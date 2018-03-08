@@ -3505,6 +3505,7 @@ def payment_selection(request):
                                                          application_url_base + "/payment/?id=" + application_id_local)
                 return HttpResponseRedirect(paypal_url)
         else:
+            form.error_summary_title = 'There was a problem on this page'
             variables = {
                 'form': form,
                 'application_id': application_id_local

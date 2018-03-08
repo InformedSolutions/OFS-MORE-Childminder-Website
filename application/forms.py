@@ -2279,7 +2279,8 @@ class PaymentForm(GOVUKForm):
         ('PayPal', 'PayPal')
     )
     payment_method = forms.ChoiceField(label='How would you like to pay?', choices=options,
-                                       widget=RadioSelect, required=True)
+                                       widget=RadioSelect, required=True,
+                                       error_messages={'required': 'Please select how you would like to pay'})
 
 
 class PaymentDetailsForm(GOVUKForm):

@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Confirmation & Payment{% endblock %}
+{% block page_title %}Pay your fee{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -17,7 +17,7 @@
     </div>
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
+            <h1 class="form-title heading-large" style="margin-top: 0px;">
                 Pay your fee
             </h1>
             <p>You need to pay &#163;35 to apply.</p>
