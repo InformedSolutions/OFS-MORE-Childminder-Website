@@ -141,7 +141,7 @@ class YearField(forms.IntegerField):
 
     def clean(self, value):
         """
-        This will clean the two year value enetered into the field in order to ensure the value entered is in the write
+        This will clean the two year value entered into the field in order to ensure the value entered is in the write
         century, for example, 68 will be changed to 1968 rather the 2068 as the latter has not occured yet
         :param value:The value object obtained from the form
         :return:This returns the cleaned value object (after cleaning specified above

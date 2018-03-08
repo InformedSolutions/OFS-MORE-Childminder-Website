@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Confirmation & Payment{% endblock %}
+{% block page_title %}Pay by debit or credit card{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -17,7 +17,7 @@
     </div>
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
+            <h1 class="form-title heading-large" style="margin-top: 0px;">
                 Pay by debit or credit card
             </h1>
         </div>

@@ -2306,12 +2306,18 @@ class PaymentDetailsForm(GOVUKForm):
         ('american_express', 'American Express'),
         ('maestro', 'Maestro')
     )
-    card_type = forms.ChoiceField(label='Card type', choices=card_type_options, required=True)
-    card_number = forms.CharField(label='Card number', required=True)
-    expiry_date = ExpirySplitDateField(label='Expiry date', required=True, widget=SelectDateWidget)
-    cardholders_name = forms.CharField(label="Cardholder's name", required=True)
+    card_type = forms.ChoiceField(label='Card type', choices=card_type_options, required=True,
+                                  error_messages={'required': 'Please select the type of card'})
+    card_number = forms.CharField(label='Card number', required=True,
+                                  error_messages={'required': 'Please enter the number on your card'})
+    expiry_date = ExpirySplitDateField(label='Expiry date', required=True, widget=SelectDateWidget,
+                                       error_messages={'required': 'Please enter the expiry date on the card'})
+    cardholders_name = forms.CharField(label="Cardholder's name", required=True,
+                                       error_messages={'required': 'Please enter the name of the cardholder'})
     card_security_code = forms.IntegerField(label='Card security code',
-                                            help_text='3 or 4 digit number on back of card', required=True)
+                                            help_text='3 or 4 digit number on back of card', required=True,
+                                            error_messages={
+                                                'required': 'Please enter the 3 or 4 digit card security code'})
 
     def __init__(self, *args, **kwargs):
         super(PaymentDetailsForm, self).__init__(*args, **kwargs)
@@ -2320,7 +2326,7 @@ class PaymentDetailsForm(GOVUKForm):
     def clean_card_type(self):
         card_type = self.cleaned_data['card_type']
         if not card_type:
-            raise forms.ValidationError('TBC')
+            raise forms.ValidationError('Please select the type of card')
 
     def clean_card_number(self):
         """
@@ -2336,22 +2342,21 @@ class PaymentDetailsForm(GOVUKForm):
         except:
             # At the moment this is a catch all error, in the case of there being multiple error
             # types this must be revisited
-            raise forms.ValidationError('TBC')
-
+            raise forms.ValidationError('Please check the number on your card')
         if settings.VISA_VALIDATION:
             if card_type == 'visa':
                 if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:
-                    raise forms.ValidationError('TBC')
+                    raise forms.ValidationError('Please check the number on your card')
         if card_type == 'mastercard':
             if re.match("^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$",
                         card_number) is None:
-                raise forms.ValidationError('TBC')
+                raise forms.ValidationError('Please check the number on your card')
         elif card_type == 'american_express':
             if re.match("^3[47][0-9]{13}$", card_number) is None:
-                raise forms.ValidationError('TBC')
+                raise forms.ValidationError('Please check the number on your card')
         elif card_type == 'maestro':
             if re.match("^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$", card_number) is None:
-                raise forms.ValidationError('TBC')
+                raise forms.ValidationError('Please check the number on your card')
         return card_number
 
     def clean_cardholders_name(self):
@@ -2360,8 +2365,8 @@ class PaymentDetailsForm(GOVUKForm):
         :return: string
         """
         cardholders_name = self.cleaned_data['cardholders_name']
-        if re.match("^[A-Za-z- ]+$", cardholders_name) is None:
-            raise forms.ValidationError('TBC')
+        if len(cardholders_name) > 50:
+            raise forms.ValidationError('Please enter 50 characters or less')
 
     def clean_card_security_code(self):
         """
@@ -2370,7 +2375,7 @@ class PaymentDetailsForm(GOVUKForm):
         """
         card_security_code = str(self.cleaned_data['card_security_code'])
         if re.match("^[0-9]{3,4}$", card_security_code) is None:
-            raise forms.ValidationError('TBC')
+            raise forms.ValidationError('The code should be 3 or 4 digits long')
 
 
 class ApplicationSavedForm(GOVUKForm):
