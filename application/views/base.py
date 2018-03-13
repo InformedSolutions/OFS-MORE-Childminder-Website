@@ -17,8 +17,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.views.decorators.cache import never_cache
 
-from . import address_helper, magic_link, payment, status
-from .business_logic import (childcare_type_logic,
+from .. import address_helper, magic_link, payment, status
+from ..business_logic import (childcare_type_logic,
                              dbs_check_logic,
                              eyfs_knowledge_logic,
                              eyfs_questions_logic,
@@ -41,7 +41,8 @@ from .business_logic import (childcare_type_logic,
                              remove_adult,
                              remove_child,
                              reset_declaration)
-from .forms import (AccountForm, ApplicationSavedForm, ContactEmailForm, ContactPhoneForm, ContactSummaryForm,
+
+from ..forms import (AccountForm, ApplicationSavedForm, ContactEmailForm, ContactPhoneForm, ContactSummaryForm,
                     DBSCheckDBSDetailsForm, DBSCheckGuidanceForm, DBSCheckSummaryForm, DBSCheckUploadDBSForm,
                     DeclarationDeclarationForm, DeclarationDeclarationForm2, DeclarationSummaryForm, EYFSGuidanceForm,
                     EYFSKnowledgeForm, EYFSQuestionsForm, EYFSSummaryForm, EYFSTrainingForm,
@@ -61,8 +62,9 @@ from .forms import (AccountForm, ApplicationSavedForm, ContactEmailForm, Contact
                     ReferenceSecondReferenceAddressLookupForm, ReferenceSecondReferenceAddressManualForm,
                     ReferenceSecondReferenceContactForm, ReferenceSummaryForm, SecondReferenceForm,
                     TypeOfChildcareAgeGroupsForm, TypeOfChildcareGuidanceForm, TypeOfChildcareRegisterForm)
-from .middleware import CustomAuthenticationHandler
-from .models import (AdultInHome, ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application, AuditLog,
+
+from ..middleware import CustomAuthenticationHandler
+from ..models import (AdultInHome, ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application, AuditLog,
                      ChildInHome, ChildcareType, CriminalRecordCheck, EYFS, FirstAidTraining, HealthDeclarationBooklet,
                      Reference, UserDetails)
 
@@ -453,74 +455,6 @@ def type_of_childcare_register(request):
                 'application_id': application_id_local
             }
             return render(request, 'childcare-guidance.html', variables)
-
-
-def task_list(request):
-    """
-    Method returning the template for the task-list (with current task status) for an applicant's application;
-    logic is built in to enable the Declarations and Confirm your details tasks when all other tasks are complete
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered task list template
-    """
-    if request.method == 'GET':
-        application_id = request.GET["id"]
-        application = Application.objects.get(pk=application_id)
-        childcare_record = ChildcareType.objects.get(application_id=application_id)
-        zero_to_five_status = childcare_record.zero_to_five
-        five_to_eight_status = childcare_record.five_to_eight
-        eight_plus_status = childcare_record.eight_plus
-        if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
-            registers = 'Early Years and Childcare Register (both parts)'
-            fee = '£35'
-        elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
-            registers = 'Early Years and Childcare Register (compulsory part)'
-            fee = '£35'
-        elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
-            registers = 'Early Years and Childcare Register (voluntary part)'
-            fee = '£35'
-        elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
-            registers = 'Childcare Register (both parts)'
-            fee = '£103'
-        elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
-            registers = 'Early Years Register'
-            fee = '£35'
-        elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is False):
-            registers = 'Childcare Register (compulsory part)'
-            fee = '£103'
-        elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
-            registers = 'Childcare Register (voluntary part)'
-            fee = '£103'
-        application_status_context = dict({
-            'application_id': application_id,
-            'login_details_status': application.login_details_status,
-            'personal_details_status': application.personal_details_status,
-            'childcare_type_status': application.childcare_type_status,
-            'first_aid_training_status': application.first_aid_training_status,
-            'eyfs_training_status': application.eyfs_training_status,
-            'criminal_record_check_status': application.criminal_record_check_status,
-            'health_status': application.health_status,
-            'reference_status': application.references_status,
-            'people_in_home_status': application.people_in_home_status,
-            'declaration_status': application.declarations_status,
-            'all_complete': False,
-            'confirm_details': False,
-            'registers': registers,
-            'fee': fee
-        })
-        temp_context = application_status_context
-        del temp_context['declaration_status']
-        # Enable/disable Declarations and Confirm your details tasks depending on task completion
-        if ('NOT_STARTED' in temp_context.values()) or ('IN_PROGRESS' in temp_context.values()):
-            application_status_context['all_complete'] = False
-        else:
-            application_status_context['all_complete'] = True
-            application_status_context['declaration_status'] = application.declarations_status
-            if application_status_context['declaration_status'] == 'COMPLETED':
-                application_status_context['confirm_details'] = True
-            else:
-                application_status_context['confirm_details'] = False
-    return render(request, 'task-list.html', application_status_context)
-
 
 def personal_details_guidance(request):
     """

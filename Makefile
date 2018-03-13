@@ -35,3 +35,6 @@ shell:
 
 graph:
 	python manage.py graph_models -a -o childminder_models.png --settings=$(PROJECT_SETTINGS)
+
+load:
+	python manage.py loaddata db.json --settings=${PROJECT_SETTINGS}
