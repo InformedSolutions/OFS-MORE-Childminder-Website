@@ -3787,6 +3787,37 @@ def home_ready(request):
             return render(request, 'next-steps-home.html', variables)
 
 
+def prepare_for_interview(request):
+    """
+    Method returning the template for the Prepare for your interview page
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Prepare for your interview template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET['id']
+        order_code = Application.objects.get(pk=application_id_local).order_code
+        form = PrepareForInterviewForm()
+        variables = {
+            'application_id': application_id_local,
+            'order_code': order_code,
+            'form': form
+        }
+        return render(request, 'next-steps-interview.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        order_code = Application.objects.get(pk=application_id_local).order_code
+        form = PrepareForInterviewForm(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/confirmation?id=' + application_id_local + '&orderCode=' + str(order_code))
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'next-steps-interview.html', variables)
+
+
 def application_saved(request):
     """
     Method returning the template for the Application saved page (for a given application)

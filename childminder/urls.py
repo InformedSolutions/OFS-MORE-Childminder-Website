@@ -108,6 +108,7 @@ urlpatterns = [
     url(r'^confirmation/', views.payment_confirmation, name='Payment-Confirmation'),
     url(r'^next-steps/documents/', views.documents_needed, name='Next-Steps-Documents'),
     url(r'^next-steps/home/', views.home_ready, name='Next-Steps-Home'),
+    url(r'^next-steps/interview/', views.prepare_for_interview, name='Next-Steps-Interview'),
     url(r'^code-expired/', TemplateView.as_view(template_name='code-expired.html')),
     url(r'^bad-link/', TemplateView.as_view(template_name='bad-link.html')),
     url(r'^link-resolution-error/', TemplateView.as_view(template_name='link-resolution-error.html')),
