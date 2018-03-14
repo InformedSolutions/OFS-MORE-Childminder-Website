@@ -3457,9 +3457,9 @@ def declaration_declaration(request):
         application_id_local = request.POST["id"]
         application = Application.objects.get(application_id=application_id_local)
         form = DeclarationDeclarationForm(request.POST, id=application_id_local)
-        form.error_summary_title = 'There is a problem with this form (I am happy for Ofsted to)'
+        form.error_summary_title = 'There was a problem with your declaration (I am happy for Ofsted to)'
         form2 = DeclarationDeclarationForm2(request.POST, id=application_id_local)
-        form2.error_summary_title = 'There is a problem with this form (I declare that)'
+        form2.error_summary_title = 'There was a problem with your declaration (I declare that)'
         # Validate both forms (sets of checkboxes)
         if form.is_valid():
             background_check_declare = form.cleaned_data.get('background_check_declare')
