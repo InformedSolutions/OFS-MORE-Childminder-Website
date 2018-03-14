@@ -2255,6 +2255,11 @@ input[type=number] {
   float: left;
 }
 
+.grayed-out {
+  color: #BFC1C3;
+  pointer-events: none;
+}
+
 .task-completed {
   display: -moz-inline-stack;
   display: inline-block;
