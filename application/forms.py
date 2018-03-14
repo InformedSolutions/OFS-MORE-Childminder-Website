@@ -7,7 +7,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 import re
 
-from datetime import date
+from datetime import date, datetime
 from django import forms
 from django.conf import settings
 from govuk_forms.forms import GOVUKForm
@@ -1085,7 +1085,7 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
-    #Overrides standard NumberInput widget too give wider field
+    # Overrides standard NumberInput widget too give wider field
     widget_instance = NumberInput()
     widget_instance.input_classes = 'form-control form-control-1-4'
 
@@ -1104,7 +1104,6 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
                                     choices=options, widget=InlineRadioSelect,
                                     required=True,
                                     error_messages={'required': 'Please say if you have any cautions or convictions'})
-
 
     def __init__(self, *args, **kwargs):
         """
@@ -1968,7 +1967,6 @@ class OtherPeopleAdultDBSForm(GOVUKForm):
                                                 required=True,
                                                 widget=widget_instance)
 
-
     def __init__(self, *args, **kwargs):
         """
         Method to configure the initialisation of the People in your home: adult DBS form
@@ -2358,6 +2356,22 @@ class PaymentDetailsForm(GOVUKForm):
             if re.match("^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$", card_number) is None:
                 raise forms.ValidationError('Please check the number on your card')
         return card_number
+
+    def clean_expiry_date(self):
+        """
+        Expiry date validation
+        :return: expiry date
+        """
+        expiry_date = self.cleaned_data['expiry_date']
+        year = expiry_date[0]
+        month = expiry_date[1]
+        today_month = date.today().month
+        today_year = date.today().year
+        expiry_date_object = date(year, month, 1)
+        today_date = date(today_year, today_month, 1)
+        date_difference = expiry_date_object - today_date
+        if date_difference.days < 0:
+            raise forms.ValidationError('Check the expiry date or use a new card')
 
     def clean_cardholders_name(self):
         """
