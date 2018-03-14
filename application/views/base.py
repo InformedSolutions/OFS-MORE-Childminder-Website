@@ -161,7 +161,8 @@ def contact_email(request):
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'login_details_status': application.login_details_status
+            'login_details_status': application.login_details_status,
+            'childcare_type_status': application.childcare_type_status
         }
         return render(request, 'contact-email.html', variables)
     if request.method == 'POST':
@@ -197,7 +198,8 @@ def contact_email(request):
             variables = {
                 'form': form,
                 'application_id': application_id_local,
-                'login_details_status': application.login_details_status
+                'login_details_status': application.login_details_status,
+                'childcare_type_status': application.childcare_type_status
             }
             return render(request, 'contact-email.html', variables)
 
@@ -217,7 +219,8 @@ def contact_phone(request):
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'login_details_status': application.login_details_status
+            'login_details_status': application.login_details_status,
+            'childcare_type_status': application.childcare_type_status
         }
         return render(request, 'contact-phone.html', variables)
     if request.method == 'POST':
@@ -236,7 +239,8 @@ def contact_phone(request):
             variables = {
                 'form': form,
                 'application_id': application_id_local,
-                'login_details_status': application.login_details_status
+                'login_details_status': application.login_details_status,
+                'childcare_type_status': application.childcare_type_status
             }
             return render(request, 'contact-phone.html', variables)
 
@@ -255,7 +259,8 @@ def contact_question(request):
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'login_details_status': application.login_details_status
+            'login_details_status': application.login_details_status,
+            'childcare_type_status': application.childcare_type_status
         }
         return render(request, 'contact-question.html', variables)
     if request.method == 'POST':
@@ -278,7 +283,8 @@ def contact_question(request):
             variables = {
                 'form': form,
                 'application_id': application_id_local,
-                'login_details_status': application.login_details_status
+                'login_details_status': application.login_details_status,
+                'childcare_type_status': application.childcare_type_status
             }
             return render(request, 'contact-question.html', variables)
 
@@ -326,7 +332,8 @@ def contact_summary(request):
             variables = {
                 'form': form,
                 'application_id': application_id_local,
-                'login_details_status': application.login_details_status
+                'login_details_status': application.login_details_status,
+                'childcare_type_status': application.childcare_type_status
             }
             return render(request, 'contact-summary.html', variables)
 
