@@ -1189,13 +1189,13 @@ class OtherPeopleTest(TestCase):
 class DeclarationTest(TestCase):
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/declaration/summary/')
+        found = resolve(settings.URL_PREFIX + '/check-answers/')
         self.assertEqual(found.func, declaration_summary)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/declaration/summary?id=')
+            c.get(settings.URL_PREFIX + '/check-answers?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
