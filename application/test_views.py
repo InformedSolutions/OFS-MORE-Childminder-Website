@@ -1201,13 +1201,25 @@ class DeclarationTest(TestCase):
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/declaration/declaration/')
+        found = resolve(settings.URL_PREFIX + '/declaration/')
         self.assertEqual(found.func, declaration_declaration)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/declaration/declaration?id=')
+            c.get(settings.URL_PREFIX + '/declaration?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/your-declaration/')
+        self.assertEqual(found.func, declaration_declaration)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/your-declaration?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)

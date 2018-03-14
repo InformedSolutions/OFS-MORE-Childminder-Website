@@ -2175,6 +2175,15 @@ class OtherPeopleSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
+class DeclarationIntroForm(GOVUKForm):
+    """
+    GOV.UK form for the Declaration: guidance page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
+    auto_replace_widgets = True
+
+
 class DeclarationDeclarationForm(GOVUKForm):
     """
     GOV.UK form for the Declaration: declaration page
@@ -2233,8 +2242,10 @@ class DeclarationDeclarationForm2(GOVUKForm):
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
-    information_correct_declare = forms.BooleanField(label='the information I have given in this form is correct',
-                                                     required=True)
+    information_correct_declare = forms.BooleanField(label='the information I have given is correct', required=True,
+                                                     error_messages={'required': 'You need to confirm this'})
+    change_declare = forms.BooleanField(label='I will tell Ofsted if this information changes', required=True,
+                                        error_messages={'required': 'You need to confirm this'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -2253,6 +2264,11 @@ class DeclarationDeclarationForm2(GOVUKForm):
                 self.fields['information_correct_declare'].initial = '1'
             elif information_correct_declare is False:
                 self.fields['information_correct_declare'].initial = '0'
+            change_declare = Application.objects.get(application_id=self.application_id_local).change_declare
+            if change_declare is True:
+                self.fields['change_declare'].initial = '1'
+            elif change_declare is False:
+                self.fields['change_declare'].initial = '0'
 
 
 class DeclarationSummaryForm(GOVUKForm):

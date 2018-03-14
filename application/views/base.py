@@ -45,24 +45,25 @@ from ..business_logic import (childcare_type_logic,
 
 from ..forms import (AccountForm, ApplicationSavedForm, ContactEmailForm, ContactPhoneForm, ContactSummaryForm,
                     DBSCheckDBSDetailsForm, DBSCheckGuidanceForm, DBSCheckSummaryForm, DBSCheckUploadDBSForm,
-                    DeclarationDeclarationForm, DeclarationDeclarationForm2, DeclarationSummaryForm, EYFSGuidanceForm,
-                    EYFSKnowledgeForm, EYFSQuestionsForm, EYFSSummaryForm, EYFSTrainingForm,
-                    FirstAidTrainingDeclarationForm, FirstAidTrainingDetailsForm, FirstAidTrainingGuidanceForm,
-                    FirstAidTrainingRenewForm, FirstAidTrainingSummaryForm, FirstAidTrainingTrainingForm,
-                    FirstReferenceForm, HealthBookletForm, HealthIntroForm, OtherPeopleAdultDBSForm,
-                    OtherPeopleAdultDetailsForm, OtherPeopleAdultPermissionForm, OtherPeopleAdultQuestionForm,
-                    OtherPeopleApproaching16Form, OtherPeopleChildrenDetailsForm, OtherPeopleChildrenQuestionForm,
-                    OtherPeopleGuidanceForm, OtherPeopleSummaryForm, PaymentDetailsForm, PaymentForm,
-                    PersonalDetailsChildcareAddressForm, PersonalDetailsChildcareAddressLookupForm,
-                    PersonalDetailsChildcareAddressManualForm, PersonalDetailsDOBForm, PersonalDetailsGuidanceForm,
-                    PersonalDetailsHomeAddressForm, PersonalDetailsHomeAddressLookupForm,
-                    PersonalDetailsHomeAddressManualForm, PersonalDetailsLocationOfCareForm, PersonalDetailsNameForm,
-                    PersonalDetailsSummaryForm, QuestionForm, ReferenceFirstReferenceAddressForm,
-                    ReferenceFirstReferenceAddressLookupForm, ReferenceFirstReferenceAddressManualForm,
-                    ReferenceFirstReferenceContactForm, ReferenceIntroForm, ReferenceSecondReferenceAddressForm,
-                    ReferenceSecondReferenceAddressLookupForm, ReferenceSecondReferenceAddressManualForm,
-                    ReferenceSecondReferenceContactForm, ReferenceSummaryForm, SecondReferenceForm,
-                    TypeOfChildcareAgeGroupsForm, TypeOfChildcareGuidanceForm, TypeOfChildcareRegisterForm)
+                    DeclarationDeclarationForm, DeclarationDeclarationForm2, DeclarationIntroForm,
+                    DeclarationSummaryForm, EYFSGuidanceForm, EYFSKnowledgeForm, EYFSQuestionsForm, EYFSSummaryForm,
+                    EYFSTrainingForm, FirstAidTrainingDeclarationForm, FirstAidTrainingDetailsForm,
+                    FirstAidTrainingGuidanceForm, FirstAidTrainingRenewForm, FirstAidTrainingSummaryForm,
+                    FirstAidTrainingTrainingForm, FirstReferenceForm, HealthBookletForm, HealthIntroForm,
+                    OtherPeopleAdultDBSForm, OtherPeopleAdultDetailsForm, OtherPeopleAdultPermissionForm,
+                    OtherPeopleAdultQuestionForm, OtherPeopleApproaching16Form, OtherPeopleChildrenDetailsForm,
+                    OtherPeopleChildrenQuestionForm, OtherPeopleGuidanceForm, OtherPeopleSummaryForm,
+                    PaymentDetailsForm, PaymentForm, PersonalDetailsChildcareAddressForm,
+                    PersonalDetailsChildcareAddressLookupForm, PersonalDetailsChildcareAddressManualForm,
+                    PersonalDetailsDOBForm, PersonalDetailsGuidanceForm, PersonalDetailsHomeAddressForm,
+                    PersonalDetailsHomeAddressLookupForm, PersonalDetailsHomeAddressManualForm,
+                    PersonalDetailsLocationOfCareForm, PersonalDetailsNameForm, PersonalDetailsSummaryForm,
+                    QuestionForm, ReferenceFirstReferenceAddressForm, ReferenceFirstReferenceAddressLookupForm,
+                    ReferenceFirstReferenceAddressManualForm, ReferenceFirstReferenceContactForm, ReferenceIntroForm,
+                    ReferenceSecondReferenceAddressForm, ReferenceSecondReferenceAddressLookupForm,
+                    ReferenceSecondReferenceAddressManualForm, ReferenceSecondReferenceContactForm,
+                    ReferenceSummaryForm, SecondReferenceForm, TypeOfChildcareAgeGroupsForm,
+                     TypeOfChildcareGuidanceForm, TypeOfChildcareRegisterForm)
 
 from ..middleware import CustomAuthenticationHandler
 from ..models import (AdultInHome, ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application, AuditLog,
@@ -3391,13 +3392,45 @@ def declaration_summary(request):
         if form.is_valid():
             if application.declarations_status != 'COMPLETED':
                 status.update(application_id_local, 'declarations_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/declaration/declaration?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/declaration?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
             return render(request, 'declaration-summary.html', variables)
+
+
+def declaration_intro(request):
+    """
+    Method returning the template for the Declaration intro page (for a given application) and navigating to
+    the declaration page when successfully completed
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Declaration intro template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = DeclarationIntroForm()
+        application = Application.objects.get(pk=application_id_local)
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'declarations_status': application.declarations_status
+        }
+        return render(request, 'declaration-intro.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        application = Application.objects.get(application_id=application_id_local)
+        form = DeclarationIntroForm(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect(settings.URL_PREFIX + '/your-declaration?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'declarations_status': application.declarations_status
+            }
+            return render(request, 'declaration-intro.html', variables)
 
 
 def declaration_declaration(request):
