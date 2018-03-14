@@ -87,7 +87,7 @@ class Application(models.Model):
     background_check_declare = models.NullBooleanField(blank=True, null=True)
     inspect_home_declare = models.NullBooleanField(blank=True, null=True)
     interview_declare = models.NullBooleanField(blank=True, null=True)
-    eyfs_questions_declare = models.NullBooleanField(blank=True, null=True)
+    share_info_declare = models.NullBooleanField(blank=True, null=True)
     information_correct_declare = models.NullBooleanField(blank=True, null=True)
     date_created = models.DateTimeField(blank=True, null=True)
     date_updated = models.DateTimeField(blank=True, null=True)
