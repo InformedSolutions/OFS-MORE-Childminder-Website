@@ -2417,6 +2417,15 @@ class DocumentsNeededForm(GOVUKForm):
     auto_replace_widgets = True
 
 
+class HomeReadyForm(GOVUKForm):
+    """
+    GOV.UK form for the Get your home ready page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
+    auto_replace_widgets = True
+
+
 class ApplicationSavedForm(GOVUKForm):
     """
     GOV.UK form for the Application saved page

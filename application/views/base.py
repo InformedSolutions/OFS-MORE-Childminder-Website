@@ -3733,11 +3733,11 @@ def documents_needed(request):
     """
     Method returning the template for the Documents you need for the visit page
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Documents you need for the visit confirmation template
+    :return: an HttpResponse object with the rendered Documents you need for the visit template
     """
     if request.method == 'GET':
         application_id_local = request.GET['id']
-        order_code = request.GET['orderCode']
+        order_code = Application.objects.get(pk=application_id_local).order_code
         form = DocumentsNeededForm()
         variables = {
             'application_id': application_id_local,
@@ -3757,6 +3757,34 @@ def documents_needed(request):
                 'application_id': application_id_local
             }
             return render(request, 'next-steps-documents.html', variables)
+
+
+def home_ready(request):
+    """
+    Method returning the template for the Get your home ready page
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Get your home ready template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET['id']
+        form = HomeReadyForm()
+        variables = {
+            'application_id': application_id_local,
+            'form': form
+        }
+        return render(request, 'next-steps-home.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = HomeReadyForm(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/next-steps/interview?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'next-steps-home.html', variables)
 
 
 def application_saved(request):
