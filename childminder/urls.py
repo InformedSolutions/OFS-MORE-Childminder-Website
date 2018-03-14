@@ -106,6 +106,7 @@ urlpatterns = [
     url(r'^email-sent/', TemplateView.as_view(template_name='email-sent.html')),
     url(r'^start/', views.start_page),
     url(r'^confirmation/', views.payment_confirmation, name='Payment-Confirmation'),
+    url(r'^next-steps/documents/', views.documents_needed, name='Next-Steps-Documents'),
     url(r'^code-expired/', TemplateView.as_view(template_name='code-expired.html')),
     url(r'^bad-link/', TemplateView.as_view(template_name='bad-link.html')),
     url(r'^link-resolution-error/', TemplateView.as_view(template_name='link-resolution-error.html')),

@@ -43,32 +43,86 @@ from ..business_logic import (childcare_type_logic,
                              remove_child,
                              reset_declaration)
 
-from ..forms import (AccountForm, ApplicationSavedForm, ContactEmailForm, ContactPhoneForm, ContactSummaryForm,
-                    DBSCheckDBSDetailsForm, DBSCheckGuidanceForm, DBSCheckSummaryForm, DBSCheckUploadDBSForm,
-                    DeclarationDeclarationForm, DeclarationDeclarationForm2, DeclarationIntroForm,
-                    DeclarationSummaryForm, EYFSGuidanceForm, EYFSKnowledgeForm, EYFSQuestionsForm, EYFSSummaryForm,
-                    EYFSTrainingForm, FirstAidTrainingDeclarationForm, FirstAidTrainingDetailsForm,
-                    FirstAidTrainingGuidanceForm, FirstAidTrainingRenewForm, FirstAidTrainingSummaryForm,
-                    FirstAidTrainingTrainingForm, FirstReferenceForm, HealthBookletForm, HealthIntroForm,
-                    OtherPeopleAdultDBSForm, OtherPeopleAdultDetailsForm, OtherPeopleAdultPermissionForm,
-                    OtherPeopleAdultQuestionForm, OtherPeopleApproaching16Form, OtherPeopleChildrenDetailsForm,
-                    OtherPeopleChildrenQuestionForm, OtherPeopleGuidanceForm, OtherPeopleSummaryForm,
-                    PaymentDetailsForm, PaymentForm, PersonalDetailsChildcareAddressForm,
-                    PersonalDetailsChildcareAddressLookupForm, PersonalDetailsChildcareAddressManualForm,
-                    PersonalDetailsDOBForm, PersonalDetailsGuidanceForm, PersonalDetailsHomeAddressForm,
-                    PersonalDetailsHomeAddressLookupForm, PersonalDetailsHomeAddressManualForm,
-                    PersonalDetailsLocationOfCareForm, PersonalDetailsNameForm, PersonalDetailsSummaryForm,
-                    QuestionForm, ReferenceFirstReferenceAddressForm, ReferenceFirstReferenceAddressLookupForm,
-                    ReferenceFirstReferenceAddressManualForm, ReferenceFirstReferenceContactForm, ReferenceIntroForm,
-                    ReferenceSecondReferenceAddressForm, ReferenceSecondReferenceAddressLookupForm,
-                    ReferenceSecondReferenceAddressManualForm, ReferenceSecondReferenceContactForm,
-                    ReferenceSummaryForm, SecondReferenceForm, TypeOfChildcareAgeGroupsForm,
-                     TypeOfChildcareGuidanceForm, TypeOfChildcareRegisterForm)
+from ..forms import (AccountForm,
+                     ApplicationSavedForm,
+                     ContactEmailForm,
+                     ContactPhoneForm,
+                     ContactSummaryForm,
+                     DBSCheckDBSDetailsForm,
+                     DBSCheckGuidanceForm,
+                     DBSCheckSummaryForm,
+                     DBSCheckUploadDBSForm,
+                     DeclarationDeclarationForm,
+                     DeclarationDeclarationForm2,
+                     DeclarationSummaryForm,
+                     DocumentsNeededForm,
+                     EYFSGuidanceForm,
+                     EYFSKnowledgeForm,
+                     EYFSQuestionsForm,
+                     EYFSSummaryForm,
+                     EYFSTrainingForm,
+                     FirstAidTrainingDeclarationForm,
+                     FirstAidTrainingDetailsForm,
+                     FirstAidTrainingGuidanceForm,
+                     FirstAidTrainingRenewForm,
+                     FirstAidTrainingSummaryForm,
+                     FirstAidTrainingTrainingForm,
+                     FirstReferenceForm,
+                     HealthBookletForm,
+                     HealthIntroForm,
+                     OtherPeopleAdultDBSForm,
+                     OtherPeopleAdultDetailsForm,
+                     OtherPeopleAdultPermissionForm,
+                     OtherPeopleAdultQuestionForm,
+                     OtherPeopleApproaching16Form,
+                     OtherPeopleChildrenDetailsForm,
+                     OtherPeopleChildrenQuestionForm,
+                     OtherPeopleGuidanceForm,
+                     OtherPeopleSummaryForm,
+                     PaymentDetailsForm,
+                     PaymentForm,
+                     PersonalDetailsChildcareAddressForm,
+                     PersonalDetailsChildcareAddressLookupForm,
+                     PersonalDetailsChildcareAddressManualForm,
+                     PersonalDetailsDOBForm,
+                     PersonalDetailsGuidanceForm,
+                     PersonalDetailsHomeAddressForm,
+                     PersonalDetailsHomeAddressLookupForm,
+                     PersonalDetailsHomeAddressManualForm,
+                     PersonalDetailsLocationOfCareForm,
+                     PersonalDetailsNameForm,
+                     PersonalDetailsSummaryForm,
+                     QuestionForm,
+                     ReferenceFirstReferenceAddressForm,
+                     ReferenceFirstReferenceAddressLookupForm,
+                     ReferenceFirstReferenceAddressManualForm,
+                     ReferenceFirstReferenceContactForm,
+                     ReferenceIntroForm,
+                     ReferenceSecondReferenceAddressForm,
+                     ReferenceSecondReferenceAddressLookupForm,
+                     ReferenceSecondReferenceAddressManualForm,
+                     ReferenceSecondReferenceContactForm,
+                     ReferenceSummaryForm,
+                     SecondReferenceForm,
+                     TypeOfChildcareAgeGroupsForm,
+                     TypeOfChildcareGuidanceForm,
+                     TypeOfChildcareRegisterForm)
 
 from ..middleware import CustomAuthenticationHandler
-from ..models import (AdultInHome, ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application, AuditLog,
-                     ChildInHome, ChildcareType, CriminalRecordCheck, EYFS, FirstAidTraining, HealthDeclarationBooklet,
-                     Reference, UserDetails)
+from ..models import (AdultInHome,
+                      ApplicantHomeAddress,
+                      ApplicantName,
+                      ApplicantPersonalDetails,
+                      Application,
+                      AuditLog,
+                      ChildInHome,
+                      ChildcareType,
+                      CriminalRecordCheck,
+                      EYFS,
+                      FirstAidTraining,
+                      HealthDeclarationBooklet,
+                      Reference,
+                      UserDetails)
 
 # initiate logging
 log = logging.getLogger('django.server')
@@ -3673,6 +3727,36 @@ def payment_confirmation(request):
                 'application_id': application_id_local
             }
             return HttpResponseRedirect(settings.URL_PREFIX + '/payment/?id=' + application_id_local, variables)
+
+
+def documents_needed(request):
+    """
+    Method returning the template for the Documents you need for the visit page
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Documents you need for the visit confirmation template
+    """
+    if request.method == 'GET':
+        application_id_local = request.GET['id']
+        order_code = request.GET['orderCode']
+        form = DocumentsNeededForm()
+        variables = {
+            'application_id': application_id_local,
+            'order_code': order_code,
+            'form': form
+        }
+        return render(request, 'next-steps-documents.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        form = DocumentsNeededForm(request.POST)
+        if form.is_valid():
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + '/next-steps/home?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'next-steps-documents.html', variables)
 
 
 def application_saved(request):
