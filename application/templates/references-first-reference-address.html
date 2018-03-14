@@ -28,10 +28,8 @@
                 <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
                     {{form.postcode.label}}
                 </label>
-                <span style="margin-right: 10px;">{{form.postcode}}</span><input type="submit"
-                                                                                 class="button button-search"
-                                                                                 value="Find address"
-                                                                                 name="postcode-search">
+                {{form.postcode}}
+                <input type="submit" class="button button-search find-address-button" value="Find address" name="postcode-search">
             </div>
             {% elif form.errors %}
             <div id="id_postcode-group" class="form-group-error form-group-required form-group">
