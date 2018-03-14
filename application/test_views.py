@@ -1275,13 +1275,13 @@ class PaymentTest(TestCase):
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/payment-details/')
+        found = resolve(settings.URL_PREFIX + '/payment/details/')
         self.assertEqual(found.func, card_payment_details)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/payment-details/?id=')
+            c.get(settings.URL_PREFIX + '/payment/details/?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
