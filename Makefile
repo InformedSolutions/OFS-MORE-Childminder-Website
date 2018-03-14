@@ -38,3 +38,9 @@ graph:
 
 load:
 	python manage.py loaddata db.json --settings=${PROJECT_SETTINGS}
+
+export:
+	python manage.py dumpdata > db.raw.json --settings=${PROJECT_SETTINGS}
+	cat db.raw.json | python -m json.tool > db.json
+	rm db.raw.json
+
