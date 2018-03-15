@@ -5,7 +5,7 @@ from .base import *
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-PUBLIC_APPLICATION_URL = 'https://ofsted.informed.com'
+PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
 # Base URL of notify gateway
 NOTIFY_URL = 'http://notify-gateway:8000/notify-gateway'
@@ -15,6 +15,9 @@ PAYMENT_URL = 'http://payment-gateway:8000/payment-gateway'
 
 # Base URL of arc-service gateway
 ADDRESSING_URL = 'http://addressing-service:8000/addressing-service'
+
+# Visa Validation
+VISA_VALIDATION = True
 
 PROD_APPS = [
     'whitenoise',

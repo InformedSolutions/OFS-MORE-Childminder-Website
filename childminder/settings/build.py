@@ -3,17 +3,18 @@ from .base import *
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-PUBLIC_APPLICATION_URL = 'http://mcriscd01/childminder'
+PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
+
 INTERNAL_IPS = "127.0.0.1"
 
 # Base URL of notify gateway
-NOTIFY_URL = "http://" + os.environ.get('APP_NOTIFY_URL', '130.130.52.132:8095') + "/notify-gateway"
+NOTIFY_URL = "http://" + os.environ.get('APP_NOTIFY_URL') + "/notify-gateway"
 
 # Base URL of payment gateway
-PAYMENT_URL = "http://" + os.environ.get('APP_PAYMENT_URL', '130.130.52.132:8089') + "/payment-gateway"
+PAYMENT_URL = "http://" + os.environ.get('APP_PAYMENT_URL') + "/payment-gateway"
 
 # Base URL of arc-service gateway
-ADDRESSING_URL = "http://" + os.environ.get('APP_ADDRESSING_URL', '130.130.52.132:8000') + "/addressing-service"
+ADDRESSING_URL = "http://" + os.environ.get('APP_ADDRESSING_URL') + "/addressing-service"
 
 
 # Visa Validation
