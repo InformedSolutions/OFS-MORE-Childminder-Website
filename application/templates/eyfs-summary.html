@@ -78,17 +78,17 @@
             <td>
                 Will you answer questions about your early years knowledge?
             </td>
-            {% if eyfs_questions_declare is True %}
+            {% if share_info_declare is True %}
             <td style="word-wrap: break-word">
                 Yes
             </td>
-            {% elif eyfs_questions_declare is False %}
+            {% elif share_info_declare is False %}
             <td style="word-wrap: break-word">
                 No
             </td>
             {% endif %}
             <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/eyfs/questions?id={{application_id}}#id_eyfs_questions_declare"
+                <a href="{{ URL_PREFIX }}/eyfs/questions?id={{application_id}}#id_share_info_declare"
                    alt='Change answer on EYFS questions'>
                     Change <span class="visuallyhidden">answer on EYFS questions</span>
                 </a>

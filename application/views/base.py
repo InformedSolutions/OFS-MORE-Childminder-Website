@@ -1574,7 +1574,7 @@ def eyfs_summary(request):
         eyfs_record = EYFS.objects.get(application_id=application_id_local)
         eyfs_understand = eyfs_record.eyfs_understand
         eyfs_training_declare = eyfs_record.eyfs_training_declare
-        eyfs_questions_declare = eyfs_record.eyfs_questions_declare
+        share_info_declare = eyfs_record.share_info_declare
         form = EYFSSummaryForm()
         application = Application.objects.get(pk=application_id_local)
         variables = {
@@ -1582,7 +1582,7 @@ def eyfs_summary(request):
             'application_id': application_id_local,
             'eyfs_understand': eyfs_understand,
             'eyfs_training_declare': eyfs_training_declare,
-            'eyfs_questions_declare': eyfs_questions_declare,
+            'share_info_declare': share_info_declare,
             'eyfs_training_status': application.eyfs_training_status,
         }
         return render(request, 'eyfs-summary.html', variables)
@@ -3342,7 +3342,7 @@ def declaration_summary(request):
             'send_hdb_declare': hdb_record.send_hdb_declare,
             # 'eyfs_understand': eyfs_record.eyfs_understand,
             # 'eyfs_training_declare': eyfs_record.eyfs_training_declare,
-            # 'eyfs_questions_declare': eyfs_record.eyfs_questions_declare,
+            # 'share_info_declare': eyfs_record.share_info_declare,
             'first_reference_first_name': first_reference_record.first_name,
             'first_reference_last_name': first_reference_record.last_name,
             'first_reference_relationship': first_reference_record.relationship,
@@ -3428,11 +3428,11 @@ def declaration_declaration(request):
             background_check_declare = form.cleaned_data.get('background_check_declare')
             inspect_home_declare = form.cleaned_data.get('inspect_home_declare')
             interview_declare = form.cleaned_data.get('interview_declare')
-            eyfs_questions_declare = form.cleaned_data.get('eyfs_questions_declare')
+            share_info_declare = form.cleaned_data.get('share_info_declare')
             application.background_check_declare = background_check_declare
             application.inspect_home_declare = inspect_home_declare
             application.interview_declare = interview_declare
-            application.eyfs_questions_declare = eyfs_questions_declare
+            application.share_info_declare = share_info_declare
             application.save()
             application.date_updated = current_date
             application.save()

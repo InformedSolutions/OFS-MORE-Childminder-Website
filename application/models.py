@@ -191,7 +191,7 @@ class EYFS(models.Model):
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     eyfs_understand = models.NullBooleanField(blank=True, null=True, default=None)
     eyfs_training_declare = models.NullBooleanField(blank=True, null=True, default=None)
-    eyfs_questions_declare = models.NullBooleanField(blank=True, null=True, default=None)
+    share_info_declare = models.NullBooleanField(blank=True, null=True, default=None)
 
     class Meta:
         db_table = 'EYFS'
