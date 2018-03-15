@@ -987,6 +987,10 @@ hr {
   }
 }
 
+.icon-ofsted-download {
+    vertical-align: middle
+}
+
 .icon-important {
   width: 35px;
   height: 35px;
@@ -2516,7 +2520,7 @@ div.error-summary ul.error-summary-list {
   outline-style: solid;
   color: #6F777B;
   width: calc(20% - 6px);
-  margin: 0px 0px 0px 3px;
+  margin: 0px 3px 0px 3px;
 }
 
 a.remove-file {
