@@ -768,7 +768,7 @@ class TestEYFSLogic(TestCase):
             application_id=Application.objects.get(application_id=test_application_id),
             eyfs_understand='True',
             eyfs_training_declare='True',
-            eyfs_questions_declare='True'
+            share_info_declare='True'
         )
         assert (EYFS.objects.filter(application_id=test_application_id).count() > 0)
 

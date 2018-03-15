@@ -80,15 +80,15 @@ class Application(models.Model):
     health_status = models.CharField(choices=TASK_STATUS, max_length=50)
     references_status = models.CharField(choices=TASK_STATUS, max_length=50)
     people_in_home_status = models.CharField(choices=TASK_STATUS, max_length=50)
-    adults_in_home = models.NullBooleanField(blank=True, null=True)
-    children_in_home = models.NullBooleanField(blank=True, null=True)
-    children_turning_16 = models.NullBooleanField(blank=True, null=True)
+    adults_in_home = models.NullBooleanField(blank=True, null=True, default=None)
+    children_in_home = models.NullBooleanField(blank=True, null=True, default=None)
+    children_turning_16 = models.NullBooleanField(blank=True, null=True, default=None)
     declarations_status = models.CharField(choices=TASK_STATUS, max_length=50)
-    background_check_declare = models.NullBooleanField(blank=True, null=True)
-    inspect_home_declare = models.NullBooleanField(blank=True, null=True)
-    interview_declare = models.NullBooleanField(blank=True, null=True)
-    share_info_declare = models.NullBooleanField(blank=True, null=True)
-    information_correct_declare = models.NullBooleanField(blank=True, null=True)
+    background_check_declare = models.NullBooleanField(blank=True, null=True, default=None)
+    inspect_home_declare = models.NullBooleanField(blank=True, null=True, default=None)
+    interview_declare = models.NullBooleanField(blank=True, null=True, default=None)
+    share_info_declare = models.NullBooleanField(blank=True, null=True, default=None)
+    information_correct_declare = models.NullBooleanField(blank=True, null=True, default=None)
     date_created = models.DateTimeField(blank=True, null=True)
     date_updated = models.DateTimeField(blank=True, null=True)
     date_accepted = models.DateTimeField(blank=True, null=True)
@@ -156,8 +156,8 @@ class ApplicantHomeAddress(models.Model):
     county = models.CharField(max_length=100, blank=True)
     country = models.CharField(max_length=100, blank=True)
     postcode = models.CharField(max_length=8, blank=True)
-    childcare_address = models.NullBooleanField(blank=True, null=True)
-    current_address = models.NullBooleanField(blank=True, null=True)
+    childcare_address = models.NullBooleanField(blank=True, null=True, default=None)
+    current_address = models.NullBooleanField(blank=True, null=True, default=None)
     move_in_month = models.IntegerField(blank=True)
     move_in_year = models.IntegerField(blank=True)
 
@@ -176,8 +176,8 @@ class FirstAidTraining(models.Model):
     course_day = models.IntegerField()
     course_month = models.IntegerField()
     course_year = models.IntegerField()
-    show_certificate = models.NullBooleanField(blank=True, null=True)
-    renew_certificate = models.NullBooleanField(blank=True, null=True)
+    show_certificate = models.NullBooleanField(blank=True, null=True, default=None)
+    renew_certificate = models.NullBooleanField(blank=True, null=True, default=None)
 
     class Meta:
         db_table = 'FIRST_AID_TRAINING'
@@ -189,9 +189,9 @@ class EYFS(models.Model):
     """
     eyfs_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
-    eyfs_understand = models.NullBooleanField(blank=True, null=True)
-    eyfs_training_declare = models.NullBooleanField(blank=True, null=True)
-    eyfs_questions_declare = models.NullBooleanField(blank=True, null=True)
+    eyfs_understand = models.NullBooleanField(blank=True, null=True, default=None)
+    eyfs_training_declare = models.NullBooleanField(blank=True, null=True, default=None)
+    share_info_declare = models.NullBooleanField(blank=True, null=True, default=None)
 
     class Meta:
         db_table = 'EYFS'

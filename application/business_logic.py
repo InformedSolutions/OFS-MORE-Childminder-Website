@@ -317,14 +317,14 @@ def eyfs_questions_logic(application_id_local, form):
     :return: an EYFS object to be saved
     """
     this_application = Application.objects.get(application_id=application_id_local)
-    eyfs_questions_declare = form.cleaned_data.get('eyfs_questions_declare')
+    share_info_declare = form.cleaned_data.get('share_info_declare')
     # If the user entered information for this task for the first time
     if EYFS.objects.filter(application_id=application_id_local).count() == 0:
-        eyfs_record = EYFS(eyfs_questions_declare=eyfs_questions_declare, application_id=this_application)
+        eyfs_record = EYFS(share_info_declare=share_info_declare, application_id=this_application)
     # If the user previously entered information for this task
     elif EYFS.objects.filter(application_id=application_id_local).count() > 0:
         eyfs_record = EYFS.objects.get(application_id=application_id_local)
-        eyfs_record.eyfs_questions_declare = eyfs_questions_declare
+        eyfs_record.share_info_declare = share_info_declare
     return eyfs_record
 
 
@@ -613,7 +613,7 @@ def reset_declaration(application):
     if application.declarations_status == 'COMPLETED':
         application.declarations_status = 'NOT_STARTED'
         application.background_check_declare = None
-        application.eyfs_questions_declare = None
+        application.share_info_declare = None
         application.inspect_home_declare = None
         application.interview_declare = None
         application.information_correct_declare = None

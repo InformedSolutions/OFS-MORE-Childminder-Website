@@ -1041,7 +1041,7 @@ class EYFSQuestionsForm(GOVUKForm):
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
-    eyfs_questions_declare = forms.BooleanField(label='I am happy to answer questions about my early years knowledge',
+    share_info_declare = forms.BooleanField(label='I am happy to answer questions about my early years knowledge',
                                                 required=True)
 
     def __init__(self, *args, **kwargs):
@@ -1056,7 +1056,7 @@ class EYFSQuestionsForm(GOVUKForm):
         # If information was previously entered, display it on the form
         if EYFS.objects.filter(application_id=self.application_id_local).count() > 0:
             eyfs_record = EYFS.objects.get(application_id=self.application_id_local)
-            self.fields['eyfs_questions_declare'].initial = eyfs_record.eyfs_questions_declare
+            self.fields['share_info_declare'].initial = eyfs_record.share_info_declare
 
 
 class EYFSSummaryForm(GOVUKForm):
@@ -2188,7 +2188,7 @@ class DeclarationDeclarationForm(GOVUKForm):
     background_check_declare = forms.BooleanField(label='carry out background checks', required=True)
     inspect_home_declare = forms.BooleanField(label='inspect my home', required=True)
     interview_declare = forms.BooleanField(label='interview me', required=True)
-    eyfs_questions_declare = forms.BooleanField(label='ask me questions about the EYFS', required=True)
+    share_info_declare = forms.BooleanField(label='ask me questions about the EYFS', required=True)
 
     def __init__(self, *args, **kwargs):
         """
@@ -2219,12 +2219,12 @@ class DeclarationDeclarationForm(GOVUKForm):
                 self.fields['interview_declare'].initial = '1'
             elif interview_declare is False:
                 self.fields['interview_declare'].initial = '0'
-            eyfs_questions_declare = Application.objects.get(
-                application_id=self.application_id_local).eyfs_questions_declare
-            if eyfs_questions_declare is True:
-                self.fields['eyfs_questions_declare'].initial = '1'
-            elif eyfs_questions_declare is False:
-                self.fields['eyfs_questions_declare'].initial = '0'
+            share_info_declare = Application.objects.get(
+                application_id=self.application_id_local).share_info_declare
+            if share_info_declare is True:
+                self.fields['share_info_declare'].initial = '1'
+            elif share_info_declare is False:
+                self.fields['share_info_declare'].initial = '0'
 
 
 class DeclarationDeclarationForm2(GOVUKForm):
