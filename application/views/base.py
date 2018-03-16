@@ -9,6 +9,7 @@ import datetime
 import json
 import re
 import time
+import logging
 from datetime import date
 from uuid import UUID
 
@@ -67,6 +68,9 @@ from ..middleware import CustomAuthenticationHandler
 from ..models import (AdultInHome, ApplicantHomeAddress, ApplicantName, ApplicantPersonalDetails, Application, AuditLog,
                      ChildInHome, ChildcareType, CriminalRecordCheck, EYFS, FirstAidTraining, HealthDeclarationBooklet,
                      Reference, UserDetails)
+
+# initiate logging
+log = logging.getLogger('django.server')
 
 
 def error_404(request):
