@@ -3507,7 +3507,6 @@ def payment_selection(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         paid = Application.objects.get(pk=application_id_local).order_code
-        print(paid)
         if paid is None:
             form = PaymentForm()
             variables = {
@@ -3557,7 +3556,6 @@ def card_payment_details(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         paid = Application.objects.get(pk=application_id_local).order_code
-        print(paid)
         if paid is None:
             form = PaymentDetailsForm()
             variables = {
