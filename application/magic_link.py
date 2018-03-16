@@ -10,6 +10,8 @@ import random
 import requests
 import string
 import time
+import logging
+import traceback
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -19,6 +21,8 @@ from . import login_redirect_helper
 from .middleware import CustomAuthenticationHandler
 from .forms import EmailLoginForm, VerifyPhoneForm
 from .models import Application, UserDetails
+
+log = logging.getLogger('django.server')
 
 
 def existing_application(request):
@@ -36,6 +40,9 @@ def existing_application(request):
             try:
                 acc = UserDetails.objects.get(email=email)
             except Exception as ex:
+                exception_data = traceback.format_exc().splitlines()
+                exception_array = [exception_data[-3:]]
+                log.error(exception_array)
                 return HttpResponseRedirect(settings.URL_PREFIX + '/email-sent')
             # Send time-boxed e-mail link to log back in
             domain = request.META.get('HTTP_REFERER', '')
@@ -152,6 +159,9 @@ def validate_magic_link(request, id):
         else:
             return HttpResponseRedirect(settings.URL_PREFIX + '/code-expired/')
     except Exception as ex:
+        exception_data = traceback.format_exc().splitlines()
+        exception_array = [exception_data[-3:]]
+        log.error(exception_array)
         return HttpResponseRedirect(settings.URL_PREFIX + '/bad-link/')
 
 
