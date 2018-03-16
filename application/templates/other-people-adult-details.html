@@ -39,20 +39,19 @@
             {% endfor %}
             {% csrf_token %}
             <input type="hidden" value="{{application_id}}" name="id"/>
-            <br>
-            <br>
             <input type="submit" class="button-save-and-exit" style="margin-left: 0px;" name="add_person" value="Add another person">
+            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+            <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
             <br>
             <br>
             <input type="submit" class="button" name="submit" value="Save and continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-            <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
         </div>
+
     </form>
     <br>
     <!-- Return to task list -->
     <div class="form-group grid-row">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" style="float: left;">Return to list</a>
     </div>
 </div>
 

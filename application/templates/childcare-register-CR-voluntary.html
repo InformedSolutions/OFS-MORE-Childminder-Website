@@ -20,8 +20,7 @@
             </h1>
             <p>You will be joining the voluntary part of the Childcare Register.</p>
             <p>It costs &#163;103 to apply.</p>
-            <p>This is the register to look after children aged 8 or over.</p>
-            <br>
+            <p class="text-before-button">This is the register to look after children aged 8 or over.</p>
             {% csrf_token %}
             {{form.as_div}}
             <input type="hidden" value="{{application_id}}" name="id"/>

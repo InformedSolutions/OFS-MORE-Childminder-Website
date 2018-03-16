@@ -28,10 +28,9 @@
                     <li>able to look after children</li>
                 </ul>
             </div>
-            <p>They must have known you for at least 1 year.</p>
+            <p class="text-before-button">They must have known you for at least 1 year.</p>
             {{form.as_div}}
             {% csrf_token %}
-            <br>
             <input type="submit" class="button" value="Continue">
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         </div>

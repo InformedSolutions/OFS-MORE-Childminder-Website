@@ -58,8 +58,7 @@
                 </tbody>
             </table>
             <br>
-            <p>You can join more than one register if you don't know what ages you will be caring for.</p>
-            <br>
+            <p class="text-before-button">You can join more than one register if you don't know what ages you will be caring for.</p>
             {% csrf_token %}
             {{form.as_div}}
             <input type="hidden" value="{{application_id}}" name="id"/>

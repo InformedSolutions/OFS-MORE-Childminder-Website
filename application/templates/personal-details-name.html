@@ -26,8 +26,6 @@
             <p>Please give us your full name, including any middle names.</p>
             {{form.as_div}}
             {% csrf_token %}
-        </div>
-        <div class="form-group grid-row">
             <input type="submit" class="button" value="Save and continue">
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         </div>
