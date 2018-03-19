@@ -16,6 +16,7 @@ VISA_VALIDATION = False
 
 PUBLIC_APPLICATION_URL = 'http://localhost:8000/childminder'
 INTERNAL_IPS = "127.0.0.1"
+ALLOWED_HOSTS = ['*']
 
 DEV_APPS = [
     'debug_toolbar',
