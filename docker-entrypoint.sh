@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Create database migration files
 echo "Create database migration files"
