@@ -28,7 +28,6 @@
             <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
             {{form.as_div}}
             {% csrf_token %}
-            <br>
             <a href="{{ URL_PREFIX }}/personal-details/enter-home-address?id={{application_id}}" name="manual" id="manual">I
                 can't find my address in the list</a>
             <br>

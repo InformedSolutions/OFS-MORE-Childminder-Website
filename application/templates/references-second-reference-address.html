@@ -52,11 +52,8 @@
             </div>
             {% endif %}
             {% csrf_token %}
-            <br>
-            <br>
             <a href="{{ URL_PREFIX }}/references/enter-second-reference-address?id={{application_id}}"
                name="manual" id="manual">Enter address manually</a>
-            <br>
             <br>
             <br>
             <input type="submit" class="button button-submit" value="Save and continue" name="submit">

@@ -2259,6 +2259,8 @@ input[type=number] {
   float: left;
 }
 
+
+
 .grayed-out {
   color: #BFC1C3;
   pointer-events: none;
@@ -2449,6 +2451,12 @@ input[type=number] {
   text-align: center;
 }
 
+@media (max-width: 639px) {
+    .task-finished{
+        width: 30%
+    }
+}
+
 .task-name-no-margin {
   font-size: 19px;
   font-weight: 400;
@@ -2525,6 +2533,12 @@ div.error-summary ul.error-summary-list {
   color: #6F777B;
   width: calc(20% - 6px);
   margin: 0px 3px 0px 3px;
+}
+
+@media (max-width: 639px) {
+    .task-do-last{
+        width: calc(30% - 6px) !important
+    }
 }
 
 a.remove-file {
@@ -2646,7 +2660,9 @@ a.section-link:active {
 
 .summary-column {
     width: 40%;
-}.find-address-button {
+}
+
+.find-address-button {
    margin-left: 10px;
 }
 
@@ -2656,3 +2672,23 @@ a.section-link:active {
        margin-left: 0;
     }
 }
+
+.text-before-button {
+    margin-bottom: 30px;
+}
+
+@media (max-width: 639px) {
+    .text-before-button {
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 639px) {
+    .task-name{
+        width: 70%
+    }
+}
+
+
+
+

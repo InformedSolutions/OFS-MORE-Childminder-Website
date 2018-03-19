@@ -22,10 +22,9 @@
             </h1>
             <p>Your first aid certificate is over 3 years old and no longer valid.</p>
             <p>You will have to go on a 12-hour paediatric first aid course to update your training.</p>
-            <p>You can finish this section when you have completed your course.</p>
+            <p class="text-before-button">You can finish this section when you have completed your course.</p>
             {{form.as_div}}
             {% csrf_token %}
-            </br>
             <input type="submit" class="button" value="Save and continue">
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         </div>
