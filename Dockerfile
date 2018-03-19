@@ -8,6 +8,11 @@ RUN  if [ "`echo $PROJECT_SETTINGS | rev | cut -c -3 | rev`" = "dev" ]; then \
        apt-get install -y build-essential graphviz vim tree git tig; \
      fi
 
+RUN apt-get update && \
+        apt-get install -y \
+                netcat \
+        && rm -rf /var/lib/apt/lists/*
+
 RUN mkdir /source
 WORKDIR /source
 ADD . /source/
