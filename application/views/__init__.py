@@ -5,3 +5,5 @@ from .application_saved import *
 from .documents_needed import *
 from .home_ready import *
 from .prepare_for_interview import *
+from .payment_selection import *
+from .personal_details_home_address_manual import *
