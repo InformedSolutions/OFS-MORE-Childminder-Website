@@ -86,7 +86,7 @@ def task_list(request):
                     'status_url': None,
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'Type-Of-Childcare-Age-Groups-View'},
-                        {'status': 'FURTHER_INFORMATION', 'url': 'Type-Of-Childcare-Age-Groups-View'},
+                        {'status': 'FLAGGED', 'url': 'Type-Of-Childcare-Age-Groups-View'},
                         {'status': 'OTHER',     'url': 'Type-Of-Childcare-Guidance-View'}
                     ],
                 },
@@ -97,7 +97,7 @@ def task_list(request):
                     'status_url': None,
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'Personal-Details-Summary-View'},
-                        {'status': 'FURTHER_INFORMATION', 'url': 'Personal-Details-Summary-View'},
+                        {'status': 'FLAGGED', 'url': 'Personal-Details-Summary-View'},
                         {'status': 'OTHER',     'url': 'Personal-Details-Guidance-View'}
                     ],
                 },
@@ -108,7 +108,7 @@ def task_list(request):
                     'status_url': None,
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'First-Aid-Training-Summary-View'},
-                        {'status': 'FURTHER_INFORMATION', 'url': 'First-Aid-Training-Summary-View'},
+                        {'status': 'FLAGGED', 'url': 'First-Aid-Training-Summary-View'},
                         {'status': 'OTHER',     'url': 'First-Aid-Training-Guidance-View'}
                     ],
                 },
@@ -119,7 +119,7 @@ def task_list(request):
                     'status_url': None,
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'Health-Check-Answers-View'},
-                        {'status': 'FURTHER_INFORMATION', 'url': 'Health-Check-Answers-View'},
+                        {'status': 'FLAGGED', 'url': 'Health-Check-Answers-View'},
                         {'status': 'OTHER',     'url': 'Health-Intro-View'}
                     ],
                 },
@@ -130,7 +130,7 @@ def task_list(request):
                     'status_url': None,
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'DBS-Check-Summary-View'},
-                        {'status': 'FURTHER_INFORMATION', 'url': 'DBS-Check-Summary-View'},     
+                        {'status': 'FLAGGED', 'url': 'DBS-Check-Summary-View'},
                         {'status': 'OTHER',     'url': 'DBS-Check-Guidance-View'}
                     ],
                 },
@@ -141,7 +141,7 @@ def task_list(request):
                     'status_url': None,
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'Other-People-Summary-View'},
-                        {'status': 'FURTHER_INFORMATION', 'url': 'Other-People-Summary-View'},
+                        {'status': 'FLAGGED', 'url': 'Other-People-Summary-View'},
                         {'status': 'OTHER', 'url': 'Other-People-Guidance-View'}
                     ],
                 },
@@ -152,7 +152,7 @@ def task_list(request):
                     'status_url': None,
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'References-Summary-View'},
-                        {'status': 'FURTHER_INFORMATION', 'url': 'References-Summary-View'},
+                        {'status': 'FLAGGED', 'url': 'References-Summary-View'},
                         {'status': 'OTHER',     'url': 'References-Intro-View'}
                     ],
                 },
