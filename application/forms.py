@@ -28,11 +28,36 @@ from .models import (AdultInHome,
                      FirstAidTraining,
                      HealthDeclarationBooklet,
                      Reference,
-                     UserDetails)
+                     UserDetails, ArcComments)
 from .forms_helper import full_stop_stripper
 
 
-class AccountForm(GOVUKForm):
+class ChildminderForms(GOVUKForm):
+    pk = ''
+    field_list = []
+    def check_flag(self):
+        for i in self.field_list:
+            if ArcComments.objects.filter(table_pk=self.pk, field_name=i).count() == 1:
+                log = ArcComments.objects.get(table_pk=self.pk, field_name=i)
+                try:
+                    if log.flagged:
+                        raise forms.ValidationError(log.comment)
+                    else:
+                        forms.ValidationError('')
+                except Exception as ex:
+                    self.cleaned_data = ''
+                    self.add_error(i, ex)
+
+    def remove_flag(self):
+        for i in self.field_list:
+            if ArcComments.objects.filter(table_pk=self.pk, field_name=i).count() == 1:
+                log = ArcComments.objects.filter(table_pk=self.pk, field_name=i)
+                if log.flagged:
+                    log.flagged = False
+                    log.save()
+
+
+class AccountForm(ChildminderForms):
     """
     GOV.UK form for the Account selection page
     """
@@ -41,7 +66,7 @@ class AccountForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class ContactEmailForm(GOVUKForm):
+class ContactEmailForm(ChildminderForms):
     """
     GOV.UK form for the Your login and contact details: email page
     """
@@ -66,6 +91,8 @@ class ContactEmailForm(GOVUKForm):
             login_id = this_user.login_id.login_id
             if UserDetails.objects.get(login_id=login_id).login_id != '':
                 self.fields['email_address'].initial = UserDetails.objects.get(login_id=login_id).email
+                self.pk = login_id
+                self.field_list = ['email_address']
 
     def clean_email_address(self):
         """
@@ -81,7 +108,7 @@ class ContactEmailForm(GOVUKForm):
         return email_address
 
 
-class ContactPhoneForm(GOVUKForm):
+class ContactPhoneForm(ChildminderForms):
     """
     GOV.UK form for the Your login and contact details: phone page
     """
@@ -107,6 +134,8 @@ class ContactPhoneForm(GOVUKForm):
             login_id = this_user.login_id.login_id
             self.fields['mobile_number'].initial = UserDetails.objects.get(login_id=login_id).mobile_number
             self.fields['add_phone_number'].initial = UserDetails.objects.get(login_id=login_id).add_phone_number
+            self.pk = login_id
+            self.field_list = ['mobile_number','add_phone_number']
 
     def clean_mobile_number(self):
         """
@@ -136,7 +165,7 @@ class ContactPhoneForm(GOVUKForm):
         return add_phone_number
 
 
-class QuestionForm(GOVUKForm):
+class QuestionForm(ChildminderForms):
     """
     GOV.UK form for the Your login and contact details: knowledge based question page
     """
@@ -162,6 +191,8 @@ class QuestionForm(GOVUKForm):
             login_id = this_user.login_id.login_id
             self.fields['security_question'].initial = UserDetails.objects.get(login_id=login_id).security_question
             self.fields['security_answer'].initial = UserDetails.objects.get(login_id=login_id).security_answer
+            self.pk = login_id
+            self.field_list = ['security_question','security_answer']
 
     def clean_security_question(self):
         security_question = self.cleaned_data['security_question']
@@ -176,7 +207,7 @@ class QuestionForm(GOVUKForm):
         return security_answer
 
 
-class ContactSummaryForm(GOVUKForm):
+class ContactSummaryForm(ChildminderForms):
     """
     GOV.UK form for the Your login and contact details: summary page
     """
@@ -185,7 +216,7 @@ class ContactSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class TypeOfChildcareGuidanceForm(GOVUKForm):
+class TypeOfChildcareGuidanceForm(ChildminderForms):
     """
     GOV.UK form for the Type of childcare: guidance page
     """
@@ -194,7 +225,7 @@ class TypeOfChildcareGuidanceForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class TypeOfChildcareAgeGroupsForm(GOVUKForm):
+class TypeOfChildcareAgeGroupsForm(ChildminderForms):
     """
     GOV.UK form for the Type of childcare task
     """
@@ -250,7 +281,7 @@ class TypeOfChildcareAgeGroupsForm(GOVUKForm):
             'required': 'You must select at least one age group to continue with your application'}
 
 
-class TypeOfChildcareRegisterForm(GOVUKForm):
+class TypeOfChildcareRegisterForm(ChildminderForms):
     """
     GOV.UK form for the Type of childcare: register page
     """
@@ -259,7 +290,7 @@ class TypeOfChildcareRegisterForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class EmailLoginForm(GOVUKForm):
+class EmailLoginForm(ChildminderForms):
     """
     GOV.UK form for the page to log back into an application
     """
@@ -280,7 +311,7 @@ class EmailLoginForm(GOVUKForm):
         return email_address
 
 
-class VerifyPhoneForm(GOVUKForm):
+class VerifyPhoneForm(ChildminderForms):
     """
     GOV.UK form for the page to verify an SMS code
     """
@@ -312,7 +343,7 @@ class VerifyPhoneForm(GOVUKForm):
         return magic_link_sms
 
 
-class VerifySecurityQuestionForm(GOVUKForm):
+class VerifySecurityQuestionForm(ChildminderForms):
     """
     GOV.UK form for the page to verify an SMS code
     """
@@ -339,7 +370,7 @@ class VerifySecurityQuestionForm(GOVUKForm):
         return security_answer
 
 
-class PersonalDetailsGuidanceForm(GOVUKForm):
+class PersonalDetailsGuidanceForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: guidance page
     """
@@ -348,7 +379,7 @@ class PersonalDetailsGuidanceForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class PersonalDetailsNameForm(GOVUKForm):
+class PersonalDetailsNameForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: name page
     """
@@ -377,6 +408,8 @@ class PersonalDetailsNameForm(GOVUKForm):
             self.fields['first_name'].initial = applicant_name_record.first_name
             self.fields['middle_names'].initial = applicant_name_record.middle_names
             self.fields['last_name'].initial = applicant_name_record.last_name
+            self.pk = applicant_name_record.name_id
+            self.field_list = ['first_name','middle_names','last_name']
 
     def clean_first_name(self):
         """
@@ -410,7 +443,7 @@ class PersonalDetailsNameForm(GOVUKForm):
         return last_name
 
 
-class PersonalDetailsDOBForm(GOVUKForm):
+class PersonalDetailsDOBForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: date of birth page
     """
@@ -436,6 +469,8 @@ class PersonalDetailsDOBForm(GOVUKForm):
             self.fields['date_of_birth'].initial = [personal_details_record.birth_day,
                                                     personal_details_record.birth_month,
                                                     personal_details_record.birth_year]
+            self.pk = personal_details_record.personal_detail_id
+            self.field_list = ['date_of_birth']
 
     def clean_date_of_birth(self):
         """
@@ -457,7 +492,7 @@ class PersonalDetailsDOBForm(GOVUKForm):
         return birth_day, birth_month, birth_year
 
 
-class PersonalDetailsHomeAddressForm(GOVUKForm):
+class PersonalDetailsHomeAddressForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: home address page for postcode search
     """
@@ -496,7 +531,7 @@ class PersonalDetailsHomeAddressForm(GOVUKForm):
         return postcode
 
 
-class PersonalDetailsHomeAddressManualForm(GOVUKForm):
+class PersonalDetailsHomeAddressManualForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: home address page for manual entry
     """
@@ -533,6 +568,8 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
             self.fields['town'].initial = applicant_home_address.town
             self.fields['county'].initial = applicant_home_address.county
             self.fields['postcode'].initial = applicant_home_address.postcode
+            self.pk = applicant_home_address.home_address_id
+            self.field_list = ['street_name_and_number','street_name_and_number2','town','county','postcode']
 
     def clean_street_name_and_number(self):
         """
@@ -592,7 +629,7 @@ class PersonalDetailsHomeAddressManualForm(GOVUKForm):
         return postcode
 
 
-class PersonalDetailsHomeAddressLookupForm(GOVUKForm):
+class PersonalDetailsHomeAddressLookupForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: home address page for postcode search results
     """
@@ -616,7 +653,7 @@ class PersonalDetailsHomeAddressLookupForm(GOVUKForm):
         self.fields['address'].choices = self.choices
 
 
-class PersonalDetailsLocationOfCareForm(GOVUKForm):
+class PersonalDetailsLocationOfCareForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: location of care page
     """
@@ -649,7 +686,7 @@ class PersonalDetailsLocationOfCareForm(GOVUKForm):
                 personal_detail_id=personal_detail_id, current_address=True).childcare_address
 
 
-class PersonalDetailsChildcareAddressForm(GOVUKForm):
+class PersonalDetailsChildcareAddressForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: childcare address page for postcode search
     """
@@ -689,7 +726,7 @@ class PersonalDetailsChildcareAddressForm(GOVUKForm):
         return postcode
 
 
-class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
+class PersonalDetailsChildcareAddressManualForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: childcare address page for manual entry
     """
@@ -726,6 +763,8 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
             self.fields['town'].initial = childcare_address.town
             self.fields['county'].initial = childcare_address.county
             self.fields['postcode'].initial = childcare_address.postcode
+            self.pk = childcare_address.child_id
+            self.field_list = ['street_name_and_number','street_name_and_number2','town','county','postcode']
 
     def clean_street_name_and_number(self):
         """
@@ -785,7 +824,7 @@ class PersonalDetailsChildcareAddressManualForm(GOVUKForm):
         return postcode
 
 
-class PersonalDetailsChildcareAddressLookupForm(GOVUKForm):
+class PersonalDetailsChildcareAddressLookupForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: childcare address page for postcode search results
     """
@@ -809,7 +848,7 @@ class PersonalDetailsChildcareAddressLookupForm(GOVUKForm):
         self.fields['address'].choices = self.choices
 
 
-class PersonalDetailsSummaryForm(GOVUKForm):
+class PersonalDetailsSummaryForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: summary page
     """
@@ -818,7 +857,7 @@ class PersonalDetailsSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class FirstAidTrainingGuidanceForm(GOVUKForm):
+class FirstAidTrainingGuidanceForm(ChildminderForms):
     """
     GOV.UK form for the First aid training: guidance page
     """
@@ -827,7 +866,7 @@ class FirstAidTrainingGuidanceForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class FirstAidTrainingDetailsForm(GOVUKForm):
+class FirstAidTrainingDetailsForm(ChildminderForms):
     """
     GOV.UK form for the First aid training: details page
     """
@@ -860,6 +899,8 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
             self.fields['course_date'].initial = [first_aid_record.course_day,
                                                   first_aid_record.course_month,
                                                   first_aid_record.course_year]
+            self.pk = first_aid_record.first_aid_id
+            self.field_list = ['first_aid_training_organisation','title_of_training_course','course_date']
 
     def clean_first_aid_training_organisation(self):
         """
@@ -898,7 +939,7 @@ class FirstAidTrainingDetailsForm(GOVUKForm):
         return course_day, course_month, course_year
 
 
-class FirstAidTrainingDeclarationForm(GOVUKForm):
+class FirstAidTrainingDeclarationForm(ChildminderForms):
     """
     GOV.UK form for the First aid training: declaration page
     """
@@ -925,7 +966,7 @@ class FirstAidTrainingDeclarationForm(GOVUKForm):
             self.fields['declaration'].initial = first_aid_record.show_certificate
 
 
-class FirstAidTrainingRenewForm(GOVUKForm):
+class FirstAidTrainingRenewForm(ChildminderForms):
     """
     GOV.UK form for the First aid training: renew page
     """
@@ -951,7 +992,7 @@ class FirstAidTrainingRenewForm(GOVUKForm):
             self.fields['renew'].initial = first_aid_record.renew_certificate
 
 
-class FirstAidTrainingTrainingForm(GOVUKForm):
+class FirstAidTrainingTrainingForm(ChildminderForms):
     """
     GOV.UK form for the First aid training: training page
     """
@@ -960,7 +1001,7 @@ class FirstAidTrainingTrainingForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class FirstAidTrainingSummaryForm(GOVUKForm):
+class FirstAidTrainingSummaryForm(ChildminderForms):
     """
     GOV.UK form for the First aid training: summary page
     """
@@ -969,7 +1010,7 @@ class FirstAidTrainingSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class EYFSGuidanceForm(GOVUKForm):
+class EYFSGuidanceForm(ChildminderForms):
     """
     GOV.UK form for the Early Years knowledge: guidance page
     """
@@ -978,7 +1019,7 @@ class EYFSGuidanceForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class EYFSKnowledgeForm(GOVUKForm):
+class EYFSKnowledgeForm(ChildminderForms):
     """
     GOV.UK form for the Early Years knowledge: knowledge page
     """
@@ -1008,7 +1049,7 @@ class EYFSKnowledgeForm(GOVUKForm):
             self.fields['eyfs_understand'].initial = eyfs_record.eyfs_understand
 
 
-class EYFSTrainingForm(GOVUKForm):
+class EYFSTrainingForm(ChildminderForms):
     """
     GOV.UK form for the EYFS: training page
     """
@@ -1033,7 +1074,7 @@ class EYFSTrainingForm(GOVUKForm):
             self.fields['eyfs_training_declare'].initial = eyfs_record.eyfs_training_declare
 
 
-class EYFSQuestionsForm(GOVUKForm):
+class EYFSQuestionsForm(ChildminderForms):
     """
     GOV.UK form for the EYFS: training page
     """
@@ -1042,7 +1083,7 @@ class EYFSQuestionsForm(GOVUKForm):
     auto_replace_widgets = True
 
     share_info_declare = forms.BooleanField(label='I am happy to answer questions about my early years knowledge',
-                                                required=True)
+                                            required=True)
 
     def __init__(self, *args, **kwargs):
         """
@@ -1059,7 +1100,7 @@ class EYFSQuestionsForm(GOVUKForm):
             self.fields['share_info_declare'].initial = eyfs_record.share_info_declare
 
 
-class EYFSSummaryForm(GOVUKForm):
+class EYFSSummaryForm(ChildminderForms):
     """
     GOV.UK form for the Early Years knowledge: summary page
     """
@@ -1068,7 +1109,7 @@ class EYFSSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class DBSCheckGuidanceForm(GOVUKForm):
+class DBSCheckGuidanceForm(ChildminderForms):
     """
     GOV.UK form for the Your criminal record (DBS) check: guidance page
     """
@@ -1077,7 +1118,7 @@ class DBSCheckGuidanceForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class DBSCheckDBSDetailsForm(GOVUKForm):
+class DBSCheckDBSDetailsForm(ChildminderForms):
     """
     GOV.UK form for the Your criminal record (DBS) check: details page
     """
@@ -1119,6 +1160,8 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
             dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id_local)
             self.fields['dbs_certificate_number'].initial = dbs_record.dbs_certificate_number
             self.fields['convictions'].initial = dbs_record.cautions_convictions
+            self.pk = dbs_record.criminal_record_id
+            self.field_list = ['dbs_certificate_number']
 
     def clean_dbs_certificate_number(self):
         """
@@ -1133,7 +1176,7 @@ class DBSCheckDBSDetailsForm(GOVUKForm):
         return dbs_certificate_number
 
 
-class DBSCheckUploadDBSForm(GOVUKForm):
+class DBSCheckUploadDBSForm(ChildminderForms):
     """
     GOV.UK form for the Your criminal record (DBS) check: upload DBS page
     """
@@ -1163,7 +1206,7 @@ class DBSCheckUploadDBSForm(GOVUKForm):
                 self.fields['declaration'].initial = '0'
 
 
-class DBSCheckSummaryForm(GOVUKForm):
+class DBSCheckSummaryForm(ChildminderForms):
     """
     GOV.UK form for the Your criminal record (DBS) check: summary page
     """
@@ -1172,7 +1215,7 @@ class DBSCheckSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class HealthIntroForm(GOVUKForm):
+class HealthIntroForm(ChildminderForms):
     """
     GOV.UK form for the Your health: intro page
     """
@@ -1181,7 +1224,7 @@ class HealthIntroForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class HealthBookletForm(GOVUKForm):
+class HealthBookletForm(ChildminderForms):
     """
     GOV.UK form for the Your health: intro page
     """
@@ -1211,7 +1254,7 @@ class HealthBookletForm(GOVUKForm):
                 self.fields['send_hdb_declare'].initial = '0'
 
 
-class ReferenceIntroForm(GOVUKForm):
+class ReferenceIntroForm(ChildminderForms):
     """
     GOV.UK form for the 2 references: intro page
     """
@@ -1220,7 +1263,7 @@ class ReferenceIntroForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class FirstReferenceForm(GOVUKForm):
+class FirstReferenceForm(ChildminderForms):
     """
     GOV.UK form for the 2 references: first reference page
     """
@@ -1254,6 +1297,9 @@ class FirstReferenceForm(GOVUKForm):
             self.fields['last_name'].initial = reference_record.last_name
             self.fields['relationship'].initial = reference_record.relationship
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
+            self.pk = reference_record.reference_id
+            self.field_list = ['first_name','last_name','relationship','time_known']
+
 
     def clean_first_name(self):
         """
@@ -1301,7 +1347,7 @@ class FirstReferenceForm(GOVUKForm):
         return years_known, months_known
 
 
-class ReferenceFirstReferenceAddressForm(GOVUKForm):
+class ReferenceFirstReferenceAddressForm(ChildminderForms):
     """
     GOV.UK form for the 2 references: first reference address page for postcode search
     """
@@ -1338,7 +1384,7 @@ class ReferenceFirstReferenceAddressForm(GOVUKForm):
         return postcode
 
 
-class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
+class ReferenceFirstReferenceAddressManualForm(ChildminderForms):
     """
     GOV.UK form for the 2 references: first reference address page for manual entry
     """
@@ -1373,7 +1419,8 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
             self.fields['county'].initial = reference_record.county
             self.fields['postcode'].initial = reference_record.postcode
             self.fields['country'].initial = reference_record.country
-
+            self.pk = reference_record.reference_id
+            self.field_list = ['street_name_and_number','street_name_and_number2','town','county','postcode','country']
     def clean_street_name_and_number(self):
         """
         Street name and number validation
@@ -1445,7 +1492,7 @@ class ReferenceFirstReferenceAddressManualForm(GOVUKForm):
         return country
 
 
-class ReferenceFirstReferenceAddressLookupForm(GOVUKForm):
+class ReferenceFirstReferenceAddressLookupForm(ChildminderForms):
     """
     GOV.UK form for the 2 references: first reference address page for postcode search results
     """
@@ -1469,7 +1516,7 @@ class ReferenceFirstReferenceAddressLookupForm(GOVUKForm):
         self.fields['address'].choices = self.choices
 
 
-class ReferenceFirstReferenceContactForm(GOVUKForm):
+class ReferenceFirstReferenceContactForm(ChildminderForms):
     """
     GOV.UK form for the 2 references: first reference contact details page
     """
@@ -1523,7 +1570,7 @@ class ReferenceFirstReferenceContactForm(GOVUKForm):
         return email_address
 
 
-class SecondReferenceForm(GOVUKForm):
+class SecondReferenceForm(ChildminderForms):
     """
     GOV.UK form for the 2 references: second reference page
     """
@@ -1557,6 +1604,8 @@ class SecondReferenceForm(GOVUKForm):
             self.fields['last_name'].initial = reference_record.last_name
             self.fields['relationship'].initial = reference_record.relationship
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
+            self.pk = reference_record.reference_id
+            self.field_list = ['first_name','last_name','relationship','time_known']
 
     def clean_first_name(self):
         """
@@ -1594,7 +1643,7 @@ class SecondReferenceForm(GOVUKForm):
         return years_known, months_known
 
 
-class ReferenceSecondReferenceAddressForm(GOVUKForm):
+class ReferenceSecondReferenceAddressForm(ChildminderForms):
     """
     GOV.UK form for the 2 references: second reference address page for postcode search
     """
@@ -1631,7 +1680,7 @@ class ReferenceSecondReferenceAddressForm(GOVUKForm):
         return postcode
 
 
-class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
+class ReferenceSecondReferenceAddressManualForm(ChildminderForms):
     """
     GOV.UK form for the 2 references: second reference address page for manual entry
     """
@@ -1666,6 +1715,8 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
             self.fields['county'].initial = reference_record.county
             self.fields['postcode'].initial = reference_record.postcode
             self.fields['country'].initial = reference_record.country
+            self.pk = reference_record.reference_id
+            self.field_list = ['street_name_and_number','street_name_and_number2','town','county','postcode','country']
 
     def clean_street_name_and_number(self):
         """
@@ -1738,7 +1789,7 @@ class ReferenceSecondReferenceAddressManualForm(GOVUKForm):
         return country
 
 
-class ReferenceSecondReferenceAddressLookupForm(GOVUKForm):
+class ReferenceSecondReferenceAddressLookupForm(ChildminderForms):
     """
     GOV.UK form for the 2 references: second reference address page for postcode search results
     """
@@ -1762,7 +1813,7 @@ class ReferenceSecondReferenceAddressLookupForm(GOVUKForm):
         self.fields['address'].choices = self.choices
 
 
-class ReferenceSecondReferenceContactForm(GOVUKForm):
+class ReferenceSecondReferenceContactForm(ChildminderForms):
     """
     GOV.UK form for the 2 references: second reference contact details page
     """
@@ -1789,6 +1840,8 @@ class ReferenceSecondReferenceContactForm(GOVUKForm):
             reference_record = Reference.objects.get(application_id=self.application_id_local, reference=2)
             self.fields['phone_number'].initial = reference_record.phone_number
             self.fields['email_address'].initial = reference_record.email
+            self.pk = reference_record.reference_id
+            self.field_list = ['phone_number','email_address']
 
     def clean_phone_number(self):
         """
@@ -1815,7 +1868,7 @@ class ReferenceSecondReferenceContactForm(GOVUKForm):
         return email_address
 
 
-class ReferenceSummaryForm(GOVUKForm):
+class ReferenceSummaryForm(ChildminderForms):
     """
     GOV.UK form for the 2 references: summary page
     """
@@ -1824,7 +1877,7 @@ class ReferenceSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class OtherPeopleGuidanceForm(GOVUKForm):
+class OtherPeopleGuidanceForm(ChildminderForms):
     """
     GOV.UK form for the People in your home: guidance page
     """
@@ -1833,7 +1886,7 @@ class OtherPeopleGuidanceForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class OtherPeopleAdultQuestionForm(GOVUKForm):
+class OtherPeopleAdultQuestionForm(ChildminderForms):
     """
     GOV.UK form for the People in your home: adult question page
     """
@@ -1862,7 +1915,7 @@ class OtherPeopleAdultQuestionForm(GOVUKForm):
             application_id=self.application_id_local).adults_in_home
 
 
-class OtherPeopleAdultDetailsForm(GOVUKForm):
+class OtherPeopleAdultDetailsForm(ChildminderForms):
     """
     GOV.UK form for the People in your home: adult details page
     """
@@ -1897,6 +1950,9 @@ class OtherPeopleAdultDetailsForm(GOVUKForm):
                                                     adult_record.birth_month,
                                                     adult_record.birth_year]
             self.fields['relationship'].initial = adult_record.relationship
+            self.pk = adult_record.adult_id
+            self.field_list = ['first_name','middle_names','last_name','date_of_birth','relationship']
+
 
     def clean_first_name(self):
         """
@@ -1951,7 +2007,7 @@ class OtherPeopleAdultDetailsForm(GOVUKForm):
         return birth_day, birth_month, birth_year
 
 
-class OtherPeopleAdultDBSForm(GOVUKForm):
+class OtherPeopleAdultDBSForm(ChildminderForms):
     """
     GOV.UK form for the People in your home: adult DBS page
     """
@@ -1982,6 +2038,8 @@ class OtherPeopleAdultDBSForm(GOVUKForm):
         if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).count() > 0:
             adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
             self.fields['dbs_certificate_number'].initial = adult_record.dbs_certificate_number
+            self.pk = adult_record.adult_id
+            self.field_list = ['dbs_certificate_number']
 
     def clean_dbs_certificate_number(self):
         """
@@ -1996,7 +2054,7 @@ class OtherPeopleAdultDBSForm(GOVUKForm):
         return dbs_certificate_number
 
 
-class OtherPeopleAdultPermissionForm(GOVUKForm):
+class OtherPeopleAdultPermissionForm(ChildminderForms):
     """
     GOV.UK form for the People in your home: adult permission page
     """
@@ -2030,7 +2088,7 @@ class OtherPeopleAdultPermissionForm(GOVUKForm):
             self.fields['permission_declare'].initial = adult_record.permission_declare
 
 
-class OtherPeopleChildrenQuestionForm(GOVUKForm):
+class OtherPeopleChildrenQuestionForm(ChildminderForms):
     """
     GOV.UK form for the People in your home: children question page
     """
@@ -2059,7 +2117,7 @@ class OtherPeopleChildrenQuestionForm(GOVUKForm):
             application_id=self.application_id_local).children_in_home
 
 
-class OtherPeopleChildrenDetailsForm(GOVUKForm):
+class OtherPeopleChildrenDetailsForm(ChildminderForms):
     """
     GOV.UK form for the People in your home: children details page
     """
@@ -2094,6 +2152,8 @@ class OtherPeopleChildrenDetailsForm(GOVUKForm):
                                                     child_record.birth_month,
                                                     child_record.birth_year]
             self.fields['relationship'].initial = child_record.relationship
+            self.pk = child_record.child_id
+            self.field_list = ['first_name','middle_names','last_name','date_of_birth','relationship']
 
     def clean_first_name(self):
         """
@@ -2148,7 +2208,7 @@ class OtherPeopleChildrenDetailsForm(GOVUKForm):
         return birth_day, birth_month, birth_year
 
 
-class OtherPeopleApproaching16Form(GOVUKForm):
+class OtherPeopleApproaching16Form(ChildminderForms):
     """
     GOV.UK form for the People in your home: approaching 16 page
     """
@@ -2157,7 +2217,7 @@ class OtherPeopleApproaching16Form(GOVUKForm):
     auto_replace_widgets = True
 
 
-class OtherPeopleNumberOfChildrenForm(GOVUKForm):
+class OtherPeopleNumberOfChildrenForm(ChildminderForms):
     """
     GOV.UK form for the People in your home: number of children page
     """
@@ -2166,7 +2226,7 @@ class OtherPeopleNumberOfChildrenForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class OtherPeopleSummaryForm(GOVUKForm):
+class OtherPeopleSummaryForm(ChildminderForms):
     """
     GOV.UK form for the People in your home: summary page
     """
@@ -2175,7 +2235,7 @@ class OtherPeopleSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class DeclarationIntroForm(GOVUKForm):
+class DeclarationIntroForm(ChildminderForms):
     """
     GOV.UK form for the Declaration: guidance page
     """
@@ -2184,7 +2244,7 @@ class DeclarationIntroForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class DeclarationDeclarationForm(GOVUKForm):
+class DeclarationDeclarationForm(ChildminderForms):
     """
     GOV.UK form for the Declaration: declaration page
     """
@@ -2234,7 +2294,7 @@ class DeclarationDeclarationForm(GOVUKForm):
                 self.fields['share_info_declare'].initial = '0'
 
 
-class DeclarationDeclarationForm2(GOVUKForm):
+class DeclarationDeclarationForm2(ChildminderForms):
     """
     GOV.UK form for the Declaration: declaration page
     """
@@ -2271,7 +2331,7 @@ class DeclarationDeclarationForm2(GOVUKForm):
                 self.fields['change_declare'].initial = '0'
 
 
-class DeclarationSummaryForm(GOVUKForm):
+class DeclarationSummaryForm(ChildminderForms):
     """
     GOV.UK form for the Confirm your details page
     """
@@ -2280,7 +2340,7 @@ class DeclarationSummaryForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class PaymentForm(GOVUKForm):
+class PaymentForm(ChildminderForms):
     """
     GOV.UK form for the Payment selection page
     """
@@ -2297,7 +2357,7 @@ class PaymentForm(GOVUKForm):
                                        error_messages={'required': 'Please select how you would like to pay'})
 
 
-class PaymentDetailsForm(GOVUKForm):
+class PaymentDetailsForm(ChildminderForms):
     """
     GOV.UK form for the Payment details page
     """
@@ -2408,7 +2468,7 @@ class PaymentDetailsForm(GOVUKForm):
             raise forms.ValidationError('The code should be 3 or 4 digits long')
 
 
-class DocumentsNeededForm(GOVUKForm):
+class DocumentsNeededForm(ChildminderForms):
     """
     GOV.UK form for the Documents you need for the visit page
     """
@@ -2417,15 +2477,7 @@ class DocumentsNeededForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class HomeReadyForm(GOVUKForm):
-    """
-    GOV.UK form for the Get your home ready page
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'error-summary.html'
-    auto_replace_widgets = True
-
-class PrepareForInterviewForm(GOVUKForm):
+class HomeReadyForm(ChildminderForms):
     """
     GOV.UK form for the Get your home ready page
     """
@@ -2434,7 +2486,16 @@ class PrepareForInterviewForm(GOVUKForm):
     auto_replace_widgets = True
 
 
-class ApplicationSavedForm(GOVUKForm):
+class PrepareForInterviewForm(ChildminderForms):
+    """
+    GOV.UK form for the Get your home ready page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
+    auto_replace_widgets = True
+
+
+class ApplicationSavedForm(ChildminderForms):
     """
     GOV.UK form for the Application saved page
     """

@@ -75,7 +75,7 @@ def task_list(request):
                     'status_url': None,                                             # Will be filled later
                     'status_urls': [                                                # Available urls for each status
                          {'status': 'COMPLETED',  'url': 'Contact-Summary-View'},
-                         {'status': 'FURTHER_INFORMATION',  'url': 'Contact-Summary-View'},
+                         {'status': 'FLAGGED',  'url': 'Contact-Summary-View'},
                          {'status': 'OTHER',      'url': 'Contact-Email-View'},     # For all other statuses
                      ],
                 },

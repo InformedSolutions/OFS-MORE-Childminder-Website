@@ -219,6 +219,7 @@ def contact_email(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = ContactEmailForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -230,6 +231,7 @@ def contact_email(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = ContactEmailForm(request.POST, id=application_id_local)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             # Send login e-mail link if applicant has previously applied
@@ -277,6 +279,7 @@ def contact_phone(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = ContactPhoneForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -288,6 +291,7 @@ def contact_phone(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = ContactPhoneForm(request.POST, id=application_id_local)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             # Update User_Details record
@@ -317,6 +321,7 @@ def contact_question(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = QuestionForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -328,6 +333,7 @@ def contact_question(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = QuestionForm(request.POST, id=application_id_local)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         # If form is not empty
         if form.is_valid():
@@ -569,6 +575,7 @@ def personal_details_name(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = PersonalDetailsNameForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -579,6 +586,7 @@ def personal_details_name(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = PersonalDetailsNameForm(request.POST, id=application_id_local)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.personal_details_status != 'COMPLETED':
@@ -611,6 +619,7 @@ def personal_details_dob(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = PersonalDetailsDOBForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -621,6 +630,7 @@ def personal_details_dob(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = PersonalDetailsDOBForm(request.POST, id=application_id_local)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.personal_details_status != 'COMPLETED':
@@ -815,6 +825,7 @@ def personal_details_home_address_manual(request):
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
         form = PersonalDetailsHomeAddressManualForm(id=application_id_local)
+        form.check_flag()
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -825,6 +836,7 @@ def personal_details_home_address_manual(request):
         application_id_local = request.POST["id"]
         application = Application.objects.get(pk=application_id_local)
         form = PersonalDetailsHomeAddressManualForm(request.POST, id=application_id_local)
+        form.remove_flag()
         if form.is_valid():
             home_address_record = personal_home_address_logic(application_id_local, form)
             home_address_record.save()
@@ -871,6 +883,7 @@ def personal_details_location_of_care(request):
         if application.login_details_status != 'COMPLETED':
             status.update(application_id_local, 'login_details_status', 'COMPLETED')
         form = PersonalDetailsLocationOfCareForm(id=application_id_local)
+        form.check_flag()
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -887,6 +900,7 @@ def personal_details_location_of_care(request):
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=application_id_local).personal_detail_id
         form = PersonalDetailsLocationOfCareForm(request.POST, id=application_id_local)
+        form.remove_flag()
         if form.is_valid():
             # Reset status to in progress as question can change status of overall task
             status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
@@ -1087,6 +1101,7 @@ def personal_details_childcare_address_manual(request):
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
         form = PersonalDetailsChildcareAddressManualForm(id=application_id_local)
+        form.check_flag()
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -1097,6 +1112,7 @@ def personal_details_childcare_address_manual(request):
         application_id_local = request.POST["id"]
         application = Application.objects.get(pk=application_id_local)
         form = PersonalDetailsChildcareAddressManualForm(request.POST, id=application_id_local)
+        form.remove_flag()
         if form.is_valid():
             street_line1 = form.cleaned_data.get('street_name_and_number')
             street_line2 = form.cleaned_data.get('street_name_and_number2')
@@ -1228,6 +1244,7 @@ def first_aid_training_guidance(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = FirstAidTrainingGuidanceForm()
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -1238,6 +1255,7 @@ def first_aid_training_guidance(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = FirstAidTrainingGuidanceForm(request.POST)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.first_aid_training_status != 'COMPLETED':
@@ -1356,6 +1374,7 @@ def first_aid_training_renew(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = FirstAidTrainingRenewForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -1366,6 +1385,7 @@ def first_aid_training_renew(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = FirstAidTrainingRenewForm(request.POST, id=application_id_local)
+        form.remove_flag()
         if form.is_valid():
             renew = form.cleaned_data.get('renew')
             first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
@@ -1707,6 +1727,7 @@ def dbs_check_dbs_details(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = DBSCheckDBSDetailsForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -1721,6 +1742,7 @@ def dbs_check_dbs_details(request):
         status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
 
         form = DBSCheckDBSDetailsForm(request.POST, id=application_id_local)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             # Create or update Criminal_Record_Check record
@@ -1983,6 +2005,7 @@ def references_first_reference(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = FirstReferenceForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -1993,6 +2016,7 @@ def references_first_reference(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = FirstReferenceForm(request.POST, id=application_id_local)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.references_status != 'COMPLETED':
@@ -2085,6 +2109,7 @@ def references_first_reference_address_select(request):
             return render(request, 'references-first-reference-address-lookup.html', variables)
         else:
             form = ReferenceFirstReferenceAddressForm(id=application_id_local)
+            form.check_flag()
             form.errors['postcode'] = {'Please enter a valid postcode.': 'invalid'}
             variables = {
                 'form': form,
@@ -2099,6 +2124,7 @@ def references_first_reference_address_select(request):
         postcode = first_reference_record.postcode
         addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
         form = ReferenceFirstReferenceAddressLookupForm(request.POST, id=application_id_local, choices=addresses)
+        form.remove_flag()
         if form.is_valid():
             selected_address_index = int(request.POST["address"])
             selected_address = address_helper.AddressHelper.get_posted_address(selected_address_index, postcode)
@@ -2143,6 +2169,7 @@ def references_first_reference_address_manual(request):
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
         form = ReferenceFirstReferenceAddressManualForm(id=application_id_local)
+        form.check_flag()
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -2153,6 +2180,7 @@ def references_first_reference_address_manual(request):
         application_id_local = request.POST["id"]
         application = Application.objects.get(pk=application_id_local)
         form = ReferenceFirstReferenceAddressManualForm(request.POST, id=application_id_local)
+        form.remove_flag()
         if form.is_valid():
             street_name_and_number = form.cleaned_data.get('street_name_and_number')
             street_name_and_number2 = form.cleaned_data.get('street_name_and_number2')
@@ -2197,6 +2225,7 @@ def references_first_reference_contact_details(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = ReferenceFirstReferenceContactForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -2207,6 +2236,7 @@ def references_first_reference_contact_details(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = ReferenceFirstReferenceContactForm(request.POST, id=application_id_local)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.references_status != 'COMPLETED':
@@ -2244,6 +2274,7 @@ def references_second_reference(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = SecondReferenceForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -2254,6 +2285,7 @@ def references_second_reference(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = SecondReferenceForm(request.POST, id=application_id_local)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.references_status != 'COMPLETED':
@@ -2346,6 +2378,7 @@ def references_second_reference_address_select(request):
             return render(request, 'references-second-reference-address-lookup.html', variables)
         else:
             form = ReferenceSecondReferenceAddressForm(id=application_id_local)
+            form.check_flag()
             form.errors['postcode'] = {'Please enter a valid postcode.': 'invalid'}
             variables = {
                 'form': form,
@@ -2360,6 +2393,7 @@ def references_second_reference_address_select(request):
         postcode = second_reference_record.postcode
         addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
         form = ReferenceSecondReferenceAddressLookupForm(request.POST, id=application_id_local, choices=addresses)
+        form.remove_flag()
         if form.is_valid():
             selected_address_index = int(request.POST["address"])
             selected_address = address_helper.AddressHelper.get_posted_address(selected_address_index, postcode)
@@ -2404,6 +2438,7 @@ def references_second_reference_address_manual(request):
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
         form = ReferenceSecondReferenceAddressManualForm(id=application_id_local)
+        form.check_flag()
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -2414,6 +2449,7 @@ def references_second_reference_address_manual(request):
         application_id_local = request.POST["id"]
         application = Application.objects.get(pk=application_id_local)
         form = ReferenceSecondReferenceAddressManualForm(request.POST, id=application_id_local)
+        form.remove_flag()
         if form.is_valid():
             street_name_and_number = form.cleaned_data.get('street_name_and_number')
             street_name_and_number2 = form.cleaned_data.get('street_name_and_number2')
@@ -2458,6 +2494,7 @@ def references_second_reference_contact_details(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = ReferenceSecondReferenceContactForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -2468,6 +2505,7 @@ def references_second_reference_contact_details(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = ReferenceSecondReferenceContactForm(request.POST, id=application_id_local)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             status.update(application_id_local, 'references_status', 'COMPLETED')
