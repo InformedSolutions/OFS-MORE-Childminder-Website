@@ -51,7 +51,7 @@ class ChildminderForms(GOVUKForm):
     def remove_flag(self):
         for i in self.field_list:
             if ArcComments.objects.filter(table_pk=self.pk, field_name=i).count() == 1:
-                log = ArcComments.objects.filter(table_pk=self.pk, field_name=i)
+                log = ArcComments.objects.get(table_pk=self.pk, field_name=i)
                 if log.flagged:
                     log.flagged = False
                     log.save()
