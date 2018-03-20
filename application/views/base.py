@@ -159,53 +159,6 @@ def start_page(request):
     """
     return render(request, 'start-page.html')
 
-
-def account_selection(request):
-    """
-    Method returning the template for the account selection page and navigating to the account: email page when
-    clicking on the Create an account button, which triggers the creation of a new application
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered account selection template
-    """
-    if request.method == 'GET':
-        form = AccountForm()
-        variables = {
-            'form': form,
-        }
-        return render(request, 'account-account.html', variables)
-    if request.method == 'POST':
-        user = UserDetails.objects.create()
-        application = Application.objects.create(
-            application_type='CHILDMINDER',
-            login_id=user,
-            application_status='DRAFTING',
-            cygnum_urn='',
-            login_details_status='NOT_STARTED',
-            personal_details_status='NOT_STARTED',
-            childcare_type_status='NOT_STARTED',
-            first_aid_training_status='NOT_STARTED',
-            eyfs_training_status='COMPLETED',
-            criminal_record_check_status='NOT_STARTED',
-            health_status='NOT_STARTED',
-            references_status='NOT_STARTED',
-            people_in_home_status='NOT_STARTED',
-            declarations_status='NOT_STARTED',
-            date_created=datetime.datetime.today(),
-            date_updated=datetime.datetime.today(),
-            date_accepted=None,
-            order_code=None
-        )
-        application_id_local = str(application.application_id)
-        trigger_audit_log(application_id_local,'CREATED')
-        return HttpResponseRedirect(settings.URL_PREFIX + '/account/email?id=' + application_id_local)
-    else:
-        form = AccountForm()
-        variables = {
-            'form': form
-        }
-        return render(request, 'account-account.html', variables)
-
-
 def contact_email(request):
     """
     Method returning the template for the Your login and contact details: email page (for a given application)
