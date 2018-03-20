@@ -275,6 +275,7 @@ class CreateTestNewApplicationSubmit(TestCase):
                 'background_check_declare': 'on',
                 'inspect_home_declare': 'on',
                 'interview_declare': 'on',
+                'change_declare': 'on',
                 'share_info_declare': 'on',
                 'information_correct_declare': 'on',
             }
