@@ -2408,6 +2408,32 @@ class PaymentDetailsForm(GOVUKForm):
             raise forms.ValidationError('The code should be 3 or 4 digits long')
 
 
+class DocumentsNeededForm(GOVUKForm):
+    """
+    GOV.UK form for the Documents you need for the visit page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
+    auto_replace_widgets = True
+
+
+class HomeReadyForm(GOVUKForm):
+    """
+    GOV.UK form for the Get your home ready page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
+    auto_replace_widgets = True
+
+class PrepareForInterviewForm(GOVUKForm):
+    """
+    GOV.UK form for the Get your home ready page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
+    auto_replace_widgets = True
+
+
 class ApplicationSavedForm(GOVUKForm):
     """
     GOV.UK form for the Application saved page

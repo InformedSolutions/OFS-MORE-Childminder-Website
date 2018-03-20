@@ -1,0 +1,42 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Get your home ready{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+<div class="grid-row">
+    <div class="column-two-thirds">
+        <!-- Back button -->
+        <a href="{{ URL_PREFIX }}/next-steps/documents?id={{application_id}}" class="link-back"
+           style="margin-right: 10px; line-height: 28px">
+            Back
+        </a>
+        <h2 class="heading-large">
+            Get your home ready
+        </h2>
+        <p>Make sure your home is safe, secure and suitable for children.</p>
+        <p>The inspector will ask how you have:</p>
+        <ul class="list-bullet" style="margin-bottom: 20px; margin-left: 20px;">
+            <li>made the home safe</li>
+            <li>assessed any risks</li>
+            <li>arranged space in the home</li>
+        </ul>
+        <p>They will also check the safety of equipment, like high chairs and buggies.</p>
+        <p>Read the registration handbook for more details.</p>
+        <p><img src="{% static 'download-button.png' %}"
+                style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
+            <a href="https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/650103/EY_and_childcare_reg_handbook.pdf">Early
+                years registration handbook</a> (PDF, 918KB)</p>
+        <br>
+        <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+            {{form.as_div}}
+            {% csrf_token %}
+            <input type="submit" class="button" value="Continue">
+            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+        </form>
+    </div>
+</div>
+</div>
+
+{% endblock %}

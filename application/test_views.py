@@ -10,7 +10,7 @@ import datetime
 from django.conf import settings
 from django.test import Client
 from django.test import TestCase
-from django.urls import resolve
+from django.urls import resolve, reverse
 from uuid import UUID
 
 from application import models
@@ -29,6 +29,7 @@ from application.views import (application_saved,
                                dbs_check_upload_dbs,
                                declaration_declaration,
                                declaration_summary,
+                               documents_needed,
                                eyfs_guidance,
                                eyfs_knowledge,
                                eyfs_questions,
@@ -43,6 +44,7 @@ from application.views import (application_saved,
                                health_intro,
                                health_booklet,
                                health_check_answers,
+                               home_ready,
                                other_people_guidance,
                                other_people_adult_question,
                                other_people_adult_details,
@@ -66,6 +68,7 @@ from application.views import (application_saved,
                                personal_details_location_of_care,
                                personal_details_name,
                                personal_details_summary,
+                               prepare_for_interview,
                                references_intro,
                                references_first_reference,
                                references_first_reference_address,
@@ -1318,6 +1321,42 @@ class PaymentTest(TestCase):
         c = Client()
         try:
             c.get(settings.URL_PREFIX + '/confirmation/?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(reverse('Next-Steps-Documents'))
+        self.assertEqual(found.func, documents_needed)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(reverse('Next-Steps-Documents') + '?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(reverse('Next-Steps-Home'))
+        self.assertEqual(found.func, home_ready)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(reverse('Next-Steps-Home') + '?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_url_resolves_to_page(self):
+        found = resolve(reverse('Next-Steps-Interview'))
+        self.assertEqual(found.func, prepare_for_interview)
+
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(reverse('Next-Steps-Interview') + '?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
