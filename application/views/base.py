@@ -992,12 +992,14 @@ def personal_details_childcare_address_select(request):
         form = PersonalDetailsChildcareAddressLookupForm(request.POST, id=application_id_local, choices=addresses)
         if form.is_valid():
             selected_address_index = int(request.POST["address"])
-            selected_address = address_helper.AddressHelper.get_posted_address(selected_address_index, postcode)
+            selected_address = address_helper.AddressHelper.get_posted_address(
+                selected_address_index, postcode)
             line1 = selected_address['line1']
             line2 = selected_address['line2']
             town = selected_address['townOrCity']
             postcode = selected_address['postcode']
-            personal_detail_record = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+            personal_detail_record = ApplicantPersonalDetails.objects.get(
+                application_id=application_id_local)
             personal_detail_id = personal_detail_record.personal_detail_id
             # If the user entered information for this task for the first time
             if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).count() == 0:
@@ -1028,7 +1030,8 @@ def personal_details_childcare_address_select(request):
             application.date_updated = current_date
             application.save()
             if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
-                status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'personal_details_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/check-answers?id=' +
                                         application_id_local)
         else:
@@ -1072,7 +1075,8 @@ def personal_details_childcare_address_manual(request):
             town = form.cleaned_data.get('town')
             county = form.cleaned_data.get('county')
             postcode = form.cleaned_data.get('postcode')
-            applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+            applicant = ApplicantPersonalDetails.objects.get(
+                application_id=application_id_local)
             if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
                                                    current_address=False).count() == 0:
                 childcare_address_record = ApplicantHomeAddress(street_line1=street_line1,
@@ -1101,7 +1105,8 @@ def personal_details_childcare_address_manual(request):
             application.date_updated = current_date
             application.save()
             if Application.objects.get(pk=application_id_local).personal_details_status != 'COMPLETED':
-                status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'personal_details_status', 'IN_PROGRESS')
             reset_declaration(application)
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/personal-details/check-answers?id=' + application_id_local)
@@ -1124,11 +1129,13 @@ def personal_details_summary(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+        personal_detail_id = ApplicantPersonalDetails.objects.get(
+            application_id=application_id_local)
         birth_day = personal_detail_id.birth_day
         birth_month = personal_detail_id.birth_month
         birth_year = personal_detail_id.birth_year
-        applicant_name_record = ApplicantName.objects.get(personal_detail_id=personal_detail_id)
+        applicant_name_record = ApplicantName.objects.get(
+            personal_detail_id=personal_detail_id)
         first_name = applicant_name_record.first_name
         middle_names = applicant_name_record.middle_names
         last_name = applicant_name_record.last_name
@@ -1149,7 +1156,8 @@ def personal_details_summary(request):
         childcare_postcode = applicant_childcare_address_record.postcode
         form = PersonalDetailsSummaryForm()
         application = Application.objects.get(pk=application_id_local)
-        status.update(application_id_local, 'personal_details_status', 'COMPLETED')
+        status.update(application_id_local,
+                      'personal_details_status', 'COMPLETED')
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -1177,7 +1185,8 @@ def personal_details_summary(request):
         application_id_local = request.POST["id"]
         form = PersonalDetailsSummaryForm()
         if form.is_valid():
-            status.update(application_id_local, 'personal_details_status', 'COMPLETED')
+            status.update(application_id_local,
+                          'personal_details_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
             variables = {
@@ -1212,7 +1221,8 @@ def first_aid_training_guidance(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.first_aid_training_status != 'COMPLETED':
-                status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'first_aid_training_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/details?id=' + application_id_local)
         else:
             variables = {
@@ -1246,13 +1256,16 @@ def first_aid_training_details(request):
         application_id_local = request.POST["id"]
 
         # Reset status to in progress as question can change status of overall task
-        status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
+        status.update(application_id_local,
+                      'first_aid_training_status', 'IN_PROGRESS')
 
-        form = FirstAidTrainingDetailsForm(request.POST, id=application_id_local)
+        form = FirstAidTrainingDetailsForm(
+            request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             # Create or update First_Aid_Training record
-            first_aid_training_record = first_aid_logic(application_id_local, form)
+            first_aid_training_record = first_aid_logic(
+                application_id_local, form)
             first_aid_training_record.save()
             application.date_updated = current_date
             application.save()
@@ -1261,7 +1274,8 @@ def first_aid_training_details(request):
             certificate_day = form.cleaned_data.get('course_date')[0]
             certificate_month = form.cleaned_data.get('course_date')[1]
             certificate_year = form.cleaned_data.get('course_date')[2]
-            certificate_date = date(certificate_year, certificate_month, certificate_day)
+            certificate_date = date(
+                certificate_year, certificate_month, certificate_day)
             today = date.today()
             certificate_date_difference = today - certificate_date
             certificate_age = certificate_date_difference.days / 365
@@ -1299,14 +1313,17 @@ def first_aid_training_declaration(request):
         return render(request, 'first-aid-declaration.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = FirstAidTrainingDeclarationForm(request.POST, id=application_id_local)
+        form = FirstAidTrainingDeclarationForm(
+            request.POST, id=application_id_local)
         if form.is_valid():
             declaration = form.cleaned_data.get('declaration')
-            first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
+            first_aid_record = FirstAidTraining.objects.get(
+                application_id=application_id_local)
             first_aid_record.show_certificate = declaration
             first_aid_record.renew_certificate = False
             first_aid_record.save()
-            status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
+            status.update(application_id_local,
+                          'first_aid_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem on this page'
@@ -1341,11 +1358,13 @@ def first_aid_training_renew(request):
         form.remove_flag()
         if form.is_valid():
             renew = form.cleaned_data.get('renew')
-            first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
+            first_aid_record = FirstAidTraining.objects.get(
+                application_id=application_id_local)
             first_aid_record.renew_certificate = renew
             first_aid_record.show_certificate = False
             first_aid_record.save()
-            status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
+            status.update(application_id_local,
+                          'first_aid_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem on this page'
@@ -1377,11 +1396,13 @@ def first_aid_training_training(request):
         application_id_local = request.POST["id"]
         form = FirstAidTrainingTrainingForm(request.POST)
         if form.is_valid():
-            first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
+            first_aid_record = FirstAidTraining.objects.get(
+                application_id=application_id_local)
             first_aid_record.show_certificate = False
             first_aid_record.renew_certificate = False
             first_aid_record.save()
-            status.update(application_id_local, 'first_aid_training_status', 'NOT_STARTED')
+            status.update(application_id_local,
+                          'first_aid_training_status', 'NOT_STARTED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
         else:
             variables = {
@@ -1400,7 +1421,8 @@ def first_aid_training_summary(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
+        first_aid_record = FirstAidTraining.objects.get(
+            application_id=application_id_local)
         form = FirstAidTrainingSummaryForm()
         application = Application.objects.get(pk=application_id_local)
         variables = {
@@ -1446,7 +1468,8 @@ def eyfs_guidance(request):
             'eyfs_training_status': application.eyfs_training_status
         }
         if application.eyfs_training_status != 'COMPLETED':
-            status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
+            status.update(application_id_local,
+                          'eyfs_training_status', 'IN_PROGRESS')
         return render(request, 'eyfs-guidance.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
@@ -1454,7 +1477,8 @@ def eyfs_guidance(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.eyfs_training_status != 'COMPLETED':
-                status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'eyfs_training_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/knowledge?id=' + application_id_local)
         else:
             variables = {
@@ -1489,7 +1513,8 @@ def eyfs_knowledge(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.eyfs_training_status != 'COMPLETED':
-                status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'eyfs_training_status', 'IN_PROGRESS')
             # Create or update EYFS record
             eyfs_record = eyfs_knowledge_logic(application_id_local, form)
             eyfs_record.save()
@@ -1498,7 +1523,8 @@ def eyfs_knowledge(request):
             reset_declaration(application)
             eyfs_understand = form.cleaned_data['eyfs_understand']
             if eyfs_understand == 'True':
-                eyfs_record = EYFS.objects.get(application_id=application_id_local)
+                eyfs_record = EYFS.objects.get(
+                    application_id=application_id_local)
                 eyfs_record.eyfs_training_declare = False
                 eyfs_record.save()
                 reset_declaration(application)
@@ -1538,7 +1564,8 @@ def eyfs_training(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.eyfs_training_status != 'COMPLETED':
-                status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'eyfs_training_status', 'IN_PROGRESS')
             # Create or update EYFS record
             eyfs_record = eyfs_training_logic(application_id_local, form)
             eyfs_record.save()
@@ -1587,7 +1614,8 @@ def eyfs_questions(request):
             application.save()
             reset_declaration(application)
             if application.eyfs_training_status != 'COMPLETED':
-                status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
+                status.update(application_id_local,
+                              'eyfs_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/eyfs/summary?id=' + application_id_local)
         else:
             variables = {
@@ -1657,7 +1685,8 @@ def dbs_check_guidance(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.criminal_record_check_status != 'COMPLETED':
-                status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'criminal_record_check_status', 'IN_PROGRESS')
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/criminal-record/your-details?id=' + application_id_local)
         else:
@@ -1692,7 +1721,8 @@ def dbs_check_dbs_details(request):
         application_id_local = request.POST["id"]
 
         # Reset status to in progress as question can change status of overall task
-        status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
+        status.update(application_id_local,
+                      'criminal_record_check_status', 'IN_PROGRESS')
 
         form = DBSCheckDBSDetailsForm(request.POST, id=application_id_local)
         form.remove_flag()
@@ -1710,7 +1740,8 @@ def dbs_check_dbs_details(request):
                     settings.URL_PREFIX + '/criminal-record/post-certificate?id=' + application_id_local)
             elif cautions_convictions == 'False':
                 if application.criminal_record_check_status != 'COMPLETED':
-                    status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
+                    status.update(application_id_local,
+                                  'criminal_record_check_status', 'COMPLETED')
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
         else:
@@ -1746,14 +1777,16 @@ def dbs_check_upload_dbs(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             declare = form.cleaned_data['declaration']
-            dbs_check_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
+            dbs_check_record = CriminalRecordCheck.objects.get(
+                application_id=application_id_local)
             dbs_check_record.send_certificate_declare = declare
             dbs_check_record.save()
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
             if application.criminal_record_check_status != 'COMPLETED':
-                status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
+                status.update(application_id_local,
+                              'criminal_record_check_status', 'COMPLETED')
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
         else:
@@ -1774,7 +1807,8 @@ def dbs_check_summary(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
+        criminal_record_check = CriminalRecordCheck.objects.get(
+            application_id=application_id_local)
         dbs_certificate_number = criminal_record_check.dbs_certificate_number
         cautions_convictions = criminal_record_check.cautions_convictions
         send_certificate_declare = criminal_record_check.send_certificate_declare
@@ -1825,7 +1859,8 @@ def health_intro(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.health_status != 'COMPLETED':
-                status.update(application_id_local, 'health_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'health_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/health/booklet?id=' + application_id_local)
         else:
             variables = {
@@ -1866,7 +1901,8 @@ def health_booklet(request):
             application.save()
             reset_declaration(application)
             if application.health_status != 'COMPLETED':
-                status.update(application_id_local, 'health_status', 'COMPLETED')
+                status.update(application_id_local,
+                              'health_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/health/check-answers?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem with this page.'
@@ -1886,7 +1922,8 @@ def health_check_answers(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        send_hdb_declare = HealthDeclarationBooklet.objects.get(application_id=application_id_local).send_hdb_declare
+        send_hdb_declare = HealthDeclarationBooklet.objects.get(
+            application_id=application_id_local).send_hdb_declare
         form = HealthBookletForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         variables = {
@@ -1936,7 +1973,8 @@ def references_intro(request):
 
         if form.is_valid():
             if application.references_status != 'COMPLETED':
-                status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'references_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference?id=' + application_id_local)
         else:
             variables = {
@@ -1973,9 +2011,11 @@ def references_first_reference(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.references_status != 'COMPLETED':
-                status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'references_status', 'IN_PROGRESS')
             # Create or update Reference record
-            references_record = references_first_reference_logic(application_id_local, form)
+            references_record = references_first_reference_logic(
+                application_id_local, form)
             references_record.save()
             application.date_updated = current_date
             application.save()
@@ -2012,10 +2052,12 @@ def references_first_reference_address(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         application = Application.objects.get(pk=application_id_local)
-        form = ReferenceFirstReferenceAddressForm(request.POST, id=application_id_local)
+        form = ReferenceFirstReferenceAddressForm(
+            request.POST, id=application_id_local)
         if form.is_valid():
             postcode = form.cleaned_data.get('postcode')
-            first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
+            first_reference_record = Reference.objects.get(
+                application_id=application_id_local, reference=1)
             first_reference_record.postcode = postcode
             first_reference_record.save()
             application = Application.objects.get(pk=application_id_local)
@@ -2048,11 +2090,14 @@ def references_first_reference_address_select(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
-        first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
+        first_reference_record = Reference.objects.get(
+            application_id=application_id_local, reference=1)
         postcode = first_reference_record.postcode
-        addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
+        addresses = address_helper.AddressHelper.create_address_lookup_list(
+            postcode)
         if len(addresses) != 0:
-            form = ReferenceFirstReferenceAddressLookupForm(id=application_id_local, choices=addresses)
+            form = ReferenceFirstReferenceAddressLookupForm(
+                id=application_id_local, choices=addresses)
             variables = {
                 'form': form,
                 'application_id': application_id_local,
@@ -2073,14 +2118,16 @@ def references_first_reference_address_select(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         application = Application.objects.get(pk=application_id_local)
-        first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
+        first_reference_record = Reference.objects.get(
+            application_id=application_id_local, reference=1)
         postcode = first_reference_record.postcode
         addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
         form = ReferenceFirstReferenceAddressLookupForm(request.POST, id=application_id_local, choices=addresses)
         form.remove_flag()
         if form.is_valid():
             selected_address_index = int(request.POST["address"])
-            selected_address = address_helper.AddressHelper.get_posted_address(selected_address_index, postcode)
+            selected_address = address_helper.AddressHelper.get_posted_address(
+                selected_address_index, postcode)
             line1 = selected_address['line1']
             line2 = selected_address['line2']
             town = selected_address['townOrCity']
@@ -2135,13 +2182,16 @@ def references_first_reference_address_manual(request):
         form = ReferenceFirstReferenceAddressManualForm(request.POST, id=application_id_local)
         form.remove_flag()
         if form.is_valid():
-            street_name_and_number = form.cleaned_data.get('street_name_and_number')
-            street_name_and_number2 = form.cleaned_data.get('street_name_and_number2')
+            street_name_and_number = form.cleaned_data.get(
+                'street_name_and_number')
+            street_name_and_number2 = form.cleaned_data.get(
+                'street_name_and_number2')
             town = form.cleaned_data.get('town')
             county = form.cleaned_data.get('county')
             postcode = form.cleaned_data.get('postcode')
             country = form.cleaned_data.get('country')
-            first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
+            first_reference_record = Reference.objects.get(
+                application_id=application_id_local, reference=1)
             first_reference_record.street_line1 = street_name_and_number
             first_reference_record.street_line2 = street_name_and_number2
             first_reference_record.town = town
@@ -2154,7 +2204,8 @@ def references_first_reference_address_manual(request):
             application.save()
             reset_declaration(application)
             if application.references_status != 'COMPLETED':
-                status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'references_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-contact-details?id=' +
                                         application_id_local)
         else:
@@ -2193,7 +2244,8 @@ def references_first_reference_contact_details(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.references_status != 'COMPLETED':
-                status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'references_status', 'IN_PROGRESS')
             email_address = form.cleaned_data.get('email_address')
             phone_number = form.cleaned_data.get('phone_number')
             references_first_reference_address_record = Reference.objects.get(application_id=application_id_local,
@@ -2242,9 +2294,11 @@ def references_second_reference(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.references_status != 'COMPLETED':
-                status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'references_status', 'IN_PROGRESS')
             # Create or update Reference record
-            references_record = references_second_reference_logic(application_id_local, form)
+            references_record = references_second_reference_logic(
+                application_id_local, form)
             references_record.save()
             application.date_updated = current_date
             application.save()
@@ -2281,10 +2335,12 @@ def references_second_reference_address(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         application = Application.objects.get(pk=application_id_local)
-        form = ReferenceSecondReferenceAddressForm(request.POST, id=application_id_local)
+        form = ReferenceSecondReferenceAddressForm(
+            request.POST, id=application_id_local)
         if form.is_valid():
             postcode = form.cleaned_data.get('postcode')
-            second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
+            second_reference_record = Reference.objects.get(
+                application_id=application_id_local, reference=2)
             second_reference_record.postcode = postcode
             second_reference_record.save()
             application = Application.objects.get(pk=application_id_local)
@@ -2317,11 +2373,14 @@ def references_second_reference_address_select(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
-        second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
+        second_reference_record = Reference.objects.get(
+            application_id=application_id_local, reference=2)
         postcode = second_reference_record.postcode
-        addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
+        addresses = address_helper.AddressHelper.create_address_lookup_list(
+            postcode)
         if len(addresses) != 0:
-            form = ReferenceSecondReferenceAddressLookupForm(id=application_id_local, choices=addresses)
+            form = ReferenceSecondReferenceAddressLookupForm(
+                id=application_id_local, choices=addresses)
             variables = {
                 'form': form,
                 'application_id': application_id_local,
@@ -2342,14 +2401,16 @@ def references_second_reference_address_select(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         application = Application.objects.get(pk=application_id_local)
-        second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
+        second_reference_record = Reference.objects.get(
+            application_id=application_id_local, reference=2)
         postcode = second_reference_record.postcode
         addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
         form = ReferenceSecondReferenceAddressLookupForm(request.POST, id=application_id_local, choices=addresses)
         form.remove_flag()
         if form.is_valid():
             selected_address_index = int(request.POST["address"])
-            selected_address = address_helper.AddressHelper.get_posted_address(selected_address_index, postcode)
+            selected_address = address_helper.AddressHelper.get_posted_address(
+                selected_address_index, postcode)
             line1 = selected_address['line1']
             line2 = selected_address['line2']
             town = selected_address['townOrCity']
@@ -2365,7 +2426,8 @@ def references_second_reference_address_select(request):
             application.date_updated = current_date
             application.save()
             if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
-                status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'references_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-contact-details?id=' +
                                         application_id_local)
         else:
@@ -2404,13 +2466,16 @@ def references_second_reference_address_manual(request):
         form = ReferenceSecondReferenceAddressManualForm(request.POST, id=application_id_local)
         form.remove_flag()
         if form.is_valid():
-            street_name_and_number = form.cleaned_data.get('street_name_and_number')
-            street_name_and_number2 = form.cleaned_data.get('street_name_and_number2')
+            street_name_and_number = form.cleaned_data.get(
+                'street_name_and_number')
+            street_name_and_number2 = form.cleaned_data.get(
+                'street_name_and_number2')
             town = form.cleaned_data.get('town')
             county = form.cleaned_data.get('county')
             postcode = form.cleaned_data.get('postcode')
             country = form.cleaned_data.get('country')
-            second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
+            second_reference_record = Reference.objects.get(
+                application_id=application_id_local, reference=2)
             second_reference_record.street_line1 = street_name_and_number
             second_reference_record.street_line2 = street_name_and_number2
             second_reference_record.town = town
@@ -2423,7 +2488,8 @@ def references_second_reference_address_manual(request):
             application.save()
             reset_declaration(application)
             if application.references_status != 'COMPLETED':
-                status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'references_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-contact-details?id=' +
                                         application_id_local)
         else:
@@ -2461,7 +2527,8 @@ def references_second_reference_contact_details(request):
         form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
-            status.update(application_id_local, 'references_status', 'COMPLETED')
+            status.update(application_id_local,
+                          'references_status', 'COMPLETED')
             email_address = form.cleaned_data.get('email_address')
             phone_number = form.cleaned_data.get('phone_number')
             references_second_reference_address_record = Reference.objects.get(application_id=application_id_local,
@@ -2491,8 +2558,10 @@ def references_summary(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
-        second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
+        first_reference_record = Reference.objects.get(
+            application_id=application_id_local, reference=1)
+        second_reference_record = Reference.objects.get(
+            application_id=application_id_local, reference=2)
         first_reference_first_name = first_reference_record.first_name
         first_reference_last_name = first_reference_record.last_name
         first_reference_relationship = first_reference_record.relationship
@@ -2558,7 +2627,8 @@ def references_summary(request):
         application_id_local = request.POST["id"]
         form = ReferenceSummaryForm()
         if form.is_valid():
-            status.update(application_id_local, 'references_status', 'COMPLETED')
+            status.update(application_id_local,
+                          'references_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
             variables = {
@@ -2591,7 +2661,8 @@ def other_people_guidance(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.people_in_home_status != 'COMPLETED':
-                status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'people_in_home_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/adult-question?id=' + application_id_local)
         else:
             variables = {
@@ -2620,17 +2691,21 @@ def other_people_adult_question(request):
             'people_in_home_status': application.people_in_home_status
         }
         if application.people_in_home_status != 'COMPLETED':
-            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+            status.update(application_id_local,
+                          'people_in_home_status', 'IN_PROGRESS')
         return render(request, 'other-people-adult-question.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
 
         # Reset status to in progress as question can change status of overall task
-        status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+        status.update(application_id_local,
+                      'people_in_home_status', 'IN_PROGRESS')
 
-        form = OtherPeopleAdultQuestionForm(request.POST, id=application_id_local)
+        form = OtherPeopleAdultQuestionForm(
+            request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
-        number_of_adults = AdultInHome.objects.filter(application_id=application_id_local).count()
+        number_of_adults = AdultInHome.objects.filter(
+            application_id=application_id_local).count()
         if form.is_valid():
             adults_in_home = form.cleaned_data.get('adults_in_home')
             application.adults_in_home = adults_in_home
@@ -2645,7 +2720,8 @@ def other_people_adult_question(request):
             # If adults do not live in your home, navigate to children question page
             elif adults_in_home == 'False':
                 # Delete any existing adults
-                adults = AdultInHome.objects.filter(application_id=application_id_local)
+                adults = AdultInHome.objects.filter(
+                    application_id=application_id_local)
                 for adult in adults:
                     adult.delete()
                 application.date_updated = current_date
@@ -2692,7 +2768,8 @@ def other_people_adult_details(request):
         # Generate a list of forms to iterate through in the HTML
         form_list = []
         for i in range(1, number_of_adults + 1):
-            form = OtherPeopleAdultDetailsForm(id=application_id_local, adult=i, prefix=i)
+            form = OtherPeopleAdultDetailsForm(
+                id=application_id_local, adult=i, prefix=i)
             form_list.append(form)
         variables = {
             'form_list': form_list,
@@ -2704,7 +2781,8 @@ def other_people_adult_details(request):
             'people_in_home_status': application.people_in_home_status
         }
         if application.people_in_home_status != 'COMPLETED':
-            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+            status.update(application_id_local,
+                          'people_in_home_status', 'IN_PROGRESS')
         return render(request, 'other-people-adult-details.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
@@ -2726,11 +2804,14 @@ def other_people_adult_details(request):
         # List to allow for the validation of each form
         valid_list = []
         for i in range(1, int(number_of_adults) + 1):
-            form = OtherPeopleAdultDetailsForm(request.POST, id=application_id_local, adult=i, prefix=i)
+            form = OtherPeopleAdultDetailsForm(
+                request.POST, id=application_id_local, adult=i, prefix=i)
             form_list.append(form)
-            form.error_summary_title = 'There is a problem with this form (Person ' + str(i) + ')'
+            form.error_summary_title = 'There is a problem with this form (Person ' + str(
+                i) + ')'
             if form.is_valid():
-                adult_record = other_people_adult_details_logic(application_id_local, form, i)
+                adult_record = other_people_adult_details_logic(
+                    application_id_local, form, i)
                 adult_record.save()
                 application.date_updated = current_date
                 application.save()
@@ -2769,7 +2850,8 @@ def other_people_adult_details(request):
                 add_adult = int(number_of_adults) + 1
                 add_adult_string = str(add_adult)
                 return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/other-people/adult-details?id=' + application_id_local + '&adults=' + add_adult_string + '&remove=0',
+                    settings.URL_PREFIX + '/other-people/adult-details?id=' +
+                    application_id_local + '&adults=' + add_adult_string + '&remove=0',
                     variables)
             # If there is an invalid form
             elif False in valid_list:
@@ -2800,12 +2882,14 @@ def other_people_adult_dbs(request):
         # Generate a list of forms to iterate through in the HTML
         form_list = []
         for i in range(1, number_of_adults + 1):
-            adult = AdultInHome.objects.get(application_id=application_id_local, adult=i)
+            adult = AdultInHome.objects.get(
+                application_id=application_id_local, adult=i)
             if adult.middle_names == '':
                 name = adult.first_name + ' ' + adult.last_name
             elif adult.middle_names != '':
                 name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
-            form = OtherPeopleAdultDBSForm(id=application_id_local, adult=i, prefix=i, name=name)
+            form = OtherPeopleAdultDBSForm(
+                id=application_id_local, adult=i, prefix=i, name=name)
             form_list.append(form)
         variables = {
             'form_list': form_list,
@@ -2815,7 +2899,8 @@ def other_people_adult_dbs(request):
             'people_in_home_status': application.people_in_home_status
         }
         if application.people_in_home_status != 'COMPLETED':
-            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+            status.update(application_id_local,
+                          'people_in_home_status', 'IN_PROGRESS')
         return render(request, 'other-people-adult-dbs.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
@@ -2826,18 +2911,23 @@ def other_people_adult_dbs(request):
         # List to allow for the validation of each form
         valid_list = []
         for i in range(1, int(number_of_adults) + 1):
-            adult = AdultInHome.objects.get(application_id=application_id_local, adult=i)
+            adult = AdultInHome.objects.get(
+                application_id=application_id_local, adult=i)
             # Generate name to pass to form, for display in HTML
             if adult.middle_names == '':
                 name = adult.first_name + ' ' + adult.last_name
             elif adult.middle_names != '':
                 name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
-            form = OtherPeopleAdultDBSForm(request.POST, id=application_id_local, adult=i, prefix=i, name=name)
+            form = OtherPeopleAdultDBSForm(
+                request.POST, id=application_id_local, adult=i, prefix=i, name=name)
             form_list.append(form)
-            form.error_summary_title = 'There is a problem with this form (Person ' + str(i) + ')'
+            form.error_summary_title = 'There is a problem with this form (Person ' + str(
+                i) + ')'
             if form.is_valid():
-                adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=i)
-                adult_record.dbs_certificate_number = form.cleaned_data.get('dbs_certificate_number')
+                adult_record = AdultInHome.objects.get(
+                    application_id=application_id_local, adult=i)
+                adult_record.dbs_certificate_number = form.cleaned_data.get(
+                    'dbs_certificate_number')
                 adult_record.save()
                 application.date_updated = current_date
                 application.save()
@@ -2852,7 +2942,8 @@ def other_people_adult_dbs(request):
                 'people_in_home_status': application.people_in_home_status
             }
             if application.people_in_home_status != 'COMPLETED':
-                status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'people_in_home_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/adult-permission?id=' +
                                         application_id_local + '&adults=' + number_of_adults, variables)
         # If there is an invalid form
@@ -2882,7 +2973,8 @@ def other_people_adult_permission(request):
         # Generate a list of forms to iterate through in the HTML
         form_list = []
         for i in range(1, number_of_adults + 1):
-            form = OtherPeopleAdultPermissionForm(id=application_id_local, adult=i, prefix=i)
+            form = OtherPeopleAdultPermissionForm(
+                id=application_id_local, adult=i, prefix=i)
             form_list.append(form)
         variables = {
             'form_list': form_list,
@@ -2892,7 +2984,8 @@ def other_people_adult_permission(request):
             'people_in_home_status': application.people_in_home_status
         }
         if application.people_in_home_status != 'COMPLETED':
-            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+            status.update(application_id_local,
+                          'people_in_home_status', 'IN_PROGRESS')
         return render(request, 'other-people-adult-permission.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
@@ -2903,12 +2996,16 @@ def other_people_adult_permission(request):
         # List to allow for the validation of each form
         valid_list = []
         for i in range(1, int(number_of_adults) + 1):
-            form = OtherPeopleAdultPermissionForm(request.POST, id=application_id_local, adult=i, prefix=i)
+            form = OtherPeopleAdultPermissionForm(
+                request.POST, id=application_id_local, adult=i, prefix=i)
             form_list.append(form)
-            form.error_summary_title = 'There is a problem with this form (Person ' + str(i) + ')'
+            form.error_summary_title = 'There is a problem with this form (Person ' + str(
+                i) + ')'
             if form.is_valid():
-                adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=i)
-                adult_record.permission_declare = form.cleaned_data.get('permission_declare')
+                adult_record = AdultInHome.objects.get(
+                    application_id=application_id_local, adult=i)
+                adult_record.permission_declare = form.cleaned_data.get(
+                    'permission_declare')
                 adult_record.save()
                 application.date_updated = current_date
                 application.save()
@@ -2923,7 +3020,8 @@ def other_people_adult_permission(request):
                 'people_in_home_status': application.people_in_home_status
             }
             if application.people_in_home_status != 'COMPLETED':
-                status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'people_in_home_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/children-question?id=' +
                                         application_id_local, variables)
         # If there is an invalid form
@@ -2950,7 +3048,8 @@ def other_people_children_question(request):
         application_id_local = request.GET["id"]
         form = OtherPeopleChildrenQuestionForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
-        number_of_adults = AdultInHome.objects.filter(application_id=application_id_local).count()
+        number_of_adults = AdultInHome.objects.filter(
+            application_id=application_id_local).count()
         adults_in_home = application.adults_in_home
         variables = {
             'form': form,
@@ -2960,17 +3059,21 @@ def other_people_children_question(request):
             'people_in_home_status': application.people_in_home_status
         }
         if application.people_in_home_status != 'COMPLETED':
-            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+            status.update(application_id_local,
+                          'people_in_home_status', 'IN_PROGRESS')
         return render(request, 'other-people-children-question.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
 
         # Reset status to in progress as question can change status of overall task
-        status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+        status.update(application_id_local,
+                      'people_in_home_status', 'IN_PROGRESS')
 
-        form = OtherPeopleChildrenQuestionForm(request.POST, id=application_id_local)
+        form = OtherPeopleChildrenQuestionForm(
+            request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
-        number_of_children = ChildInHome.objects.filter(application_id=application_id_local).count()
+        number_of_children = ChildInHome.objects.filter(
+            application_id=application_id_local).count()
         if form.is_valid():
             children_in_home = form.cleaned_data.get('children_in_home')
             application.children_in_home = children_in_home
@@ -2984,7 +3087,8 @@ def other_people_children_question(request):
                                             application_id_local + '&children=' + str(number_of_children) + '&remove=0')
             elif children_in_home == 'False':
                 # Delete any existing children from database
-                children = ChildInHome.objects.filter(application_id=application_id_local)
+                children = ChildInHome.objects.filter(
+                    application_id=application_id_local)
                 for child in children:
                     child.delete()
                 reset_declaration(application)
@@ -3026,7 +3130,8 @@ def other_people_children_details(request):
         # Generate a list of forms to iterate through in the HTML
         form_list = []
         for i in range(1, number_of_children + 1):
-            form = OtherPeopleChildrenDetailsForm(id=application_id_local, child=i, prefix=i)
+            form = OtherPeopleChildrenDetailsForm(
+                id=application_id_local, child=i, prefix=i)
             form_list.append(form)
         variables = {
             'form_list': form_list,
@@ -3038,7 +3143,8 @@ def other_people_children_details(request):
             'people_in_home_status': application.people_in_home_status
         }
         if application.people_in_home_status != 'COMPLETED':
-            status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+            status.update(application_id_local,
+                          'people_in_home_status', 'IN_PROGRESS')
         return render(request, 'other-people-children-details.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
@@ -3062,11 +3168,14 @@ def other_people_children_details(request):
         # List to allow for the age verification of each form
         age_list = []
         for i in range(1, int(number_of_children) + 1):
-            form = OtherPeopleChildrenDetailsForm(request.POST, id=application_id_local, child=i, prefix=i)
+            form = OtherPeopleChildrenDetailsForm(
+                request.POST, id=application_id_local, child=i, prefix=i)
             form_list.append(form)
-            form.error_summary_title = 'There is a problem with this form (Child ' + str(i) + ')'
+            form.error_summary_title = 'There is a problem with this form (Child ' + str(
+                i) + ')'
             if form.is_valid():
-                child_record = other_people_children_details_logic(application_id_local, form, i)
+                child_record = other_people_children_details_logic(
+                    application_id_local, form, i)
                 child_record.save()
                 reset_declaration(application)
                 valid_list.append(True)
@@ -3077,7 +3186,7 @@ def other_people_children_details(request):
                 applicant_dob = date(birth_year, birth_month, birth_day)
                 today = date.today()
                 age = today.year - applicant_dob.year - (
-                        (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
+                    (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
                 if 15 <= age < 16:
                     age_list.append(True)
                 elif age < 15:
@@ -3140,7 +3249,8 @@ def other_people_children_details(request):
                 add_child = int(number_of_children) + 1
                 add_child_string = str(add_child)
                 return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/other-people/children-details?id=' + application_id_local + '&children=' + add_child_string + '&remove=0',
+                    settings.URL_PREFIX + '/other-people/children-details?id=' +
+                    application_id_local + '&children=' + add_child_string + '&remove=0',
                     variables)
             # If there is an invalid form
             elif False in valid_list:
@@ -3167,7 +3277,8 @@ def other_people_approaching_16(request):
         application_id_local = request.GET["id"]
         form = OtherPeopleApproaching16Form()
         application = Application.objects.get(pk=application_id_local)
-        number_of_children = ChildInHome.objects.filter(application_id=application_id_local).count()
+        number_of_children = ChildInHome.objects.filter(
+            application_id=application_id_local).count()
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -3179,10 +3290,12 @@ def other_people_approaching_16(request):
         application_id_local = request.POST["id"]
         form = OtherPeopleApproaching16Form(request.POST)
         application = Application.objects.get(pk=application_id_local)
-        number_of_children = ChildInHome.objects.filter(application_id=application_id_local).count()
+        number_of_children = ChildInHome.objects.filter(
+            application_id=application_id_local).count()
         if form.is_valid():
             if application.people_in_home_status != 'COMPLETED':
-                status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+                status.update(application_id_local,
+                              'people_in_home_status', 'IN_PROGRESS')
             variables = {
                 'form': form,
                 'number_of_children': number_of_children,
@@ -3208,7 +3321,8 @@ def other_people_summary(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
+        adults_list = AdultInHome.objects.filter(
+            application_id=application_id_local).order_by('adult')
         adult_name_list = []
         adult_birth_day_list = []
         adult_birth_month_list = []
@@ -3216,7 +3330,8 @@ def other_people_summary(request):
         adult_relationship_list = []
         adult_dbs_list = []
         adult_permission_list = []
-        children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
+        children_list = ChildInHome.objects.filter(
+            application_id=application_id_local).order_by('child')
         child_name_list = []
         child_birth_day_list = []
         child_birth_month_list = []
@@ -3262,13 +3377,15 @@ def other_people_summary(request):
             'turning_16': application.children_turning_16,
             'people_in_home_status': application.people_in_home_status
         }
-        status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
+        status.update(application_id_local,
+                      'people_in_home_status', 'COMPLETED')
         return render(request, 'other-people-summary.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = OtherPeopleSummaryForm()
         if form.is_valid():
-            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
+            status.update(application_id_local,
+                          'people_in_home_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
             variables = {
@@ -3289,26 +3406,37 @@ def declaration_summary(request):
         application_id_local = request.GET["id"]
         form = DeclarationSummaryForm()
         # Retrieve all information related to the application from the database
-        application = Application.objects.get(application_id=application_id_local)
+        application = Application.objects.get(
+            application_id=application_id_local)
         login_detail_id = application.login_id.login_id
         login_record = UserDetails.objects.get(login_id=login_detail_id)
-        childcare_record = ChildcareType.objects.get(application_id=application_id_local)
-        applicant_record = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+        childcare_record = ChildcareType.objects.get(
+            application_id=application_id_local)
+        applicant_record = ApplicantPersonalDetails.objects.get(
+            application_id=application_id_local)
         personal_detail_id = applicant_record.personal_detail_id
-        applicant_name_record = ApplicantName.objects.get(personal_detail_id=personal_detail_id)
+        applicant_name_record = ApplicantName.objects.get(
+            personal_detail_id=personal_detail_id)
         applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                          current_address=True)
         applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                               childcare_address=True)
-        first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
-        dbs_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
-        hdb_record = HealthDeclarationBooklet.objects.get(application_id=application_id_local)
+        first_aid_record = FirstAidTraining.objects.get(
+            application_id=application_id_local)
+        dbs_record = CriminalRecordCheck.objects.get(
+            application_id=application_id_local)
+        hdb_record = HealthDeclarationBooklet.objects.get(
+            application_id=application_id_local)
         # eyfs_record = EYFS.objects.get(application_id=application_id_local)
-        first_reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
-        second_reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
+        first_reference_record = Reference.objects.get(
+            application_id=application_id_local, reference=1)
+        second_reference_record = Reference.objects.get(
+            application_id=application_id_local, reference=2)
         # Retrieve lists of adults and children, ordered by adult/child number for iteration by the HTML
-        adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
-        children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
+        adults_list = AdultInHome.objects.filter(
+            application_id=application_id_local).order_by('adult')
+        children_list = ChildInHome.objects.filter(
+            application_id=application_id_local).order_by('child')
         # Generate lists of data for adults in your home, to be iteratively displayed on the summary page
         # The HTML will then parse through each list simultaneously, to display the correct data for each adult
         adult_name_list = []
@@ -3431,7 +3559,8 @@ def declaration_summary(request):
             'turning_16': application.children_turning_16,
         }
         if application.declarations_status != 'COMPLETED':
-            status.update(application_id_local, 'declarations_status', 'NOT_STARTED')
+            status.update(application_id_local,
+                          'declarations_status', 'NOT_STARTED')
         return render(request, 'declaration-summary.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
@@ -3439,8 +3568,9 @@ def declaration_summary(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.declarations_status != 'COMPLETED':
-                status.update(application_id_local, 'declarations_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/declaration?id=' + application_id_local)
+                status.update(application_id_local,
+                              'declarations_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/declaration/declaration?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -3503,15 +3633,20 @@ def declaration_declaration(request):
         return render(request, 'declaration-declaration.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        application = Application.objects.get(application_id=application_id_local)
-        form = DeclarationDeclarationForm(request.POST, id=application_id_local)
-        form.error_summary_title = 'There was a problem with your declaration (I am happy for Ofsted to)'
-        form2 = DeclarationDeclarationForm2(request.POST, id=application_id_local)
-        form2.error_summary_title = 'There was a problem with your declaration (I declare that)'
+        application = Application.objects.get(
+            application_id=application_id_local)
+        form = DeclarationDeclarationForm(
+            request.POST, id=application_id_local)
+        form.error_summary_title = 'There is a problem with this form (I am happy for Ofsted to)'
+        form2 = DeclarationDeclarationForm2(
+            request.POST, id=application_id_local)
+        form2.error_summary_title = 'There is a problem with this form (I declare that)'
         # Validate both forms (sets of checkboxes)
         if form.is_valid():
-            background_check_declare = form.cleaned_data.get('background_check_declare')
-            inspect_home_declare = form.cleaned_data.get('inspect_home_declare')
+            background_check_declare = form.cleaned_data.get(
+                'background_check_declare')
+            inspect_home_declare = form.cleaned_data.get(
+                'inspect_home_declare')
             interview_declare = form.cleaned_data.get('interview_declare')
             share_info_declare = form.cleaned_data.get('share_info_declare')
             application.background_check_declare = background_check_declare
@@ -3522,12 +3657,14 @@ def declaration_declaration(request):
             application.date_updated = current_date
             application.save()
             if form2.is_valid():
-                information_correct_declare = form2.cleaned_data.get('information_correct_declare')
+                information_correct_declare = form2.cleaned_data.get(
+                    'information_correct_declare')
                 application.information_correct_declare = information_correct_declare
                 application.save()
                 application.date_updated = current_date
                 application.save()
-                status.update(application_id_local, 'declarations_status', 'COMPLETED')
+                status.update(application_id_local,
+                              'declarations_status', 'COMPLETED')
                 return HttpResponseRedirect(settings.URL_PREFIX + '/payment?id=' + application_id_local)
             else:
                 variables = {
@@ -3555,6 +3692,7 @@ def payment_selection(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         paid = Application.objects.get(pk=application_id_local).order_code
+        print(paid)
         if paid is None:
             form = PaymentForm()
             variables = {
@@ -3575,7 +3713,7 @@ def payment_selection(request):
             payment_method = form.cleaned_data['payment_method']
             application_url_base = settings.PUBLIC_APPLICATION_URL
             if payment_method == 'Credit':
-                return HttpResponseRedirect(settings.URL_PREFIX + '/payment/details/?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/payment-details/?id=' + application_id_local)
             elif payment_method == 'PayPal':
                 paypal_url = payment.make_paypal_payment("GB", 3500, "GBP", "Childminder Registration Fee",
                                                          application_id_local, application_url_base +
@@ -3641,10 +3779,12 @@ def card_payment_details(request):
                 application.date_submitted = datetime.datetime.today()
                 login_id = application.login_id.login_id
                 login_record = UserDetails.objects.get(pk=login_id)
-                personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=
-                                                                          application_id_local).personal_detail_id
-                applicant_name_record = ApplicantName.objects.get(personal_detail_id=personal_detail_id)
-                payment.payment_email(login_record.email, applicant_name_record.first_name)
+                personal_detail_id = ApplicantPersonalDetails.objects.get(
+                    application_id=application_id_local).personal_detail_id
+                applicant_name_record = ApplicantName.objects.get(
+                    personal_detail_id=personal_detail_id)
+                payment.payment_email(login_record.email,
+                                      applicant_name_record.first_name)
                 print('Email sent')
                 order_code = parsed_payment_response["orderCode"]
                 variables = {
@@ -3710,7 +3850,8 @@ def payment_confirmation(request):
                 'application_id': application_id_local,
                 'order_code': request.GET["orderCode"],
             }
-            local_app = Application.objects.get(application_id=application_id_local)
+            local_app = Application.objects.get(
+                application_id=application_id_local)
             local_app.application_status = 'SUBMITTED'
             local_app.save()
             return render(request, 'payment-confirmation.html', variables)
@@ -3721,131 +3862,6 @@ def payment_confirmation(request):
                 'application_id': application_id_local
             }
             return HttpResponseRedirect(settings.URL_PREFIX + '/payment/?id=' + application_id_local, variables)
-
-
-def documents_needed(request):
-    """
-    Method returning the template for the Documents you need for the visit page
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Documents you need for the visit template
-    """
-    if request.method == 'GET':
-        application_id_local = request.GET['id']
-        order_code = Application.objects.get(pk=application_id_local).order_code
-        form = DocumentsNeededForm()
-        variables = {
-            'application_id': application_id_local,
-            'order_code': order_code,
-            'form': form
-        }
-        return render(request, 'next-steps-documents.html', variables)
-
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = DocumentsNeededForm(request.POST)
-
-        if form.is_valid():
-            return HttpResponseRedirect(
-                settings.URL_PREFIX + '/next-steps/home?id=' + application_id_local)
-        else:
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'next-steps-documents.html', variables)
-
-
-def home_ready(request):
-    """
-    Method returning the template for the Get your home ready page
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Get your home ready template
-    """
-    if request.method == 'GET':
-        application_id_local = request.GET['id']
-        form = HomeReadyForm()
-        variables = {
-            'application_id': application_id_local,
-            'form': form
-        }
-        return render(request, 'next-steps-home.html', variables)
-
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = HomeReadyForm(request.POST)
-
-        if form.is_valid():
-            return HttpResponseRedirect(
-                settings.URL_PREFIX + '/next-steps/interview?id=' + application_id_local)
-        else:
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'next-steps-home.html', variables)
-
-
-def prepare_for_interview(request):
-    """
-    Method returning the template for the Prepare for your interview page
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Prepare for your interview template
-    """
-    if request.method == 'GET':
-
-        application_id_local = request.GET['id']
-        order_code = Application.objects.get(pk=application_id_local).order_code
-        form = PrepareForInterviewForm()
-        variables = {
-            'application_id': application_id_local,
-            'order_code': order_code,
-            'form': form
-        }
-        return render(request, 'next-steps-interview.html', variables)
-
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        order_code = Application.objects.get(pk=application_id_local).order_code
-        form = PrepareForInterviewForm(request.POST)
-
-        if form.is_valid():
-            return HttpResponseRedirect(
-                settings.URL_PREFIX + '/confirmation?id=' + application_id_local + '&orderCode=' + str(order_code))
-        else:
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'next-steps-interview.html', variables)
-
-
-def application_saved(request):
-    """
-    Method returning the template for the Application saved page (for a given application)
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Application saved template
-    """
-    if request.method == 'GET':
-        application_id_local = request.GET["id"]
-        form = ApplicationSavedForm()
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-        }
-        return render(request, 'application-saved.html', variables)
-
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = ApplicationSavedForm(request.POST)
-
-        if form.is_valid():
-            return HttpResponseRedirect(settings.URL_PREFIX + '/application-saved/?id=' + application_id_local)
-        else:
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'application-saved.html', variables)
 
 
 def awaiting_review(request):
@@ -3891,7 +3907,9 @@ def trigger_audit_log(application_id, status):
     mydata['date'] = str(datetime.datetime.today().strftime("%d/%m/%Y"))
     if AuditLog.objects.filter(application_id=application_id).count() == 1:
         log = AuditLog.objects.get(application_id=application_id)
-        log.audit_message = log.audit_message[:-1] + ',' + json.dumps(mydata) + ']'
+        log.audit_message = log.audit_message[:-
+                                              1] + ',' + json.dumps(mydata) + ']'
         log.save()
     else:
-        log = AuditLog.objects.create(application_id=application_id, audit_message='[' + json.dumps(mydata) + ']')
+        log = AuditLog.objects.create(
+            application_id=application_id, audit_message='[' + json.dumps(mydata) + ']')
