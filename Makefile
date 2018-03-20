@@ -40,7 +40,7 @@ load:
 	python manage.py loaddata db.json --settings=${PROJECT_SETTINGS}
 
 export:
-	python manage.py dumpdata --indent 2 --natural-foreign --natural-primary -e sessions -e admin -e contenttypes -e auth.Permission  > db.raw.json --settings=${PROJECT_SETTINGS}
+	python manage.py dumpdata --indent 2 --natural-foreign --natural-primary -e sessions -e admin -e contenttypes -e auth.Permission  > db.json --settings=${PROJECT_SETTINGS}
 
 flush:
 	python manage.py sqlflush --settings=${PROJECT_SETTINGS}
