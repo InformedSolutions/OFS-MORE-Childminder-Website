@@ -2195,7 +2195,7 @@ class DeclarationDeclarationForm(GOVUKForm):
     background_check_declare = forms.BooleanField(label='carry out background checks', required=True)
     inspect_home_declare = forms.BooleanField(label='inspect my home', required=True)
     interview_declare = forms.BooleanField(label='interview me', required=True)
-    share_info_declare = forms.BooleanField(label='ask me questions about the EYFS', required=True)
+    share_info_declare = forms.BooleanField(label='share information with other organisations', required=True)
 
     def __init__(self, *args, **kwargs):
         """
