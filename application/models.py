@@ -22,7 +22,6 @@ class AuditLog(models.Model):
     audit_message = JSONField(blank=True)
 
     class Meta:
-        managed = False
         db_table = 'AUDIT_LOG'
 
 
@@ -35,7 +34,6 @@ class ArcComments(models.Model):
     flagged = models.BooleanField()
 
     class Meta:
-        managed = False
         db_table = 'ARC_COMMENTS'
 
 
@@ -56,7 +54,6 @@ class Arc(models.Model):
     people_in_home_review = models.CharField(choices=TASK_STATUS, max_length=50)
 
     class Meta:
-        managed = False
         db_table = 'ARC'
 
 
