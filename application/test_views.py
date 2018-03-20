@@ -1326,37 +1326,37 @@ class PaymentTest(TestCase):
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + reverse('Next-Steps-Documents'))
+        found = resolve(reverse('Next-Steps-Documents'))
         self.assertEqual(found.func, documents_needed)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + reverse('Next-Steps-Documents') + '?id=')
+            c.get(reverse('Next-Steps-Documents') + '?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + reverse('Next-Steps-Home'))
+        found = resolve(reverse('Next-Steps-Home'))
         self.assertEqual(found.func, home_ready)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + reverse('Next-Steps-Home') + '?id=')
+            c.get(reverse('Next-Steps-Home') + '?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + reverse('Next-Steps-Interview'))
+        found = resolve(reverse('Next-Steps-Interview'))
         self.assertEqual(found.func, prepare_for_interview)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + reverse('Next-Steps-Interview') + '?id=')
+            c.get(reverse('Next-Steps-Interview') + '?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
