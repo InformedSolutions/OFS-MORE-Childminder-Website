@@ -9,4 +9,5 @@ django-timeline-logger
 django-google-analytics-app==4.2.0
 django-settings-export==1.2.1
 django-debug-toolbar
+selenium
 
