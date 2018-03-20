@@ -3745,9 +3745,11 @@ def documents_needed(request):
             'form': form
         }
         return render(request, 'next-steps-documents.html', variables)
+
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = DocumentsNeededForm(request.POST)
+
         if form.is_valid():
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/next-steps/home?id=' + application_id_local)
@@ -3773,9 +3775,11 @@ def home_ready(request):
             'form': form
         }
         return render(request, 'next-steps-home.html', variables)
+
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = HomeReadyForm(request.POST)
+
         if form.is_valid():
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/next-steps/interview?id=' + application_id_local)
@@ -3794,6 +3798,7 @@ def prepare_for_interview(request):
     :return: an HttpResponse object with the rendered Prepare for your interview template
     """
     if request.method == 'GET':
+
         application_id_local = request.GET['id']
         order_code = Application.objects.get(pk=application_id_local).order_code
         form = PrepareForInterviewForm()
@@ -3803,10 +3808,12 @@ def prepare_for_interview(request):
             'form': form
         }
         return render(request, 'next-steps-interview.html', variables)
+
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         order_code = Application.objects.get(pk=application_id_local).order_code
         form = PrepareForInterviewForm(request.POST)
+
         if form.is_valid():
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/confirmation?id=' + application_id_local + '&orderCode=' + str(order_code))
@@ -3832,9 +3839,11 @@ def application_saved(request):
             'application_id': application_id_local,
         }
         return render(request, 'application-saved.html', variables)
+
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = ApplicationSavedForm(request.POST)
+
         if form.is_valid():
             return HttpResponseRedirect(settings.URL_PREFIX + '/application-saved/?id=' + application_id_local)
         else:

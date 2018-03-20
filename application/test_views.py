@@ -10,7 +10,7 @@ import datetime
 from django.conf import settings
 from django.test import Client
 from django.test import TestCase
-from django.urls import resolve
+from django.urls import resolve, reverse
 from uuid import UUID
 
 from application import models
@@ -1326,37 +1326,37 @@ class PaymentTest(TestCase):
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/next-steps/documents/')
+        found = resolve(settings.URL_PREFIX + reverse('Next-Steps-Documents'))
         self.assertEqual(found.func, documents_needed)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/next-steps/documents?id=')
+            c.get(settings.URL_PREFIX + reverse('Next-Steps-Documents') + '?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/next-steps/home/')
+        found = resolve(settings.URL_PREFIX + reverse('Next-Steps-Home'))
         self.assertEqual(found.func, home_ready)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/next-steps/home?id=')
+            c.get(settings.URL_PREFIX + reverse('Next-Steps-Home') + '?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/next-steps/interview/')
+        found = resolve(settings.URL_PREFIX + reverse('Next-Steps-Interview'))
         self.assertEqual(found.func, prepare_for_interview)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/next-steps/interview?id=')
+            c.get(settings.URL_PREFIX + reverse('Next-Steps-Interview') + '?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
