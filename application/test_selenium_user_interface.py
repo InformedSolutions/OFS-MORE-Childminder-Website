@@ -1,26 +1,27 @@
+import random
+import string
+import unittest
+
 from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import Select
-from selenium.common.exceptions import NoSuchElementException
 from selenium.common.exceptions import NoAlertPresentException
-import unittest, time, re, random, string
+from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver.support.ui import Select
 
 
 class ApplyAsAChildminder(unittest.TestCase):
     def setUp(self):
-        self.driver = webdriver.Firefox(executable_path=r'C:\Users\geevesh\Downloads\geckodriver.exe')
+        self.driver = webdriver.Firefox(executable_path=r'R:\geckodriver.exe')
         self.driver.implicitly_wait(30)
-        self.base_url = "https://www.katalon.com/"
+        self.base_url = "http://beta:accept@build-lb-779835042.eu-west-2.elb.amazonaws.com/childminder/"
         self.verificationErrors = []
         self.accept_next_alert = True
 
     def test_apply_as_a_childminder(self):
         driver = self.driver
-        rand_string_1 = ''.join(random.choices(string.ascii_uppercase))
-        rand_string_2 = ''.join(random.choices(string.ascii_uppercase))
+        rand_string_1 = ''.join(random.choice(string.ascii_uppercase))
+        rand_string_2 = ''.join(random.choice(string.ascii_uppercase))
         email = rand_string_1 + "@" + rand_string_2 + ".com"
-        driver.get("http://127.0.0.1:8000/childminder")
+        driver.get(self.base_url)
         driver.find_element_by_xpath("//input[@value='Start now']").click()
         driver.find_element_by_xpath("//input[@value='Create my account']").click()
         driver.find_element_by_id("id_email_address").click()
@@ -177,11 +178,11 @@ class ApplyAsAChildminder(unittest.TestCase):
         driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
         driver.find_element_by_xpath("//tr[@id='review']/td/a/span").click()
         driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
         driver.find_element_by_id("id_background_check_declare-label").click()
         driver.find_element_by_id("id_inspect_home_declare-label").click()
         driver.find_element_by_xpath("//div[@id='id_interview_declare-group']/div").click()
         driver.find_element_by_id("id_interview_declare-label").click()
-        #driver.find_element_by_xpath("//main[@id='content']/div[2]/div[2]/form/h3[2]").click()
         driver.find_element_by_id("id_share_info_declare-label").click()
         driver.find_element_by_id("id_information_correct_declare-label").click()
         driver.find_element_by_xpath("//input[@value='Confirm and pay your fee']").click()
