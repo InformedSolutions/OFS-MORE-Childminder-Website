@@ -9,3 +9,4 @@ from .payment_selection import *
 from .personal_details_home_address_manual import *
 from .contact_question import *
 from .contact_email import *
+from .declaration_declaration import *
