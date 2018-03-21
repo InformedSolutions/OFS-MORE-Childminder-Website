@@ -2,7 +2,6 @@
 Method returning the template for the Declaration page (for a given application) and navigating to
 the task list when successfully completed
 """
-
 from datetime import datetime
 
 from django.http import HttpResponseRedirect
@@ -20,14 +19,14 @@ def declaration_declaration(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Declaration template
     """
+
     current_date = datetime.today()
 
     if request.method == 'GET':
-
         app_id = request.GET["id"]
         form = DeclarationDeclarationForm(id=app_id)
         form2 = DeclarationDeclarationForm2(id=app_id)
-        application = Application.objects.get(pk=app_id)
+        application = Application.get_id(app_id=app_id)
         variables = {
             'form': form,
             'form2': form2,
@@ -39,7 +38,7 @@ def declaration_declaration(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
-        application = Application.objects.get(application_id=app_id)
+        application = Application.get_id(app_id=app_id)
         form = DeclarationDeclarationForm(request.POST, id=app_id)
         form.error_summary_title = 'There is a problem with this form (I am happy for Ofsted to)'
         form2 = DeclarationDeclarationForm2(request.POST, id=app_id)
@@ -63,7 +62,6 @@ def declaration_declaration(request):
             application.save()
 
             if form2.is_valid():
-
                 information_correct_declare = form2.cleaned_data.get(
                     'information_correct_declare')
                 application.information_correct_declare = information_correct_declare
@@ -73,11 +71,11 @@ def declaration_declaration(request):
                 status.update(app_id,
                               'declarations_status', 'COMPLETED')
                 return HttpResponseRedirect(reverse('Payment-View') + '?id=' + app_id)
+        else:
+            variables = {
+                'form': form,
+                'form2': form2,
+                'application_id': app_id
+            }
 
-    variables = {
-        'form': form,
-        'form2': form2,
-        'application_id': app_id
-    }
-
-    return render(request, 'declaration-declaration.html', variables)
+            return render(request, 'declaration-declaration.html', variables)

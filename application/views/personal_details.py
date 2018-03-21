@@ -40,7 +40,7 @@ def personal_details_guidance(request):
     if request.method == 'GET':
         app_id = request.GET["id"]
         form = PersonalDetailsGuidanceForm()
-        application = Application.objects.get(pk=app_id)
+        application = Application.get_id(app_id=app_id)
         variables = {
             'form': form,
             'application_id': app_id,
@@ -55,7 +55,7 @@ def personal_details_guidance(request):
         form = PersonalDetailsGuidanceForm(request.POST)
 
         if form.is_valid():
-            if Application.objects.get(pk=app_id).personal_details_status != 'COMPLETED':
+            if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                 status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
             return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/your-name?id=' + app_id)
@@ -87,7 +87,7 @@ def personal_details_name(request):
         app_id = request.GET["id"]
         form = PersonalDetailsNameForm(id=app_id)
         form.check_flag()
-        application = Application.objects.get(pk=app_id)
+        application = Application.get_id(app_id=app_id)
         variables = {
             'form': form,
             'application_id': app_id,
@@ -101,7 +101,7 @@ def personal_details_name(request):
         app_id = request.POST["id"]
         form = PersonalDetailsNameForm(request.POST, id=app_id)
         form.remove_flag()
-        application = Application.objects.get(pk=app_id)
+        application = Application.get_id(app_id=app_id)
 
         if form.is_valid():
             if application.personal_details_status != 'COMPLETED':
@@ -142,11 +142,10 @@ def personal_details_dob(request):
     current_date = datetime.datetime.today()
 
     if request.method == 'GET':
-
         app_id = request.GET["id"]
         form = PersonalDetailsDOBForm(id=app_id)
         form.check_flag()
-        application = Application.objects.get(pk=app_id)
+        application = Application.get_id(app_id=app_id)
         variables = {
             'form': form,
             'application_id': app_id,
@@ -160,7 +159,8 @@ def personal_details_dob(request):
         app_id = request.POST["id"]
         form = PersonalDetailsDOBForm(request.POST, id=app_id)
         form.remove_flag()
-        application = Application.objects.get(pk=app_id)
+        application = Application.get_id(app_id=app_id)
+
         if form.is_valid():
             if application.personal_details_status != 'COMPLETED':
                 status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
@@ -168,7 +168,7 @@ def personal_details_dob(request):
             # Update Applicant_Personal_Details record
             personal_details_record = personal_dob_logic(app_id, form)
             personal_details_record.save()
-            application = Application.objects.get(pk=app_id)
+            application = Application.get_id(app_id=app_id)
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
@@ -202,9 +202,8 @@ def personal_details_home_address(request):
     current_date = datetime.datetime.today()
 
     if request.method == 'GET':
-
         app_id = request.GET["id"]
-        application = Application.objects.get(pk=app_id)
+        application = Application.get_id(app_id=app_id)
         form = PersonalDetailsHomeAddressForm(id=app_id)
         variables = {
             'form': form,
@@ -217,12 +216,12 @@ def personal_details_home_address(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
-        application = Application.objects.get(pk=app_id)
+        application = Application.get_id(app_id=app_id)
         form = PersonalDetailsHomeAddressForm(request.POST, id=app_id)
         if form.is_valid():
 
             postcode = form.cleaned_data.get('postcode')
-            applicant = ApplicantPersonalDetails.objects.get(application_id=app_id)
+            applicant = ApplicantPersonalDetails.get_id(app_id=app_id)
             if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant,
                                                    current_address=True).count() == 0:
 
@@ -247,7 +246,7 @@ def personal_details_home_address(request):
                 home_address_record.postcode = postcode
                 home_address_record.save()
 
-            application = Application.objects.get(pk=app_id)
+            application = Application.get_id(app_id=app_id)
             application.date_updated = current_date
             application.save()
 
@@ -288,8 +287,8 @@ def personal_details_home_address_select(request):
     if request.method == 'GET':
 
         app_id = request.GET["id"]
-        application = Application.objects.get(pk=app_id)
-        applicant = ApplicantPersonalDetails.objects.get(application_id=app_id)
+        application = Application.get_id(app_id=app_id)
+        applicant = ApplicantPersonalDetails.get_id(app_id=app_id)
         home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, current_address=True)
         postcode = home_address_record.postcode
         addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
@@ -318,8 +317,8 @@ def personal_details_home_address_select(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
-        application = Application.objects.get(pk=app_id)
-        applicant = ApplicantPersonalDetails.objects.get(application_id=app_id)
+        application = Application.get_id(app_id=app_id)
+        applicant = ApplicantPersonalDetails.get_id(app_id=app_id)
         home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant, current_address=True)
         postcode = home_address_record.postcode
         addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
@@ -332,7 +331,7 @@ def personal_details_home_address_select(request):
             line2 = selected_address['line2']
             town = selected_address['townOrCity']
             postcode = selected_address['postcode']
-            personal_detail_record = ApplicantPersonalDetails.objects.get(application_id=app_id)
+            personal_detail_record = ApplicantPersonalDetails.get_id(app_id=app_id)
             personal_detail_id = personal_detail_record.personal_detail_id
 
             # If the user entered information for this task for the first time
@@ -363,12 +362,11 @@ def personal_details_home_address_select(request):
                 home_address_record.town = town
                 home_address_record.postcode = postcode
                 home_address_record.save()
-            application = Application.objects.get(pk=app_id)
+            application = Application.get_id(app_id=app_id)
             application.date_updated = current_date
             application.save()
 
-            if Application.objects.get(pk=app_id).personal_details_status != 'COMPLETED':
-
+            if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                 status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address-details?id=' +
                                         app_id)
@@ -383,10 +381,12 @@ def personal_details_home_address_select(request):
 
             return render(request, 'personal-details-home-address-lookup.html', variables)
 
+
 """
 Method returning the template for the Your personal details: location of care page (for a given application)
 and navigating to the Your personal details: childcare or summary page when successfully completed;
 """
+
 
 def personal_details_location_of_care(request):
     """
@@ -410,11 +410,11 @@ def personal_details_location_of_care(request):
         town = applicant_home_address.town
         county = applicant_home_address.county
         postcode = applicant_home_address.postcode
-        application = Application.objects.get(pk=app_id)
+        application = Application.get_id(app_id=app_id)
 
         if application.login_details_status != 'COMPLETED':
-
             status.update(app_id, 'login_details_status', 'COMPLETED')
+
         form = PersonalDetailsLocationOfCareForm(id=app_id)
         form.check_flag()
         variables = {
@@ -430,6 +430,7 @@ def personal_details_location_of_care(request):
         return render(request, 'personal-details-location-of-care.html', variables)
 
     if request.method == 'POST':
+
         app_id = request.POST["id"]
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=app_id).personal_detail_id
@@ -443,7 +444,7 @@ def personal_details_location_of_care(request):
             # Update home address record
             home_address_record = personal_location_of_care_logic(app_id, form)
             home_address_record.save()
-            application = Application.objects.get(pk=app_id)
+            application = Application.get_id(app_id=app_id)
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
@@ -468,10 +469,13 @@ def personal_details_location_of_care(request):
 
             return render(request, 'personal-details-location-of-care.html', variables)
 
+
 """
 Method returning the template for the Your personal details: childcare address page (for a given application)
 and navigating to the Your personal details: summary page when successfully completed;
 """
+
+
 def personal_details_childcare_address(request):
     """
     :param request: a request object used to generate the HttpResponse
@@ -481,9 +485,8 @@ def personal_details_childcare_address(request):
     current_date = datetime.datetime.today()
 
     if request.method == 'GET':
-
         app_id = request.GET["id"]
-        application = Application.objects.get(pk=app_id)
+        application = Application.get_id(app_id=app_id)
         form = PersonalDetailsChildcareAddressForm(id=app_id)
         variables = {
             'form': form,
@@ -495,12 +498,14 @@ def personal_details_childcare_address(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
-        application = Application.objects.get(pk=app_id)
+        application = Application.get_id(app_id=app_id)
         form = PersonalDetailsChildcareAddressForm(request.POST, id=app_id)
+
         if form.is_valid():
 
             postcode = form.cleaned_data.get('postcode')
-            applicant = ApplicantPersonalDetails.objects.get(application_id=app_id)
+            applicant = ApplicantPersonalDetails.get_id(app_id=app_id)
+
             if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
                                                    current_address=False).count() == 0:
 
@@ -525,7 +530,7 @@ def personal_details_childcare_address(request):
                                                                             current_address=False)
                 childcare_address_record.postcode = postcode
                 childcare_address_record.save()
-            application = Application.objects.get(pk=app_id)
+            application = Application.get_id(app_id=app_id)
             application.date_updated = current_date
             application.save()
 
@@ -547,6 +552,7 @@ def personal_details_childcare_address(request):
 
             return render(request, 'personal-details-childcare-address.html', variables)
 
+
 """
 Method returning the template for the Your personal details: select childcare address page (for a given
 application) and navigating to the Your personal details: location of care page when successfully completed;
@@ -565,15 +571,14 @@ def personal_details_childcare_address_select(request):
     if request.method == 'GET':
 
         app_id = request.GET["id"]
-        application = Application.objects.get(pk=app_id)
-        applicant = ApplicantPersonalDetails.objects.get(application_id=app_id)
+        application = Application.get_id(app_id=app_id)
+        applicant = ApplicantPersonalDetails.get_id(app_id=app_id)
         childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
                                                                     childcare_address=True)
         postcode = childcare_address_record.postcode
         addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
 
         if len(addresses) != 0:
-
             form = PersonalDetailsChildcareAddressLookupForm(id=app_id, choices=addresses)
             variables = {
                 'form': form,
@@ -596,8 +601,8 @@ def personal_details_childcare_address_select(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
-        application = Application.objects.get(pk=app_id)
-        applicant = ApplicantPersonalDetails.objects.get(application_id=app_id)
+        application = Application.get_id(app_id=app_id)
+        applicant = ApplicantPersonalDetails.get_id(app_id=app_id)
         childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
                                                                     childcare_address=True)
         postcode = childcare_address_record.postcode
@@ -631,6 +636,7 @@ def personal_details_childcare_address_select(request):
                                                                 move_in_year=0,
                                                                 personal_detail_id=personal_detail_record)
                 childcare_address_record.save()
+
             # If the user previously entered information for this task
             elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
                                                      childcare_address=True).count() > 0:
@@ -643,11 +649,11 @@ def personal_details_childcare_address_select(request):
                 childcare_address_record.town = town
                 childcare_address_record.postcode = postcode
                 childcare_address_record.save()
-            application = Application.objects.get(pk=app_id)
+            application = Application.get_id(app_id=app_id)
             application.date_updated = current_date
             application.save()
 
-            if Application.objects.get(pk=app_id).personal_details_status != 'COMPLETED':
+            if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                 status.update(app_id,
                               'personal_details_status', 'IN_PROGRESS')
 
@@ -672,10 +678,12 @@ def personal_details_childcare_address_manual(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your personal details: childcare template
     """
+
     current_date = datetime.datetime.today()
+
     if request.method == 'GET':
         app_id = request.GET["id"]
-        application = Application.objects.get(pk=app_id)
+        application = Application.get_id(app_id=app_id)
         form = PersonalDetailsChildcareAddressManualForm(id=app_id)
         form.check_flag()
         variables = {
@@ -685,11 +693,14 @@ def personal_details_childcare_address_manual(request):
         }
         return render(request, 'personal-details-childcare-address-manual.html', variables)
     if request.method == 'POST':
+
         app_id = request.POST["id"]
-        application = Application.objects.get(pk=app_id)
+        application = Application.get_id(app_id=app_id)
         form = PersonalDetailsChildcareAddressManualForm(request.POST, id=app_id)
         form.remove_flag()
+
         if form.is_valid():
+
             street_line1 = form.cleaned_data.get('street_name_and_number')
             street_line2 = form.cleaned_data.get('street_name_and_number2')
             town = form.cleaned_data.get('town')
@@ -697,6 +708,7 @@ def personal_details_childcare_address_manual(request):
             postcode = form.cleaned_data.get('postcode')
             applicant = ApplicantPersonalDetails.objects.get(
                 application_id=app_id)
+
             if ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
                                                    current_address=False).count() == 0:
                 childcare_address_record = ApplicantHomeAddress(street_line1=street_line1,
@@ -710,6 +722,7 @@ def personal_details_childcare_address_manual(request):
                                                                 move_in_year=0,
                                                                 personal_detail_id=applicant)
                 childcare_address_record.save()
+
             elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
                                                      current_address=False).count() > 0:
                 childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
@@ -721,16 +734,19 @@ def personal_details_childcare_address_manual(request):
                 childcare_address_record.county = county
                 childcare_address_record.postcode = postcode
                 childcare_address_record.save()
-            application = Application.objects.get(pk=app_id)
+            application = Application.get_id(app_id=app_id)
             application.date_updated = current_date
             application.save()
-            if Application.objects.get(pk=app_id).personal_details_status != 'COMPLETED':
+
+            if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                 status.update(app_id,
                               'personal_details_status', 'IN_PROGRESS')
             reset_declaration(application)
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/personal-details/check-answers?id=' + app_id)
+
         else:
+
             form.error_summary_title = 'There was a problem with your address'
             variables = {
                 'form': form,
@@ -747,15 +763,18 @@ def personal_details_summary(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your personal details: summary template
     """
+
     if request.method == 'GET':
         app_id = request.GET["id"]
-        personal_detail_id = ApplicantPersonalDetails.objects.get(
-            application_id=app_id)
+        # Move to models
+
+        personal_detail_id = ApplicantPersonalDetails.get_id(
+            app_id=app_id)
         birth_day = personal_detail_id.birth_day
         birth_month = personal_detail_id.birth_month
         birth_year = personal_detail_id.birth_year
-        applicant_name_record = ApplicantName.objects.get(
-            personal_detail_id=personal_detail_id)
+        applicant_name_record = ApplicantName.get_id(
+            app_id=app_id)
         first_name = applicant_name_record.first_name
         middle_names = applicant_name_record.middle_names
         last_name = applicant_name_record.last_name
@@ -774,8 +793,11 @@ def personal_details_summary(request):
         childcare_town = applicant_childcare_address_record.town
         childcare_county = applicant_childcare_address_record.county
         childcare_postcode = applicant_childcare_address_record.postcode
+
+        ##
+
         form = PersonalDetailsSummaryForm()
-        application = Application.objects.get(pk=app_id)
+        application = Application.get_id(app_id=app_id)
         status.update(app_id,
                       'personal_details_status', 'COMPLETED')
         variables = {
@@ -801,13 +823,17 @@ def personal_details_summary(request):
             'personal_details_status': application.personal_details_status
         }
         return render(request, 'personal-details-summary.html', variables)
+
     if request.method == 'POST':
+
         app_id = request.POST["id"]
         form = PersonalDetailsSummaryForm()
+
         if form.is_valid():
             status.update(app_id,
                           'personal_details_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + app_id)
+
         else:
             variables = {
                 'form': form,

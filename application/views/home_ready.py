@@ -6,6 +6,7 @@ from django.shortcuts import render
 
 from ..forms import HomeReadyForm
 
+
 def home_ready(request):
     """
     :param request: a request object used to generate the HttpResponse
@@ -21,16 +22,17 @@ def home_ready(request):
         return render(request, 'next-steps-home.html', variables)
 
     if request.method == 'POST':
+
         application_id_local = request.POST["id"]
         form = HomeReadyForm(request.POST)
 
         if form.is_valid():
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/next-steps/interview?id=' + application_id_local)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
 
-    variables = {
-        'form': form,
-        'application_id': application_id_local
-    }
-
-    return render(request, 'next-steps-home.html', variables)
+            return render(request, 'next-steps-home.html', variables)

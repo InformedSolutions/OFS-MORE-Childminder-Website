@@ -29,7 +29,6 @@ def contact_email(request):
     current_date = datetime.today()
 
     if request.method == 'GET':
-
         app_id = request.GET["id"]
         form = ContactEmailForm(id=app_id)
         form.check_flag()
@@ -94,6 +93,7 @@ def contact_email(request):
             }
 
             return render(request, 'contact-email.html', variables)
+
 
 """
 Method returning the template for the Your login and contact details: phone number page (for a given application)
