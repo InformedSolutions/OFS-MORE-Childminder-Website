@@ -7,11 +7,11 @@ of a new application
 
 import datetime
 
-from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.core.urlresolvers import reverse
 
-from timeline_logger.models import TimelineLog
+# from timeline_logger.models import TimelineLog
 
 from .base import trigger_audit_log
 from ..models import Application, UserDetails
@@ -44,17 +44,24 @@ def account_selection(request):
             date_accepted=None,
             order_code=None
         )
+
         application_id_local = str(application.application_id)
+
         trigger_audit_log(application_id_local, 'CREATED')
-        TimelineLog.objects.create(
-            content_object=application,
-            user=None
-        )
-        return HttpResponseRedirect(settings.URL_PREFIX +
-                                    '/account/email?id=' + application_id_local)
+
+        #TimelineLog.objects.create(
+        #    content_object=application,
+        #    user=None,
+        #    template='timeline_logger/application_action.txt',
+        #    extra_data={'user_type': 'applicant', 'action': 'drafted'}
+        #)
+
+        return HttpResponseRedirect(
+            reverse('Contact-Email-View') + '?id=' + application_id_local)
 
     form = AccountForm()
     variables = {
         'form': form
     }
+
     return render(request, 'account-account.html', variables)

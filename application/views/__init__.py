@@ -12,3 +12,4 @@ from .contact_info import *
 from .declaration_declaration import *
 from .childcare_type import *
 from .personal_details import *
+from .card_payment_details import *
