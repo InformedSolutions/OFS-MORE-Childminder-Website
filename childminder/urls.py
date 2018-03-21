@@ -103,7 +103,7 @@ urlpatterns = [
     url(r'^existing-application/', magic_link.existing_application, name='Existing-Application'),
     url(r'^validate/(?P<id>[\w-]+)/$', magic_link.validate_magic_link),
     url(r'^verify-phone/', magic_link.sms_verification),
-    url(r'^email-sent/', TemplateView.as_view(template_name='email-sent.html')),
+    url(r'^email-sent/', TemplateView.as_view(template_name='email-sent.html'), name='Email-Sent-Template'),
     url(r'^start/', views.start_page),
     url(r'^confirmation/', views.payment_confirmation, name='Payment-Confirmation'),
     url(r'^next-steps/documents/', views.documents_needed, name='Next-Steps-Documents'),
