@@ -1,0 +1,4 @@
+{% load i18n %}
+{% blocktrans trimmed with action=log.extra_data.action %}
+   Application has been {{ action }}
+{% endblocktrans %}

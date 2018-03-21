@@ -1,4 +1,0 @@
-{% load i18n %}
-{% blocktrans trimmed with timestamp=log.timestamp user=log.user|default:_('Anonymous user') object=log.content_object extra=log.exta_data|safe %}
-   {{ timestamp }} - {{ user }} purchased item "{{ object }}", using payment method "{{ extra.invoice.method }}", for a total price of {{ extra.invoice.total }} €.
-{% endblocktrans %}
