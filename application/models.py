@@ -22,6 +22,7 @@ class AuditLog(models.Model):
     application_id = models.UUIDField(primary_key=True, default=uuid4)
     audit_message = JSONField(blank=True)
 
+    @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
 
@@ -37,6 +38,7 @@ class ArcComments(models.Model):
     comment = models.CharField(max_length=100, blank=True)
     flagged = models.BooleanField()
 
+    @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
 
@@ -60,6 +62,7 @@ class Arc(models.Model):
     references_review = models.CharField(choices=TASK_STATUS, max_length=50)
     people_in_home_review = models.CharField(choices=TASK_STATUS, max_length=50)
 
+    @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
 
@@ -82,6 +85,7 @@ class UserDetails(models.Model):
     security_question = models.CharField(max_length=100, blank=True, null=True)
     security_answer = models.CharField(max_length=100, blank=True, null=True)
 
+    @classmethod
     def get_id(cls, app_id):
         login_id = Application.get_id(app_id).login_id
         return cls.objects.get(pk=login_id)
@@ -166,6 +170,7 @@ class ChildcareType(models.Model):
     five_to_eight = models.BooleanField()
     eight_plus = models.BooleanField()
 
+    @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
 
@@ -183,6 +188,7 @@ class ApplicantPersonalDetails(models.Model):
     birth_month = models.IntegerField(blank=True, null=True)
     birth_year = models.IntegerField(blank=True, null=True)
 
+    @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
 
@@ -202,6 +208,7 @@ class ApplicantName(models.Model):
     middle_names = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
 
+    @classmethod
     def get_id(cls, app_id):
         personal_detail_id = ApplicantPersonalDetails.get_id(app_id)
         return cls.objects.get(personal_detail_id=personal_detail_id)
@@ -228,6 +235,7 @@ class ApplicantHomeAddress(models.Model):
     move_in_month = models.IntegerField(blank=True)
     move_in_year = models.IntegerField(blank=True)
 
+    @classmethod
     def get_id(cls, app_id):
         personal_detail_id = ApplicantPersonalDetails.get_id(app_id)
         return cls.objects.get(personal_detail_id=personal_detail_id)
@@ -250,6 +258,7 @@ class FirstAidTraining(models.Model):
     show_certificate = models.NullBooleanField(blank=True, null=True, default=None)
     renew_certificate = models.NullBooleanField(blank=True, null=True, default=None)
 
+    @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
 
@@ -267,6 +276,7 @@ class EYFS(models.Model):
     eyfs_training_declare = models.NullBooleanField(blank=True, null=True, default=None)
     share_info_declare = models.NullBooleanField(blank=True, null=True, default=None)
 
+    @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
 
@@ -284,6 +294,7 @@ class CriminalRecordCheck(models.Model):
     cautions_convictions = models.BooleanField(blank=True)
     send_certificate_declare = models.NullBooleanField(blank=True)
 
+    @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
 
@@ -299,6 +310,7 @@ class HealthDeclarationBooklet(models.Model):
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     send_hdb_declare = models.NullBooleanField(blank=True)
 
+    @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
 
@@ -327,6 +339,7 @@ class Reference(models.Model):
     phone_number = models.CharField(max_length=50, blank=True)
     email = models.CharField(max_length=100, blank=True)
 
+    @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
 
@@ -351,6 +364,7 @@ class AdultInHome(models.Model):
     dbs_certificate_number = models.CharField(max_length=50, blank=True)
     permission_declare = models.NullBooleanField(blank=True)
 
+    @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
 
@@ -373,6 +387,7 @@ class ChildInHome(models.Model):
     birth_year = models.IntegerField(blank=True)
     relationship = models.CharField(max_length=100, blank=True)
 
+    @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
 
