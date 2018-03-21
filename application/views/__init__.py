@@ -8,5 +8,7 @@ from .prepare_for_interview import *
 from .payment_selection import *
 from .personal_details_home_address_manual import *
 from .contact_question import *
-from .contact_email import *
+from .contact_info import *
 from .declaration_declaration import *
+from .childcare_type import *
+from .personal_details import *

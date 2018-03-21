@@ -17,9 +17,13 @@ TASK_STATUS = (
     ('COMPLETE', 'COMPLETE')
 )
 
+
 class AuditLog(models.Model):
     application_id = models.UUIDField(primary_key=True, default=uuid4)
     audit_message = JSONField(blank=True)
+
+    def get_id(cls, app_id):
+        return cls.objects.get(application_id=app_id)
 
     class Meta:
         db_table = 'AUDIT_LOG'
@@ -32,6 +36,9 @@ class ArcComments(models.Model):
     field_name = models.CharField(max_length=30, blank=True)
     comment = models.CharField(max_length=100, blank=True)
     flagged = models.BooleanField()
+
+    def get_id(cls, app_id):
+        return cls.objects.get(application_id=app_id)
 
     class Meta:
         db_table = 'ARC_COMMENTS'
@@ -53,6 +60,9 @@ class Arc(models.Model):
     references_review = models.CharField(choices=TASK_STATUS, max_length=50)
     people_in_home_review = models.CharField(choices=TASK_STATUS, max_length=50)
 
+    def get_id(cls, app_id):
+        return cls.objects.get(application_id=app_id)
+
     class Meta:
         db_table = 'ARC'
 
@@ -71,6 +81,10 @@ class UserDetails(models.Model):
     magic_link_sms = models.CharField(max_length=100, blank=True, null=True)
     security_question = models.CharField(max_length=100, blank=True, null=True)
     security_answer = models.CharField(max_length=100, blank=True, null=True)
+
+    def get_id(cls, app_id):
+        login_id = Application.get_id(app_id).login_id
+        return cls.objects.get(pk=login_id)
 
     class Meta:
         db_table = 'USER_DETAILS'
@@ -134,6 +148,10 @@ class Application(models.Model):
     order_code = models.UUIDField(blank=True, null=True)
     date_submitted = models.DateTimeField(blank=True, null=True)
 
+    @classmethod
+    def get_id(cls, app_id):
+        return cls.objects.get(pk=app_id)
+
     class Meta:
         db_table = 'APPLICATION'
 
@@ -148,6 +166,9 @@ class ChildcareType(models.Model):
     five_to_eight = models.BooleanField()
     eight_plus = models.BooleanField()
 
+    def get_id(cls, app_id):
+        return cls.objects.get(application_id=app_id)
+
     class Meta:
         db_table = 'CHILDCARE_TYPE'
 
@@ -161,6 +182,9 @@ class ApplicantPersonalDetails(models.Model):
     birth_day = models.IntegerField(blank=True, null=True)
     birth_month = models.IntegerField(blank=True, null=True)
     birth_year = models.IntegerField(blank=True, null=True)
+
+    def get_id(cls, app_id):
+        return cls.objects.get(application_id=app_id)
 
     class Meta:
         db_table = 'APPLICANT_PERSONAL_DETAILS'
@@ -177,6 +201,10 @@ class ApplicantName(models.Model):
     first_name = models.CharField(max_length=100, blank=True)
     middle_names = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
+
+    def get_id(cls, app_id):
+        personal_detail_id = ApplicantPersonalDetails.get_id(app_id)
+        return cls.objects.get(personal_detail_id=personal_detail_id)
 
     class Meta:
         db_table = 'APPLICANT_NAME'
@@ -200,6 +228,10 @@ class ApplicantHomeAddress(models.Model):
     move_in_month = models.IntegerField(blank=True)
     move_in_year = models.IntegerField(blank=True)
 
+    def get_id(cls, app_id):
+        personal_detail_id = ApplicantPersonalDetails.get_id(app_id)
+        return cls.objects.get(personal_detail_id=personal_detail_id)
+
     class Meta:
         db_table = 'APPLICANT_HOME_ADDRESS'
 
@@ -218,6 +250,9 @@ class FirstAidTraining(models.Model):
     show_certificate = models.NullBooleanField(blank=True, null=True, default=None)
     renew_certificate = models.NullBooleanField(blank=True, null=True, default=None)
 
+    def get_id(cls, app_id):
+        return cls.objects.get(application_id=app_id)
+
     class Meta:
         db_table = 'FIRST_AID_TRAINING'
 
@@ -231,6 +266,9 @@ class EYFS(models.Model):
     eyfs_understand = models.NullBooleanField(blank=True, null=True, default=None)
     eyfs_training_declare = models.NullBooleanField(blank=True, null=True, default=None)
     share_info_declare = models.NullBooleanField(blank=True, null=True, default=None)
+
+    def get_id(cls, app_id):
+        return cls.objects.get(application_id=app_id)
 
     class Meta:
         db_table = 'EYFS'
@@ -246,6 +284,9 @@ class CriminalRecordCheck(models.Model):
     cautions_convictions = models.BooleanField(blank=True)
     send_certificate_declare = models.NullBooleanField(blank=True)
 
+    def get_id(cls, app_id):
+        return cls.objects.get(application_id=app_id)
+
     class Meta:
         db_table = 'CRIMINAL_RECORD_CHECK'
 
@@ -257,6 +298,9 @@ class HealthDeclarationBooklet(models.Model):
     hdb_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     send_hdb_declare = models.NullBooleanField(blank=True)
+
+    def get_id(cls, app_id):
+        return cls.objects.get(application_id=app_id)
 
     class Meta:
         db_table = 'HDB'
@@ -283,6 +327,9 @@ class Reference(models.Model):
     phone_number = models.CharField(max_length=50, blank=True)
     email = models.CharField(max_length=100, blank=True)
 
+    def get_id(cls, app_id):
+        return cls.objects.get(application_id=app_id)
+
     class Meta:
         db_table = 'REFERENCE'
 
@@ -304,6 +351,9 @@ class AdultInHome(models.Model):
     dbs_certificate_number = models.CharField(max_length=50, blank=True)
     permission_declare = models.NullBooleanField(blank=True)
 
+    def get_id(cls, app_id):
+        return cls.objects.get(application_id=app_id)
+
     class Meta:
         db_table = 'ADULT_IN_HOME'
 
@@ -322,6 +372,9 @@ class ChildInHome(models.Model):
     birth_month = models.IntegerField(blank=True)
     birth_year = models.IntegerField(blank=True)
     relationship = models.CharField(max_length=100, blank=True)
+
+    def get_id(cls, app_id):
+        return cls.objects.get(application_id=app_id)
 
     class Meta:
         db_table = 'CHILD_IN_HOME'
