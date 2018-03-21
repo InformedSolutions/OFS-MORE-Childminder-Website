@@ -5,7 +5,7 @@ Functional tests for views
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 
-from .models import Application
+from .models import Application, UserDetails
 
 
 class CreateTestNewApplicationSubmit(TestCase):
@@ -14,31 +14,51 @@ class CreateTestNewApplicationSubmit(TestCase):
     def setUp(cls):
         cls.client = Client()
         cls.application_id = None
+        cls.app_id = None
         cls.order_id = None
 
     def TestAppInit(self):
         r = self.client.post(reverse('Account-View'))
         location = r.get('Location')
+
         self.application_id = location.split('=')[-1]
+        self.app_id = location.split('=')[-1]
+
         self.assertEqual(r.status_code, 302)
 
+        self.assertTrue(
+            Application.objects.get(
+                pk=self.app_id
+            ).application_status == "DRAFTING"
+        )
+
     def TestAppEmail(self):
-        # Submit email
+        """Submit email"""
+
+        email = 'omelette.du.fromage@gmail.com'
+
         r = self.client.post(
             reverse('Contact-Email-View'),
             {
                 'id': self.application_id,
-                'email_address': 'omelette.du.fromage@gmail.com'
+                'email_address': email
             }
         )
+
+        #print(UserDetails.get_id(app_id=self.app_id).login_id)
+
         self.assertEqual(r.status_code, 302)
+        #self.assertTrue(
+        #    UserDetails.get_id(app_id=self.app_id).email == email
+        #)
 
     def TestAppPhone(self):
         r = self.client.post(
             reverse('Contact-Phone-View'),
             {
                 'id': self.application_id,
-                'mobile_number': '07783446526'
+                'mobile_number': '07783446526',
+                'add_phone_number': ''
             }
         )
         self.assertEqual(r.status_code, 302)
@@ -53,6 +73,13 @@ class CreateTestNewApplicationSubmit(TestCase):
             }
         )
         self.assertEqual(r.status_code, 302)
+
+        print(Application.objects.get(pk=self.app_id).login_details_status)
+
+        self.assertTrue(
+            Application.objects.get(pk=self.app_id).login_details_status == "COMPLETED"
+        )
+
 
     def TestAppPersonalDetailsNames(self):
         r = self.client.post(
@@ -342,7 +369,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestAppPaymentMethod()
         self.TestAppPaymentCreditDetails()
         self.TestAppPaymentConfirmation()
-        pass
 
     def test_new_application_submit(self):
         """
@@ -350,6 +376,8 @@ class CreateTestNewApplicationSubmit(TestCase):
         """
         self.TestNewApplicationSubmit()
         self.assertTrue(Application.objects.filter(application_id=self.application_id).exists())
+        #print(Application.objects.values_list(flat=True).filter(pk=self.application_id).values())
+
         self.assertTrue(Application.objects.get(application_id=self.application_id).application_status == "SUBMITTED")
 
     def test_new_application_submit_log(self):
