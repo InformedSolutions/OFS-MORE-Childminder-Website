@@ -2,7 +2,7 @@ import datetime
 import json
 import re
 from uuid import UUID
-
+from ..utils import trigger_audit_log
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render

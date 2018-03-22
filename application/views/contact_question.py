@@ -7,6 +7,7 @@ and contact details: summary page when successfully completed
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
+from uuid import UUID
 
 from ..forms import QuestionForm
 from ..models import Application, UserDetails
@@ -40,21 +41,23 @@ def contact_question(request):
         form = QuestionForm(request.POST, id=app_id)
         form.remove_flag()
         application = Application.get_id(app_id=app_id)
+        try:
 
-        # If form is not empty
-        if form.is_valid():
-            # Save security question and answer
-            acc = UserDetails.objects.get(login_id=application.login_id)
-            security_answer = form.clean_security_answer()
-            security_question = form.clean_security_question()
-            acc.security_question = security_question
-            acc.security_answer = security_answer
-            acc.save()
-            reset_declaration(application)
+            # If form is not empty
+            if form.is_valid():
+                # Save security question and answer
+                acc = UserDetails.objects.get(login_id=application.login_id.login_id)
+                security_answer = form.clean_security_answer()
+                security_question = form.clean_security_question()
+                acc.security_question = security_question
+                acc.security_answer = security_answer
+                acc.save()
+                reset_declaration(application)
 
-            return HttpResponseRedirect(
-                reverse('Contact-Summary-View') + '?id=' + app_id)
-
+                return HttpResponseRedirect(
+                    reverse('Contact-Summary-View') + '?id=' + app_id)
+        except Exception as ex:
+            print("EX: " +str(ex))
         else:
             variables = {
                 'form': form,

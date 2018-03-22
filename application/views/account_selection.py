@@ -17,6 +17,7 @@ from ..utils import trigger_audit_log
 from ..models import Application, UserDetails
 from ..forms import AccountForm
 
+
 def account_selection(request):
     """
     :param request: a request object used to generate the HttpResponse
@@ -49,12 +50,12 @@ def account_selection(request):
 
         trigger_audit_log(application_id_local, 'CREATED')
 
-        #TimelineLog.objects.create(
+        # TimelineLog.objects.create(
         #    content_object=application,
         #    user=None,
         #    template='timeline_logger/application_action.txt',
         #    extra_data={'user_type': 'applicant', 'action': 'drafted'}
-        #)
+        # )
 
         return HttpResponseRedirect(
             reverse('Contact-Email-View') + '?id=' + application_id_local)

@@ -63,6 +63,14 @@ class CreateTestNewApplicationSubmit(TestCase):
         )
         self.assertEqual(r.status_code, 302)
 
+    # Summary page test below
+    def TestContactSummaryView(self):
+        r = self.client.post(reverse('Contact-Summary-View'))
+        self.assertEqual(r.status_code, 302)
+
+        self.assertTrue(
+            Application.objects.get(pk=self.app_id).login_details_status == "COMPLETED")
+
     def TestAppSecurityQuestion(self):
         r = self.client.post(
             reverse('Question-View'),
@@ -73,11 +81,6 @@ class CreateTestNewApplicationSubmit(TestCase):
             }
         )
         self.assertEqual(r.status_code, 302)
-
-        print(Application.objects.get(pk=self.app_id).login_details_status)
-
-        self.assertTrue(
-            Application.objects.get(pk=self.app_id).login_details_status == "COMPLETED")
 
 
     def TestAppPersonalDetailsNames(self):
@@ -366,8 +369,8 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestAppSecondReferenceContactDetails()
         self.TestAppDeclaration()
         self.TestAppPaymentMethod()
-#        self.TestAppPaymentCreditDetails()
-#        self.TestAppPaymentConfirmation()
+        self.TestAppPaymentCreditDetails()
+        self.TestAppPaymentConfirmation()
 
     def test_new_application_submit(self):
         """
