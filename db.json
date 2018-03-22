@@ -26,6 +26,24 @@
   }
 },
 {
+  "model": "timeline_logger.timelinelog",
+  "pk": 1,
+  "fields": {
+    "content_type": [
+      "application",
+      "application"
+    ],
+    "object_id": "48e0b0f3-21e6-4ebd-b9a5-79d4c763f2b2",
+    "timestamp": "2018-03-21T18:14:24.295Z",
+    "extra_data": {
+      "action": "drafted",
+      "user_type": "applicant"
+    },
+    "user": null,
+    "template": "timeline_logger/application_action.txt"
+  }
+},
+{
   "model": "application.auditlog",
   "pk": "dff7d296-4af8-4b51-8aa5-34802c026644",
   "fields": {
@@ -45,6 +63,55 @@
     "magic_link_sms": null,
     "security_question": "test",
     "security_answer": "test"
+  }
+},
+{
+  "model": "application.userdetails",
+  "pk": "ab627a88-7458-4431-aa44-a01e8b2c85b5",
+  "fields": {
+    "email": "holms@holms.lt",
+    "mobile_number": "0786647894",
+    "add_phone_number": "",
+    "email_expiry_date": 0,
+    "sms_expiry_date": 1521732312,
+    "magic_link_email": "0KIJ1ZT11VC1",
+    "magic_link_sms": "04070",
+    "security_question": null,
+    "security_answer": null
+  }
+},
+{
+  "model": "application.application",
+  "pk": "48e0b0f3-21e6-4ebd-b9a5-79d4c763f2b2",
+  "fields": {
+    "login_id": "ab627a88-7458-4431-aa44-a01e8b2c85b5",
+    "application_type": "CHILDMINDER",
+    "application_status": "DRAFTING",
+    "cygnum_urn": "",
+    "login_details_status": "NOT_STARTED",
+    "personal_details_status": "NOT_STARTED",
+    "childcare_type_status": "NOT_STARTED",
+    "first_aid_training_status": "NOT_STARTED",
+    "eyfs_training_status": "COMPLETED",
+    "criminal_record_check_status": "NOT_STARTED",
+    "health_status": "NOT_STARTED",
+    "references_status": "NOT_STARTED",
+    "people_in_home_status": "NOT_STARTED",
+    "adults_in_home": null,
+    "children_in_home": null,
+    "children_turning_16": null,
+    "declarations_status": "NOT_STARTED",
+    "background_check_declare": null,
+    "inspect_home_declare": null,
+    "interview_declare": null,
+    "share_info_declare": null,
+    "information_correct_declare": null,
+    "change_declare": null,
+    "date_created": "2018-03-21T18:14:24.239Z",
+    "date_updated": "2018-03-21T18:16:18.030Z",
+    "date_accepted": null,
+    "order_code": null,
+    "date_submitted": null
   }
 },
 {
