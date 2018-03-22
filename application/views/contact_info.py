@@ -196,8 +196,9 @@ def contact_summary(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
-        form = ContactSummaryForm()
+        form = ContactSummaryForm(request.POST)
         application = Application.objects.get(pk=app_id)
+
         if form.is_valid():
             status.update(app_id, 'login_details_status', 'COMPLETED')
             return HttpResponseRedirect(reverse('Type-Of-Childcare-Guidance-View') + '?id=' + app_id)

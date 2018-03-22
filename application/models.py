@@ -119,7 +119,7 @@ class Application(models.Model):
     TASK_STATUS = (
         ('NOT_STARTED', 'NOT_STARTED'),
         ('IN_PROGRESS', 'IN_PROGRESS'),
-        ('COMPLETE', 'COMPLETE'),
+        ('COMPLETED', 'COMPLETED'),
         ('FURTHER_INFORMATION', 'FURTHER_INFORMATION')
     )
     application_id = models.UUIDField(primary_key=True, default=uuid4)
