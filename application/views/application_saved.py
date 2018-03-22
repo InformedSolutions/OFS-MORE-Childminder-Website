@@ -7,6 +7,7 @@ from django.core.urlresolvers import reverse
 from application.forms import ApplicationSavedForm
 
 
+# noinspection PyUnboundLocalVariable
 def application_saved(request):
     """
     :param request: a request object used to generate the HttpResponse
@@ -14,18 +15,25 @@ def application_saved(request):
     """
 
     if request.method == 'GET':
-        application_id_local = request.GET["id"]
+        app_id = request.GET["id"]
         form = ApplicationSavedForm()
 
     if request.method == 'POST':
-        application_id_local = request.POST["id"]
+
+        app_id = request.POST["id"]
         form = ApplicationSavedForm(request.POST)
         if form.is_valid():
             return HttpResponseRedirect(
-                reverse('Application-Saved-View') + '?id=' + application_id_local)
+                reverse('Application-Saved-View') + '?id=' + app_id)
+        else:
+            variables = {
+                'form': form,
+                'application_id': app_id
+            }
+            return render(request, 'application-saved.html', variables)
 
     variables = {
         'form': form,
-        'application_id': application_id_local
+        'application_id': app_id
     }
     return render(request, 'application-saved.html', variables)

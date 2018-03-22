@@ -13,8 +13,8 @@ def prepare_for_interview(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Prepare for your interview template
     """
-    if request.method == 'GET':
 
+    if request.method == 'GET':
         application_id_local = request.GET['id']
         order_code = Application.objects.get(
             pk=application_id_local).order_code
@@ -37,9 +37,9 @@ def prepare_for_interview(request):
             return HttpResponseRedirect(
                 reverse('Payment-Confirmation') + '?id=' + application_id_local
                 + '&orderCode=' + str(order_code))
-
-    variables = {
-        'form': form,
-        'application_id': application_id_local
-    }
-    return render(request, 'next-steps-interview.html', variables)
+        else:
+            variables = {
+                'form': form,
+                'application_id': application_id_local
+            }
+            return render(request, 'next-steps-interview.html', variables)

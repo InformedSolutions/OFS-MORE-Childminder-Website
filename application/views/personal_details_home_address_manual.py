@@ -16,6 +16,7 @@ from ..models import Application
 from ..forms import PersonalDetailsHomeAddressManualForm
 from ..business_logic import reset_declaration, personal_home_address_logic
 
+
 def personal_details_home_address_manual(request):
     """
     :param request: a request object used to generate the HttpResponse
@@ -24,7 +25,6 @@ def personal_details_home_address_manual(request):
     current_date = datetime.datetime.today()
 
     if request.method == 'GET':
-
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
         form = PersonalDetailsHomeAddressManualForm(id=application_id_local)
@@ -52,20 +52,19 @@ def personal_details_home_address_manual(request):
             application.date_updated = current_date
             application.save()
 
-            if Application.objects\
-                .get(pk=application_id_local)\
-                .personal_details_status != 'COMPLETED':
-
+            if Application.objects \
+                    .get(pk=application_id_local) \
+                    .personal_details_status != 'COMPLETED':
                 status.update(application_id_local, 'personal_details_status', 'IN_PROGRESS')
 
             reset_declaration(application)
             return HttpResponseRedirect(
                 reverse('Personal-Details-Location-Of-Care-View') + '?id=' + application_id_local)
-
-    form.error_summary_title = 'There was a problem with your address'
-    variables = {
-        'form': form,
-        'application_id': application_id_local,
-        'personal_details_status': application.personal_details_status
-    }
-    return render(request, 'personal-details-home-address-manual.html', variables)
+        else:
+            form.error_summary_title = 'There was a problem with your address'
+            variables = {
+                'form': form,
+                'application_id': application_id_local,
+                'personal_details_status': application.personal_details_status
+            }
+            return render(request, 'personal-details-home-address-manual.html', variables)

@@ -16,7 +16,7 @@ from django.views.decorators.cache import never_cache
 
 #from timeline_logger.models import TimelineLog
 
-from .base import trigger_audit_log
+from ..utils import trigger_audit_log
 from .. import payment
 from ..forms import PaymentDetailsForm
 from ..models import Application, UserDetails, ApplicantPersonalDetails, ApplicantName
