@@ -11,6 +11,9 @@ from .models import Application, UserDetails
 
 
 class CreateTestNewApplicationSubmit(TestCase):
+    """
+    Functional test for submitting whole application.
+    """
 
     @classmethod
     def setUp(cls):
@@ -19,6 +22,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         cls.order_id = None
 
     def TestAppInit(self):
+        """Start application"""
         r = self.client.post(reverse('Account-View'))
         location = r.get('Location')
 
@@ -48,6 +52,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppPhone(self):
+        """Submit phone"""
         r = self.client.post(
             reverse('Contact-Phone-View'),
             {
@@ -65,6 +70,7 @@ class CreateTestNewApplicationSubmit(TestCase):
             Application.objects.get(pk=self.app_id).login_details_status == "COMPLETED")
 
     def TestAppSecurityQuestion(self):
+        """Submit security question"""
         r = self.client.post(
             reverse('Question-View'),
             {
@@ -77,6 +83,7 @@ class CreateTestNewApplicationSubmit(TestCase):
 
 
     def TestAppPersonalDetailsNames(self):
+        """Submit your name in Personal details task"""
         r = self.client.post(
             reverse('Personal-Details-Name-View'),
             {
@@ -89,6 +96,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppPersonalDetailsDOB(self):
+        """Submit DOB"""
         r = self.client.post(
             reverse('Personal-Details-DOB-View'),
             {
@@ -101,6 +109,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def  TestAppPersonalDetailsHomeAddress(self):
+        """Submit Personal Home address"""
         r = self.client.post(
             reverse('Personal-Details-Home-Address-Manual-View'),
             {
@@ -115,6 +124,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppPersonalDetailsHomeAddressDetails(self):
+        """Submit Personal Home address"""
         r = self.client.post(
             reverse('Personal-Details-Location-Of-Care-View'),
             {
@@ -127,6 +137,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 200)
 
     def TestAppFirstAidStart(self):
+        """Start First Aid"""
         r = self.client.post(
             reverse('First-Aid-Training-Guidance-View'),
             {
@@ -136,6 +147,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppFirstAid(self):
+        """Submit First Aid"""
         r = self.client.post(
             reverse('First-Aid-Training-Details-View'),
             {
@@ -150,6 +162,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppFirstAidCert(self):
+        """Submit First Aid certificate"""
         r = self.client.post(
             reverse('First-Aid-Training-Declaration-View'),
             {
@@ -160,6 +173,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppHealthBooklet(self):
+        """Submit Health booklet"""
         r = self.client.post(
             reverse('Health-Booklet-View'),
             {
@@ -170,6 +184,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppCriminalRecordCheckDetails(self):
+        """Submit CRC details"""
         r = self.client.post(
             reverse('DBS-Check-DBS-Details-View'),
             {
@@ -181,6 +196,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 200)
 
     def TestAppOtherPeopleAdults(self):
+        """Submit other people"""
         r = self.client.post(
             reverse('Other-People-Guidance-View'),
             {
@@ -191,6 +207,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppOtherPeopleChildren(self):
+        """Submit other children"""
         r = self.client.post(
             reverse('Other-People-Guidance-View'),
             {
@@ -201,6 +218,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppFirstReferenceName(self):
+        """Submit first reference name"""
         r = self.client.post(
             reverse('References-First-Reference-View'),
             {
@@ -215,6 +233,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppFirstReferenceAddress(self):
+        """Submit First reference address"""
         r = self.client.post(
             reverse('References-First-Reference-Address-View'),
             {
@@ -234,6 +253,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppFirstReferenceContactDetails(self):
+        """Submit First reference contact details"""
         r = self.client.post(
             reverse('References-First-Reference-Contact-Details-View'),
             {
@@ -245,6 +265,8 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppSecondReferenceName(self):
+        """Submit Second Reference Name"""
+
         r = self.client.post(
             reverse('References-Second-Reference-View'),
             {
@@ -259,6 +281,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppSecondReferenceAddress(self):
+        """Submit Second Reference Address"""
         r = self.client.post(
             reverse('References-Second-Reference-Address-View'),
             {
@@ -279,6 +302,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppSecondReferenceContactDetails(self):
+        """Submit Second Reference Contact Details"""
         r = self.client.post(
             reverse('References-Second-Reference-Contact-Details-View'),
             {
@@ -290,6 +314,8 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppDeclaration(self):
+        """Send Declaration"""
+
         r = self.client.post(
             reverse('Declaration-Declaration-View'),
             {
@@ -306,6 +332,8 @@ class CreateTestNewApplicationSubmit(TestCase):
 
 
     def TestAppPaymentMethod(self):
+        """Choose payment method"""
+
         r = self.client.post(
             reverse('Payment-View'),
             {
@@ -316,6 +344,8 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppPaymentCreditDetails(self):
+        """Submit Credit Card details"""
+
         r = self.client.post(
             reverse('Payment-Details-View'),
             {
@@ -331,6 +361,8 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
 
     def TestAppPaymentConfirmation(self):
+        """Send Payment Confirmation"""
+
         r = self.client.get(
             reverse('Payment-Confirmation'),
             {
@@ -338,11 +370,11 @@ class CreateTestNewApplicationSubmit(TestCase):
                 'orderCode': Application.objects.get(app_id=self.app_id).order_code
             }
         )
-
-        # While payment gateway in test mode, this test will not pass
-        # self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.status_code, 302)
 
     def TestNewApplicationSubmit(self):
+        """Submit whole application"""
+
         self.TestAppInit()
         self.TestAppEmail()
         self.TestAppPhone()
@@ -371,7 +403,7 @@ class CreateTestNewApplicationSubmit(TestCase):
 
     def test_new_application_submit(self):
         """
-        Test whole application submission process
+        Test if application been submitted
         """
         self.TestNewApplicationSubmit()
         self.assertTrue(Application.objects.filter(app_id=self.app_id).exists())
