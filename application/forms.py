@@ -1288,8 +1288,10 @@ class DBSCheckSummaryForm(ChildminderForms):
     GOV.UK form for the Your criminal record (DBS) check: summary page
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'error-summary.html'
+    error_summary_template_name = 'generic-error-summary.html'
     auto_replace_widgets = True
+
+    arc_errors = forms.CharField()
 
 
 class HealthIntroForm(ChildminderForms):
