@@ -5,6 +5,8 @@ Functional tests for views
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 
+from timeline_logger.models import TimelineLog
+
 from .models import Application, UserDetails
 
 
@@ -13,7 +15,6 @@ class CreateTestNewApplicationSubmit(TestCase):
     @classmethod
     def setUp(cls):
         cls.client = Client()
-        cls.application_id = None
         cls.app_id = None
         cls.order_id = None
 
@@ -21,7 +22,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(reverse('Account-View'))
         location = r.get('Location')
 
-        self.application_id = location.split('=')[-1]
         self.app_id = location.split('=')[-1]
 
         self.assertEqual(r.status_code, 302)
@@ -40,33 +40,26 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('Contact-Email-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'email_address': email
             }
         )
 
-        #print(UserDetails.get_id(app_id=self.app_id).login_id)
-
         self.assertEqual(r.status_code, 302)
-        #self.assertTrue(
-        #    UserDetails.get_id(app_id=self.app_id).email == email
-        #)
 
     def TestAppPhone(self):
         r = self.client.post(
             reverse('Contact-Phone-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'mobile_number': '07783446526',
                 'add_phone_number': ''
             }
         )
         self.assertEqual(r.status_code, 302)
 
-    # Summary page test below
     def TestContactSummaryView(self):
         r = self.client.post(reverse('Contact-Summary-View'), {'id':self.app_id})
-        # self.assertEqual(r.status_code, 302)
 
         self.assertTrue(
             Application.objects.get(pk=self.app_id).login_details_status == "COMPLETED")
@@ -75,7 +68,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('Question-View'),
             {
-             'id': self.application_id,
+             'id': self.app_id,
              'security_question': 'street born in',
              'security_answer': 'backer street'
             }
@@ -87,7 +80,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('Personal-Details-Name-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'first_name': "Arthur",
                 'middle_names': "Conan",
                 'last_name': "Doyle"
@@ -99,7 +92,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('Personal-Details-DOB-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'date_of_birth_0': '12',
                 'date_of_birth_1': '03',
                 'date_of_birth_2': '1987'
@@ -111,7 +104,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('Personal-Details-Home-Address-Manual-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'street_name_and_number': '43 Lynford Gardens',
                 'street_name_and_number2': '',
                 'town': 'London',
@@ -125,7 +118,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('Personal-Details-Location-Of-Care-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'date_of_birth_0': '12',
                 'date_of_birth_1': '03',
                 'date_of_birth_2': '1987'
@@ -137,7 +130,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('First-Aid-Training-Guidance-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
             }
         )
         self.assertEqual(r.status_code, 302)
@@ -146,7 +139,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('First-Aid-Training-Details-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'first_aid_training_organisation': 'The Swing Cats Ltd.',
                 'title_of_training_course': 'Surviving in the woods',
                 'course_date_0': '31',
@@ -160,7 +153,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('First-Aid-Training-Declaration-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'declaration': 'on'
             }
         )
@@ -170,7 +163,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('Health-Booklet-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'send_hdb_declare': 'on'
             }
         )
@@ -180,7 +173,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('DBS-Check-DBS-Details-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'dbs_certificate_number': '123456789012',
                 'convictions': 'false'
             }
@@ -191,7 +184,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('Other-People-Guidance-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'adults_in_home':'no',
             }
         )
@@ -201,7 +194,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('Other-People-Guidance-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'children_in_home':'no',
             }
         )
@@ -211,7 +204,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('References-First-Reference-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'first_name':'Roman',
                 'last_name': 'Gorodeckij',
                 'relationship':'My client',
@@ -225,7 +218,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('References-First-Reference-Address-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'street_name_and_number': '29 Baker street',
                 'street_name_and_number2': '',
                 'town': 'London',
@@ -244,7 +237,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('References-First-Reference-Contact-Details-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'phone_number': '0123456789',
                 'email_address': 'info@swingcats.lt',
             }
@@ -255,7 +248,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('References-Second-Reference-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'first_name':'Sherlock',
                 'last_name': 'Holmes',
                 'relationship':'My client',
@@ -269,7 +262,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('References-Second-Reference-Address-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'street_name_and_number': '59 Chet street',
                 'street_name_and_number2': '',
                 'town': 'London',
@@ -289,7 +282,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('References-Second-Reference-Contact-Details-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'phone_number': '0123456780',
                 'email_address': 'it@swingcats.lt',
             }
@@ -300,7 +293,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('Declaration-Declaration-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'background_check_declare': 'on',
                 'inspect_home_declare': 'on',
                 'interview_declare': 'on',
@@ -316,7 +309,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('Payment-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'payment_method': 'Credit'
             }
         )
@@ -326,7 +319,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(
             reverse('Payment-Details-View'),
             {
-                'id': self.application_id,
+                'id': self.app_id,
                 'card_type': 'visa',
                 'card_number': '5454545454545454',
                 'expiry_date_0': 1,
@@ -341,8 +334,8 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.get(
             reverse('Payment-Confirmation'),
             {
-                'id': self.application_id,
-                'orderCode': Application.objects.get(application_id=self.application_id).order_code
+                'id': self.app_id,
+                'orderCode': Application.objects.get(app_id=self.app_id).order_code
             }
         )
 
@@ -381,10 +374,8 @@ class CreateTestNewApplicationSubmit(TestCase):
         Test whole application submission process
         """
         self.TestNewApplicationSubmit()
-        self.assertTrue(Application.objects.filter(application_id=self.application_id).exists())
-        #print(Application.objects.values_list(flat=True).filter(pk=self.application_id).values())
-
-        self.assertTrue(Application.objects.get(application_id=self.application_id).application_status == "SUBMITTED")
+        self.assertTrue(Application.objects.filter(app_id=self.app_id).exists())
+        self.assertTrue(Application.objects.get(app_id=self.app_id).application_status == "SUBMITTED")
 
     def test_new_application_submit_log(self):
         """
