@@ -2497,6 +2497,14 @@ div.error-summary ul.error-summary-list {
   font-weight: bold;
 }
 
+.error-container {
+  margin: 0px;
+}
+
+.error-text {
+  padding-left: 10px;
+}
+
 #radio-or {
   clear: both;
   padding-left: 7px;
