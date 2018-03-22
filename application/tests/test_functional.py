@@ -73,6 +73,7 @@ class CreateTestNewApplicationSubmit(TestCase):
             UserDetails.objects.get(application=self.app_id).mobile_number, data['mobile_number']
         )
 
+
     def TestContactSummaryView(self):
         r = self.client.post(reverse('Contact-Summary-View'), {'id':self.app_id})
 
@@ -157,6 +158,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(ApplicantName.objects.get(personal_detail_id=p_id).middle_names, data['middle_names'])
         self.assertEqual(ApplicantName.objects.get(personal_detail_id=p_id).last_name, data['last_name'])
 
+
     def TestAppPersonalDetailsDOB(self):
         """Submit DOB"""
         data = {
@@ -173,6 +175,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_day, data['date_of_birth_0'])
         self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_month, data['date_of_birth_1'])
         self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_year, data['date_of_birth_2'])
+
 
     def TestAppPersonalDetailsHomeAddress(self):
         """Submit Personal Home address"""
@@ -196,6 +199,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).county, data['county'])
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).postcode, data['postcode'])
 
+
     def TestAppPersonalDetailsHomeAddressDetails(self):
         """Submit Personal Home address"""
 
@@ -208,6 +212,7 @@ class CreateTestNewApplicationSubmit(TestCase):
             reverse('Personal-Details-Location-Of-Care-View'), data
         )
         self.assertEqual(r.status_code, 302)
+
 
     def TestAppPersonalDetailsSummaryView(self):
         """Personal details summary"""
