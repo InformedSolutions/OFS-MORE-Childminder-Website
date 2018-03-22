@@ -367,7 +367,7 @@ class CreateTestNewApplicationSubmit(TestCase):
             reverse('Payment-Confirmation'),
             {
                 'id': self.app_id,
-                'orderCode': Application.objects.get(app_id=self.app_id).order_code
+                'orderCode': Application.objects.get(application_id=self.app_id).order_code
             }
         )
         self.assertEqual(r.status_code, 302)
@@ -406,8 +406,9 @@ class CreateTestNewApplicationSubmit(TestCase):
         Test if application been submitted
         """
         self.TestNewApplicationSubmit()
-        self.assertTrue(Application.objects.filter(app_id=self.app_id).exists())
-        self.assertTrue(Application.objects.get(app_id=self.app_id).application_status == "SUBMITTED")
+        self.assertTrue(Application.objects.filter(application_id=self.app_id).exists())
+        self.assertTrue(Application.objects.get(application_id=self.app_id).application_status == "SUBMITTED")
+
 
     def test_new_application_submit_log(self):
         """
