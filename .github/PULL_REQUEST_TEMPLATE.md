@@ -35,4 +35,10 @@ Please refer to PR review [guide](https://github.com/InformedSolutions/OFS-MORE-
 
 ## PR merge
 
+Select only one:
+
+- [ ] Should be merged?
+- [ ] Should be rebased?
+- [ ] Should be squashed?
+
 Please refer to PR merge [guide](https://github.com/InformedSolutions/OFS-MORE-DevOps-Tooling/wiki/Pull-requests#how-to-merge-a-pull_request)
