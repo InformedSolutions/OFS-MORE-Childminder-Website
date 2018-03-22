@@ -13,3 +13,11 @@ from .declaration_declaration import *
 from .childcare_type import *
 from .personal_details import *
 from .card_payment_details import *
+from .dbs import *
+from .declaration import *
+from .eyfs import *
+from .first_aid import *
+from .health import *
+from .other_people import *
+from .payment import *
+from .references import *

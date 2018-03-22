@@ -13,7 +13,7 @@ from django.core.urlresolvers import reverse
 
 # from timeline_logger.models import TimelineLog
 
-from .base import trigger_audit_log
+from ..utils import trigger_audit_log
 from ..models import Application, UserDetails
 from ..forms import AccountForm
 
