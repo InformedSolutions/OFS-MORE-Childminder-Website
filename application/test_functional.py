@@ -1,5 +1,8 @@
 """
 Functional tests for views
+
+NOTE! If it throws you status 200, that means form submission is failing!
+
 """
 
 from django.core.urlresolvers import reverse
@@ -7,7 +10,7 @@ from django.test import Client, TestCase
 
 from timeline_logger.models import TimelineLog
 
-from .models import Application, UserDetails
+from .models import Application, UserDetails, ApplicantName, ApplicantPersonalDetails, ApplicantHomeAddress, ChildcareType
 
 
 class CreateTestNewApplicationSubmit(TestCase):
@@ -50,91 +53,148 @@ class CreateTestNewApplicationSubmit(TestCase):
         )
 
         self.assertEqual(r.status_code, 302)
+        self.assertEqual(
+            UserDetails.objects.get(application=self.app_id).email, email
+        )
 
     def TestAppPhone(self):
         """Submit phone"""
-        r = self.client.post(
-            reverse('Contact-Phone-View'),
-            {
-                'id': self.app_id,
-                'mobile_number': '07783446526',
-                'add_phone_number': ''
-            }
-        )
+
+        data = {
+            'id': self.app_id,
+            'mobile_number': '07783446526',
+            'add_phone_number': ''
+        }
+
+        r = self.client.post(reverse('Contact-Phone-View'), data)
+
         self.assertEqual(r.status_code, 302)
+        self.assertEqual(
+            UserDetails.objects.get(application=self.app_id).mobile_number, data['mobile_number']
+        )
+
 
     def TestContactSummaryView(self):
         r = self.client.post(reverse('Contact-Summary-View'), {'id':self.app_id})
 
-        self.assertTrue(
-            Application.objects.get(pk=self.app_id).login_details_status == "COMPLETED")
+        self.assertEqual(
+           Application.objects.get(pk=self.app_id).login_details_status, "COMPLETED")
 
     def TestAppSecurityQuestion(self):
         """Submit security question"""
-        r = self.client.post(
-            reverse('Question-View'),
-            {
-             'id': self.app_id,
-             'security_question': 'street born in',
-             'security_answer': 'backer street'
-            }
-        )
+
+        data = {
+            'id': self.app_id,
+            'security_question': 'street born in',
+            'security_answer': 'backer street'
+        }
+
+        r = self.client.post(reverse('Question-View'), data)
+
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(UserDetails.objects.get(application=self.app_id).security_question, data['security_question'])
+        self.assertEqual(UserDetails.objects.get(application=self.app_id).security_answer, data['security_answer'])
+
+    def TestTypeOfChildcareAgeGroups(self):
+        """Type of childcare age groups"""
+
+        data = {
+            'id': self.app_id,
+            'type_of_childcare': ['0-5', '5-8', '8over']
+        }
+
+        r = self.client.post(reverse('Type-Of-Childcare-Age-Groups-View'), data)
         self.assertEqual(r.status_code, 302)
 
+        self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).zero_to_five, True)
+        self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).five_to_eight, True)
+        self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).eight_plus, True)
+
+    def AppTestTypeOfChildcareRegister(self):
+        """Type of childcare register"""
+        r = self.client.post(reverse('Type-Of-Childcare-Register-View'), {'id': self.app_id})
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(Application.objects.get(pk=self.app_id).childcare_type_status, "COMPLETED")
 
     def TestAppPersonalDetailsNames(self):
         """Submit your name in Personal details task"""
-        r = self.client.post(
-            reverse('Personal-Details-Name-View'),
-            {
-                'id': self.app_id,
-                'first_name': "Arthur",
-                'middle_names': "Conan",
-                'last_name': "Doyle"
-            }
-        )
+
+        data = {
+            'id': self.app_id,
+            'first_name': "Arthur",
+            'middle_names': "Conan",
+            'last_name': "Doyle"
+        }
+
+        r = self.client.post(reverse('Personal-Details-Name-View'), data)
         self.assertEqual(r.status_code, 302)
+
+        p_id = ApplicantPersonalDetails.objects.get(application_id=Application.objects.get(pk=self.app_id))
+        self.assertEqual(ApplicantName.objects.get(personal_detail_id=p_id).first_name, data['first_name'])
+        self.assertEqual(ApplicantName.objects.get(personal_detail_id=p_id).middle_names, data['middle_names'])
+        self.assertEqual(ApplicantName.objects.get(personal_detail_id=p_id).last_name, data['last_name'])
+
 
     def TestAppPersonalDetailsDOB(self):
         """Submit DOB"""
-        r = self.client.post(
-            reverse('Personal-Details-DOB-View'),
-            {
-                'id': self.app_id,
-                'date_of_birth_0': '12',
-                'date_of_birth_1': '03',
-                'date_of_birth_2': '1987'
-            }
-        )
+        data = {
+            'id': self.app_id,
+            'date_of_birth_0': 12,
+            'date_of_birth_1': 3,
+            'date_of_birth_2': 1987
+        }
+
+        r = self.client.post(reverse('Personal-Details-DOB-View'), data)
         self.assertEqual(r.status_code, 302)
 
-    def  TestAppPersonalDetailsHomeAddress(self):
+        p_id = ApplicantPersonalDetails.objects.get(application_id=Application.objects.get(pk=self.app_id)).personal_detail_id
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_day, data['date_of_birth_0'])
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_month, data['date_of_birth_1'])
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_year, data['date_of_birth_2'])
+
+
+    def TestAppPersonalDetailsHomeAddress(self):
         """Submit Personal Home address"""
-        r = self.client.post(
-            reverse('Personal-Details-Home-Address-Manual-View'),
-            {
-                'id': self.app_id,
-                'street_name_and_number': '43 Lynford Gardens',
-                'street_name_and_number2': '',
-                'town': 'London',
-                'county': 'Essex',
-                'postcode': 'IG39LY'
-            }
-        )
+
+        data = {
+            'id': self.app_id,
+            'street_name_and_number': '43 Lynford Gardens',
+            'street_name_and_number2': '',
+            'town': 'London',
+            'county': 'Essex',
+            'postcode': 'IG39LY'
+        }
+
+        r = self.client.post(reverse('Personal-Details-Home-Address-Manual-View'), data)
         self.assertEqual(r.status_code, 302)
+
+        p_id = ApplicantPersonalDetails.objects.get(application_id=Application.objects.get(pk=self.app_id)).personal_detail_id
+        self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).street_line1, data['street_name_and_number'])
+        self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).street_line2, data['street_name_and_number2'])
+        self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).town, data['town'])
+        self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).county, data['county'])
+        self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).postcode, data['postcode'])
+
 
     def TestAppPersonalDetailsHomeAddressDetails(self):
         """Submit Personal Home address"""
+
+        data =  {
+            'id': self.app_id,
+            'location_of_care': True,
+        }
+
         r = self.client.post(
-            reverse('Personal-Details-Location-Of-Care-View'),
-            {
-                'id': self.app_id,
-                'date_of_birth_0': '12',
-                'date_of_birth_1': '03',
-                'date_of_birth_2': '1987'
-            }
+            reverse('Personal-Details-Location-Of-Care-View'), data
         )
-        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.status_code, 302)
+
+
+    def TestAppPersonalDetailsSummaryView(self):
+        """Personal details summary"""
+        self.client.get(reverse('Personal-Details-Summary-View'), {'id': self.app_id})
+        self.assertEqual(
+            Application.objects.get(pk=self.app_id).personal_details_status, "COMPLETED")
 
     def TestAppFirstAidStart(self):
         """Start First Aid"""
@@ -190,18 +250,18 @@ class CreateTestNewApplicationSubmit(TestCase):
             {
                 'id': self.app_id,
                 'dbs_certificate_number': '123456789012',
-                'convictions': 'false'
+                'convictions': False
             }
         )
-        self.assertEqual(r.status_code, 200)
+        self.assertEqual(r.status_code, 302)
 
     def TestAppOtherPeopleAdults(self):
         """Submit other people"""
         r = self.client.post(
-            reverse('Other-People-Guidance-View'),
+            reverse('Other-People-Adult-Question-View'),
             {
                 'id': self.app_id,
-                'adults_in_home':'no',
+                'adults_in_home': False,
             }
         )
         self.assertEqual(r.status_code, 302)
@@ -209,13 +269,20 @@ class CreateTestNewApplicationSubmit(TestCase):
     def TestAppOtherPeopleChildren(self):
         """Submit other children"""
         r = self.client.post(
-            reverse('Other-People-Guidance-View'),
+            reverse('Other-People-Children-Question-View'),
             {
                 'id': self.app_id,
-                'children_in_home':'no',
+                'children_in_home': False,
             }
         )
         self.assertEqual(r.status_code, 302)
+
+    def TestAppOtherPeopleSummary(self):
+        """Submit Other People Summary"""
+        r = self.client.get(reverse('Other-People-Summary-View'), {'id': self.app_id})
+        self.assertEqual(r.status_code, 200)
+
+        self.assertEqual(Application.objects.get(pk=self.app_id).people_in_home_status, "COMPLETED")
 
     def TestAppFirstReferenceName(self):
         """Submit first reference name"""
@@ -226,8 +293,8 @@ class CreateTestNewApplicationSubmit(TestCase):
                 'first_name':'Roman',
                 'last_name': 'Gorodeckij',
                 'relationship':'My client',
-                'time_known_0': '5',
-                'time_known_1': '5',
+                'time_known_0': 5,
+                'time_known_1': 5,
             }
         )
         self.assertEqual(r.status_code, 302)
@@ -274,8 +341,8 @@ class CreateTestNewApplicationSubmit(TestCase):
                 'first_name':'Sherlock',
                 'last_name': 'Holmes',
                 'relationship':'My client',
-                'time_known_0': '5',
-                'time_known_1': '8',
+                'time_known_0': 5,
+                'time_known_1': 8,
             }
         )
         self.assertEqual(r.status_code, 302)
@@ -312,6 +379,12 @@ class CreateTestNewApplicationSubmit(TestCase):
             }
         )
         self.assertEqual(r.status_code, 302)
+
+    def TestReferencesSummary(self):
+        """Submit Second Reference Contact Details"""
+        r = self.client.get(reverse('References-Summary-View'), {'id': self.app_id})
+        self.assertEqual(r.status_code, 200)
+        self.assertEqual(Application.objects.get(pk=self.app_id).references_status, "COMPLETED")
 
     def TestAppDeclaration(self):
         """Send Declaration"""
@@ -370,32 +443,44 @@ class CreateTestNewApplicationSubmit(TestCase):
                 'orderCode': Application.objects.get(application_id=self.app_id).order_code
             }
         )
-        self.assertEqual(r.status_code, 302)
+        self.assertEqual(r.status_code, 200)
 
     def TestNewApplicationSubmit(self):
         """Submit whole application"""
 
         self.TestAppInit()
+
         self.TestAppEmail()
         self.TestAppPhone()
-        self.TestAppSecurityQuestion()
         self.TestContactSummaryView()
+        self.TestAppSecurityQuestion()
+        self.TestTypeOfChildcareAgeGroups()
+        self.AppTestTypeOfChildcareRegister()
+
         self.TestAppPersonalDetailsNames()
         self.TestAppPersonalDetailsDOB()
         self.TestAppPersonalDetailsHomeAddress()
         self.TestAppPersonalDetailsHomeAddressDetails()
+        self.TestAppPersonalDetailsSummaryView()
+
         self.TestAppFirstAid()
         self.TestAppFirstAidCert()
         self.TestAppHealthBooklet()
+
         self.TestAppCriminalRecordCheckDetails()
+
         self.TestAppOtherPeopleAdults()
         self.TestAppOtherPeopleChildren()
+        self.TestAppOtherPeopleSummary()
+
         self.TestAppFirstReferenceName()
         self.TestAppFirstReferenceAddress()
         self.TestAppFirstReferenceContactDetails()
         self.TestAppSecondReferenceName()
         self.TestAppSecondReferenceAddress()
         self.TestAppSecondReferenceContactDetails()
+        self.TestReferencesSummary()
+
         self.TestAppDeclaration()
         self.TestAppPaymentMethod()
         self.TestAppPaymentCreditDetails()
@@ -406,9 +491,11 @@ class CreateTestNewApplicationSubmit(TestCase):
         Test if application been submitted
         """
         self.TestNewApplicationSubmit()
-        self.assertTrue(Application.objects.filter(application_id=self.app_id).exists())
-        self.assertTrue(Application.objects.get(application_id=self.app_id).application_status == "SUBMITTED")
 
+        print(Application.objects.filter(pk=self.app_id).values())
+
+        self.assertTrue(Application.objects.filter(application_id=self.app_id).exists())
+        self.assertEqual(Application.objects.get(application_id=self.app_id).application_status, "SUBMITTED")
 
     def test_new_application_submit_log(self):
         """
