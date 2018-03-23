@@ -529,4 +529,14 @@ class CreateTestNewApplicationSubmit(TestCase):
             TimelineLog.objects.get(object_id=self.app_id).extra_data['action'], "created"
         )
 
+    def test_submitted_application_log(self):
+        """
+        Check if logging triggered right after application got submitted status
+        """
+        self.TestNewApplicationSubmit()
+        self.assertTrue(
+            TimelineLog.objects.filter(object_id=self.app_id, extra_data__contains={"action": "submitted"})
+        )
+
+
 

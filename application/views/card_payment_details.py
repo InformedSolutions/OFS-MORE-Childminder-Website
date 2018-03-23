@@ -14,7 +14,7 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.views.decorators.cache import never_cache
 
-#from timeline_logger.models import TimelineLog
+from timeline_logger.models import TimelineLog
 
 from .. import payment
 from ..forms import PaymentDetailsForm
@@ -30,29 +30,29 @@ def card_payment_details(request):
 
     if request.method == 'GET':
 
-        application_id_local = request.GET["id"]
-        paid = Application.objects.get(pk=application_id_local).order_code
+        app_id = request.GET["id"]
+        paid = Application.objects.get(pk=app_id).order_code
 
         if paid is None:
 
             form = PaymentDetailsForm()
             variables = {
                 'form': form,
-                'application_id': application_id_local
+                'application_id': app_id
             }
             return render(request, 'payment-details.html', variables)
 
         elif paid is not None:
 
             variables = {
-                'application_id': application_id_local,
+                'application_id': app_id,
                 'order_code': paid
             }
             return render(request, 'paid.html', variables)
 
     if request.method == 'POST':
 
-        application_id_local = request.POST["id"]
+        app_id = request.POST["id"]
         form = PaymentDetailsForm(request.POST)
 
         if form.is_valid():
@@ -66,19 +66,19 @@ def card_payment_details(request):
             # Make payment
             payment_response = payment.make_payment(
                 3500, cardholders_name, card_number, card_security_code,
-                expiry_month, expiry_year, 'GBP', application_id_local,
-                application_id_local)
+                expiry_month, expiry_year, 'GBP', app_id,
+                app_id)
             parsed_payment_response = json.loads(payment_response.text)
 
             # If the payment is successful
             if payment_response.status_code == 201:
 
-                application = Application.objects.get(pk=application_id_local)
+                application = Application.objects.get(pk=app_id)
                 application.date_submitted = datetime.datetime.today()
                 login_id = application.login_id.login_id
                 login_record = UserDetails.objects.get(pk=login_id)
                 personal_detail_id = ApplicantPersonalDetails.objects.get(
-                    application_id=application_id_local).personal_detail_id
+                    application_id=app_id).personal_detail_id
                 applicant_name_record = ApplicantName.objects.get(
                     personal_detail_id=personal_detail_id)
                 payment.payment_email(login_record.email,
@@ -89,7 +89,7 @@ def card_payment_details(request):
                 order_code = parsed_payment_response["orderCode"]
                 variables = {
                     'form': form,
-                    'application_id': application_id_local,
+                    'application_id': app_id,
                     'order_code': order_code
                 }
 
@@ -97,33 +97,33 @@ def card_payment_details(request):
                 application.save()
 
                 # when functionality to resubmit an application is added this trigger must be added
-                # trigger_audit_log(application_id_local, 'RESUBMITTED')
-                #TimelineLog.objects.create(
-                #    content_object=application,
-                #    user=None,
-                #    template='timeline_logger/application_action.txt',
-                #    extra_data={'user_type': 'applicant', 'action': 'submitted'}
-                #)
+                # trigger_audit_log(app_id, 'RESUBMITTED')
+                TimelineLog.objects.create(
+                    content_object=application,
+                    user=None,
+                    template='timeline_logger/application_action.txt',
+                    extra_data={'user_type': 'applicant', 'action': 'submitted'}
+                )
 
                 return HttpResponseRedirect(
                     reverse('Payment-Confirmation') \
-                        + '?id=' + application_id_local + '&orderCode=' + order_code,
+                        + '?id=' + app_id + '&orderCode=' + order_code,
                     variables)
 
             else:
 
                 variables = {
                     'form': form,
-                    'application_id': application_id_local,
+                    'application_id': app_id,
                     'error_flag': 1,
                     'error_message': parsed_payment_response["message"],
                 }
             return HttpResponseRedirect(
-                reverse('Payment-Details-View') + '?id=' + application_id_local, variables)
+                reverse('Payment-Details-View') + '?id=' + app_id, variables)
 
         else:
             variables = {
                 'form': form,
-                'application_id': application_id_local
+                'application_id': app_id
             }
             return render(request, 'payment-details.html', variables)
