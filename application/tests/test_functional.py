@@ -511,7 +511,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestAppPaymentCreditDetails()
         self.TestAppPaymentConfirmation()
 
-    def test_new_application_submit(self):
+    def test_application_submit(self):
         """
         Test if application been submitted
         """
@@ -522,8 +522,11 @@ class CreateTestNewApplicationSubmit(TestCase):
 
     def test_new_application_submit_log(self):
         """
-        Check if logging works when whole application is submitted
+        Check logging trigger right after application was drafted/started
         """
-        pass
+        self.TestAppInit()
+        self.assertEqual(
+            TimelineLog.objects.get(object_id=self.app_id).extra_data['action'], "created"
+        )
 
 

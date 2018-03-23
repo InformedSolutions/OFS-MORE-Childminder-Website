@@ -10,7 +10,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 
-# from timeline_logger.models import TimelineLog
+from timeline_logger.models import TimelineLog
+
 from ..models import Application, UserDetails
 from ..forms import AccountForm
 
@@ -43,17 +44,17 @@ def account_selection(request):
             order_code=None
         )
 
-        application_id_local = str(application.application_id)
+        app_id = str(application.application_id)
 
-        # TimelineLog.objects.create(
-        #    content_object=application,
-        #    user=None,
-        #    template='timeline_logger/application_action.txt',
-        #    extra_data={'user_type': 'applicant', 'action': 'drafted'}
-        # )
+        TimelineLog.objects.create(
+           content_object=application,
+           user=None,
+           template='timeline_logger/application_action.txt',
+           extra_data={'user_type': 'applicant', 'action': 'created'}
+        )
 
         return HttpResponseRedirect(
-            reverse('Contact-Email-View') + '?id=' + application_id_local)
+            reverse('Contact-Email-View') + '?id=' + app_id)
 
     form = AccountForm()
     variables = {
