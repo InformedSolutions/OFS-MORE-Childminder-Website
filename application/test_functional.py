@@ -492,8 +492,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         """
         self.TestNewApplicationSubmit()
 
-        print(Application.objects.filter(pk=self.app_id).values())
-
         self.assertTrue(Application.objects.filter(application_id=self.app_id).exists())
         self.assertEqual(Application.objects.get(application_id=self.app_id).application_status, "SUBMITTED")
 
