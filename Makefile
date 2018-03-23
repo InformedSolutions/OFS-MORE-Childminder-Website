@@ -12,7 +12,7 @@ run:
 
 compose:
 	docker-compose up app-childminder
-	
+
 compose-shell:
 	docker-compose run app-childminder /bin/bash
 
@@ -24,16 +24,16 @@ compose-static:
 
 compose-test:
 	docker-compose run app-childminder make test
-	
+
 compose-migrate:
 	docker-compose run app-childminder make migrate
-	
+
 compose-load:
 	docker-compose run app-childminder make load
-	
+
 compose-export:
 	docker-compose run app-childminder make export
-	
+
 compose-flush:
 	docker-compose run app-childminder make flush
 
@@ -46,7 +46,8 @@ install:
 ifndef WIN
 	-virtualenv -p python3 .venv
 endif
-	pip install -r requirements.txt
+	.venv/bin/pip install -r requirements.txt
+	.venv/bin/pip install -r requirements.dev.txt
 
 # handle django migrations
 migrate:
