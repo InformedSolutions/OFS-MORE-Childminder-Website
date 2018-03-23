@@ -10,6 +10,33 @@ endif
 run:
 	python manage.py runserver $(PROJECT_IP):$(PROJECT_PORT)  --settings=$(PROJECT_SETTINGS)
 
+compose:
+	docker-compose up app-childminder
+	
+compose-shell:
+	docker-compose run app-childminder /bin/bash
+
+compose-shellplus:
+	docker-compose run app-childminder make shell
+
+compose-static:
+	docker-compose run app-childminder make static
+
+compose-test:
+	docker-compose run app-childminder make test
+	
+compose-migrate:
+	docker-compose run app-childminder make migrate
+	
+compose-load:
+	docker-compose run app-childminder make load
+	
+compose-export:
+	docker-compose run app-childminder make export
+	
+compose-flush:
+	docker-compose run app-childminder make flush
+
 # run tests
 test:
 	python manage.py test --settings=$(PROJECT_SETTINGS)
