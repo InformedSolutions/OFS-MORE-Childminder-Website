@@ -1,0 +1,20 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Link not resolved{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+<div class="column-full">
+    <h1 class="form-title heading-large">
+        This is the placeholder local authority page
+    </h1>
+    <p>This will be filled on content definition.</p>
+    <p>The user is will be referred to their local authority <a href="">here</a>.</p>
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        {% csrf_token %}
+        <input type="hidden" id="id" name="id" value="{{application_id}}">
+        <input type="submit" class="button" value="Save and continue">
+    </form>
+</div>
+
+{% endblock %}
