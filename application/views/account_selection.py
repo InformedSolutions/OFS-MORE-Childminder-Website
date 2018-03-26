@@ -12,8 +12,6 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 
 # from timeline_logger.models import TimelineLog
-
-from ..utils import trigger_audit_log
 from ..models import Application, UserDetails
 from ..forms import AccountForm
 
@@ -47,8 +45,6 @@ def account_selection(request):
         )
 
         application_id_local = str(application.application_id)
-
-        trigger_audit_log(application_id_local, 'CREATED')
 
         # TimelineLog.objects.create(
         #    content_object=application,

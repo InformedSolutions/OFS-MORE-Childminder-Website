@@ -16,7 +16,6 @@ from django.views.decorators.cache import never_cache
 
 #from timeline_logger.models import TimelineLog
 
-from ..utils import trigger_audit_log
 from .. import payment
 from ..forms import PaymentDetailsForm
 from ..models import Application, UserDetails, ApplicantPersonalDetails, ApplicantName
@@ -99,7 +98,6 @@ def card_payment_details(request):
 
                 # when functionality to resubmit an application is added this trigger must be added
                 # trigger_audit_log(application_id_local, 'RESUBMITTED')
-                trigger_audit_log(application_id_local, 'SUBMITTED')
                 #TimelineLog.objects.create(
                 #    content_object=application,
                 #    user=None,

@@ -7,7 +7,6 @@ from application.models import (
     ApplicantName,
     ApplicantPersonalDetails,
     Application,
-    AuditLog,
     ChildInHome,
     ChildcareType,
     CriminalRecordCheck,

@@ -15,8 +15,6 @@ from ..models import (ApplicantName,
                       ApplicantPersonalDetails,
                       Application,
                       UserDetails)
-from ..utils import trigger_audit_log
-
 
 @never_cache
 def card_payment_details(request):
@@ -62,7 +60,7 @@ def card_payment_details(request):
                 application = Application.objects.get(pk=application_id_local)
                 # when functionality to resubmit an application is added this trigger must be added
                 # trigger_audit_log(application_id_local, 'RESUBMITTED')
-                trigger_audit_log(application_id_local, 'SUBMITTED')
+
                 application.date_submitted = datetime.datetime.today()
                 login_id = application.login_id.login_id
                 login_record = UserDetails.objects.get(pk=login_id)
