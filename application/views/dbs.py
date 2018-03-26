@@ -4,6 +4,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
+from ..summary_page_data import dbs_summary_dict
 from .. table_util import table_creator
 from .. import status
 from ..business_logic import (dbs_check_logic,
@@ -159,21 +160,15 @@ def dbs_check_summary(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your criminal record (DBS) check: summary template
     """
-    DATA_NAMES = ['dbs_certificate_number', 'cautions_convictions', 'send_certificate_declare']
-    DISPLAY_NAMES = ['DBS certificate number', 'Do you have any cautions or convictions?',
-                   'Will you send your DBS certificate to Ofsted?']
-    BACK_URL_NAMES = ['DBS-Check-DBS-Details-View', 'DBS-Check-DBS-Details-View', 'DBS-Check-Upload-DBS-View']
-    TABLE_NAMES = ['Check your answers: your criminal record check']
-    TABLE_ERROR_NAMES = ['There was a problem with your criminal record check']
-    PAGE_TITLE = 'Check your answers: criminal record (DBS) check'
 
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
-        object_list = [criminal_record_check]
+        object_list = [[criminal_record_check]]
 
-        table_list = table_creator(object_list, DISPLAY_NAMES, DATA_NAMES,
-                                   TABLE_NAMES, TABLE_ERROR_NAMES, BACK_URL_NAMES)
+        table_list = table_creator(object_list, dbs_summary_dict['display_names'], dbs_summary_dict['data_names'],
+                                   dbs_summary_dict['table_names'], dbs_summary_dict['table_error_names'],
+                                   dbs_summary_dict['back_url_names'])
 
         form = DBSCheckSummaryForm()
 
@@ -183,7 +178,7 @@ def dbs_check_summary(request):
             'application_id': application_id_local,
             'criminal_record_check_status': application.criminal_record_check_status,
             'table_list': table_list,
-            'page_title': PAGE_TITLE
+            'page_title': dbs_summary_dict['page_title']
         }
 
         return render(request, 'generic-summary-template.html', variables)
