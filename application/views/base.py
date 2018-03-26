@@ -9,6 +9,8 @@ import logging
 
 from django.shortcuts import render
 
+from .. import status
+
 # initiate logging
 log = logging.getLogger('django.server')
 
@@ -49,7 +51,11 @@ def awaiting_review(request):
     :return: an HttpResponse object with the rendered awaiting review saved template
     """
     application_id_local = request.GET["id"]
+    resubmitted = request.GET["resubmitted"]
+    if resubmitted == '1':
+        status.update(application_id_local, 'application_status', 'SUBMITTED')
     variables = {
+        'resubmitted': resubmitted,
         'application_id': application_id_local
     }
     return render(request, 'awaiting-review.html', variables)
