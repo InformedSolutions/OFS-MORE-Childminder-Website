@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from .. import status
-from ..table_util import create_tables, Table
+from ..table_util import create_tables, Table, submit_link_setter
 from ..summary_page_data import other_adult_link_dict, other_adult_name_dict, other_child_link_dict,\
                                 other_child_name_dict, other_adult_summary_link_dict, other_adult_summary_name_dict,\
                                 other_child_summary_name_dict, other_child_summary_link_dict
@@ -819,6 +819,8 @@ def other_people_summary(request):
             'turning_16': application.children_turning_16,
             'people_in_home_status': application.people_in_home_status
         }
+        variables = submit_link_setter(variables, table_list, 'people_in_home', application_id_local)
+
         status.update(application_id_local,
                       'people_in_home_status', 'COMPLETED')
         return render(request, 'generic-summary-template.html', variables)

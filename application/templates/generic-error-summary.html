@@ -5,17 +5,21 @@
       {{ table.error_summary_title }}
     </h2>
     <ul class="error-summary-list">
-
+    {% with other_people_numbers=table.other_people_numbers %}
       <p>Please review the following errors: </p>
 
       {% for row in table.row_list %}
         <li class="field-error">
           <ul>
-              <a href="#{{ row.data_name }}">{{ row.error }}</a>
+
+              <a href="{% url row.back_link %}?id={{application_id}}{{other_people_numbers}}">{{ row.error }}</a>
           </ul>
 
         </li>
+
       {% endfor %}
+
+      {% endwith %}
     </ul>
   </div>
 {% endif %}

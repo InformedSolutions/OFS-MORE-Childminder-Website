@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from .. import status
-from ..table_util import Table, create_tables
+from ..table_util import Table, create_tables, submit_link_setter
 from ..summary_page_data import health_link_dict, health_name_dict
 from ..business_logic import (health_check_logic,
                               reset_declaration)
@@ -122,6 +122,8 @@ def health_check_answers(request):
             'health_status': application.health_status,
             'page_title': 'Check your answers: your health'
         }
+        variables = submit_link_setter(variables, table_list, 'health', application_id_local)
+
         return render(request, 'generic-summary-template.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]

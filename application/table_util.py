@@ -1,5 +1,7 @@
-from .models import ArcComments
+from django.urls import reverse
 
+from .models import ArcComments, Application
+from .summary_page_data import submit_link_dict, back_link_dict
 
 class Table:
     """
@@ -12,7 +14,7 @@ class Table:
         """
         for row in self.row_list:
             for key in self.table_pk:
-                if ArcComments.objects.filter(table_pk=key, field_name=row.data_name).count() == 1:
+                if ArcComments.objects.filter(table_pk=key, field_name=row.data_name, flagged=True).count() == 1:
                     log = ArcComments.objects.get(table_pk=key, field_name=row.data_name)
                     try:
                         if log.flagged:
@@ -140,3 +142,20 @@ def create_tables(tables_values, page_name_dict, page_link_dict):
             table['table_object'].other_people_numbers = table['other_people_numbers']
         table_output_list.append(table['table_object'])
     return table_output_list
+
+
+def submit_link_setter(variables, table_list, section_name, application_id):
+    application = Application.objects.get(application_id=application_id)
+    for table in table_list:
+        if table.get_error_amount() != 0:
+            variables['submit_link'] = reverse(submit_link_dict[section_name])
+        else:
+            #Go to task list
+            variables['submit_link'] = reverse('morebeta')
+        #If section status is completed and not in arc review, we should go back to the previous question in section
+        if application.application_status != 'FURTHER_INFORMATION':
+            variables['back_link'] = back_link_dict[section_name]
+        # Otherwise, return to the task list
+        else:
+            variables['back_link'] = 'morebeta'
+    return variables

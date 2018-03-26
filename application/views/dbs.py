@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from ..summary_page_data import dbs_summary_dict
-from .. table_util import table_creator
+from ..table_util import table_creator, submit_link_setter
 from .. import status
 from ..business_logic import (dbs_check_logic,
                               reset_declaration)
@@ -180,6 +180,7 @@ def dbs_check_summary(request):
             'table_list': table_list,
             'page_title': dbs_summary_dict['page_title']
         }
+        variables = submit_link_setter(variables, table_list, 'criminal_record_check', application_id_local)
 
         return render(request, 'generic-summary-template.html', variables)
     if request.method == 'POST':

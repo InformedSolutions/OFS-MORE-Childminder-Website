@@ -6,7 +6,7 @@ from django.shortcuts import render
 
 from ..summary_page_data import first_reference_name_dict, first_reference_link_dict,\
                                 second_reference_name_dict, second_reference_link_dict
-from ..table_util import Table, create_tables
+from ..table_util import Table, create_tables, submit_link_setter
 from .. import address_helper, status
 from ..business_logic import (references_first_reference_logic,
                               references_second_reference_logic,
@@ -714,6 +714,8 @@ def references_summary(request):
             'page_title': 'Check your answers: references',
             'references_status': application.references_status,
         }
+        variables = submit_link_setter(variables, table_list, 'references', application_id_local)
+
         return render(request, 'generic-summary-template.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]

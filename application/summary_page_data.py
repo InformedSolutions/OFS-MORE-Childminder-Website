@@ -99,3 +99,18 @@ second_reference_link_dict = {'full_name': 'References-Second-Reference-View',
                               'phone_number': 'References-Second-Reference-Contact-Details-View',
                               'email_address': 'References-Second-Reference-Contact-Details-View'}
 
+submit_link_dict = {'login_details': 'Contact-Email-View',
+                    'personal_details': 'Personal-Details-Guidance-View',
+                    'first_aid_training': 'First-Aid-Training-Guidance-View',
+                    'criminal_record_check': 'DBS-Check-Guidance-View',
+                    'health': 'Health-Intro-View',
+                    'references': 'References-Intro-View',
+                    'people_in_home': 'Other-People-Guidance-View'}
+
+back_link_dict = {'login_details': 'Question-View',
+                  'personal_details': 'Personal-Details-Guidance-View',
+                  'first_aid_training': 'First-Aid-Training-Guidance-View',
+                  'criminal_record_check': 'DBS-Check-Guidance-View',
+                  'health': 'Health-Intro-View',
+                  'references': 'References-Intro-View',
+                  'people_in_home': 'Other-People-Guidance-View'}
