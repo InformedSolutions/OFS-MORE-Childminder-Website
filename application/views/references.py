@@ -6,7 +6,7 @@ from django.shortcuts import render
 
 from ..summary_page_data import first_reference_name_dict, first_reference_link_dict,\
                                 second_reference_name_dict, second_reference_link_dict
-from ..table_util import Table, multi_table_magic
+from ..table_util import Table, create_tables
 from .. import address_helper, status
 from ..business_logic import (references_first_reference_logic,
                               references_second_reference_logic,
@@ -685,8 +685,8 @@ def references_summary(request):
                                  'fields': first_reference_fields,
                                  'title': 'First reference',
                                  'error_summary_title': "There's something wrong with your first reference"}
-        first_reference_table = multi_table_magic([first_reference_table], first_reference_name_dict,
-                                                  first_reference_link_dict)
+        first_reference_table = create_tables([first_reference_table], first_reference_name_dict,
+                                              first_reference_link_dict)
 
         second_reference_fields = {'full_name': ' '.join([second_reference_first_name, second_reference_last_name]),
                                    'relationship': second_reference_relationship,
@@ -702,8 +702,8 @@ def references_summary(request):
                                   'fields': second_reference_fields,
                                   'title': 'Second reference',
                                   'error_summary_title': "There's something wrong with your first reference"}
-        second_reference_table = multi_table_magic([second_reference_table], second_reference_name_dict,
-                                                    second_reference_link_dict)
+        second_reference_table = create_tables([second_reference_table], second_reference_name_dict,
+                                               second_reference_link_dict)
         table_list = first_reference_table + second_reference_table
 
         status.update(application_id_local, 'references_status', 'COMPLETED')

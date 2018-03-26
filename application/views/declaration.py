@@ -3,6 +3,7 @@ import datetime
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.core.urlresolvers import reverse
 
 from .. import status
 from ..forms import (DeclarationIntroForm,
@@ -293,6 +294,9 @@ def declaration_declaration(request):
                 application.save()
                 status.update(application_id_local,
                               'declarations_status', 'COMPLETED')
+                if application.application_status == 'FURTHER_INFORMATION':
+                    return HttpResponseRedirect(reverse('Awaiting-Review-View') + '?id=' + application_id_local + '&resubmitted=1')
+
                 return HttpResponseRedirect(settings.URL_PREFIX + '/payment?id=' + application_id_local)
             else:
                 variables = {

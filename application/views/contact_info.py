@@ -13,7 +13,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .. table_util import multi_table_magic, Table
+from .. table_util import create_tables, Table
 from ..summary_page_data import contact_info_link_dict, contact_info_name_dict
 from .. import magic_link, status
 from ..business_logic import login_contact_logic, reset_declaration, login_contact_logic_phone
@@ -191,7 +191,7 @@ def contact_summary(request):
                               'fields': contact_info_fields,
                               'title': 'Your login details',
                               'error_summary_title': 'There is something wrong with your login details'}
-        table_list = multi_table_magic([contact_info_table], contact_info_name_dict, contact_info_link_dict)
+        table_list = create_tables([contact_info_table], contact_info_name_dict, contact_info_link_dict)
 
         form = ContactSummaryForm()
         variables = {

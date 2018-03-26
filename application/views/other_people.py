@@ -7,7 +7,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from .. import status
-from ..table_util import multi_table_magic, Table
+from ..table_util import create_tables, Table
 from ..summary_page_data import other_adult_link_dict, other_adult_name_dict, other_child_link_dict,\
                                 other_child_name_dict, other_adult_summary_link_dict, other_adult_summary_name_dict,\
                                 other_child_summary_name_dict, other_child_summary_link_dict
@@ -763,7 +763,7 @@ def other_people_summary(request):
         back_link_addition = '&adults=' + str((len(adult_table_list))) + '&remove=0'
         for table in adult_table_list:
             table['other_people_numbers'] = back_link_addition
-        adult_table_list = multi_table_magic(adult_table_list, other_adult_name_dict, other_adult_link_dict)
+        adult_table_list = create_tables(adult_table_list, other_adult_name_dict, other_adult_link_dict)
 
         child_table_list = []
         for child in children_list:
@@ -785,7 +785,7 @@ def other_people_summary(request):
         back_link_addition = '&children=' + str(len(child_table_list)) + '&remove=0'
         for table in child_table_list:
             table['other_people_numbers'] = back_link_addition
-        child_table_list = multi_table_magic(child_table_list, other_child_name_dict, other_child_link_dict, )
+        child_table_list = create_tables(child_table_list, other_child_name_dict, other_child_link_dict, )
 
 
         if not adult_table_list:
@@ -806,8 +806,8 @@ def other_people_summary(request):
                        'fields': {'children_in_home': children_in_home},
                        'title': 'Children in your home',
                        'error_summary_title': 'There is a problem with the children in your home'}
-        adult_table = multi_table_magic([adult_table], other_adult_summary_name_dict, other_adult_summary_link_dict)
-        child_table = multi_table_magic([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
+        adult_table = create_tables([adult_table], other_adult_summary_name_dict, other_adult_summary_link_dict)
+        child_table = create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
 
         table_list = adult_table + child_table + adult_table_list + child_table_list
 

@@ -10,7 +10,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .. table_util import Table, Row, multi_table_magic
+from .. table_util import Table, Row, create_tables
 from .. summary_page_data import personal_details_name_dict, personal_details_link_dict
 from .. import address_helper, status
 from ..business_logic import (multiple_childcare_address_logic,
@@ -820,7 +820,7 @@ def personal_details_summary(request):
                         'error_summary_title': 'There is something wrong with your address'}
 
         tables = [name_dob_dict, address_dict]
-        table_list = multi_table_magic(tables, personal_details_name_dict, personal_details_link_dict)
+        table_list = create_tables(tables, personal_details_name_dict, personal_details_link_dict)
 
         form = PersonalDetailsSummaryForm()
         application = Application.get_id(app_id=app_id)

@@ -5,7 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from .. import status
-from ..table_util import Table, multi_table_magic
+from ..table_util import Table, create_tables
 from ..summary_page_data import health_link_dict, health_name_dict
 from ..business_logic import (health_check_logic,
                               reset_declaration)
@@ -113,7 +113,7 @@ def health_check_answers(request):
                         'fields': health_fields,
                         'title': 'Your health',
                         'error_summary_title': 'There is something wrong with your health'}
-        table_list = multi_table_magic([health_table], health_name_dict, health_link_dict)
+        table_list = create_tables([health_table], health_name_dict, health_link_dict)
 
         variables = {
             'form': form,

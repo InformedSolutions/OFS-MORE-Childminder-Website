@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from .. import status
-from ..table_util import Table, multi_table_magic
+from ..table_util import Table, create_tables
 from ..summary_page_data import first_aid_name_dict, first_aid_link_dict
 from ..business_logic import (first_aid_logic,
                               reset_declaration)
@@ -272,7 +272,7 @@ def first_aid_training_summary(request):
                            'fields': first_aid_fields,
                            'title': 'First aid training',
                            'error_summary_title': 'There is something wrong with your first aid training'}
-        table_list = multi_table_magic([first_aid_table], first_aid_name_dict, first_aid_link_dict)
+        table_list = create_tables([first_aid_table], first_aid_name_dict, first_aid_link_dict)
 
         variables = {
             'form': form,

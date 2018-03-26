@@ -7,9 +7,15 @@
 
 <div class="column-full">
     <div class="grid-row">
-        <h1 class="form-title heading-large">
-            Awaiting Review
-        </h1>
+        {% if resubmitted == '1' %}
+            <h1 class="form-title heading-large">
+                Thank you for resubmitting your application
+            </h1>
+        {% else %}
+            <h1 class="form-title heading-large">
+                Awaiting review
+            </h1>
+        {% endif %}
         <p>Application actions are on Ofsted</p>
     </div>
 </div>

@@ -73,7 +73,7 @@ other_adult_summary_link_dict = {'adults_in_home': 'Other-People-Adult-Question-
 other_child_summary_name_dict = {'children_in_home': 'Do you live with any children'}
 other_child_summary_link_dict = {'children_in_home': 'Other-People-Children-Question-View'}
 
-first_reference_name_dict = {'full_name': 'Full_name',
+first_reference_name_dict = {'full_name': 'Full name',
                              'relationship': 'How they know you',
                              'known_for': 'Known for',
                              'address': 'Address',
@@ -86,7 +86,7 @@ first_reference_link_dict = {'full_name': 'References-First-Reference-View',
                              'phone_number': 'References-First-Reference-Contact-Details-View',
                              'email_address': 'References-First-Reference-Contact-Details-View'}
 
-second_reference_name_dict = {'full_name': 'Full_name',
+second_reference_name_dict = {'full_name': 'Full name',
                               'relationship': 'How they know you',
                               'known_for': 'Known for',
                               'address': 'Address',
