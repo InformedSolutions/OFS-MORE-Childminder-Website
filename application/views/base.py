@@ -51,7 +51,10 @@ def awaiting_review(request):
     :return: an HttpResponse object with the rendered awaiting review saved template
     """
     application_id_local = request.GET["id"]
-    resubmitted = request.GET["resubmitted"]
+    if 'resubmitted' in request.GET.keys():
+        resubmitted = request.GET["resubmitted"]
+    else:
+        resubmitted = '0'
     if resubmitted == '1':
         status.update(application_id_local, 'application_status', 'SUBMITTED')
     variables = {

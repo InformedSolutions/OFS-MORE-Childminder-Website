@@ -13,7 +13,7 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .. table_util import create_tables, Table
+from ..table_util import create_tables, Table, submit_link_setter
 from ..summary_page_data import contact_info_link_dict, contact_info_name_dict
 from .. import magic_link, status
 from ..business_logic import login_contact_logic, reset_declaration, login_contact_logic_phone
@@ -203,6 +203,8 @@ def contact_summary(request):
             'login_details_status': application.login_details_status,
             'childcare_type_status': application.childcare_type_status
         }
+
+        variables = submit_link_setter(variables, table_list, 'login_details', app_id)
 
         return render(request, 'generic-summary-template.html', variables)
 

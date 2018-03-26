@@ -6,7 +6,15 @@
 {% block inner_content %}
 
 <div class="column-full">
-        {% include "generic-error-summary.html" with table_list=table_list %}
+    <div class="grid-row">
+        <!-- Back button -->
+        <a href="{% url back_link %}?id={{ application_id }}" class="link-back"
+           style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
+            Back
+        </a>
+    </div>
+
+        {% include "generic-error-summary.html" with table_list=table_list application_id=application_id %}
 
     <div class="grid-row">
         <h1 class="form-title heading-large">{{ page_title }}</h1>
@@ -70,10 +78,13 @@
     {% endfor %}
     <br>
     <div class="form-group grid-row">
-        <form action="{{ URL_PREFIX}}{{ submit_link|default:"/task-list"}}?id={{application_id}}" method="get">
+        <form action="{{ submit_link|default:"/task-list/"}}?id={{application_id}}" method="get">
             <input type="submit" class="button" value="Confirm and continue"/>
             <input type="hidden" value="{{application_id}}" name="id"/>
         </form>
+    </div>
+    <div class="form-group grid-row">
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
     </div>
     <br>
 </div>

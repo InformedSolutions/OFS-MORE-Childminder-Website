@@ -10,7 +10,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from .. table_util import Table, Row, create_tables
+from ..table_util import Table, Row, create_tables, submit_link_setter
 from .. summary_page_data import personal_details_name_dict, personal_details_link_dict
 from .. import address_helper, status
 from ..business_logic import (multiple_childcare_address_logic,
@@ -833,6 +833,8 @@ def personal_details_summary(request):
             'page_title': 'Check your answers: your personal details',
             'personal_details_status': application.personal_details_status
         }
+        variables = submit_link_setter(variables, table_list, 'personal_details', app_id)
+
         return render(request, 'generic-summary-template.html', variables)
 
     if request.method == 'POST':

@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from .. import status
-from ..table_util import Table, create_tables
+from ..table_util import Table, create_tables, submit_link_setter
 from ..summary_page_data import first_aid_name_dict, first_aid_link_dict
 from ..business_logic import (first_aid_logic,
                               reset_declaration)
@@ -281,6 +281,8 @@ def first_aid_training_summary(request):
             'page_title': 'Check your answers: first aid training',
             'first_aid_training_status': application.first_aid_training_status
         }
+
+        variables = submit_link_setter(variables, table_list, 'first_aid_training', application_id_local)
 
         return render(request, 'generic-summary-template.html', variables)
 
