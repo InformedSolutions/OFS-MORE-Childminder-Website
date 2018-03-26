@@ -19,5 +19,23 @@ These environment variables have to be defined before running Childminder:
 | POSTGRES_PASSWORD   | Database password                                                                     |
 | POSTGRES_PORT       | Database port                                                                         |
 
+## Makefile structure
 
-Once these dependencies have been gathered, you can run the prototype itself by issuing the command `python manage.py runserver`. After running this command, the prototype will be made available (using the default Django port) on http://127.0.0.1:8000.
+We're using Makefile to speed usage of this app
+
+| Target name   | Description                                                                                                      |
+| ------------- | ---------------------------------------------------------------------------------------------------------------- |
+| install       | installs depedencies                                                                                             |
+| run           | run application with manage.py                                                                                   |
+| test          | run django tests                                                                                                 |
+| migrate       | make and run migrations                                                                                          |
+| static        | generate statics                                                                                                 |
+| shellplus     | enter shell of manage.py                                                                                         |
+| graph         | generate uml graph of django model                                                                               |
+| load          | load fixtures to database                                                                                        |
+| export        | export fixtures from database                                                                                    |
+| flush         | clear database                                                                                                   |
+| compose       | run this service in docker                                                                                       |
+| compose-shell | enter container with bash shell                                                                                  |
+| compose-%     | run make targets inside container, for example `make compose-run` will launch this service inside of a container |
+
