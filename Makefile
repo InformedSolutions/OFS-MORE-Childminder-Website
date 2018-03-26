@@ -6,36 +6,14 @@ ifeq ($(OS),Windows_NT)
 	WIN := 1
 endif
 
-# run server
-run:
-	python manage.py runserver $(PROJECT_IP):$(PROJECT_PORT)  --settings=$(PROJECT_SETTINGS)
-
 compose:
 	docker-compose up app-childminder
 
 compose-shell:
 	docker-compose run app-childminder /bin/bash
 
-compose-shellplus:
-	docker-compose run app-childminder make shell
-
-compose-static:
-	docker-compose run app-childminder make static
-
-compose-test:
-	docker-compose run app-childminder make test
-
-compose-migrate:
-	docker-compose run app-childminder make migrate
-
-compose-load:
-	docker-compose run app-childminder make load
-
-compose-export:
-	docker-compose run app-childminder make export
-
-compose-flush:
-	docker-compose run app-childminder make flush
+compose-%:
+	docker-compose run app-childminder make $*
 
 # run tests
 test:
@@ -49,6 +27,11 @@ endif
 	.venv/bin/pip install -r requirements.txt
 	.venv/bin/pip install -r requirements.dev.txt
 
+# run server
+run:
+	python manage.py runserver $(PROJECT_IP):$(PROJECT_PORT)  --settings=$(PROJECT_SETTINGS)
+
+
 # handle django migrations
 migrate:
 	python manage.py makemigrations --settings=$(PROJECT_SETTINGS)
@@ -58,7 +41,7 @@ migrate:
 static:
 	python manage.py collectstatic --settings=$(PROJECT_SETTINGS)
 
-shell:
+shellplus:
 	python manage.py shell_plus --settings=$(PROJECT_SETTINGS)
 
 graph:
