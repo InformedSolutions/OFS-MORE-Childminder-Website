@@ -56,7 +56,7 @@
                 {{row.value}}
             </td>
             <td class="change-answer">
-                <a href="{% url row.back_link %}?id={{application_id}}#id_{{row.data_name}}-group"
+                <a href="{% url row.back_link %}?id={{application_id}}{{table.other_people_numbers}}#id_{{row.data_name}}-group"
                    alt='Change DBS certificate number'>
                     Change <span class="visuallyhidden">DBS certificate number</span>
                 </a>
@@ -70,7 +70,7 @@
     {% endfor %}
     <br>
     <div class="form-group grid-row">
-        <form action="{{ URL_PREFIX}}/task-list?id={{application_id}}" method="get">
+        <form action="{{ URL_PREFIX}}{{ submit_link|default:"/task-list"}}?id={{application_id}}" method="get">
             <input type="submit" class="button" value="Confirm and continue"/>
             <input type="hidden" value="{{application_id}}" name="id"/>
         </form>

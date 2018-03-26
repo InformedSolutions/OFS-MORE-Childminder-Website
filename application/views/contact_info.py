@@ -13,6 +13,8 @@ from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
+from .. table_util import multi_table_magic, Table
+from ..summary_page_data import contact_info_link_dict, contact_info_name_dict
 from .. import magic_link, status
 from ..business_logic import login_contact_logic, reset_declaration, login_contact_logic_phone
 from ..forms import ContactEmailForm, ContactPhoneForm, ContactSummaryForm
@@ -177,20 +179,32 @@ def contact_summary(request):
         if application.login_details_status != 'COMPLETED':
             status.update(app_id, 'login_details_status', 'COMPLETED')
 
-        form = ContactSummaryForm()
-        variables = {
-            'form': form,
-            'application_id': app_id,
+        contact_info_fields = {
             'email': email,
             'mobile_number': mobile_number,
             'add_phone_number': add_phone_number,
             'security_question': security_question,
             'security_answer': security_answer,
+        }
+
+        contact_info_table = {'table_object': Table([user_details.pk]),
+                              'fields': contact_info_fields,
+                              'title': 'Your login details',
+                              'error_summary_title': 'There is something wrong with your login details'}
+        table_list = multi_table_magic([contact_info_table], contact_info_name_dict, contact_info_link_dict)
+
+        form = ContactSummaryForm()
+        variables = {
+            'form': form,
+            'application_id': app_id,
+            'table_list': table_list,
+            'page_title': 'Check your answers: your login details',
+            'submit_link': '/childcare/guidance/',
             'login_details_status': application.login_details_status,
             'childcare_type_status': application.childcare_type_status
         }
 
-        return render(request, 'contact-summary.html', variables)
+        return render(request, 'generic-summary-template.html', variables)
 
     if request.method == 'POST':
 

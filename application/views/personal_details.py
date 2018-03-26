@@ -4,11 +4,14 @@ and navigating to the Your login and contact details: name page when successfull
 """
 
 import datetime
+import calendar
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
+from .. table_util import Table, Row, multi_table_magic
+from .. summary_page_data import personal_details_name_dict, personal_details_link_dict
 from .. import address_helper, status
 from ..business_logic import (multiple_childcare_address_logic,
                               personal_dob_logic,
@@ -764,6 +767,7 @@ def personal_details_summary(request):
     :return: an HttpResponse object with the rendered Your personal details: summary template
     """
 
+
     if request.method == 'GET':
         app_id = request.GET["id"]
         # Move to models
@@ -794,7 +798,29 @@ def personal_details_summary(request):
         childcare_county = applicant_childcare_address_record.county
         childcare_postcode = applicant_childcare_address_record.postcode
 
-        ##
+        name_dob_table_dict = {'name': ' '.join([first_name, (middle_names or ''), last_name]),
+                               'date_of_birth': ' '.join([str(birth_day), calendar.month_name[birth_month], str(birth_year)])}
+
+        home_address = ' '.join([street_line1, (street_line2 or ''), town, (county or ''), postcode])
+        if location_of_childcare:
+            childcare_location = 'Same as home address'
+        else:
+            childcare_location = ' '.join([childcare_street_line1, (childcare_street_line2 or ''),
+                                           childcare_town, (childcare_county or ''), childcare_postcode])
+
+        address_table_dict = {'home_address': home_address,
+                              'childcare_location': childcare_location}
+        name_dob_dict = {'table_object': Table([personal_detail_id.pk, applicant_name_record.pk]),
+                        'fields': name_dob_table_dict,
+                        'title': 'Your name and date of birth',
+                        'error_summary_title': 'There is something wrong with your name and date of birth'}
+        address_dict = {'table_object': Table([applicant_home_address_record.pk, applicant_childcare_address_record.pk]),
+                        'fields': address_table_dict,
+                        'title': 'Your home address',
+                        'error_summary_title': 'There is something wrong with your address'}
+
+        tables = [name_dob_dict, address_dict]
+        table_list = multi_table_magic(tables, personal_details_name_dict, personal_details_link_dict)
 
         form = PersonalDetailsSummaryForm()
         application = Application.get_id(app_id=app_id)
@@ -803,26 +829,11 @@ def personal_details_summary(request):
         variables = {
             'form': form,
             'application_id': app_id,
-            'first_name': first_name,
-            'middle_names': middle_names,
-            'last_name': last_name,
-            'birth_day': birth_day,
-            'birth_month': birth_month,
-            'birth_year': birth_year,
-            'street_line1': street_line1,
-            'street_line2': street_line2,
-            'town': town,
-            'county': county,
-            'postcode': postcode,
-            'location_of_childcare': location_of_childcare,
-            'childcare_street_line1': childcare_street_line1,
-            'childcare_street_line2': childcare_street_line2,
-            'childcare_town': childcare_town,
-            'childcare_county': childcare_county,
-            'childcare_postcode': childcare_postcode,
+            'table_list': table_list,
+            'page_title': 'Check your answers: your personal details',
             'personal_details_status': application.personal_details_status
         }
-        return render(request, 'personal-details-summary.html', variables)
+        return render(request, 'generic-summary-template.html', variables)
 
     if request.method == 'POST':
 
