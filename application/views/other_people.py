@@ -37,6 +37,7 @@ def other_people_guidance(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = OtherPeopleGuidanceForm()
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -47,6 +48,7 @@ def other_people_guidance(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = OtherPeopleGuidanceForm(request.POST)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.people_in_home_status != 'COMPLETED':
@@ -159,6 +161,7 @@ def other_people_adult_details(request):
         for i in range(1, number_of_adults + 1):
             form = OtherPeopleAdultDetailsForm(
                 id=application_id_local, adult=i, prefix=i)
+            form.check_flag()
             form_list.append(form)
         variables = {
             'form_list': form_list,
@@ -195,6 +198,7 @@ def other_people_adult_details(request):
         for i in range(1, int(number_of_adults) + 1):
             form = OtherPeopleAdultDetailsForm(
                 request.POST, id=application_id_local, adult=i, prefix=i)
+            form.remove_flag()
             form_list.append(form)
             form.error_summary_title = 'There is a problem with this form (Person ' + str(
                 i) + ')'
@@ -522,6 +526,7 @@ def other_people_children_details(request):
             form = OtherPeopleChildrenDetailsForm(
                 id=application_id_local, child=i, prefix=i)
             form_list.append(form)
+            form.check_flag()
         variables = {
             'form_list': form_list,
             'application_id': application_id_local,
@@ -559,6 +564,7 @@ def other_people_children_details(request):
         for i in range(1, int(number_of_children) + 1):
             form = OtherPeopleChildrenDetailsForm(
                 request.POST, id=application_id_local, child=i, prefix=i)
+            form.remove_flag()
             form_list.append(form)
             form.error_summary_title = 'There is a problem with this form (Child ' + str(
                 i) + ')'

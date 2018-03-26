@@ -2,7 +2,7 @@ import datetime
 import json
 import re
 from uuid import UUID
-from ..utils import trigger_audit_log
+
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -15,6 +15,7 @@ from ..models import (ApplicantName,
                       ApplicantPersonalDetails,
                       Application,
                       UserDetails)
+from ..utils import trigger_audit_log
 
 
 @never_cache
@@ -71,7 +72,6 @@ def card_payment_details(request):
                     personal_detail_id=personal_detail_id)
                 payment.payment_email(login_record.email,
                                       applicant_name_record.first_name)
-                print('Email sent')
                 order_code = parsed_payment_response["orderCode"]
                 variables = {
                     'form': form,
@@ -117,7 +117,6 @@ def paypal_payment_completion(request):
             return HttpResponseRedirect(settings.URL_PREFIX + '/confirmation/?id=' + application_id_local +
                                         '&orderCode=' + order_code, variables)
         else:
-            print('HELP')
             return render(request, '500.html')
 
 

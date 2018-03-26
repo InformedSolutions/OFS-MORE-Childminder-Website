@@ -35,9 +35,15 @@ from .forms_helper import full_stop_stripper
 class ChildminderForms(GOVUKForm):
     pk = ''
     field_list = []
+
     def check_flag(self):
+        """
+        For a class to call this method it must set self.pk and self.field_list.  This method simply checks whether
+        or not a field is flagged, and raises a validation error if it is
+        :return: Form validation error.
+        """
         for i in self.field_list:
-            if ArcComments.objects.filter(table_pk=self.pk, field_name=i).count() == 1:
+            if ArcComments.objects.filter(table_pk=self.pk, field_name=i).exists():
                 log = ArcComments.objects.get(table_pk=self.pk, field_name=i)
                 try:
                     if log.flagged:
@@ -47,14 +53,85 @@ class ChildminderForms(GOVUKForm):
                 except Exception as ex:
                     self.cleaned_data = ''
                     self.add_error(i, ex)
+            self.if_name(i)
+            self.if_address(i)
 
     def remove_flag(self):
+        """
+        This method is called when a form is posted.  It simply removes the validation errors triggered by the Arc
+        comments.
+        :return: Update the arc comments to remove the flag (but keep the comment)
+        """
         for i in self.field_list:
             if ArcComments.objects.filter(table_pk=self.pk, field_name=i).count() == 1:
                 log = ArcComments.objects.get(table_pk=self.pk, field_name=i)
                 if log.flagged:
                     log.flagged = False
                     log.save()
+
+    def if_name(self, field):
+        """
+        This checks if a name has been flagged, as first, middle or last cannot be flagged individually.
+        :param field:
+        :return:
+        """
+
+        log = None
+        if ArcComments.objects.filter(
+                table_pk=self.pk).count() > 0 and field == 'first_name' or 'last_name' or 'middle_names':
+
+            if ArcComments.objects.filter(table_pk=self.pk, field_name='name').exists():
+                log = ArcComments.objects.get(table_pk=self.pk, field_name='name')
+
+            if ArcComments.objects.filter(table_pk=self.pk, field_name='full_name').exists():
+                log = ArcComments.objects.get(table_pk=self.pk, field_name='full_name')
+            try:
+                if hasattr(log, 'comment'):
+
+                    if log.flagged:
+                        raise forms.ValidationError(log.comment)
+                else:
+                    forms.ValidationError('')
+
+            except Exception as ex:
+
+                self.cleaned_data = ''
+                if field == 'first_name':
+                    self.add_error(field, ex)
+
+                else:
+                    self.add_error(field, '')
+
+    def if_address(self, field):
+        """
+        This checks if an address has been flagged, as each address field cannot be flagged individually.
+        :param field:
+        :return:
+        """
+
+        log = None
+        # Right now only an address as a whole can be flagged, and the message is repeated for each field
+        if ArcComments.objects.filter(table_pk=self.pk).count() > 0:
+            if field == 'street_line1' or 'street_line2' or 'town' or 'county' or 'country' or 'postcode':
+
+                if ArcComments.objects.filter(table_pk=self.pk, field_name='address').exists():
+                    log = ArcComments.objects.get(table_pk=self.pk, field_name='address')
+
+                if ArcComments.objects.filter(table_pk=self.pk, field_name='home_address').exists():
+                    log = ArcComments.objects.get(table_pk=self.pk, field_name='home_address')
+                try:
+
+                    if hasattr(log, 'comment'):
+                        if log.flagged:
+                            raise forms.ValidationError(log.comment)
+                    else:
+                        forms.ValidationError('')
+                except Exception as ex:
+                    self.cleaned_data = ''
+                    if field == 'street_name_and_number':
+                        self.add_error(field, ex)
+                    else:
+                        self.add_error(field, '')
 
 
 class AccountForm(ChildminderForms):
@@ -135,7 +212,7 @@ class ContactPhoneForm(ChildminderForms):
             self.fields['mobile_number'].initial = UserDetails.objects.get(login_id=login_id).mobile_number
             self.fields['add_phone_number'].initial = UserDetails.objects.get(login_id=login_id).add_phone_number
             self.pk = login_id
-            self.field_list = ['mobile_number','add_phone_number']
+            self.field_list = ['mobile_number', 'add_phone_number']
 
     def clean_mobile_number(self):
         """
@@ -192,7 +269,7 @@ class QuestionForm(ChildminderForms):
             self.fields['security_question'].initial = UserDetails.objects.get(login_id=login_id).security_question
             self.fields['security_answer'].initial = UserDetails.objects.get(login_id=login_id).security_answer
             self.pk = login_id
-            self.field_list = ['security_question','security_answer']
+            self.field_list = ['security_question', 'security_answer']
 
     def clean_security_question(self):
         security_question = self.cleaned_data['security_question']
@@ -409,7 +486,7 @@ class PersonalDetailsNameForm(ChildminderForms):
             self.fields['middle_names'].initial = applicant_name_record.middle_names
             self.fields['last_name'].initial = applicant_name_record.last_name
             self.pk = applicant_name_record.name_id
-            self.field_list = ['first_name','middle_names','last_name']
+            self.field_list = ['first_name', 'middle_names', 'last_name']
 
     def clean_first_name(self):
         """
@@ -569,7 +646,7 @@ class PersonalDetailsHomeAddressManualForm(ChildminderForms):
             self.fields['county'].initial = applicant_home_address.county
             self.fields['postcode'].initial = applicant_home_address.postcode
             self.pk = applicant_home_address.home_address_id
-            self.field_list = ['street_name_and_number','street_name_and_number2','town','county','postcode']
+            self.field_list = ['street_name_and_number', 'street_name_and_number2', 'town', 'county', 'postcode']
 
     def clean_street_name_and_number(self):
         """
@@ -764,7 +841,7 @@ class PersonalDetailsChildcareAddressManualForm(ChildminderForms):
             self.fields['county'].initial = childcare_address.county
             self.fields['postcode'].initial = childcare_address.postcode
             self.pk = childcare_address.child_id
-            self.field_list = ['street_name_and_number','street_name_and_number2','town','county','postcode']
+            self.field_list = ['street_name_and_number', 'street_name_and_number2', 'town', 'county', 'postcode']
 
     def clean_street_name_and_number(self):
         """
@@ -900,7 +977,7 @@ class FirstAidTrainingDetailsForm(ChildminderForms):
                                                   first_aid_record.course_month,
                                                   first_aid_record.course_year]
             self.pk = first_aid_record.first_aid_id
-            self.field_list = ['first_aid_training_organisation','title_of_training_course','course_date']
+            self.field_list = ['first_aid_training_organisation', 'title_of_training_course', 'course_date']
 
     def clean_first_aid_training_organisation(self):
         """
@@ -1298,8 +1375,7 @@ class FirstReferenceForm(ChildminderForms):
             self.fields['relationship'].initial = reference_record.relationship
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
             self.pk = reference_record.reference_id
-            self.field_list = ['first_name','last_name','relationship','time_known']
-
+            self.field_list = ['first_name', 'last_name', 'relationship', 'time_known']
 
     def clean_first_name(self):
         """
@@ -1420,7 +1496,9 @@ class ReferenceFirstReferenceAddressManualForm(ChildminderForms):
             self.fields['postcode'].initial = reference_record.postcode
             self.fields['country'].initial = reference_record.country
             self.pk = reference_record.reference_id
-            self.field_list = ['street_name_and_number','street_name_and_number2','town','county','postcode','country']
+            self.field_list = ['street_name_and_number', 'street_name_and_number2', 'town', 'county', 'postcode',
+                               'country']
+
     def clean_street_name_and_number(self):
         """
         Street name and number validation
@@ -1605,7 +1683,7 @@ class SecondReferenceForm(ChildminderForms):
             self.fields['relationship'].initial = reference_record.relationship
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
             self.pk = reference_record.reference_id
-            self.field_list = ['first_name','last_name','relationship','time_known']
+            self.field_list = ['first_name', 'last_name', 'relationship', 'time_known']
 
     def clean_first_name(self):
         """
@@ -1716,7 +1794,8 @@ class ReferenceSecondReferenceAddressManualForm(ChildminderForms):
             self.fields['postcode'].initial = reference_record.postcode
             self.fields['country'].initial = reference_record.country
             self.pk = reference_record.reference_id
-            self.field_list = ['street_name_and_number','street_name_and_number2','town','county','postcode','country']
+            self.field_list = ['street_name_and_number', 'street_name_and_number2', 'town', 'county', 'postcode',
+                               'country']
 
     def clean_street_name_and_number(self):
         """
@@ -1841,7 +1920,7 @@ class ReferenceSecondReferenceContactForm(ChildminderForms):
             self.fields['phone_number'].initial = reference_record.phone_number
             self.fields['email_address'].initial = reference_record.email
             self.pk = reference_record.reference_id
-            self.field_list = ['phone_number','email_address']
+            self.field_list = ['phone_number', 'email_address']
 
     def clean_phone_number(self):
         """
@@ -1951,8 +2030,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
                                                     adult_record.birth_year]
             self.fields['relationship'].initial = adult_record.relationship
             self.pk = adult_record.adult_id
-            self.field_list = ['first_name','middle_names','last_name','date_of_birth','relationship']
-
+            self.field_list = ['first_name', 'middle_names', 'last_name', 'date_of_birth', 'relationship']
 
     def clean_first_name(self):
         """
@@ -2153,7 +2231,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
                                                     child_record.birth_year]
             self.fields['relationship'].initial = child_record.relationship
             self.pk = child_record.child_id
-            self.field_list = ['first_name','middle_names','last_name','date_of_birth','relationship']
+            self.field_list = ['first_name', 'middle_names', 'last_name', 'date_of_birth', 'relationship']
 
     def clean_first_name(self):
         """

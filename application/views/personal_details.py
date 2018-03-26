@@ -412,8 +412,8 @@ def personal_details_location_of_care(request):
         postcode = applicant_home_address.postcode
         application = Application.get_id(app_id=app_id)
 
-        if application.login_details_status != 'COMPLETED':
-            status.update(app_id, 'login_details_status', 'COMPLETED')
+        if application.login_details_status != 'COMPLETE':
+            status.update(app_id, 'login_details_status', 'COMPLETE')
 
         form = PersonalDetailsLocationOfCareForm(id=app_id)
         form.check_flag()

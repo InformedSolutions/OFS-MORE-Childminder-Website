@@ -55,7 +55,7 @@ def contact_email(request):
             # Send login e-mail link if applicant has previously applied
             email = form.cleaned_data['email_address']
 
-            if UserDetails.objects.filter(email=email).exists():
+            if UserDetails.objects.filter(email=email).exists() and application.application_status != 'FURTHER_INFORMATION':
 
                 acc = UserDetails.objects.get(email=email)
                 domain = request.META.get('HTTP_REFERER', "")
@@ -78,7 +78,6 @@ def contact_email(request):
                 application.save()
                 reset_declaration(application)
                 response = HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + app_id)
-
                 # Create session and issue cookie to user
                 CustomAuthenticationHandler.create_session(response, application.login_id.email)
 
