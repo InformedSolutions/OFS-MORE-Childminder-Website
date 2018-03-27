@@ -57,7 +57,7 @@ def contact_email(request):
             # Send login e-mail link if applicant has previously applied
             email = form.cleaned_data['email_address']
 
-            if UserDetails.objects.filter(email=email).exists() and application.application_status != 'FURTHER_INFORMATION':
+            if UserDetails.objects.filter(email=email).exists() and application.login_details_status != 'COMPLETED':
 
                 acc = UserDetails.objects.get(email=email)
                 domain = request.META.get('HTTP_REFERER', "")
@@ -79,9 +79,12 @@ def contact_email(request):
                 application.date_updated = current_date
                 application.save()
                 reset_declaration(application)
-                response = HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + app_id)
-                # Create session and issue cookie to user
-                CustomAuthenticationHandler.create_session(response, application.login_id.email)
+                if application.login_details_status == 'COMPLETED':
+                    response = HttpResponseRedirect(reverse('Contact-Summary-View') + '?id=' + app_id)
+                else:
+                    response = HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + app_id)
+                    # Create session and issue cookie to user
+                    CustomAuthenticationHandler.create_session(response, application.login_id.email)
 
                 return response
         else:
