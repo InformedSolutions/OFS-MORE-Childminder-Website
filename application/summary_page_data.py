@@ -9,11 +9,17 @@ dbs_summary_dict = {'data_names': ['dbs_certificate_number', 'cautions_convictio
                     'page_title': 'Check your answers: criminal record (DBS) check'
                     }
 
+###
+
+# Name dict contains the data_name of each table field and the actual name to be rendered
+
 contact_info_name_dict = {'email': 'Your email',
                            'mobile_number': 'Mobile phone number',
                            'add_phone_number': 'Alternative phone number',
                            'security_question': 'Knowledge based question',
                            'security_answer': 'Knowledge based answer'}
+
+# Link dict contains the data_name of each table field and the name of the change_link view to be reversed in template
 
 contact_info_link_dict = {'email': 'Contact-Email-View',
                            'mobile_number': 'Contact-Phone-View',
@@ -21,7 +27,9 @@ contact_info_link_dict = {'email': 'Contact-Email-View',
                            'security_question': 'Question-View',
                            'security_answer': 'Question-View'}
 
-personal_details_name_dict = {'name':'Your name',
+###
+
+personal_details_name_dict = {'name': 'Your name',
                               'date_of_birth': 'Your date of birth',
                               'home_address': 'Home address',
                               'childcare_location': 'Childcare location'}
@@ -30,6 +38,8 @@ personal_details_link_dict = {'name': 'Personal-Details-Name-View',
                               'date_of_birth': 'Personal-Details-DOB-View',
                               'home_address': 'Personal-Details-Home-Address-Manual-View',
                               'childcare_location': 'Personal-Details-Location-Of-Care-View'}
+
+###
 
 first_aid_name_dict = {'first_aid_training_organisation': 'Training organisation',
                        'title_of_training_course': 'Title of training course',
@@ -43,9 +53,13 @@ first_aid_link_dict = {'first_aid_training_organisation': 'First-Aid-Training-De
                        'renew_certificate': 'First-Aid-Training-Renew-View',
                        'show_certificate': 'First-Aid-Training-Declaration-View'}
 
+###
+
 health_name_dict = {'health_submission_consent': 'Will you submit a health declaration booklet to Ofsted'}
 
 health_link_dict = {'health_submission_consent': 'Health-Booklet-View'}
+
+###
 
 other_adult_name_dict = {'full_name': 'Name',
                          'date_of_birth': 'Date of birth',
@@ -59,6 +73,8 @@ other_adult_link_dict = {'full_name': 'Other-People-Adult-Details-View',
                          'dbs_certificate_number': 'Other-People-Adult-DBS-View',
                          'permission': 'Other-People-Adult-Permission-View'}
 
+###
+
 other_child_name_dict = {'full_name': 'Name',
                          'date_of_birth': 'Date of birth',
                          'relationship': 'Relationship'}
@@ -67,11 +83,16 @@ other_child_link_dict = {'full_name': 'Other-People-Children-Details-View',
                          'date_of_birth': 'Other-People-Children-Details-View',
                          'relationship': 'Other-People-Children-Details-View'}
 
+# The below dictionaries are for the two tables at the top of the other people summary page
+
 other_adult_summary_name_dict = {'adults_in_home': 'Do you live with anyone who is 16 or over'}
 other_adult_summary_link_dict = {'adults_in_home': 'Other-People-Adult-Question-View'}
 
+
 other_child_summary_name_dict = {'children_in_home': 'Do you live with any children'}
 other_child_summary_link_dict = {'children_in_home': 'Other-People-Children-Question-View'}
+
+###
 
 first_reference_name_dict = {'full_name': 'Full name',
                              'relationship': 'How they know you',
@@ -99,6 +120,11 @@ second_reference_link_dict = {'full_name': 'References-Second-Reference-View',
                               'phone_number': 'References-Second-Reference-Contact-Details-View',
                               'email_address': 'References-Second-Reference-Contact-Details-View'}
 
+###
+
+# This dictionary contains the view to be reversed if the user clicks submit on the summary page ONLY if there are
+# errors to be rectified
+
 submit_link_dict = {'login_details': 'Contact-Email-View',
                     'personal_details': 'Personal-Details-Guidance-View',
                     'first_aid_training': 'First-Aid-Training-Guidance-View',
@@ -106,6 +132,8 @@ submit_link_dict = {'login_details': 'Contact-Email-View',
                     'health': 'Health-Intro-View',
                     'references': 'References-Intro-View',
                     'people_in_home': 'Other-People-Guidance-View'}
+
+
 
 back_link_dict = {'login_details': 'Question-View',
                   'personal_details': 'Personal-Details-Guidance-View',
