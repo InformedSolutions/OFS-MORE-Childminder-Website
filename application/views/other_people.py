@@ -1,4 +1,5 @@
 import datetime
+import calendar
 from datetime import date
 
 from django.conf import settings
@@ -6,6 +7,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from .. import status
+from ..table_util import create_tables, Table, submit_link_setter
+from ..summary_page_data import other_adult_link_dict, other_adult_name_dict, other_child_link_dict,\
+                                other_child_name_dict, other_adult_summary_link_dict, other_adult_summary_name_dict,\
+                                other_child_summary_name_dict, other_child_summary_link_dict
 from ..business_logic import (other_people_adult_details_logic,
                               other_people_children_details_logic,
                               rearrange_adults,
@@ -734,47 +739,91 @@ def other_people_summary(request):
         child_relationship_list = []
         form = OtherPeopleSummaryForm()
         application = Application.objects.get(pk=application_id_local)
+        adult_table_list = []
+        adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
+                          adult_relationship_list, adult_dbs_list, adult_permission_list)
         for adult in adults_list:
             if adult.middle_names != '':
                 name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
             elif adult.middle_names == '':
                 name = adult.first_name + ' ' + adult.last_name
-            adult_name_list.append(name)
-            adult_birth_day_list.append(adult.birth_day)
-            adult_birth_month_list.append(adult.birth_month)
-            adult_birth_year_list.append(adult.birth_year)
-            adult_relationship_list.append(adult.relationship)
-            adult_dbs_list.append(adult.dbs_certificate_number)
-            adult_permission_list.append(adult.permission_declare)
-        adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
-                          adult_relationship_list, adult_dbs_list, adult_permission_list)
+            birth_date = ' '.join([str(adult.birth_day),calendar.month_name[adult.birth_month],str(adult.birth_year)])
+            other_adult_fields = {'full_name': name,
+                                  'date_of_birth': birth_date,
+                                  'relationship': adult.relationship,
+                                  'dbs_certificate_number': adult.dbs_certificate_number,
+                                  'permission': adult.permission_declare}
+
+            other_adult_table = {'table_object': Table([adult.pk]),
+                                 'fields': other_adult_fields,
+                                 'title': name,
+                                 'error_summary_title': ('There is something wrong with a persons details ('
+                                                         + name + ')')}
+            adult_table_list.append(other_adult_table)
+        back_link_addition = '&adults=' + str((len(adult_table_list))) + '&remove=0'
+        for table in adult_table_list:
+            table['other_people_numbers'] = back_link_addition
+        adult_table_list = create_tables(adult_table_list, other_adult_name_dict, other_adult_link_dict)
+
+        child_table_list = []
         for child in children_list:
             if child.middle_names != '':
                 name = child.first_name + ' ' + child.middle_names + ' ' + child.last_name
             elif child.middle_names == '':
                 name = child.first_name + ' ' + child.last_name
-            child_name_list.append(name)
-            child_birth_day_list.append(child.birth_day)
-            child_birth_month_list.append(child.birth_month)
-            child_birth_year_list.append(child.birth_year)
-            child_relationship_list.append(child.relationship)
-        child_lists = zip(child_name_list, child_birth_day_list, child_birth_month_list, child_birth_year_list,
-                          child_relationship_list)
+            other_child_fields = {'full_name': name,
+                                  'date_of_birth': ' '.join([str(child.birth_day),
+                                                             calendar.month_name[child.birth_month],
+                                                             str(child.birth_year)]),
+                                  'relationship': child.relationship}
+
+            other_child_table = {'table_object': Table([child.pk]),
+                                 'fields': other_child_fields,
+                                 'title': name,
+                                 'error_summary_title': 'child test'}
+            child_table_list.append(other_child_table)
+        back_link_addition = '&children=' + str(len(child_table_list)) + '&remove=0'
+        for table in child_table_list:
+            table['other_people_numbers'] = back_link_addition
+        child_table_list = create_tables(child_table_list, other_child_name_dict, other_child_link_dict, )
+
+
+        if not adult_table_list:
+            adults_in_home = False
+        else:
+            adults_in_home = True
+
+        if not child_table_list:
+            children_in_home = False
+        else:
+            children_in_home = True
+
+        adult_table = {'table_object': Table([application_id_local]),
+                       'fields': {'adults_in_home': adults_in_home},
+                       'title': 'Adults in your home',
+                       'error_summary_title': 'There is a problem with the adults in your home'}
+        child_table = {'table_object': Table([application_id_local]),
+                       'fields': {'children_in_home': children_in_home},
+                       'title': 'Children in your home',
+                       'error_summary_title': 'There is a problem with the children in your home'}
+        adult_table = create_tables([adult_table], other_adult_summary_name_dict, other_adult_summary_link_dict)
+        child_table = create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
+
+        table_list = adult_table + child_table + adult_table_list + child_table_list
+
         variables = {
+            'page_title': 'Check your answers: people in your home',
             'form': form,
             'application_id': application_id_local,
-            'adults_in_home': application.adults_in_home,
-            'children_in_home': application.children_in_home,
-            'number_of_adults': adults_list.count(),
-            'number_of_children': children_list.count(),
-            'adult_lists': adult_lists,
-            'child_lists': child_lists,
+            'table_list': table_list,
             'turning_16': application.children_turning_16,
             'people_in_home_status': application.people_in_home_status
         }
+        variables = submit_link_setter(variables, table_list, 'people_in_home', application_id_local)
+
         status.update(application_id_local,
                       'people_in_home_status', 'COMPLETED')
-        return render(request, 'other-people-summary.html', variables)
+        return render(request, 'generic-summary-template.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = OtherPeopleSummaryForm()

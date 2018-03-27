@@ -4,6 +4,9 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
+from ..summary_page_data import first_reference_name_dict, first_reference_link_dict,\
+                                second_reference_name_dict, second_reference_link_dict
+from ..table_util import Table, create_tables, submit_link_setter
 from .. import address_helper, status
 from ..business_logic import (references_first_reference_logic,
                               references_second_reference_logic,
@@ -668,39 +671,52 @@ def references_summary(request):
         second_reference_email = second_reference_record.email
         form = ReferenceSummaryForm()
         application = Application.objects.get(pk=application_id_local)
+
+        first_reference_fields = {'full_name': ' '.join([first_reference_first_name, first_reference_last_name]),
+                                  'relationship': first_reference_relationship,
+                                  'known_for': ' '.join([str(first_reference_years_known), 'years,',
+                                                         str(first_reference_months_known), 'months']),
+                                  'address': ' '.join([first_reference_street_line1, (first_reference_street_line2 or ''),
+                                                       first_reference_town, (first_reference_county or ''),
+                                                       first_reference_postcode, first_reference_country]),
+                                  'phone_number': first_reference_phone_number,
+                                  'email_address': first_reference_email}
+        first_reference_table = {'table_object': Table([first_reference_record.pk]),
+                                 'fields': first_reference_fields,
+                                 'title': 'First reference',
+                                 'error_summary_title': "There's something wrong with your first reference"}
+        first_reference_table = create_tables([first_reference_table], first_reference_name_dict,
+                                              first_reference_link_dict)
+
+        second_reference_fields = {'full_name': ' '.join([second_reference_first_name, second_reference_last_name]),
+                                   'relationship': second_reference_relationship,
+                                   'known_for': ' '.join([str(second_reference_years_known), 'years,',
+                                                          str(second_reference_months_known), 'months']),
+                                   'address': ' '.join(
+                                      [second_reference_street_line1, (second_reference_street_line2 or ''),
+                                       second_reference_town, (second_reference_county or ''),
+                                       second_reference_postcode, second_reference_country]),
+                                   'phone_number': second_reference_phone_number,
+                                   'email_address': second_reference_email}
+        second_reference_table = {'table_object': Table([second_reference_record.pk]),
+                                  'fields': second_reference_fields,
+                                  'title': 'Second reference',
+                                  'error_summary_title': "There's something wrong with your first reference"}
+        second_reference_table = create_tables([second_reference_table], second_reference_name_dict,
+                                               second_reference_link_dict)
+        table_list = first_reference_table + second_reference_table
+
         status.update(application_id_local, 'references_status', 'COMPLETED')
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'first_reference_first_name': first_reference_first_name,
-            'first_reference_last_name': first_reference_last_name,
-            'first_reference_relationship': first_reference_relationship,
-            'first_reference_years_known': first_reference_years_known,
-            'first_reference_months_known': first_reference_months_known,
-            'first_reference_street_line1': first_reference_street_line1,
-            'first_reference_street_line2': first_reference_street_line2,
-            'first_reference_town': first_reference_town,
-            'first_reference_county': first_reference_county,
-            'first_reference_country': first_reference_country,
-            'first_reference_postcode': first_reference_postcode,
-            'first_reference_phone_number': first_reference_phone_number,
-            'first_reference_email': first_reference_email,
-            'second_reference_first_name': second_reference_first_name,
-            'second_reference_last_name': second_reference_last_name,
-            'second_reference_relationship': second_reference_relationship,
-            'second_reference_years_known': second_reference_years_known,
-            'second_reference_months_known': second_reference_months_known,
-            'second_reference_street_line1': second_reference_street_line1,
-            'second_reference_street_line2': second_reference_street_line2,
-            'second_reference_town': second_reference_town,
-            'second_reference_county': second_reference_county,
-            'second_reference_country': second_reference_country,
-            'second_reference_postcode': second_reference_postcode,
-            'second_reference_phone_number': second_reference_phone_number,
-            'second_reference_email': second_reference_email,
-            'references_status': application.references_status
+            'table_list': table_list,
+            'page_title': 'Check your answers: references',
+            'references_status': application.references_status,
         }
-        return render(request, 'references-summary.html', variables)
+        variables = submit_link_setter(variables, table_list, 'references', application_id_local)
+
+        return render(request, 'generic-summary-template.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = ReferenceSummaryForm()

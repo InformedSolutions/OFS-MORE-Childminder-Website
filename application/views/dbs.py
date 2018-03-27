@@ -4,6 +4,8 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
+from ..summary_page_data import dbs_summary_dict
+from ..table_util import table_creator, submit_link_setter
 from .. import status
 from ..business_logic import (dbs_check_logic,
                               reset_declaration)
@@ -158,25 +160,31 @@ def dbs_check_summary(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your criminal record (DBS) check: summary template
     """
+
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        criminal_record_check = CriminalRecordCheck.objects.get(
-            application_id=application_id_local)
-        dbs_certificate_number = criminal_record_check.dbs_certificate_number
-        cautions_convictions = criminal_record_check.cautions_convictions
-        send_certificate_declare = criminal_record_check.send_certificate_declare
+        criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
+        object_list = [[criminal_record_check]]
+
+        table_list = table_creator(object_list, dbs_summary_dict['display_names'], dbs_summary_dict['data_names'],
+                                   dbs_summary_dict['table_names'], dbs_summary_dict['table_error_names'],
+                                   dbs_summary_dict['back_url_names'])
+
         form = DBSCheckSummaryForm()
+
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'dbs_certificate_number': dbs_certificate_number,
-            'cautions_convictions': cautions_convictions,
             'criminal_record_check_status': application.criminal_record_check_status,
-            'declaration': send_certificate_declare
+            'table_list': table_list,
+            'page_title': dbs_summary_dict['page_title']
         }
-        return render(request, 'dbs-check-summary.html', variables)
+        variables = submit_link_setter(variables, table_list, 'criminal_record_check', application_id_local)
+
+        return render(request, 'generic-summary-template.html', variables)
     if request.method == 'POST':
+
         application_id_local = request.POST["id"]
         form = DBSCheckSummaryForm(request.POST)
         if form.is_valid():

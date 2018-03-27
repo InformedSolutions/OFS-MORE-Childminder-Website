@@ -70,6 +70,7 @@ def declaration_declaration(request):
                 application.save()
                 status.update(app_id,
                               'declarations_status', 'COMPLETED')
+
                 return HttpResponseRedirect(reverse('Payment-View') + '?id=' + app_id)
         else:
             variables = {

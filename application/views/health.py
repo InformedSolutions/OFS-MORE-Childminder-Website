@@ -5,6 +5,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from .. import status
+from ..table_util import Table, create_tables, submit_link_setter
+from ..summary_page_data import health_link_dict, health_name_dict
 from ..business_logic import (health_check_logic,
                               reset_declaration)
 from ..forms import (HealthBookletForm,
@@ -99,17 +101,30 @@ def health_check_answers(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        send_hdb_declare = HealthDeclarationBooklet.objects.get(
-            application_id=application_id_local).send_hdb_declare
+        health_record = HealthDeclarationBooklet.objects.get(
+            application_id=application_id_local)
+        send_hdb_declare = health_record.send_hdb_declare
         form = HealthBookletForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
+
+        health_fields = {'health_submission_consent': send_hdb_declare}
+
+        health_table = {'table_object': Table([health_record.pk]),
+                        'fields': health_fields,
+                        'title': 'Your health',
+                        'error_summary_title': 'There is something wrong with your health'}
+        table_list = create_tables([health_table], health_name_dict, health_link_dict)
+
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'send_hdb_declare': send_hdb_declare,
+            'table_list': table_list,
             'health_status': application.health_status,
+            'page_title': 'Check your answers: your health'
         }
-        return render(request, 'health-check-answers.html', variables)
+        variables = submit_link_setter(variables, table_list, 'health', application_id_local)
+
+        return render(request, 'generic-summary-template.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = HealthBookletForm(request.POST, id=application_id_local)

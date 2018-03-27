@@ -6,6 +6,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from .. import status
+from ..table_util import Table, create_tables, submit_link_setter
+from ..summary_page_data import first_aid_name_dict, first_aid_link_dict
 from ..business_logic import (first_aid_logic,
                               reset_declaration)
 from ..forms import (FirstAidTrainingDeclarationForm,
@@ -250,19 +252,40 @@ def first_aid_training_summary(request):
             application_id=application_id_local)
         form = FirstAidTrainingSummaryForm()
         application = Application.objects.get(pk=application_id_local)
+
+        first_aid_fields = {'first_aid_training_organisation': first_aid_record.training_organisation,
+                            'title_of_training_course': first_aid_record.course_title,
+                            'course_date': '/'.join([str(first_aid_record.course_day),
+                                                     str(first_aid_record.course_month),
+                                                     str(first_aid_record.course_year)])}
+        if first_aid_record.renew_certificate is True:
+            first_aid_fields['renew_certificate'] = first_aid_record.renew_certificate
+        else:
+            first_aid_fields['renew_certificate'] = None
+
+        if first_aid_record.show_certificate is True:
+            first_aid_fields['show_certificate'] = first_aid_record.show_certificate
+        else:
+            first_aid_fields['show_certificate'] = None
+
+        first_aid_table = {'table_object': Table([first_aid_record.pk]),
+                           'fields': first_aid_fields,
+                           'title': 'First aid training',
+                           'error_summary_title': 'There is something wrong with your first aid training'}
+        table_list = create_tables([first_aid_table], first_aid_name_dict, first_aid_link_dict)
+
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'training_organisation': first_aid_record.training_organisation,
-            'training_course': first_aid_record.course_title,
-            'certificate_day': first_aid_record.course_day,
-            'certificate_month': first_aid_record.course_month,
-            'certificate_year': first_aid_record.course_year,
-            'renew_certificate': first_aid_record.renew_certificate,
-            'show_certificate': first_aid_record.show_certificate,
+            'table_list': table_list,
+            'page_title': 'Check your answers: first aid training',
             'first_aid_training_status': application.first_aid_training_status
         }
-        return render(request, 'first-aid-summary.html', variables)
+
+        variables = submit_link_setter(variables, table_list, 'first_aid_training', application_id_local)
+
+        return render(request, 'generic-summary-template.html', variables)
+
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = FirstAidTrainingSummaryForm(request.POST)

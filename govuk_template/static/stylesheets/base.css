@@ -2497,6 +2497,14 @@ div.error-summary ul.error-summary-list {
   font-weight: bold;
 }
 
+.error-container {
+  margin: 0px;
+}
+
+.error-text {
+  padding-left: 10px;
+}
+
 #radio-or {
   clear: both;
   padding-left: 7px;
@@ -2659,9 +2667,16 @@ a.section-link:active {
 }
 
 .summary-column {
+    word-wrap: break-word;
     width: 40%;
+    border-bottom: 1px solid #bfc1c3 !important;
 }
 
+.error-row {
+    padding-left: 10px;
+    border-bottom: none;
+    border-left: 5px solid #b10e1e;
+}
 .find-address-button {
    margin-left: 10px;
 }
