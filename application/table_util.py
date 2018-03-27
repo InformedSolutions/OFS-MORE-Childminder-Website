@@ -83,23 +83,41 @@ class Row:
 
 
 def table_creator(object_list, field_names, data_names, table_names, table_error_names, back_url_names):
-
+    """
+    More efficient version of create_tables that only works on simple table designs, currently only exists in DBS
+    :param object_list: List of lists containing the database objects to render, a single list will be a single table
+    :param field_names: List of the names to be rendered on each row, stored in a dictionary under their data name
+    :param data_names: The name of the field as defined in the ARC forms, so that we can read from ARC_COMMENTS
+    :param table_names: List of names for each table to be rendered
+    :param table_error_names: List of names for the error summary for each table
+    :param back_url_names: The view names for the change link for each field
+    :return: List of filled (has rows) Table objects that can be rendered by the template
+    """
     data_list = []
     table_list = []
 
+    # Grab each list from the list of lists
     for object_table_list in object_list:
+        # For each database object
         for object in object_table_list:
+            # Grab a dictionary of data_names to corresponding data in current database object
             field_dict = field_mapper(object, data_names)
             for name in data_names:
+                # Create a list of each field data in order of appearance in the data_names
                 data_list.append(field_dict[name])
+            # Zip all necessary data for each row into a list of lists
             row_data = zip(data_names,field_names, data_list, back_url_names)
             temp_table = Table([object.pk])
+            # Populate all the rows for the table object for the current database object
             for row in row_data:
                 local_row = Row(row[0], row[1], row[2], row[3], '')
                 temp_table.add_row(local_row)
+        # Store any errors for each row in the row itself and add the table to the table list
         temp_table.get_errors()
         table_list.append(temp_table)
     table_to_title = zip(table_list, table_names, table_error_names)
+
+    # Assign the titles for each table (both normal and error)
     for table, name, error_name in table_to_title:
         table.title = name
         table.error_summary_title = error_name
@@ -107,6 +125,14 @@ def table_creator(object_list, field_names, data_names, table_names, table_error
 
 
 def field_mapper(data_object, field_names, data_dictionary={}):
+    """
+    Function to find all fields in a database object that exist in the provided list of field names
+    :param data_object: The database object to be searched
+    :param field_names: The list of field names to search against the database object
+    :param data_dictionary: Dictionary containing all existing fields for a table and teir values
+    :return: Updated dictionary with all new fields from field names added
+    """
+    # Accessing a protected member but this is considered an exception by the community due to usefulness
     for field in data_object._meta.get_fields():
         if field.name in field_names:
             data_dictionary[field.name] = getattr(data_object, field.name)
