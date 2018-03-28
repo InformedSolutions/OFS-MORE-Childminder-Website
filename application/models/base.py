@@ -8,5 +8,5 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 TASK_STATUS = (
     ('NOT_STARTED', 'NOT_STARTED'),
     ('FLAGGED', 'FLAGGED'),
-    ('COMPLETE', 'COMPLETE')
+    ('COMPLETED', 'COMPLETED')
 )
