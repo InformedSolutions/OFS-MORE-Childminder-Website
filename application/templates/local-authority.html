@@ -6,6 +6,10 @@
 {% block inner_content %}
 <div class="column-full">
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        <a href="{{request.META.HTTP_REFERER}}" class="link-back"
+           style="margin-right: 10px; line-height: 28px">
+            Back
+        </a>
         <div form="form group grid-row">
             <h1 class="form-title heading-large">
                 This is the placeholder local authority page
