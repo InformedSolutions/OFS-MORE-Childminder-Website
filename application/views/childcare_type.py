@@ -30,7 +30,8 @@ def type_of_childcare_guidance(request):
         variables = {
             'form': form,
             'application_id': app_id,
-            'childcare_type_status': application.childcare_type_status
+            'childcare_type_status': application.childcare_type_status,
+            'login_details_status': application.login_details_status,
         }
         if application.childcare_type_status != 'COMPLETED':
             status.update(app_id, 'childcare_type_status', 'IN_PROGRESS')
@@ -80,6 +81,7 @@ def type_of_childcare_age_groups(request):
         variables = {
             'form': form,
             'application_id': app_id,
+            'login_details_status': application.login_details_status,
             'childcare_type_status': application.childcare_type_status
         }
 
@@ -132,6 +134,7 @@ def type_of_childcare_register(request):
         variables = {
             'form': form,
             'application_id': app_id,
+            'login_details_status': application.login_details_status,
             'childcare_type_status': application.childcare_type_status
         }
 
