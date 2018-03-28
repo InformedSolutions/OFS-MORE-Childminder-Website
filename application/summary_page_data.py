@@ -136,9 +136,9 @@ submit_link_dict = {'login_details': 'Contact-Email-View',
 
 
 back_link_dict = {'login_details': 'Question-View',
-                  'personal_details': 'Personal-Details-Guidance-View',
-                  'first_aid_training': 'First-Aid-Training-Guidance-View',
-                  'criminal_record_check': 'DBS-Check-Guidance-View',
-                  'health': 'Health-Intro-View',
-                  'references': 'References-Intro-View',
-                  'people_in_home': 'Other-People-Guidance-View'}
+                  'personal_details': 'Personal-Details-Location-Of-Care-View',
+                  'first_aid_training': 'First-Aid-Training-Details-View',
+                  'criminal_record_check': 'DBS-Check-DBS-Details-View',
+                  'health': 'Health-Booklet-View',
+                  'references': 'References-Second-Reference-Contact-Details-View',
+                  'people_in_home': 'Other-People-Children-Question-View'}

@@ -202,12 +202,13 @@ def contact_summary(request):
             'application_id': app_id,
             'table_list': table_list,
             'page_title': 'Check your answers: your login details',
-            'submit_link': '/childcare/guidance/',
             'login_details_status': application.login_details_status,
             'childcare_type_status': application.childcare_type_status
         }
 
         variables = submit_link_setter(variables, table_list, 'login_details', app_id)
+
+        variables['submit_link'] = reverse('Type-Of-Childcare-Guidance-View')
 
         return render(request, 'generic-summary-template.html', variables)
 

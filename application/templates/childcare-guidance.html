@@ -32,33 +32,32 @@
             </h1>
             <p>You need to say what age groups you will be looking after.</p>
             <p>This is so you can join the right register.</p>
-            <table>
-                <thead>
+            <div class="form-group">
+                <table class="check-your-answers form-group">
+                    <thead>
+                        <tr>
+                            <th>Age of children</th>
+                            <th>Register</th>
+                        </tr>
+                    </thead>
+                    <tbody>
                     <tr>
-                        <th colspan="2"></th>
+                        <td>0 to 5</td>
+                        <td>Early Years</td>
                     </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td style="font-weight: bold;">Age of children</td>
-                    <td style="font-weight: bold;">Register</td>
-                </tr>
-                <tr>
-                    <td>0 to 5</td>
-                    <td>Early Years</td>
-                </tr>
-                <tr>
-                    <td>5 to 7</td>
-                    <td>Childcare (compulsory part)</td>
-                </tr>
-                <tr>
-                    <td>8 or older</td>
-                    <td>Childcare (voluntary part)</td>
-                </tr>
-                </tbody>
-            </table>
+                    <tr>
+                        <td>5 to 7</td>
+                        <td>Childcare (compulsory part)</td>
+                    </tr>
+                    <tr>
+                        <td>8 or older</td>
+                        <td>Childcare (voluntary part)</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
             <br>
-            <p class="text-before-button">You can join more than one register if you don't know what ages you will be caring for.</p>
+            <p class="text-before-button">It's free to join the Childcare Register if you're already on or applying to the Early Years Register.</p>
             {% csrf_token %}
             {{form.as_div}}
             <input type="hidden" value="{{application_id}}" name="id"/>

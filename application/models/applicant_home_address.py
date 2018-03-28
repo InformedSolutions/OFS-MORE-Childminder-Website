@@ -1,6 +1,8 @@
 from uuid import uuid4
 from django.db import models
 from .applicant_personal_details import ApplicantPersonalDetails
+from .application import Application
+
 
 class ApplicantHomeAddress(models.Model):
     """
@@ -9,6 +11,8 @@ class ApplicantHomeAddress(models.Model):
     home_address_id = models.UUIDField(primary_key=True, default=uuid4)
     personal_detail_id = models.ForeignKey(ApplicantPersonalDetails, on_delete=models.CASCADE,
                                            db_column='personal_detail_id')
+    application_id = models.ForeignKey(Application, on_delete=models.CASCADE,
+                                       db_column='application_id')
     street_line1 = models.CharField(max_length=100, blank=True)
     street_line2 = models.CharField(max_length=100, blank=True)
     town = models.CharField(max_length=100, blank=True)

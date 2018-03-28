@@ -75,35 +75,55 @@ def login_contact_logic_phone(application_id_local, form):
     return login_and_contact_details_record
 
 
-def personal_name_logic(application_id_local, form):
+def personal_name_logic(app_id, form):
     """
     Business logic to create or update an Applicant_Name record with name details
-    :param application_id_local: A string object containing the current application ID
+
+    :param app_id: A string object containing the current application ID
     :param form: A form object containing the data to be stored
     :return: an ApplicantName object to be saved
     """
-    this_application = Application.objects.get(application_id=application_id_local)
+    app_obj = Application.objects.get(pk=app_id)
     first_name = form.cleaned_data.get('first_name')
     middle_names = form.cleaned_data.get('middle_names')
     last_name = form.cleaned_data.get('last_name')
+
     # If the user entered information for this task for the first time
-    if ApplicantPersonalDetails.objects.filter(application_id=application_id_local).count() == 0:
-        # Create an empty ApplicantPersonalDetails object to generate a personal_detail_id
-        personal_details_record = ApplicantPersonalDetails(birth_day=None, birth_month=None, birth_year=None,
-                                                           application_id=this_application)
+    if not ApplicantPersonalDetails.objects.filter(application_id=app_id).exists():
+
+        # Create an empty ApplicantPersonalDetails object to generate a p_id
+        personal_details_record = ApplicantPersonalDetails(
+                birth_day=None,
+                birth_month=None,
+                birth_year=None,
+                application_id=app_obj
+        )
+
         personal_details_record.save()
-        personal_detail_id_local = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
-        applicant_names_record = ApplicantName(current_name='True', first_name=first_name, middle_names=middle_names,
-                                               last_name=last_name, personal_detail_id=personal_detail_id_local)
+
+        p_id = ApplicantPersonalDetails.objects.get(application_id=app_id)
+
+        applicant_names_record = ApplicantName(
+            application_id=app_obj,
+            current_name='True',
+            first_name=first_name,
+            middle_names=middle_names,
+            last_name=last_name,
+            personal_detail_id=p_id
+        )
+
     # If the user previously entered information for this task
-    elif ApplicantPersonalDetails.objects.filter(application_id=application_id_local).count() > 0:
+    elif ApplicantPersonalDetails.objects.filter(application_id=app_id).exists():
+
         # Retrieve the personal_details_id corresponding to the application
-        personal_detail_id_local = ApplicantPersonalDetails.objects.get(
-            application_id=application_id_local).personal_detail_id
-        applicant_names_record = ApplicantName.objects.get(personal_detail_id=personal_detail_id_local)
+        p_id = ApplicantPersonalDetails.objects.get(application_id=app_id).personal_detail_id
+
+        applicant_names_record = ApplicantName.objects.get(personal_detail_id=p_id)
+        applicant_names_record.application_id = app_obj
         applicant_names_record.first_name = first_name
         applicant_names_record.middle_names = middle_names
         applicant_names_record.last_name = last_name
+
     return applicant_names_record
 
 
@@ -132,37 +152,55 @@ def personal_dob_logic(application_id_local, form):
     return personal_details_record
 
 
-def personal_home_address_logic(application_id_local, form):
+def personal_home_address_logic(app_id, form):
     """
     Business logic to create or update an Applicant_Home_Address record with home address details
     :param application_id_local: A string object containing the current application ID
     :param form: A form object containing the data to be stored
     :return: an ApplicantHomeAddress object to be saved
     """
-    this_application = Application.objects.get(application_id=application_id_local)
+
+    app_obj = Application.objects.get(application_id=app_id)
     street_line1 = form.cleaned_data.get('street_name_and_number')
     street_line2 = form.cleaned_data.get('street_name_and_number2')
     town = form.cleaned_data.get('town')
     county = form.cleaned_data.get('county')
     postcode = form.cleaned_data.get('postcode')
-    personal_detail_record = ApplicantPersonalDetails.objects.get(application_id=this_application)
+    personal_detail_record = ApplicantPersonalDetails.objects.get(application_id=app_obj)
     personal_detail_id = personal_detail_record.personal_detail_id
+
     # If the user entered information for this task for the first time
-    if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).count() == 0:
-        home_address_record = ApplicantHomeAddress(street_line1=street_line1, street_line2=street_line2, town=town,
-                                                   county=county, country='United Kingdom', postcode=postcode,
-                                                   childcare_address=None, current_address=True, move_in_month=0,
-                                                   move_in_year=0, personal_detail_id=personal_detail_record)
+    if not ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).exists():
+
+        home_address_record = ApplicantHomeAddress(
+            street_line1=street_line1,
+            street_line2=street_line2,
+            town=town,
+            county=county,
+            country='United Kingdom',
+            postcode=postcode,
+            childcare_address=None,
+            current_address=True,
+            move_in_month=0,
+            move_in_year=0,
+            personal_detail_id=personal_detail_record,
+            application_id=app_obj
+        )
         home_address_record.save()
-    # If the user previously entered information for this task
-    elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
-        home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                               current_address=True)
+
+   # If the user previously entered information for this task
+    elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).exists():
+
+        home_address_record = ApplicantHomeAddress.objects.get(
+            personal_detail_id=personal_detail_id,
+            current_address=True
+        )
         home_address_record.street_line1 = street_line1
         home_address_record.street_line2 = street_line2
         home_address_record.town = town
         home_address_record.county = county
         home_address_record.postcode = postcode
+
     return home_address_record
 
 
@@ -225,7 +263,8 @@ def personal_childcare_address_logic(application_id_local, form):
         childcare_address_record = ApplicantHomeAddress(street_line1=street_line1, street_line2=street_line2, town=town,
                                                         county=county, country='United Kingdom', postcode=postcode,
                                                         childcare_address=True, current_address=False, move_in_month=0,
-                                                        move_in_year=0, personal_detail_id=personal_detail_record)
+                                                        move_in_year=0, personal_detail_id=personal_detail_record,
+                                                        application_id=application_id_local)
         childcare_address_record.save()
     # If the user previously entered information for this task
     elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,

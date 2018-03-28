@@ -184,7 +184,7 @@ class TestPersonalLogic(TestCase):
         )
         ApplicantPersonalDetails.objects.create(
             personal_detail_id=(UUID(test_personal_detail_id)),
-            application_id=Application.objects.get(application_id=test_application_id),
+            application_id=Application.objects.get(pk=test_application_id),
             birth_day='00',
             birth_month='00',
             birth_year='0000'
@@ -193,6 +193,7 @@ class TestPersonalLogic(TestCase):
         ApplicantName.objects.create(
             name_id=(UUID(test_name_id)),
             personal_detail_id=ApplicantPersonalDetails.objects.get(personal_detail_id=test_personal_detail_id),
+            application_id=Application.objects.get(pk=test_application_id),
             current_name='True',
             first_name='Erik',
             middle_names='Tolstrup',
@@ -259,6 +260,7 @@ class TestPersonalLogic(TestCase):
         ApplicantHomeAddress.objects.create(
             home_address_id=(UUID(test_home_address_id)),
             personal_detail_id=ApplicantPersonalDetails.objects.get(personal_detail_id=test_personal_detail_id),
+            application_id=Application.objects.get(pk=test_application_id),
             street_line1='',
             street_line2='',
             town='',
@@ -323,6 +325,7 @@ class TestPersonalLogic(TestCase):
         ApplicantHomeAddress.objects.create(
             home_address_id=(UUID(test_home_address_id)),
             personal_detail_id=ApplicantPersonalDetails.objects.get(personal_detail_id=test_personal_detail_id),
+            application_id=Application.objects.get(pk=test_application_id),
             street_line1='',
             street_line2='',
             town='',
@@ -389,6 +392,7 @@ class TestPersonalLogic(TestCase):
         ApplicantHomeAddress.objects.create(
             home_address_id=(UUID(test_home_address_id)),
             personal_detail_id=ApplicantPersonalDetails.objects.get(personal_detail_id=test_personal_detail_id),
+            application_id=Application.objects.get(pk=test_application_id),
             street_line1='',
             street_line2='',
             town='',
@@ -453,6 +457,7 @@ class TestPersonalLogic(TestCase):
         ApplicantHomeAddress.objects.create(
             home_address_id=(UUID(test_home_address_id)),
             personal_detail_id=ApplicantPersonalDetails.objects.get(personal_detail_id=test_personal_detail_id),
+            application_id=Application.objects.get(pk=test_application_id),
             street_line1='',
             street_line2='',
             town='',
@@ -468,6 +473,7 @@ class TestPersonalLogic(TestCase):
         ApplicantHomeAddress.objects.create(
             home_address_id=(UUID(test_home_address_id2)),
             personal_detail_id=ApplicantPersonalDetails.objects.get(personal_detail_id=test_personal_detail_id),
+            application_id=Application.objects.get(pk=test_application_id),
             street_line1='',
             street_line2='',
             town='',

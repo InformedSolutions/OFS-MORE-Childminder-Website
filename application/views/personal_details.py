@@ -104,7 +104,7 @@ def personal_details_name(request):
         app_id = request.POST["id"]
         form = PersonalDetailsNameForm(request.POST, id=app_id)
         form.remove_flag()
-        application = Application.get_id(app_id=app_id)
+        application = Application.objects.get(pk=app_id)
 
         if form.is_valid():
             if application.personal_details_status != 'COMPLETED':
@@ -238,7 +238,8 @@ def personal_details_home_address(request):
                                                            childcare_address=None,
                                                            move_in_month=0,
                                                            move_in_year=0,
-                                                           personal_detail_id=applicant)
+                                                           personal_detail_id=applicant,
+                                                           application_id=app_id)
                 home_address_record.save()
 
             elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant,
@@ -350,7 +351,8 @@ def personal_details_home_address_select(request):
                                                            current_address=True,
                                                            move_in_month=0,
                                                            move_in_year=0,
-                                                           personal_detail_id=personal_detail_record)
+                                                           personal_detail_id=personal_detail_record,
+                                                           application_id=app_id)
                 home_address_record.save()
 
             # If the user previously entered information for this task
@@ -522,7 +524,8 @@ def personal_details_childcare_address(request):
                                                                 childcare_address=True,
                                                                 move_in_month=0,
                                                                 move_in_year=0,
-                                                                personal_detail_id=applicant)
+                                                                personal_detail_id=applicant,
+                                                                application_id=app_id)
                 childcare_address_record.save()
 
             elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
@@ -637,7 +640,8 @@ def personal_details_childcare_address_select(request):
                                                                 current_address=False,
                                                                 move_in_month=0,
                                                                 move_in_year=0,
-                                                                personal_detail_id=personal_detail_record)
+                                                                personal_detail_id=personal_detail_record,
+                                                                application_id=app_id)
                 childcare_address_record.save()
 
             # If the user previously entered information for this task
@@ -723,7 +727,8 @@ def personal_details_childcare_address_manual(request):
                                                                 childcare_address=True,
                                                                 move_in_month=0,
                                                                 move_in_year=0,
-                                                                personal_detail_id=applicant)
+                                                                personal_detail_id=applicant,
+                                                                application_id=app_id)
                 childcare_address_record.save()
 
             elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,
