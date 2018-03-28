@@ -58,7 +58,6 @@ def contact_email(request):
             email = form.cleaned_data['email_address']
 
             if UserDetails.objects.filter(email=email).exists() and 'account/account' in request.META.get('HTTP_REFERER'):
-                print("THIS: " +request.META.get('HTTP_REFERER'))
                 acc = UserDetails.objects.get(email=email)
                 domain = request.META.get('HTTP_REFERER', "")
                 domain = domain[:-54]
