@@ -5,17 +5,11 @@
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
-{{form2.error_summary}}
 
-<div class="column-two-thirds">
-    <div class="grid-row">
-        <a href="{{ URL_PREFIX }}/declaration?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
+<div class="column-full">
+    {% include "back-button.html" %}
+    {{form.error_summary}}
+    {{form2.error_summary}}
     <div class="form-group grid-row">
         <h1 class="form-title heading-large">
             Your declaration

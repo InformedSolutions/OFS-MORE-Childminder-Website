@@ -5,20 +5,14 @@
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{% for form in form_list %}
-{{form.error_summary}}
-{% endfor %}
 
 <div class="column-full">
-    <div class="grid-row">
-        <a href="{{ URL_PREFIX }}/other-people/adult-dbs?id={{application_id}}&adults={{number_of_adults}}"
-           class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
-            Back
-        </a>
-    </div>
+    {% include "back-button.html" %}
+
+    <!-- Initialise error summary for page -->
+    {% for form in form_list %}
+    {{form.error_summary}}
+    {% endfor %}
     <!-- Form -->
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->
@@ -39,7 +33,7 @@
                             on background checks</a> (PDF, 174KB, 1 page)
                     </p>
                 </div>
-            <br>
+                <br>
             </details>
             <h2 class="form-title heading-medium">
                 Permission for checks

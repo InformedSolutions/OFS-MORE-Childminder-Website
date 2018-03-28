@@ -6,12 +6,11 @@
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="grid-row">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
+    {% include "back-button.html" %}
+
+    <!-- Initialise error summary for page -->
+    {{form.error_summary}}
+
     <!-- Form -->
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->
@@ -21,7 +20,7 @@
             </h1>
             <p>You need to give your full name and home address.</p>
             <p>The details must match what is in your criminal record (DBS) check.</p>
-            <p class ="text-before-button">Make sure you include any middle names.</p>
+            <p class="text-before-button">Make sure you include any middle names.</p>
             {{form.as_div}}
             {% csrf_token %}
             <input type="submit" class="button" value="Continue">
