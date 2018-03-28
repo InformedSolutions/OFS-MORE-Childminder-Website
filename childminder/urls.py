@@ -19,6 +19,7 @@ urlpatterns = [
     url(r'^childcare/guidance/', views.type_of_childcare_guidance, name='Type-Of-Childcare-Guidance-View'),
     url(r'^childcare/age-groups/', views.type_of_childcare_age_groups, name='Type-Of-Childcare-Age-Groups-View'),
     url(r'^childcare/register/', views.type_of_childcare_register, name='Type-Of-Childcare-Register-View'),
+    url(r'^childcare/local-authority/', views.local_authority_links, name='Local-Authority-View'),
     url(r'^account/email/', views.contact_email, name='Contact-Email-View'),
     url(r'^account/phone/', views.contact_phone, name='Contact-Phone-View'),
     url(r'^account/summary/', views.contact_summary, name='Contact-Summary-View'),
