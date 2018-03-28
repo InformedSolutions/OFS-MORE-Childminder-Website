@@ -1,0 +1,31 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Type of childcare{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+<div class="column-full">
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        <a href="{{request.META.HTTP_REFERER}}" class="link-back"
+           style="margin-right: 10px; line-height: 28px">
+            Back
+        </a>
+        <div form="form group grid-row">
+            <h1 class="form-title heading-large">
+                This is the placeholder local authority page
+            </h1>
+            <p>This will be filled on content definition.</p>
+            <p>The user is will be referred to their local authority <a href="">here</a>.</p>
+
+            {% csrf_token %}
+            <input type="hidden" value="{{application_id}}" name="id"/>
+            <input type="submit" class="button-save-and-exit" style="margin-left: 0px;" name="Cancel application" value="Cancel application">
+            <br>
+            <br>
+            <input type="hidden" id="id" name="id" value="{{application_id}}">
+            <input type="submit" class="button" value="Continue to task-list">
+        </div>
+    </form>
+</div>
+
+{% endblock %}

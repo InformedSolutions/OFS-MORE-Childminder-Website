@@ -81,8 +81,9 @@ def type_of_childcare_age_groups(request):
         variables = {
             'form': form,
             'application_id': app_id,
+            'childcare_type_status': application.childcare_type_status,
             'login_details_status': application.login_details_status,
-            'childcare_type_status': application.childcare_type_status
+
         }
 
         return render(request, 'childcare-age-groups.html', variables)
@@ -134,8 +135,8 @@ def type_of_childcare_register(request):
         variables = {
             'form': form,
             'application_id': app_id,
+            'childcare_type_status': application.childcare_type_status,
             'login_details_status': application.login_details_status,
-            'childcare_type_status': application.childcare_type_status
         }
 
         # Move into separate method - check business logic too
@@ -150,14 +151,15 @@ def type_of_childcare_register(request):
             return render(request, 'childcare-register-EYR-CR-compulsory.html', variables)
         elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
             return render(request, 'childcare-register-EYR-CR-voluntary.html', variables)
-        elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
-            return render(request, 'childcare-register-CR-both.html', variables)
         elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
             return render(request, 'childcare-register-EYR.html', variables)
+
         elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is False):
-            return render(request, 'childcare-register-CR-compulsory.html', variables)
+            return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + app_id)
+        elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
+            return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + app_id)
         elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
-            return render(request, 'childcare-register-CR-voluntary.html', variables)
+            return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + app_id)
 
         ###
 
@@ -178,3 +180,30 @@ def type_of_childcare_register(request):
             }
 
             return render(request, 'childcare-guidance.html', variables)
+
+
+def local_authority_links(request):
+    """
+
+    :param request:
+    :return:
+    """
+    if request.method == 'GET':
+
+        app_id = request.GET["id"]
+        variables = {
+            'application_id': app_id
+        }
+        return render(request, 'local-authority.html', variables)
+
+    if request.method == 'POST':
+
+        app_id = request.POST["id"]
+        application = Application.get_id(app_id=app_id)
+        if application.childcare_type_status != 'COMPLETED':
+            status.update(app_id, 'childcare_type_status', 'COMPLETED')
+        if 'Cancel application' in request.POST.keys():
+            return render(request, 'cancellation-guidance.html', )
+        else:
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + app_id)
+
