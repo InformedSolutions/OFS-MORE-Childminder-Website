@@ -780,7 +780,7 @@ def other_people_summary(request):
             other_child_table = {'table_object': Table([child.pk]),
                                  'fields': other_child_fields,
                                  'title': name,
-                                 'error_summary_title': 'child test'}
+                                 'error_summary_title': 'child tests'}
             child_table_list.append(other_child_table)
         back_link_addition = '&children=' + str(len(child_table_list)) + '&remove=0'
         for table in child_table_list:

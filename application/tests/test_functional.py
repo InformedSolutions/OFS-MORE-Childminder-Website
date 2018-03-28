@@ -10,7 +10,7 @@ from django.test import Client, TestCase
 
 from timeline_logger.models import TimelineLog
 
-from .models import Application, UserDetails, ApplicantName, ApplicantPersonalDetails, ApplicantHomeAddress, ChildcareType
+from application.models import Application, UserDetails, ApplicantName, ApplicantPersonalDetails, ApplicantHomeAddress, ChildcareType
 
 
 class CreateTestNewApplicationSubmit(TestCase):

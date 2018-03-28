@@ -8,8 +8,8 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.test import TestCase
 
-from . import login_redirect_helper
-from .models import Application
+from application import login_redirect_helper
+from application.models import Application
 
 
 class TestLoginRedirectHelper(TestCase):
