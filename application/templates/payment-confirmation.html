@@ -48,7 +48,7 @@
         <p>We have sent you a copy of your application by email.</p>
         <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print"
                                            style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
-            <a href="">Print page</a></p>
+            <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print page</a></p>
         <p style="margin-left: 20px;"><img src="{% static 'download-button.png' %}" alt="Download"
                                            style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
             <a href="">Download application</a></p>
