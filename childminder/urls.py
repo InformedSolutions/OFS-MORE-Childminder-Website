@@ -118,6 +118,7 @@ urlpatterns = [
     url(r'^djga/', include('google_analytics.urls')),
     url(r'^awaiting-review/', views.awaiting_review, name='Awaiting-Review-View'),
     url(r'^accepted/', views.application_accepted, name='Accepted-View'),
+    url(r'^print-application/(?P<page>[-\w]+)/$', views.base_print_handler, name='Print-Handler-View'),
 
 ]
 

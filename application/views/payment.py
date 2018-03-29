@@ -145,3 +145,6 @@ def payment_confirmation(request):
                 'application_id': application_id_local
             }
             return HttpResponseRedirect(settings.URL_PREFIX + '/payment/?id=' + application_id_local, variables)
+
+    if request.method == 'POST':
+        application_id_local = request.GET['id']

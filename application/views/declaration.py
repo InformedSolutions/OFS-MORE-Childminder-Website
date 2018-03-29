@@ -24,7 +24,7 @@ from ..models import (AdultInHome,
                       UserDetails)
 
 
-def declaration_summary(request):
+def declaration_summary(request, print=False):
     """
     Method returning the template for the Declaration: summary page (for a given application) and navigating to
     the Declaration: declaration page when successfully completed
@@ -186,11 +186,14 @@ def declaration_summary(request):
             'adult_lists': adult_lists,
             'child_lists': child_lists,
             'turning_16': application.children_turning_16,
+            'print': print
         }
         if application.declarations_status != 'COMPLETED':
             status.update(application_id_local,
                           'declarations_status', 'NOT_STARTED')
-        return render(request, 'declaration-summary.html', variables)
+        if print:
+            return variables
+        return render(request, 'master-summary.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = DeclarationSummaryForm(request.POST)
@@ -205,7 +208,7 @@ def declaration_summary(request):
                 'form': form,
                 'application_id': application_id_local
             }
-            return render(request, 'declaration-summary.html', variables)
+            return render(request, 'master-summary.html', variables)
 
 
 def declaration_intro(request):
