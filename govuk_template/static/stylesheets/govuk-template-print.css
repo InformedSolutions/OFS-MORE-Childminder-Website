@@ -8,7 +8,8 @@ html {
   color: black;
   text-shadow: none;
   filter: none;
-  -ms-filter: none; }
+  -ms-filter: none;
+  }
 
 body {
   font-family: sans-serif;
@@ -44,7 +45,13 @@ img {
 select {
   background: white; }
 
+table {
+    page-break-inside: avoid;
+    }
 
+td {
+    margin-top: 20px;
+}
 
 #global-header {
   margin: 3px 0 1em; }
@@ -76,6 +83,11 @@ select {
 
 .summary-column {
     width: 50%;
+}
+
+.heading-medium {
+    text-align: left !important;
+    margin-top: 20px !important;
 }
 
 .heading-medium {
