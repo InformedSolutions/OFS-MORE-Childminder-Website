@@ -89,7 +89,7 @@ def first_aid_training_details(request):
 
         form = FirstAidTrainingDetailsForm(
             request.POST, id=application_id_local)
-        form.remove_flag
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             # Create or update First_Aid_Training record
