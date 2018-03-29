@@ -5,11 +5,13 @@
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
+
 
 <div class="column-full">
     {% include "back-button.html" %}
+
+    <!-- Initialise error summary for page -->
+{{form.error_summary}}
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <div class="form-group grid-row">
             <h1 class="form-title heading-large">
