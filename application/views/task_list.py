@@ -90,8 +90,8 @@ def task_list(request):
                     'description': "Type of childcare",
                     'status_url': None,
                     'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'Type-Of-Childcare-Age-Groups-View'},
-                        {'status': 'FLAGGED', 'url': 'Type-Of-Childcare-Age-Groups-View'},
+                        {'status': 'COMPLETED', 'url': 'Type-Of-Childcare-Summary-View'},
+                        {'status': 'FLAGGED', 'url': 'Type-Of-Childcare-Summary-View'},
                         {'status': 'OTHER', 'url': 'Type-Of-Childcare-Guidance-View'}
                     ],
                 },

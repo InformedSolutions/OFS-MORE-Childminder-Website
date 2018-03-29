@@ -11,6 +11,7 @@ class ChildcareType(models.Model):
     zero_to_five = models.BooleanField()
     five_to_eight = models.BooleanField()
     eight_plus = models.BooleanField()
+    overnight_care = models.NullBooleanField()
 
     @classmethod
     def get_id(cls, app_id):

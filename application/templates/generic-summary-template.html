@@ -13,8 +13,10 @@
     <div class="grid-row">
         <h1 class="form-title heading-large">{{ page_title }}</h1>
     </div>
+
+    <div class="grid-row">
     {% for table in table_list %}
-    <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
+    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
         <colgroup>
             <col class="summary-column">
             <col class="summary-column">
@@ -70,7 +72,8 @@
     </table>
 
     {% endfor %}
-    <br>
+    </div>
+    <br/>
     <div class="form-group grid-row">
         <form action="{{ submit_link|default:"/task-list/"}}?id={{application_id}}" method="get">
             <input type="submit" class="button" value="Confirm and continue"/>

@@ -1,3 +1,14 @@
+###
+
+childcare_type_name_dict = {'childcare_age_groups': 'What age groups will you be caring for?',
+                       'overnight_care': 'Are you providing overnight care?'}
+
+childcare_type_link_dict = {'childcare_age_groups': 'Type-Of-Childcare-Age-Groups-View',
+                       'overnight_care': 'Type-Of-Childcare-Overnight-Care-View'}
+
+
+###
+
 dbs_summary_dict = {'data_names': ['dbs_certificate_number', 'cautions_convictions', 'send_certificate_declare'],
                     'display_names': ['DBS certificate number', 'Do you have any cautions or convictions?',
                                       'Will you send your DBS certificate to Ofsted?'],
@@ -13,19 +24,20 @@ dbs_summary_dict = {'data_names': ['dbs_certificate_number', 'cautions_convictio
 
 # Name dict contains the data_name of each table field and the actual name to be rendered
 
+
 contact_info_name_dict = {'email_address': 'Your email',
-                           'mobile_number': 'Mobile phone number',
-                           'add_phone_number': 'Alternative phone number',
-                           'security_question': 'Knowledge based question',
-                           'security_answer': 'Knowledge based answer'}
+                          'mobile_number': 'Mobile phone number',
+                          'add_phone_number': 'Alternative phone number',
+                          'security_question': 'Knowledge based question',
+                          'security_answer': 'Knowledge based answer'}
 
 # Link dict contains the data_name of each table field and the name of the change_link view to be reversed in template
 
 contact_info_link_dict = {'email_address': 'Contact-Email-View',
-                           'mobile_number': 'Contact-Phone-View',
-                           'add_phone_number': 'Contact-Phone-View',
-                           'security_question': 'Question-View',
-                           'security_answer': 'Question-View'}
+                          'mobile_number': 'Contact-Phone-View',
+                          'add_phone_number': 'Contact-Phone-View',
+                          'security_question': 'Question-View',
+                          'security_answer': 'Question-View'}
 
 ###
 
@@ -88,7 +100,6 @@ other_child_link_dict = {'full_name': 'Other-People-Children-Details-View',
 other_adult_summary_name_dict = {'adults_in_home': 'Do you live with anyone who is 16 or over'}
 other_adult_summary_link_dict = {'adults_in_home': 'Other-People-Adult-Question-View'}
 
-
 other_child_summary_name_dict = {'children_in_home': 'Do you live with any children'}
 other_child_summary_link_dict = {'children_in_home': 'Other-People-Children-Question-View'}
 
@@ -126,6 +137,7 @@ second_reference_link_dict = {'full_name': 'References-Second-Reference-View',
 # errors to be rectified
 
 submit_link_dict = {'login_details': 'Contact-Email-View',
+                    'type_of_childcare': 'Type-Of-Childcare-Guidance-View',
                     'personal_details': 'Personal-Details-Guidance-View',
                     'first_aid_training': 'First-Aid-Training-Guidance-View',
                     'criminal_record_check': 'DBS-Check-Guidance-View',
@@ -133,9 +145,8 @@ submit_link_dict = {'login_details': 'Contact-Email-View',
                     'references': 'References-Intro-View',
                     'people_in_home': 'Other-People-Guidance-View'}
 
-
-
 back_link_dict = {'login_details': 'Question-View',
+                  'type_of_childcare': 'Type-Of-Childcare-Guidance-View',
                   'personal_details': 'Personal-Details-Location-Of-Care-View',
                   'first_aid_training': 'First-Aid-Training-Details-View',
                   'criminal_record_check': 'DBS-Check-DBS-Details-View',

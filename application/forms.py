@@ -379,6 +379,40 @@ class TypeOfChildcareRegisterForm(ChildminderForms):
     auto_replace_widgets = True
 
 
+class TypeOfChildcareOvernightCareForm(ChildminderForms):
+    """
+    GOV.UK form for the Type of Childcare: Overnight care page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
+    auto_replace_widgets = True
+
+    options = (
+        ('True', 'Yes'),
+        ('False', 'No')
+    )
+
+    overnight_care = forms.ChoiceField(label='Are you providing overnight care?', choices=options,
+                                       widget=InlineRadioSelect, required=True,
+                                       error_messages={'required': 'TBC'})
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Type of Childcare: Overnight form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(TypeOfChildcareOvernightCareForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
+
+        # If information was previously entered, display it on the form
+        if ChildcareType.objects.filter(application_id=self.application_id_local).count() > 0:
+            childcare_record = ChildcareType.objects.get(application_id=self.application_id_local)
+            self.fields['overnight_care'].initial = childcare_record.overnight_care
+            self.field_list = ['overnight_care']
+
+
 class EmailLoginForm(ChildminderForms):
     """
     GOV.UK form for the page to log back into an application
