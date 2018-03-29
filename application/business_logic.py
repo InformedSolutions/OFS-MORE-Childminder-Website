@@ -83,7 +83,7 @@ def personal_name_logic(app_id, form):
     :param form: A form object containing the data to be stored
     :return: an ApplicantName object to be saved
     """
-    app_obj = Application.objects.get(pk=app_id)
+    app_obj = Application.objects.get(pk=app_id.pk)
     first_name = form.cleaned_data.get('first_name')
     middle_names = form.cleaned_data.get('middle_names')
     last_name = form.cleaned_data.get('last_name')

@@ -17,10 +17,26 @@ class ApplicantName(models.Model):
     middle_names = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
 
+    # TODO Might not work - need to test
     @classmethod
     def get_id(cls, app_id):
         personal_detail_id = ApplicantPersonalDetails.get_id(app_id)
         return cls.objects.get(personal_detail_id=personal_detail_id)
+
+    @property
+    def timelog_fields(self):
+        """
+        Specify which fields to track in this model once application is returned.
+
+        Used for signals only. Check base.py for available signals.
+        This is used for logging fields which gonna be updated by applicant
+        once application status changed to "FURTHER_INFORMATION" on the arc side
+
+        Returns:
+            tuple of fields which needs update tracking when application is returned
+        """
+
+        return ('first_name', 'last_name', 'middle_names',)
 
     class Meta:
         db_table = 'APPLICANT_NAME'

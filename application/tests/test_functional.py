@@ -75,7 +75,7 @@ class CreateTestNewApplicationSubmit(TestCase):
 
 
     def TestContactSummaryView(self):
-        r = self.client.post(reverse('Contact-Summary-View'), {'id':self.app_id})
+        self.client.post(reverse('Contact-Summary-View'), {'id':self.app_id})
 
         self.assertEqual(
            Application.objects.get(pk=self.app_id).login_details_status, "COMPLETED")
@@ -140,15 +140,16 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
         self.assertEqual(Application.objects.get(pk=self.app_id).childcare_type_status, "COMPLETED")
 
-    def TestAppPersonalDetailsNames(self):
+    def TestAppPersonalDetailsNames(self, data=None):
         """Submit your name in Personal details task"""
 
-        data = {
-            'id': self.app_id,
-            'first_name': "Arthur",
-            'middle_names': "Conan",
-            'last_name': "Doyle"
-        }
+        if not data:
+            data = {
+                'id': self.app_id,
+                'first_name': "Arthur",
+                'middle_names': "Conan",
+                'last_name': "Doyle"
+            }
 
         r = self.client.post(reverse('Personal-Details-Name-View'), data)
         self.assertEqual(r.status_code, 302)
@@ -392,16 +393,18 @@ class CreateTestNewApplicationSubmit(TestCase):
         )
         self.assertEqual(r.status_code, 302)
 
-    def TestAppSecondReferenceContactDetails(self):
+    def TestAppSecondReferenceContactDetails(self, data=None):
         """Submit Second Reference Contact Details"""
-        r = self.client.post(
-            reverse('References-Second-Reference-Contact-Details-View'),
-            {
+
+        if not data:
+            data = {
                 'id': self.app_id,
                 'phone_number': '0123456780',
                 'email_address': 'it@swingcats.lt',
             }
-        )
+
+        r = self.client.post(
+            reverse('References-Second-Reference-Contact-Details-View'), data)
         self.assertEqual(r.status_code, 302)
 
     def TestReferencesSummary(self):
@@ -538,5 +541,45 @@ class CreateTestNewApplicationSubmit(TestCase):
             TimelineLog.objects.filter(object_id=self.app_id, extra_data__contains={"action": "submitted"})
         )
 
+    def test_updated_field_log(self):
+        """
+        After application been returned, we start to log all field changes with the
+        help of signals.
+        """
 
+        self.TestNewApplicationSubmit()
 
+        # Set application_status to FURTHER_INFORMATION programatically,
+        # as functionally this can be only done from ARC.
+        self._set_application_status("FURTHER_INFORMATION")
+
+        # Update the field
+
+        data={
+            'id': self.app_id,
+            'first_name': "Sherlock",
+            'middle_names': "Scott",
+            'last_name': "Holmes"
+        }
+
+        self.TestAppPersonalDetailsNames(data)
+
+        # Check if logs appareade
+        self.assertTrue(
+            TimelineLog.objects.filter(
+                object_id=self.app_id,
+                extra_data__contains={
+                    "application_status": "FURTHER_INFORMATION"
+            })
+        )
+
+    def _set_application_status(self, status):
+        """Helper to set status in Application model
+
+        Arguments:
+            status {string} -- Desired application status
+        """
+
+        app = Application.objects.get(pk=self.app_id)
+        app.application_status = status
+        app.save()

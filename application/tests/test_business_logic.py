@@ -152,7 +152,7 @@ class TestPersonalLogic(TestCase):
         ApplicantName.objects.filter(personal_detail_id=test_personal_detail_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
         user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
+            login_id=test_login_id,
             email='',
             mobile_number='',
             add_phone_number='',
@@ -162,7 +162,7 @@ class TestPersonalLogic(TestCase):
             magic_link_sms=''
         )
         Application.objects.create(
-            application_id=(UUID(test_application_id)),
+            application_id=test_application_id,
             login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
@@ -183,7 +183,7 @@ class TestPersonalLogic(TestCase):
             order_code=None
         )
         ApplicantPersonalDetails.objects.create(
-            personal_detail_id=(UUID(test_personal_detail_id)),
+            personal_detail_id=test_personal_detail_id,
             application_id=Application.objects.get(pk=test_application_id),
             birth_day='00',
             birth_month='00',
@@ -191,7 +191,7 @@ class TestPersonalLogic(TestCase):
         )
         test_name_id = '6e09fe41-2b07-4177-a5e4-347b2515ea8e'
         ApplicantName.objects.create(
-            name_id=(UUID(test_name_id)),
+            name_id=test_name_id,
             personal_detail_id=ApplicantPersonalDetails.objects.get(personal_detail_id=test_personal_detail_id),
             application_id=Application.objects.get(pk=test_application_id),
             current_name='True',
