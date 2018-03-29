@@ -1,3 +1,6 @@
+import socket
+import os
+
 from .base import *
 
 DEBUG = True
@@ -14,8 +17,13 @@ ADDRESSING_URL = "http://" + os.environ.get('APP_ADDRESSING_URL', '130.130.52.13
 # Visa Validation
 VISA_VALIDATION = False
 
-PUBLIC_APPLICATION_URL = 'http://localhost:8000/childminder'
-INTERNAL_IPS = "127.0.0.1"
+PUBLIC_APPLICATION_URL = 'http://127.0.0.1:8000/childminder'
+
+INTERNAL_IPS = ["127.0.0.1", ]
+
+# Workdaround for docker
+INTERNAL_IPS += [socket.gethostbyname(socket.gethostname())[:-1] + '1']
+
 ALLOWED_HOSTS = ['*']
 
 DEV_APPS = [
