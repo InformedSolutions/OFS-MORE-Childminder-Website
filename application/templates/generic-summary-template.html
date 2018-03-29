@@ -6,13 +6,7 @@
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="grid-row">
-        <!-- Back button -->
-        <a href="{% url back_link %}?id={{ application_id }}" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
-            Back
-        </a>
-    </div>
+    {% include "back-button.html" %}
 
         {% include "generic-error-summary.html" with table_list=table_list application_id=application_id %}
 

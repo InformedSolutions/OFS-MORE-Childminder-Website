@@ -53,8 +53,8 @@ class ChildminderForms(GOVUKForm):
                 except Exception as ex:
                     self.cleaned_data = ''
                     self.add_error(i, ex)
-            self.if_name(i)
-            self.if_address(i)
+            self.if_name(i, True)
+            self.if_address(i, True)
 
     def remove_flag(self):
         """
@@ -62,14 +62,16 @@ class ChildminderForms(GOVUKForm):
         comments.
         :return: Update the arc comments to remove the flag (but keep the comment)
         """
+        log = ''
         for i in self.field_list:
             if ArcComments.objects.filter(table_pk=self.pk, field_name=i).count() == 1:
                 log = ArcComments.objects.get(table_pk=self.pk, field_name=i)
-                if log.flagged:
-                    log.flagged = False
-                    log.save()
+                log.flagged = False
+                log.save()
+            self.if_name(i, False)
+            self.if_address(i, False)
 
-    def if_name(self, field):
+    def if_name(self, field, enabled):
         """
         This checks if a name has been flagged, as first, middle or last cannot be flagged individually.
         :param field:
@@ -89,7 +91,12 @@ class ChildminderForms(GOVUKForm):
                 if hasattr(log, 'comment'):
 
                     if log.flagged:
-                        raise forms.ValidationError(log.comment)
+                        if enabled:
+                            raise forms.ValidationError(log.comment)
+                        else:
+                            print("DISABLE FLAG")
+                            log.flagged = False
+                            log.save()
                 else:
                     forms.ValidationError('')
 
@@ -102,7 +109,7 @@ class ChildminderForms(GOVUKForm):
                 else:
                     self.add_error(field, '')
 
-    def if_address(self, field):
+    def if_address(self, field, enabled):
         """
         This checks if an address has been flagged, as each address field cannot be flagged individually.
         :param field:
@@ -123,7 +130,12 @@ class ChildminderForms(GOVUKForm):
 
                     if hasattr(log, 'comment'):
                         if log.flagged:
-                            raise forms.ValidationError(log.comment)
+                            if enabled:
+                                raise forms.ValidationError(log.comment)
+                            else:
+                                print("DISABLE FLAG")
+                                log.flagged = False
+                                log.save()
                     else:
                         forms.ValidationError('')
                 except Exception as ex:

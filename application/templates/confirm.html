@@ -6,12 +6,7 @@
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="grid-row">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
+    {% include "back-button.html" %}
     <div class="grid-row">
         <h1 class="form-title heading-large">
             Check and confirm all your details

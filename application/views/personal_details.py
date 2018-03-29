@@ -208,6 +208,7 @@ def personal_details_home_address(request):
         app_id = request.GET["id"]
         application = Application.get_id(app_id=app_id)
         form = PersonalDetailsHomeAddressForm(id=app_id)
+        form.check_flag()
         variables = {
             'form': form,
             'application_id': app_id,
@@ -221,6 +222,7 @@ def personal_details_home_address(request):
         app_id = request.POST["id"]
         application = Application.get_id(app_id=app_id)
         form = PersonalDetailsHomeAddressForm(request.POST, id=app_id)
+        form.remove_flag()
         if form.is_valid():
 
             postcode = form.cleaned_data.get('postcode')
@@ -239,7 +241,7 @@ def personal_details_home_address(request):
                                                            move_in_month=0,
                                                            move_in_year=0,
                                                            personal_detail_id=applicant,
-                                                           application_id=app_id)
+                                                           application_id=application)
                 home_address_record.save()
 
             elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant,

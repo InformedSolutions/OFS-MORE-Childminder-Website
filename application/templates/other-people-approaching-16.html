@@ -6,13 +6,12 @@
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="grid-row">
-        <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}&remove=0" class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
-            Back
-        </a>
-    </div>
+    {% include "back-button.html" %}
+
+    <!-- Initialise error summary for page -->
+    {% for form in form_list %}
+    {{form.error_summary}}
+    {% endfor %}
     <!-- Form -->
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->

@@ -56,9 +56,7 @@ def contact_email(request):
 
             # Send login e-mail link if applicant has previously applied
             email = form.cleaned_data['email_address']
-
-            if UserDetails.objects.filter(email=email).exists() and application.login_details_status != 'COMPLETED':
-
+            if UserDetails.objects.filter(email=email).exists() and ('/existing-application/' in request.META.get('HTTP_REFERER') or request.META.get('HTTP_REFERER') == None):
                 acc = UserDetails.objects.get(email=email)
                 domain = request.META.get('HTTP_REFERER', "")
                 domain = domain[:-54]
@@ -183,7 +181,7 @@ def contact_summary(request):
             status.update(app_id, 'login_details_status', 'COMPLETED')
 
         contact_info_fields = {
-            'email': email,
+            'email_address': email,
             'mobile_number': mobile_number,
             'add_phone_number': add_phone_number,
             'security_question': security_question,

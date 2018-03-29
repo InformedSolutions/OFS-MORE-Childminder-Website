@@ -5,16 +5,11 @@
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
-
 <div class="column-full">
-    <div class="grid-row">
-        <a href="{{ URL_PREFIX }}/personal-details/childcare-address?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
+    {% include "back-button.html" %}
+    <!-- Initialise error summary for page -->
+    {{form.error_summary}}
+
     <!-- Form -->
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->
@@ -24,7 +19,8 @@
             </h1>
             <p>Where will you be looking after the children?</p>
             <h2 class="form-title heading-small">Postcode</h2>
-            <p>{{postcode}} <a href="{{ URL_PREFIX }}/personal-details/childcare-address?id={{application_id}}">Change</a></p>
+            <p>{{postcode}} <a
+                    href="{{ URL_PREFIX }}/personal-details/childcare-address?id={{application_id}}">Change</a></p>
             <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
             {{form.as_div}}
             {% csrf_token %}

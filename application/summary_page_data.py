@@ -13,7 +13,7 @@ dbs_summary_dict = {'data_names': ['dbs_certificate_number', 'cautions_convictio
 
 # Name dict contains the data_name of each table field and the actual name to be rendered
 
-contact_info_name_dict = {'email': 'Your email',
+contact_info_name_dict = {'email_address': 'Your email',
                            'mobile_number': 'Mobile phone number',
                            'add_phone_number': 'Alternative phone number',
                            'security_question': 'Knowledge based question',
@@ -21,7 +21,7 @@ contact_info_name_dict = {'email': 'Your email',
 
 # Link dict contains the data_name of each table field and the name of the change_link view to be reversed in template
 
-contact_info_link_dict = {'email': 'Contact-Email-View',
+contact_info_link_dict = {'email_address': 'Contact-Email-View',
                            'mobile_number': 'Contact-Phone-View',
                            'add_phone_number': 'Contact-Phone-View',
                            'security_question': 'Question-View',

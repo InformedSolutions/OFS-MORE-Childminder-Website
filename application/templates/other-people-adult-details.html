@@ -5,19 +5,14 @@
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{% for form in form_list %}
-{{form.error_summary}}
-{% endfor %}
 
 <div class="column-full">
-    <div class="grid-row">
-        <a href="{{ URL_PREFIX }}/other-people/adult-question?id={{application_id}}&adults={{number_of_adults}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
-            Back
-        </a>
-    </div>
+    {% include "back-button.html" %}
+
+    <!-- Initialise error summary for page -->
+    {% for form in form_list %}
+    {{form.error_summary}}
+    {% endfor %}
     <!-- Form -->
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->
@@ -39,7 +34,8 @@
             {% endfor %}
             {% csrf_token %}
             <input type="hidden" value="{{application_id}}" name="id"/>
-            <input type="submit" class="button-save-and-exit" style="margin-left: 0px;" name="add_person" value="Add another person">
+            <input type="submit" class="button-save-and-exit" style="margin-left: 0px;" name="add_person"
+                   value="Add another person">
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
             <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
             <br>

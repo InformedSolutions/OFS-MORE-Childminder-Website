@@ -5,13 +5,9 @@
 
 {% block inner_content %}
 
-<div class="column-two-thirds">
-    <div class="grid-row">
-        <a href="{{ URL_PREFIX }}/check-answers?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
+<div class="column-full">
+    {% include "back-button.html" %}
+    {{form.error_summary}}
     <div class="form-group grid-row">
         <h1 class="form-title heading-large">
             Declaration

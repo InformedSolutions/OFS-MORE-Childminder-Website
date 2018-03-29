@@ -6,24 +6,7 @@
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="grid-row">
-        {% if childcare_type_status == 'NOT_STARTED' %}
-        <a href="{{ URL_PREFIX }}/account/summary?id={{application_id}}" class="link-back" style="margin-right: 10px;
-        line-height: 28px">
-            Back
-        </a>
-        {% elif childcare_type_status == 'IN_PROGRESS' %}
-        <a href="{{ URL_PREFIX }}/account/summary?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-        {% elif childcare_type_status == 'COMPLETED' %}
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-        {% endif %}
-    </div>
+    {% include "back-button.html" %}
     <!-- Form -->
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <div class="form-group grid-row">
