@@ -21,7 +21,12 @@ body {
   width: 100%; }
 
 a, a:visited {
-  word-wrap: break-word; }
+  word-wrap: break-word;
+   display: none !important;}
+
+input {
+    display: none !important;
+}
 
 a[href^="/"]:after,
 a[href^="http://"]:after,
@@ -38,6 +43,8 @@ img {
 
 select {
   background: white; }
+
+
 
 #global-header {
   margin: 3px 0 1em; }
@@ -67,9 +74,18 @@ select {
     border: 0;
     vertical-align: middle; }
 
+.summary-column {
+    width: 50%;
+}
+
+.heading-medium {
+    margin: 22.5px, 0px, 9px, 0px
+}
 /* hide the unnecessary page elements */
 body footer,
 .visuallyhidden,
+.change-answer
+.no-print
 #global-cookie-message,
 #skiplink-container {
   display: none !important; }
