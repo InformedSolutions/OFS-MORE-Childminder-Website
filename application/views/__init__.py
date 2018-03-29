@@ -21,3 +21,4 @@ from .health import *
 from .other_people import *
 from .payment import *
 from .references import *
+from .print_handler import *
