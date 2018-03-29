@@ -30,11 +30,7 @@
         </div>
         {% endif %}
     </form>
-    {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
-        <div class="form group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    {% endif %}
+
 </div>
 
 {% endblock %}
