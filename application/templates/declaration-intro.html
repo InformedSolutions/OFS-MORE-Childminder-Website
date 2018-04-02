@@ -5,23 +5,21 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    {% include "back-button.html" %}
-    {{form.error_summary}}
-    <div class="form-group grid-row">
-        <h1 class="form-title heading-large">
-            Declaration
-        </h1>
-        <p>Ofsted will have to check your details, inspect your home and interview you after you apply.</p>
-        <p>We need your permission to carry out checks and share information with local councils.</p>
-        <p>We may need to share your details with other organisations for legal reasons, for instance if there are concerns around protecting children.</p>
-        <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="hidden" value="{{application_id}}" name="id"/>
-            <input type="submit" class="button" value="Continue"/>
-        </form>
-    </div>
+{% include "back-button.html" %}
+{{form.error_summary}}
+<div class="form-group">
+    <h1 class="form-title heading-large">
+        Declaration
+    </h1>
+    <p>Ofsted will have to check your details, inspect your home and interview you after you apply.</p>
+    <p>We need your permission to carry out checks and share information with local councils.</p>
+    <p>We may need to share your details with other organisations for legal reasons, for instance if there are concerns around protecting children.</p>
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" value="Continue"/>
+    </form>
 </div>
 
 {% endblock %}

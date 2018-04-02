@@ -5,1261 +5,1259 @@
 
 {% block inner_content %}
 <link href="{% static 'stylesheets/govuk-template-print.css' %}" media="print" rel="stylesheet" />
-<div class="column-full">
-    <div class="grid-row {{ print_class }}">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
-    <div class="grid-row">
-        <h1 class="form-title heading-large">
-            Check and confirm all your details
-        </h1>
-    </div>
-    <table class="check-your-answers">
-        <colgroup>
-            <col class="summary-column">
-            <col class="summary-column">
-            <col class="change-answer {{ print_class }}">
-        </colgroup>
-        <thead>
-        <tr>
-            <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-                <div class="heading-medium">
-                    Your login details
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Email
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{login_details_email}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/account/email?id={{application_id}}#id_email_address" alt="Update your email">
-                    Change <span class="visuallyhidden">email</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Mobile phone number
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{login_details_mobile_number}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/account/phone?id={{application_id}}#id_mobile_number" alt="Update your mobile phone number">
-                    Change <span class="visuallyhidden">mobile phone number</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Alternative phone number
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{login_details_alternative_phone_number}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/account/phone?id={{application_id}}#id_add_phone_number" alt="Update your alternative phone number">
-                    Change <span class="visuallyhidden">alternative phone number</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <table class="check-your-answers">
-        <colgroup>
-            <col class="summary-column">
-            <col class="summary-column">
-            <col class="change-answer {{ print_class }}">
-        </colgroup>
-        <thead>
-        <tr>
-            <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-                <div class="heading-medium">
-                    Childcare Type
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Looking after 0 to 5 year olds?
-            </td>
-            {% if childcare_type_zero_to_five is True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Yes
-            </td>
-            {% elif childcare_type_zero_to_five is False %}
-            <td style="word-wrap: break-word" class=summary-column>
-                No
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/childcare/age-groups?id={{application_id}}#id_type_of_childcare_0" alt="Update whether you plan to look after 0 to 5 year olds">
-                    Change <span class="visuallyhidden">0 to 5</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Looking after 5 to 7 year olds?
-            </td>
-            {% if childcare_type_five_to_eight is True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Yes
-            </td>
-            {% elif childcare_type_five_to_eight is False %}
-            <td style="word-wrap: break-word" class=summary-column>
-                No
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/childcare/age-groups?id={{application_id}}#id_type_of_childcare_1" alt="Update whether you plan to look after 5 to 7 year olds">
-                    Change <span class="visuallyhidden">5 to 7</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Looking after 8 year olds and older?
-            </td>
-            {% if childcare_type_eight_plus is True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Yes
-            </td>
-            {% elif childcare_type_eight_plus is False %}
-            <td style="word-wrap: break-word" class=summary-column>
-                No
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/childcare/age-groups?id={{application_id}}#id_type_of_childcare_2" alt="Update whether you plan to look at children of 8 years and older">
-                    Change <span class="visuallyhidden">8 and older</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Registers
-            </td>
-            {% if childcare_type_zero_to_five is True and childcare_type_five_to_eight is True and childcare_type_eight_plus is True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Early Years Register
-                <br>
-                Childcare Register
-            </td>
-            {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is True and childcare_type_eight_plus is False %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Early Years Register
-                <br>
-                Childcare Register
-            </td>
-            {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is False and childcare_type_eight_plus is True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Early Years Register
-                <br>
-                Childcare Register
-            </td>
-            {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is True and childcare_type_eight_plus is True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Childcare Register (compulsory & voluntary parts)
-            </td>
-            {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is False and childcare_type_eight_plus is False %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Early Years Register
-            </td>
-            {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is True and childcare_type_eight_plus is False %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Childcare Register (compulsory part)
-            </td>
-            {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is False and childcare_type_eight_plus is True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Childcare Register (voluntary part)
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/childcare/age-groups?id={{application_id}}" alt="Update your registers">
-                    Change <span class="visuallyhidden">registers</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <table class="check-your-answers">
-        <colgroup>
-            <col class="summary-column">
-            <col class="summary-column">
-            <col class="change-answer {{ print_class }}">
-        </colgroup>
-        <thead>
-        <tr>
-            <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-                <div class="heading-medium">
-                    Your personal details
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Full name
-            </td>
-            {% if personal_details_middle_names %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_first_name}} {{personal_details_middle_names}} {{personal_details_last_name}}
-            </td>
-            {% elif not personal_details_middle_names %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_first_name}} {{personal_details_last_name}}
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/personal-details/your-name/?id={{application_id}}" alt="Update your name">
-                    Change <span class="visuallyhidden">your name</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Date of Birth
-            </td>
-            {% if personal_details_birth_month == 1 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_birth_day}} January {{personal_details_birth_year}}
-            </td>
-            {% elif personal_details_birth_month == 2 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_birth_day}} February {{personal_details_birth_year}}
-            </td>
-            {% elif personal_details_birth_month == 3 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_birth_day}} March {{personal_details_birth_year}}
-            </td>
-            {% elif personal_details_birth_month == 4 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_birth_day}} April {{personal_details_birth_year}}
-            </td>
-            {% elif personal_details_birth_month == 5 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_birth_day}} May {{personal_details_birth_year}}
-            </td>
-            {% elif personal_details_birth_month == 6 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_birth_day}} June {{personal_details_birth_year}}
-            </td>
-            {% elif personal_details_birth_month == 7 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_birth_day}} July {{personal_details_birth_year}}
-            </td>
-            {% elif personal_details_birth_month == 8 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_birth_day}} August {{personal_details_birth_year}}
-            </td>
-            {% elif personal_details_birth_month == 9 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_birth_day}} September {{personal_details_birth_year}}
-            </td>
-            {% elif personal_details_birth_month == 10 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_birth_day}} October {{personal_details_birth_year}}
-            </td style="word-wrap: break-word">
-            {% elif personal_details_birth_month == 11 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_birth_day}} November {{personal_details_birth_year}}
-            </td>
-            {% elif personal_details_birth_month == 12 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{personal_details_birth_day}} December {{personal_details_birth_year}}
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/personal-details/your-date-of-birth/?id={{application_id}}" alt="Update your date of birth">
-                    Change <span class="visuallyhidden">date of birth</span>
-                </a>
-            </td>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Home address
-            </td>
-            {% if home_address_street_line2 and home_address_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{home_address_street_line1}}
-                </br>
-                {{home_address_street_line2}}
-                </br>
-                {{home_address_town}}
-                </br>
-                {{home_address_county}}
-                </br>
-                {{home_address_postcode}}
-            </td>
-            {% elif home_address_street_line2 and not home_address_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{home_address_street_line1}}
-                </br>
-                {{home_address_street_line2}}
-                </br>
-                {{home_address_town}}
-                </br>
-                {{home_address_postcode}}
-            </td>
-            {% elif not home_address_street_line2 and home_address_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{home_address_street_line1}}
-                </br>
-                {{home_address_town}}
-                </br>
-                {{home_address_county}}
-                </br>
-                {{home_address_postcode}}
-            </td>
-            {% elif not home_address_street_line2 and not home_address_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{home_address_street_line1}}
-                </br>
-                {{home_address_town}}
-                </br>
-                {{home_address_postcode}}
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/personal-details/your-home-address/?id={{application_id}}&manual=True&lookup=False"
-                   alt='Update your home address'>
-                    Change <span class="visuallyhidden">home address</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Childcare address
-            </td>
-            {% if location_of_childcare == True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Same as home address
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/personal-details/childcare-address/?id={{application_id}}"
-                   alt='Update your childcare address'>
-                    Change <span class="visuallyhidden">childcare address</span>
-                </a>
-            </td>
-            {% elif location_of_childcare == False %}
-            {% if childcare_street_line2 and childcare_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{childcare_street_line1}}
-                </br>
-                {{childcare_street_line2}}
-                </br>
-                {{childcare_town}}
-                </br>
-                {{childcare_county}}
-                </br>
-                {{childcare_postcode}}
-            </td>
-            {% elif childcare_street_line2 and not childcare_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{childcare_street_line1}}
-                </br>
-                {{childcare_street_line2}}
-                </br>
-                {{childcare_town}}
-                </br>
-                {{childcare_postcode}}
-            </td>
-            {% elif not childcare_street_line2 and childcare_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{childcare_street_line1}}
-                </br>
-                {{childcare_town}}
-                </br>
-                {{childcare_county}}
-                </br>
-                {{childcare_postcode}}
-            </td>
-            {% elif not childcare_street_line2 and not childcare_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{childcare_street_line1}}
-                </br>
-                {{childcare_town}}
-                </br>
-                {{childcare_postcode}}
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/personal-details/childcare-address?id={{application_id}}&manual=True&lookup=False"
-                   alt='Update your childcare address'>
-                    Change <span class="visuallyhidden">childcare address</span>
-                </a>
-            </td>
-            {% endif %}
-        </tr>
-        </tbody>
-    </table>
-    <table class="check-your-answers">
-        <colgroup>
-            <col class="summary-column">
-            <col class="summary-column">
-            <col class="change-answer {{ print_class }}">
-        </colgroup>
-        <thead>
-        <tr>
-            <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-                <div class="heading-medium">
-                    Your first aid certificate
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                First aid training provider
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_aid_training_organisation}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/first-aid/details?id={{application_id}}#id_first_aid_training_organisation"
-                   alt='Update your first aid training provider'>
-                    Change <span class="visuallyhidden">first aid training provider</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Title of first aid course
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_aid_training_course}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/first-aid/details?id={{application_id}}#id_title_of_training_course"
-                   alt='Update your first aid training course title'>
-                    Change <span class="visuallyhidden">course title</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Date of first aid certificate
-            </td>
-            {% if first_aid_certificate_month == 1 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_aid_certificate_day}} January {{first_aid_certificate_year}}
-            </td>
-            {% elif first_aid_certificate_month == 2 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_aid_certificate_day}} February {{first_aid_certificate_year}}
-            </td>
-            {% elif first_aid_certificate_month == 3 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_aid_certificate_day}} March {{first_aid_certificate_year}}
-            </td>
-            {% elif first_aid_certificate_month == 4 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_aid_certificate_day}} April {{first_aid_certificate_year}}
-            </td>
-            {% elif first_aid_certificate_month == 5 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_aid_certificate_day}} May {{first_aid_certificate_year}}
-            </td>
-            {% elif first_aid_certificate_month == 6 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_aid_certificate_day}} June {{first_aid_certificate_year}}
-            </td>
-            {% elif first_aid_certificate_month == 7 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_aid_certificate_day}} July {{first_aid_certificate_year}}
-            </td>
-            {% elif first_aid_certificate_month == 8 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_aid_certificate_day}} August {{first_aid_certificate_year}}
-            </td>
-            {% elif first_aid_certificate_month == 9 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_aid_certificate_day}} September {{first_aid_certificate_year}}
-            </td>
-            {% elif first_aid_certificate_month == 10 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_aid_certificate_day}} October {{first_aid_certificate_year}}
-            </td>
-            {% elif first_aid_certificate_month == 11 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_aid_certificate_day}} November {{first_aid_certificate_year}}
-            </td>
-            {% elif first_aid_certificate_month == 12 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_aid_certificate_day}} December {{first_aid_certificate_year}}
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/first-aid/details?id={{application_id}}"
-                   alt='Update your first aid certificate date'>
-                    Change <span class="visuallyhidden">date of first aid certificate</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
-        <colgroup>
-            <col class="summary-column">
-            <col class="summary-column">
-            <col class="change-answer {{ print_class }}">
-        </colgroup>
-        <thead>
-        <tr>
-            <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-                <div class="heading-medium">
-                    Criminal record checks
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                DBS certificate number
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{dbs_certificate_number}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/criminal-record/your-details/?id={{application_id}}#id_dbs_certificate_number"
-                   alt='Update your DBS certificate number'>
-                    Change <span class="visuallyhidden">DBS certificate number</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Do you have any cautions or convictions?
-            </td>
-            {% if cautions_convictions is True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Yes
-            </td>
-            {% elif cautions_convictions is False %}
-            <td style="word-wrap: break-word" class=summary-column>
-                No
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/criminal-record/your-details/?id={{application_id}}"
-                   alt='Update whether you have any cautions or convictions?'>
-                    Change <span class="visuallyhidden">do you have any cautions or convictions?</span>
-                </a>
-            </td>
-        </tr>
-        {% if cautions_convictions is True %}
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Will you send your DBS certificate to Ofsted?
-            </td>
-            {% if declaration is True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Yes
-            </td>
-            {% elif declaration is False %}
-            <td style="word-wrap: break-word" class=summary-column>
-                No
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/criminal-record/post-certificate/?id={{application_id}}#id_declaration"
-                   alt='Update whether you will send your DBS certificate to Ofsted?'>
-                    Change <span class="visuallyhidden">will you send your DBS certificate to Ofsted?</span>
-                </a>
-            </td>
-        </tr>
-        {% endif %}
-        </tbody>
-    </table>
-    <table class="check-your-answers">
-        <colgroup>
-            <col class="summary-column">
-            <col class="summary-column">
-            <col class="change-answer {{ print_class }}">
-        </colgroup>
-        <thead>
-        <tr>
-            <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-                <div class="heading-medium">
-                    Health checks
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Provide a Health Declaration Booklet?
-            </td>
-            {% if send_hdb_declare is True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Yes
-            </td>
-            {% elif send_hdb_declare is False %}
-            <td style="word-wrap: break-word" class=summary-column>
-                No
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/health/booklet?id={{application_id}}#id_send_hdb_declare" alt="Update your declaration to send a Health Declaration Booklet to Ofsted">
-                    Change <span class="visuallyhidden">your declaration to provide a Health Declaration Booklet</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
-        <colgroup>
-            <col class="summary-column">
-            <col class="summary-column">
-            <col class="change-answer {{ print_class }}">
-        </colgroup>
-        <thead>
-        <tr>
-            <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-                <div class="heading-medium">
-                    First reference
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Full name
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_first_name}} {{first_reference_last_name}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Update your first reference's name">
-                    Change
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                How they know you
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_relationship}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}#id_relationship" alt="Update your first reference's relationship">
-                    Change
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Known for
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_years_known}} years, {{first_reference_months_known}} months
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Update your first reference's time known">
-                    Change
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Address
-            </td>
-            {% if first_reference_street_line2 and first_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_street_line1}}
-                </br>
-                {{first_reference_street_line2}}
-                </br>
-                {{first_reference_town}}
-                </br>
-                {{first_reference_county}}
-                </br>
-                {{first_reference_postcode}}
-                </br>
-                {{first_reference_country}}
-            </td>
-            {% elif first_reference_street_line2 and not first_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_street_line1}}
-                </br>
-                {{first_reference_street_line2}}
-                </br>
-                {{first_reference_town}}
-                </br>
-                {{first_reference_postcode}}
-                </br>
-                {{first_reference_country}}
-            </td>
-            {% elif not first_reference_street_line2 and first_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_street_line1}}
-                </br>
-                {{first_reference_town}}
-                </br>
-                {{first_reference_county}}
-                </br>
-                {{first_reference_postcode}}
-                </br>
-                {{first_reference_country}}
-            </td>
-            {% elif not first_reference_street_line2 and not first_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_street_line1}}
-                </br>
-                {{first_reference_town}}
-                </br>
-                {{first_reference_postcode}}
-                </br>
-                {{first_reference_country}}
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/references/first-reference-address?id={{application_id}}&manual=True&lookup=False" alt="Update your first reference's address">
-                    Change
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Phone number
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_phone_number}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/references/first-reference-contact-details?id={{application_id}}#id_phone_number" alt="Update your first reference's phone number">
-                    Change
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Email address
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_email}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/references/first-reference-contact-details?id={{application_id}}#id_email_address" alt="Update your first reference's email">
-                    Change
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
-        <colgroup>
-            <col class="summary-column">
-            <col class="summary-column">
-            <col class="change-answer {{ print_class }}">
-        </colgroup>
-        <thead>
-        <tr>
-            <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-                <div class="heading-medium">
-                    Second reference
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Full name
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_first_name}} {{second_reference_last_name}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Update your second reference's name">
-                    Change
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                How they know you
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_relationship}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}#id_relationship" alt="Update your second reference's relationship">
-                    Change
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Known for
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_years_known}} years, {{second_reference_months_known}} months
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Update your second reference's time known">
-                    Change
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Address
-            </td>
-            {% if second_reference_street_line2 and second_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_street_line1}}
-                </br>
-                {{second_reference_street_line2}}
-                </br>
-                {{second_reference_town}}
-                </br>
-                {{second_reference_county}}
-                </br>
-                {{second_reference_postcode}}
-                </br>
-                {{second_reference_country}}
-            </td>
-            {% elif second_reference_street_line2 and not second_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_street_line1}}
-                </br>
-                {{second_reference_street_line2}}
-                </br>
-                {{second_reference_town}}
-                </br>
-                {{second_reference_postcode}}
-                </br>
-                {{second_reference_country}}
-            </td>
-            {% elif not second_reference_street_line2 and second_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_street_line1}}
-                </br>
-                {{second_reference_town}}
-                </br>
-                {{second_reference_county}}
-                </br>
-                {{second_reference_postcode}}
-                </br>
-                {{second_reference_country}}
-            </td>
-            {% elif not second_reference_street_line2 and not second_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_street_line1}}
-                </br>
-                {{second_reference_town}}
-                </br>
-                {{second_reference_postcode}}
-                </br>
-                {{second_reference_country}}
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/references/second-reference-address?id={{application_id}}&manual=True&lookup=False" alt="Update your second reference's address">
-                    Change
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Phone number
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_phone_number}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/references/second-reference-contact-details?id={{application_id}}#id_phone_number" alt="Update your second reference's phone number">
-                    Change
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Email address
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_email}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/references/second-reference-contact-details?id={{application_id}}#id_email_address" alt="Update your second reference's email">
-                    Change
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
-        <colgroup>
-            <col class="summary-column">
-            <col class="summary-column">
-            <col class="change-answer {{ print_class }}">
-        </colgroup>
-        <thead>
-        <tr>
-            <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-                <div class="heading-medium">
-                    Adults in your home
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Do you live with anyone who is 16 or over?
-            </td>
-            {% if adults_in_home is True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Yes
-            </td>
-            {% elif adults_in_home is False %}
-            <td style="word-wrap: break-word" class=summary-column>
-                No
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/other-people/adult-question?id={{application_id}}"
-                   alt='Update the adults in your home'>
-                    Change <span class="visuallyhidden">adults in your home</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
-        <colgroup>
-            <col class="summary-column">
-            <col class="summary-column">
-            <col class="change-answer {{ print_class }}">
-        </colgroup>
-        <thead>
-        <tr>
-            <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-                <div class="heading-medium">
-                    Children in your home
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Do you live with any children?
-            </td>
-            {% if children_in_home is True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Yes
-            </td>
-            {% elif children_in_home is False %}
-            <td style="word-wrap: break-word" class=summary-column>
-                No
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/other-people/children-question?id={{application_id}}"
-                   alt='Update the children in your home'>
-                    Change <span class="visuallyhidden">children in your home</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    {% for name, day, month, year, relationship, dbs_certificate_number, permission in adult_lists %}
-    <table class="check-your-answers">
-        <colgroup>
-            <col class="summary-column">
-            <col class="summary-column">
-            <col class="change-answer {{ print_class }}">
-        </colgroup>
-        <thead>
-        <tr>
-            <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-                <div class="heading-medium">
-                    {{name}}
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Name
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{name}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{number_of_adults}}&remove=0"
-                   alt="Update the adult's name">
-                    Change <span class="visuallyhidden">adult name</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Date of birth
-            </td>
-            {% if month == 1 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} January {{year}}
-            </td>
-            {% elif month == 2 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} February {{year}}
-            </td>
-            {% elif month == 3 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} March {{year}}
-            </td>
-            {% elif month == 4 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} April {{year}}
-            </td>
-            {% elif month == 5 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} May {{year}}
-            </td>
-            {% elif month == 6 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} June {{year}}
-            </td>
-            {% elif month == 7 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} July {{year}}
-            </td>
-            {% elif month == 8 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} August {{year}}
-            </td>
-            {% elif month == 9 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} September {{year}}
-            </td>
-            {% elif month == 10 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} October {{year}}
-            </td>
-            {% elif month == 11 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} November {{year}}
-            </td>
-            {% elif month == 12 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} December {{year}}
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{number_of_adults}}&remove=0"
-                   alt="Update the adult's date of birth">
-                    Change <span class="visuallyhidden">date of birth</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Relationship
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{relationship}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{number_of_adults}}&remove=0"
-                   alt="Update the adult's relationship">
-                    Change <span class="visuallyhidden">adult relationship</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                DBS certificate number
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{dbs_certificate_number}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/other-people/adult-dbs?id={{application_id}}&adults={{number_of_adults}}"
-                   alt="Update the adult's DBS certificate number">
-                    Change <span class="visuallyhidden">adult DBS certificate number</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Permission for checks
-            </td>
-            {% if permission is True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Yes
-            </td>
-            {% elif permission is False %}
-            <td style="word-wrap: break-word" class=summary-column>
-                No
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/other-people/adult-permission?id={{application_id}}&adults={{number_of_adults}}"
-                   alt="Update the adult's permission for checks">
-                    Change <span class="visuallyhidden">adult permission for checks</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    {% endfor %}
-    {% for name, day, month, year, relationship in child_lists %}
-    <table class="check-your-answers">
-        <colgroup>
-            <col class="summary-column">
-            <col class="summary-column">
-            <col class="change-answer {{ print_class }}">
-        </colgroup>
-        <thead>
-        <tr>
-            <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-                <div class="heading-medium">
-                    {{name}}
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Name
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{name}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}&remove=0"
-                   alt="Update the child's name">
-                    Change <span class="visuallyhidden">child name</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Date of birth
-            </td>
-            {% if month == 1 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} January {{year}}
-            </td>
-            {% elif month == 2 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} February {{year}}
-            </td>
-            {% elif month == 3 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} March {{year}}
-            </td>
-            {% elif month == 4 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} April {{year}}
-            </td>
-            {% elif month == 5 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} May {{year}}
-            </td>
-            {% elif month == 6 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} June {{year}}
-            </td>
-            {% elif month == 7 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} July {{year}}
-            </td>
-            {% elif month == 8 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} August {{year}}
-            </td>
-            {% elif month == 9 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} September {{year}}
-            </td>
-            {% elif month == 10 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} October {{year}}
-            </td>
-            {% elif month == 11 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} November {{year}}
-            </td>
-            {% elif month == 12 %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{day}} December {{year}}
-            </td>
-            {% endif %}
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}&remove=0"
-                   alt="Update the child's date of birth">
-                    Change <span class="visuallyhidden">date of birth</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Relationship
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{relationship}}
-            </td>
-            <td class="change-answer {{ print_class }}">
-                <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}&remove=0"
-                   alt="Update the child's relationship">
-                    Change <span class="visuallyhidden">child relationship</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    {% endfor %}
-    <br>
-    {% if not print %}
-    <div class="{{ print_class }} form-group grid-row ">
-        <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-            {% csrf_token %}
-            <input type="submit" class="button" value="Confirm and continue"/>
-            <input type="hidden" value="{{application_id}}" name="id"/>
-        </form>
-    </div>
-    {% endif %}
-    <br>
-    <!-- Return to task list -->
-    {% if print %}
-    <div class="form-group grid-row ">
-        <input class="button" type="submit" value="Print" onClick="javascript:window.print()">
-    </div>
-    {% endif %}
-    {% if not print %}
-    <div class="form-group grid-row">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
-    {% endif %}
-    {% if print %}
-    <div class="form-group grid-row">
-        <a href="{{URL_PREFIX}}/confirmation/?id={{application_id}}&orderCode={{order_code}}">Return to confirmation</a>
-    </div>
-    {% endif %}
-    <input type="hidden" value="{{application_id}}" name="id"/>
+<div class="{{ print_class }}">
+    <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
+       style="margin-right: 10px; line-height: 28px">
+        Back
+    </a>
 </div>
+
+<h1 class="form-title heading-large">
+    Check and confirm all your details
+</h1>
+
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Your login details
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Email
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{login_details_email}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/account/email?id={{application_id}}#id_email_address" alt="Update your email">
+                Change <span class="visuallyhidden">email</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Mobile phone number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{login_details_mobile_number}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/account/phone?id={{application_id}}#id_mobile_number" alt="Update your mobile phone number">
+                Change <span class="visuallyhidden">mobile phone number</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Alternative phone number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{login_details_alternative_phone_number}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/account/phone?id={{application_id}}#id_add_phone_number" alt="Update your alternative phone number">
+                Change <span class="visuallyhidden">alternative phone number</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Childcare Type
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Looking after 0 to 5 year olds?
+        </td>
+        {% if childcare_type_zero_to_five is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif childcare_type_zero_to_five is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/childcare/age-groups?id={{application_id}}#id_type_of_childcare_0" alt="Update whether you plan to look after 0 to 5 year olds">
+                Change <span class="visuallyhidden">0 to 5</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Looking after 5 to 7 year olds?
+        </td>
+        {% if childcare_type_five_to_eight is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif childcare_type_five_to_eight is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/childcare/age-groups?id={{application_id}}#id_type_of_childcare_1" alt="Update whether you plan to look after 5 to 7 year olds">
+                Change <span class="visuallyhidden">5 to 7</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Looking after 8 year olds and older?
+        </td>
+        {% if childcare_type_eight_plus is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif childcare_type_eight_plus is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/childcare/age-groups?id={{application_id}}#id_type_of_childcare_2" alt="Update whether you plan to look at children of 8 years and older">
+                Change <span class="visuallyhidden">8 and older</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Registers
+        </td>
+        {% if childcare_type_zero_to_five is True and childcare_type_five_to_eight is True and childcare_type_eight_plus is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Early Years Register
+            <br>
+            Childcare Register
+        </td>
+        {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is True and childcare_type_eight_plus is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Early Years Register
+            <br>
+            Childcare Register
+        </td>
+        {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is False and childcare_type_eight_plus is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Early Years Register
+            <br>
+            Childcare Register
+        </td>
+        {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is True and childcare_type_eight_plus is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Childcare Register (compulsory & voluntary parts)
+        </td>
+        {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is False and childcare_type_eight_plus is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Early Years Register
+        </td>
+        {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is True and childcare_type_eight_plus is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Childcare Register (compulsory part)
+        </td>
+        {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is False and childcare_type_eight_plus is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Childcare Register (voluntary part)
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/childcare/age-groups?id={{application_id}}" alt="Update your registers">
+                Change <span class="visuallyhidden">registers</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Your personal details
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Full name
+        </td>
+        {% if personal_details_middle_names %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_first_name}} {{personal_details_middle_names}} {{personal_details_last_name}}
+        </td>
+        {% elif not personal_details_middle_names %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_first_name}} {{personal_details_last_name}}
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/personal-details/your-name/?id={{application_id}}" alt="Update your name">
+                Change <span class="visuallyhidden">your name</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Date of Birth
+        </td>
+        {% if personal_details_birth_month == 1 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_birth_day}} January {{personal_details_birth_year}}
+        </td>
+        {% elif personal_details_birth_month == 2 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_birth_day}} February {{personal_details_birth_year}}
+        </td>
+        {% elif personal_details_birth_month == 3 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_birth_day}} March {{personal_details_birth_year}}
+        </td>
+        {% elif personal_details_birth_month == 4 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_birth_day}} April {{personal_details_birth_year}}
+        </td>
+        {% elif personal_details_birth_month == 5 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_birth_day}} May {{personal_details_birth_year}}
+        </td>
+        {% elif personal_details_birth_month == 6 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_birth_day}} June {{personal_details_birth_year}}
+        </td>
+        {% elif personal_details_birth_month == 7 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_birth_day}} July {{personal_details_birth_year}}
+        </td>
+        {% elif personal_details_birth_month == 8 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_birth_day}} August {{personal_details_birth_year}}
+        </td>
+        {% elif personal_details_birth_month == 9 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_birth_day}} September {{personal_details_birth_year}}
+        </td>
+        {% elif personal_details_birth_month == 10 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_birth_day}} October {{personal_details_birth_year}}
+        </td style="word-wrap: break-word">
+        {% elif personal_details_birth_month == 11 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_birth_day}} November {{personal_details_birth_year}}
+        </td>
+        {% elif personal_details_birth_month == 12 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_birth_day}} December {{personal_details_birth_year}}
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/personal-details/your-date-of-birth/?id={{application_id}}" alt="Update your date of birth">
+                Change <span class="visuallyhidden">date of birth</span>
+            </a>
+        </td>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Home address
+        </td>
+        {% if home_address_street_line2 and home_address_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{home_address_street_line1}}
+            </br>
+            {{home_address_street_line2}}
+            </br>
+            {{home_address_town}}
+            </br>
+            {{home_address_county}}
+            </br>
+            {{home_address_postcode}}
+        </td>
+        {% elif home_address_street_line2 and not home_address_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{home_address_street_line1}}
+            </br>
+            {{home_address_street_line2}}
+            </br>
+            {{home_address_town}}
+            </br>
+            {{home_address_postcode}}
+        </td>
+        {% elif not home_address_street_line2 and home_address_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{home_address_street_line1}}
+            </br>
+            {{home_address_town}}
+            </br>
+            {{home_address_county}}
+            </br>
+            {{home_address_postcode}}
+        </td>
+        {% elif not home_address_street_line2 and not home_address_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{home_address_street_line1}}
+            </br>
+            {{home_address_town}}
+            </br>
+            {{home_address_postcode}}
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/personal-details/your-home-address/?id={{application_id}}&manual=True&lookup=False"
+               alt='Update your home address'>
+                Change <span class="visuallyhidden">home address</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Childcare address
+        </td>
+        {% if location_of_childcare == True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Same as home address
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/personal-details/childcare-address/?id={{application_id}}"
+               alt='Update your childcare address'>
+                Change <span class="visuallyhidden">childcare address</span>
+            </a>
+        </td>
+        {% elif location_of_childcare == False %}
+        {% if childcare_street_line2 and childcare_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{childcare_street_line1}}
+            </br>
+            {{childcare_street_line2}}
+            </br>
+            {{childcare_town}}
+            </br>
+            {{childcare_county}}
+            </br>
+            {{childcare_postcode}}
+        </td>
+        {% elif childcare_street_line2 and not childcare_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{childcare_street_line1}}
+            </br>
+            {{childcare_street_line2}}
+            </br>
+            {{childcare_town}}
+            </br>
+            {{childcare_postcode}}
+        </td>
+        {% elif not childcare_street_line2 and childcare_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{childcare_street_line1}}
+            </br>
+            {{childcare_town}}
+            </br>
+            {{childcare_county}}
+            </br>
+            {{childcare_postcode}}
+        </td>
+        {% elif not childcare_street_line2 and not childcare_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{childcare_street_line1}}
+            </br>
+            {{childcare_town}}
+            </br>
+            {{childcare_postcode}}
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/personal-details/childcare-address?id={{application_id}}&manual=True&lookup=False"
+               alt='Update your childcare address'>
+                Change <span class="visuallyhidden">childcare address</span>
+            </a>
+        </td>
+        {% endif %}
+    </tr>
+    </tbody>
+</table>
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Your first aid certificate
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            First aid training provider
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_aid_training_organisation}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/first-aid/details?id={{application_id}}#id_first_aid_training_organisation"
+               alt='Update your first aid training provider'>
+                Change <span class="visuallyhidden">first aid training provider</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Title of first aid course
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_aid_training_course}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/first-aid/details?id={{application_id}}#id_title_of_training_course"
+               alt='Update your first aid training course title'>
+                Change <span class="visuallyhidden">course title</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Date of first aid certificate
+        </td>
+        {% if first_aid_certificate_month == 1 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_aid_certificate_day}} January {{first_aid_certificate_year}}
+        </td>
+        {% elif first_aid_certificate_month == 2 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_aid_certificate_day}} February {{first_aid_certificate_year}}
+        </td>
+        {% elif first_aid_certificate_month == 3 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_aid_certificate_day}} March {{first_aid_certificate_year}}
+        </td>
+        {% elif first_aid_certificate_month == 4 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_aid_certificate_day}} April {{first_aid_certificate_year}}
+        </td>
+        {% elif first_aid_certificate_month == 5 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_aid_certificate_day}} May {{first_aid_certificate_year}}
+        </td>
+        {% elif first_aid_certificate_month == 6 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_aid_certificate_day}} June {{first_aid_certificate_year}}
+        </td>
+        {% elif first_aid_certificate_month == 7 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_aid_certificate_day}} July {{first_aid_certificate_year}}
+        </td>
+        {% elif first_aid_certificate_month == 8 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_aid_certificate_day}} August {{first_aid_certificate_year}}
+        </td>
+        {% elif first_aid_certificate_month == 9 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_aid_certificate_day}} September {{first_aid_certificate_year}}
+        </td>
+        {% elif first_aid_certificate_month == 10 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_aid_certificate_day}} October {{first_aid_certificate_year}}
+        </td>
+        {% elif first_aid_certificate_month == 11 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_aid_certificate_day}} November {{first_aid_certificate_year}}
+        </td>
+        {% elif first_aid_certificate_month == 12 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_aid_certificate_day}} December {{first_aid_certificate_year}}
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/first-aid/details?id={{application_id}}"
+               alt='Update your first aid certificate date'>
+                Change <span class="visuallyhidden">date of first aid certificate</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Criminal record checks
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            DBS certificate number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{dbs_certificate_number}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/criminal-record/your-details/?id={{application_id}}#id_dbs_certificate_number"
+               alt='Update your DBS certificate number'>
+                Change <span class="visuallyhidden">DBS certificate number</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Do you have any cautions or convictions?
+        </td>
+        {% if cautions_convictions is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif cautions_convictions is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/criminal-record/your-details/?id={{application_id}}"
+               alt='Update whether you have any cautions or convictions?'>
+                Change <span class="visuallyhidden">do you have any cautions or convictions?</span>
+            </a>
+        </td>
+    </tr>
+    {% if cautions_convictions is True %}
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Will you send your DBS certificate to Ofsted?
+        </td>
+        {% if declaration is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif declaration is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/criminal-record/post-certificate/?id={{application_id}}#id_declaration"
+               alt='Update whether you will send your DBS certificate to Ofsted?'>
+                Change <span class="visuallyhidden">will you send your DBS certificate to Ofsted?</span>
+            </a>
+        </td>
+    </tr>
+    {% endif %}
+    </tbody>
+</table>
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Health checks
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Provide a Health Declaration Booklet?
+        </td>
+        {% if send_hdb_declare is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif send_hdb_declare is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/health/booklet?id={{application_id}}#id_send_hdb_declare" alt="Update your declaration to send a Health Declaration Booklet to Ofsted">
+                Change <span class="visuallyhidden">your declaration to provide a Health Declaration Booklet</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                First reference
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Full name
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_first_name}} {{first_reference_last_name}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Update your first reference's name">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            How they know you
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_relationship}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}#id_relationship" alt="Update your first reference's relationship">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Known for
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_years_known}} years, {{first_reference_months_known}} months
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Update your first reference's time known">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Address
+        </td>
+        {% if first_reference_street_line2 and first_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_street_line1}}
+            </br>
+            {{first_reference_street_line2}}
+            </br>
+            {{first_reference_town}}
+            </br>
+            {{first_reference_county}}
+            </br>
+            {{first_reference_postcode}}
+            </br>
+            {{first_reference_country}}
+        </td>
+        {% elif first_reference_street_line2 and not first_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_street_line1}}
+            </br>
+            {{first_reference_street_line2}}
+            </br>
+            {{first_reference_town}}
+            </br>
+            {{first_reference_postcode}}
+            </br>
+            {{first_reference_country}}
+        </td>
+        {% elif not first_reference_street_line2 and first_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_street_line1}}
+            </br>
+            {{first_reference_town}}
+            </br>
+            {{first_reference_county}}
+            </br>
+            {{first_reference_postcode}}
+            </br>
+            {{first_reference_country}}
+        </td>
+        {% elif not first_reference_street_line2 and not first_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_street_line1}}
+            </br>
+            {{first_reference_town}}
+            </br>
+            {{first_reference_postcode}}
+            </br>
+            {{first_reference_country}}
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/references/first-reference-address?id={{application_id}}&manual=True&lookup=False" alt="Update your first reference's address">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Phone number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_phone_number}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/references/first-reference-contact-details?id={{application_id}}#id_phone_number" alt="Update your first reference's phone number">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Email address
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_email}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/references/first-reference-contact-details?id={{application_id}}#id_email_address" alt="Update your first reference's email">
+                Change
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Second reference
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Full name
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_first_name}} {{second_reference_last_name}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Update your second reference's name">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            How they know you
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_relationship}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}#id_relationship" alt="Update your second reference's relationship">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Known for
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_years_known}} years, {{second_reference_months_known}} months
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Update your second reference's time known">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Address
+        </td>
+        {% if second_reference_street_line2 and second_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_street_line1}}
+            </br>
+            {{second_reference_street_line2}}
+            </br>
+            {{second_reference_town}}
+            </br>
+            {{second_reference_county}}
+            </br>
+            {{second_reference_postcode}}
+            </br>
+            {{second_reference_country}}
+        </td>
+        {% elif second_reference_street_line2 and not second_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_street_line1}}
+            </br>
+            {{second_reference_street_line2}}
+            </br>
+            {{second_reference_town}}
+            </br>
+            {{second_reference_postcode}}
+            </br>
+            {{second_reference_country}}
+        </td>
+        {% elif not second_reference_street_line2 and second_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_street_line1}}
+            </br>
+            {{second_reference_town}}
+            </br>
+            {{second_reference_county}}
+            </br>
+            {{second_reference_postcode}}
+            </br>
+            {{second_reference_country}}
+        </td>
+        {% elif not second_reference_street_line2 and not second_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_street_line1}}
+            </br>
+            {{second_reference_town}}
+            </br>
+            {{second_reference_postcode}}
+            </br>
+            {{second_reference_country}}
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/references/second-reference-address?id={{application_id}}&manual=True&lookup=False" alt="Update your second reference's address">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Phone number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_phone_number}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/references/second-reference-contact-details?id={{application_id}}#id_phone_number" alt="Update your second reference's phone number">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Email address
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_email}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/references/second-reference-contact-details?id={{application_id}}#id_email_address" alt="Update your second reference's email">
+                Change
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Adults in your home
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Do you live with anyone who is 16 or over?
+        </td>
+        {% if adults_in_home is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif adults_in_home is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/other-people/adult-question?id={{application_id}}"
+               alt='Update the adults in your home'>
+                Change <span class="visuallyhidden">adults in your home</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Children in your home
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Do you live with any children?
+        </td>
+        {% if children_in_home is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif children_in_home is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/other-people/children-question?id={{application_id}}"
+               alt='Update the children in your home'>
+                Change <span class="visuallyhidden">children in your home</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+{% for name, day, month, year, relationship, dbs_certificate_number, permission in adult_lists %}
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                {{name}}
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Name
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{name}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Update the adult's name">
+                Change <span class="visuallyhidden">adult name</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Date of birth
+        </td>
+        {% if month == 1 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} January {{year}}
+        </td>
+        {% elif month == 2 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} February {{year}}
+        </td>
+        {% elif month == 3 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} March {{year}}
+        </td>
+        {% elif month == 4 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} April {{year}}
+        </td>
+        {% elif month == 5 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} May {{year}}
+        </td>
+        {% elif month == 6 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} June {{year}}
+        </td>
+        {% elif month == 7 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} July {{year}}
+        </td>
+        {% elif month == 8 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} August {{year}}
+        </td>
+        {% elif month == 9 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} September {{year}}
+        </td>
+        {% elif month == 10 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} October {{year}}
+        </td>
+        {% elif month == 11 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} November {{year}}
+        </td>
+        {% elif month == 12 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} December {{year}}
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Update the adult's date of birth">
+                Change <span class="visuallyhidden">date of birth</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Relationship
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{relationship}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Update the adult's relationship">
+                Change <span class="visuallyhidden">adult relationship</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            DBS certificate number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{dbs_certificate_number}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/other-people/adult-dbs?id={{application_id}}&adults={{number_of_adults}}"
+               alt="Update the adult's DBS certificate number">
+                Change <span class="visuallyhidden">adult DBS certificate number</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Permission for checks
+        </td>
+        {% if permission is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif permission is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/other-people/adult-permission?id={{application_id}}&adults={{number_of_adults}}"
+               alt="Update the adult's permission for checks">
+                Change <span class="visuallyhidden">adult permission for checks</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+{% endfor %}
+{% for name, day, month, year, relationship in child_lists %}
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                {{name}}
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Name
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{name}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}&remove=0"
+               alt="Update the child's name">
+                Change <span class="visuallyhidden">child name</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Date of birth
+        </td>
+        {% if month == 1 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} January {{year}}
+        </td>
+        {% elif month == 2 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} February {{year}}
+        </td>
+        {% elif month == 3 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} March {{year}}
+        </td>
+        {% elif month == 4 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} April {{year}}
+        </td>
+        {% elif month == 5 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} May {{year}}
+        </td>
+        {% elif month == 6 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} June {{year}}
+        </td>
+        {% elif month == 7 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} July {{year}}
+        </td>
+        {% elif month == 8 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} August {{year}}
+        </td>
+        {% elif month == 9 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} September {{year}}
+        </td>
+        {% elif month == 10 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} October {{year}}
+        </td>
+        {% elif month == 11 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} November {{year}}
+        </td>
+        {% elif month == 12 %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} December {{year}}
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}&remove=0"
+               alt="Update the child's date of birth">
+                Change <span class="visuallyhidden">date of birth</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Relationship
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{relationship}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}&remove=0"
+               alt="Update the child's relationship">
+                Change <span class="visuallyhidden">child relationship</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+{% endfor %}
+<br>
+{% if not print %}
+<div class="{{ print_class }} form-group">
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        {% csrf_token %}
+        <input type="submit" class="button" value="Confirm and continue"/>
+        <input type="hidden" value="{{application_id}}" name="id"/>
+    </form>
+</div>
+{% endif %}
+<br>
+<!-- Return to task list -->
+{% if print %}
+<div class="form-group ">
+    <input class="button" type="submit" value="Print" onClick="javascript:window.print()">
+</div>
+{% endif %}
+{% if not print %}
+<div class="form-group">
+    <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+</div>
+{% endif %}
+{% if print %}
+<div class="form-group">
+    <a href="{{URL_PREFIX}}/confirmation/?id={{application_id}}&orderCode={{order_code}}">Return to confirmation</a>
+</div>
+{% endif %}
+<input type="hidden" value="{{application_id}}" name="id"/>
 
 {% endblock %}

@@ -4,31 +4,29 @@
 {% load govuk_template_base %}
 
 {% block inner_content %}
+{% include "back-button.html" %}
 
+{{form.error_summary}}
+{{form2.error_summary}}
 
-<div class="column-full">
-    {% include "back-button.html" %}
-    {{form.error_summary}}
-    {{form2.error_summary}}
-    <div class="form-group grid-row">
-        <h1 class="form-title heading-large">
-            Your declaration
-        </h1>
-        <p style="font-weight: bold;">Please confirm you are happy to apply and go ahead with the next steps.</p>
-        <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-            <h3 class="heading-small">
-                I am happy for Ofsted to:
-            </h3>
-            {{form.as_div}}
-            <h3 class="heading-small">
-                I declare that:
-            </h3>
-            {{form2.as_div}}
-            {% csrf_token %}
-            <input type="hidden" value="{{application_id}}" name="id"/>
-            <input type="submit" class="button" value="Confirm and pay your fee"/>
-        </form>
-    </div>
+<div class="form-group">
+    <h1 class="form-title heading-large">
+        Your declaration
+    </h1>
+    <p style="font-weight: bold;">Please confirm you are happy to apply and go ahead with the next steps.</p>
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        <h3 class="heading-small">
+            I am happy for Ofsted to:
+        </h3>
+        {{form.as_div}}
+        <h3 class="heading-small">
+            I declare that:
+        </h3>
+        {{form2.as_div}}
+        {% csrf_token %}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" value="Confirm and pay your fee"/>
+    </form>
 </div>
 
 {% endblock %}
