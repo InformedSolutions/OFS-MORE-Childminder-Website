@@ -1,0 +1,123 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Costs of becoming a childminder{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    Costs of becoming a childminder
+</h1>
+
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">
+                <div class="heading-medium">
+                    Register as a childminder
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            Application fee
+        </td>
+        <td>
+            £35
+        </td>
+    </tr>
+</table>
+
+<p class="top-padded">The fee is £103 if you are only caring for children aged over 5.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">
+                <div class="heading-medium">
+                    Criminal record (DBS) checks
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            Your criminal record (DBS) check
+        </td>
+        <td>
+            £52.10
+        </td>
+    </tr>
+     <tr>
+        <td>
+            Checks for adults in your home
+        </td>
+        <td>
+            £52.10 each
+        </td>
+    </tr>
+</table>
+
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">
+                <div class="heading-medium">
+                    Training
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            Paediatric first aid course
+        </td>
+        <td>
+            £100 to £200 (approx)
+        </td>
+    </tr>
+     <tr>
+        <td>
+            Early years training (if you need it)
+        </td>
+        <td>
+            £200 (approx)
+        </td>
+    </tr>
+</table>
+
+
+    <table>
+    <thead>
+        <tr>
+            <th colspan="2">
+                <div class="heading-medium">
+                    Insurance
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            Public liability insurance
+        </td>
+        <td>
+            £100 (approx)
+        </td>
+    </tr>
+</table>
+
+<p class="top-padded">
+    Your house and car insurance also need to be up to date.
+</p>
+
+ <a href="{% url 'morebeta' %}?id={{ id }}" class="button">Return to application</a>
+
+{% endblock %}

@@ -4,28 +4,23 @@
 {% load govuk_template_base %}
 
 {% block inner_content %}
+{% include "back-button.html" %}
 
 <!-- Initialise error summary for page -->
+{{form.error_summary}}
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Ages of the children
+        </h1>
 
-
-<div class="column-full">
-    {% include "back-button.html" %}
-    {{form.error_summary}}
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Ages of the children
-            </h1>
-
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-    </form>
-
-</div>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+</form>
 
 {% endblock %}

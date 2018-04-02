@@ -5,31 +5,29 @@
 
 {% block inner_content %}
 
+{% include "back-button.html" %}
 <!-- Initialise error summary for page -->
 {{form.error_summary}}
 
-<div class="column-full">
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Overnight care
-            </h1>
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Overnight care
+        </h1>
 
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue" alt='Continue to summary'>
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-    </form>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Save and continue" alt='Continue to summary'>
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+</form>
 
-    {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
-        <div class="form group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    {% endif %}
-
-</div>
+{% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
+    <div class="form group">
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+    </div>
+{% endif %}
 
 {% endblock %}

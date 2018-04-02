@@ -5,23 +5,21 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    {% include "back-button.html" %}
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Childcare Register (voluntary part)
-            </h1>
-            <p>You will be joining the voluntary part of the Childcare Register.</p>
-            <p>It costs &#163;103 to apply.</p>
-            <p class="text-before-button">This is the register to look after children aged 8 or over.</p>
-            {% csrf_token %}
-            {{form.as_div}}
-            <input type="hidden" value="{{application_id}}" name="id"/>
-            <input type="submit" class="button" value="Confirm and continue">
-        </div>
-    </form>
-</div>
+{% include "back-button.html" %}
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Childcare Register (voluntary part)
+        </h1>
+        <p>You will be joining the voluntary part of the Childcare Register.</p>
+        <p>It costs &#163;103 to apply.</p>
+        <p class="text-before-button">This is the register to look after children aged 8 or over.</p>
+        {% csrf_token %}
+        {{form.as_div}}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" value="Confirm and continue">
+    </div>
+</form>
 
 {% endblock %}
