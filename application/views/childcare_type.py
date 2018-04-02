@@ -239,13 +239,17 @@ def childcare_type_summary(request):
         childcare_age_groups = ''
 
         if childcare_record.zero_to_five:
-            childcare_age_groups += '0 to 5 year olds,' + '\n'
+            childcare_age_groups += '0 to 5 year olds,'
 
         if childcare_record.five_to_eight:
-            childcare_age_groups += '5 to 7 year olds,' + '\n'
+            childcare_age_groups += '5 to 7 year olds,'
 
         if childcare_record.eight_plus:
             childcare_age_groups += '8 years or older'
+
+        # Format response by comma delimiting
+        childcare_age_groups = childcare_age_groups.rstrip(',')
+        childcare_age_groups = childcare_age_groups.replace(',', ', ')
 
         childcare_type_fields = {
             'childcare_age_groups': childcare_age_groups,

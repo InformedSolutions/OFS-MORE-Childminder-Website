@@ -12,9 +12,8 @@ from django.shortcuts import render
 
 from application.models import (
     Application,
-    ChildcareType
-
-)
+    ChildcareType,
+    Arc)
 
 
 # noinspection PyTypeChecker
@@ -34,6 +33,14 @@ def task_list(request):
         zero_to_five_status = childcare_record.zero_to_five
         five_to_eight_status = childcare_record.five_to_eight
         eight_plus_status = childcare_record.eight_plus
+
+        #Instantiate arc_comment
+        arc_comment = None
+
+        # If an ARC review has been undertaken
+        if Arc.objects.filter(application_id=application_id):
+            arc = Arc.objects.get(application_id=application_id)
+            arc_comment = arc.comments
 
         # See childcare_type move to seperate method/file
 
@@ -69,6 +76,7 @@ def task_list(request):
             'id': application_id,
             'all_complete': False,
             'registers': registers,
+            'arc_comment': arc_comment,
             'fee': fee,
             'tasks': [
                 {
