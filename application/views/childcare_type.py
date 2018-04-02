@@ -3,7 +3,7 @@ Method returning the template for the Type of childcare: guidance page (for a gi
 to the Type of childcare: childcare ages page when successfully completed
 """
 
-from datetime import datetime
+from django.utils import timezone
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -75,7 +75,7 @@ def type_of_childcare_age_groups(request):
     :return: an HttpResponse object with the rendered Type of childcare: age groups template
     """
 
-    current_date = datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]
@@ -179,7 +179,7 @@ def overnight_care(request):
     :return: an HttpResponse object with the correct rendered Type of childcare: Overnight care page
     """
 
-    current_date = datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
 

@@ -3,7 +3,7 @@ Method returning the template for the Your personal details: guidance page (for 
 and navigating to the Your login and contact details: name page when successfully completed
 """
 
-import datetime
+from django.utils import timezone
 import calendar
 
 from django.conf import settings
@@ -84,7 +84,7 @@ def personal_details_name(request):
     :return: an HttpResponse object with the rendered Your personal details: name template
     """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]
@@ -142,7 +142,7 @@ def personal_details_dob(request):
     :return: an HttpResponse object with the rendered Your personal details: date of birth template
     """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]
@@ -202,7 +202,7 @@ def personal_details_home_address(request):
     :return: an HttpResponse object with the rendered Your personal details: home address template
     """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]
@@ -288,7 +288,7 @@ def personal_details_home_address_select(request):
     :return: an HttpResponse object with the rendered Your personal details: home address template
     """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
 
@@ -401,7 +401,7 @@ def personal_details_location_of_care(request):
     :return: an HttpResponse object with the rendered Your personal details: location of care template
     """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
 
@@ -489,7 +489,7 @@ def personal_details_childcare_address(request):
     :return: an HttpResponse object with the rendered Your personal details: childcare template
     """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]
@@ -574,7 +574,7 @@ def personal_details_childcare_address_select(request):
         :return: an HttpResponse object with the rendered Your personal details: childcare address template
         """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
 
@@ -688,7 +688,7 @@ def personal_details_childcare_address_manual(request):
     :return: an HttpResponse object with the rendered Your personal details: childcare template
     """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]

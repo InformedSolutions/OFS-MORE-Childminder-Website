@@ -7,7 +7,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 import re
 
-from datetime import date, datetime
+from datetime import date
 from django import forms
 from django.conf import settings
 from govuk_forms.forms import GOVUKForm

@@ -1,20 +1,18 @@
+"""
+OFS-MORE-CCN3: Apply to be a Childminder Beta
+-- task_list.py --
+
+@author: Informed Solutions
+
+Handler for returning a list of tasks to be completed by a user when applying, coupled with the relevant status value
+based on whether they have previously completed the task or not.
+"""
+
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
 
 from application.models import (
-    AdultInHome,
-    ApplicantHomeAddress,
-    ApplicantName,
-    ApplicantPersonalDetails,
     Application,
-    ChildInHome,
-    ChildcareType,
-    CriminalRecordCheck,
-    EYFS,
-    FirstAidTraining,
-    HealthDeclarationBooklet,
-    Reference,
-    UserDetails
+    ChildcareType
 
 )
 

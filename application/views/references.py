@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -73,7 +73,7 @@ def references_first_reference(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered 2 references: first reference template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = FirstReferenceForm(id=application_id_local)
@@ -119,7 +119,7 @@ def references_first_reference_address(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered 2 references: first reference address template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
@@ -167,7 +167,7 @@ def references_first_reference_address_select(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered 2 references: first reference select address template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
@@ -245,7 +245,7 @@ def references_first_reference_address_manual(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered 2 references: first reference manual address template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
@@ -306,7 +306,7 @@ def references_first_reference_contact_details(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered 2 references: first reference contact details template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = ReferenceFirstReferenceContactForm(id=application_id_local)
@@ -356,7 +356,7 @@ def references_second_reference(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered 2 references: second reference template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = SecondReferenceForm(id=application_id_local)
@@ -402,7 +402,7 @@ def references_second_reference_address(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered 2 references: second reference address template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
@@ -450,7 +450,7 @@ def references_second_reference_address_select(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered 2 references: second reference select address template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
@@ -529,7 +529,7 @@ def references_second_reference_address_manual(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered 2 references: second reference manual address template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
@@ -590,7 +590,7 @@ def references_second_reference_contact_details(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered 2 references: second reference contact details template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = ReferenceSecondReferenceContactForm(id=application_id_local)

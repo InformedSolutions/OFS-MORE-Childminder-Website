@@ -2,7 +2,7 @@
 Method returning the template for the Declaration page (for a given application) and navigating to
 the task list when successfully completed
 """
-from datetime import datetime
+from django.utils import timezone
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -20,7 +20,7 @@ def declaration_declaration(request):
     :return: an HttpResponse object with the rendered Declaration template
     """
 
-    current_date = datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]

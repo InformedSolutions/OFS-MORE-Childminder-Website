@@ -5,8 +5,7 @@ the Create an account button, which triggers the creation
 of a new application
 """
 
-import datetime
-
+from django.utils import timezone
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
@@ -38,8 +37,8 @@ def account_selection(request):
             references_status='NOT_STARTED',
             people_in_home_status='NOT_STARTED',
             declarations_status='NOT_STARTED',
-            date_created=datetime.datetime.today(),
-            date_updated=datetime.datetime.today(),
+            date_created=timezone.now(),
+            date_updated=timezone.now(),
             date_accepted=None,
             order_code=None
         )

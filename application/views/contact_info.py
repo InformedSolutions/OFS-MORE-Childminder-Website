@@ -7,7 +7,7 @@ the page redirects `the applicant to the login page if they have previously appl
 """
 
 import time
-from datetime import datetime
+from django.utils import timezone
 
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
@@ -28,7 +28,7 @@ def contact_email(request):
     :return: an HttpResponse object with the rendered Your login and contact details: email template
     """
 
-    current_date = datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]
@@ -109,7 +109,7 @@ def contact_phone(request):
     :return: an HttpResponse object with the rendered Your login and contact details: phone template
     """
 
-    current_date = datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]
