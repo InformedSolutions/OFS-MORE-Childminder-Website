@@ -203,11 +203,13 @@ def overnight_care(request):
 
             childcare_record = ChildcareType.objects.get(application_id=app_id)
             childcare_record.overnight_care = form.cleaned_data['overnight_care']
-            reset_declaration(application)
-            status.update(app_id, 'childcare_type_status', 'COMPLETED')
             childcare_record.save()
+
             application.date_updated = current_date
             application.save()
+
+            reset_declaration(application)
+            status.update(app_id, 'childcare_type_status', 'COMPLETED')
 
         else:
 

@@ -1,3 +1,5 @@
+SHELL := /bin/bash
+
 # Include Makefile settings
 -include .makerc
 
@@ -55,3 +57,15 @@ export:
 
 flush:
 	python manage.py sqlflush --settings=${PROJECT_SETTINGS}
+
+rebase:
+	git stash
+	git checkout develop
+	git pull --rebase origin develop
+	if [ $$(git status --porcelain | wc -l) -lt 1 ]; then \
+		git checkout @{-1};\
+		git rebase develop;\
+	fi;
+
+
+
