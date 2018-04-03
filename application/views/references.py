@@ -1,3 +1,5 @@
+import collections
+
 from django.utils import timezone
 
 from django.conf import settings
@@ -672,15 +674,17 @@ def references_summary(request):
         form = ReferenceSummaryForm()
         application = Application.objects.get(pk=application_id_local)
 
-        first_reference_fields = {'full_name': ' '.join([first_reference_first_name, first_reference_last_name]),
-                                  'relationship': first_reference_relationship,
-                                  'known_for': ' '.join([str(first_reference_years_known), 'years,',
-                                                         str(first_reference_months_known), 'months']),
-                                  'address': ' '.join([first_reference_street_line1, (first_reference_street_line2 or ''),
-                                                       first_reference_town, (first_reference_county or ''),
-                                                       first_reference_postcode, first_reference_country]),
-                                  'phone_number': first_reference_phone_number,
-                                  'email_address': first_reference_email}
+        first_reference_fields = collections.OrderedDict([
+            ('full_name', ' '.join([first_reference_first_name, first_reference_last_name])),
+            ('relationship', first_reference_relationship),
+            ('known_for', ' '.join([str(first_reference_years_known), 'years,',
+                                   str(first_reference_months_known), 'months'])),
+            ('address', ' '.join([first_reference_street_line1, (first_reference_street_line2 or ''),
+                                 first_reference_town, (first_reference_county or ''),
+                                 first_reference_postcode, first_reference_country])),
+            ('phone_number', first_reference_phone_number),
+            ('email_address', first_reference_email)
+        ])
         first_reference_table = {'table_object': Table([first_reference_record.pk]),
                                  'fields': first_reference_fields,
                                  'title': 'First reference',
@@ -688,16 +692,15 @@ def references_summary(request):
         first_reference_table = create_tables([first_reference_table], first_reference_name_dict,
                                               first_reference_link_dict)
 
-        second_reference_fields = {'full_name': ' '.join([second_reference_first_name, second_reference_last_name]),
-                                   'relationship': second_reference_relationship,
-                                   'known_for': ' '.join([str(second_reference_years_known), 'years,',
-                                                          str(second_reference_months_known), 'months']),
-                                   'address': ' '.join(
-                                      [second_reference_street_line1, (second_reference_street_line2 or ''),
-                                       second_reference_town, (second_reference_county or ''),
-                                       second_reference_postcode, second_reference_country]),
-                                   'phone_number': second_reference_phone_number,
-                                   'email_address': second_reference_email}
+        second_reference_fields = collections.OrderedDict([
+            ('full_name', ' '.join([second_reference_first_name, second_reference_last_name])),
+            ('relationship', second_reference_relationship),
+            ('known_for', ' '.join([str(second_reference_years_known), 'years,',str(second_reference_months_known), 'months'])),
+            ('address', ' '.join([second_reference_street_line1, (second_reference_street_line2 or ''),
+                                  second_reference_town, (second_reference_county or ''),
+                                  second_reference_postcode, second_reference_country])),
+            ('phone_number', second_reference_phone_number),
+            ('email_address', second_reference_email)])
         second_reference_table = {'table_object': Table([second_reference_record.pk]),
                                   'fields': second_reference_fields,
                                   'title': 'Second reference',

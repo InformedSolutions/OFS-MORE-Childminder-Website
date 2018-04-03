@@ -1,3 +1,5 @@
+import collections
+
 from django.utils import timezone
 
 import calendar
@@ -749,17 +751,20 @@ def other_people_summary(request):
             elif adult.middle_names == '':
                 name = adult.first_name + ' ' + adult.last_name
             birth_date = ' '.join([str(adult.birth_day),calendar.month_name[adult.birth_month],str(adult.birth_year)])
-            other_adult_fields = {'full_name': name,
-                                  'date_of_birth': birth_date,
-                                  'relationship': adult.relationship,
-                                  'dbs_certificate_number': adult.dbs_certificate_number,
-                                  'permission': adult.permission_declare}
+            other_adult_fields = collections.OrderedDict([
+                ('full_name', name),
+                ('date_of_birth', birth_date),
+                ('relationship', adult.relationship),
+                ('dbs_certificate_number', adult.dbs_certificate_number),
+                ('permission', adult.permission_declare)
+            ])
 
-            other_adult_table = {'table_object': Table([adult.pk]),
-                                 'fields': other_adult_fields,
-                                 'title': name,
-                                 'error_summary_title': ('There is something wrong with a persons details ('
-                                                         + name + ')')}
+            other_adult_table = collections.OrderedDict({
+                'table_object': Table([adult.pk]),
+                'fields': other_adult_fields,
+                'title': name,
+                'error_summary_title': ('There is something wrong with a persons details (' + name + ')')
+            })
             adult_table_list.append(other_adult_table)
         back_link_addition = '&adults=' + str((len(adult_table_list))) + '&remove=0'
         for table in adult_table_list:
@@ -772,22 +777,25 @@ def other_people_summary(request):
                 name = child.first_name + ' ' + child.middle_names + ' ' + child.last_name
             elif child.middle_names == '':
                 name = child.first_name + ' ' + child.last_name
-            other_child_fields = {'full_name': name,
-                                  'date_of_birth': ' '.join([str(child.birth_day),
-                                                             calendar.month_name[child.birth_month],
-                                                             str(child.birth_year)]),
-                                  'relationship': child.relationship}
+            other_child_fields = collections.OrderedDict([
+                ('full_name', name),
+                ('date_of_birth', ' '.join([str(child.birth_day), calendar.month_name[child.birth_month],
+                                           str(child.birth_year)])),
+                ('relationship', child.relationship)
+            ])
 
-            other_child_table = {'table_object': Table([child.pk]),
-                                 'fields': other_child_fields,
-                                 'title': name,
-                                 'error_summary_title': 'child tests'}
+            other_child_table = collections.OrderedDict({
+                'table_object': Table([child.pk]),
+                'fields': other_child_fields,
+                'title': name,
+                'error_summary_title': ('There is something wrong with a persons details (' + name + ')')
+            })
+
             child_table_list.append(other_child_table)
         back_link_addition = '&children=' + str(len(child_table_list)) + '&remove=0'
         for table in child_table_list:
             table['other_people_numbers'] = back_link_addition
         child_table_list = create_tables(child_table_list, other_child_name_dict, other_child_link_dict, )
-
 
         if not adult_table_list:
             adults_in_home = False
@@ -799,14 +807,20 @@ def other_people_summary(request):
         else:
             children_in_home = True
 
-        adult_table = {'table_object': Table([application_id_local]),
-                       'fields': {'adults_in_home': adults_in_home},
-                       'title': 'Adults in your home',
-                       'error_summary_title': 'There is a problem with the adults in your home'}
-        child_table = {'table_object': Table([application_id_local]),
-                       'fields': {'children_in_home': children_in_home},
-                       'title': 'Children in your home',
-                       'error_summary_title': 'There is a problem with the children in your home'}
+        adult_table = collections.OrderedDict({
+            'table_object': Table([application_id_local]),
+            'fields': {'adults_in_home': adults_in_home},
+            'title': 'Adults in your home',
+            'error_summary_title': 'There is a problem with the adults in your home'
+        })
+
+        child_table = collections.OrderedDict({
+            'table_object': Table([application_id_local]),
+            'fields': {'children_in_home': children_in_home},
+            'title': 'Children in your home',
+            'error_summary_title': 'There is a problem with the children in your home'
+        })
+
         adult_table = create_tables([adult_table], other_adult_summary_name_dict, other_adult_summary_link_dict)
         child_table = create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
 

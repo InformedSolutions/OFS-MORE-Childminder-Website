@@ -2,6 +2,7 @@
 Method returning the template for the Type of childcare: guidance page (for a given application) and navigating
 to the Type of childcare: childcare ages page when successfully completed
 """
+import collections
 
 from django.utils import timezone
 
@@ -253,15 +254,17 @@ def childcare_type_summary(request):
         childcare_age_groups = childcare_age_groups.rstrip(',')
         childcare_age_groups = childcare_age_groups.replace(',', ', ')
 
-        childcare_type_fields = {
-            'childcare_age_groups': childcare_age_groups,
-            'overnight_care': childcare_record.overnight_care,
-        }
+        childcare_type_fields = collections.OrderedDict([
+            ('childcare_age_groups', childcare_age_groups),
+            ('overnight_care', childcare_record.overnight_care),
+        ] )
 
-        childcare_type_table = {'table_object': Table([childcare_record.pk]),
-                        'fields': childcare_type_fields,
-                        'title': 'Type of childcare',
-                        'error_summary_title': 'There is something wrong with your type of childcare'}
+        childcare_type_table = collections.OrderedDict({
+            'table_object': Table([childcare_record.pk]),
+            'fields': childcare_type_fields,
+            'title': 'Type of childcare',
+            'error_summary_title': 'There is something wrong with your type of childcare'
+        })
 
         table_list = create_tables([childcare_type_table], childcare_type_name_dict, childcare_type_link_dict)
 

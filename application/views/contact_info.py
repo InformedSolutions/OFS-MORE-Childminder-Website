@@ -5,7 +5,7 @@ and contact details: phone number page when successfully completed; business log
 is applied to either create or update the associated User_Details record;
 the page redirects `the applicant to the login page if they have previously applied
 """
-
+import collections
 import time
 from django.utils import timezone
 
@@ -180,18 +180,21 @@ def contact_summary(request):
         if application.login_details_status != 'COMPLETED':
             status.update(app_id, 'login_details_status', 'COMPLETED')
 
-        contact_info_fields = {
-            'email_address': email,
-            'mobile_number': mobile_number,
-            'add_phone_number': add_phone_number,
-            'security_question': security_question,
-            'security_answer': security_answer,
-        }
+        contact_info_fields = collections.OrderedDict([
+            ('email_address', email),
+            ('mobile_number', mobile_number),
+            ('add_phone_number', add_phone_number),
+            ('security_question', security_question),
+            ('security_answer', security_answer),
+        ])
 
-        contact_info_table = {'table_object': Table([user_details.pk]),
-                              'fields': contact_info_fields,
-                              'title': 'Your login details',
-                              'error_summary_title': 'There is something wrong with your login details'}
+        contact_info_table = collections.OrderedDict({
+            'table_object': Table([user_details.pk]),
+            'fields': contact_info_fields,
+            'title': 'Your login details',
+            'error_summary_title': 'There is something wrong with your login details'
+        })
+
         table_list = create_tables([contact_info_table], contact_info_name_dict, contact_info_link_dict)
 
         form = ContactSummaryForm()

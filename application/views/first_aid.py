@@ -1,3 +1,5 @@
+import collections
+
 from django.utils import timezone
 from datetime import date
 
@@ -255,11 +257,13 @@ def first_aid_training_summary(request):
         form = FirstAidTrainingSummaryForm()
         application = Application.objects.get(pk=application_id_local)
 
-        first_aid_fields = {'first_aid_training_organisation': first_aid_record.training_organisation,
-                            'title_of_training_course': first_aid_record.course_title,
-                            'course_date': '/'.join([str(first_aid_record.course_day),
-                                                     str(first_aid_record.course_month),
-                                                     str(first_aid_record.course_year)])}
+        first_aid_fields = collections.OrderedDict([
+            ('first_aid_training_organisation', first_aid_record.training_organisation),
+            ('title_of_training_course', first_aid_record.course_title),
+            ('course_date', '/'.join([str(first_aid_record.course_day), str(first_aid_record.course_month),
+                                     str(first_aid_record.course_year)]))
+        ])
+
         if first_aid_record.renew_certificate is True:
             first_aid_fields['renew_certificate'] = first_aid_record.renew_certificate
         else:
@@ -270,10 +274,13 @@ def first_aid_training_summary(request):
         else:
             first_aid_fields['show_certificate'] = None
 
-        first_aid_table = {'table_object': Table([first_aid_record.pk]),
-                           'fields': first_aid_fields,
-                           'title': 'First aid training',
-                           'error_summary_title': 'There is something wrong with your first aid training'}
+        first_aid_table = collections.OrderedDict({
+            'table_object': Table([first_aid_record.pk]),
+            'fields': first_aid_fields,
+            'title': 'First aid training',
+            'error_summary_title': 'There is something wrong with your first aid training'
+        })
+
         table_list = create_tables([first_aid_table], first_aid_name_dict, first_aid_link_dict)
 
         variables = {

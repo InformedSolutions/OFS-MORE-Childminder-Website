@@ -2,6 +2,7 @@
 Method returning the template for the Your personal details: guidance page (for a given application)
 and navigating to the Your login and contact details: name page when successfully completed
 """
+import collections
 
 from django.utils import timezone
 import calendar
@@ -774,7 +775,6 @@ def personal_details_summary(request):
     :return: an HttpResponse object with the rendered Your personal details: summary template
     """
 
-
     if request.method == 'GET':
         app_id = request.GET["id"]
         # Move to models
@@ -805,8 +805,10 @@ def personal_details_summary(request):
         childcare_county = applicant_childcare_address_record.county
         childcare_postcode = applicant_childcare_address_record.postcode
 
-        name_dob_table_dict = {'name': ' '.join([first_name, (middle_names or ''), last_name]),
-                               'date_of_birth': ' '.join([str(birth_day), calendar.month_name[birth_month], str(birth_year)])}
+        name_dob_table_dict = collections.OrderedDict([
+            ('name', ' '.join([first_name, (middle_names or ''), last_name])),
+            ('date_of_birth', ' '.join([str(birth_day), calendar.month_name[birth_month], str(birth_year)]))
+        ])
 
         home_address = ' '.join([street_line1, (street_line2 or ''), town, (county or ''), postcode])
         if location_of_childcare:
@@ -815,16 +817,24 @@ def personal_details_summary(request):
             childcare_location = ' '.join([childcare_street_line1, (childcare_street_line2 or ''),
                                            childcare_town, (childcare_county or ''), childcare_postcode])
 
-        address_table_dict = {'home_address': home_address,
-                              'childcare_location': childcare_location}
-        name_dob_dict = {'table_object': Table([personal_detail_id.pk, applicant_name_record.pk]),
-                        'fields': name_dob_table_dict,
-                        'title': 'Your name and date of birth',
-                        'error_summary_title': 'There is something wrong with your name and date of birth'}
-        address_dict = {'table_object': Table([applicant_home_address_record.pk, applicant_childcare_address_record.pk]),
-                        'fields': address_table_dict,
-                        'title': 'Your home address',
-                        'error_summary_title': 'There is something wrong with your address'}
+        address_table_dict = collections.OrderedDict([
+            ('home_address', home_address),
+            ('childcare_location', childcare_location)
+        ])
+
+        name_dob_dict = collections.OrderedDict({
+            'table_object': Table([personal_detail_id.pk, applicant_name_record.pk]),
+            'fields': name_dob_table_dict,
+            'title': 'Your name and date of birth',
+            'error_summary_title': 'There is something wrong with your name and date of birth'
+        })
+
+        address_dict = collections.OrderedDict({
+            'table_object': Table([applicant_home_address_record.pk, applicant_childcare_address_record.pk]),
+            'fields': address_table_dict,
+            'title': 'Your home address',
+            'error_summary_title': 'There is something wrong with your address'
+        })
 
         tables = [name_dob_dict, address_dict]
         table_list = create_tables(tables, personal_details_name_dict, personal_details_link_dict)
