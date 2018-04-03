@@ -252,10 +252,10 @@ def childcare_type_summary(request):
         childcare_age_groups = childcare_age_groups.rstrip(',')
         childcare_age_groups = childcare_age_groups.replace(',', ', ')
 
-        childcare_type_fields = collections.OrderedDict({
-            'childcare_age_groups': childcare_age_groups,
-            'overnight_care': childcare_record.overnight_care,
-        })
+        childcare_type_fields = collections.OrderedDict(
+            ('childcare_age_groups', childcare_age_groups),
+            ('overnight_care', childcare_record.overnight_care),
+        )
 
         childcare_type_table = collections.OrderedDict({
             'table_object': Table([childcare_record.pk]),

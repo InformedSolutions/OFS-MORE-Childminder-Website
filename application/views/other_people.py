@@ -751,13 +751,13 @@ def other_people_summary(request):
             elif adult.middle_names == '':
                 name = adult.first_name + ' ' + adult.last_name
             birth_date = ' '.join([str(adult.birth_day),calendar.month_name[adult.birth_month],str(adult.birth_year)])
-            other_adult_fields = collections.OrderedDict({
-                'full_name': name,
-                'date_of_birth': birth_date,
-                'relationship': adult.relationship,
-                'dbs_certificate_number': adult.dbs_certificate_number,
-                'permission': adult.permission_declare
-            })
+            other_adult_fields = collections.OrderedDict(
+                ('full_name', name),
+                ('date_of_birth', birth_date),
+                ('relationship', adult.relationship),
+                ('dbs_certificate_number', adult.dbs_certificate_number),
+                ('permission', adult.permission_declare)
+            )
 
             other_adult_table = collections.OrderedDict({
                 'table_object': Table([adult.pk]),
@@ -777,12 +777,12 @@ def other_people_summary(request):
                 name = child.first_name + ' ' + child.middle_names + ' ' + child.last_name
             elif child.middle_names == '':
                 name = child.first_name + ' ' + child.last_name
-            other_child_fields = collections.OrderedDict({
-                'full_name': name,
-                'date_of_birth': ' '.join([str(child.birth_day), calendar.month_name[child.birth_month],
-                                           str(child.birth_year)]),
-                'relationship': child.relationship
-            })
+            other_child_fields = collections.OrderedDict(
+                ('full_name', name),
+                ('date_of_birth', ' '.join([str(child.birth_day), calendar.month_name[child.birth_month],
+                                           str(child.birth_year)])),
+                ('relationship', child.relationship)
+            )
 
             other_child_table = collections.OrderedDict({
                 'table_object': Table([child.pk]),
