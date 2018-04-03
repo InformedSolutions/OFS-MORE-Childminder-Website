@@ -18,11 +18,12 @@ class CreateTestNewApplicationSubmit(TestCase):
     Functional test for submitting whole application.
     """
 
-    @classmethod
-    def setUp(cls):
-        cls.client = Client()
-        cls.app_id = None
-        cls.order_id = None
+    def setUp(self):
+        self.client = Client()
+        self.app_id = None
+        self.order_id = None
+
+        self.TestNewApplicationSubmit()
 
     def TestAppInit(self):
         """Start application"""
@@ -518,8 +519,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         """
         Test if application been submitted
         """
-        self.TestNewApplicationSubmit()
-
         self.assertTrue(Application.objects.filter(application_id=self.app_id).exists())
         self.assertEqual(Application.objects.get(application_id=self.app_id).application_status, "SUBMITTED")
 
@@ -536,7 +535,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         """
         Check if logging triggered right after application got submitted status
         """
-        self.TestNewApplicationSubmit()
         self.assertTrue(
             TimelineLog.objects.filter(object_id=self.app_id, extra_data__contains={"action": "submitted"})
         )
@@ -546,8 +544,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         After application been returned, we start to log all field changes with the
         help of signals.
         """
-
-        self.TestNewApplicationSubmit()
 
         # Set application_status to FURTHER_INFORMATION programatically,
         # as functionally this can be only done from ARC.
