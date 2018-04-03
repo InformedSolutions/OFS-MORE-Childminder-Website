@@ -1,3 +1,5 @@
+import collections
+
 from django.utils import timezone
 
 from django.conf import settings
@@ -107,12 +109,15 @@ def health_check_answers(request):
         form = HealthBookletForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
 
-        health_fields = {'health_submission_consent': send_hdb_declare}
+        health_fields = collections.OrderedDict({'health_submission_consent': send_hdb_declare})
 
-        health_table = {'table_object': Table([health_record.pk]),
-                        'fields': health_fields,
-                        'title': 'Your health',
-                        'error_summary_title': 'There is something wrong with your health'}
+        health_table = collections.OrderedDict({
+            'table_object': Table([health_record.pk]),
+            'fields': health_fields,
+            'title': 'Your health',
+            'error_summary_title': 'There is something wrong with your health'
+        })
+
         table_list = create_tables([health_table], health_name_dict, health_link_dict)
 
         variables = {
