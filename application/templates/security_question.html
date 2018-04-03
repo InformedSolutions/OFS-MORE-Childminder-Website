@@ -28,7 +28,7 @@
             {{question}}
         </p>
     </div>
-    <div class="form-group grid-row">
+    <div class="form-group">
         {{form.as_div}}
         {% csrf_token %}
         <input type="hidden" id="id" value="{{application_id}}" name="id"/>
@@ -37,7 +37,7 @@
 </form>
 <!-- If applicant has previously completed this task, allow user to return to task list -->
 {% if login_details_status == 'COMPLETED' %}
-<div class="form-group grid-row">
+<div class="form-group">
     <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
 </div>
 {% endif %}
