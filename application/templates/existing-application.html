@@ -5,24 +5,21 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    {% include "back-button.html" %}
-    {{form.error_summary}}
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
-        <div class="grid-row">
-            <h1 class="form-title heading-large">
-                Log into your childminder application
-            </h1>
-            <p>Please enter your email address so we can find your application.</p>
-            {% csrf_token %}
-            {{form.as_div}}
+{% include "back-button.html" %}
 
-            <input type="submit" class="button" value="Continue">
-            <input type="hidden" name="id" value="Save and continue" />
+{{form.error_summary}}
 
-        </div>
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+        <h1 class="form-title heading-large">
+            Log into your childminder application
+        </h1>
+        <p>Please enter your email address so we can find your application.</p>
+        {% csrf_token %}
+        {{form.as_div}}
 
-    </form>
-</div>
-	
+        <input type="submit" class="button" value="Continue">
+        <input type="hidden" name="id" value="Save and continue" />
+
+</form>
+
 {% endblock %}
