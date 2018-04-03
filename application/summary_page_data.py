@@ -1,8 +1,10 @@
 import collections
 ###
 
+
 childcare_type_name_dict = collections.OrderedDict([('childcare_age_groups', 'What age groups will you be caring for?'),
                                                    ('overnight_care', 'Are you providing overnight care?')])
+
 
 childcare_type_link_dict = collections.OrderedDict([('childcare_age_groups', 'Type-Of-Childcare-Age-Groups-View'),
                                                    ('overnight_care', 'Type-Of-Childcare-Overnight-Care-View')])

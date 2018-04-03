@@ -392,7 +392,7 @@ class TypeOfChildcareOvernightCareForm(ChildminderForms):
         ('False', 'No')
     )
 
-    overnight_care = forms.ChoiceField(label='Will you be providing overnight care?', choices=options,
+    overnight_care = forms.ChoiceField(label='Will you be looking after children overnight?', choices=options,
                                        widget=InlineRadioSelect, required=True,
                                        error_messages={'required': 'TBC'})
 

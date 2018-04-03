@@ -9,13 +9,13 @@ ifeq ($(OS),Windows_NT)
 endif
 
 compose:
-	docker-compose up app-childminder
+	docker-compose up $(APP)
 
 compose-shell:
-	docker-compose run app-childminder /bin/bash
+	docker-compose run $(APP) /bin/bash
 
 compose-%:
-	docker-compose run app-childminder make $*
+	docker-compose run $(APP) make $*
 
 # run tests
 test:
