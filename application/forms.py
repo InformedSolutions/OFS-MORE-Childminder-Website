@@ -2040,7 +2040,8 @@ class OtherPeopleAdultQuestionForm(ChildminderForms):
         # If information was previously entered, display it on the form
         self.fields['adults_in_home'].initial = Application.objects.get(
             application_id=self.application_id_local).adults_in_home
-
+        self.pk = self.application_id_local
+        self.field_list = ['adults_in_home']
 
 class OtherPeopleAdultDetailsForm(ChildminderForms):
     """
@@ -2241,6 +2242,8 @@ class OtherPeopleChildrenQuestionForm(ChildminderForms):
         # If information was previously entered, display it on the form
         self.fields['children_in_home'].initial = Application.objects.get(
             application_id=self.application_id_local).children_in_home
+        self.pk = self.application_id_local
+        self.field_list = ['children_in_home']
 
 
 class OtherPeopleChildrenDetailsForm(ChildminderForms):
