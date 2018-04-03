@@ -1,3 +1,4 @@
 PROJECT_SETTINGS=childminder.settings.dev
 PROJECT_PORT=8000
 PROJECT_IP=127.0.0.1
+APP=app-childminder
