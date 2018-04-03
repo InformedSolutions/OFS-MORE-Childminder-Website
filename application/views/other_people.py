@@ -83,6 +83,7 @@ def other_people_adult_question(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = OtherPeopleAdultQuestionForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -102,6 +103,7 @@ def other_people_adult_question(request):
 
         form = OtherPeopleAdultQuestionForm(
             request.POST, id=application_id_local)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         number_of_adults = AdultInHome.objects.filter(
             application_id=application_id_local).count()
@@ -448,6 +450,7 @@ def other_people_children_question(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = OtherPeopleChildrenQuestionForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         number_of_adults = AdultInHome.objects.filter(
             application_id=application_id_local).count()
@@ -473,6 +476,7 @@ def other_people_children_question(request):
         form = OtherPeopleChildrenQuestionForm(
             request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
+        form.remove_flag()
         number_of_children = ChildInHome.objects.filter(
             application_id=application_id_local).count()
         if form.is_valid():
