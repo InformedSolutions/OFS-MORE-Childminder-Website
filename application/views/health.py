@@ -109,7 +109,7 @@ def health_check_answers(request):
         form = HealthBookletForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
 
-        health_fields = collections.OrderedDict(('health_submission_consent', send_hdb_declare))
+        health_fields = collections.OrderedDict([('health_submission_consent', send_hdb_declare)])
 
         health_table = collections.OrderedDict({
             'table_object': Table([health_record.pk]),

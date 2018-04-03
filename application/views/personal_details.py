@@ -805,10 +805,10 @@ def personal_details_summary(request):
         childcare_county = applicant_childcare_address_record.county
         childcare_postcode = applicant_childcare_address_record.postcode
 
-        name_dob_table_dict = collections.OrderedDict(
+        name_dob_table_dict = collections.OrderedDict([
             ('name', ' '.join([first_name, (middle_names or ''), last_name])),
             ('date_of_birth', ' '.join([str(birth_day), calendar.month_name[birth_month], str(birth_year)]))
-        )
+        ])
 
         home_address = ' '.join([street_line1, (street_line2 or ''), town, (county or ''), postcode])
         if location_of_childcare:
@@ -817,10 +817,10 @@ def personal_details_summary(request):
             childcare_location = ' '.join([childcare_street_line1, (childcare_street_line2 or ''),
                                            childcare_town, (childcare_county or ''), childcare_postcode])
 
-        address_table_dict = collections.OrderedDict(
+        address_table_dict = collections.OrderedDict([
             ('home_address', home_address),
             ('childcare_location', childcare_location)
-        )
+        ])
 
         name_dob_dict = collections.OrderedDict({
             'table_object': Table([personal_detail_id.pk, applicant_name_record.pk]),

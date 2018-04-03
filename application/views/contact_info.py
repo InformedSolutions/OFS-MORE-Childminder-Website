@@ -180,13 +180,13 @@ def contact_summary(request):
         if application.login_details_status != 'COMPLETED':
             status.update(app_id, 'login_details_status', 'COMPLETED')
 
-        contact_info_fields = collections.OrderedDict(
+        contact_info_fields = collections.OrderedDict([
             ('email_address', email),
             ('mobile_number', mobile_number),
             ('add_phone_number', add_phone_number),
             ('security_question', security_question),
             ('security_answer', security_answer),
-        )
+        ])
 
         contact_info_table = collections.OrderedDict({
             'table_object': Table([user_details.pk]),

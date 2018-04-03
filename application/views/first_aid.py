@@ -257,12 +257,12 @@ def first_aid_training_summary(request):
         form = FirstAidTrainingSummaryForm()
         application = Application.objects.get(pk=application_id_local)
 
-        first_aid_fields = collections.OrderedDict(
+        first_aid_fields = collections.OrderedDict([
             ('first_aid_training_organisation', first_aid_record.training_organisation),
             ('title_of_training_course', first_aid_record.course_title),
             ('course_date', '/'.join([str(first_aid_record.course_day), str(first_aid_record.course_month),
                                      str(first_aid_record.course_year)]))
-        )
+        ])
 
         if first_aid_record.renew_certificate is True:
             first_aid_fields['renew_certificate'] = first_aid_record.renew_certificate
