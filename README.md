@@ -35,7 +35,9 @@ We're using Makefile to speed usage of this app
 | load          | load fixtures to database                                                                                        |
 | export        | export fixtures from database                                                                                    |
 | flush         | clear database                                                                                                   |
+| rebase        | rebase develop from origin, and rebase current branch against develop branch                                     |
 | compose       | run this service in docker                                                                                       |
 | compose-shell | enter container with bash shell                                                                                  |
 | compose-%     | run make targets inside container, for example `make compose-run` will launch this service inside of a container |
+
 
