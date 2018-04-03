@@ -37,7 +37,6 @@ def timelog_post_save(sender, instance, created, **kwargs):
     """
 
     try:
-        print(instance.application_id)
         status = Application.objects.get(pk=instance.application_id.pk).application_status
     except AttributeError:
         traceback.print_exc(file=sys.stdout)

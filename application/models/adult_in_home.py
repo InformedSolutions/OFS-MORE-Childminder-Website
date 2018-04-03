@@ -21,6 +21,32 @@ class AdultInHome(models.Model):
     dbs_certificate_number = models.CharField(max_length=50, blank=True)
     permission_declare = models.NullBooleanField(blank=True)
 
+    @property
+    def timelog_fields(self):
+        """
+        Specify which fields to track in this model once application is returned.
+
+        Used for signals only. Check base.py for available signals.
+        This is used for logging fields which gonna be updated by applicant
+        once application status changed to "FURTHER_INFORMATION" on the arc side
+
+        Returns:
+            tuple of fields which needs update tracking when application is returned
+        """
+
+        return (
+            'adult',
+            'first_name',
+            'middle_names',
+            'last_name',
+            'birth_day',
+            'birth_month',
+            'birth_year',
+            'relationship',
+            'dbs_certificate_number',
+            'permission_declare'
+        )
+
     @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)

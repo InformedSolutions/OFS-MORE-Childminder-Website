@@ -459,13 +459,12 @@ def personal_details_location_of_care(request):
             # Delete childcare address if it is marked the same as the home address
             multiple_childcare_address_logic(personal_detail_id)
 
-            if home_address_record.childcare_address == 'True':
+            if home_address_record.childcare_address:
 
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/personal-details/check-answers?id=' + app_id)
 
-            elif home_address_record.childcare_address == 'False':
-
+            else:
                 return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/childcare-address?id=' +
                                             app_id + '&manual=False&lookup=False')
         else:

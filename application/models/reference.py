@@ -23,6 +23,36 @@ class Reference(models.Model):
     phone_number = models.CharField(max_length=50, blank=True)
     email = models.CharField(max_length=100, blank=True)
 
+    @property
+    def timelog_fields(self):
+        """
+        Specify which fields to track in this model once application is returned.
+
+        Used for signals only. Check base.py for available signals.
+        This is used for logging fields which gonna be updated by applicant
+        once application status changed to "FURTHER_INFORMATION" on the arc side
+
+        Returns:
+            tuple of fields which needs update tracking when application is returned
+        """
+
+        return (
+            'reference',
+            'first_name',
+            'last_name',
+            'relationship',
+            'years_known',
+            'months_known',
+            'street_line1',
+            'street_line2',
+            'town',
+            'county',
+            'country',
+            'postcode',
+            'phone_number',
+            'email'
+        )
+
     @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)

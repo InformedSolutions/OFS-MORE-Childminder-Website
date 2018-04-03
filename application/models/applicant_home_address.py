@@ -24,6 +24,33 @@ class ApplicantHomeAddress(models.Model):
     move_in_month = models.IntegerField(blank=True)
     move_in_year = models.IntegerField(blank=True)
 
+    @property
+    def timelog_fields(self):
+        """
+        Specify which fields to track in this model once application is returned.
+
+        Used for signals only. Check base.py for available signals.
+        This is used for logging fields which gonna be updated by applicant
+        once application status changed to "FURTHER_INFORMATION" on the arc side
+
+        Returns:
+            tuple of fields which needs update tracking when application is returned
+        """
+
+        return (
+            'street_line1',
+            'street_line2',
+            'town',
+            'county',
+            'country',
+            'postcode',
+            'childcare_address',
+            'current_address',
+            'move_in_month',
+            'move_in_year'
+        )
+
+
     @classmethod
     def get_id(cls, app_id):
         personal_detail_id = ApplicantPersonalDetails.get_id(app_id)

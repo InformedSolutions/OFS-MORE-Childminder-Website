@@ -21,7 +21,20 @@ class ApplicationConfig(AppConfig):
         from django.db.models.signals import post_init, post_save
         from application.signals import timelog_post_init, timelog_post_save
 
-        timelog_models_instances = [self.get_model(model) for model in ['ApplicantName']]
+        timelog_models_instances = [self.get_model(model) for model in [\
+            'ApplicantName',
+            'ApplicantPersonalDetails',
+            'ApplicantHomeAddress',
+            'AdultInHome',
+            'ChildInHome',
+            'ChildcareType',
+            'CriminalRecordCheck',
+            'EYFS',
+            'FirstAidTraining',
+            'HealthDeclarationBooklet',
+            'Reference',
+            #'UserDetails',
+        ]]
 
         for model in timelog_models_instances:
             post_init.connect(timelog_post_init, sender=model, dispatch_uid="timelog_post_init")
