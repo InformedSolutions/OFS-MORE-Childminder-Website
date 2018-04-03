@@ -104,8 +104,6 @@ def type_of_childcare_age_groups(request):
             childcare_type_record.save()
             application.date_updated = current_date
             application.save()
-            reset_declaration(application)
-            status.update(app_id, 'childcare_type_status', 'COMPLETED')
 
             return HttpResponseRedirect(reverse('Type-Of-Childcare-Register-View') + '?id=' + app_id)
         else:
@@ -204,6 +202,8 @@ def overnight_care(request):
 
             childcare_record = ChildcareType.objects.get(application_id=app_id)
             childcare_record.overnight_care = form.cleaned_data['overnight_care']
+            reset_declaration(application)
+            status.update(app_id, 'childcare_type_status', 'COMPLETED')
             childcare_record.save()
             application.date_updated = current_date
             application.save()
@@ -273,17 +273,6 @@ def childcare_type_summary(request):
         variables = submit_link_setter(variables, table_list, 'type_of_childcare', app_id)
 
         return render(request, 'generic-summary-template.html', variables)
-
-    if request.method == 'POST':
-
-        app_id = request.POST["id"]
-        application = Application.get_id(app_id=app_id)
-
-        if application.childcare_type_status != 'COMPLETED':
-
-            status.update(app_id, 'childcare_type_status', 'COMPLETED')
-
-        return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + app_id)
 
 
 def local_authority_links(request):

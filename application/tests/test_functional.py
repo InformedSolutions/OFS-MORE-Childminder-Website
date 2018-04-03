@@ -132,6 +132,11 @@ class CreateTestNewApplicationSubmit(TestCase):
         """Type of childcare register"""
         r = self.client.post(reverse('Type-Of-Childcare-Register-View'), {'id': self.app_id})
         self.assertEqual(r.status_code, 302)
+
+    def AppTestOvernightCare(self):
+        """Overnight care provision"""
+        r = self.client.post(reverse('Type-Of-Childcare-Overnight-Care-View'), {'id': self.app_id})
+        self.assertEqual(r.status_code, 302)
         self.assertEqual(Application.objects.get(pk=self.app_id).childcare_type_status, "COMPLETED")
 
     def TestAppPersonalDetailsNames(self):

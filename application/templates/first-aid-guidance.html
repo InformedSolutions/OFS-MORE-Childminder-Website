@@ -5,23 +5,21 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    {% include "back-button.html" %}
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                First aid training
-            </h1>
-            <p>You will have to go on a full paediatric first aid course.</p>
-            <p>This should last at least 12 hours. It is usually a 2-day course.</p>
-            <p>Courses cost between &#163;100 and &#163;200.</p>
-            <p class="text-before-button">You have to renew your certificate every 3 years to keep it up to date.</p>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button button-submit" value="Continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-    </form>
-</div>
+{% include "back-button.html" %}
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            First aid training
+        </h1>
+        <p>You will have to go on a full paediatric first aid course.</p>
+        <p>This should last at least 12 hours. It is usually a 2-day course.</p>
+        <p>Courses cost between &#163;100 and &#163;200.</p>
+        <p class="text-before-button">You have to renew your certificate every 3 years to keep it up to date.</p>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button button-submit" value="Continue">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+</form>
 
 {% endblock %}

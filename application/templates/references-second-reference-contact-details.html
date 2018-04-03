@@ -5,29 +5,27 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    {% include "back-button.html" %}
+{% include "back-button.html" %}
 
-    <!-- Initialise error summary for page -->
-    {{form.error_summary}}
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Second reference contact details
-            </h1>
-            <p>Please give contact details for this referee.</p>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue">
-            <input type="hidden" name="id" value="{{application_id}}"/>
-        </div>
-        </br>
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    </form>
-</div>
+<!-- Initialise error summary for page -->
+{{form.error_summary}}
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Second reference contact details
+        </h1>
+        <p>Please give contact details for this referee.</p>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Save and continue">
+        <input type="hidden" name="id" value="{{application_id}}"/>
+    </div>
+    </br>
+    <div class="form-group">
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+    </div>
+</form>
 
 {% endblock %}

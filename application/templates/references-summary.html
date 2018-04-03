@@ -5,302 +5,298 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    <div class="grid-row">
-        <h1 class="form-title heading-large">Check your answers: references</h1>
-    </div>
-    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
-        <colgroup>
-            <col class="td">
-            <col class="td">
-            <col class="change-answer">
-        </colgroup>
-        <thead>
-        <tr>
-            <th colspan="3">
-                <div class="heading-medium">
-                    First reference
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Full name
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_first_name}} {{first_reference_last_name}}
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Change full name for referee 1">
-                    Change <span class="visuallyhidden">full name for referee 1</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                How they know you
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_relationship}}
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Change how referee 1 knows you">
-                    Change <span class="visuallyhidden">how referee 1 knows you</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Known for
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_years_known}} years, {{first_reference_months_known}} months
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Change how long referee 1 has known you for">
-                    Change <span class="visuallyhidden">how long referee 1 has known you for</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Address
-            </td>
-            {% if first_reference_street_line2 and first_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_street_line1}}
-                </br>
-                {{first_reference_street_line2}}
-                </br>
-                {{first_reference_town}}
-                </br>
-                {{first_reference_county}}
-                </br>
-                {{first_reference_postcode}}
-                </br>
-                {{first_reference_country}}
-            </td>
-            {% elif first_reference_street_line2 and not first_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_street_line1}}
-                </br>
-                {{first_reference_street_line2}}
-                </br>
-                {{first_reference_town}}
-                </br>
-                {{first_reference_postcode}}
-                </br>
-                {{first_reference_country}}
-            </td>
-            {% elif not first_reference_street_line2 and first_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_street_line1}}
-                </br>
-                {{first_reference_town}}
-                </br>
-                {{first_reference_county}}
-                </br>
-                {{first_reference_postcode}}
-                </br>
-                {{first_reference_country}}
-            </td>
-            {% elif not first_reference_street_line2 and not first_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_street_line1}}
-                </br>
-                {{first_reference_town}}
-                </br>
-                {{first_reference_postcode}}
-                </br>
-                {{first_reference_country}}
-            </td>
-            {% endif %}
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/references/enter-first-reference-address?id={{application_id}}" alt="Change address for referee 1">
-                    Change <span class="visuallyhidden">address for referee 1</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Phone number
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_phone_number}}
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/references/first-reference-contact-details?id={{application_id}}" alt="Change phone number for referee 1">
-                    Change <span class="visuallyhidden">phone number for referee 1</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Email address
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{first_reference_email}}
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/references/first-reference-contact-details?id={{application_id}}" alt="Change email address for referee 1">
-                    Change <span class="visuallyhidden">email address for referee 1</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
-        <colgroup>
-            <col class="check-your-answers">
-            <col class="check-your-answers">
-            <col class="change-answer">
-        </colgroup>
-        <thead>
-        <tr>
-            <th colspan="3">
-                <div class="heading-medium">
-                    Second reference
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Full name
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_first_name}} {{second_reference_last_name}}
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Change full name for referee 2">
-                    Change <span class="visuallyhidden">full name for referee 2</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                How they know you
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_relationship}}
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Change how referee 2 knows you">
-                    Change <span class="visuallyhidden">how referee 2 knows you</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Known for
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_years_known}} years, {{second_reference_months_known}} months
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Change how long referee 2 has known you for">
-                    Change <span class="visuallyhidden">how long referee 2 has known you for</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Address
-            </td>
-            {% if second_reference_street_line2 and second_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_street_line1}}
-                </br>
-                {{second_reference_street_line2}}
-                </br>
-                {{second_reference_town}}
-                </br>
-                {{second_reference_county}}
-                </br>
-                {{second_reference_postcode}}
-                </br>
-                {{second_reference_country}}
-            </td>
-            {% elif second_reference_street_line2 and not second_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_street_line1}}
-                </br>
-                {{second_reference_street_line2}}
-                </br>
-                {{second_reference_town}}
-                </br>
-                {{second_reference_postcode}}
-                </br>
-                {{second_reference_country}}
-            </td>
-            {% elif not second_reference_street_line2 and second_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_street_line1}}
-                </br>
-                {{second_reference_town}}
-                </br>
-                {{second_reference_county}}
-                </br>
-                {{second_reference_postcode}}
-                </br>
-                {{second_reference_country}}
-            </td>
-            {% elif not second_reference_street_line2 and not second_reference_county %}
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_street_line1}}
-                </br>
-                {{second_reference_town}}
-                </br>
-                {{second_reference_postcode}}
-                </br>
-                {{second_reference_country}}
-            </td>
-            {% endif %}
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/references/enter-second-reference-address?id={{application_id}}" alt="Change address for referee 2">
-                    Change <span class="visuallyhidden">address for referee 2</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Phone number
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_phone_number}}
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/references/second-reference-contact-details?id={{application_id}}" alt="Change phone number for referee 2">
-                    Change <span class="visuallyhidden">phone number for referee 2</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Email address
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{second_reference_email}}
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/references/second-reference-contact-details?id={{application_id}}" alt="Change email address for referee 2">
-                    Change <span class="visuallyhidden">email address for referee 2</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <br>
-    <div class="form-group grid-row">
-        <form action="{{ URL_PREFIX }}/task-list?id={{application_id}}" method="get">
-            <input type="submit" class="button" value="Confirm and continue"/>
-            <input type="hidden" value="{{application_id}}" name="id"/>
-        </form>
-    </div>
-    <br>
+<h1 class="form-title heading-large">Check your answers: references</h1>
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="td">
+        <col class="td">
+        <col class="change-answer">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="3">
+            <div class="heading-medium">
+                First reference
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Full name
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_first_name}} {{first_reference_last_name}}
+        </td>
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Change full name for referee 1">
+                Change <span class="visuallyhidden">full name for referee 1</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            How they know you
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_relationship}}
+        </td>
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Change how referee 1 knows you">
+                Change <span class="visuallyhidden">how referee 1 knows you</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Known for
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_years_known}} years, {{first_reference_months_known}} months
+        </td>
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Change how long referee 1 has known you for">
+                Change <span class="visuallyhidden">how long referee 1 has known you for</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Address
+        </td>
+        {% if first_reference_street_line2 and first_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_street_line1}}
+            </br>
+            {{first_reference_street_line2}}
+            </br>
+            {{first_reference_town}}
+            </br>
+            {{first_reference_county}}
+            </br>
+            {{first_reference_postcode}}
+            </br>
+            {{first_reference_country}}
+        </td>
+        {% elif first_reference_street_line2 and not first_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_street_line1}}
+            </br>
+            {{first_reference_street_line2}}
+            </br>
+            {{first_reference_town}}
+            </br>
+            {{first_reference_postcode}}
+            </br>
+            {{first_reference_country}}
+        </td>
+        {% elif not first_reference_street_line2 and first_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_street_line1}}
+            </br>
+            {{first_reference_town}}
+            </br>
+            {{first_reference_county}}
+            </br>
+            {{first_reference_postcode}}
+            </br>
+            {{first_reference_country}}
+        </td>
+        {% elif not first_reference_street_line2 and not first_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_street_line1}}
+            </br>
+            {{first_reference_town}}
+            </br>
+            {{first_reference_postcode}}
+            </br>
+            {{first_reference_country}}
+        </td>
+        {% endif %}
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/references/enter-first-reference-address?id={{application_id}}" alt="Change address for referee 1">
+                Change <span class="visuallyhidden">address for referee 1</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Phone number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_phone_number}}
+        </td>
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/references/first-reference-contact-details?id={{application_id}}" alt="Change phone number for referee 1">
+                Change <span class="visuallyhidden">phone number for referee 1</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Email address
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_email}}
+        </td>
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/references/first-reference-contact-details?id={{application_id}}" alt="Change email address for referee 1">
+                Change <span class="visuallyhidden">email address for referee 1</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="check-your-answers">
+        <col class="check-your-answers">
+        <col class="change-answer">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="3">
+            <div class="heading-medium">
+                Second reference
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Full name
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_first_name}} {{second_reference_last_name}}
+        </td>
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Change full name for referee 2">
+                Change <span class="visuallyhidden">full name for referee 2</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            How they know you
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_relationship}}
+        </td>
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Change how referee 2 knows you">
+                Change <span class="visuallyhidden">how referee 2 knows you</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Known for
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_years_known}} years, {{second_reference_months_known}} months
+        </td>
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Change how long referee 2 has known you for">
+                Change <span class="visuallyhidden">how long referee 2 has known you for</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Address
+        </td>
+        {% if second_reference_street_line2 and second_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_street_line1}}
+            </br>
+            {{second_reference_street_line2}}
+            </br>
+            {{second_reference_town}}
+            </br>
+            {{second_reference_county}}
+            </br>
+            {{second_reference_postcode}}
+            </br>
+            {{second_reference_country}}
+        </td>
+        {% elif second_reference_street_line2 and not second_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_street_line1}}
+            </br>
+            {{second_reference_street_line2}}
+            </br>
+            {{second_reference_town}}
+            </br>
+            {{second_reference_postcode}}
+            </br>
+            {{second_reference_country}}
+        </td>
+        {% elif not second_reference_street_line2 and second_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_street_line1}}
+            </br>
+            {{second_reference_town}}
+            </br>
+            {{second_reference_county}}
+            </br>
+            {{second_reference_postcode}}
+            </br>
+            {{second_reference_country}}
+        </td>
+        {% elif not second_reference_street_line2 and not second_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_street_line1}}
+            </br>
+            {{second_reference_town}}
+            </br>
+            {{second_reference_postcode}}
+            </br>
+            {{second_reference_country}}
+        </td>
+        {% endif %}
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/references/enter-second-reference-address?id={{application_id}}" alt="Change address for referee 2">
+                Change <span class="visuallyhidden">address for referee 2</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Phone number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_phone_number}}
+        </td>
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/references/second-reference-contact-details?id={{application_id}}" alt="Change phone number for referee 2">
+                Change <span class="visuallyhidden">phone number for referee 2</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Email address
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_email}}
+        </td>
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/references/second-reference-contact-details?id={{application_id}}" alt="Change email address for referee 2">
+                Change <span class="visuallyhidden">email address for referee 2</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<br>
+<div class="form-group">
+    <form action="{{ URL_PREFIX }}/task-list?id={{application_id}}" method="get">
+        <input type="submit" class="button" value="Confirm and continue"/>
+        <input type="hidden" value="{{application_id}}" name="id"/>
+    </form>
 </div>
+<br>
 
 {% endblock %}

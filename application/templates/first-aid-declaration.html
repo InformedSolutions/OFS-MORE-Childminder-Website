@@ -5,31 +5,29 @@
 
 {% block inner_content %}
 
+{% include "back-button.html" %}
+{{form.error_summary}}
 
-<div class="column-full">
-    {% include "back-button.html" %}
-    {{form.error_summary}}
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                First aid training certificate
-            </h1>
-            <p>An inspector will ask to see your certificate when they visit your home.</p>
-            <h2 class="form-title heading-medium">
-                I declare that:
-            </h2>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Continue" alt='Continue to declaration'>
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-        <!-- Return to task list -->
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    </form>
-</div>
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            First aid training certificate
+        </h1>
+        <p>An inspector will ask to see your certificate when they visit your home.</p>
+        <h2 class="form-title heading-medium">
+            I declare that:
+        </h2>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Continue" alt='Continue to declaration'>
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+    <!-- Return to task list -->
+    <div class="form-group">
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+    </div>
+</form>
 
 {% endblock %}

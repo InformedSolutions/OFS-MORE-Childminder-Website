@@ -5,31 +5,29 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    {% include "back-button.html" %}
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                References
-            </h1>
-            <p>You need to give details of 2 people who can give you a reference.</p>
-            <p>You can use anyone who knows you well (like a friend, neighbour, teacher or employers), but not family.</p>
-            <p>We ask referees if you are:</p>
-            <div style="margin: 35px;">
-                <ul style="list-style-type:disc">
-                    <li>honest, reliable and trustworthy</li>
-                    <li>able to look after children</li>
-                </ul>
-            </div>
-            <p class="text-before-button">They must have known you for at least 1 year.</p>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+{% include "back-button.html" %}
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            References
+        </h1>
+        <p>You need to give details of 2 people who can give you a reference.</p>
+        <p>You can use anyone who knows you well (like a friend, neighbour, teacher or employers), but not family.</p>
+        <p>We ask referees if you are:</p>
+        <div style="margin: 35px;">
+            <ul style="list-style-type:disc">
+                <li>honest, reliable and trustworthy</li>
+                <li>able to look after children</li>
+            </ul>
         </div>
-    </form>
-</div>
+        <p class="text-before-button">They must have known you for at least 1 year.</p>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Continue">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+</form>
 
 {% endblock %}

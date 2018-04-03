@@ -5,43 +5,37 @@
 
 {% block inner_content %}
 
+{% include "back-button.html" %}
 
-<div class="column-full">
-    {% include "back-button.html" %}
+<!-- Initialise error summary for page -->
+{{form.error_summary}}
 
-    <!-- Initialise error summary for page -->
-    {{form.error_summary}}
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        <h1 class="form-title heading-large">
+            Pay by debit or credit card
+        </h1>
 
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Pay by debit or credit card
-            </h1>
-        </div>
-        <p class="form-group grid-row">
-            <img src="{% static 'card-types.png' %}" alt="accepted-cards-visa-maestro-mastercard-amex"
-                 style="height: 40px;"/>
+    <p class="form-group">
+        <img src="{% static 'card-types.png' %}" alt="accepted-cards-visa-maestro-mastercard-amex"
+             style="height: 40px;"/>
+    </p>
+    <div class="form-group">
+        <p>We accept Visa, Maestro, MasterCard and American Express cards.</p>
+        <p>
+            You are paying <span class="bold-small">&#163;35</span> to <span class="bold-small">apply to be a childminder</span>.
         </p>
-        <div class="grid-row">
-            <div class="form-group">
-                <p>We accept Visa, Maestro, MasterCard and American Express cards.</p>
-                <p>
-                    You are paying <span class="bold-small">&#163;35</span> to <span class="bold-small">apply to be a childminder</span>.
-                </p>
-            </div>
-            <div class="form-group">
-                {{form.as_div}}
-                {% csrf_token %}
-                <input type="hidden" value="{{application_id}}" name="id"/>
-                <input type="submit" class="button" value="Make payment and apply">
-            </div>
+    </div>
+    <div class="form-group">
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" value="Make payment and apply">
+    </div>
+    <div class="form-group">
+        <div class="form-group">
+            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
         </div>
-        <div class="form-group grid-row">
-            <div class="form-group">
-                <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-            </div>
-        </div>
-    </form>
-</div>
+    </div>
+</form>
 
 {% endblock %}

@@ -5,51 +5,48 @@
 
 {% block inner_content %}
 
+{% include "back-button.html" %}
+
 <!-- Initialise error summary for page -->
 
-
-<div class="column-full">
-    {% include "back-button.html" %}
-
-    {% for form in form_list %}
-    {{form.error_summary}}
-    {% endfor %}
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                DBS checks on adults in your home
-            </h1>
-            <p>Each adult in your home must get a criminal record (DBS) check.</p>
-            <details style="margin-bottom: 15px;" role="group">
-                <summary role="button" aria-controls="details-content-0" aria-expanded="true"><span class="summary">How do I get a DBS check?</span>
-                </summary>
-                <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="false">
-                    <p>Apply for a DBS check online using the link below.</p>
-                    <p>DBS checks usually take about 6 weeks and cost £52.10 per person.</p>
-                    <a href="http://ofsteddbsapplication.co.uk/step-one.aspx">Get an Ofsted DBS check</a>
-                </div>
-                <br>
-            </details>
-            <p>Please enter the DBS certificate number for each adult in your home.</p>
-            {% for form in form_list %}
-            <h2 class="form-title heading-medium">
-                {{form.name}}
-            </h2>
-            {{form.as_div}}
-            {% endfor %}
-            {% csrf_token %}
-            <input type="hidden" value="{{application_id}}" name="id"/>
-            <input type="submit" class="button" value="Save and continue">
-            <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
-        </div>
-    </form>
-    </br>
-    <!-- Return to task list -->
-    <div class="form-group grid-row">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+{% for form in form_list %}
+{{form.error_summary}}
+{% endfor %}
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            DBS checks on adults in your home
+        </h1>
+        <p>Each adult in your home must get a criminal record (DBS) check.</p>
+        <details style="margin-bottom: 15px;" role="group">
+            <summary role="button" aria-controls="details-content-0" aria-expanded="true"><span class="summary">How do I get a DBS check?</span>
+            </summary>
+            <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="false">
+                <p>Apply for a DBS check online using the link below.</p>
+                <p>DBS checks usually take about 6 weeks and cost £52.10 per person.</p>
+                <a href="http://ofsteddbsapplication.co.uk/step-one.aspx">Get an Ofsted DBS check</a>
+            </div>
+            <br>
+        </details>
+        <p>Please enter the DBS certificate number for each adult in your home.</p>
+        {% for form in form_list %}
+        <h2 class="form-title heading-medium">
+            {{form.name}}
+        </h2>
+        {{form.as_div}}
+        {% endfor %}
+        {% csrf_token %}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" value="Save and continue">
+        <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
     </div>
+</form>
+</br>
+<!-- Return to task list -->
+<div class="form-group">
+    <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
 </div>
 
 {% endblock %}
