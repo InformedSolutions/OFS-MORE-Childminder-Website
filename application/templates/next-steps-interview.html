@@ -8,7 +8,7 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/next-steps/home?id={{application_id}}" class="link-back"
+        <a href="{{ request.META.HTTP_REFERER }}" class="link-back"
            style="margin-right: 10px; line-height: 28px">
             Back
         </a>
@@ -23,7 +23,8 @@
             <li>help them learn and develop</li>
             <li>measure their progress</li>
         </ul>
-        <p>Read the Early Years Foundation Stage for details or ask your council about childminding training courses in your area.</p>
+        <p>Read the Early Years Foundation Stage for details or ask your council about childminding training courses in
+            your area.</p>
         <p><img src="{% static 'download-button.png' %}"
                 style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
             <a href="">Early Years Foundation Stage</a> (PDF, 552KB)</p>
@@ -37,8 +38,8 @@
             <input type="submit" class="button" value="Return to confirmation page">
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         </form>
-        </div>
     </div>
+</div>
 </div>
 
 {% endblock %}

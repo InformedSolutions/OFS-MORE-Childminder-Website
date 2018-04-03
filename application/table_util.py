@@ -1,3 +1,10 @@
+"""
+OFS-MORE-CCN3: Apply to be a Childminder Beta
+-- table_util.py --
+
+@author: Informed Solutions
+"""
+
 from django.urls import reverse
 
 from .models import ArcComments, Application

@@ -5,26 +5,11 @@
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
+
 
 <div class="column-full">
-    <div class="grid-row">
-        <!-- If applicant has previously completed this task, return to task list with Back button -->
-        {% if login_details_status == 'COMPLETED' %}
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
-            Back
-        </a>
-        {% endif %}
-        <!-- If applicant has not yet completed this task, return to start page with Back button -->
-        {% if login_details_status != 'COMPLETED' %}
-        <a href="{{ URL_PREFIX }}/account/account?id={{application_id}}" class="link-back" style="margin-right: 10px;
-        line-height: 28px">
-            Back
-        </a>
-        {% endif %}
-    </div>
+    {% include "back-button.html" %}
+    {{form.error_summary}}
     <!-- Form -->
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->

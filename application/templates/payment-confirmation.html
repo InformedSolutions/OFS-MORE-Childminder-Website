@@ -54,7 +54,7 @@
             <a href="">Download application</a></p>
         <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print"
                                            style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
-            <a href="">Print application</a></p>
+            <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print application</a></p>
         <h2 class="heading-medium">
             What happens next
         </h2>

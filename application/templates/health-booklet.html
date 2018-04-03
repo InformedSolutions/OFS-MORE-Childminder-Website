@@ -6,16 +6,10 @@
 {% block inner_content %}
 
 <!-- Initialise error summary for page -->
-{{form.error_summary}}
 
 <div class="column-full">
-    <div class="grid-row">
-        <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/health?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
+    {% include "back-button.html" %}
+    {{form.error_summary}}
     <div class="form-group grid-row">
         <h1 class="form-title heading-large">
             Fill in the health declaration booklet

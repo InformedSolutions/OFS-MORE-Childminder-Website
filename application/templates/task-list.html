@@ -9,8 +9,15 @@
         <header class="page-heading page-heading-with-context">
             <h1 class="heading-xlarge">Register as a childminder list</h1>
             <p><span style="font-weight: bold;">Your application:</span> {{ registers }}</p>
-            <p><span style="font-weight: bold;">Fee:</span> {{ fee }} (<a href="#">more about costs</a>)</p>
+            <p><span style="font-weight: bold;">Fee:</span> {{ fee }} (<a href="{% url 'Costs-View' %}?id={{ id }}">more about costs</a>)</p>
             <br>
+            {% if arc_comment is not None %}
+                <div class="panel panel-border-narrow arc-comment">
+                    <strong class="bold-small">
+                        {{ arc_comment }}
+                    </strong>
+                </div>
+            {% endif %}
             <p>Fill in the sections below to apply.</p>
         </header>
     </div>

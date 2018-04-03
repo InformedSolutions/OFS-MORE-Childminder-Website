@@ -1,22 +1,19 @@
+"""
+OFS-MORE-CCN3: Apply to be a Childminder Beta
+-- task_list.py --
+
+@author: Informed Solutions
+
+Handler for returning a list of tasks to be completed by a user when applying, coupled with the relevant status value
+based on whether they have previously completed the task or not.
+"""
+
 from django.shortcuts import render
-from django.core.urlresolvers import reverse
 
 from application.models import (
-    AdultInHome,
-    ApplicantHomeAddress,
-    ApplicantName,
-    ApplicantPersonalDetails,
     Application,
-    ChildInHome,
     ChildcareType,
-    CriminalRecordCheck,
-    EYFS,
-    FirstAidTraining,
-    HealthDeclarationBooklet,
-    Reference,
-    UserDetails
-
-)
+    Arc)
 
 
 # noinspection PyTypeChecker
@@ -36,6 +33,14 @@ def task_list(request):
         zero_to_five_status = childcare_record.zero_to_five
         five_to_eight_status = childcare_record.five_to_eight
         eight_plus_status = childcare_record.eight_plus
+
+        #Instantiate arc_comment
+        arc_comment = None
+
+        # If an ARC review has been undertaken
+        if Arc.objects.filter(application_id=application_id):
+            arc = Arc.objects.get(application_id=application_id)
+            arc_comment = arc.comments
 
         # See childcare_type move to seperate method/file
 
@@ -71,6 +76,7 @@ def task_list(request):
             'id': application_id,
             'all_complete': False,
             'registers': registers,
+            'arc_comment': arc_comment,
             'fee': fee,
             'tasks': [
                 {
@@ -90,8 +96,8 @@ def task_list(request):
                     'description': "Type of childcare",
                     'status_url': None,
                     'status_urls': [
-                        {'status': 'COMPLETED', 'url': 'Type-Of-Childcare-Age-Groups-View'},
-                        {'status': 'FLAGGED', 'url': 'Type-Of-Childcare-Age-Groups-View'},
+                        {'status': 'COMPLETED', 'url': 'Type-Of-Childcare-Summary-View'},
+                        {'status': 'FLAGGED', 'url': 'Type-Of-Childcare-Summary-View'},
                         {'status': 'OTHER', 'url': 'Type-Of-Childcare-Guidance-View'}
                     ],
                 },

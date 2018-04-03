@@ -3,7 +3,7 @@ Method returning the template for the Your personal details: guidance page (for 
 and navigating to the Your login and contact details: name page when successfully completed
 """
 
-import datetime
+from django.utils import timezone
 import calendar
 
 from django.conf import settings
@@ -84,7 +84,7 @@ def personal_details_name(request):
     :return: an HttpResponse object with the rendered Your personal details: name template
     """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]
@@ -142,7 +142,7 @@ def personal_details_dob(request):
     :return: an HttpResponse object with the rendered Your personal details: date of birth template
     """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]
@@ -202,12 +202,13 @@ def personal_details_home_address(request):
     :return: an HttpResponse object with the rendered Your personal details: home address template
     """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]
         application = Application.get_id(app_id=app_id)
         form = PersonalDetailsHomeAddressForm(id=app_id)
+        form.check_flag()
         variables = {
             'form': form,
             'application_id': app_id,
@@ -221,6 +222,7 @@ def personal_details_home_address(request):
         app_id = request.POST["id"]
         application = Application.get_id(app_id=app_id)
         form = PersonalDetailsHomeAddressForm(request.POST, id=app_id)
+        form.remove_flag()
         if form.is_valid():
 
             postcode = form.cleaned_data.get('postcode')
@@ -239,7 +241,7 @@ def personal_details_home_address(request):
                                                            move_in_month=0,
                                                            move_in_year=0,
                                                            personal_detail_id=applicant,
-                                                           application_id=app_id)
+                                                           application_id=application)
                 home_address_record.save()
 
             elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant,
@@ -286,7 +288,7 @@ def personal_details_home_address_select(request):
     :return: an HttpResponse object with the rendered Your personal details: home address template
     """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
 
@@ -399,7 +401,7 @@ def personal_details_location_of_care(request):
     :return: an HttpResponse object with the rendered Your personal details: location of care template
     """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
 
@@ -487,7 +489,7 @@ def personal_details_childcare_address(request):
     :return: an HttpResponse object with the rendered Your personal details: childcare template
     """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]
@@ -572,7 +574,7 @@ def personal_details_childcare_address_select(request):
         :return: an HttpResponse object with the rendered Your personal details: childcare address template
         """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
 
@@ -686,7 +688,7 @@ def personal_details_childcare_address_manual(request):
     :return: an HttpResponse object with the rendered Your personal details: childcare template
     """
 
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]

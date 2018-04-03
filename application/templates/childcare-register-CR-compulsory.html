@@ -4,29 +4,22 @@
 {% load govuk_template_base %}
 
 {% block inner_content %}
+{% include "back-button.html" %}
 
-<div class="column-full">
-    <div class="grid-row">
-        <a href="{{ URL_PREFIX }}/childcare/age-groups?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <div class="form-group grid-row">
+        <h1 class="form-title heading-large">
+            Childcare Register (compulsory part)
+        </h1>
+        <p>You will be joining the compulsory part of the Childcare Register.</p>
+        <p>It costs &#163;103 to apply.</p>
+        <p class="text-before-button">This will let you look after children aged 5 to 7.</p>
+        {% csrf_token %}
+        {{form.as_div}}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" value="Confirm and continue">
     </div>
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Childcare Register (compulsory part)
-            </h1>
-            <p>You will be joining the compulsory part of the Childcare Register.</p>
-            <p>It costs &#163;103 to apply.</p>
-            <p class="text-before-button">This will let you look after children aged 5 to 7.</p>
-            {% csrf_token %}
-            {{form.as_div}}
-            <input type="hidden" value="{{application_id}}" name="id"/>
-            <input type="submit" class="button" value="Confirm and continue">
-        </div>
-    </form>
-</div>
+</form>
 
 {% endblock %}

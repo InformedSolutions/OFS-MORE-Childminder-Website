@@ -5,38 +5,30 @@
 
 {% block inner_content %}
 
+{% include "back-button.html" %}
+
 <!-- Initialise error summary for page -->
 {{form.error_summary}}
-
-<div class="column-full">
-    <div class="grid-row">
-        <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/account/email?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
-            Back
-        </a>
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Your phone number
+        </h1>
+        <p>Please let us know the best phone number to ring or text you on.</p>
+        <p>We will send a code to your mobile when you log back in.</p>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
+        <input type="hidden" name="id" value="{{application_id}}"/>
     </div>
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Your phone number
-            </h1>
-            <p>Please let us know the best phone number to ring or text you on.</p>
-            <p>We will send a code to your mobile when you log back in.</p>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
-            <input type="hidden" name="id" value="{{application_id}}"/>
-        </div>
-        <br>
-        <!-- If applicant has previously completed this task, allow user to return to task list -->
-        {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
-        <div class="form group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-        {% endif %}
-    </form>
-</div>
+    <br>
+    <!-- If applicant has previously completed this task, allow user to return to task list -->
+    {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
+    <div class="form group">
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+    </div>
+    {% endif %}
+</form>
 
 {% endblock %}

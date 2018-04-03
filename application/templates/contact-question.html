@@ -5,20 +5,12 @@
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
+{% include "back-button.html" %}
 
-<div class="column-full">
-    <div class="grid-row">
-        <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/account/phone?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt='Back to application list'>
-            Back
-        </a>
-    </div>
+    <!-- Initialise error summary for page -->
+{{form.error_summary}}
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <div class="form-group grid-row">
+        <div class="form-group">
             <h1 class="form-title heading-large">
                 Your security question
             </h1>
@@ -33,10 +25,9 @@
     </form>
     <!-- If applicant has previously completed this task, allow user to return to task list -->
     {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
-    <div class="form-group grid-row">
+    <div class="form-group">
         <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
     </div>
     {% endif %}
-</div>
 
 {% endblock %}

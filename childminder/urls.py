@@ -20,6 +20,8 @@ urlpatterns = [
     url(r'^childcare/age-groups/', views.type_of_childcare_age_groups, name='Type-Of-Childcare-Age-Groups-View'),
     url(r'^childcare/register/', views.type_of_childcare_register, name='Type-Of-Childcare-Register-View'),
     url(r'^childcare/local-authority/', views.local_authority_links, name='Local-Authority-View'),
+    url(r'^childcare/overnight-care/', views.overnight_care, name='Type-Of-Childcare-Overnight-Care-View'),
+    url(r'^childcare/summary/', views.childcare_type_summary, name='Type-Of-Childcare-Summary-View'),
     url(r'^account/email/', views.contact_email, name='Contact-Email-View'),
     url(r'^account/phone/', views.contact_phone, name='Contact-Phone-View'),
     url(r'^account/summary/', views.contact_summary, name='Contact-Summary-View'),
@@ -119,6 +121,7 @@ urlpatterns = [
     url(r'^awaiting-review/', views.awaiting_review, name='Awaiting-Review-View'),
     url(r'^accepted/', views.application_accepted, name='Accepted-View'),
     url(r'^print-application/(?P<page>[-\w]+)/$', views.base_print_handler, name='Print-Handler-View'),
+    url(r'^costs/$', views.costs, name='Costs-View'),
 
 ]
 

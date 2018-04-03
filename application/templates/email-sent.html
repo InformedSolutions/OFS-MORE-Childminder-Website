@@ -6,13 +6,8 @@
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="grid-row">
-        <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/existing-application/" class="link-back" style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
-            Back
-        </a>
-    </div>
+    {% include "back-button.html" %}
+    {{form.error_summary}}
     <div class="grid-row">
         <h1 class="form-title heading-large">
             Check your e-mail

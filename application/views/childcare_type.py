@@ -3,16 +3,19 @@ Method returning the template for the Type of childcare: guidance page (for a gi
 to the Type of childcare: childcare ages page when successfully completed
 """
 
-from datetime import datetime
+from django.utils import timezone
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 
+from application.summary_page_data import childcare_type_name_dict, childcare_type_link_dict
+from application.table_util import Table, create_tables, submit_link_setter
 from .. import status
 from ..business_logic import reset_declaration, childcare_type_logic
-from ..forms import TypeOfChildcareGuidanceForm, TypeOfChildcareAgeGroupsForm, TypeOfChildcareRegisterForm
+from ..forms import TypeOfChildcareGuidanceForm, TypeOfChildcareAgeGroupsForm, TypeOfChildcareRegisterForm, \
+    TypeOfChildcareOvernightCareForm
 from ..models import Application, ChildcareType
 
 
@@ -72,7 +75,7 @@ def type_of_childcare_age_groups(request):
     :return: an HttpResponse object with the rendered Type of childcare: age groups template
     """
 
-    current_date = datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         app_id = request.GET["id"]
@@ -166,20 +169,121 @@ def type_of_childcare_register(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
-        form = TypeOfChildcareRegisterForm(request.POST)
-        application = Application.get_id(app_id=app_id)
-        if form.is_valid():
-            if application.childcare_type_status != 'COMPLETED':
-                status.update(app_id, 'childcare_type_status', 'COMPLETED')
+        return HttpResponseRedirect(reverse('Type-Of-Childcare-Overnight-Care-View') + '?id=' + app_id)
 
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + app_id)
+
+def overnight_care(request):
+    """
+    Method for capturing the response supplied on the Overnight care provisioning page
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the correct rendered Type of childcare: Overnight care page
+    """
+
+    current_date = timezone.now()
+
+    if request.method == 'GET':
+
+        app_id = request.GET["id"]
+        form = TypeOfChildcareOvernightCareForm(id=app_id)
+        application = Application.get_id(app_id=app_id)
+        variables = {
+            'form': form,
+            'application_id': app_id,
+            'childcare_type_status': application.childcare_type_status,
+            'login_details_status': application.login_details_status,
+        }
+        return render(request, 'childcare-overnight-care.html', variables)
+
+    if request.method == 'POST':
+
+        app_id = request.POST["id"]
+        form = TypeOfChildcareOvernightCareForm(request.POST, id=app_id)
+        application = Application.get_id(app_id=app_id)
+
+        if form.is_valid():
+
+            childcare_record = ChildcareType.objects.get(application_id=app_id)
+            childcare_record.overnight_care = form.cleaned_data['overnight_care']
+            childcare_record.save()
+            application.date_updated = current_date
+            application.save()
+
         else:
+
             variables = {
                 'form': form,
-                'application_id': app_id
+                'application_id': app_id,
+                'login_details_status': application.login_details_status,
+                'childcare_type_status': application.childcare_type_status
             }
 
-            return render(request, 'childcare-guidance.html', variables)
+            return render(request, 'childcare-overnight-care.html', variables)
+
+        app_id = request.POST["id"]
+        return HttpResponseRedirect(reverse('Type-Of-Childcare-Summary-View') + '?id=' + app_id)
+
+
+def childcare_type_summary(request):
+    """
+    Method for rendering a summary page for the childcare type task.
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the correct rendered Type of childcare summary page
+    """
+
+    if request.method == 'GET':
+
+        app_id = request.GET["id"]
+        childcare_record = ChildcareType.objects.get(application_id=app_id)
+        application = Application.objects.get(pk=app_id)
+
+        childcare_age_groups = ''
+
+        if childcare_record.zero_to_five:
+            childcare_age_groups += '0 to 5 year olds,'
+
+        if childcare_record.five_to_eight:
+            childcare_age_groups += '5 to 7 year olds,'
+
+        if childcare_record.eight_plus:
+            childcare_age_groups += '8 years or older'
+
+        # Format response by comma delimiting
+        childcare_age_groups = childcare_age_groups.rstrip(',')
+        childcare_age_groups = childcare_age_groups.replace(',', ', ')
+
+        childcare_type_fields = {
+            'childcare_age_groups': childcare_age_groups,
+            'overnight_care': childcare_record.overnight_care,
+        }
+
+        childcare_type_table = {'table_object': Table([childcare_record.pk]),
+                        'fields': childcare_type_fields,
+                        'title': 'Type of childcare',
+                        'error_summary_title': 'There is something wrong with your type of childcare'}
+
+        table_list = create_tables([childcare_type_table], childcare_type_name_dict, childcare_type_link_dict)
+
+        variables = {
+            'application_id': app_id,
+            'table_list': table_list,
+            'health_status': application.health_status,
+            'page_title': 'Check your answers: Type of childcare'
+        }
+
+        variables = submit_link_setter(variables, table_list, 'type_of_childcare', app_id)
+
+        return render(request, 'generic-summary-template.html', variables)
+
+    if request.method == 'POST':
+
+        app_id = request.POST["id"]
+        application = Application.get_id(app_id=app_id)
+
+        if application.childcare_type_status != 'COMPLETED':
+
+            status.update(app_id, 'childcare_type_status', 'COMPLETED')
+
+        return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + app_id)
 
 
 def local_authority_links(request):

@@ -2712,3 +2712,10 @@ a.section-link:active {
     }
 }
 
+.arc-comment {
+    margin-bottom: 2em;
+}
+
+.top-padded {
+    padding-top: 10px;
+}

@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -250,7 +250,7 @@ def declaration_declaration(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Declaration template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = DeclarationDeclarationForm(id=application_id_local)

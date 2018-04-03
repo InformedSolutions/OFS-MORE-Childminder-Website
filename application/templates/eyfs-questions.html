@@ -5,26 +5,12 @@
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
 
 <div class="column-full">
-    <div class="grid-row">
-        <!-- Back button -->
-        {% if eyfs_training_declare is False %}
-        <a href="{{ URL_PREFIX }}/eyfs/knowledge?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
-            Back
-        </a>
-        {% elif eyfs_training_declare is True %}
-        <a href="{{ URL_PREFIX }}/eyfs/training?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
-            Back
-        </a>
-        {% endif %}
-    </div>
+    {% include "back-button.html" %}
+
+    <!-- Initialise error summary for page -->
+    {{form.error_summary}}
     <div class="form-group grid-row">
         <h1 class="form-title heading-large">
             Early years questions

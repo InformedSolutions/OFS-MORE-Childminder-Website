@@ -73,7 +73,6 @@ class CreateTestNewApplicationSubmit(TestCase):
             UserDetails.objects.get(application=self.app_id).mobile_number, data['mobile_number']
         )
 
-
     def TestContactSummaryView(self):
         r = self.client.post(reverse('Contact-Summary-View'), {'id':self.app_id})
 
@@ -110,6 +109,25 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).five_to_eight, True)
         self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).eight_plus, True)
 
+    def TestTypeOfChildcareOvernightCare(self):
+        """Type of childcare overnight care"""
+
+        data = {
+            'id': self.app_id,
+            'overnight_care': ['True']
+        }
+
+        r = self.client.post(reverse('Type-Of-Childcare-Overnight-Care-View'), data)
+        self.assertEqual(r.status_code, 302)
+
+        self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).overnight_care, True)
+
+    def TestTypeOfChildcareSummaryView(self):
+        r = self.client.post(reverse('Type-Of-Childcare-Summary-View'), {'id':self.app_id})
+
+        self.assertEqual(
+           Application.objects.get(pk=self.app_id).childcare_type_status, "COMPLETED")
+
     def AppTestTypeOfChildcareRegister(self):
         """Type of childcare register"""
         r = self.client.post(reverse('Type-Of-Childcare-Register-View'), {'id': self.app_id})
@@ -134,7 +152,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(ApplicantName.objects.get(personal_detail_id=p_id).middle_names, data['middle_names'])
         self.assertEqual(ApplicantName.objects.get(personal_detail_id=p_id).last_name, data['last_name'])
 
-
     def TestAppPersonalDetailsDOB(self):
         """Submit DOB"""
         data = {
@@ -151,7 +168,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_day, data['date_of_birth_0'])
         self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_month, data['date_of_birth_1'])
         self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_year, data['date_of_birth_2'])
-
 
     def TestAppPersonalDetailsHomeAddress(self):
         """Submit Personal Home address"""
@@ -175,7 +191,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).county, data['county'])
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).postcode, data['postcode'])
 
-
     def TestAppPersonalDetailsHomeAddressDetails(self):
         """Submit Personal Home address"""
 
@@ -188,7 +203,6 @@ class CreateTestNewApplicationSubmit(TestCase):
             reverse('Personal-Details-Location-Of-Care-View'), data
         )
         self.assertEqual(r.status_code, 302)
-
 
     def TestAppPersonalDetailsSummaryView(self):
         """Personal details summary"""
@@ -455,6 +469,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestContactSummaryView()
         self.TestAppSecurityQuestion()
         self.TestTypeOfChildcareAgeGroups()
+        self.TestTypeOfChildcareOvernightCare()
         self.AppTestTypeOfChildcareRegister()
 
         self.TestAppPersonalDetailsNames()

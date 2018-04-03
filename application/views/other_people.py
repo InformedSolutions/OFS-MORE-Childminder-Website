@@ -1,4 +1,5 @@
-import datetime
+from django.utils import timezone
+
 import calendar
 from datetime import date
 
@@ -76,7 +77,7 @@ def other_people_adult_question(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered People in your home: adult question template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = OtherPeopleAdultQuestionForm(id=application_id_local)
@@ -140,7 +141,7 @@ def other_people_adult_details(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered People in your home: adult details template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         number_of_adults = int(request.GET["adults"])
@@ -272,7 +273,7 @@ def other_people_adult_dbs(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered People in your home: adult DBS template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         number_of_adults = int(request.GET["adults"])
@@ -363,7 +364,7 @@ def other_people_adult_permission(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered People in your home: adult permission template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         number_of_adults = int(request.GET["adults"])
@@ -441,7 +442,7 @@ def other_people_children_question(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered People in your home: children question template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = OtherPeopleChildrenQuestionForm(id=application_id_local)
@@ -506,7 +507,7 @@ def other_people_children_details(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered People in your home: children details template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         number_of_children = int(request.GET["children"])

@@ -5,7 +5,7 @@ and navigating to the Your personal details: location of care page when successf
 business logic is applied to either create or update the associated Applicant_Name record
 """
 
-import datetime
+from django.utils import timezone
 
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
@@ -22,7 +22,7 @@ def personal_details_home_address_manual(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your personal details: home address template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
 
     if request.method == 'GET':
         application_id_local = request.GET["id"]

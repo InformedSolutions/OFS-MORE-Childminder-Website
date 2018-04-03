@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -60,7 +60,7 @@ def dbs_check_dbs_details(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your criminal record (DBS) check: details template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = DBSCheckDBSDetailsForm(id=application_id_local)
@@ -115,7 +115,7 @@ def dbs_check_upload_dbs(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your criminal record (DBS) check: upload DBS template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = DBSCheckUploadDBSForm(id=application_id_local)

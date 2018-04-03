@@ -6,28 +6,11 @@
 {% block inner_content %}
 
 <div class="column-full">
-    <div class="grid-row">
-        {% if turning_16 is True and children_in_home is True %}
-        <a href="{{ URL_PREFIX }}/other-people/approaching-16?id={{application_id}}"
-           class="link-back" style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
-            Back
-        </a>
-        {% elif turning_16 is False and children_in_home is True %}
-        <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}&remove=0"
-           class="link-back" style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
-            Back
-        </a>
-        {% elif turning_16 is False and children_in_home is False %}
-        <a href="{{ URL_PREFIX }}/other-people/children-question?id={{application_id}}"
-           class="link-back" style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
-            Back
-        </a>
-        {% endif %}
-    </div>
+    {% include "back-button.html" %}
     <div class="grid-row">
         <h1 class="form-title heading-large">Check your answers: people in your home</h1>
     </div>
-    <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
+    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
         <colgroup>
             <col class="summary-column">
             <col class="summary-column">
@@ -64,7 +47,7 @@
         </tr>
         </tbody>
     </table>
-    <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
+    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
         <colgroup>
             <col class="summary-column">
             <col class="summary-column">
@@ -102,7 +85,7 @@
         </tbody>
     </table>
     {% for name, day, month, year, relationship, dbs_certificate_number, permission in adult_lists %}
-    <table class="check-your-answers form-group grid-row">
+    <table class="check-your-answers">
         <colgroup>
             <col class="summary-column">
             <col class="summary-column">
@@ -239,7 +222,7 @@
     </table>
     {% endfor %}
     {% for name, day, month, year, relationship in child_lists %}
-    <table class="check-your-answers form-group grid-row">
+    <table class="check-your-answers">
         <colgroup>
             <col class="summary-column">
             <col class="summary-column">

@@ -5,23 +5,11 @@
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
-
 <div class="column-full">
-    <div class="grid-row">
-        {% if adults_in_home is True %}
-        <a href="{{ URL_PREFIX }}/other-people/adult-permission?id={{application_id}}&adults={{number_of_adults}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt="Back to application list">
-            Back
-        </a>
-        {% elif adults_in_home is False %}
-        <a href="{{ URL_PREFIX }}/other-people/adult-question?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt="Back to application list">
-            Back
-        </a>
-        {% endif %}
-    </div>
+    {% include "back-button.html" %}
+
+    <!-- Initialise error summary for page -->
+    {{form.error_summary}}
     <!-- Form -->
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->

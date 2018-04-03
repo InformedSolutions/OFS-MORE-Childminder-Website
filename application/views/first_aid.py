@@ -1,4 +1,4 @@
-import datetime
+from django.utils import timezone
 from datetime import date
 
 from django.conf import settings
@@ -68,10 +68,11 @@ def first_aid_training_details(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered First aid training: details template
     """
-    current_date = datetime.datetime.today()
+    current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = FirstAidTrainingDetailsForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -88,6 +89,7 @@ def first_aid_training_details(request):
 
         form = FirstAidTrainingDetailsForm(
             request.POST, id=application_id_local)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             # Create or update First_Aid_Training record

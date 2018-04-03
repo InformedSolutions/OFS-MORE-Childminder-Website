@@ -1,3 +1,12 @@
+"""
+OFS-MORE-CCN3: Apply to be a Childminder Beta
+-- notify.py --
+
+@author: Informed Solutions
+
+Handler for dispatching email notifications via the GOV.UK notify gateway api.
+"""
+
 import json
 
 import requests

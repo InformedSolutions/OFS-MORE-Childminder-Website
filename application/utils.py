@@ -1,5 +1,9 @@
-import json
-from datetime import datetime
+"""
+OFS-MORE-CCN3: Apply to be a Childminder Beta
+-- utils.py --
+
+@author: Informed Solutions
+"""
 
 from .models import Application, Reference, CriminalRecordCheck, EYFS, HealthDeclarationBooklet, ChildInHome, \
     ChildcareType, FirstAidTraining, ApplicantPersonalDetails, ApplicantName, ApplicantHomeAddress, AdultInHome
