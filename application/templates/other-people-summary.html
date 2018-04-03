@@ -5,11 +5,8 @@
 
 {% block inner_content %}
 
-<div class="column-full">
     {% include "back-button.html" %}
-    <div class="grid-row">
-        <h1 class="form-title heading-large">Check your answers: people in your home</h1>
-    </div>
+    <h1 class="form-title heading-large">Check your answers: people in your home</h1>
     <table class="check-your-answers" style="table-layout: fixed; width: 100%">
         <colgroup>
             <col class="summary-column">
@@ -327,13 +324,12 @@
     </table>
     {% endfor %}
     <br>
-    <div class="form-group grid-row">
+    <div class="form-group">
         <form action="{{ URL_PREFIX }}/task-list?id={{application_id}}" method="get">
             <input type="submit" class="button" value="Confirm and continue"/>
             <input type="hidden" value="{{application_id}}" name="id"/>
         </form>
     </div>
     <br>
-</div>
 
 {% endblock %}

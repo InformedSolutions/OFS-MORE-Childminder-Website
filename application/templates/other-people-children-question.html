@@ -5,42 +5,40 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    {% include "back-button.html" %}
+{% include "back-button.html" %}
 
-    <!-- Initialise error summary for page -->
-    {{form.error_summary}}
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Children in your home
-            </h1>
-            <p>We need to know about any children under 16 who live in your home.</p>
-            <p>This is to check you won't be looking after too many children.</p>
-            <details role="group">
-                <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">How many children can I look after?</span>
-                </summary>
-                <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-                    <p>Each childminder can look after up to six children under the age of 8.</p>
-                    <p>Three of these children can be under 5.</p>
-                    <p>You can look after more children if you have an assistant.</p>
-                </div>
-                <br>
-            </details>
+<!-- Initialise error summary for page -->
+{{form.error_summary}}
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Children in your home
+        </h1>
+        <p>We need to know about any children under 16 who live in your home.</p>
+        <p>This is to check you won't be looking after too many children.</p>
+        <details role="group">
+            <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">How many children can I look after?</span>
+            </summary>
+            <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+                <p>Each childminder can look after up to six children under the age of 8.</p>
+                <p>Three of these children can be under 5.</p>
+                <p>You can look after more children if you have an assistant.</p>
+            </div>
             <br>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-        </br>
-        <!-- Return to task list -->
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    </form>
-</div>
+        </details>
+        <br>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Save and continue">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+    </br>
+    <!-- Return to task list -->
+    <div class="form-group">
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+    </div>
+</form>
 
 {% endblock %}

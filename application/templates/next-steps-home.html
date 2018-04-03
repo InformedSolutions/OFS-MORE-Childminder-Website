@@ -8,10 +8,7 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <!-- Back button -->
-        <a href="{{ request.META.HTTP_REFERER }}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
+        {% include "back-button.html" %}
         <h2 class="heading-large">
             Get your home ready
         </h2>

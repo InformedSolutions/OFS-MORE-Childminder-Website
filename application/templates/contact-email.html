@@ -5,15 +5,13 @@
 
 {% block inner_content %}
 
+{% include "back-button.html" %}
 
-
-<div class="column-full">
-    {% include "back-button.html" %}
     {{form.error_summary}}
     <!-- Form -->
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->
-        <div class="form-group grid-row">
+        <div class="form-group">
             <h1 class="form-title heading-large">
                 Your email address
             </h1>
@@ -32,6 +30,5 @@
         </div>
         {% endif %}
     </form>
-</div>
 
 {% endblock %}

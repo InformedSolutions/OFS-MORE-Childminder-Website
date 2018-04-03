@@ -7,51 +7,50 @@
 
 <!-- Initialise error summary for page -->
 
-<div class="column-full">
-    {% include "back-button.html" %}
-    {{form.error_summary}}
-    <div class="form-group grid-row">
-        <h1 class="form-title heading-large">
-            Fill in the health declaration booklet
-        </h1>
-        <p>Please follow the steps below:</p>
-        <ul class="list list-bullet">
-            <li>download and print the booklet</li>
-            <li>fill in sections A and B</li>
-            <li>ask your GP to fill in section C</li>
-            <li>post the completed form to Ofsted</li>
-        </ul>
-        <p>
-            <img src="{% static 'download-button.png' %}" class="icon-ofsted-download" alt="Download"/>
-            <a href="https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/381218/Health_20declaration_20booklet.pdf"
-               target="_blank" alt="Download 'Health Declaration Booklet'">Health declaration booklet</a>
-            (PDF, 174KB, 16 pages)
+{% include "back-button.html" %}
+{{form.error_summary}}
+
+<div class="form-group">
+    <h1 class="form-title heading-large">
+        Fill in the health declaration booklet
+    </h1>
+    <p>Please follow the steps below:</p>
+    <ul class="list list-bullet">
+        <li>download and print the booklet</li>
+        <li>fill in sections A and B</li>
+        <li>ask your GP to fill in section C</li>
+        <li>post the completed form to Ofsted</li>
+    </ul>
+    <p>
+        <img src="{% static 'download-button.png' %}" class="icon-ofsted-download" alt="Download"/>
+        <a href="https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/381218/Health_20declaration_20booklet.pdf"
+           target="_blank" alt="Download 'Health Declaration Booklet'">Health declaration booklet</a>
+        (PDF, 174KB, 16 pages)
+    </p>
+    <p>Send the booklet in a stamped addressed envelope to:</p>
+    <div style="margin-left: 40px;">
+        <p>Applications Team<br>
+            Ofsted<br>
+            Piccadilly Gate<br>
+            Store Street<br>
+            Manchester<br>
+            M1 2WD<br><br>
         </p>
-        <p>Send the booklet in a stamped addressed envelope to:</p>
-        <div style="margin-left: 40px;">
-            <p>Applications Team<br>
-                Ofsted<br>
-                Piccadilly Gate<br>
-                Store Street<br>
-                Manchester<br>
-                M1 2WD<br><br>
-            </p>
-        </div>
-        <p>Ofsted will look at the booklet as part of your application.</p>
-        <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-            <h2 class="form-title heading-medium">
-                I declare that:
-            </h2>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Continue" alt='Continue to declaration'>
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-            </br>
-            </br>
-            <!-- Return to task list -->
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </form>
     </div>
+    <p>Ofsted will look at the booklet as part of your application.</p>
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        <h2 class="form-title heading-medium">
+            I declare that:
+        </h2>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Continue" alt='Continue to declaration'>
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+        </br>
+        </br>
+        <!-- Return to task list -->
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+    </form>
 </div>
 
 {% endblock %}

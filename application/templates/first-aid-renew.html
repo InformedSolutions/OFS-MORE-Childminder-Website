@@ -5,32 +5,30 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    {% include "back-button.html" %}
-    {{form.error_summary}}
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Renew your first aid training
-            </h1>
-            <p>Your certificate is only valid for 3 years and will run out in the next few months.</p>
-            <p>You will have to go on a 12-hour paediatric first aid course to renew your training.</p>
-            <p>Your certificate must be up to date when you register with Ofsted.</p>
-            <h2 class="form-title heading-medium">
-                I declare that:
-            </h2>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-        <!-- Return to task list -->
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    </form>
-</div>
+{% include "back-button.html" %}
+{{form.error_summary}}
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Renew your first aid training
+        </h1>
+        <p>Your certificate is only valid for 3 years and will run out in the next few months.</p>
+        <p>You will have to go on a 12-hour paediatric first aid course to renew your training.</p>
+        <p>Your certificate must be up to date when you register with Ofsted.</p>
+        <h2 class="form-title heading-medium">
+            I declare that:
+        </h2>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Save and continue">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+    <!-- Return to task list -->
+    <div class="form-group">
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+    </div>
+</form>
 
 {% endblock %}

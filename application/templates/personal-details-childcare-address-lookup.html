@@ -5,7 +5,6 @@
 
 {% block inner_content %}
 
-<div class="column-full">
     {% include "back-button.html" %}
     <!-- Initialise error summary for page -->
     {{form.error_summary}}
@@ -13,7 +12,7 @@
     <!-- Form -->
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <!-- Content -->
-        <div class="form-group grid-row">
+        <div class="form-group">
             <h1 class="form-title heading-large">
                 Select childcare address
             </h1>
@@ -33,10 +32,9 @@
         </div>
         <br>
         <!-- Return to task list -->
-        <div class="form-group grid-row">
+        <div class="form-group">
             <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
         </div>
     </form>
-</div>
 
 {% endblock %}

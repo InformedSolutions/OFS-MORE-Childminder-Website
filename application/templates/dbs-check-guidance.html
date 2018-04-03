@@ -5,25 +5,23 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    {% include "back-button.html" %}
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Criminal record (DBS) check
-            </h1>
-            <p>You have to apply for a criminal record (DBS) check.</p>
-            <p>This must be an enhanced check for a home-based childcare role.</p>
-            <p>The check costs &#163;52.10.</p>
-            <p>It can take about 6 weeks to get your certificate.</p>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-    </form>
-</div>
+{% include "back-button.html" %}
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Criminal record (DBS) check
+        </h1>
+        <p>You have to apply for a criminal record (DBS) check.</p>
+        <p>This must be an enhanced check for a home-based childcare role.</p>
+        <p>The check costs &#163;52.10.</p>
+        <p>It can take about 6 weeks to get your certificate.</p>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Continue">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+</form>
 
 {% endblock %}

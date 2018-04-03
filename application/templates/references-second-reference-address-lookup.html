@@ -5,38 +5,34 @@
 
 {% block inner_content %}
 
-
-
-<div class="column-full">
-    {% include "back-button.html" %}
-    {{form.error_summary}}
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Second reference address
-            </h1>
-            <p>Please give the address for your second referee.</p>
-            <h2 class="form-title heading-small">Postcode</h2>
-            <p>{{postcode}} <a href="{{ URL_PREFIX }}/references/second-reference-address?id={{application_id}}">Change</a></p>
-            <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
-            {{form.as_div}}
-            {% csrf_token %}
-            <br>
-            <a href="{{ URL_PREFIX }}/references/enter-second-reference-address?id={{application_id}}" name="manual"
-               id="manual">I can't find my address in the list</a>
-            <br>
-            <br>
-            <input type="submit" class="button button-submit" value="Save and continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
+{% include "back-button.html" %}
+{{form.error_summary}}
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Second reference address
+        </h1>
+        <p>Please give the address for your second referee.</p>
+        <h2 class="form-title heading-small">Postcode</h2>
+        <p>{{postcode}} <a href="{{ URL_PREFIX }}/references/second-reference-address?id={{application_id}}">Change</a></p>
+        <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
+        {{form.as_div}}
+        {% csrf_token %}
         <br>
-        <!-- Return to task list -->
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    </form>
-</div>
+        <a href="{{ URL_PREFIX }}/references/enter-second-reference-address?id={{application_id}}" name="manual"
+           id="manual">I can't find my address in the list</a>
+        <br>
+        <br>
+        <input type="submit" class="button button-submit" value="Save and continue">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+    <br>
+    <!-- Return to task list -->
+    <div class="form-group">
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+    </div>
+</form>
 
 {% endblock %}

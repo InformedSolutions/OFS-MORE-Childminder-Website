@@ -731,7 +731,7 @@ def personal_details_childcare_address_manual(request):
                                                                 move_in_month=0,
                                                                 move_in_year=0,
                                                                 personal_detail_id=applicant,
-                                                                application_id=app_id)
+                                                                application_id=application)
                 childcare_address_record.save()
 
             elif ApplicantHomeAddress.objects.filter(personal_detail_id=applicant, childcare_address=True,

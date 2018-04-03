@@ -5,28 +5,26 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    {% include "back-button.html" %}
+{% include "back-button.html" %}
 
-    <!-- Initialise error summary for page -->
-    {{form.error_summary}}
+<!-- Initialise error summary for page -->
+{{form.error_summary}}
 
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Personal details
-            </h1>
-            <p>You need to give your full name and home address.</p>
-            <p>The details must match what is in your criminal record (DBS) check.</p>
-            <p class="text-before-button">Make sure you include any middle names.</p>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-    </form>
-</div>
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Personal details
+        </h1>
+        <p>You need to give your full name and home address.</p>
+        <p>The details must match what is in your criminal record (DBS) check.</p>
+        <p class="text-before-button">Make sure you include any middle names.</p>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Continue">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+</form>
 
 {% endblock %}
