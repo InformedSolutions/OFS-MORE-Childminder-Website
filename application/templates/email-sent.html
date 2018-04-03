@@ -5,16 +5,14 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    {% include "back-button.html" %}
-    {{form.error_summary}}
-    <div class="grid-row">
-        <h1 class="form-title heading-large">
-            Check your e-mail
-        </h1>
-        <p>An e-mail has been sent to you with a link to retrieve your application.</p>
-        <a href="{{ URL_PREFIX }}/">Return to account selection</a>
-    </div>
+{% include "back-button.html" %}
+{{form.error_summary}}
+<div class="grid-row">
+    <h1 class="form-title heading-large">
+        Check your e-mail
+    </h1>
+    <p>An e-mail has been sent to you with a link to retrieve your application.</p>
+    <a href="{{ URL_PREFIX }}/">Return to account selection</a>
 </div>
 
 {% endblock %}
