@@ -206,7 +206,6 @@ def references_first_reference_address_select(request):
         postcode = first_reference_record.postcode
         addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
         form = ReferenceFirstReferenceAddressLookupForm(request.POST, id=application_id_local, choices=addresses)
-        form.remove_flag()
         if form.is_valid():
             selected_address_index = int(request.POST["address"])
             selected_address = address_helper.AddressHelper.get_posted_address(
