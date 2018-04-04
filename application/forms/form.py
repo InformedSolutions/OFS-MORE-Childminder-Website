@@ -65,11 +65,11 @@ class ContactEmailForm(ChildminderForms):
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
-            this_user = Application.objects.get(pk=self.application_id_local)
-            login_id = this_user.login_id.login_id
-            if UserDetails.objects.get(login_id=login_id).login_id != '':
-                self.fields['email_address'].initial = UserDetails.objects.get(login_id=login_id).email
-                self.pk = login_id
+            this_user = UserDetails.objects.get(application_id=self.application_id_local)
+            login_id = this_user.login_id
+            if this_user.login_id != '':
+                self.fields['email_address'].initial = this_user.email
+                self.pk = this_user.pk
                 self.field_list = ['email_address']
 
     def clean_email_address(self):
@@ -108,8 +108,8 @@ class ContactPhoneForm(ChildminderForms):
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
-            this_user = Application.objects.get(pk=self.application_id_local)
-            login_id = this_user.login_id.login_id
+            this_user = UserDetails.objects.get(application_id=self.application_id_local)
+            login_id = this_user.login_id
             self.fields['mobile_number'].initial = UserDetails.objects.get(login_id=login_id).mobile_number
             self.fields['add_phone_number'].initial = UserDetails.objects.get(login_id=login_id).add_phone_number
             self.pk = login_id
@@ -165,8 +165,8 @@ class QuestionForm(ChildminderForms):
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
-            this_user = Application.objects.get(pk=self.application_id_local)
-            login_id = this_user.login_id.login_id
+            this_user = UserDetails.objects.get(application_id=self.application_id_local)
+            login_id = this_user.login_id
             self.fields['security_question'].initial = UserDetails.objects.get(login_id=login_id).security_question
             self.fields['security_answer'].initial = UserDetails.objects.get(login_id=login_id).security_answer
             self.pk = login_id
