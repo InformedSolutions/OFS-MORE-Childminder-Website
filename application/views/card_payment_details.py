@@ -75,8 +75,7 @@ def card_payment_details(request):
 
                 application = Application.objects.get(pk=app_id)
                 application.date_submitted = datetime.datetime.today()
-                login_id = application.login_id.login_id
-                login_record = UserDetails.objects.get(pk=login_id)
+                login_record = UserDetails.objects.get(application_id=application)
                 personal_detail_id = ApplicantPersonalDetails.objects.get(
                     application_id=app_id).personal_detail_id
                 applicant_name_record = ApplicantName.objects.get(
