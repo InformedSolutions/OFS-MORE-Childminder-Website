@@ -23,4 +23,10 @@
     </div>
 </form>
 
+{% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
+    <div class="form group">
+        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+    </div>
+{% endif %}
+
 {% endblock %}

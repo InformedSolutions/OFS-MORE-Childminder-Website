@@ -2344,9 +2344,22 @@ input[type=number] {
   float: left;
 }
 
-.button-add-another, .button-save-and-exit {
+.button-secondary {
+  display: block !important;
   background-color: #eee;
   color: #000;
+}
+
+.button-add-another {
+  margin-top: 15px;
+}
+
+.button-save-and-exit {
+  margin-left: 0;
+  display: inline-block !important
+}
+
+.button-add-another, .button-save-and-exit {
   position: relative;
   display: -moz-inline-stack;
   display: inline-block;
@@ -2368,10 +2381,6 @@ input[type=number] {
   box-sizing: border-box;
   padding: 0.5263157895em 0.7894736842em 0.2631578947em 0.7894736842em;
   vertical-align: top;
-}
-
-.button-save-and-exit {
-  margin-left: 50px;
 }
 
 .task-group {
