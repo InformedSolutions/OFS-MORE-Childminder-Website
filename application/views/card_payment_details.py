@@ -101,7 +101,7 @@ def card_payment_details(request):
                     content_object=application,
                     user=None,
                     template='timeline_logger/application_action.txt',
-                    extra_data={'user_type': 'applicant', 'action': 'submitted'}
+                    extra_data={'user_type': 'applicant', 'action': 'submitted', 'entity': 'application'}
                 )
 
                 return HttpResponseRedirect(
