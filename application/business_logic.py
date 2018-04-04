@@ -18,7 +18,8 @@ from .models import (AdultInHome,
                      EYFS,
                      FirstAidTraining,
                      HealthDeclarationBooklet,
-                     Reference)
+                     Reference,
+                     UserDetails)
 
 
 def childcare_type_logic(application_id_local, form):
@@ -46,15 +47,16 @@ def childcare_type_logic(application_id_local, form):
 
 
 def login_contact_logic(application_id_local, form):
+
     """
     Business logic to create or update a User_Details record with e-mail address details
     :param application_id_local: A string object containing the current application ID
     :param form: A form object containing the data to be stored
     :return: a UserDetails object to be saved
     """
-    this_application = Application.objects.get(application_id=application_id_local)
+    this_application = UserDetails.objects.get(application_id=application_id_local)
     email_address = form.cleaned_data.get('email_address')
-    login_and_contact_details_record = this_application.login_id
+    login_and_contact_details_record = this_application
     login_and_contact_details_record.email = email_address
     return login_and_contact_details_record
 
@@ -66,13 +68,13 @@ def login_contact_logic_phone(application_id_local, form):
     :param form: A form object containing the data to be stored
     :return: a UserDetails object to be saved
     """
-    this_application = Application.objects.get(application_id=application_id_local)
+    this_application = UserDetails.objects.get(application_id=application_id_local)
     mobile_number = form.cleaned_data.get('mobile_number')
     add_phone_number = form.cleaned_data.get('add_phone_number')
-    login_and_contact_details_record = this_application.login_id
-    login_and_contact_details_record.mobile_number = mobile_number
-    login_and_contact_details_record.add_phone_number = add_phone_number
-    return login_and_contact_details_record
+    #login_and_contact_details_record = this_application.login_id
+    this_application.mobile_number = mobile_number
+    this_application.add_phone_number = add_phone_number
+    return this_application
 
 
 def personal_name_logic(app_id, form):

@@ -36,19 +36,8 @@ class TestChildcareTypeLogic(TestCase):
     def test_logic_to_update_record(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        Application.objects.create(
+        test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -67,6 +56,18 @@ class TestChildcareTypeLogic(TestCase):
             date_accepted=None,
             order_code=None
         )
+        user = UserDetails.objects.create(
+            login_id=(UUID(test_login_id)),
+            application_id=test_app,
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
+        )
+
         test_childcare_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         ChildcareType.objects.create(
             childcare_id=(UUID(test_childcare_id)),
@@ -95,19 +96,8 @@ class TestPersonalLogic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         ApplicantPersonalDetails.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        Application.objects.create(
+        test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -151,19 +141,8 @@ class TestPersonalLogic(TestCase):
         ApplicantPersonalDetails.objects.filter(application_id=test_application_id).delete()
         ApplicantName.objects.filter(personal_detail_id=test_personal_detail_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=test_login_id,
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        Application.objects.create(
-            application_id=test_application_id,
-            login_id=user,
+        test_app = Application.objects.create(
+            application_id=(UUID(test_application_id)),
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -182,6 +161,17 @@ class TestPersonalLogic(TestCase):
             date_accepted=None,
             order_code=None
         )
+        user = UserDetails.objects.create(
+		            application_id = test_app,
+					login_id=(UUID(test_login_id)),
+					email='',
+					mobile_number='',
+					add_phone_number='',
+					email_expiry_date=None,
+					sms_expiry_date=None,
+					magic_link_email='',
+					magic_link_sms=''
+				)
         ApplicantPersonalDetails.objects.create(
             personal_detail_id=test_personal_detail_id,
             application_id=Application.objects.get(pk=test_application_id),
@@ -218,19 +208,9 @@ class TestPersonalLogic(TestCase):
         ApplicantPersonalDetails.objects.filter(application_id=test_application_id).delete()
         ApplicantHomeAddress.objects.filter(personal_detail_id=test_personal_detail_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        Application.objects.create(
+
+        test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -248,6 +228,17 @@ class TestPersonalLogic(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = UserDetails.objects.create(
+            login_id=(UUID(test_login_id)),
+            application_id=test_app,
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         ApplicantPersonalDetails.objects.create(
             personal_detail_id=(UUID(test_personal_detail_id)),
@@ -283,19 +274,9 @@ class TestPersonalLogic(TestCase):
         ApplicantPersonalDetails.objects.filter(application_id=test_application_id).delete()
         ApplicantHomeAddress.objects.filter(personal_detail_id=test_personal_detail_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        Application.objects.create(
+
+        test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -313,6 +294,17 @@ class TestPersonalLogic(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = UserDetails.objects.create(
+            login_id=(UUID(test_login_id)),
+            application_id = test_app,
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         ApplicantPersonalDetails.objects.create(
             personal_detail_id=(UUID(test_personal_detail_id)),
@@ -350,19 +342,8 @@ class TestPersonalLogic(TestCase):
         ApplicantPersonalDetails.objects.filter(application_id=test_application_id).delete()
         ApplicantHomeAddress.objects.filter(personal_detail_id=test_personal_detail_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        Application.objects.create(
+        test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -381,6 +362,17 @@ class TestPersonalLogic(TestCase):
             date_accepted=None,
             order_code=None
         )
+        user = UserDetails.objects.create(
+		            application_id = test_app,
+					login_id=(UUID(test_login_id)),
+					email='',
+					mobile_number='',
+					add_phone_number='',
+					email_expiry_date=None,
+					sms_expiry_date=None,
+					magic_link_email='',
+					magic_link_sms=''
+				)
         ApplicantPersonalDetails.objects.create(
             personal_detail_id=(UUID(test_personal_detail_id)),
             application_id=Application.objects.get(application_id=test_application_id),
@@ -415,19 +407,8 @@ class TestPersonalLogic(TestCase):
         ApplicantPersonalDetails.objects.filter(application_id=test_application_id).delete()
         ApplicantHomeAddress.objects.filter(personal_detail_id=test_personal_detail_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        Application.objects.create(
+        test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -446,6 +427,17 @@ class TestPersonalLogic(TestCase):
             date_accepted=None,
             order_code=None
         )
+        user = UserDetails.objects.create(
+		            application_id = test_app,
+					login_id=(UUID(test_login_id)),
+					email='',
+					mobile_number='',
+					add_phone_number='',
+					email_expiry_date=None,
+					sms_expiry_date=None,
+					magic_link_email='',
+					magic_link_sms=''
+				)
         ApplicantPersonalDetails.objects.create(
             personal_detail_id=(UUID(test_personal_detail_id)),
             application_id=Application.objects.get(application_id=test_application_id),
@@ -511,19 +503,8 @@ class TestFirstAidTrainingLogic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         FirstAidTraining.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        Application.objects.create(
+        test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -542,6 +523,17 @@ class TestFirstAidTrainingLogic(TestCase):
             date_accepted=None,
             order_code=None
         )
+        user = UserDetails.objects.create(
+		            application_id = test_app,
+					login_id=(UUID(test_login_id)),
+					email='',
+					mobile_number='',
+					add_phone_number='',
+					email_expiry_date=None,
+					sms_expiry_date=None,
+					magic_link_email='',
+					magic_link_sms=''
+				)
         test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         FirstAidTraining.objects.create(
             first_aid_id=(UUID(test_first_aid_id)),
@@ -559,19 +551,8 @@ class TestFirstAidTrainingLogic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         FirstAidTraining.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        Application.objects.create(
+        test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -589,6 +570,17 @@ class TestFirstAidTrainingLogic(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = UserDetails.objects.create(
+            login_id=(UUID(test_login_id)),
+			application_id = test_app,
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         test_first_aid = FirstAidTraining.objects.create(
@@ -614,19 +606,8 @@ class TestFirstAidTrainingLogic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         FirstAidTraining.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        Application.objects.create(
+        test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -644,6 +625,17 @@ class TestFirstAidTrainingLogic(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = UserDetails.objects.create(
+            login_id=(UUID(test_login_id)),
+			application_id = test_app,
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         test_first_aid = FirstAidTraining.objects.create(
@@ -669,19 +661,8 @@ class TestFirstAidTrainingLogic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         FirstAidTraining.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        Application.objects.create(
+        test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -699,6 +680,17 @@ class TestFirstAidTrainingLogic(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = UserDetails.objects.create(
+            login_id=(UUID(test_login_id)),
+			application_id = test_app,
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         test_first_aid_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         test_first_aid = FirstAidTraining.objects.create(
@@ -737,19 +729,8 @@ class TestEYFSLogic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         EYFS.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        Application.objects.create(
+        test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -768,6 +749,17 @@ class TestEYFSLogic(TestCase):
             date_accepted=None,
             order_code=None
         )
+        user = UserDetails.objects.create(
+		            application_id = test_app,
+					login_id=(UUID(test_login_id)),
+					email='',
+					mobile_number='',
+					add_phone_number='',
+					email_expiry_date=None,
+					sms_expiry_date=None,
+					magic_link_email='',
+					magic_link_sms=''
+				)
         test_eyfs_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         EYFS.objects.create(
             eyfs_id=(UUID(test_eyfs_id)),
@@ -796,19 +788,8 @@ class TestDBSCheckLogic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         CriminalRecordCheck.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        Application.objects.create(
+        test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -827,6 +808,17 @@ class TestDBSCheckLogic(TestCase):
             date_accepted=None,
             order_code=None
         )
+        user = UserDetails.objects.create(
+		            application_id = test_app,
+					login_id=(UUID(test_login_id)),
+					email='',
+					mobile_number='',
+					add_phone_number='',
+					email_expiry_date=None,
+					sms_expiry_date=None,
+					magic_link_email='',
+					magic_link_sms=''
+				)
         test_criminal_record_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         CriminalRecordCheck.objects.create(
             criminal_record_id=(UUID(test_criminal_record_id)),
@@ -854,19 +846,8 @@ class TestHealthLogic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         HealthDeclarationBooklet.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        Application.objects.create(
+        test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -885,6 +866,17 @@ class TestHealthLogic(TestCase):
             date_accepted=None,
             order_code=None
         )
+        user = UserDetails.objects.create(
+		            application_id = test_app,
+					login_id=(UUID(test_login_id)),
+					email='',
+					mobile_number='',
+					add_phone_number='',
+					email_expiry_date=None,
+					sms_expiry_date=None,
+					magic_link_email='',
+					magic_link_sms=''
+				)
         test_hdb_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         HealthDeclarationBooklet.objects.create(
             hdb_id=(UUID(test_hdb_id)),
@@ -911,19 +903,8 @@ class TestReferencesLogic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         Reference.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
         application = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -941,6 +922,17 @@ class TestReferencesLogic(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = UserDetails.objects.create(
+            login_id=(UUID(test_login_id)),
+			application_id = application,
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         test_reference_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         Reference.objects.create(
@@ -981,19 +973,8 @@ class TestPeopleInYourHomeLogic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         AdultInHome.objects.filter(application_id=test_application_id, adult=1).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
         application = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -1011,6 +992,17 @@ class TestPeopleInYourHomeLogic(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = UserDetails.objects.create(
+            login_id=(UUID(test_login_id)),
+            application_id = application,
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         test_adult_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         AdultInHome.objects.create(
@@ -1036,19 +1028,8 @@ class TestPeopleInYourHomeLogic(TestCase):
         AdultInHome.objects.filter(application_id=test_application_id, adult=2).delete()
         AdultInHome.objects.filter(application_id=test_application_id, adult=3).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
         application = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -1066,6 +1047,17 @@ class TestPeopleInYourHomeLogic(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = UserDetails.objects.create(
+            login_id=(UUID(test_login_id)),
+			application_id = application,
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         test_adult_1_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         AdultInHome.objects.create(
@@ -1135,19 +1127,8 @@ class TestPeopleInYourHomeLogic(TestCase):
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
         ChildInHome.objects.filter(application_id=test_application_id, child=1).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
         application = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -1165,6 +1146,17 @@ class TestPeopleInYourHomeLogic(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = UserDetails.objects.create(
+            login_id=(UUID(test_login_id)),
+			application_id = application,
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         test_child_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         ChildInHome.objects.create(
@@ -1188,19 +1180,8 @@ class TestPeopleInYourHomeLogic(TestCase):
         ChildInHome.objects.filter(application_id=test_application_id, child=2).delete()
         ChildInHome.objects.filter(application_id=test_application_id, child=3).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
-        user = UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
         application = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -1218,6 +1199,17 @@ class TestPeopleInYourHomeLogic(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = UserDetails.objects.create(
+            login_id=(UUID(test_login_id)),
+			application_id = application,
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         test_child_1_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         ChildInHome.objects.create(

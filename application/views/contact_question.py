@@ -46,7 +46,7 @@ def contact_question(request):
             # If form is not empty
             if form.is_valid():
                 # Save security question and answer
-                acc = UserDetails.objects.get(login_id=application.login_id.login_id)
+                acc = UserDetails.objects.get(application_id=app_id)
                 security_answer = form.clean_security_answer()
                 security_question = form.clean_security_question()
                 acc.security_question = security_question

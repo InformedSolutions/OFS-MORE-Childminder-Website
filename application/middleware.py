@@ -10,7 +10,7 @@ from re import compile
 from django.conf import settings  # import the settings file
 from django.http import HttpResponseRedirect, HttpResponseServerError
 
-from .models import Application
+from .models import Application, UserDetails
 
 COOKIE_IDENTIFIER = '_ofs'
 
@@ -48,9 +48,10 @@ class CustomAuthenticationHandler(object):
         # If an application id is present fetch application from store
         if application_id is not None:
             application = Application.objects.get(pk=application_id)
+            account = UserDetails.objects.get(application_id=application)
             # Check the email address stored in the session matches that found on the application
             # and if not raise generic exception
-            if application.login_id.email != self.get_session_user(request):
+            if account.email != self.get_session_user(request):
                 raise Exception
         # If request has not been blocked at this point in the execution flow, allow
         # request to continue processing as normal
