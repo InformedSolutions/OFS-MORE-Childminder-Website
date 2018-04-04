@@ -20,5 +20,6 @@ staticfiles/*
 ### Dev files ###
 .settings/
 .idea/
+.vscode/
 .makerc
 .venv
