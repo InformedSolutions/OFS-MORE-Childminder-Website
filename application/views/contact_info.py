@@ -72,8 +72,9 @@ def contact_email(request):
             else:
 
                 # Create or update User_Details record
-                user_details_record = login_contact_logic(app_id, form)
-                user_details_record.save()
+                acc = UserDetails.objects.get(application_id=app_id)
+                acc = login_contact_logic(app_id, form)
+                acc.save()
                 application.date_updated = current_date
                 application.save()
                 reset_declaration(application)
@@ -81,8 +82,8 @@ def contact_email(request):
                     response = HttpResponseRedirect(reverse('Contact-Summary-View') + '?id=' + app_id)
                 else:
                     response = HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + app_id)
-                    # Create session and issue cookie to user
-                    CustomAuthenticationHandler.create_session(response, application.login_id.email)
+                    # Create session and issue cookie to useracc = UserDetails.objects.get
+                    CustomAuthenticationHandler.create_session(response, acc.email)
 
                 return response
         else:
@@ -169,8 +170,7 @@ def contact_summary(request):
 
         app_id = request.GET["id"]
         application = Application.objects.get(pk=app_id)
-        login_id = application.login_id.login_id
-        user_details = UserDetails.objects.get(login_id=login_id)
+        user_details = UserDetails.objects.get(application_id=application)
         email = user_details.email
         mobile_number = user_details.mobile_number
         add_phone_number = user_details.add_phone_number

@@ -22,10 +22,10 @@ def account_selection(request):
     :return: an HttpResponse object with the rendered account selection template
     """
     if request.method == 'POST':
-        user = UserDetails.objects.create()
+
         application = Application.objects.create(
             application_type='CHILDMINDER',
-            login_id=user,
+            #login_id=user,
             application_status='DRAFTING',
             cygnum_urn='',
             login_details_status='NOT_STARTED',
@@ -43,6 +43,7 @@ def account_selection(request):
             date_accepted=None,
             order_code=None
         )
+        user = UserDetails.objects.create(application_id=application)
 
         app_id = str(application.application_id)
 
