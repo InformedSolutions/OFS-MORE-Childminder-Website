@@ -55,7 +55,7 @@ class CreateTestNewApplicationSubmit(TestCase):
 
         self.assertEqual(r.status_code, 302)
         self.assertEqual(
-            UserDetails.objects.get(application=self.app_id).email, email
+            UserDetails.objects.get(application_id=self.app_id).email, email
         )
 
     def TestAppPhone(self):
@@ -71,7 +71,7 @@ class CreateTestNewApplicationSubmit(TestCase):
 
         self.assertEqual(r.status_code, 302)
         self.assertEqual(
-            UserDetails.objects.get(application=self.app_id).mobile_number, data['mobile_number']
+            UserDetails.objects.get(application_id=self.app_id).mobile_number, data['mobile_number']
         )
 
 
@@ -93,8 +93,8 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(reverse('Question-View'), data)
 
         self.assertEqual(r.status_code, 302)
-        self.assertEqual(UserDetails.objects.get(application=self.app_id).security_question, data['security_question'])
-        self.assertEqual(UserDetails.objects.get(application=self.app_id).security_answer, data['security_answer'])
+        self.assertEqual(UserDetails.objects.get(application_id=self.app_id).security_question, data['security_question'])
+        self.assertEqual(UserDetails.objects.get(application_id=self.app_id).security_answer, data['security_answer'])
 
     def TestTypeOfChildcareAgeGroups(self):
         """Type of childcare age groups"""

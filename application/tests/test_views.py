@@ -7,6 +7,8 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 import datetime
 
+from ..models import Application, UserDetails
+from uuid import UUID
 from django.conf import settings
 from django.test import Client
 from django.test import TestCase
@@ -151,19 +153,8 @@ class TypeOfChildcareTest(TestCase):
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        models.Application.objects.create(
+        test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -182,10 +173,20 @@ class TypeOfChildcareTest(TestCase):
             date_accepted=None,
             order_code=None
         )
+        user = UserDetails.objects.create(
+            application_id=test_app,
+            login_id=(UUID(test_login_id)),
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
+        )
         assert (models.Application.objects.get(pk=test_application_id).childcare_type_status != 'COMPLETED')
 
     def delete(self):
-
         models.Application.objects.get(pk='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         models.UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
@@ -243,19 +244,8 @@ class LoginAndContactDetailsTest(TestCase):
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        models.Application.objects.create(
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -274,6 +264,18 @@ class LoginAndContactDetailsTest(TestCase):
             date_accepted=None,
             order_code=None
         )
+        user = models.UserDetails.objects.create(
+            application_id=application,
+            login_id=(UUID(test_login_id)),
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
+        )
+
         assert (models.Application.objects.get(pk=test_application_id).login_details_status != 'COMPLETED')
 
     def delete(self):
@@ -419,19 +421,9 @@ class PersonalDetailsTest(TestCase):
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        models.Application.objects.create(
+
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -449,6 +441,17 @@ class PersonalDetailsTest(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = models.UserDetails.objects.create(
+            application_id = application,
+            login_id=(UUID(test_login_id)),
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         assert (models.Application.objects.get(pk=test_application_id).personal_details_status != 'COMPLETED')
 
@@ -535,19 +538,9 @@ class FirstAidTrainingTest(TestCase):
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        models.Application.objects.create(
+
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -565,6 +558,17 @@ class FirstAidTrainingTest(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = models.UserDetails.objects.create(
+            application_id=application,
+            login_id=(UUID(test_login_id)),
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         assert (models.Application.objects.get(pk=test_application_id).first_aid_training_status != 'COMPLETED')
 
@@ -615,19 +619,9 @@ class HealthTest(TestCase):
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        models.Application.objects.create(
+
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -645,6 +639,17 @@ class HealthTest(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = models.UserDetails.objects.create(
+            login_id=(UUID(test_login_id)),
+            application_id=application,
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         assert (models.Application.objects.get(pk=test_application_id).health_status != 'COMPLETED')
 
@@ -719,19 +724,9 @@ class EYFSTest(TestCase):
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        models.Application.objects.create(
+
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -749,6 +744,17 @@ class EYFSTest(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = models.UserDetails.objects.create(
+            login_id=(UUID(test_login_id)),
+            application_id=application,
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         assert (models.Application.objects.get(pk=test_application_id).eyfs_training_status != 'COMPLETED')
 
@@ -811,19 +817,10 @@ class DBSCheckTest(TestCase):
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        models.Application.objects.create(
+
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
+            
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -841,6 +838,17 @@ class DBSCheckTest(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = models.UserDetails.objects.create(
+            application_id=application,
+            login_id=(UUID(test_login_id)),
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         assert (models.Application.objects.get(pk=test_application_id).criminal_record_check_status != 'COMPLETED')
 
@@ -999,19 +1007,9 @@ class ReferencesTest(TestCase):
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        models.Application.objects.create(
+
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -1029,6 +1027,17 @@ class ReferencesTest(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = models.UserDetails.objects.create(
+            application_id=application,
+            login_id=(UUID(test_login_id)),
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         assert (models.Application.objects.get(pk=test_application_id).references_status != 'COMPLETED')
 
@@ -1151,19 +1160,9 @@ class OtherPeopleTest(TestCase):
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        models.Application.objects.create(
+
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -1181,6 +1180,17 @@ class OtherPeopleTest(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = models.UserDetails.objects.create(
+            application_id=application,
+            login_id=(UUID(test_login_id)),
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         assert (models.Application.objects.get(pk=test_application_id).people_in_home_status != 'COMPLETED')
 
@@ -1230,23 +1240,12 @@ class DeclarationTest(TestCase):
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
-        models.Application.objects.create(
+        application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
-            login_details_status='COMPLETED',
+            login_details_status='NOT_STARTED',
             personal_details_status='COMPLETED',
             childcare_type_status='COMPLETED',
             first_aid_training_status='COMPLETED',
@@ -1260,6 +1259,17 @@ class DeclarationTest(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = models.UserDetails.objects.create(
+            login_id=(UUID(test_login_id)),
+            application_id=application,
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         assert (models.Application.objects.get(pk=test_application_id).declarations_status != 'COMPLETED')
 
@@ -1418,19 +1428,8 @@ class TaskStatusTest(TestCase):
     def test_status_update_with_tasks_not_started(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
         application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -1449,6 +1448,18 @@ class TaskStatusTest(TestCase):
             date_accepted=None,
             order_code=None
         )
+        user = models.UserDetails.objects.create(
+            application_id = application,
+            login_id=(UUID(test_login_id)),
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
+        )
+
         application_status_context = dict({
             'application_id': test_application_id,
             'login_details_status': application.login_details_status,
@@ -1471,19 +1482,9 @@ class TaskStatusTest(TestCase):
     def test_status_update_with_tasks_in_progress(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
+
         application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -1501,6 +1502,17 @@ class TaskStatusTest(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = models.UserDetails.objects.create(
+            application_id=application,
+            login_id=(UUID(test_login_id)),
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         application_status_context = dict({
             'application_id': test_application_id,
@@ -1524,19 +1536,9 @@ class TaskStatusTest(TestCase):
     def test_status_update_with_tasks_completed_except_declarations(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
+
         application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -1554,6 +1556,17 @@ class TaskStatusTest(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = models.UserDetails.objects.create(
+            application_id = application,
+            login_id=(UUID(test_login_id)),
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         application_status_context = dict({
             'application_id': test_application_id,
@@ -1578,19 +1591,9 @@ class TaskStatusTest(TestCase):
     def test_status_update_with_tasks_completed_with_declarations_to_do(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
+
         application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -1608,6 +1611,17 @@ class TaskStatusTest(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = models.UserDetails.objects.create(
+            application_id=application,
+            login_id=(UUID(test_login_id)),
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         application_status_context = dict({
             'application_id': test_application_id,
@@ -1629,19 +1643,9 @@ class TaskStatusTest(TestCase):
     def test_status_update_with_tasks_completed_with_declarations_in_progress(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
+
         application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -1659,6 +1663,17 @@ class TaskStatusTest(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = models.UserDetails.objects.create(
+            application_id=application,
+            login_id=(UUID(test_login_id)),
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         application_status_context = dict({
             'application_id': test_application_id,
@@ -1680,19 +1695,9 @@ class TaskStatusTest(TestCase):
     def test_status_update_with_tasks_completed_with_declarations_complete(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        user = models.UserDetails.objects.create(
-            login_id=(UUID(test_login_id)),
-            email='',
-            mobile_number='',
-            add_phone_number='',
-            email_expiry_date=None,
-            sms_expiry_date=None,
-            magic_link_email='',
-            magic_link_sms=''
-        )
+
         application = models.Application.objects.create(
             application_id=(UUID(test_application_id)),
-            login_id=user,
             application_type='CHILDMINDER',
             application_status='DRAFTING',
             cygnum_urn='',
@@ -1710,6 +1715,17 @@ class TaskStatusTest(TestCase):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
             order_code=None
+        )
+        user = models.UserDetails.objects.create(
+            application_id=application,
+            login_id=(UUID(test_login_id)),
+            email='',
+            mobile_number='',
+            add_phone_number='',
+            email_expiry_date=None,
+            sms_expiry_date=None,
+            magic_link_email='',
+            magic_link_sms=''
         )
         application_status_context = dict({
             'application_id': test_application_id,
