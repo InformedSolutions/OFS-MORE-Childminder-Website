@@ -183,8 +183,8 @@ def sms_verification(request):
         magic_link_text(phone, g).status_code
         return HttpResponseRedirect(settings.URL_PREFIX + '/verify-phone/?id=' + id)
     form = VerifyPhoneForm(id=id)
-    login_id = acc.login_id
-    application = Application.objects.get(login_id=login_id)
+    app = acc.application_id
+    application = Application.objects.get(application_id=app.pk)
     if request.method == 'POST':
         form = VerifyPhoneForm(request.POST, id=id)
         code = request.POST['magic_link_sms']
@@ -192,10 +192,10 @@ def sms_verification(request):
             exp = acc.sms_expiry_date
             if form.is_valid() and not has_expired(exp):
                 if code == acc.magic_link_sms:
-                    response = login_redirect_helper.redirect_by_status(application)
+                    response = login_redirect_helper.redirect_by_status(app)
 
                     # Create session issue custom cookie to user
-                    CustomAuthenticationHandler.create_session(response, application.login_id.email)
+                    CustomAuthenticationHandler.create_session(response, acc.email)
 
                     # Forward back onto application
                     return response

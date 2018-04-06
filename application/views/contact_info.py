@@ -161,8 +161,7 @@ def contact_summary(request):
 
         app_id = request.GET["id"]
         application = Application.objects.get(pk=app_id)
-        login_id = application.login_id.login_id
-        user_details = UserDetails.objects.get(login_id=login_id)
+        user_details = UserDetails.objects.get(application_id=app_id)
         email = user_details.email
         mobile_number = user_details.mobile_number
         add_phone_number = user_details.add_phone_number
