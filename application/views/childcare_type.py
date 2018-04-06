@@ -157,11 +157,11 @@ def type_of_childcare_register(request):
             return render(request, 'childcare-register-EYR.html', variables)
 
         elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is False):
-            return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + app_id)
+            return HttpResponseRedirect(reverse('CR-Cancel-Application') + '?id=' + app_id)
         elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
-            return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + app_id)
+            return HttpResponseRedirect(reverse('CR-Cancel-Application') + '?id=' + app_id)
         elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
-            return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + app_id)
+            return HttpResponseRedirect(reverse('CR-Cancel-Application') + '?id=' + app_id)
 
         ###
 

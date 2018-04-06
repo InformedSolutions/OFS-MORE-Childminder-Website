@@ -10,7 +10,8 @@ from django.test import Client, TestCase
 
 from timeline_logger.models import TimelineLog
 
-from application.models import Application, UserDetails, ApplicantName, ApplicantPersonalDetails, ApplicantHomeAddress, ChildcareType
+from application.models import Application, UserDetails, ApplicantName, ApplicantPersonalDetails, ApplicantHomeAddress, \
+    ChildcareType
 
 
 class CreateTestNewApplicationSubmit(TestCase):
@@ -74,12 +75,11 @@ class CreateTestNewApplicationSubmit(TestCase):
             UserDetails.objects.get(application_id=self.app_id).mobile_number, data['mobile_number']
         )
 
-
     def TestContactSummaryView(self):
-        self.client.post(reverse('Contact-Summary-View'), {'id':self.app_id})
+        self.client.post(reverse('Contact-Summary-View'), {'id': self.app_id})
 
         self.assertEqual(
-           Application.objects.get(pk=self.app_id).login_details_status, "COMPLETED")
+            Application.objects.get(pk=self.app_id).login_details_status, "COMPLETED")
 
     def TestAppSecurityQuestion(self):
         """Submit security question"""
@@ -93,7 +93,8 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(reverse('Question-View'), data)
 
         self.assertEqual(r.status_code, 302)
-        self.assertEqual(UserDetails.objects.get(application_id=self.app_id).security_question, data['security_question'])
+        self.assertEqual(UserDetails.objects.get(application_id=self.app_id).security_question,
+                         data['security_question'])
         self.assertEqual(UserDetails.objects.get(application_id=self.app_id).security_answer, data['security_answer'])
 
     def TestTypeOfChildcareAgeGroups(self):
@@ -125,10 +126,10 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).overnight_care, True)
 
     def TestTypeOfChildcareSummaryView(self):
-        r = self.client.post(reverse('Type-Of-Childcare-Summary-View'), {'id':self.app_id})
+        r = self.client.post(reverse('Type-Of-Childcare-Summary-View'), {'id': self.app_id})
 
         self.assertEqual(
-           Application.objects.get(pk=self.app_id).childcare_type_status, "COMPLETED")
+            Application.objects.get(pk=self.app_id).childcare_type_status, "COMPLETED")
 
     def AppTestTypeOfChildcareRegister(self):
         """Type of childcare register"""
@@ -160,7 +161,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(ApplicantName.objects.get(personal_detail_id=p_id).middle_names, data['middle_names'])
         self.assertEqual(ApplicantName.objects.get(personal_detail_id=p_id).last_name, data['last_name'])
 
-
     def TestAppPersonalDetailsDOB(self):
         """Submit DOB"""
         data = {
@@ -173,11 +173,14 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(reverse('Personal-Details-DOB-View'), data)
         self.assertEqual(r.status_code, 302)
 
-        p_id = ApplicantPersonalDetails.objects.get(application_id=Application.objects.get(pk=self.app_id)).personal_detail_id
-        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_day, data['date_of_birth_0'])
-        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_month, data['date_of_birth_1'])
-        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_year, data['date_of_birth_2'])
-
+        p_id = ApplicantPersonalDetails.objects.get(
+            application_id=Application.objects.get(pk=self.app_id)).personal_detail_id
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_day,
+                         data['date_of_birth_0'])
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_month,
+                         data['date_of_birth_1'])
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_year,
+                         data['date_of_birth_2'])
 
     def TestAppPersonalDetailsHomeAddress(self):
         """Submit Personal Home address"""
@@ -194,18 +197,20 @@ class CreateTestNewApplicationSubmit(TestCase):
         r = self.client.post(reverse('Personal-Details-Home-Address-Manual-View'), data)
         self.assertEqual(r.status_code, 302)
 
-        p_id = ApplicantPersonalDetails.objects.get(application_id=Application.objects.get(pk=self.app_id)).personal_detail_id
-        self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).street_line1, data['street_name_and_number'])
-        self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).street_line2, data['street_name_and_number2'])
+        p_id = ApplicantPersonalDetails.objects.get(
+            application_id=Application.objects.get(pk=self.app_id)).personal_detail_id
+        self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).street_line1,
+                         data['street_name_and_number'])
+        self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).street_line2,
+                         data['street_name_and_number2'])
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).town, data['town'])
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).county, data['county'])
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).postcode, data['postcode'])
 
-
     def TestAppPersonalDetailsHomeAddressDetails(self):
         """Submit Personal Home address"""
 
-        data =  {
+        data = {
             'id': self.app_id,
             'location_of_care': True,
         }
@@ -214,7 +219,6 @@ class CreateTestNewApplicationSubmit(TestCase):
             reverse('Personal-Details-Location-Of-Care-View'), data
         )
         self.assertEqual(r.status_code, 302)
-
 
     def TestAppPersonalDetailsSummaryView(self):
         """Personal details summary"""
@@ -316,9 +320,9 @@ class CreateTestNewApplicationSubmit(TestCase):
             reverse('References-First-Reference-View'),
             {
                 'id': self.app_id,
-                'first_name':'Roman',
+                'first_name': 'Roman',
                 'last_name': 'Gorodeckij',
-                'relationship':'My client',
+                'relationship': 'My client',
                 'time_known_0': 5,
                 'time_known_1': 5,
             }
@@ -364,9 +368,9 @@ class CreateTestNewApplicationSubmit(TestCase):
             reverse('References-Second-Reference-View'),
             {
                 'id': self.app_id,
-                'first_name':'Sherlock',
+                'first_name': 'Sherlock',
                 'last_name': 'Holmes',
-                'relationship':'My client',
+                'relationship': 'My client',
                 'time_known_0': 5,
                 'time_known_1': 8,
             }
@@ -430,7 +434,6 @@ class CreateTestNewApplicationSubmit(TestCase):
             }
         )
         self.assertEqual(r.status_code, 302)
-
 
     def TestAppPaymentMethod(self):
         """Choose payment method"""
@@ -551,7 +554,7 @@ class CreateTestNewApplicationSubmit(TestCase):
 
         # Update the field
 
-        data={
+        data = {
             'id': self.app_id,
             'first_name': "Sherlock",
             'middle_names': "Scott",
@@ -566,7 +569,7 @@ class CreateTestNewApplicationSubmit(TestCase):
                 object_id=self.app_id,
                 extra_data__contains={
                     "application_status": "FURTHER_INFORMATION"
-            })
+                })
         )
 
     def _set_application_status(self, status):
@@ -579,3 +582,19 @@ class CreateTestNewApplicationSubmit(TestCase):
         app = Application.objects.get(pk=self.app_id)
         app.application_status = status
         app.save()
+
+    def test_cancel_application(self):
+        r = self.client.get(reverse('Cancel-Application'),
+                            {
+                                'id': self.app_id
+                            })
+        self.assertTrue(Application.objects.filter(pk=self.app_id).exists())
+        r = self.client.get(reverse('Cancel-Application-Confirmation'))
+        self.assertEqual(r.status_code, 200)
+
+        data = {
+            'id': self.app_id,
+        }
+
+        r = self.client.post(reverse('Cancel-Application'), data)
+        self.assertFalse(Application.objects.filter(pk=self.app_id).exists())

@@ -1,0 +1,26 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Cancel Application{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Cancel Application
+        </h1>
+        <p>By continuing, you will be completely deleting all details from the system.</p>
+        <p>You will not be able to retrieve any details of this application.</p>
+        <p>Please confirm that you would like to continue.</p>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Cancel Application">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+</form>
+
+{% endblock %}
