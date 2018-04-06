@@ -50,13 +50,12 @@ def contact_email(request):
         app_id = request.POST["id"]
         form = ContactEmailForm(request.POST, id=app_id)
         form.remove_flag()
-        application = Application.get_id(app_id=app_id)
 
         if form.is_valid():
 
             # Send login e-mail link if applicant has previously applied
             email = form.cleaned_data['email_address']
-            if UserDetails.objects.filter(email=email).exists() and ('/existing-application/' in request.META.get('HTTP_REFERER') or request.META.get('HTTP_REFERER') == None):
+            if UserDetails.objects.filter(email=email).exists():
                 acc = UserDetails.objects.get(email=email)
                 domain = request.META.get('HTTP_REFERER', "")
                 domain = domain[:-54]
@@ -72,9 +71,9 @@ def contact_email(request):
             else:
 
                 # Create or update User_Details record
-                acc = UserDetails.objects.get(application_id=app_id)
-                acc = login_contact_logic(app_id, form)
-                acc.save()
+                application = Application.objects.get(pk=app_id)
+                user_details_record = login_contact_logic(app_id, form)
+                user_details_record.save()
                 application.date_updated = current_date
                 application.save()
                 reset_declaration(application)
@@ -82,18 +81,10 @@ def contact_email(request):
                     response = HttpResponseRedirect(reverse('Contact-Summary-View') + '?id=' + app_id)
                 else:
                     response = HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + app_id)
-                    # Create session and issue cookie to useracc = UserDetails.objects.get
-                    CustomAuthenticationHandler.create_session(response, acc.email)
+                    # Create session and issue cookie to user
+                    CustomAuthenticationHandler.create_session(response, user_details_record.email)
 
                 return response
-        else:
-
-            variables = {
-                'form': form,
-                'application_id': app_id,
-                'login_details_status': application.login_details_status,
-                'childcare_type_status': application.childcare_type_status
-            }
 
             return render(request, 'contact-email.html', variables)
 
@@ -170,7 +161,7 @@ def contact_summary(request):
 
         app_id = request.GET["id"]
         application = Application.objects.get(pk=app_id)
-        user_details = UserDetails.objects.get(application_id=application)
+        user_details = UserDetails.objects.get(application_id=app_id)
         email = user_details.email
         mobile_number = user_details.mobile_number
         add_phone_number = user_details.add_phone_number
