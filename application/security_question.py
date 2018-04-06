@@ -24,8 +24,7 @@ def load(request):
         application_id_local = request.GET['id']
         form = VerifySecurityQuestionForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
-        login_id = application.login_id.login_id
-        acc = UserDetails.objects.get(login_id=login_id)
+        acc = UserDetails.objects.get(application_id=application)
         security_question = acc.security_question
         return render(request, 'security_question.html',
                       {'form': form, 'application_id': application_id_local, 'question': security_question})
@@ -33,8 +32,7 @@ def load(request):
         application_id_local = request.POST['id']
         form = VerifySecurityQuestionForm(request.POST, id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
-        login_id = application.login_id.login_id
-        acc = UserDetails.objects.get(login_id=login_id)
+        acc = UserDetails.objects.get(application_id=application)
         security_question = acc.security_question
         if form.is_valid():
             if acc.security_answer == form.clean_security_answer():
@@ -42,7 +40,7 @@ def load(request):
                 response = login_redirect_helper.redirect_by_status(application)
 
                 # Create session issue custom cookie to user
-                CustomAuthenticationHandler.create_session(response, application.login_id.email)
+                CustomAuthenticationHandler.create_session(response, acc.email)
 
                 # Forward back onto application
                 return response
