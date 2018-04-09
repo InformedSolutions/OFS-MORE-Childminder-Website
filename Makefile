@@ -19,9 +19,11 @@ compose-%:
 
 # run tests
 test:
+	-rm -r selenium/*.png
 	python manage.py test --settings=$(PROJECT_SETTINGS)
 
 test-selenium:
+	-rm -r selenium/*.png
 	python manage.py test application.tests.test_selenium --settings=$(PROJECT_SETTINGS)
 
 # install depedencies (and virtualenv for linux)
