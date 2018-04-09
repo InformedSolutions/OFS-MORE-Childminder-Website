@@ -1,4 +1,3 @@
-SHELL := /bin/bash
 
 # Include Makefile settings
 -include .makerc
@@ -16,6 +15,7 @@ compose-shell:
 
 compose-%:
 	docker-compose run --rm --name $(APP) $(APP) make $*
+	-docker kill $(shell docker ps -q)
 
 # run tests
 test:
