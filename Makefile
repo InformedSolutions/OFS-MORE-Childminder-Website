@@ -64,12 +64,13 @@ flush:
 	python manage.py sqlflush --settings=${PROJECT_SETTINGS}
 
 rebase:
-	git stash
+	git stash --include-untracked
 	git checkout develop
 	git pull --rebase origin develop
 	if [ $$(git status --porcelain | wc -l) -lt 1 ]; then \
 		git checkout -;\
 		git rebase develop;\
+		git stash apply;\
 	fi;
 
 
