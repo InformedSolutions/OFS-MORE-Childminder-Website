@@ -589,12 +589,14 @@ class CreateTestNewApplicationSubmit(TestCase):
                                 'id': self.app_id
                             })
         self.assertTrue(Application.objects.filter(pk=self.app_id).exists())
+
         r = self.client.get(reverse('Cancel-Application-Confirmation'))
         self.assertEqual(r.status_code, 200)
 
+    def test_delete_application(self):
         data = {
             'id': self.app_id,
         }
-
+        self.assertTrue(Application.objects.filter(pk=self.app_id).exists())
         r = self.client.post(reverse('Cancel-Application'), data)
         self.assertFalse(Application.objects.filter(pk=self.app_id).exists())
