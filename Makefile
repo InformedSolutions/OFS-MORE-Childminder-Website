@@ -15,11 +15,14 @@ compose-shell:
 	docker-compose run $(APP) /bin/bash
 
 compose-%:
-	docker-compose run $(APP) make $*
+	docker-compose run --rm --name $(APP) $(APP) make $*
 
 # run tests
 test:
 	python manage.py test --settings=$(PROJECT_SETTINGS)
+
+test-selenium:
+	python manage.py test application.tests.test_selenium --settings=$(PROJECT_SETTINGS)
 
 # install depedencies (and virtualenv for linux)
 install:
