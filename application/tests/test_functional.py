@@ -11,7 +11,7 @@ from django.test import Client, TestCase
 from timeline_logger.models import TimelineLog
 
 from application.models import Application, UserDetails, ApplicantName, ApplicantPersonalDetails, ApplicantHomeAddress, \
-    ChildcareType
+    ChildcareType, Reference, AdultInHome, Arc, ChildInHome, CriminalRecordCheck, EYFS
 
 
 class CreateTestNewApplicationSubmit(TestCase):
@@ -599,4 +599,16 @@ class CreateTestNewApplicationSubmit(TestCase):
         }
         self.assertTrue(Application.objects.filter(pk=self.app_id).exists())
         r = self.client.post(reverse('Cancel-Application'), data)
-        self.assertFalse(Application.objects.filter(pk=self.app_id).exists())
+        self.assertFalse(Application.objects.filter(application_id=self.app_id).exists())
+        self.assertFalse(UserDetails.objects.filter(application_id=self.app_id).exists())
+        self.assertFalse(ApplicantHomeAddress.objects.filter(application_id=self.app_id).exists())
+        self.assertFalse(ApplicantName.objects.filter(application_id=self.app_id).exists())
+        self.assertFalse(ApplicantPersonalDetails.objects.filter(application_id=self.app_id).exists())
+        self.assertFalse(ChildcareType.objects.filter(application_id=self.app_id).exists())
+        self.assertFalse(Reference.objects.filter(application_id=self.app_id).exists())
+        self.assertFalse(AdultInHome.objects.filter(application_id=self.app_id).exists())
+        self.assertFalse(ChildInHome.objects.filter(application_id=self.app_id).exists())
+        self.assertFalse(CriminalRecordCheck.objects.filter(application_id=self.app_id).exists())
+        self.assertFalse(EYFS.objects.filter(application_id=self.app_id).exists())
+
+
