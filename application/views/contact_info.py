@@ -48,6 +48,7 @@ def contact_email(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
+        application = Application.objects.get(pk=app_id)
         form = ContactEmailForm(request.POST, id=app_id)
         form.remove_flag()
 
@@ -87,6 +88,15 @@ def contact_email(request):
                 return response
 
             return render(request, 'contact-email.html', variables)
+
+        variables = {
+            'form': form,
+            'application_id': app_id,
+            'login_details_status': application.login_details_status,
+            'childcare_type_status': application.childcare_type_status
+        }
+
+        return render(request, 'contact-email.html', variables)
 
 
 """
