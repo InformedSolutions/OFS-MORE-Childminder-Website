@@ -13,6 +13,7 @@ from django.core.urlresolvers import reverse
 
 from application.summary_page_data import childcare_type_name_dict, childcare_type_link_dict
 from application.table_util import Table, create_tables, submit_link_setter
+from application.utils import can_cancel
 from .. import status
 from ..business_logic import reset_declaration, childcare_type_logic
 from ..forms import TypeOfChildcareGuidanceForm, TypeOfChildcareAgeGroupsForm, TypeOfChildcareRegisterForm, \
@@ -289,8 +290,10 @@ def local_authority_links(request):
     if request.method == 'GET':
 
         app_id = request.GET["id"]
+        application = Application.objects.get(pk=app_id)
         variables = {
-            'application_id': app_id
+            'application_id': app_id,
+            'can_cancel': can_cancel(application)
         }
         return render(request, 'local-authority.html', variables)
 
@@ -301,7 +304,7 @@ def local_authority_links(request):
         if application.childcare_type_status != 'COMPLETED':
             status.update(app_id, 'childcare_type_status', 'COMPLETED')
         if 'Cancel application' in request.POST.keys():
-            return render(request, 'cancellation-guidance.html', )
+            return HttpResponseRedirect(reverse('CR-Cancel-Application')+ '?id=' + app_id)
         else:
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + app_id)
 

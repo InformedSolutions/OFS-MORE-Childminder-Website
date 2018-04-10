@@ -17,6 +17,9 @@ from application.models import (
 
 
 # noinspection PyTypeChecker
+from application.utils import can_cancel
+
+
 def task_list(request):
     """
     Method returning the template for the task-list (with current task status) for an applicant's application;
@@ -68,6 +71,9 @@ def task_list(request):
 
         ##
 
+
+
+
         """
         Variables which are passed to the template
         """
@@ -78,6 +84,7 @@ def task_list(request):
             'registers': registers,
             'arc_comment': arc_comment,
             'fee': fee,
+            'can_cancel':can_cancel(application),
             'tasks': [
                 {
                     'name': 'account_details',  # This is CSS class (Not recommended to store it here)

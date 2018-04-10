@@ -83,6 +83,11 @@
         <div class="form-group">
             <input type="hidden" value="{{ id }}" name="id"/>
             <a href="{% url 'Application-Saved-View' %}?id={{ id }}" class="button-secondary button-save-and-exit">Save and exit</a>
+            <br>
+            <br>
+            {% if can_cancel %}
+            <a href="{% url 'Cancel-Application' %}?id={{ id }}">Cancel application</a>
+            {% endif %}
         </div>
     </div>
 </div>

@@ -1,0 +1,29 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Childcare Register{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Childcare Register
+        </h1>
+        <p>You want to join the Childcare Register.</p>
+        <p>This will let you look after children aged 5 or older.</p>
+        <p>This test service can't help you to apply for that register yet.</p>
+        <p> We will delete all the information you have given us. </p>
+        <br>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Cancel Application" alt="Cancel Application">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+
+</form>
+
+{% endblock %}

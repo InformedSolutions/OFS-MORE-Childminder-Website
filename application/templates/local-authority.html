@@ -16,10 +16,10 @@
         <p>The user is will be referred to their local authority <a href="">here</a>.</p>
 
         {% csrf_token %}
-
+        {% if can_cancel %}
         <input type="hidden" value="{{application_id}}" name="id"/>
         <input type="submit" class="button-save-and-exit" style="margin-left: 0px;" name="Cancel application" value="Cancel application">
-
+        {% endif %}
         <br>
         <br>
 
