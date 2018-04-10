@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Cancel Application{% endblock %}
+{% block page_title %}Childcare Register{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -11,24 +11,19 @@
     <!-- Content -->
     <div class="form-group">
         <h1 class="form-title heading-large">
-            Childcare Register (compulsory part)
+            Childcare Register
         </h1>
-        <p>You want to join the compulsory part of the Childcare Register.</p>
-        <p>This will let you look after children aged 5 to 7.</p>
-        <p>This service can't help you to apply for that register yet.</p>
-        <p> We will: </p>
-        <div style="margin-left: 20px;">
-        <ul style="list-style-type:disc">
-            <li>delete all the information you have given us</li>
-            <li> direct you to the service where you can apply</li>
-        </ul>
-        </div>
+        <p>You want to join the Childcare Register.</p>
+        <p>This will let you look after children aged 5 or older.</p>
+        <p>This test service can't help you to apply for that register yet.</p>
+        <p> We will delete all the information you have given us. </p>
         <br>
         {{form.as_div}}
         {% csrf_token %}
-        <input type="submit" class="button" value="Cancel Application">
+        <input type="submit" class="button" value="Cancel Application" alt="Cancel Application">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
+
 </form>
 
 {% endblock %}
