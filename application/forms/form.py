@@ -499,8 +499,11 @@ class PersonalDetailsDOBForm(ChildminderForms):
             raise forms.ValidationError('You must be 18 or older to be a childminder')
         date_today_diff = today.year - applicant_dob.year - (
                 (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
+        if len(str(birth_year)) < 4:
+            raise forms.ValidationError('Please enter the whole year (4 digits) TBC WITH CONTENT')
         if date_today_diff < 0:
             raise forms.ValidationError('Please check the year')
+
         return birth_day, birth_month, birth_year
 
 
@@ -890,7 +893,7 @@ class FirstAidTrainingDetailsForm(ChildminderForms):
         'required': 'Please enter the title of your course'})
     title_of_training_course = forms.CharField(label='Title of training course', error_messages={
         'required': 'Please enter the title of the course'})
-    course_date = CustomSplitDateField(label='Date you completed course', help_text='For example, 31 03 2016',
+    course_date = CustomSplitDateFieldDOB(label='Date you completed course', help_text='For example, 31 03 2016',
                                        error_messages={
                                            'required': 'Please enter the full date, including the day, month and year'})
 
@@ -1943,7 +1946,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
     first_name = forms.CharField(label='First name', required=True)
     middle_names = forms.CharField(label='Middle names (if they have any)', required=False)
     last_name = forms.CharField(label='Last name', required=True)
-    date_of_birth = SplitDateField(label='Date of birth', help_text='For example, 31 03 1980')
+    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980')
     relationship = forms.CharField(label='How are they related to you?', help_text='For instance, husband or daughter',
                                    required=True)
 
@@ -2146,7 +2149,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
     first_name = forms.CharField(label='First name', required=True)
     middle_names = forms.CharField(label='Middle names (if they have any)', required=False)
     last_name = forms.CharField(label='Last name', required=True)
-    date_of_birth = SplitDateField(label='Date of birth', help_text='For example, 31 03 1980')
+    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980')
     relationship = forms.CharField(label='How are they related to you?', help_text='For instance, son or daughter',
                                    required=True)
 
