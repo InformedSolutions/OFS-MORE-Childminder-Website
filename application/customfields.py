@@ -430,15 +430,8 @@ class CustomYearFieldDOB(forms.IntegerField):
             # 2-digit dates are a minimum of 10 years ago by default
             era_boundary = self.current_year - self.century - 10
         self.era_boundary = era_boundary
-        bounds_error = gettext('Please check the year') % {
-            'current_year': self.current_year
-        }
         options = {
-            'min_value': 1900,
-            'max_value': self.current_year,
             'error_messages': {
-                'min_value': bounds_error,
-                'max_value': bounds_error,
                 'invalid': gettext('Enter year as a number'),
             }
         }
@@ -447,11 +440,6 @@ class CustomYearFieldDOB(forms.IntegerField):
 
     def clean(self, value):
         value = self.to_python(value)
-        if isinstance(value, int) and value < 100:
-            if value > self.era_boundary:
-                value += self.century - 100
-            else:
-                value += self.century
         return super().clean(value)
 
 
