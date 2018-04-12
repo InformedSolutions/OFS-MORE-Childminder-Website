@@ -475,7 +475,9 @@ class CreateTestNewApplicationSubmit(TestCase):
             }
         )
         print(Application.objects.get(application_id=self.app_id).order_code)
+        print(r)
         self.assertEqual(r.status_code, 200)
+
 
     def TestNewApplicationSubmit(self):
         """Submit whole application"""
