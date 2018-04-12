@@ -47,6 +47,7 @@ def payment_confirmation(request):
     if request.method == 'GET':
         application_id_local = request.GET['id']
         order_code = request.GET['orderCode']
+        print(order_code)
         # If the payment has been successfully processed
         if payment.check_payment(order_code) == 200:
             variables = {
