@@ -126,14 +126,12 @@ class YearField(forms.IntegerField):
             # 2-digit dates are a minimum of 10 years ago by default
             era_boundary = self.current_year - self.century - 10
         self.era_boundary = era_boundary
-        bounds_error = gettext('TBC') % {
-            'current_year': self.current_year
-        }
+        bounds_error = gettext('Check the expiry date or use a new card')
         options = {
             'min_value': self.current_year,
             'error_messages': {
                 'min_value': bounds_error,
-                'invalid': gettext('TBC'),
+                'invalid': gettext('Check the expiry date or use a new card'),
             }
         }
         options.update(kwargs)
@@ -147,11 +145,12 @@ class YearField(forms.IntegerField):
         :return:This returns the cleaned value object (after cleaning specified above
         """
         value = self.to_python(value)
+        if len(str(value)) > 2:
+            raise forms.ValidationError('Check the expiry date or use a new card')
         if isinstance(value, int) and value < 100:
-            if value > self.era_boundary:
-                value += self.century - 100
-            else:
                 value += self.century
+
+        print(value)
         return super().clean(value)
 
 
@@ -163,7 +162,7 @@ class ExpirySplitDateField(forms.MultiValueField):
     widget = ExpirySplitDateWidget
     hidden_widget = SplitHiddenDateWidget
     default_error_messages = {
-        'invalid': _('TBC')
+        'invalid': _('Check the expiry date or use a new card')
     }
 
     def __init__(self, *args, **kwargs):
@@ -173,14 +172,14 @@ class ExpirySplitDateField(forms.MultiValueField):
         :param args: Standard arguments parameter
         :param kwargs: Standard key word arguments parameter
         """
-        month_bounds_error = gettext('Month should be between 1 and 12')
+        month_bounds_error = gettext('Check the expiry date or use a new card')
 
         # Field definition
         self.fields = [
             forms.IntegerField(min_value=1, max_value=12, error_messages={
                 'min_value': month_bounds_error,
                 'max_value': month_bounds_error,
-                'invalid': gettext('TBC')
+                'invalid': gettext('Check the expiry date or use a new card')
             }),
             # Uses a clean year field defined above
             YearField(),
@@ -440,6 +439,8 @@ class CustomYearFieldDOB(forms.IntegerField):
 
     def clean(self, value):
         value = self.to_python(value)
+        if len(str(value)) > 4:
+            raise forms.ValidationError('Please enter the whole year (4 digits)')
         return super().clean(value)
 
 
