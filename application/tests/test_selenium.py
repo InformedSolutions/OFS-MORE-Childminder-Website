@@ -24,7 +24,8 @@ selenium_task_executor = None
 @override_settings(ALLOWED_HOSTS=['*'])
 class ApplyAsAChildminder(LiveServerTestCase):
     port = 8000
-    host = '0.0.0.0'
+    host = '127.0.0.1'
+    current_year = datetime.now().year
 
     def setUp(self):
         global selenium_task_executor
@@ -256,14 +257,12 @@ class ApplyAsAChildminder(LiveServerTestCase):
         try:
             self.create_standard_eyfs_application()
 
-            current_year = datetime.now().year
-
             selenium_task_executor.complete_people_in_your_home_task(
                 False,
                 None, None, None,
                 None, None, None, None, None,
                 True, faker.first_name(), faker.first_name(), faker.last_name_female(),
-                random.randint(1, 28), random.randint(1, 12), random.randint(current_year - 15, current_year - 1),
+                random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 15, self.current_year - 1),
                 'Child'
             )
 
@@ -309,57 +308,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         global selenium_task_executor
 
         try:
-            self.create_standard_eyfs_application()
-
-            # Below DOB means they are an adult so do not fire validation triggers
-            selenium_task_executor.complete_personal_details(
-                faker.first_name(), faker.first_name(), faker.last_name_female(),
-                random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-                False
-            )
-
-            # Check task status marked as Done
-            self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='personal_details']/td/a/strong").text)
-
-            # When completing first aid training task ensure that certification is within last 3 years
-            current_year = datetime.now().year
-
-            selenium_task_executor.complete_first_aid_training(
-                faker.company(),
-                random.randint(1, 28), random.randint(1, 12), random.randint(current_year - 2, current_year - 1),
-                False
-            )
-
-            self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='first_aid']/td/a/strong").text)
-
-            selenium_task_executor.complete_health_declaration_task()
-
-            self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='health']/td/a/strong").text)
-
-            test_dbs = ''.join(str(random.randint(1, 9)) for _ in range(12))
-            selenium_task_executor.complete_dbs_task(test_dbs, True)
-
-            self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='dbs']/td/a/strong").text)
-
-            selenium_task_executor.complete_people_in_your_home_task(
-                True,
-                faker.first_name(), faker.first_name(), faker.last_name_female(),
-                random.randint(1, 29), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
-                True, faker.first_name(), faker.first_name(), faker.last_name_female(),
-                random.randint(1, 28), random.randint(1, 12), random.randint(current_year - 15, current_year - 1),
-                'Child'
-            )
-
-            self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/strong").text)
-
-            selenium_task_executor.complete_references_task(
-                faker.first_name(), faker.last_name_female(), 'Friend', random.randint(1, 12), random.randint(1, 10),
-                selenium_task_executor.generate_random_mobile_number(), faker.email(),
-                faker.first_name(), faker.last_name_female(), 'Friend', random.randint(1, 12), random.randint(1, 10),
-                selenium_task_executor.generate_random_mobile_number(), faker.email()
-            )
-
-            self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='references']/td/a/strong").text)
+            self.complete_full_question_set()
 
             selenium_task_executor.complete_review()
             selenium_task_executor.complete_declaration()
@@ -367,7 +316,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
             # Card number must be 5454... due to this being a Worldpay API test value
             test_cvc = ''.join(str(random.randint(0, 9)) for _ in range(3))
             selenium_task_executor.complete_payment(True, 'Visa', '5454545454545454', str(random.randint(1, 12)),
-                                                    str(random.randint(current_year + 1, current_year + 5)),
+                                                    str(random.randint(self.current_year + 1, self.current_year + 5)),
                                                     faker.name(),
                                                     test_cvc)
         except Exception as e:
@@ -435,11 +384,9 @@ class ApplyAsAChildminder(LiveServerTestCase):
             self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='personal_details']/td/a/strong").text)
 
             # When completing first aid training task ensure that certification is within last 3 years
-            current_year = datetime.now().year
-
             selenium_task_executor.complete_first_aid_training(
                 faker.company(),
-                random.randint(1, 28), random.randint(1, 12), random.randint(current_year - 2, current_year - 1),
+                random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 2, self.current_year - 1),
                 False
             )
 
@@ -459,7 +406,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
                 faker.first_name(), faker.first_name(), faker.last_name_female(),
                 random.randint(1, 29), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
                 True, faker.first_name(), faker.first_name(), faker.last_name_female(),
-                random.randint(1, 28), random.randint(1, 12), random.randint(current_year - 15, current_year - 1),
+                random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 15, self.current_year - 1),
                 'Child'
             )
 
@@ -480,7 +427,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
             # Card number must be 5454... due to this being a Worldpay API test value
             test_cvc = ''.join(str(random.randint(0, 9)) for _ in range(3))
             selenium_task_executor.complete_payment(True, 'Visa', '5454545454545454', str(random.randint(1, 12)),
-                                                    str(random.randint(current_year + 1, current_year + 5)),
+                                                    str(random.randint(self.current_year + 1, self.current_year + 5)),
                                                     faker.name(),
                                                     test_cvc)
         except Exception as e:
@@ -587,7 +534,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
             self.capture_screenshot()
             raise e
 
-    def test_can_cancel_application(self):
+    def test_can_save_and_exit(self):
         self.assert_can_save_and_exit()
 
     def assert_can_save_and_exit(self):
@@ -604,6 +551,46 @@ class ApplyAsAChildminder(LiveServerTestCase):
         except Exception as e:
             self.capture_screenshot()
             raise e
+
+    def test_task_summaries_display_on_completion(self):
+        self.assert_task_summaries_display_on_completion()
+
+    def assert_task_summaries_display_on_completion(self):
+        """
+        Tests that once a task is marked as Done, clicking that task from the task list shows the summary page
+        """
+        global selenium_task_executor
+
+        self.complete_full_question_set()
+        selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='children']/td/a/span").click()
+        self.assertEqual("Check your answers: Type of childcare",
+                         selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/h1").text)
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='personal_details']/td/a/span").click()
+        self.assertEqual("Check your answers: your personal details",
+                         selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/h1").text)
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='first_aid']/td/a/span").click()
+        self.assertEqual("Check your answers: first aid training",
+                         selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/h1").text)
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='health']/td/a/span").click()
+        self.assertEqual("Check your answers: your health",
+                         selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/h1").text)
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='dbs']/td/a/span").click()
+        self.assertEqual("Check your answers: criminal record (DBS) check",
+                         selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/h1").text)
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
+        self.assertEqual("Check your answers: people in your home",
+                         selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/h1").text)
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='references']/td/a/span").click()
+        self.assertEqual("Check your answers: references",
+                         selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/h1").text)
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
 
     def create_standard_eyfs_application(self):
         """
@@ -627,6 +614,72 @@ class ApplyAsAChildminder(LiveServerTestCase):
             self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='children']/td/a/strong").text)
 
             return test_email
+        except Exception as e:
+            self.capture_screenshot()
+            raise e
+
+    def complete_full_question_set(self):
+        """
+        Helper method for completing all questions in an application
+        """
+        global selenium_task_executor
+
+        try:
+            self.create_standard_eyfs_application()
+
+            # Below DOB means they are an adult so do not fire validation triggers
+            selenium_task_executor.complete_personal_details(
+                faker.first_name(), faker.first_name(), faker.last_name_female(),
+                random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
+                False
+            )
+
+            # Check task status marked as Done
+            self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath(
+                "//tr[@id='personal_details']/td/a/strong").text)
+
+            # When completing first aid training task ensure that certification is within last 3 years
+            selenium_task_executor.complete_first_aid_training(
+                faker.company(),
+                random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 2, self.current_year - 1),
+                False
+            )
+
+            self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath(
+                "//tr[@id='first_aid']/td/a/strong").text)
+
+            selenium_task_executor.complete_health_declaration_task()
+
+            self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath(
+                "//tr[@id='health']/td/a/strong").text)
+
+            test_dbs = ''.join(str(random.randint(1, 9)) for _ in range(12))
+            selenium_task_executor.complete_dbs_task(test_dbs, True)
+
+            self.assertEqual("Done",
+                             selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='dbs']/td/a/strong").text)
+
+            selenium_task_executor.complete_people_in_your_home_task(
+                True,
+                faker.first_name(), faker.first_name(), faker.last_name_female(),
+                random.randint(1, 29), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
+                True, faker.first_name(), faker.first_name(), faker.last_name_female(),
+                random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 15, self.current_year - 1),
+                'Child'
+            )
+
+            self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath(
+                "//tr[@id='other_people']/td/a/strong").text)
+
+            selenium_task_executor.complete_references_task(
+                faker.first_name(), faker.last_name_female(), 'Friend', random.randint(1, 12), random.randint(1, 10),
+                selenium_task_executor.generate_random_mobile_number(), faker.email(),
+                faker.first_name(), faker.last_name_female(), 'Friend', random.randint(1, 12), random.randint(1, 10),
+                selenium_task_executor.generate_random_mobile_number(), faker.email()
+            )
+
+            self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath(
+                "//tr[@id='references']/td/a/strong").text)
         except Exception as e:
             self.capture_screenshot()
             raise e

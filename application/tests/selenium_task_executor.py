@@ -466,14 +466,6 @@ class SeleniumTaskExecutor:
         driver.find_element_by_id("id_change_declare").click()
         driver.find_element_by_xpath("//input[@value='Confirm and pay your fee']").click()
 
-    @staticmethod
-    def generate_random_mobile_number():
-        """
-        Generates a random UK mobile number for testing purposes
-        :return: A random UK mobile phone number
-        """
-        return '0779' + ''.join(str(random.randint(0, 9)) for _ in range(7))
-
     def select_test_address(self):
         """
         Reusable method for selecting a test address
@@ -488,3 +480,12 @@ class SeleniumTaskExecutor:
         driver.find_element_by_id("id_address").click()
         Select(driver.find_element_by_id("id_address")).select_by_visible_text(
             "INFORMED SOLUTIONS LTD, THE OLD BANK, OLD MARKET PLACE, ALTRINCHAM, WA14 4PA")
+
+    @staticmethod
+    def generate_random_mobile_number():
+        """
+        Generates a random UK mobile number for testing purposes
+        :return: A random UK mobile phone number
+        """
+        return '0779' + ''.join(str(random.randint(0, 9)) for _ in range(7))
+
