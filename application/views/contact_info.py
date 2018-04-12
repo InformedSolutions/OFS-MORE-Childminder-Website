@@ -32,7 +32,7 @@ def contact_email(request):
 
     if request.method == 'GET':
         app_id = request.GET["id"]
-        form = ContactEmailForm(id=app_id)
+        form = ContactEmailForm()
         form.check_flag()
         application = Application.objects.get(pk=app_id)
 

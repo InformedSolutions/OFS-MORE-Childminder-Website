@@ -4,6 +4,13 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 @author: Informed Solutions
 """
+import json
+
+import requests
+from django.conf import settings
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.urls import reverse
 
 from .models import Application, Reference, CriminalRecordCheck, EYFS, HealthDeclarationBooklet, ChildInHome, \
     ChildcareType, FirstAidTraining, ApplicantPersonalDetails, ApplicantName, ApplicantHomeAddress, AdultInHome
@@ -46,6 +53,44 @@ def can_cancel(application):
 
     return can_cancel
 
+
+
+def test_notify():
+    if test_notify_settings and test_notify_connection:
+        return True
+    else:
+        return HttpResponseRedirect(reverse())
+def test_notify_settings():
+    url = settings.NOTIFY_URL
+    if 'url' in locals():
+        return True
+    else:
+        return False
+
+
+def test_notify_connection():
+    # Test Sending Email
+    header = {'content-type': 'application/json'}
+    notification_request = {
+        'email': 'a@a.com',
+        'personalisation': {
+            'link': ''
+        },
+        'reference': 'string',
+        'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
+    }
+    r = requests.post(settings.NOTIFY_URL + '/api/v1/notifications/email/',
+                      json.dumps(notification_request),
+                      headers=header)
+
+    if r.status_code == 201:
+        return True
+    else:
+        return False
+
+
+def service_down(request):
+    return render(request, 'service-down.html')
 
 def date_formatter(day, month, year):
     """

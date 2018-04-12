@@ -1,0 +1,16 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Error{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    Service Down
+</h1>
+
+<p>The page you requested could not be found.</p>
+
+{% endblock %}

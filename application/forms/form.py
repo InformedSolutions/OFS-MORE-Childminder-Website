@@ -10,7 +10,6 @@ import re
 from datetime import date
 from django import forms
 from django.conf import settings
-from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect, NumberInput
 from govuk_forms.fields import SplitDateField
 
@@ -29,7 +28,7 @@ from application.models import (AdultInHome,
                                 FirstAidTraining,
                                 HealthDeclarationBooklet,
                                 Reference,
-                                UserDetails, ArcComments)
+                                UserDetails)
 from application.forms_helper import full_stop_stripper
 from application.utils import date_formatter
 
@@ -50,26 +49,7 @@ class ContactEmailForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
-
     email_address = forms.EmailField()
-
-    def __init__(self, *args, **kwargs):
-        """
-        Method to configure the initialisation of the Your login and contact details: email form
-        :param args: arguments passed to the form
-        :param kwargs: keyword arguments passed to the form, e.g. application ID
-        """
-        self.application_id_local = kwargs.pop('id')
-        super(ContactEmailForm, self).__init__(*args, **kwargs)
-        full_stop_stripper(self)
-        # If information was previously entered, display it on the form
-        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
-            this_user = UserDetails.objects.get(application_id=self.application_id_local)
-            login_id = this_user.login_id
-            if this_user.login_id != '':
-                self.fields['email_address'].initial = this_user.email
-                self.pk = this_user.pk
-                self.field_list = ['email_address']
 
     def clean_email_address(self):
         """
