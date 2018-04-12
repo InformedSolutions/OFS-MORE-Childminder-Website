@@ -63,6 +63,12 @@ def card_payment_details(request):
             expiry_month = request.POST["expiry_date_0"]
             expiry_year = request.POST["expiry_date_1"]
 
+            print("Card number: " + card_number)
+            print("Cardholders name: " + cardholders_name)
+            print("Card security code: " + card_security_code)
+            print("Expiry month: " + expiry_month)
+            print("Expiry year: " + expiry_year)
+
             # Make payment
             payment_response = payment.make_payment(
                 3500, cardholders_name, card_number, card_security_code,
