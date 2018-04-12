@@ -474,7 +474,6 @@ class CreateTestNewApplicationSubmit(TestCase):
                 'orderCode': Application.objects.get(application_id=self.app_id).order_code
             }
         )
-        print(r.META)
         print(Application.objects.get(application_id=self.app_id).order_code)
         self.assertEqual(r.status_code, 200)
 
