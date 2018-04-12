@@ -15,7 +15,7 @@ from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, Radio
 from govuk_forms.fields import SplitDateField
 
 from application.customfields import TimeKnownField, SelectDateWidget, ExpirySplitDateField, CustomSplitDateFieldDOB, \
-    CustomSplitDateField
+    CustomSplitDateField, ExpirySplitDateWidget
 from application.forms.childminder import ChildminderForms
 from application.models import (AdultInHome,
                                 ApplicantHomeAddress,
@@ -31,8 +31,7 @@ from application.models import (AdultInHome,
                                 Reference,
                                 UserDetails, ArcComments)
 from application.forms_helper import full_stop_stripper
-
-
+from application.utils import date_formatter
 
 
 class AccountForm(ChildminderForms):
@@ -476,11 +475,14 @@ class PersonalDetailsDOBForm(ChildminderForms):
         super(PersonalDetailsDOBForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         # If information was previously entered, display it on the form        
-        if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
+        if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).exists():
             personal_details_record = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local)
-            self.fields['date_of_birth'].initial = [personal_details_record.birth_day,
-                                                    personal_details_record.birth_month,
-                                                    personal_details_record.birth_year]
+
+            birth_day, birth_month, birth_year = date_formatter(personal_details_record.birth_day,
+                                                                personal_details_record.birth_month,
+                                                                personal_details_record.birth_year)
+
+            self.fields['date_of_birth'].initial = [birth_day, birth_month, birth_year]
             self.pk = personal_details_record.personal_detail_id
             self.field_list = ['date_of_birth']
 
@@ -492,6 +494,7 @@ class PersonalDetailsDOBForm(ChildminderForms):
         birth_day = self.cleaned_data['date_of_birth'].day
         birth_month = self.cleaned_data['date_of_birth'].month
         birth_year = self.cleaned_data['date_of_birth'].year
+        print(birth_day, birth_month, birth_year)
         applicant_dob = date(birth_year, birth_month, birth_day)
         today = date.today()
         age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
@@ -500,7 +503,7 @@ class PersonalDetailsDOBForm(ChildminderForms):
         date_today_diff = today.year - applicant_dob.year - (
                 (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
         if len(str(birth_year)) < 4:
-            raise forms.ValidationError('Please enter the whole year (4 digits) TBC WITH CONTENT')
+            raise forms.ValidationError('Please enter the whole year (4 digits)')
         if date_today_diff < 0:
             raise forms.ValidationError('Please check the year')
 
@@ -909,11 +912,14 @@ class FirstAidTrainingDetailsForm(ChildminderForms):
         # If information was previously entered, display it on the form        
         if FirstAidTraining.objects.filter(application_id=self.application_id_local).count() > 0:
             first_aid_record = FirstAidTraining.objects.get(application_id=self.application_id_local)
+
+            course_day, course_month, course_year = date_formatter(first_aid_record.course_day,
+                                                                   first_aid_record.course_month,
+                                                                   first_aid_record.course_year)
+
             self.fields['first_aid_training_organisation'].initial = first_aid_record.training_organisation
             self.fields['title_of_training_course'].initial = first_aid_record.course_title
-            self.fields['course_date'].initial = [first_aid_record.course_day,
-                                                  first_aid_record.course_month,
-                                                  first_aid_record.course_year]
+            self.fields['course_date'].initial = [course_day, course_month, course_year]
             self.pk = first_aid_record.first_aid_id
             self.field_list = ['first_aid_training_organisation', 'title_of_training_course', 'course_date']
 
@@ -951,6 +957,8 @@ class FirstAidTrainingDetailsForm(ChildminderForms):
                 (today.month, today.day) < (course_date.month, course_date.day))
         if date_today_diff < 0:
             raise forms.ValidationError('Please enter a past date')
+        if len(str(course_year)) < 4:
+            raise forms.ValidationError('Please enter the whole year (4 digits)')
         return course_day, course_month, course_year
 
 
@@ -1963,12 +1971,15 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         # If information was previously entered, display it on the form
         if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).count() > 0:
             adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
+
+            birth_day, birth_month, birth_year = date_formatter(adult_record.birth_day,
+                                                                adult_record.birth_month,
+                                                                adult_record.birth_year)
+
             self.fields['first_name'].initial = adult_record.first_name
             self.fields['middle_names'].initial = adult_record.middle_names
             self.fields['last_name'].initial = adult_record.last_name
-            self.fields['date_of_birth'].initial = [adult_record.birth_day,
-                                                    adult_record.birth_month,
-                                                    adult_record.birth_year]
+            self.fields['date_of_birth'].initial = [birth_day, birth_month, birth_year]
             self.fields['relationship'].initial = adult_record.relationship
             self.pk = adult_record.adult_id
             self.field_list = ['first_name', 'middle_names', 'last_name', 'date_of_birth', 'relationship']
@@ -2023,6 +2034,8 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
         if age < 16:
             raise forms.ValidationError('TBC')
+        if len(str(birth_year)) < 4:
+            raise forms.ValidationError('Please enter the whole year (4 digits)')
         return birth_day, birth_month, birth_year
 
 
@@ -2166,12 +2179,15 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
         # If information was previously entered, display it on the form
         if ChildInHome.objects.filter(application_id=self.application_id_local, child=self.child).count() > 0:
             child_record = ChildInHome.objects.get(application_id=self.application_id_local, child=self.child)
+
+            birth_day, birth_month, birth_year = date_formatter(child_record.birth_day,
+                                                                child_record.birth_month,
+                                                                child_record.birth_year)
+
             self.fields['first_name'].initial = child_record.first_name
             self.fields['middle_names'].initial = child_record.middle_names
             self.fields['last_name'].initial = child_record.last_name
-            self.fields['date_of_birth'].initial = [child_record.birth_day,
-                                                    child_record.birth_month,
-                                                    child_record.birth_year]
+            self.fields['date_of_birth'].initial = [birth_day, birth_month, birth_year]
             self.fields['relationship'].initial = child_record.relationship
             self.pk = child_record.child_id
             self.field_list = ['first_name', 'middle_names', 'last_name', 'date_of_birth', 'relationship']
@@ -2226,6 +2242,8 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
         age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
         if age >= 16:
             raise forms.ValidationError('TBC')
+        if len(str(birth_year)) < 4:
+            raise forms.ValidationError('Please enter the whole year (4 digits)')
         return birth_day, birth_month, birth_year
 
 
@@ -2405,7 +2423,7 @@ class PaymentDetailsForm(ChildminderForms):
                                   error_messages={'required': 'Please select the type of card'})
     card_number = forms.CharField(label='Card number', required=True,
                                   error_messages={'required': 'Please enter the number on your card'})
-    expiry_date = ExpirySplitDateField(label='Expiry date', required=True, widget=SelectDateWidget,
+    expiry_date = ExpirySplitDateField(label='Expiry date', required=True, widget=ExpirySplitDateWidget,
                                        error_messages={'required': 'Please enter the expiry date on the card'})
     cardholders_name = forms.CharField(label="Cardholder's name", required=True,
                                        error_messages={'required': 'Please enter the name of the cardholder'})
@@ -2460,6 +2478,7 @@ class PaymentDetailsForm(ChildminderForms):
         :return: expiry date
         """
         expiry_date = self.cleaned_data['expiry_date']
+        print(expiry_date)
         year = expiry_date[0]
         month = expiry_date[1]
         today_month = date.today().month
