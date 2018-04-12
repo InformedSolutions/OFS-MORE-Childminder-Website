@@ -61,7 +61,7 @@ def card_payment_details(request):
             cardholders_name = request.POST["cardholders_name"]
             card_security_code = str(request.POST["card_security_code"])
             expiry_month = request.POST["expiry_date_0"]
-            expiry_year = int("20" + str(request.POST["expiry_date_1"]))
+            expiry_year = '20' + request.POST["expiry_date_1"]
 
             print("Card number: " + card_number)
             print("Cardholders name: " + cardholders_name)
