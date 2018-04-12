@@ -295,7 +295,7 @@ def local_authority_links(request):
             'application_id': app_id,
             'can_cancel': can_cancel(application)
         }
-        return render(request, 'local-authority.html', variables)
+        return HttpResponseRedirect(reverse('CR-Cancel-Application') + '?id=' + app_id)
 
     if request.method == 'POST':
 
