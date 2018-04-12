@@ -24,7 +24,7 @@ selenium_task_executor = None
 @override_settings(ALLOWED_HOSTS=['*'])
 class ApplyAsAChildminder(LiveServerTestCase):
     port = 8000
-    host = '127.0.0.1'
+    host = '0.0.0.0'
     current_year = datetime.now().year
 
     def setUp(self):
