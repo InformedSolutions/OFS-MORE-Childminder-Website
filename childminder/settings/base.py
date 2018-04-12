@@ -25,6 +25,15 @@ EMAIL_EXPIRY = 1
 # Visa Validation
 VISA_VALIDATION = False
 
+# Base URL of notify gateway
+NOTIFY_URL = os.environ.get('APP_NOTIFY_URL')
+
+# Base URL of payment gateway
+PAYMENT_URL = os.environ.get('APP_PAYMENT_URL')
+
+# Base URL of addressing-service gateway
+ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL')
+
 # INSTALLED DJANGO APPLICATIONS
 
 BUILTIN_APPS = [

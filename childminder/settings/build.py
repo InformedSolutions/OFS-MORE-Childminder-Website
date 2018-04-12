@@ -7,16 +7,6 @@ PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
 INTERNAL_IPS = "127.0.0.1"
 
-# Base URL of notify gateway
-NOTIFY_URL = "http://" + os.environ.get('APP_NOTIFY_URL') + "/notify-gateway"
-
-# Base URL of payment gateway
-PAYMENT_URL = "http://" + os.environ.get('APP_PAYMENT_URL') + "/payment-gateway"
-
-# Base URL of arc-service gateway
-ADDRESSING_URL = "http://" + os.environ.get('APP_ADDRESSING_URL') + "/addressing-service"
-
-
 # Visa Validation
 VISA_VALIDATION = False
 
