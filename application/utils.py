@@ -45,3 +45,19 @@ def can_cancel(application):
         can_cancel = False
 
     return can_cancel
+
+
+def date_formatter(day, month, year):
+    """
+
+    :param day: The day of the date to be formatted (should be integer on arrival)
+    :param month: The month of the date to be formatted (should be integer on arrival)
+    :param year: The year of the date to be formatted (should be integer on arrival)
+    :return: The day, month, and year all formatted as strings with formatting specified in [CCN3-784]
+    """
+
+    output_day = str(day).zfill(2)
+    output_month = str(month).zfill(2)
+    output_year = str(year)
+
+    return output_day, output_month, output_year
