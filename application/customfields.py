@@ -150,7 +150,6 @@ class YearField(forms.IntegerField):
         if isinstance(value, int) and value < 100:
                 value += self.century
 
-        print(value)
         return super().clean(value)
 
 

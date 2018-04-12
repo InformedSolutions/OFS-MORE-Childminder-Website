@@ -494,7 +494,6 @@ class PersonalDetailsDOBForm(ChildminderForms):
         birth_day = self.cleaned_data['date_of_birth'].day
         birth_month = self.cleaned_data['date_of_birth'].month
         birth_year = self.cleaned_data['date_of_birth'].year
-        print(birth_day, birth_month, birth_year)
         applicant_dob = date(birth_year, birth_month, birth_day)
         today = date.today()
         age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
@@ -2478,7 +2477,6 @@ class PaymentDetailsForm(ChildminderForms):
         :return: expiry date
         """
         expiry_date = self.cleaned_data['expiry_date']
-        print(expiry_date)
         year = expiry_date[0]
         month = expiry_date[1]
         today_month = date.today().month
