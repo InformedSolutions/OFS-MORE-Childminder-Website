@@ -150,9 +150,7 @@ def validate_magic_link(request, id):
         app = Application.objects.get(application_id = app_id)
         exp = acc.email_expiry_date
         if not has_expired(exp) and len(id) > 0:
-            print('outside')
             if len(acc.mobile_number) == 0:
-                print('inside')
                 response = HttpResponseRedirect(reverse('Contact-Phone-View')+'?id='+str(app_id))
                 CustomAuthenticationHandler.create_session(response, acc.email)
                 return response

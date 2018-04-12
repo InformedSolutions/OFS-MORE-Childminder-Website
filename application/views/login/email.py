@@ -5,6 +5,7 @@ and contact details: phone number page when successfully completed; business log
 is applied to either create or update the associated User_Details record;
 the page redirects `the applicant to the login page if they have previously applied
 """
+
 import time
 from django.utils import timezone
 from django.core.urlresolvers import reverse
@@ -13,16 +14,16 @@ from django.shortcuts import render
 from timeline_logger.models import TimelineLog
 
 from application import magic_link
+from ...utils import test_notify
 from ...forms import ContactEmailForm
 from ...models import UserDetails, Application
 
 
 def check_email(request):
-    return render(request,'email-sent.html')
+    return render(request, 'email-sent.html')
 
 
 def new_email(request):
-
     if request.method == 'GET':
         variables = {
             'form': ContactEmailForm()
@@ -55,6 +56,8 @@ def email_page(request, page):
         form = ContactEmailForm(request.POST)
 
         if form.is_valid():
+            if not test_notify():
+                return HttpResponseRedirect(reverse('Service-Down'))
 
             # Send login e-mail link if applicant has previously applied
             email = form.cleaned_data['email_address']
@@ -71,8 +74,8 @@ def email_page(request, page):
             elif page == 'existing':
                 return HttpResponseRedirect(reverse('Existing-Email-Sent'))
 
-        # If the form has validation errors
-        return render(request, 'contact-email.html', {'form':form})
+            # If the form has validation errors
+            return render(request, 'contact-email.html', {'form': form})
 
 
 def send_magic_link(request, email):

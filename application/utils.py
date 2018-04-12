@@ -56,10 +56,11 @@ def can_cancel(application):
 
 
 def test_notify():
-    if test_notify_settings and test_notify_connection:
+    if test_notify_settings() and test_notify_connection():
         return True
     else:
-        return HttpResponseRedirect(reverse())
+        return False
+
 def test_notify_settings():
     url = settings.NOTIFY_URL
     if 'url' in locals():
@@ -69,23 +70,26 @@ def test_notify_settings():
 
 
 def test_notify_connection():
-    # Test Sending Email
-    header = {'content-type': 'application/json'}
-    notification_request = {
-        'email': 'a@a.com',
-        'personalisation': {
-            'link': ''
-        },
-        'reference': 'string',
-        'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
-    }
-    r = requests.post(settings.NOTIFY_URL + '/api/v1/notifications/email/',
-                      json.dumps(notification_request),
-                      headers=header)
+    try:
+        # Test Sending Email
+        header = {'content-type': 'application/json'}
+        req = requests.Session()
+        notification_request = {
+            'email': 'a@a.com',
+            'personalisation': {
+                'link': ''
+            },
+            'reference': 'string',
+            'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
+        }
+        r = req.post(settings.NOTIFY_URL + '/api/v1/notifications/email/',
+                          json.dumps(notification_request),
+                          headers=header, timeout=5)
 
-    if r.status_code == 201:
-        return True
-    else:
+        if r.status_code == 201:
+            return True
+    except Exception as ex:
+        print(ex)
         return False
 
 
