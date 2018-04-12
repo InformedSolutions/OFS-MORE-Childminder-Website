@@ -9,6 +9,6 @@ django-timeline-logger==1.0
 django-google-analytics-app==4.2.0
 django-settings-export==1.2.1
 django-debug-toolbar
-selenium
+selenium==3.11.0
 faker
 
