@@ -16,6 +16,7 @@ import traceback
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.urls import reverse
 
 from . import login_redirect_helper
 from .middleware import CustomAuthenticationHandler
@@ -145,8 +146,17 @@ def validate_magic_link(request, id):
     """
     try:
         acc = UserDetails.objects.get(magic_link_email=id)
+        app_id = acc.application_id.pk
+        app = Application.objects.get(application_id = app_id)
         exp = acc.email_expiry_date
         if not has_expired(exp) and len(id) > 0:
+            print('outside')
+            if len(acc.mobile_number) == 0:
+                print('inside')
+                response = HttpResponseRedirect(reverse('Contact-Phone-View')+'?id='+str(app_id))
+                CustomAuthenticationHandler.create_session(response, acc.email)
+                return response
+
             acc.email_expiry_date = 0
             phone = acc.mobile_number
             g = generate_random(5, 'code')

@@ -126,10 +126,10 @@ urlpatterns = [
     url(r'^cancel-application/confirmation/$', views.cancel_app_confirmation, name='Cancel-Application-Confirmation'),
     url(r'^childcare-register/cancel-application/$', views.cr_cancel_app, name='CR-Cancel-Application'),
     url(r'^childcare-register/application-cancelled/$', views.cr_cancel_app_confirmation, name='CR-Cancel-Application-Confirmation'),
-    url(r'^new_application/$', views.login.new_email, name='New-Email'),
-    url(r'^new_application/check-email/$', views.login.check_email, name='New-Email-Sent'),
-    url(r'^sign_in/$', views.login.existing_email, name='Existing-Email'),
-    url(r'^sign_in/check-email/$', views.login.check_email, name='Existing-Email-Sent'),
+    url(r'^new-application/$', views.login.new_email, name='New-Email'),
+    url(r'^new-application/check-email/$', views.login.check_email, name='New-Email-Sent'),
+    url(r'^sign-in/$', views.login.existing_email, name='Existing-Email'),
+    url(r'^sign-in/check-email/$', views.login.check_email, name='Existing-Email-Sent'),
     url(r'^service-unavailable/$', utils.service_down, name='Service-Down'),
 
 ]

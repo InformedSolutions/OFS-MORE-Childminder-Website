@@ -5,13 +5,16 @@ and contact details: phone number page when successfully completed; business log
 is applied to either create or update the associated User_Details record;
 the page redirects `the applicant to the login page if they have previously applied
 """
-
+import time
+from django.utils import timezone
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, request
 from django.shortcuts import render
+from timeline_logger.models import TimelineLog
 
+from application import magic_link
 from ...forms import ContactEmailForm
-from ...models import UserDetails
+from ...models import UserDetails, Application
 
 
 def check_email(request):
@@ -56,11 +59,14 @@ def email_page(request, page):
             # Send login e-mail link if applicant has previously applied
             email = form.cleaned_data['email_address']
             if UserDetails.objects.filter(email=email).exists():
-                # Send Magic Link Email
+                send_magic_link(request, email)
                 return HttpResponseRedirect(reverse('Existing-Email-Sent'))
             elif page == 'new':
                 # Create Application & User Details
-                # Send Magic Link Email
+                acc = create_new_app()
+                acc.email = email
+                acc.save()
+                send_magic_link(request, email)
                 return HttpResponseRedirect(reverse('New-Email-Sent'))
             elif page == 'existing':
                 return HttpResponseRedirect(reverse('Existing-Email-Sent'))
@@ -69,3 +75,47 @@ def email_page(request, page):
         return render(request, 'contact-email.html', {'form':form})
 
 
+def send_magic_link(request, email):
+    if UserDetails.objects.filter(email=email).exists():
+        acc = UserDetails.objects.get(email=email)
+        domain = request.META.get('HTTP_REFERER', "")
+        domain = domain[:-54]
+        link = magic_link.generate_random(12, "link")
+        expiry = int(time.time())
+        acc.email_expiry_date = expiry
+        acc.magic_link_email = link
+        acc.save()
+        magic_link.magic_link_email(email, domain + 'validate/' + link)
+
+
+def create_new_app():
+    application = Application.objects.create(
+        application_type='CHILDMINDER',
+        # login_id=user,
+        application_status='DRAFTING',
+        cygnum_urn='',
+        login_details_status='NOT_STARTED',
+        personal_details_status='NOT_STARTED',
+        childcare_type_status='NOT_STARTED',
+        first_aid_training_status='NOT_STARTED',
+        eyfs_training_status='COMPLETED',
+        criminal_record_check_status='NOT_STARTED',
+        health_status='NOT_STARTED',
+        references_status='NOT_STARTED',
+        people_in_home_status='NOT_STARTED',
+        declarations_status='NOT_STARTED',
+        date_created=timezone.now(),
+        date_updated=timezone.now(),
+        date_accepted=None,
+        order_code=None
+    )
+    user = UserDetails.objects.create(application_id=application)
+
+    TimelineLog.objects.create(
+        content_object=application,
+        user=None,
+        template='timeline_logger/application_action.txt',
+        extra_data={'user_type': 'applicant', 'action': 'created', 'entity': 'application'}
+    )
+
+    return user
