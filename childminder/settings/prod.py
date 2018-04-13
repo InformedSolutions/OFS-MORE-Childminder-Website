@@ -7,9 +7,6 @@ DEBUG = False
 ALLOWED_HOSTS = ['*']
 PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
-# Visa Validation
-VISA_VALIDATION = True
-
 PROD_APPS = [
     'whitenoise',
 ]

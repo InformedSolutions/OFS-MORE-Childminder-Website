@@ -23,7 +23,7 @@ SMS_EXPIRY = 1
 EMAIL_EXPIRY = 1
 
 # Visa Validation
-VISA_VALIDATION = False
+VISA_VALIDATION = os.environ.get('VISA_VALIDATION') == 'True'
 
 # Base URL of notify gateway
 NOTIFY_URL = os.environ.get('APP_NOTIFY_URL')

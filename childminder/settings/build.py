@@ -7,9 +7,6 @@ PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
 INTERNAL_IPS = "127.0.0.1"
 
-# Visa Validation
-VISA_VALIDATION = False
-
 DEV_APPS = [
     'debug_toolbar'
 ]

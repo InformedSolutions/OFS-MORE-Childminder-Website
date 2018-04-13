@@ -5,9 +5,6 @@ from .base import *
 
 DEBUG = True
 
-# Visa Validation
-VISA_VALIDATION = False
-
 PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
 INTERNAL_IPS = ["127.0.0.1", ]
