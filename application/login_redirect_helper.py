@@ -7,6 +7,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 
 def redirect_by_status(application):
@@ -18,8 +19,12 @@ def redirect_by_status(application):
     """
     # If application is still being drafted, return user to task list
     if application.application_status == 'DRAFTING':
-        response = HttpResponseRedirect(
-            settings.URL_PREFIX + '/task-list/?id=' + str(application.application_id))
+        if application.childcare_type_status == 'COMPLETED':
+            response = HttpResponseRedirect(
+                settings.URL_PREFIX + '/task-list/?id=' + str(application.application_id))
+        else:
+            response = HttpResponseRedirect(
+                reverse('Type-Of-Childcare-Guidance-View') + '?id=' + str(application.application_id))
 
     # If application is submitted but awaiting ARC review, or in the process of being reviewed,
     # redirect the user to an information page informing them that no action is required of them

@@ -2,7 +2,7 @@
 {% extends 'govuk_template.html' %}
 
 <!-- Tab title -->
-{% block page_title %}Your account{% endblock %}
+{% block page_title %}Sign in question{% endblock %}
 
 {% load static %}
 {% load govuk_template_base %}
@@ -29,8 +29,12 @@
         </p>
     </div>
     <div class="form-group">
+
+        {% for form in forms %}
         {{form.as_div}}
         {% csrf_token %}
+        {% endfor %}
+
         <input type="hidden" id="id" value="{{application_id}}" name="id"/>
         <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
     </div>

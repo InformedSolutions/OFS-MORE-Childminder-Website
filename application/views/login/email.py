@@ -54,7 +54,6 @@ def email_page(request, page):
     if request.method == 'POST':
 
         form = ContactEmailForm(request.POST)
-
         if form.is_valid():
             if not test_notify():
                 return HttpResponseRedirect(reverse('Service-Down'))

@@ -61,6 +61,7 @@ def test_notify():
     else:
         return False
 
+
 def test_notify_settings():
     url = settings.NOTIFY_URL
     if 'url' in locals():
@@ -85,7 +86,6 @@ def test_notify_connection():
         r = req.post(settings.NOTIFY_URL + '/api/v1/notifications/email/',
                           json.dumps(notification_request),
                           headers=header, timeout=5)
-
         if r.status_code == 201:
             return True
     except Exception as ex:
@@ -110,3 +110,13 @@ def date_formatter(day, month, year):
     output_year = str(year)
 
     return output_day, output_month, output_year
+
+
+def date_combiner(day, month, year):
+    date = day + '.' + month + '.' + year + '.'
+    return date
+
+
+def date_splitter(date):
+    split_date = date.split('.')
+    return split_date

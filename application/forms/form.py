@@ -334,15 +334,15 @@ class VerifyPhoneForm(ChildminderForms):
         return magic_link_sms
 
 
-class VerifySecurityQuestionForm(ChildminderForms):
+class SecurityQuestionForm(ChildminderForms):
     """
     GOV.UK form for the page to verify an SMS code
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
-
-    security_answer = forms.CharField(label='Security question', required=True)
+    answer = None
+    security_answer = forms.CharField(label='', required=True)
 
     def __init__(self, *args, **kwargs):
         """
@@ -350,15 +350,61 @@ class VerifySecurityQuestionForm(ChildminderForms):
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
-        self.application_id_local = kwargs.pop('id')
-        super(VerifySecurityQuestionForm, self).__init__(*args, **kwargs)
+        self.answer = kwargs.pop('answer')
+        super(SecurityQuestionForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
 
     def clean_security_answer(self):
         security_answer = self.cleaned_data['security_answer']
-        if UserDetails.objects.filter(security_answer=security_answer).count() == 0:
+        if len(security_answer) == 0:
             raise forms.ValidationError('TBC')
+        if str(self.answer) not in security_answer:
+            raise forms.ValidationError('Wrong')
         return security_answer
+
+
+class SecurityDateForm(ChildminderForms):
+    """
+    GOV.UK form for the Your personal details: date of birth page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
+    auto_replace_widgets = True
+
+    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980', error_messages={
+        'required': 'Please enter the full date, including the day, month and year'})
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: date of birth form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.day = kwargs.pop('day')
+        self.month = kwargs.pop('month')
+        self.year = kwargs.pop('year')
+        super(SecurityDateForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
+
+    def clean_date_of_birth(self):
+        """
+        Date of birth validation (calculate if age is less than 18)
+        :return: birth day, birth month, birth year
+        """
+        birth_day = self.cleaned_data['date_of_birth'].day
+        birth_month = self.cleaned_data['date_of_birth'].month
+        birth_year = self.cleaned_data['date_of_birth'].year
+        applicant_dob = date(birth_year, birth_month, birth_day)
+        today = date.today()
+        date_today_diff = today.year - applicant_dob.year - (
+                (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
+        if len(str(birth_year)) < 4:
+            raise forms.ValidationError('Please enter the whole year (4 digits)')
+        if date_today_diff < 0:
+            raise forms.ValidationError('Please check the year')
+
+
+        return birth_day, birth_month, birth_year
 
 
 class PersonalDetailsGuidanceForm(ChildminderForms):

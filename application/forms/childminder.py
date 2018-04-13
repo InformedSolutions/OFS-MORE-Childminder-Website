@@ -1,7 +1,7 @@
 from django import forms
 from govuk_forms.forms import GOVUKForm
 
-from application.models import (ArcComments)
+from ..models import ArcComments
 
 
 class ChildminderForms(GOVUKForm):
