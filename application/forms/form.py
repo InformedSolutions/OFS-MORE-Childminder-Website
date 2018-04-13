@@ -2423,6 +2423,7 @@ class PaymentDetailsForm(ChildminderForms):
     card_number = forms.CharField(label='Card number', required=True,
                                   error_messages={'required': 'Please enter the number on your card'})
     expiry_date = ExpirySplitDateField(label='Expiry date', required=True, widget=ExpirySplitDateWidget,
+                                       help_text='For example, 10/20',
                                        error_messages={'required': 'Please enter the expiry date on the card'})
     cardholders_name = forms.CharField(label="Cardholder's name", required=True,
                                        error_messages={'required': 'Please enter the name of the cardholder'})
