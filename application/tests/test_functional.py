@@ -542,7 +542,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         Check if logging triggered right after application got submitted status
         """
         self.assertTrue(
-            TimelineLog.objects.filter(object_id=self.app_id, extra_data__contains={"action": "submitted"})
+            TimelineLog.objects.filter(object_id=self.app_id, extra_data__contains={"action": "submitted by"})
         )
 
     def test_updated_field_log(self):
