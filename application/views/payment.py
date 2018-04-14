@@ -1,19 +1,14 @@
 import datetime
-import json
-import re
 from uuid import UUID
+
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.views.decorators.cache import never_cache
+from timeline_logger.models import TimelineLog
 
 from .. import payment
-from ..forms import (PaymentDetailsForm,
-                     PaymentForm)
-from ..models import (ApplicantName,
-                      ApplicantPersonalDetails,
-                      Application,
-                      UserDetails)
+from ..forms import (PaymentForm)
+from ..models import (Application)
 
 
 def paypal_payment_completion(request):
@@ -47,7 +42,6 @@ def payment_confirmation(request):
     if request.method == 'GET':
         application_id_local = request.GET['id']
         order_code = request.GET['orderCode']
-        print(order_code)
         # If the payment has been successfully processed
         if payment.check_payment(order_code) == 200:
             variables = {
@@ -58,6 +52,15 @@ def payment_confirmation(request):
                 application_id=application_id_local)
             local_app.application_status = 'SUBMITTED'
             local_app.save()
+
+            # Payment presents the first true trigger for submission so is logged as submitted at this point
+            TimelineLog.objects.create(
+                content_object=local_app,
+                user=None,
+                template='timeline_logger/application_action.txt',
+                extra_data={'user_type': 'applicant', 'action': 'submitted by', 'entity': 'application'}
+            )
+
             return render(request, 'payment-confirmation.html', variables)
         else:
             form = PaymentForm()

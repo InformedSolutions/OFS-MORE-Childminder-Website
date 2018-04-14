@@ -25,7 +25,6 @@ def account_selection(request):
 
         application = Application.objects.create(
             application_type='CHILDMINDER',
-            #login_id=user,
             application_status='DRAFTING',
             cygnum_urn='',
             login_details_status='NOT_STARTED',
@@ -51,7 +50,7 @@ def account_selection(request):
            content_object=application,
            user=None,
            template='timeline_logger/application_action.txt',
-           extra_data={'user_type': 'applicant', 'action': 'created', 'entity': 'application'}
+           extra_data={'user_type': 'applicant', 'action': 'created by', 'entity': 'application'}
         )
 
         return HttpResponseRedirect(

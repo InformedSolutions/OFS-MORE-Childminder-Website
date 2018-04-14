@@ -63,12 +63,6 @@ def card_payment_details(request):
             expiry_month = request.POST["expiry_date_0"]
             expiry_year = '20' + request.POST["expiry_date_1"]
 
-            print("Card number: " + card_number)
-            print("Cardholders name: " + cardholders_name)
-            print("Card security code: " + card_security_code)
-            print("Expiry month: " + expiry_month)
-            print("Expiry year: " + expiry_year)
-
             # Make payment
             payment_response = payment.make_payment(
                 3500, cardholders_name, card_number, card_security_code,
@@ -89,8 +83,6 @@ def card_payment_details(request):
                 payment.payment_email(login_record.email,
                                       applicant_name_record.first_name)
 
-                print('Email sent')
-
                 order_code = parsed_payment_response["orderCode"]
                 variables = {
                     'form': form,
@@ -100,15 +92,6 @@ def card_payment_details(request):
 
                 application.order_code = UUID(order_code)
                 application.save()
-
-                # when functionality to resubmit an application is added this trigger must be added
-                # trigger_audit_log(app_id, 'RESUBMITTED')
-                TimelineLog.objects.create(
-                    content_object=application,
-                    user=None,
-                    template='timeline_logger/application_action.txt',
-                    extra_data={'user_type': 'applicant', 'action': 'submitted', 'entity': 'application'}
-                )
 
                 return HttpResponseRedirect(
                     reverse('Payment-Confirmation') \

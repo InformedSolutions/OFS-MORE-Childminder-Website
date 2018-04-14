@@ -4,6 +4,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
+from timeline_logger.models import TimelineLog
 
 from .. import status
 from ..forms import (DeclarationIntroForm,
@@ -297,6 +298,16 @@ def declaration_declaration(request):
                 status.update(application_id_local,
                               'declarations_status', 'COMPLETED')
                 if application.application_status == 'FURTHER_INFORMATION':
+
+                    # In cases where a resubmission is being made,
+                    # payment is no a valid trigger so this becomes the appropriate trigger resubmission audit
+                    TimelineLog.objects.create(
+                        content_object=application,
+                        user=None,
+                        template='timeline_logger/application_action.txt',
+                        extra_data={'user_type': 'applicant', 'action': 're-submitted by', 'entity': 'application'}
+                    )
+
                     return HttpResponseRedirect(reverse('Awaiting-Review-View') + '?id=' + application_id_local + '&resubmitted=1')
 
                 return HttpResponseRedirect(settings.URL_PREFIX + '/payment?id=' + application_id_local)

@@ -62,6 +62,7 @@ def timelog_post_save(sender, instance, created, **kwargs):
                         'user_type': 'applicant',
                         'application_status': status,
                         'field': field,
+                        'formatted_field': field.replace("_", " "),
                         'action': 'updated'
                     }
                 )
