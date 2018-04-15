@@ -177,7 +177,10 @@ def task_list(request):
                 {
                     'name': 'review',
                     'status': None,
-                    'description': "Declaration and payment",
+                    # If application is being resubmitted (i.e. is not drafting,
+                    # set declaration task name to read "Declaration" only)
+                    'description':
+                        "Declaration and payment" if application.application_status == 'DRAFTING' else "Declaration",
                     'status_url': None,
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'Declaration-Declaration-View'},
@@ -186,8 +189,6 @@ def task_list(request):
                 },
             ]
         }
-
-    # Declaratations state
 
     if len([task for task in context['tasks'] if task['status'] in ['IN_PROGRESS', 'NOT_STARTED']]) < 1:
         context['all_complete'] = True
