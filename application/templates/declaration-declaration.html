@@ -13,19 +13,36 @@
     <h1 class="form-title heading-large">
         Your declaration
     </h1>
-    <p style="font-weight: bold;">Please confirm you are happy to apply and go ahead with the next steps.</p>
+    {% if is_resubmission %}
+        <p style="font-weight: bold;">Please reconfirm that you understand the next steps and want to continue.</p>
+    {% else %}
+        <p style="font-weight: bold;">Please confirm that you understand the next steps and want to continue.</p>
+    {% endif %}
+
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        <h3 class="heading-small">
+            I understand that Ofsted will:
+        </h3>
+        {{confirmation_of_understanding_form.as_div}}
+
         <h3 class="heading-small">
             I am happy for Ofsted to:
         </h3>
-        {{form.as_div}}
+        {{consent_to_sharing_form.as_div}}
+
         <h3 class="heading-small">
             I declare that:
         </h3>
-        {{form2.as_div}}
+        {{confirmation_of_declaration_form.as_div}}
+
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>
-        <input type="submit" class="button" value="Confirm and pay your fee"/>
+
+        {% if is_resubmission %}
+            <input type="submit" class="button" value="Confirm"/>
+        {% else %}
+            <input type="submit" class="button" value="Confirm and pay your fee"/>
+        {% endif %}
     </form>
 </div>
 

@@ -8,9 +8,9 @@ from timeline_logger.models import TimelineLog
 
 from .. import status
 from ..forms import (DeclarationIntroForm,
-                     DeclarationDeclarationForm,
-                     DeclarationDeclarationForm2,
-                     DeclarationSummaryForm)
+                     DeclarationConfirmationOfUnderstandingForm,
+                     DeclarationConfirmationOfDeclarationForm,
+                     DeclarationSummaryForm, DeclarationConsentToSharingForm)
 from ..models import (AdultInHome,
                       ApplicantHomeAddress,
                       ApplicantName,
@@ -251,36 +251,49 @@ def declaration_declaration(request):
     :return: an HttpResponse object with the rendered Declaration template
     """
     current_date = timezone.now()
+
     if request.method == 'GET':
+
         application_id_local = request.GET["id"]
-        form = DeclarationDeclarationForm(id=application_id_local)
-        form2 = DeclarationDeclarationForm2(id=application_id_local)
+        confirmation_of_understanding_form = DeclarationConfirmationOfUnderstandingForm(id=application_id_local)
+        confirmation_of_declaration_form = DeclarationConfirmationOfDeclarationForm(id=application_id_local)
+        consent_to_sharing_form = DeclarationConsentToSharingForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
         variables = {
-            'form': form,
-            'form2': form2,
+            'confirmation_of_understanding_form': confirmation_of_understanding_form,
+            'confirmation_of_declaration_form': confirmation_of_declaration_form,
+            'consent_to_sharing_form': consent_to_sharing_form,
             'application_id': application_id_local,
-            'declarations_status': application.declarations_status
+            'declarations_status': application.declarations_status,
+            'is_resubmission': application.application_status == 'FURTHER_INFORMATION',
         }
         return render(request, 'declaration-declaration.html', variables)
+
     if request.method == 'POST':
+
         application_id_local = request.POST["id"]
         application = Application.objects.get(
             application_id=application_id_local)
-        form = DeclarationDeclarationForm(
+
+        confirmation_of_understanding_form = DeclarationConfirmationOfUnderstandingForm(
             request.POST, id=application_id_local)
-        form.error_summary_title = 'There is a problem with this form (I am happy for Ofsted to)'
-        form2 = DeclarationDeclarationForm2(
+        confirmation_of_understanding_form.error_summary_title = 'There is a problem with ' \
+                                                                 'this form (I understand that Ofsted will)'
+
+        confirmation_of_declaration_form = DeclarationConfirmationOfDeclarationForm(
             request.POST, id=application_id_local)
-        form2.error_summary_title = 'There is a problem with this form (I declare that)'
+        confirmation_of_declaration_form.error_summary_title = 'There is a problem with this form (I declare that)'
+
+        consent_to_sharing_form = DeclarationConsentToSharingForm(request.POST, id=application_id_local)
+
         # Validate both forms (sets of checkboxes)
-        if form.is_valid():
-            background_check_declare = form.cleaned_data.get(
+        if confirmation_of_understanding_form.is_valid():
+            background_check_declare = confirmation_of_understanding_form.cleaned_data.get(
                 'background_check_declare')
-            inspect_home_declare = form.cleaned_data.get(
+            inspect_home_declare = confirmation_of_understanding_form.cleaned_data.get(
                 'inspect_home_declare')
-            interview_declare = form.cleaned_data.get('interview_declare')
-            share_info_declare = form.cleaned_data.get('share_info_declare')
+            interview_declare = confirmation_of_understanding_form.cleaned_data.get('interview_declare')
+            share_info_declare = confirmation_of_understanding_form.cleaned_data.get('share_info_declare')
             application.background_check_declare = background_check_declare
             application.inspect_home_declare = inspect_home_declare
             application.interview_declare = interview_declare
@@ -288,15 +301,27 @@ def declaration_declaration(request):
             application.save()
             application.date_updated = current_date
             application.save()
-            if form2.is_valid():
-                information_correct_declare = form2.cleaned_data.get(
+
+            if consent_to_sharing_form.is_valid():
+                display_contact_details_on_web = consent_to_sharing_form.cleaned_data.get('display_contact_details_on_web')
+                application.display_contact_details_on_web = display_contact_details_on_web
+                application.save()
+                application.date_updated = current_date
+                application.save()
+
+            if confirmation_of_declaration_form.is_valid():
+                information_correct_declare = confirmation_of_declaration_form.cleaned_data.get(
                     'information_correct_declare')
                 application.information_correct_declare = information_correct_declare
+                change_declare = confirmation_of_declaration_form.cleaned_data.get(
+                    'change_declare')
+                application.change_declare = change_declare
                 application.save()
                 application.date_updated = current_date
                 application.save()
                 status.update(application_id_local,
                               'declarations_status', 'COMPLETED')
+
                 if application.application_status == 'FURTHER_INFORMATION':
 
                     # In cases where a resubmission is being made,
@@ -313,15 +338,17 @@ def declaration_declaration(request):
                 return HttpResponseRedirect(settings.URL_PREFIX + '/payment?id=' + application_id_local)
             else:
                 variables = {
-                    'form': form,
-                    'form2': form2,
+                    'confirmation_of_understanding_form': confirmation_of_understanding_form,
+                    'confirmation_of_declaration_form': confirmation_of_declaration_form,
+                    'consent_to_sharing_form': consent_to_sharing_form,
                     'application_id': application_id_local
                 }
                 return render(request, 'declaration-declaration.html', variables)
         else:
             variables = {
-                'form': form,
-                'form2': form2,
+                'confirmation_of_understanding_form': confirmation_of_understanding_form,
+                'confirmation_of_declaration_form': confirmation_of_declaration_form,
+                'consent_to_sharing_form': consent_to_sharing_form,
                 'application_id': application_id_local
             }
             return render(request, 'declaration-declaration.html', variables)
