@@ -84,7 +84,7 @@ def task_list(request):
             'registers': registers,
             'arc_comment': arc_comment,
             'fee': fee,
-            'can_cancel':can_cancel(application),
+            'can_cancel': can_cancel(application),
             'tasks': [
                 {
                     'name': 'account_details',  # This is CSS class (Not recommended to store it here)

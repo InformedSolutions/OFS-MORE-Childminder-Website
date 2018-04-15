@@ -40,9 +40,9 @@ def can_cancel(application):
     :return: Boolean
     """
     if application.application_status == 'DRAFTING':
-        can_cancel = True
+        return True
     else:
-        can_cancel = False
+        return False
 
     return can_cancel
 
