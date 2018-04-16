@@ -7,6 +7,8 @@ the page redirects `the applicant to the login page if they have previously appl
 """
 
 import time
+
+from django.conf import settings
 from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect, request
@@ -20,7 +22,15 @@ from ...models import UserDetails, Application
 
 
 def check_email(request):
-    return render(request, 'email-sent.html')
+    email = request.GET['email']
+    if 'r' in request.GET:
+        if request.GET['r'] == 't':
+            # Resend magic link
+            send_magic_link(request, email)
+    variables = {
+            'email': email
+    }
+    return render(request, 'email-sent.html', variables)
 
 
 def new_email(request):
@@ -62,32 +72,34 @@ def email_page(request, page):
             email = form.cleaned_data['email_address']
             if UserDetails.objects.filter(email=email).exists():
                 send_magic_link(request, email)
-                return HttpResponseRedirect(reverse('Existing-Email-Sent'))
+                return HttpResponseRedirect(reverse('Existing-Email-Sent') + '?email=' + email)
             elif page == 'new':
                 # Create Application & User Details
                 acc = create_new_app()
                 acc.email = email
                 acc.save()
                 send_magic_link(request, email)
-                return HttpResponseRedirect(reverse('New-Email-Sent'))
+                return HttpResponseRedirect(reverse('New-Email-Sent') + '?email=' + email)
             elif page == 'existing':
-                return HttpResponseRedirect(reverse('Existing-Email-Sent'))
+                return HttpResponseRedirect(reverse('Existing-Email-Sent') + '?email=' + email)
 
             # If the form has validation errors
+            return render(request, 'contact-email.html', {'form': form})
+
+        else:
             return render(request, 'contact-email.html', {'form': form})
 
 
 def send_magic_link(request, email):
     if UserDetails.objects.filter(email=email).exists():
         acc = UserDetails.objects.get(email=email)
-        domain = request.META.get('HTTP_REFERER', "")
-        domain = domain[:-54]
         link = magic_link.generate_random(12, "link")
         expiry = int(time.time())
         acc.email_expiry_date = expiry
         acc.magic_link_email = link
         acc.save()
-        magic_link.magic_link_email(email, domain + 'validate/' + link)
+        # Note url has been updated to use the domain set in the settings
+        magic_link.magic_link_email(email, str(settings.PUBLIC_APPLICATION_URL) + '/childminder/validate/' + link)
 
 
 def create_new_app():

@@ -130,6 +130,7 @@ urlpatterns = [
     url(r'^new-application/check-email/$', views.login.check_email, name='New-Email-Sent'),
     url(r'^sign-in/$', views.login.existing_email, name='Existing-Email'),
     url(r'^sign-in/check-email/$', views.login.check_email, name='Existing-Email-Sent'),
+    url(r'^sign-in/new-application/$', views.login.account_selection, name='Account-Selection'),
     url(r'^service-unavailable/$', utils.service_down, name='Service-Down'),
 
 ]

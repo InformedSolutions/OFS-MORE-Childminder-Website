@@ -27,7 +27,11 @@ def load(request):
         question = get_security_question(app_id)
         forms = get_forms(app_id, question)
 
-        variables = {'forms': forms, 'application_id': app_id, 'question': question}
+        variables = {
+            'forms': forms,
+            'application_id': app_id,
+            'label': get_label(question)
+        }
 
         return render(request, 'security_question.html', variables)
 
@@ -38,49 +42,67 @@ def load(request):
         application = Application.objects.get(pk=app_id)
         acc = UserDetails.objects.get(application_id=application)
         security_question = acc.security_question
-        if forms:
-            response = login_redirect_helper.redirect_by_status(application)
+        if forms == True:
 
+            response = login_redirect_helper.redirect_by_status(application)
             # Create session issue custom cookie to user
             CustomAuthenticationHandler.create_session(response, acc.email)
 
             # Forward back onto application
             return response
         else:
+            if 'wrong' in forms:
+                error_message = 'Your answer must match what you told us in your application'
+            else:
+                print(forms)
+                error_message = 'Please give an answer'
+
             variables = {
                 'forms': get_forms(app_id, question),
                 'application_id': app_id,
-                'question': question
+                'label': get_label(question),
+                'error': error_message
             }
             return render(request, 'security_question.html', variables)
 
 
-def get_answer(question, app_id):
-    question = ''
-    date = {'day':'','month':'','year':''}
+def get_label(q):
+    print(q)
+    if 'mobile' in q:
+        return 'Mobile Number'
+    if 'postcode' in q:
+        return 'Postcode'
+    if 'oldest' in q:
+        return ''
+    if 'dbs' in q:
+        return 'DBS certificate number'
 
+
+def get_answer(question, app_id):
+    date = []
     app = Application.objects.get(application_id=app_id)
     acc = UserDetails.objects.get(application_id=app)
     if 'mobile' in question:
-        print(acc.mobile_number)
         question = acc.mobile_number
     if 'postcode' in question:
         home = ApplicantHomeAddress.objects.get(application_id=app)
         date = ApplicantPersonalDetails.objects.get(application_id=app)
         question = home.postcode
-        date['day'] = date.birth_day
-        date['month'] = date.birth_month
-        date['year'] = date.birth_year
+        day = str(date.birth_day)
+        month = str(date.birth_month)
+        year = str(date.birth_year)
+        date = [day, month, year]
     if 'oldest' in question:
         date = AdultInHome.objects.get(application_id=app)
-        date['day'] = date.day
-        date['month'] = date.month
-        date['year'] = date.year
+        day = str(date.birth_day)
+        month = str(date.birth_month)
+        year = str(date.birth_year)
+        date = [day, month, year]
     if 'dbs' in question:
         dbs = CriminalRecordCheck.objects.get(application_id=app)
         question = dbs.dbs_certificate_number
 
-    return {'question':question,'date':date}
+    return {'question': question, 'date': date}
 
 
 def post_forms(question, r, app_id):
@@ -91,20 +113,30 @@ def post_forms(question, r, app_id):
     if 'mobile' in question:
         form_list.append(SecurityQuestionForm(r, answer=field_answer))
     if 'postcode' in question:
+        day = date_answer[0]
+        month = date_answer[1]
+        year = date_answer[2]
         form_list.append(SecurityQuestionForm(r, answer=field_answer))
-        form_list.append(SecurityDateForm(r, day=date_answer['day'], month=date_answer['month'], year=date_answer['year']))
+        form_list.append(SecurityDateForm(r, day=day, month=month, year=year))
     if 'oldest' in question:
-        form_list.append(SecurityDateForm(r, day=date_answer['day'], month=date_answer['month'], year=date_answer['year']))
+        day = date_answer[0]
+        month = date_answer[1]
+        year = date_answer[2]
+        form_list.append(SecurityDateForm(r, day=day, month=month, year=year))
     if 'dbs' in question:
         form_list.append(SecurityQuestionForm(r, answer=field_answer))
-
-    for i in form_list:
-        if not i.is_valid():
-            return False
-        else:
-            i.clean_security_answer()
-
-    return True
+    try:
+        for i in form_list:
+            if i.is_valid():
+                i.clean_security_answer()
+            elif i.error == 'wrong':
+                return i.error
+            elif i.error == 'empty':
+                return i.error
+        return True
+    except Exception as ex:
+        print("EX: " + str(ex))
+        return ex
 
 
 def get_forms(app_id, question):
@@ -120,7 +152,7 @@ def get_forms(app_id, question):
         form_list.append(SecurityDateForm(day=date.birth_day, month=date.birth_month, year=date.birth_year))
     if 'oldest' in question:
         date = AdultInHome.objects.get(application_id=app)
-        form_list.append(SecurityDateForm(day=date.day, month=date.month, year=date.year))
+        form_list.append(SecurityDateForm(day=date.birth_day, month=date.birth_month, year=date.birth_year))
     if 'dbs' in question:
         dbs = CriminalRecordCheck.objects.get(application_id=app)
         form_list.append(SecurityQuestionForm(answer=dbs.dbs_certificate_number))
@@ -139,6 +171,6 @@ def get_security_question(app_id):
             question = 'postcode'
             if app.people_in_home_status == 'COMPLETED':
                 question = 'oldest'
-                if app.criminal_record_check_status == 'COMPLETED':
-                    question = 'dbs'
+            elif app.criminal_record_check_status == 'COMPLETED':
+                question = 'dbs'
     return question

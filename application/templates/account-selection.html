@@ -1,0 +1,23 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Your account{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+<div class="grid-row">
+        <h1 class="heading-large">
+            Sign in or start a new application
+        </h1>
+        <div class="form-group">
+                <div class="form-group" style="width:500px">
+                    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+                        {{form.as_div}}
+                        {% csrf_token %}
+                        <input type="submit" class="button" value="Continue" alt='Continue'>
+                    </form>
+            </div>
+        </div>
+
+</div>
+{% endblock %}

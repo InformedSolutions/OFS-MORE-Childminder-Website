@@ -59,9 +59,9 @@ class ContactEmailForm(ChildminderForms):
         email_address = self.cleaned_data['email_address']
         # RegEx for valid e-mail addresses
         if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
-            raise forms.ValidationError('TBC')
-        if len(email_address) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less')
+            raise forms.ValidationError('Please enter a valid email address')
+        if len(email_address) == 0:
+            raise forms.ValidationError('Please enter an email address')
         return email_address
 
 
@@ -342,7 +342,7 @@ class SecurityQuestionForm(ChildminderForms):
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
     answer = None
-    security_answer = forms.CharField(label='', required=True)
+    security_answer = forms.CharField(label='')
 
     def __init__(self, *args, **kwargs):
         """
@@ -357,9 +357,14 @@ class SecurityQuestionForm(ChildminderForms):
     def clean_security_answer(self):
         security_answer = self.cleaned_data['security_answer']
         if len(security_answer) == 0:
-            raise forms.ValidationError('TBC')
-        if str(self.answer) not in security_answer:
-            raise forms.ValidationError('Wrong')
+            print("EMPTY")
+            self.error = 'emtpy'
+            raise forms.ValidationError('empty')
+
+        if self.answer.replace(' ','') != security_answer.replace(' ',''):
+            print("WRONG")
+            self.error = 'wrong'
+            raise forms.ValidationError('wrong')
         return security_answer
 
 
@@ -371,8 +376,7 @@ class SecurityDateForm(ChildminderForms):
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
 
-    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980', error_messages={
-        'required': 'Please enter the full date, including the day, month and year'})
+    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980')
 
     def __init__(self, *args, **kwargs):
         """
@@ -386,23 +390,23 @@ class SecurityDateForm(ChildminderForms):
         super(SecurityDateForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
 
-    def clean_date_of_birth(self):
+    def clean_security_answer(self):
         """
         Date of birth validation (calculate if age is less than 18)
         :return: birth day, birth month, birth year
         """
-        birth_day = self.cleaned_data['date_of_birth'].day
-        birth_month = self.cleaned_data['date_of_birth'].month
-        birth_year = self.cleaned_data['date_of_birth'].year
-        applicant_dob = date(birth_year, birth_month, birth_day)
-        today = date.today()
-        date_today_diff = today.year - applicant_dob.year - (
-                (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
-        if len(str(birth_year)) < 4:
-            raise forms.ValidationError('Please enter the whole year (4 digits)')
-        if date_today_diff < 0:
-            raise forms.ValidationError('Please check the year')
+        birth_day = str(self.cleaned_data['date_of_birth'].day)
+        birth_month = str(self.cleaned_data['date_of_birth'].month)
+        birth_year = str(self.cleaned_data['date_of_birth'].year)
+        if len(str(birth_year)) == 0 or len(str(birth_day)) == 0 or len(str(birth_month)) == 0:
+            print("EMPTYD")
+            self.error = 'emtpyd'
+            raise forms.ValidationError('empty')
 
+        if self.day != birth_day or self.month != birth_month or self.year != birth_year:
+            print("WRONGD")
+            self.error = 'wrongd'
+            raise forms.ValidationError('wrong')
 
         return birth_day, birth_month, birth_year
 
