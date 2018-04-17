@@ -18,8 +18,10 @@ class TestLoginRedirectHelper(TestCase):
         application = Application.objects.create()
         application.application_status = 'DRAFTING'
         redirect = login_redirect_helper.redirect_by_status(application)
-        target_path = settings.URL_PREFIX + "/task-list"
+        target_path = settings.URL_PREFIX + "/childcare/guidance/"
         assert (isinstance(redirect, HttpResponseRedirect))
+        print(target_path)
+        print(redirect.url)
         assert(target_path in redirect.url)
 
     def test_submitted_status_redirects_to_awaiting_review(self):

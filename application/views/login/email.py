@@ -131,12 +131,7 @@ def create_new_app():
         order_code=None
     )
     user = UserDetails.objects.create(application_id=application)
-    childcare = ChildcareType.objects.create(
-        application_id=application,
-        zero_to_five='True',
-        five_to_eight='False',
-        eight_plus='True'
-    )
+
     TimelineLog.objects.create(
         content_object=application,
         user=None,

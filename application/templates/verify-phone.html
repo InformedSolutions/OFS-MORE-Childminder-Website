@@ -19,7 +19,7 @@
     {% csrf_token %}
 
     <div class="form-group">
-        <a href="{{ URL_PREFIX }}/verify-phone?id={{id}}&f=1">Didn't get a code?</a>
+        <a href="{{ URL_PREFIX }}/security-code?id={{id}}&f=1">Didn't get a code?</a>
         <a href="{{ url }}"><p>Don't have your phone?</p></a>
         <input type="submit" class="button" value="Continue" alt="Continue">
         </br>

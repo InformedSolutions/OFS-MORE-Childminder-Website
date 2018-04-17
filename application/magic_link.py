@@ -130,7 +130,7 @@ def validate_magic_link(request, id):
             acc.sms_expiry_date = expiry
             acc.save()
             magic_link_text(phone, rand_num)
-            return HttpResponseRedirect(settings.URL_PREFIX + '/security-code/?id=' + id)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/security-code/?id=' + str(app_id))
         else:
             return HttpResponseRedirect(settings.URL_PREFIX + '/code-expired/')
     except Exception as ex:
@@ -147,7 +147,8 @@ def sms_verification(request):
     :return: HttpResponse displaying the SMS verification page
     """
     id = request.GET['id']
-    acc = UserDetails.objects.get(magic_link_email=id)
+    app = Application.objects.get(pk=id)
+    acc = UserDetails.objects.get(application_id=app)
     if 'f' in request.GET.keys():
         phone = acc.mobile_number
         g = generate_random(5, 'code')
