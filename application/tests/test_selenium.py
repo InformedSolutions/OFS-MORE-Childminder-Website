@@ -516,7 +516,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
             selenium_task_executor.navigate_to_base_url()
             selenium_task_executor.register_email_address(test_email)
 
-            self.assertEqual("Email sent", selenium_task_executor.get_driver().title)
+            self.assertEqual("Check your email", selenium_task_executor.get_driver().title)
         except Exception as e:
             self.capture_screenshot()
             raise e
