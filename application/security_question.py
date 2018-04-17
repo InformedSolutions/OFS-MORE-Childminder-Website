@@ -52,10 +52,10 @@ def question(request):
             # Forward back onto application
             return response
         else:
-            if 'wrong' in forms:
+            error_message = ''
+            if 'wrong' in str(forms):
                 error_message = 'Your answer must match what you told us in your application'
-            else:
-                print(forms)
+            if 'empty' in str(forms):
                 error_message = 'Please give an answer'
 
             variables = {
@@ -126,18 +126,22 @@ def post_forms(question, r, app_id):
         form_list.append(SecurityDateForm(r, day=day, month=month, year=year))
     if 'dbs' in question:
         form_list.append(SecurityQuestionForm(r, answer=field_answer))
-    try:
-        for i in form_list:
-            if i.is_valid():
+
+    return validate_forms(form_list)
+
+
+def validate_forms(forms):
+    for i in forms:
+        if i.is_valid():
+            try:
                 i.clean_security_answer()
-            elif i.error == 'wrong':
-                return i.error
-            elif i.error == 'empty':
-                return i.error
-        return True
-    except Exception as ex:
-        print("EX: " + str(ex))
-        return ex
+            except Exception as ex:
+                return ex
+        elif hasattr(i, 'error'):
+            return i.error
+        else:
+            return 'empty'
+    return True
 
 
 def get_forms(app_id, question):

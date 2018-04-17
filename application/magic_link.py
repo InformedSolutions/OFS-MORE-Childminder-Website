@@ -26,39 +26,6 @@ from .models import Application, UserDetails
 log = logging.getLogger('django.server')
 
 
-def existing_application(request):
-    """
-    Method returning the template for the Existing application page and navigating to the email sent page when
-    successfully completed
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Existing application template
-    """
-    form = EmailLoginForm()
-    if request.method == 'POST':
-        form = EmailLoginForm(request.POST)
-        email = request.POST['email_address']
-        if form.is_valid():
-            try:
-                acc = UserDetails.objects.get(email=email)
-            except Exception as ex:
-                exception_data = traceback.format_exc().splitlines()
-                exception_array = [exception_data[-3:]]
-                log.error(exception_array)
-                return HttpResponseRedirect(settings.URL_PREFIX + '/email-sent')
-            # Send time-boxed e-mail link to log back in
-            domain = request.META.get('HTTP_REFERER', '')
-            domain = domain[:-21]
-            link = generate_random(12, 'link')
-            expiry = int(time.time())
-            acc.email_expiry_date = expiry
-            acc.magic_link_email = link
-            acc.save()
-            magic_link_email(email, domain + 'validate/' + link)
-            # The same response is returned whether the e-mail is valid or not
-            return HttpResponseRedirect(settings.URL_PREFIX + '/email-sent')
-    return render(request, 'existing-application.html', {'form': form})
-
-
 def magic_link_email(email, link_id):
     """
     Method to send a magic link email using the Notify Gateway API
@@ -147,22 +114,22 @@ def validate_magic_link(request, id):
     try:
         acc = UserDetails.objects.get(magic_link_email=id)
         app_id = acc.application_id.pk
-        app = Application.objects.get(application_id = app_id)
+        app = Application.objects.get(application_id=app_id)
         exp = acc.email_expiry_date
         if not has_expired(exp) and len(id) > 0:
             if len(acc.mobile_number) == 0:
-                response = HttpResponseRedirect(reverse('Contact-Phone-View')+'?id='+str(app_id))
+                response = HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + str(app_id))
                 CustomAuthenticationHandler.create_session(response, acc.email)
                 return response
 
             acc.email_expiry_date = 0
             phone = acc.mobile_number
-            g = generate_random(5, 'code')
+            rand_num = generate_random(5, 'code')
             expiry = int(time.time())
-            acc.magic_link_sms = g
+            acc.magic_link_sms = rand_num
             acc.sms_expiry_date = expiry
             acc.save()
-            magic_link_text(phone, g)
+            magic_link_text(phone, rand_num)
             return HttpResponseRedirect(settings.URL_PREFIX + '/security-code/?id=' + id)
         else:
             return HttpResponseRedirect(settings.URL_PREFIX + '/code-expired/')
@@ -189,7 +156,7 @@ def sms_verification(request):
         acc.sms_expiry_date = expiry
         acc.save()
         magic_link_text(phone, g).status_code
-        return HttpResponseRedirect(reverse('Security-Code')+'?id=' + id)
+        return HttpResponseRedirect(reverse('Security-Code') + '?id=' + id)
     form = VerifyPhoneForm(id=id)
     app = acc.application_id
     application = Application.objects.get(application_id=app.pk)
@@ -208,7 +175,9 @@ def sms_verification(request):
                     # Forward back onto application
                     return response
                 else:
-                    return HttpResponseRedirect(reverse('Security-Code')+'?id=' + id)
-    return render(request, 'verify-phone.html', {'form': form, 'id': id,
-                                                 'url': reverse('Security-Question') +'?id=' + str(
-                                                     application.application_id)})
+                    return HttpResponseRedirect(reverse('Security-Code') + '?id=' + id)
+    variables = {'form': form, 'id': id,
+                 'phone_number':acc.mobile_number[-3:],
+                 'url': reverse('Security-Question') + '?id=' + str(
+                     application.application_id)}
+    return render(request, 'verify-phone.html', variables)

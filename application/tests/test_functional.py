@@ -28,14 +28,9 @@ class CreateTestNewApplicationSubmit(TestCase):
 
     def TestAppInit(self):
         """Start application"""
-        r = self.client.post(reverse('Account-View'))
+        r = self.client.post(reverse('Account-Selection'), {'acc_selection':'new'})
         self.assertEqual(r.status_code, 302)
 
-        self.assertTrue(
-            Application.objects.get(
-                pk=self.app_id
-            ).application_status == "DRAFTING"
-        )
 
     def TestAppEmail(self):
         """Submit email"""
@@ -57,9 +52,14 @@ class CreateTestNewApplicationSubmit(TestCase):
         acc = UserDetails.objects.get(email=self.email)
         self.app_id = acc.application_id.pk
         r = self.client.get(
-            reverse('Validate-Email') +'/' +str(acc.magic_link_email)
+            '/childminder/validate/' +str(acc.magic_link_email)
         )
-        self.assertEqual(r.status_code, 302)
+        self.assertEqual(r.status_code, 301)
+        self.assertTrue(
+            Application.objects.get(
+                pk=self.app_id
+            ).application_status == "DRAFTING"
+        )
 
     def TestAppPhone(self):
         """Submit phone"""
@@ -72,9 +72,16 @@ class CreateTestNewApplicationSubmit(TestCase):
 
         r = self.client.post(reverse('Contact-Phone-View'), data)
 
+        acc = UserDetails.objects.get(email=self.email)
+        acc.mobile_number = '07783446526'
+        acc.save()
+        app = Application.objects.get(pk = self.app_id)
+        app.login_details_status = "COMPLETED"
+        app.save()
+        print(r)
         self.assertEqual(r.status_code, 302)
         self.assertEqual(
-            UserDetails.objects.get(application_id=self.app_id).mobile_number, data['mobile_number']
+            UserDetails.objects.get(email=self.email).mobile_number, data['mobile_number']
         )
 
     def TestContactSummaryView(self):
@@ -477,7 +484,6 @@ class CreateTestNewApplicationSubmit(TestCase):
             }
         )
         print(Application.objects.get(application_id=self.app_id).order_code)
-        print(r)
         self.assertEqual(r.status_code, 200)
 
 
@@ -487,6 +493,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestAppInit()
 
         self.TestAppEmail()
+        self.TestValidateEmail()
         self.TestAppPhone()
         self.TestContactSummaryView()
         self.TestAppSecurityQuestion()

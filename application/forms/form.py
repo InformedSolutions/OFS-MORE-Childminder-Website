@@ -122,47 +122,6 @@ class ContactPhoneForm(ChildminderForms):
         return add_phone_number
 
 
-class QuestionForm(ChildminderForms):
-    """
-    GOV.UK form for the Your login and contact details: knowledge based question page
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'error-summary.html'
-    auto_replace_widgets = True
-
-    security_question = forms.CharField(label='Knowledge based question', required=True)
-    security_answer = forms.CharField(label='Knowledge based answer', required=True)
-
-    def __init__(self, *args, **kwargs):
-        """
-        Method to configure the initialisation of the Your login and contact details: knowledge based question form
-        :param args: arguments passed to the form
-        :param kwargs: keyword arguments passed to the form, e.g. application ID
-        """
-        self.application_id_local = kwargs.pop('id')
-        super(QuestionForm, self).__init__(*args, **kwargs)
-        full_stop_stripper(self)
-        # If information was previously entered, display it on the form
-        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
-            this_user = UserDetails.objects.get(application_id=self.application_id_local)
-            login_id = this_user.login_id
-            self.fields['security_question'].initial = UserDetails.objects.get(login_id=login_id).security_question
-            self.fields['security_answer'].initial = UserDetails.objects.get(login_id=login_id).security_answer
-            self.pk = login_id
-            self.field_list = ['security_question', 'security_answer']
-
-    def clean_security_question(self):
-        security_question = self.cleaned_data['security_question']
-        if len(security_question) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less')
-        return security_question
-
-    def clean_security_answer(self):
-        security_answer = self.cleaned_data['security_answer']
-        if len(security_answer) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less')
-        return security_answer
-
 
 class ContactSummaryForm(ChildminderForms):
     """
@@ -357,14 +316,14 @@ class SecurityQuestionForm(ChildminderForms):
     def clean_security_answer(self):
         security_answer = self.cleaned_data['security_answer']
         if len(security_answer) == 0:
-            print("EMPTY")
-            self.error = 'emtpy'
+            self.error = 'empty'
             raise forms.ValidationError('empty')
-
-        if self.answer.replace(' ','') != security_answer.replace(' ',''):
-            print("WRONG")
+        elif self.answer.replace(' ','') != security_answer.replace(' ',''):
             self.error = 'wrong'
             raise forms.ValidationError('wrong')
+
+
+
         return security_answer
 
 
@@ -398,15 +357,15 @@ class SecurityDateForm(ChildminderForms):
         birth_day = str(self.cleaned_data['date_of_birth'].day)
         birth_month = str(self.cleaned_data['date_of_birth'].month)
         birth_year = str(self.cleaned_data['date_of_birth'].year)
-        if len(str(birth_year)) == 0 or len(str(birth_day)) == 0 or len(str(birth_month)) == 0:
-            print("EMPTYD")
-            self.error = 'emtpyd'
+        if self.day != birth_day or self.month != birth_month or self.year != birth_year:
+            self.error = 'wrong'
+            raise forms.ValidationError('wrong')
+
+        if len(birth_year) == 0 or len(birth_day) == 0 or len(birth_month) == 0:
+            self.error = 'empty'
             raise forms.ValidationError('empty')
 
-        if self.day != birth_day or self.month != birth_month or self.year != birth_year:
-            print("WRONGD")
-            self.error = 'wrongd'
-            raise forms.ValidationError('wrong')
+
 
         return birth_day, birth_month, birth_year
 
