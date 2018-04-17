@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Your account{% endblock %}
+{% block page_title %}New application{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -13,22 +13,17 @@
         <!-- Content -->
         <div class="form-group">
             <h1 class="form-title heading-large">
-                Your email address
+                Start a new application
             </h1>
-            <p>Enter your email address so you can save your application.</p>
-            <p>We will send you a link so you can come back at any time.</p>
+            <p>Enter your email address.</p>
+            <p>We will send you a link to confirm your email.</p>
+            <p>We will also use it to contact you. </p>
             {{form.as_div}}
             {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
-            <input type="hidden" name="id" value="{{application_id}}"/>
+            <input type="submit" class="button" value="Continue" alt='Continue'>
         </div>
         </br>
         <!-- If applicant has previously completed this task, allow user to return to task list -->
-        {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-        {% endif %}
     </form>
 
 {% endblock %}

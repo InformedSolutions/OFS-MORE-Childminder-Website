@@ -8,10 +8,10 @@ import re
 
 from django.conf import settings
 from django.conf.urls import url, include
-from django.contrib import admin
 from django.views.generic import TemplateView
 
-from application import views, magic_link, security_question
+from application import views, magic_link, security_question, utils
+from application.views import login
 
 urlpatterns = [
     url(r'^$', views.start_page, name='start-page.html'),
@@ -25,8 +25,6 @@ urlpatterns = [
     url(r'^account/email/', views.contact_email, name='Contact-Email-View'),
     url(r'^account/phone/', views.contact_phone, name='Contact-Phone-View'),
     url(r'^account/summary/', views.contact_summary, name='Contact-Summary-View'),
-    url(r'^account/question/', views.contact_question, name='Question-View'),
-    url(r'^account/account/', views.account_selection, name='Account-View'),
     url(r'^personal-details/$', views.personal_details_guidance, name='Personal-Details-Guidance-View'),
     url(r'^personal-details/your-name/', views.personal_details_name, name='Personal-Details-Name-View'),
     url(r'^personal-details/your-date-of-birth/', views.personal_details_dob, name='Personal-Details-DOB-View'),
@@ -103,9 +101,9 @@ urlpatterns = [
     url(r'^payment/details/', views.card_payment_details, name='Payment-Details-View'),
     url(r'^paypal-payment-completion/', views.paypal_payment_completion, name='Paypal-Payment-Completion-View'),
     url(r'^application-saved/', views.application_saved, name='Application-Saved-View'),
-    url(r'^existing-application/', magic_link.existing_application, name='Existing-Application'),
-    url(r'^validate/(?P<id>[\w-]+)/$', magic_link.validate_magic_link),
-    url(r'^verify-phone/', magic_link.sms_verification),
+    # url(r'^existing-application/', magic_link.existing_application, name='Existing-Application'),
+    url(r'^validate/(?P<id>[\w-]+)/$', magic_link.validate_magic_link, name='Validate-Email'),
+    url(r'^security-code/', magic_link.sms_verification, name='Security-Code'),
     url(r'^email-sent/', TemplateView.as_view(template_name='email-sent.html'), name='Email-Sent-Template'),
     url(r'^start/', views.start_page),
     url(r'^confirmation/', views.payment_confirmation, name='Payment-Confirmation'),
@@ -115,8 +113,8 @@ urlpatterns = [
     url(r'^code-expired/', TemplateView.as_view(template_name='code-expired.html')),
     url(r'^bad-link/', TemplateView.as_view(template_name='bad-link.html')),
     url(r'^link-resolution-error/', TemplateView.as_view(template_name='link-resolution-error.html')),
-    url(r'^security-question/(?P<id>[\w-]+)/$', security_question.load),
-    url(r'^security-question/$', security_question.load),
+    url(r'^sign-in/question/(?P<id>[\w-]+)/$', security_question.question, name='Security-QuestionP'),
+    url(r'^sign-in/question/$', security_question.question, name='Security-Question'),
     url(r'^djga/', include('google_analytics.urls')),
     url(r'^awaiting-review/', views.awaiting_review, name='Awaiting-Review-View'),
     url(r'^accepted/', views.application_accepted, name='Accepted-View'),
@@ -125,8 +123,16 @@ urlpatterns = [
     url(r'^cancel-application/guidance/$', views.cancel_app, name='Cancel-Application'),
     url(r'^cancel-application/confirmation/$', views.cancel_app_confirmation, name='Cancel-Application-Confirmation'),
     url(r'^childcare-register/cancel-application/$', views.cr_cancel_app, name='CR-Cancel-Application'),
-    url(r'^childcare-register/application-cancelled/$', views.cr_cancel_app_confirmation, name='CR-Cancel-Application-Confirmation'),
-
+    url(r'^childcare-register/application-cancelled/$', views.cr_cancel_app_confirmation,
+        name='CR-Cancel-Application-Confirmation'),
+    url(r'^new-application/$', views.login.new_email, name='New-Email'),
+    url(r'^new-application/email-sent/$', views.login.check_email, name='New-Email-Sent'),
+    url(r'^sign-in/$', views.login.existing_email, name='Existing-Email'),
+    url(r'^sign-in/check-email/$', views.login.check_email, name='Existing-Email-Sent'),
+    url(r'^sign-in/new-application/$', views.login.account_selection, name='Account-Selection'),
+    url(r'^service-unavailable/$', utils.service_down, name='Service-Down'),
+    url(r'^email-resent/$', views.login.email_resent, name='Email-Resent'),
+    url(r'^code-resent/$', magic_link.resend_code, name='Resend-Code'),
 
 ]
 

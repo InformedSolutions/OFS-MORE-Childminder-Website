@@ -10,7 +10,6 @@ import re
 from datetime import date
 from django import forms
 from django.conf import settings
-from govuk_forms.forms import GOVUKForm
 from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect, RadioSelect, NumberInput
 from govuk_forms.fields import SplitDateField
 
@@ -29,7 +28,7 @@ from application.models import (AdultInHome,
                                 FirstAidTraining,
                                 HealthDeclarationBooklet,
                                 Reference,
-                                UserDetails, ArcComments)
+                                UserDetails)
 from application.forms_helper import full_stop_stripper
 from application.utils import date_formatter
 
@@ -50,26 +49,7 @@ class ContactEmailForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
-
     email_address = forms.EmailField()
-
-    def __init__(self, *args, **kwargs):
-        """
-        Method to configure the initialisation of the Your login and contact details: email form
-        :param args: arguments passed to the form
-        :param kwargs: keyword arguments passed to the form, e.g. application ID
-        """
-        self.application_id_local = kwargs.pop('id')
-        super(ContactEmailForm, self).__init__(*args, **kwargs)
-        full_stop_stripper(self)
-        # If information was previously entered, display it on the form
-        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
-            this_user = UserDetails.objects.get(application_id=self.application_id_local)
-            login_id = this_user.login_id
-            if this_user.login_id != '':
-                self.fields['email_address'].initial = this_user.email
-                self.pk = this_user.pk
-                self.field_list = ['email_address']
 
     def clean_email_address(self):
         """
@@ -79,9 +59,9 @@ class ContactEmailForm(ChildminderForms):
         email_address = self.cleaned_data['email_address']
         # RegEx for valid e-mail addresses
         if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
-            raise forms.ValidationError('TBC')
-        if len(email_address) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less')
+            raise forms.ValidationError('Please enter a valid email address')
+        if len(email_address) == 0:
+            raise forms.ValidationError('Please enter an email address')
         return email_address
 
 
@@ -141,47 +121,6 @@ class ContactPhoneForm(ChildminderForms):
                 raise forms.ValidationError('TBC')
         return add_phone_number
 
-
-class QuestionForm(ChildminderForms):
-    """
-    GOV.UK form for the Your login and contact details: knowledge based question page
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'error-summary.html'
-    auto_replace_widgets = True
-
-    security_question = forms.CharField(label='Knowledge based question', required=True)
-    security_answer = forms.CharField(label='Knowledge based answer', required=True)
-
-    def __init__(self, *args, **kwargs):
-        """
-        Method to configure the initialisation of the Your login and contact details: knowledge based question form
-        :param args: arguments passed to the form
-        :param kwargs: keyword arguments passed to the form, e.g. application ID
-        """
-        self.application_id_local = kwargs.pop('id')
-        super(QuestionForm, self).__init__(*args, **kwargs)
-        full_stop_stripper(self)
-        # If information was previously entered, display it on the form
-        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
-            this_user = UserDetails.objects.get(application_id=self.application_id_local)
-            login_id = this_user.login_id
-            self.fields['security_question'].initial = UserDetails.objects.get(login_id=login_id).security_question
-            self.fields['security_answer'].initial = UserDetails.objects.get(login_id=login_id).security_answer
-            self.pk = login_id
-            self.field_list = ['security_question', 'security_answer']
-
-    def clean_security_question(self):
-        security_question = self.cleaned_data['security_question']
-        if len(security_question) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less')
-        return security_question
-
-    def clean_security_answer(self):
-        security_answer = self.cleaned_data['security_answer']
-        if len(security_answer) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less')
-        return security_answer
 
 
 class ContactSummaryForm(ChildminderForms):
@@ -347,22 +286,28 @@ class VerifyPhoneForm(ChildminderForms):
         SMS code validation
         :return: string
         """
-        magic_link_sms = self.cleaned_data['magic_link_sms']
-        if (UserDetails.objects.filter(magic_link_sms=magic_link_sms, magic_link_email=self.magic_link_email).count()
-                == 0):
-            raise forms.ValidationError('TBC')
+        magic_link_sms = str(self.cleaned_data['magic_link_sms'])
+        # if (UserDetails.objects.filter(magic_link_sms=magic_link_sms, magic_link_email=self.magic_link_email).count()
+        #         == 0):
+        #     raise forms.ValidationError('TBC')
+        if len(magic_link_sms)<5:
+            raise forms.ValidationError('The code must be 5 digits.  You have entered fewer than 5 digits')
+        if len(magic_link_sms)>5:
+            raise forms.ValidationError('The code must be 5 digits.  You have entered more than 5 digits')
+        if len(magic_link_sms)==0:
+            raise forms.ValidationError('Please enter the 5 digit code we sent to your mobile')
         return magic_link_sms
 
 
-class VerifySecurityQuestionForm(ChildminderForms):
+class SecurityQuestionForm(ChildminderForms):
     """
     GOV.UK form for the page to verify an SMS code
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'error-summary.html'
     auto_replace_widgets = True
-
-    security_answer = forms.CharField(label='Security question', required=True)
+    answer = None
+    security_answer = forms.CharField(label='')
 
     def __init__(self, *args, **kwargs):
         """
@@ -370,15 +315,65 @@ class VerifySecurityQuestionForm(ChildminderForms):
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
-        self.application_id_local = kwargs.pop('id')
-        super(VerifySecurityQuestionForm, self).__init__(*args, **kwargs)
+        self.answer = kwargs.pop('answer')
+        super(SecurityQuestionForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
 
     def clean_security_answer(self):
         security_answer = self.cleaned_data['security_answer']
-        if UserDetails.objects.filter(security_answer=security_answer).count() == 0:
-            raise forms.ValidationError('TBC')
+        if len(security_answer) == 0:
+            self.error = 'empty'
+            raise forms.ValidationError('empty')
+        elif self.answer.replace(' ','') != security_answer.replace(' ',''):
+            self.error = 'wrong'
+            raise forms.ValidationError('wrong')
+
+
+
         return security_answer
+
+
+class SecurityDateForm(ChildminderForms):
+    """
+    GOV.UK form for the Your personal details: date of birth page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'error-summary.html'
+    auto_replace_widgets = True
+
+    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980')
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: date of birth form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.day = kwargs.pop('day')
+        self.month = kwargs.pop('month')
+        self.year = kwargs.pop('year')
+        super(SecurityDateForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
+
+    def clean_security_answer(self):
+        """
+        Date of birth validation (calculate if age is less than 18)
+        :return: birth day, birth month, birth year
+        """
+        birth_day = str(self.cleaned_data['date_of_birth'].day)
+        birth_month = str(self.cleaned_data['date_of_birth'].month)
+        birth_year = str(self.cleaned_data['date_of_birth'].year)
+        if self.day != birth_day or self.month != birth_month or self.year != birth_year:
+            self.error = 'wrong'
+            raise forms.ValidationError('wrong')
+
+        if len(birth_year) == 0 or len(birth_day) == 0 or len(birth_month) == 0:
+            self.error = 'empty'
+            raise forms.ValidationError('empty')
+
+
+
+        return birth_day, birth_month, birth_year
 
 
 class PersonalDetailsGuidanceForm(ChildminderForms):

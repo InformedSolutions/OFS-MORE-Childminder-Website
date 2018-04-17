@@ -30,17 +30,13 @@ dbs_summary_dict = collections.OrderedDict({'data_names': ['dbs_certificate_numb
 
 contact_info_name_dict = collections.OrderedDict([('email_address', 'Your email'),
                                                  ('mobile_number', 'Mobile phone number'),
-                                                 ('add_phone_number', 'Alternative phone number'),
-                                                 ('security_question', 'Knowledge based question'),
-                                                 ('security_answer', 'Knowledge based answer')])
+                                                 ('add_phone_number', 'Alternative phone number')])
 
 # Link dict contains the data_name of each table field and the name of the change_link view to be reversed in template
 
 contact_info_link_dict = collections.OrderedDict([('email_address', 'Contact-Email-View'),
                                                  ('mobile_number', 'Contact-Phone-View'),
-                                                 ('add_phone_number', 'Contact-Phone-View'),
-                                                 ('security_question', 'Question-View'),
-                                                 ('security_answer', 'Question-View')])
+                                                 ('add_phone_number', 'Contact-Phone-View')])
 
 ###
 

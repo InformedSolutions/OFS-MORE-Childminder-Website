@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Log back in{% endblock %}
+{% block page_title %}Sign in{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -11,14 +11,14 @@
 
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
         <h1 class="form-title heading-large">
-            Log into your childminder application
+            Sign in
         </h1>
-        <p>Please enter your email address so we can find your application.</p>
+        <p>Enter your email address.</p>
+        <p>We will send you a link to go back to your application.</p>
         {% csrf_token %}
         {{form.as_div}}
 
-        <input type="submit" class="button" value="Continue">
-        <input type="hidden" name="id" value="Save and continue" />
+        <input type="submit" class="button" value="Continue" alt="Continue">
 
 </form>
 

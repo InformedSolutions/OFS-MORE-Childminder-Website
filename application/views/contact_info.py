@@ -1,10 +1,4 @@
-"""
-Method returning the template for the Your login and contact details:
-email page (for a given application) and navigating to the Your login
-and contact details: phone number page when successfully completed; business logic
-is applied to either create or update the associated User_Details record;
-the page redirects `the applicant to the login page if they have previously applied
-"""
+
 import collections
 import time
 from django.utils import timezone
@@ -22,6 +16,11 @@ from ..middleware import CustomAuthenticationHandler
 from ..models import Application, UserDetails
 
 
+"""
+Method returning the template for the Your login and contact details: phone number page (for a given application)
+and navigating to the Your login and contact details: question page when successfully completed
+"""
+
 def contact_email(request):
     """
     :param request: a request object used to generate the HttpResponse
@@ -32,7 +31,7 @@ def contact_email(request):
 
     if request.method == 'GET':
         app_id = request.GET["id"]
-        form = ContactEmailForm(id=app_id)
+        form = ContactEmailForm()
         form.check_flag()
         application = Application.objects.get(pk=app_id)
 
@@ -98,13 +97,6 @@ def contact_email(request):
 
         return render(request, 'contact-email.html', variables)
 
-
-"""
-Method returning the template for the Your login and contact details: phone number page (for a given application)
-and navigating to the Your login and contact details: question page when successfully completed
-"""
-
-
 def contact_phone(request):
     """
     :param request: a request object used to generate the HttpResponse
@@ -139,10 +131,11 @@ def contact_phone(request):
             user_details_record = login_contact_logic_phone(app_id, form)
             user_details_record.save()
             application.date_updated = current_date
+            application.login_details_status = 'COMPLETED'
             application.save()
             reset_declaration(application)
 
-            return HttpResponseRedirect(reverse('Question-View') + '?id=' + app_id)
+            return HttpResponseRedirect(reverse('Contact-Summary-View') + '?id=' + app_id)
 
         else:
             variables = {
@@ -184,9 +177,7 @@ def contact_summary(request):
         contact_info_fields = collections.OrderedDict([
             ('email_address', email),
             ('mobile_number', mobile_number),
-            ('add_phone_number', add_phone_number),
-            ('security_question', security_question),
-            ('security_answer', security_answer),
+            ('add_phone_number', add_phone_number)
         ])
 
         contact_info_table = collections.OrderedDict({

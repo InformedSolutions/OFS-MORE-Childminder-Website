@@ -2,7 +2,7 @@
 {% extends 'govuk_template.html' %}
 
 <!-- Tab title -->
-{% block page_title %}Your account{% endblock %}
+{% block page_title %}Sign in question{% endblock %}
 
 {% load static %}
 {% load govuk_template_base %}
@@ -12,25 +12,34 @@
 <!-- Back Button -->
 {% include "back-button.html" %}
 
+
+{% if error %}
 <!-- Initialise error summary for page -->
-{{form.error_summary}}
+<div class="error-summary" aria-labelledby="error-summary-heading-jGBv" role="alert" tabindex="-1">
+    <h2 class="heading-medium error-summary-heading" id="error-summary-heading-jGBv"> There was a problem with your
+        answer
+    </h2>
+    <ul class="error-summary-list">
+        <li class="non-field-error">{{ error }}</li>
+    </ul>
+</div>
+{% endif %}
 
 <!-- Form -->
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <h1 class="form-title heading-large">
+        Your sign in question
+    </h1>
     <div class="form-group">
-        <h1 class="form-title heading-large">
-            Your security question
-        </h1>
-        <p>In the event that you do not have access to your mobile phone, we will use a security question to
-            ensure you are the one accessing the account.</p>
-        <p>Please answer the below question to ensure that we can secure your account.</p>
+        {% include 'security-question-content.html' %}
         <p class="form-title heading-small">
-            {{question}}
+            {{label}}
         </p>
-    </div>
-    <div class="form-group">
+        {% for form in forms %}
         {{form.as_div}}
         {% csrf_token %}
+        {% endfor %}
+
         <input type="hidden" id="id" value="{{application_id}}" name="id"/>
         <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
     </div>

@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Security code{% endblock %}
+{% block page_title %}Security code resent{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -12,7 +12,7 @@
     <h1 class="form-title heading-large">
         Enter security code
     </h1>
-    <p>We have sent a 5 digit security code by text to *********{{ phone_number }}.</p>
+    <p>We have resent a 5 digit security code by text to *********{{ phone_number }}.</p>
     <p>This can take a minute or so to arrive.</p>
     <p>This runs out in 24 hours.</p>
     {{form.as_div}}
@@ -20,7 +20,7 @@
 
     <div class="form-group">
         <a href="{{ URL_PREFIX }}/code-resent?id={{id}}&f=1">Didn't get a code?</a>
-        <a href="{{ url }}"><p>Don't have your phone?</p></a>
+    </div>
         <input type="submit" class="button" value="Continue" alt="Continue">
         </br>
         </br>
