@@ -149,15 +149,7 @@ def sms_verification(request):
     id = request.GET['id']
     app = Application.objects.get(pk=id)
     acc = UserDetails.objects.get(application_id=app)
-    if 'f' in request.GET.keys():
-        phone = acc.mobile_number
-        g = generate_random(5, 'code')
-        expiry = int(time.time())
-        acc.magic_link_sms = g
-        acc.sms_expiry_date = expiry
-        acc.save()
-        magic_link_text(phone, g).status_code
-        return HttpResponseRedirect(reverse('Security-Code') + '?id=' + id)
+
     form = VerifyPhoneForm(id=id)
     app = acc.application_id
     application = Application.objects.get(application_id=app.pk)
@@ -182,3 +174,49 @@ def sms_verification(request):
                  'url': reverse('Security-Question') + '?id=' + str(
                      application.application_id)}
     return render(request, 'verify-phone.html', variables)
+
+
+
+def resend_code(request):
+    """
+    Method to display the SMS code verification page
+    :param request: request to display the SMS verification page
+    :return: HttpResponse displaying the SMS verification page
+    """
+    id = request.GET['id']
+    app = Application.objects.get(pk=id)
+    acc = UserDetails.objects.get(application_id=app)
+    if 'f' in request.GET.keys():
+        phone = acc.mobile_number
+        g = generate_random(5, 'code')
+        expiry = int(time.time())
+        acc.magic_link_sms = g
+        acc.sms_expiry_date = expiry
+        acc.save()
+        magic_link_text(phone, g).status_code
+        return HttpResponseRedirect(reverse('Resend-Code') + '?id=' + id)
+    form = VerifyPhoneForm(id=id)
+    app = acc.application_id
+    application = Application.objects.get(application_id=app.pk)
+    if request.method == 'POST':
+        form = VerifyPhoneForm(request.POST, id=id)
+        code = request.POST['magic_link_sms']
+        if len(code) > 0:
+            exp = acc.sms_expiry_date
+            if form.is_valid() and not has_expired(exp):
+                if code == acc.magic_link_sms:
+                    response = login_redirect_helper.redirect_by_status(app)
+
+                    # Create session issue custom cookie to user
+                    CustomAuthenticationHandler.create_session(response, acc.email)
+
+                    # Forward back onto application
+                    return response
+                else:
+                    return HttpResponseRedirect(reverse('Resend-Code') + '?id=' + id)
+    variables = {'form': form, 'id': id,
+                 'phone_number':acc.mobile_number[-3:],
+                 'url': reverse('Security-Question') + '?id=' + str(
+                     application.application_id)}
+    return render(request, 'resend-security-code.html', variables)
+

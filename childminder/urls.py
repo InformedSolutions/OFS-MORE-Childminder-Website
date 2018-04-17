@@ -132,6 +132,7 @@ urlpatterns = [
     url(r'^sign-in/new-application/$', views.login.account_selection, name='Account-Selection'),
     url(r'^service-unavailable/$', utils.service_down, name='Service-Down'),
     url(r'^email-resent/$', views.login.email_resent, name='Email-Resent'),
+    url(r'^code-resent/$', magic_link.resend_code, name='Resend-Code'),
 
 ]
 
