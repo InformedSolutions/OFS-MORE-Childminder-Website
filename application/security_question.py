@@ -15,7 +15,7 @@ from .models import Application, UserDetails, ApplicantHomeAddress, ApplicantPer
     CriminalRecordCheck
 
 
-def load(request):
+def question(request):
     """
     Method returning the template for the security question verification page
     and navigating to the corresponding task list when successfully completed
@@ -29,11 +29,12 @@ def load(request):
 
         variables = {
             'forms': forms,
+            'question': question,
             'application_id': app_id,
             'label': get_label(question)
         }
 
-        return render(request, 'security_question.html', variables)
+        return render(request, 'security-question.html', variables)
 
     if request.method == 'POST':
         app_id = request.POST['id']
@@ -59,15 +60,15 @@ def load(request):
 
             variables = {
                 'forms': get_forms(app_id, question),
+                'question': question,
                 'application_id': app_id,
                 'label': get_label(question),
                 'error': error_message
             }
-            return render(request, 'security_question.html', variables)
+            return render(request, 'security-question.html', variables)
 
 
 def get_label(q):
-    print(q)
     if 'mobile' in q:
         return 'Mobile Number'
     if 'postcode' in q:

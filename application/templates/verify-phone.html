@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Log back in{% endblock %}
+{% block page_title %}Security code{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -10,22 +10,20 @@
 
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <h1 class="form-title heading-large">
-        Enter your security code
+        Enter security code
     </h1>
-    <p>We have sent a security code to your mobile phone.</p>
-    <p>This may take a minute or so to arrive.</p>
-    <p>Please enter the security code.</p>
+    <p>We have sent a 5 digit security code by text to *********{{ phone_number }}.</p>
+    <p>This can take a minute or so to arrive.</p>
+    <p>This runs out in 24 hours.</p>
     {{form.as_div}}
     {% csrf_token %}
 
     <div class="form-group">
-        <a href="{{ URL_PREFIX }}/verify-phone?id={{id}}&f=1">Didn't receive a code?</a>
+        <a href="{{ URL_PREFIX }}/verify-phone?id={{id}}&f=1">Didn't get a code?</a>
+        <a href="{{ url }}"><p>Don't have your phone?</p></a>
+        <input type="submit" class="button" value="Continue" alt="Continue">
         </br>
         </br>
-        <input type="submit" class="button" value="Save and continue">
-        </br>
-        </br>
-        <a href="{{ url }}"><p>Having trouble? Answer your security question</p></a>
     </div>
 
 </form>

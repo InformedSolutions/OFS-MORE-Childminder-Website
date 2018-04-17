@@ -29,10 +29,6 @@ class CreateTestNewApplicationSubmit(TestCase):
     def TestAppInit(self):
         """Start application"""
         r = self.client.post(reverse('Account-View'))
-        location = r.get('Location')
-
-        self.app_id = location.split('=')[-1]
-
         self.assertEqual(r.status_code, 302)
 
         self.assertTrue(
@@ -44,20 +40,26 @@ class CreateTestNewApplicationSubmit(TestCase):
     def TestAppEmail(self):
         """Submit email"""
 
-        email = 'omelette.du.fromage@gmail.com'
+        self.email = 'omelette.du.fromage@gmail.com'
 
         r = self.client.post(
-            reverse('Contact-Email-View'),
+            reverse('New-Email'),
             {
-                'id': self.app_id,
-                'email_address': email
+                'email_address': self.email
             }
         )
 
         self.assertEqual(r.status_code, 302)
-        self.assertEqual(
-            UserDetails.objects.get(application_id=self.app_id).email, email
+
+    def TestValidateEmail(self):
+        """Validate Email"""
+
+        acc = UserDetails.objects.get(email=self.email)
+        self.app_id = acc.application_id.pk
+        r = self.client.get(
+            reverse('Validate-Email') +'/' +str(acc.magic_link_email)
         )
+        self.assertEqual(r.status_code, 302)
 
     def TestAppPhone(self):
         """Submit phone"""

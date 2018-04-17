@@ -6,24 +6,19 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 """
 
 import datetime
-
-from ..models import Application, UserDetails
 from uuid import UUID
+
 from django.conf import settings
 from django.test import Client
 from django.test import TestCase
 from django.urls import resolve, reverse
-from uuid import UUID
 
 from application import models
 from application.magic_link import (existing_application,
                                     sms_verification)
 from application.views import (application_saved,
-                               account_selection,
                                card_payment_details,
-                               contact_email,
                                contact_phone,
-                               contact_question,
                                contact_summary,
                                dbs_check_dbs_details,
                                dbs_check_guidance,
@@ -32,11 +27,6 @@ from application.views import (application_saved,
                                declaration_declaration,
                                declaration_summary,
                                documents_needed,
-                               eyfs_guidance,
-                               eyfs_knowledge,
-                               eyfs_questions,
-                               eyfs_summary,
-                               eyfs_training,
                                first_aid_training_declaration,
                                first_aid_training_details,
                                first_aid_training_guidance,
@@ -87,7 +77,9 @@ from application.views import (application_saved,
                                task_list,
                                type_of_childcare_age_groups,
                                type_of_childcare_guidance,
-                               type_of_childcare_register)
+                               type_of_childcare_register, )
+from application.views.login import new_email
+from ..models import Application, UserDetails
 
 
 class StartPageTest(TestCase):
@@ -194,8 +186,8 @@ class TypeOfChildcareTest(TestCase):
 class LoginAndContactDetailsTest(TestCase):
 
     def test_url_resolves_to_email_page(self):
-        found = resolve(settings.URL_PREFIX + '/account/email/')
-        self.assertEqual(found.func, contact_email)
+        found = resolve(settings.URL_PREFIX + '/new-application/')
+        self.assertEqual(found.func, new_email)
 
     def test_email_page_not_displayed_without_id(self):
         c = Client()
@@ -213,18 +205,6 @@ class LoginAndContactDetailsTest(TestCase):
         c = Client()
         try:
             c.get(settings.URL_PREFIX + '/account/phone/?id=')
-            self.assertEqual(1, 0)
-        except:
-            self.assertEqual(0, 0)
-
-    def test_url_resolves_to_question_page(self):
-        found = resolve(settings.URL_PREFIX + '/account/question/')
-        self.assertEqual(found.func, contact_question)
-
-    def test_question_page_not_displayed_without_id(self):
-        c = Client()
-        try:
-            c.get(settings.URL_PREFIX + '/account/question/?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
@@ -1281,7 +1261,7 @@ class DeclarationTest(TestCase):
 class AccountSelectionTest(TestCase):
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/account/account/')
+        found = resolve(settings.URL_PREFIX + '/sign-in/new-application/')
         self.assertEqual(found.func, account_selection)
 
 

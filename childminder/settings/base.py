@@ -119,7 +119,7 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/security-question/$',
     r'^' + URL_PREFIX + '/email-sent/$',
     r'^' + URL_PREFIX + '/validate/.*$',
-    r'^' + URL_PREFIX + '/verify-phone/.*$',
+    r'^' + URL_PREFIX + '/security-code/.*$',
     r'^' + URL_PREFIX + '/bad-link/$',
     r'^' + URL_PREFIX + '/code-expired/$',
     r'^' + URL_PREFIX + '/djga/+',

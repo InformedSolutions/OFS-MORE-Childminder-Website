@@ -1,0 +1,14 @@
+<p>We need to make sure you are the person who is signing in.</p>
+{% if question == 'oldest' %}
+<p>Please enter the date of birth of the eldest person living in your home.</p>
+<p>This needs to match what you told us in your application.</p>
+{% endif %}
+{% if question == 'postcode' %}
+<p>Please enter your postcode and date of birth.</p>
+{% endif %}
+{% if 'dbs' in question %}
+<p>Please enter your DBS certificate number.</p>
+{% endif %}
+{% if question == 'mobile' %}
+<p>Please enter your mobile number</p>
+{% endif %}

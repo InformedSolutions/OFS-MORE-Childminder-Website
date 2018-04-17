@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Email sent{% endblock %}
+{% block page_title %}Check your email{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -14,10 +14,10 @@
 <p>We've sent a link to <a href="mailto:{{ email }}">{{ email }}</a></p>
 <p>This can take a few minutes to arrive</p>
 <p>If you don't get an email:</p>
-<ul style="list-style-type:disc;padding-left:50px">
+<ul style="list-style-type:disc;padding-left:20px">
     <li>check your spam or junk folder</li>
     <li>check you have entered the correct email</li>
-    <li><a href="./?email={{ email }}&r=t">resend the email</a></li>
+    <li><a href="/childminder/email-resent/?email={{ email }}">resend the email</a></li>
 </ul>
 
 

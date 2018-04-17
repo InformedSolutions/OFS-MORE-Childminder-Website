@@ -11,7 +11,7 @@ import time
 from django.conf import settings
 from django.utils import timezone
 from django.core.urlresolvers import reverse
-from django.http import HttpResponseRedirect, request
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from timeline_logger.models import TimelineLog
 
@@ -21,14 +21,20 @@ from ...forms import ContactEmailForm
 from ...models import UserDetails, Application
 
 
+def email_resent(request):
+    email = request.GET['email']
+    # Resend magic link
+    send_magic_link(request, email)
+    variables = {
+        'email': email
+    }
+    return render(request, 'resend-email.html', variables)
+
+
 def check_email(request):
     email = request.GET['email']
-    if 'r' in request.GET:
-        if request.GET['r'] == 't':
-            # Resend magic link
-            send_magic_link(request, email)
     variables = {
-            'email': email
+        'email': email
     }
     return render(request, 'email-sent.html', variables)
 
@@ -50,7 +56,7 @@ def existing_email(request):
             'form': ContactEmailForm()
         }
 
-        return render(request, 'contact-email.html', variables)
+        return render(request, 'existing-application.html', variables)
     else:
         return email_page(request, 'existing')
 
@@ -73,6 +79,7 @@ def email_page(request, page):
             if UserDetails.objects.filter(email=email).exists():
                 send_magic_link(request, email)
                 return HttpResponseRedirect(reverse('Existing-Email-Sent') + '?email=' + email)
+
             elif page == 'new':
                 # Create Application & User Details
                 acc = create_new_app()
@@ -80,12 +87,12 @@ def email_page(request, page):
                 acc.save()
                 send_magic_link(request, email)
                 return HttpResponseRedirect(reverse('New-Email-Sent') + '?email=' + email)
+
             elif page == 'existing':
                 return HttpResponseRedirect(reverse('Existing-Email-Sent') + '?email=' + email)
 
             # If the form has validation errors
             return render(request, 'contact-email.html', {'form': form})
-
         else:
             return render(request, 'contact-email.html', {'form': form})
 

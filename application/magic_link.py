@@ -163,7 +163,7 @@ def validate_magic_link(request, id):
             acc.sms_expiry_date = expiry
             acc.save()
             magic_link_text(phone, g)
-            return HttpResponseRedirect(settings.URL_PREFIX + '/verify-phone/?id=' + id)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/security-code/?id=' + id)
         else:
             return HttpResponseRedirect(settings.URL_PREFIX + '/code-expired/')
     except Exception as ex:
@@ -189,7 +189,7 @@ def sms_verification(request):
         acc.sms_expiry_date = expiry
         acc.save()
         magic_link_text(phone, g).status_code
-        return HttpResponseRedirect(settings.URL_PREFIX + '/verify-phone/?id=' + id)
+        return HttpResponseRedirect(reverse('Security-Code')+'?id=' + id)
     form = VerifyPhoneForm(id=id)
     app = acc.application_id
     application = Application.objects.get(application_id=app.pk)
@@ -208,8 +208,7 @@ def sms_verification(request):
                     # Forward back onto application
                     return response
                 else:
-                    print(4)
-                    return HttpResponseRedirect(settings.URL_PREFIX + '/verify-phone/?id=' + id)
+                    return HttpResponseRedirect(reverse('Security-Code')+'?id=' + id)
     return render(request, 'verify-phone.html', {'form': form, 'id': id,
-                                                 'url': settings.URL_PREFIX + '/security-question?id=' + str(
+                                                 'url': reverse('Security-Question') +'?id=' + str(
                                                      application.application_id)})
