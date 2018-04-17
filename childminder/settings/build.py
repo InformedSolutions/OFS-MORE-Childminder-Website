@@ -3,7 +3,6 @@ from .base import *
 DEBUG = True
 
 ALLOWED_HOSTS = ['*']
-PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
 INTERNAL_IPS = "127.0.0.1"
 

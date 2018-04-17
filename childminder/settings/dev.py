@@ -5,7 +5,8 @@ from .base import *
 
 DEBUG = True
 
-PUBLIC_APPLICATION_URL = 'http://localhost:8000'
+# Override default url for local dev
+PUBLIC_APPLICATION_URL = 'http://localhost:8000/childminder'
 
 INTERNAL_IPS = ["127.0.0.1", ]
 

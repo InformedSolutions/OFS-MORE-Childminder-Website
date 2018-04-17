@@ -5,7 +5,6 @@ from .base import *
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
 PROD_APPS = [
     'whitenoise',
