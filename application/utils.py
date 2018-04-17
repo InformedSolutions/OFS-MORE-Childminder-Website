@@ -81,16 +81,12 @@ def test_notify_connection():
             },
             'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
         }
-        print('Testing Notify connectivity')
-        print(notification_request)
         r = req.post(settings.NOTIFY_URL + '/api/v1/notifications/email/',
                      json.dumps(notification_request),
                      headers=header, timeout=10)
-        print(r)
         if r.status_code == 201:
             return True
     except Exception as ex:
-        print('Encountered exception whilst communicating with notify')
         print(ex)
         return False
 
