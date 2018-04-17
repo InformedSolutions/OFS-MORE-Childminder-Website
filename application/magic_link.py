@@ -6,7 +6,10 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 """
 
 import json
+import os
 import random
+import sys
+
 import requests
 import string
 import time
@@ -24,6 +27,8 @@ from .forms import EmailLoginForm, VerifyPhoneForm
 from .models import Application, UserDetails
 
 log = logging.getLogger('django.server')
+
+EXECUTING_AS_TEST = sys.argv[1:2] == ['test']
 
 
 def magic_link_email(email, link_id):
@@ -46,7 +51,13 @@ def magic_link_email(email, link_id):
     r = requests.post(base_request_url + '/api/v1/notifications/email/',
                       json.dumps(notification_request),
                       headers=header)
-    print(link_id)
+
+    # If executing login function in test mode set env variable for later retrieval by test code
+    if EXECUTING_AS_TEST is True:
+        os.environ['EMAIL_VALIDATION_URL'] = link_id
+    else:
+        print(link_id)
+
     return r
 
 

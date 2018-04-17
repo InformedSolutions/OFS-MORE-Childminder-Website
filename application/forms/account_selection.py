@@ -1,5 +1,5 @@
 from django import forms
-from govuk_forms.widgets import InlineRadioSelect
+from govuk_forms.widgets import InlineRadioSelect, RadioSelect
 
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
@@ -20,7 +20,7 @@ class AccountSelection(ChildminderForms):
     )
 
     acc_selection = forms.ChoiceField(label='', choices=options,
-                                       widget=InlineRadioSelect, required=True,
+                                       widget=RadioSelect, required=True,
                                        error_messages={'required': 'Please select one'})
 
     def __init__(self, *args, **kwargs):

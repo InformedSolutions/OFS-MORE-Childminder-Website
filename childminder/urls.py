@@ -49,12 +49,6 @@ urlpatterns = [
     url(r'^first-aid/renew/', views.first_aid_training_renew, name='First-Aid-Training-Renew-View'),
     url(r'^first-aid/update/', views.first_aid_training_training, name='First-Aid-Training-Training-View'),
     url(r'^first-aid/check-answers/', views.first_aid_training_summary, name='First-Aid-Training-Summary-View'),
-    # EYFS task temporarily disabled, pending final decisions on CCN3-357 in Sprint 7
-    # url(r'^eyfs/guidance/', views.eyfs_guidance, name='EYFS-Guidance-View'),
-    # url(r'^eyfs/knowledge/', views.eyfs_knowledge, name='EYFS-Knowledge-View'),
-    # url(r'^eyfs/questions/', views.eyfs_questions, name='EYFS-Questions-View'),
-    # url(r'^eyfs/training/', views.eyfs_training, name='EYFS-Training-View'),
-    # url(r'^eyfs/summary/', views.eyfs_summary, name='EYFS-Summary-View'),
     url(r'^criminal-record/$', views.dbs_check_guidance, name='DBS-Check-Guidance-View'),
     url(r'^criminal-record/your-details/', views.dbs_check_dbs_details, name='DBS-Check-DBS-Details-View'),
     url(r'^criminal-record/post-certificate/', views.dbs_check_upload_dbs, name='DBS-Check-Upload-DBS-View'),

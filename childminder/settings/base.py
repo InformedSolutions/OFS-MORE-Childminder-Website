@@ -34,6 +34,8 @@ PAYMENT_URL = os.environ.get('APP_PAYMENT_URL')
 # Base URL of addressing-service gateway
 ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL')
 
+PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
+
 # INSTALLED DJANGO APPLICATIONS
 
 BUILTIN_APPS = [
@@ -126,6 +128,7 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/djga/+',
     r'^' + URL_PREFIX + '/sign-in/',
     r'^' + URL_PREFIX + '/sign-in/check-email/',
+    r'^' + URL_PREFIX + '/email-resent/',
     r'^' + URL_PREFIX + '/sign-in/new-application/',
     r'^' + URL_PREFIX + '/new-application/',
     r'^' + URL_PREFIX + '/new-application/check-email/',

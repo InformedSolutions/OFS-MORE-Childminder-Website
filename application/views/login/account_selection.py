@@ -8,7 +8,7 @@ from ...forms import AccountSelection
 def account_selection(request):
     if request.method == 'GET':
         form = AccountSelection()
-        return render(request,'account-selection.html',{'form':form})
+        return render(request,'account-selection.html', {'form':form})
     if request.method == 'POST':
         form = AccountSelection(request.POST)
         if form.is_valid():

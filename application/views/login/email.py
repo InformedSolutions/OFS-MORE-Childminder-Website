@@ -5,7 +5,7 @@ and contact details: phone number page when successfully completed; business log
 is applied to either create or update the associated User_Details record;
 the page redirects `the applicant to the login page if they have previously applied
 """
-
+import sys
 import time
 
 from django.conf import settings
@@ -18,7 +18,7 @@ from timeline_logger.models import TimelineLog
 from application import magic_link
 from ...utils import test_notify
 from ...forms import ContactEmailForm
-from ...models import UserDetails, Application, ChildcareType
+from ...models import UserDetails, Application
 
 
 def email_resent(request):
@@ -112,7 +112,6 @@ def send_magic_link(request, email):
 def create_new_app():
     application = Application.objects.create(
         application_type='CHILDMINDER',
-        # login_id=user,
         application_status='DRAFTING',
         cygnum_urn='',
         login_details_status='NOT_STARTED',

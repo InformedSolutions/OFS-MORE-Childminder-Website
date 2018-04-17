@@ -5,7 +5,7 @@ from .base import *
 
 DEBUG = True
 
-PUBLIC_APPLICATION_URL = 'localhost:8000'
+PUBLIC_APPLICATION_URL = 'http://localhost:8000'
 
 INTERNAL_IPS = ["127.0.0.1", ]
 

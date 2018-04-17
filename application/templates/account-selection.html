@@ -5,19 +5,15 @@
 
 {% block inner_content %}
 {{form.error_summary}}
-<div class="grid-row">
-        <h1 class="heading-large">
-            Sign in or start a new application
-        </h1>
-        <div class="form-group">
-                <div class="form-group" style="width:500px">
-                    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-                        {{form.as_div}}
-                        {% csrf_token %}
-                        <input type="submit" class="button" value="Continue" alt='Continue'>
-                    </form>
-            </div>
-        </div>
 
-</div>
+<h1 class="heading-large">
+    Sign in or start a new application
+</h1>
+
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    {{form.as_div}}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Continue" alt='Continue'>
+</form>
+
 {% endblock %}

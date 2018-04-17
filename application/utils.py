@@ -76,11 +76,10 @@ def test_notify_connection():
         header = {'content-type': 'application/json'}
         req = requests.Session()
         notification_request = {
-            'email': 'a@a.com',
+            'email': 'simulate-delivered@notifications.service.gov.uk',
             'personalisation': {
                 'link': ''
             },
-            'reference': 'string',
             'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
         }
         r = req.post(settings.NOTIFY_URL + '/api/v1/notifications/email/',
