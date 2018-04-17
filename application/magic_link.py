@@ -28,8 +28,6 @@ from .models import Application, UserDetails
 
 log = logging.getLogger('django.server')
 
-EXECUTING_AS_TEST = sys.argv[1:2] == ['test']
-
 
 def magic_link_email(email, link_id):
     """
@@ -45,7 +43,6 @@ def magic_link_email(email, link_id):
         'personalisation': {
             'link': link_id
         },
-        'reference': 'string',
         'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
     }
     r = requests.post(base_request_url + '/api/v1/notifications/email/',
@@ -53,7 +50,7 @@ def magic_link_email(email, link_id):
                       headers=header)
 
     # If executing login function in test mode set env variable for later retrieval by test code
-    if EXECUTING_AS_TEST is True:
+    if settings.EXECUTING_AS_TEST == 'True':
         os.environ['EMAIL_VALIDATION_URL'] = link_id
     else:
         print(link_id)
@@ -76,12 +73,10 @@ def magic_link_text(phone, link_id):
             'link': link_id
         },
         'phoneNumber': phone,
-        'reference': 'string',
         'templateId': 'd285f17b-8534-4110-ba6c-e7e788eeafb2'
     }
     r = requests.post(base_request_url + '/api/v1/notifications/sms/', json.dumps(notification_request),
                       headers=header)
-    print(r.status_code)
     return r
 
 
@@ -185,7 +180,6 @@ def sms_verification(request):
                  'url': reverse('Security-Question') + '?id=' + str(
                      application.application_id)}
     return render(request, 'verify-phone.html', variables)
-
 
 
 def resend_code(request):

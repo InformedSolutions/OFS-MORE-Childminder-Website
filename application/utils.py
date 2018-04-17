@@ -54,7 +54,6 @@ def can_cancel(application):
     return can_cancel
 
 
-
 def test_notify():
     if test_notify_settings() and test_notify_connection():
         return True
@@ -83,8 +82,9 @@ def test_notify_connection():
             'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
         }
         r = req.post(settings.NOTIFY_URL + '/api/v1/notifications/email/',
-                          json.dumps(notification_request),
-                          headers=header, timeout=5)
+                     json.dumps(notification_request),
+                     headers=header, timeout=10)
+        print(r)
         if r.status_code == 201:
             return True
     except Exception as ex:
@@ -94,6 +94,7 @@ def test_notify_connection():
 
 def service_down(request):
     return render(request, 'service-down.html')
+
 
 def date_formatter(day, month, year):
     """
