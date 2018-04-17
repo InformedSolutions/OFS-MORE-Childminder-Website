@@ -65,7 +65,6 @@ def magic_link_text(phone, link_id):
     :param link_id: string containing the magic link ID related to an application
     :return: an SMS
     """
-    print('Sending SMS Message: ' + link_id)
     base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
     notification_request = {

@@ -77,7 +77,7 @@ def test_notify_connection():
         notification_request = {
             'email': 'simulate-delivered@notifications.service.gov.uk',
             'personalisation': {
-                'link': ''
+                'link': 'test'
             },
             'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
         }
