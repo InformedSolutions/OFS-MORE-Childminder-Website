@@ -8,6 +8,7 @@ from datetime import datetime
 
 from django.test import LiveServerTestCase, override_settings, tag
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
 
 from .selenium_task_executor import SeleniumTaskExecutor
 
@@ -50,7 +51,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
             )
 
         selenium_driver.maximize_window()
-        selenium_driver.implicitly_wait(5)
+        selenium_driver.implicitly_wait(20)
 
         self.verification_errors = []
         self.accept_next_alert = True
@@ -591,7 +592,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
         self.assertEqual("Check your answers: people in your home",
                          selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/h1").text)
-        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").send_keys(Keys.RETURN)
         selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='references']/td/a/span").click()
         self.assertEqual("Check your answers: references",
                          selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/h1").text)

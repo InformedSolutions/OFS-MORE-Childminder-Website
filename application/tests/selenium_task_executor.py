@@ -1,5 +1,7 @@
 import os
 import random
+
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.select import Select
 
 
@@ -354,7 +356,7 @@ class SeleniumTaskExecutor:
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
         # Task summary confirmation
-        driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        driver.find_element_by_xpath("//input[@value='Confirm and continue']").send_keys(Keys.RETURN)
 
     def complete_references_task(self, first_reference_forename, first_reference_surname, first_reference_relationship,
                                  first_reference_time_known_months, first_reference_time_known_years,

@@ -18,7 +18,7 @@
                     </strong>
                 </div>
             {% endif %}
-            <p>Fill in the sections below to apply.</p>
+            <h2 class="p">Fill in the sections below to apply.</h2>
         </header>
     </div>
 </div>
@@ -41,6 +41,7 @@
                                 </td>
                             </tr>
 
+
                         {% else %}
 
                         <tr id="{{ task.name }}">
@@ -51,13 +52,13 @@
                                     <span class="task-name">{{ task.description }}</span>
 
                                     {% if task.status == 'NOT_STARTED' %}
-                                        <strong class="task-finished task-to-do">To do</strong>
+                                        <strong class="task-finished task-to-do" alt="{{ task.name }}: To do">To do</strong>
                                     {% elif task.status == 'IN_PROGRESS' %}
-                                        <strong class="task-finished task-in-progress">Started</strong>
+                                        <strong class="task-finished task-in-progress" alt="{{ task.name }}: Started">Started</strong>
                                     {% elif task.status == 'FLAGGED' %}
-                                        <strong class="task-finished task-returned">Returned</strong>
+                                        <strong class="task-finished task-returned" alt="{{ task.name }}: Returned">Returned</strong>
                                     {% elif task.status == 'COMPLETED' %}
-                                        <strong class="task-finished">Done</strong>
+                                        <strong class="task-finished" alt="{{ task.name }}: Done">Done</strong>
                                     {% endif %}
 
                                 </a>
