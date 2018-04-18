@@ -94,10 +94,11 @@ def get_answer(question, app_id):
         year = str(date.birth_year)
         date = [day, month, year]
     if 'oldest' in question:
-        date = AdultInHome.objects.get(application_id=app)
-        day = str(date.birth_day)
-        month = str(date.birth_month)
-        year = str(date.birth_year)
+        dates = AdultInHome.objects.filter(application_id=app)
+        date = get_oldest(dates)
+        day = str(date['birth_day'])
+        month = str(date['birth_month'])
+        year = str(date['birth_year'])
         date = [day, month, year]
     if 'dbs' in question:
         dbs = CriminalRecordCheck.objects.get(application_id=app)
@@ -156,8 +157,9 @@ def get_forms(app_id, question):
         form_list.append(SecurityQuestionForm(answer=home.postcode))
         form_list.append(SecurityDateForm(day=date.birth_day, month=date.birth_month, year=date.birth_year))
     if 'oldest' in question:
-        date = AdultInHome.objects.get(application_id=app)
-        form_list.append(SecurityDateForm(day=date.birth_day, month=date.birth_month, year=date.birth_year))
+        dates = AdultInHome.objects.filter(application_id=app)
+        date = get_oldest(dates)
+        form_list.append(SecurityDateForm(day=date['birth_day'], month=date['birth_month'], year=date['birth_year']))
     if 'dbs' in question:
         dbs = CriminalRecordCheck.objects.get(application_id=app)
         form_list.append(SecurityQuestionForm(answer=dbs.dbs_certificate_number))
@@ -179,3 +181,16 @@ def get_security_question(app_id):
             elif app.criminal_record_check_status == 'COMPLETED':
                 question = 'dbs'
     return question
+
+
+def get_oldest(list):
+    oldest = {'birth_day': list[0].birth_day, 'birth_month': list[0].birth_month, 'birth_year': list[0].birth_year}
+    for i in list:
+        if i.birth_year <= oldest['birth_year']:
+            if i.birth_month <= oldest['birth_month']:
+                if i.birth_day < oldest['birth_day']:
+                    oldest['birth_day'] = i.birth_day
+                    oldest['birth_month'] = i.birth_month
+                    oldest['birth_year'] = i.birth_year
+
+    return oldest

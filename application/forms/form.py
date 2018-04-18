@@ -287,10 +287,8 @@ class VerifyPhoneForm(ChildminderForms):
         SMS code validation
         :return: string
         """
-        magic_link_sms = str(self.cleaned_data['magic_link_sms'])
-        # if (UserDetails.objects.filter(magic_link_sms=magic_link_sms, magic_link_email=self.magic_link_email).count()
-        #         == 0):
-        #     raise forms.ValidationError('TBC')
+        magic_link_sms = str(self.cleaned_data['magic_link_sms']).zfill(5)
+
         if len(magic_link_sms)<5:
             raise forms.ValidationError('The code must be 5 digits.  You have entered fewer than 5 digits')
         if len(magic_link_sms)>5:
