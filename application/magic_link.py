@@ -91,6 +91,7 @@ def generate_random(digits, type):
     elif type == 'link':
         r = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(digits)])
     r = r.upper()
+    print(r)
     return r
 
 

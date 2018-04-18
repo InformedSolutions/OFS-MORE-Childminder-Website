@@ -186,9 +186,9 @@ def get_security_question(app_id):
 def get_oldest(list):
     oldest = {'birth_day': list[0].birth_day, 'birth_month': list[0].birth_month, 'birth_year': list[0].birth_year}
     for i in list:
-        if i.birth_year < oldest['birth_year']:
-            if i.birth_year < oldest['birth_month']:
-                if i.birth_year < oldest['birth_day']:
+        if i.birth_year <= oldest['birth_year']:
+            if i.birth_month <= oldest['birth_month']:
+                if i.birth_day < oldest['birth_day']:
                     oldest['birth_day'] = i.birth_day
                     oldest['birth_month'] = i.birth_month
                     oldest['birth_year'] = i.birth_year
