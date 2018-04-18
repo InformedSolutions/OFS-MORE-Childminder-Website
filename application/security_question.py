@@ -86,7 +86,7 @@ def get_answer(question, app_id):
     if 'mobile' in question:
         question = acc.mobile_number
     if 'postcode' in question:
-        home = ApplicantHomeAddress.objects.get(application_id=app)
+        home = ApplicantHomeAddress.objects.get(application_id=app, current_address=True)
         date = ApplicantPersonalDetails.objects.get(application_id=app)
         question = home.postcode
         day = str(date.birth_day)
@@ -151,7 +151,7 @@ def get_forms(app_id, question):
     if 'mobile' in question:
         form_list.append(SecurityQuestionForm(answer=acc.mobile_number))
     if 'postcode' in question:
-        home = ApplicantHomeAddress.objects.get(application_id=app)
+        home = ApplicantHomeAddress.objects.get(application_id=app, current_address=True)
         date = ApplicantPersonalDetails.objects.get(application_id=app)
         form_list.append(SecurityQuestionForm(answer=home.postcode))
         form_list.append(SecurityDateForm(day=date.birth_day, month=date.birth_month, year=date.birth_year))
