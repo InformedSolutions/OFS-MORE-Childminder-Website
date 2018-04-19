@@ -36,6 +36,7 @@ def magic_link_email(email, link_id):
     :param link_id: string containing the magic link ID related to an application
     :return: an email
     """
+
     base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
     notification_request = {
@@ -123,6 +124,12 @@ def validate_magic_link(request, id):
         app = Application.objects.get(application_id=app_id)
         exp = acc.email_expiry_date
         if not has_expired(exp) and len(id) > 0:
+            if 'email' in request.GET:
+                acc.email = request.GET['email']
+                acc.save()
+                response = HttpResponseRedirect(reverse('Task-List-View') + '?id=' + str(app_id))
+                CustomAuthenticationHandler.create_session(response, acc.email)
+                return response
             if len(acc.mobile_number) == 0:
                 response = HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + str(app_id))
                 CustomAuthenticationHandler.create_session(response, acc.email)

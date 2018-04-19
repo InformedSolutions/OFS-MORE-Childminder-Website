@@ -28,8 +28,9 @@ def email_resent(request):
     :return: Http responsne
     """
     email = request.GET['email']
-    # Resend magic link
-    send_magic_link(request, email)
+    if len(email) > 0:
+        # Resend magic link
+        send_magic_link(email)
     variables = {
         'email': email
     }
@@ -98,7 +99,7 @@ def email_page(request, page):
             # Send login e-mail link if applicant has previously applied
             email = form.cleaned_data['email_address']
             if UserDetails.objects.filter(email=email).exists():
-                send_magic_link(request, email)
+                send_magic_link(email)
                 return HttpResponseRedirect(reverse('Existing-Email-Sent') + '?email=' + email)
 
             elif page == 'new':
@@ -106,7 +107,7 @@ def email_page(request, page):
                 acc = create_new_app()
                 acc.email = email
                 acc.save()
-                send_magic_link(request, email)
+                send_magic_link(email)
                 return HttpResponseRedirect(reverse('New-Email-Sent') + '?email=' + email)
 
             elif page == 'existing':
@@ -114,11 +115,14 @@ def email_page(request, page):
 
             # If the form has validation errors
             return render(request, 'contact-email.html', {'form': form})
-        else:
+
+        elif page == 'existing':
+            return render(request, 'existing-application.html', {'form': form})
+        elif page == 'new':
             return render(request, 'contact-email.html', {'form': form})
 
 
-def send_magic_link(request, email):
+def send_magic_link(email):
     """
     Send magic link
     :param request:
@@ -133,7 +137,9 @@ def send_magic_link(request, email):
         acc.magic_link_email = link
         acc.save()
         # Note url has been updated to use the domain set in the settings
-        magic_link.magic_link_email(email, str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link)
+        magic_link.magic_link_email(email, str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link +'?email='+email)
+
+
 
 
 def create_new_app():
