@@ -56,7 +56,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         )
 
         # session = CustomAuthenticationHandler.create_session(r,acc.email)
-        print(r)
         self.assertEqual(r.status_code, 200)
         self.assertTrue(
             Application.objects.get(
@@ -81,7 +80,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         app = Application.objects.get(pk=self.app_id)
         app.login_details_status = "COMPLETED"
         app.save()
-        print(r)
         self.assertEqual(r.status_code, 302)
         self.assertEqual(
             UserDetails.objects.get(email=self.email).mobile_number, data['mobile_number']
@@ -470,7 +468,6 @@ class CreateTestNewApplicationSubmit(TestCase):
                 'orderCode': Application.objects.get(application_id=self.app_id).order_code
             }
         )
-        print(Application.objects.get(application_id=self.app_id).order_code)
         self.assertEqual(r.status_code, 200)
 
     def TestNewApplicationSubmit(self):
