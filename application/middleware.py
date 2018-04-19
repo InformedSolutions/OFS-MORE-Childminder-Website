@@ -58,6 +58,11 @@ class CustomAuthenticationHandler(object):
         return self.get_response(request)
 
     @staticmethod
+    def get_cookie_identifier():
+        global COOKIE_IDENTIFIER
+        return COOKIE_IDENTIFIER
+
+    @staticmethod
     def get_session_user(request):
         if COOKIE_IDENTIFIER not in request.COOKIES:
             return None
@@ -67,6 +72,10 @@ class CustomAuthenticationHandler(object):
     @staticmethod
     def create_session(response, email):
         response.set_cookie(COOKIE_IDENTIFIER, email)
+
+    @staticmethod
+    def destroy_session(response):
+        response.delete_cookie(COOKIE_IDENTIFIER)
 
 
 def globalise_url_prefix(request):
@@ -82,10 +91,16 @@ def globalise_url_prefix(request):
 def globalise_server_name(request):
     """
     Middleware function to pass the server name to the footer
-    :param request:
-    :return: a dictionary containing the globalised server name
     """
     if hasattr(settings, 'SERVER_LABEL'):
         return {'SERVER_LABEL': settings.SERVER_LABEL}
     else:
         return {'SERVER_LABEL': None}
+
+
+def globalise_authentication_flag(request):
+    """
+    Middleware function to expose a flag to all templates to determine whether a user is authenticated.
+    """
+    user_is_authenticated = CustomAuthenticationHandler.get_session_user(request) is not None
+    return {'AUTHENTICATED': user_is_authenticated}

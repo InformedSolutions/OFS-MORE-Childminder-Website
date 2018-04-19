@@ -1,0 +1,67 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Help and advice{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">
+    Help and advice
+</h1>
+
+<p>Where you can get help becoming a childminder</p>
+
+<h2 class="heading-medium">
+    Your local council
+</h2>
+
+<p>You can get free help and advice from your local council</p>
+
+<a href="http://findyourfis.familyandchildcaretrust.org/kb5/findyourfis/home.page">Find your council's family information service</a>
+
+<h2 class="heading-medium">
+    Childcare groups and forums
+</h2>
+
+<p>Professional childcare groups like Pacey and Childminding UK provide training, guidance and advice.</p>
+
+<p>You could also get advice from other childminders on forums.</p>
+
+<ul>
+    <li>
+        <a href="https://www.pacey.org.uk">Pacey (Professional Association for Childcare and Early Years)</a>
+    </li>
+    <li>
+        <a href="https://childmindinguk.com">Childminding UK</a>
+    </li>
+    <li>
+        <a href="https://childmindinguk.com">Childminding Forum</a>
+    </li>
+</ul>
+
+<h2 class="heading-medium">
+    Ofsted
+</h2>
+
+<p>Contact Ofsted if you have questions about your application.</p>
+
+<div class="panel">
+    Ofsted
+    <br/>
+    <a href="mailto:enquiries@ofsted.gov.uk">enquiries@ofsted.gov.uk</a>
+    <br/>
+    Phone: 0300 123 1231
+    <p>
+        Monday to Friday, 8am to 6pm
+        <br/>
+        <a href="https://www.gov.uk/call-charges">Find out about call charges</a>
+    </p>
+</div>
+
+{% if AUTHENTICATED %}
+    <a href="{% url 'Task-List-View' %}?id={{ application_id }}" class="button">Return to application</a>
+{% endif %}
+
+{% endblock %}

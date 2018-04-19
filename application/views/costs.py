@@ -10,12 +10,9 @@ def costs(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered costs template
     """
-    if request.method == 'GET':
-
-        application_id = request.GET["id"]
-        context = {
-            'id': application_id
-        }
-
-        return render(request, 'costs-guidance.html', context)
+    application_id_local = request.GET.get('id')
+    context = {
+        'id': application_id_local
+    }
+    return render(request, 'costs-guidance.html', context)
 
