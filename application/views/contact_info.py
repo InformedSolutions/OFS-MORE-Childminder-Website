@@ -104,19 +104,20 @@ def contact_phone(request):
     """
 
     current_date = timezone.now()
-
+    flag = ''
     if request.method == 'GET':
         app_id = request.GET["id"]
         form = ContactPhoneForm(id=app_id)
         form.check_flag()
         application = Application.get_id(app_id=app_id)
+        acc = UserDetails.objects.get(application_id=app_id)
+
         variables = {
             'form': form,
             'application_id': app_id,
             'login_details_status': application.login_details_status,
             'childcare_type_status': application.childcare_type_status
         }
-
         return render(request, 'contact-phone.html', variables)
 
     if request.method == 'POST':
@@ -128,14 +129,18 @@ def contact_phone(request):
 
         if form.is_valid():
             # Update User_Details record
+            acc = UserDetails.objects.get(application_id=app_id)
+            if len(acc.mobile_number) == 0:
+                flag = '&f=1'
             user_details_record = login_contact_logic_phone(app_id, form)
+
             user_details_record.save()
             application.date_updated = current_date
             application.login_details_status = 'COMPLETED'
             application.save()
             reset_declaration(application)
 
-            return HttpResponseRedirect(reverse('Contact-Summary-View') + '?id=' + app_id)
+            return HttpResponseRedirect(reverse('Contact-Summary-View') + '?id=' + app_id + flag)
 
         else:
             variables = {
@@ -168,8 +173,6 @@ def contact_summary(request):
         email = user_details.email
         mobile_number = user_details.mobile_number
         add_phone_number = user_details.add_phone_number
-        security_question = user_details.security_question
-        security_answer = user_details.security_answer
 
         if application.login_details_status != 'COMPLETED':
             status.update(app_id, 'login_details_status', 'COMPLETED')
@@ -202,8 +205,10 @@ def contact_summary(request):
         variables = submit_link_setter(variables, table_list, 'login_details', app_id)
 
         variables['submit_link'] = reverse('Type-Of-Childcare-Guidance-View')
-
-        return render(request, 'generic-summary-template.html', variables)
+        if 'f' in request.GET:
+            return render(request, 'no-link-summary-template.html', variables)
+        else:
+            return render(request, 'generic-summary-template.html', variables)
 
     if request.method == 'POST':
 
