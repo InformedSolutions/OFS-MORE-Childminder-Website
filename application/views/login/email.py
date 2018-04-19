@@ -22,6 +22,11 @@ from ...models import UserDetails, Application
 
 
 def email_resent(request):
+    """
+    Resend email page
+    :param request: Http request
+    :return: Http responsne
+    """
     email = request.GET['email']
     # Resend magic link
     send_magic_link(request, email)
@@ -32,6 +37,11 @@ def email_resent(request):
 
 
 def check_email(request):
+    """
+    Check email page
+    :param request: Http request
+    :return: Http response
+    """
     email = request.GET['email']
     variables = {
         'email': email
@@ -40,6 +50,11 @@ def check_email(request):
 
 
 def new_email(request):
+    """
+    New application sign up form (enter email)
+    :param request: Http request
+    :return: Http response
+    """
     if request.method == 'GET':
         variables = {
             'form': ContactEmailForm()
@@ -51,6 +66,11 @@ def new_email(request):
 
 
 def existing_email(request):
+    """
+    Existing user sign in form (enter email)
+    :param request: Http request
+    :return: Http response
+    """
     if request.method == 'GET':
         variables = {
             'form': ContactEmailForm()
@@ -63,6 +83,7 @@ def existing_email(request):
 
 def email_page(request, page):
     """
+    This is the functionality behind the new/existing user sign in/up pages
     :param page: whether the request is for a new application or an existing one
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your login and contact details: email template
@@ -98,6 +119,12 @@ def email_page(request, page):
 
 
 def send_magic_link(request, email):
+    """
+    Send magic link
+    :param request:
+    :param email:
+    :return:
+    """
     if UserDetails.objects.filter(email=email).exists():
         acc = UserDetails.objects.get(email=email)
         link = magic_link.generate_random(12, "link")
