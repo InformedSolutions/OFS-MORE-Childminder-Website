@@ -29,9 +29,8 @@ class CreateTestNewApplicationSubmit(TestCase):
 
     def TestAppInit(self):
         """Start application"""
-        r = self.client.post(reverse('Account-Selection'), {'acc_selection':'new'})
+        r = self.client.post(reverse('Account-Selection'), {'acc_selection': 'new'})
         self.assertEqual(r.status_code, 302)
-
 
     def TestAppEmail(self):
         """Submit email"""
@@ -53,7 +52,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         acc = UserDetails.objects.get(email=self.email)
         self.app_id = acc.application_id.pk
         r = self.client.get(
-            '/childminder/validate/' +str(acc.magic_link_email), follow=True
+            '/childminder/validate/' + str(acc.magic_link_email), follow=True
         )
 
         # session = CustomAuthenticationHandler.create_session(r,acc.email)
@@ -79,7 +78,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         acc = UserDetails.objects.get(email=self.email)
         acc.mobile_number = '07783446526'
         acc.save()
-        app = Application.objects.get(pk = self.app_id)
+        app = Application.objects.get(pk=self.app_id)
         app.login_details_status = "COMPLETED"
         app.save()
         print(r)
@@ -93,7 +92,6 @@ class CreateTestNewApplicationSubmit(TestCase):
 
         self.assertEqual(
             Application.objects.get(pk=self.app_id).login_details_status, "COMPLETED")
-
 
     def TestTypeOfChildcareAgeGroups(self):
         """Type of childcare age groups"""
@@ -475,7 +473,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         print(Application.objects.get(application_id=self.app_id).order_code)
         self.assertEqual(r.status_code, 200)
 
-
     def TestNewApplicationSubmit(self):
         """Submit whole application"""
 
@@ -611,5 +608,3 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertFalse(ChildInHome.objects.filter(application_id=self.app_id).exists())
         self.assertFalse(CriminalRecordCheck.objects.filter(application_id=self.app_id).exists())
         self.assertFalse(EYFS.objects.filter(application_id=self.app_id).exists())
-
-

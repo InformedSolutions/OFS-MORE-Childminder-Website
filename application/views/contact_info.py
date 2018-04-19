@@ -111,7 +111,9 @@ def contact_phone(request):
         form.check_flag()
         application = Application.get_id(app_id=app_id)
         acc = UserDetails.objects.get(application_id=app_id)
-
+        if len(acc.mobile_number) == 0 and 'f' not in request.GET:
+            flag = '&f=1'
+            return HttpResponseRedirect(reverse('Contact-Phone-View')+'?id='+app_id + flag)
         variables = {
             'form': form,
             'application_id': app_id,
@@ -130,7 +132,7 @@ def contact_phone(request):
         if form.is_valid():
             # Update User_Details record
             acc = UserDetails.objects.get(application_id=app_id)
-            if len(acc.mobile_number) == 0:
+            if len(acc.mobile_number) == 0 or 'f' in request.GET:
                 flag = '&f=1'
             user_details_record = login_contact_logic_phone(app_id, form)
 
