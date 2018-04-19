@@ -86,12 +86,13 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                "application.middleware.globalise_authentication_flag",
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django_settings_export.settings_export',
-                'govuk_template_base.context_processors.govuk_template_base',
                 "application.middleware.globalise_url_prefix",
-                "application.middleware.globalise_server_name"
+                "application.middleware.globalise_server_name",
+                'govuk_template_base.context_processors.govuk_template_base',
             ],
         },
     },
@@ -135,7 +136,9 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/new-application/',
     r'^' + URL_PREFIX + '/new-application/check-email/',
     r'^' + URL_PREFIX + '/service-unavailable/',
-
+    r'^' + URL_PREFIX + '/help-advice/',
+    r'^' + URL_PREFIX + '/costs/',
+    r'^' + URL_PREFIX + '/application-saved/$',
 )
 
 STATICFILES_FINDERS = [

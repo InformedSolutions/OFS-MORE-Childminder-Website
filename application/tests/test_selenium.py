@@ -340,7 +340,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         try:
             self.create_standard_eyfs_application()
-            selenium_task_executor.get_driver().find_element_by_link_text("more about costs").click()
+            selenium_task_executor.get_driver().find_element_by_link_text("Costs").click()
             self.assertEqual("Costs of becoming a childminder", selenium_task_executor.get_driver().title)
         except Exception as e:
             self.capture_screenshot()

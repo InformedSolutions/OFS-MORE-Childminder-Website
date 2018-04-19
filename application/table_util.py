@@ -184,11 +184,11 @@ def submit_link_setter(variables, table_list, section_name, application_id):
             variables['submit_link'] = reverse(submit_link_dict[section_name])
         else:
             #Go to task list
-            variables['submit_link'] = reverse('morebeta')
+            variables['submit_link'] = reverse('Task-List-View')
         #If section status is completed and not in arc review, we should go back to the previous question in section
         if application.application_status != 'FURTHER_INFORMATION':
             variables['back_link'] = back_link_dict[section_name]
         # Otherwise, return to the task list
         else:
-            variables['back_link'] = 'morebeta'
+            variables['back_link'] = 'Task-List-View'
     return variables

@@ -11,11 +11,10 @@ from django.conf.urls import url, include
 from django.views.generic import TemplateView
 
 from application import views, magic_link, security_question, utils
-from application.views import login
 
 urlpatterns = [
     url(r'^$', views.start_page, name='start-page.html'),
-    url(r'^task-list/', views.task_list, name='morebeta'),
+    url(r'^task-list/', views.task_list, name='Task-List-View'),
     url(r'^childcare/guidance/', views.type_of_childcare_guidance, name='Type-Of-Childcare-Guidance-View'),
     url(r'^childcare/age-groups/', views.type_of_childcare_age_groups, name='Type-Of-Childcare-Age-Groups-View'),
     url(r'^childcare/register/', views.type_of_childcare_register, name='Type-Of-Childcare-Register-View'),
@@ -95,7 +94,6 @@ urlpatterns = [
     url(r'^payment/details/', views.card_payment_details, name='Payment-Details-View'),
     url(r'^paypal-payment-completion/', views.paypal_payment_completion, name='Paypal-Payment-Completion-View'),
     url(r'^application-saved/', views.application_saved, name='Application-Saved-View'),
-    # url(r'^existing-application/', magic_link.existing_application, name='Existing-Application'),
     url(r'^validate/(?P<id>[\w-]+)/$', magic_link.validate_magic_link, name='Validate-Email'),
     url(r'^security-code/', magic_link.sms_verification, name='Security-Code'),
     url(r'^email-sent/', TemplateView.as_view(template_name='email-sent.html'), name='Email-Sent-Template'),
@@ -127,7 +125,7 @@ urlpatterns = [
     url(r'^service-unavailable/$', utils.service_down, name='Service-Down'),
     url(r'^email-resent/$', views.login.email_resent, name='Email-Resent'),
     url(r'^code-resent/$', magic_link.resend_code, name='Resend-Code'),
-
+    url(r'^help-advice/$', views.help_and_advice, name='Help-And-Advice-View'),
 ]
 
 if settings.DEBUG:

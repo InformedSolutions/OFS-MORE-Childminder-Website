@@ -24,21 +24,32 @@
   {% get_service_settings as service_settings %}
   <div class="header-proposition">
     <div class="content">
-      {% if service_settings.has_header_links %}
-        <a href="#proposition-links" class="js-header-toggle menu">{% trans 'Menu' %}</a>
-      {% endif %}
+      <a href="#proposition-links" class="js-header-toggle menu" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">{% trans 'Menu' %}</a>
       <nav id="proposition-menu">
         <a href="{{ URL_PREFIX }}" id="proposition-name">
           {% block proposition %}Register as a childminder{% endblock %}
         </a>
         {% block proposition_menu %}
-          {% if service_settings.has_header_links %}
-            <ul id="proposition-links">
-              {% for link in service_settings.header_links.all %}
-                <li><a href="{{ link.url }}" class="{% if link.link_is_view_name and link.link == request.resolver_match.view_name %}active{% endif %}">{{ link.localised_name }}</a></li>
-              {% endfor %}
+           <ul id="proposition-links">
+               {% if AUTHENTICATED %}
+                   <li>
+                       <a href="{% url 'Costs-View' %}?id={{ id }}">Costs</a>
+                   </li>
+                   <li>
+                      <a href="{% url 'Help-And-Advice-View' %}?id={{ id }}">Help</a>
+                   </li>
+                   <li>
+                      <a href="{% url 'Application-Saved-View' %}?id={{ id }} ">Sign out</a>
+                   </li>
+               {% else %}
+                    <li>
+                      <a href="{% url 'Costs-View' %}">Costs</a>
+                    </li>
+                   <li>
+                      <a href="{% url 'Help-And-Advice-View' %}">Help</a>
+                   </li>
+               {% endif %}
             </ul>
-          {% endif %}
         {% endblock %}
       </nav>
     </div>
