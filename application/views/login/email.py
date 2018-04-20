@@ -14,7 +14,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from timeline_logger.models import TimelineLog
 
-from application import magic_link
+from application.views import magic_link
 from ...utils import test_notify
 from ...forms import ContactEmailForm
 from ...models import UserDetails, Application

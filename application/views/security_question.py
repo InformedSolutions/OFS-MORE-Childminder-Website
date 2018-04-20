@@ -9,9 +9,9 @@ from django.shortcuts import render
 
 from application.forms import SecurityQuestionForm, SecurityDateForm
 from application.utils import date_combiner
-from . import login_redirect_helper
-from .middleware import CustomAuthenticationHandler
-from .models import Application, UserDetails, ApplicantHomeAddress, ApplicantPersonalDetails, AdultInHome, \
+from application import login_redirect_helper
+from application.middleware import CustomAuthenticationHandler
+from application.models import Application, UserDetails, ApplicantHomeAddress, ApplicantPersonalDetails, AdultInHome, \
     CriminalRecordCheck
 
 
