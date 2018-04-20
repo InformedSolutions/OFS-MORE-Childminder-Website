@@ -55,7 +55,6 @@ class CreateTestNewApplicationSubmit(TestCase):
             '/childminder/validate/' + str(acc.magic_link_email), follow=True
         )
 
-        # session = CustomAuthenticationHandler.create_session(r,acc.email)
         self.assertEqual(r.status_code, 200)
         self.assertTrue(
             Application.objects.get(
@@ -468,6 +467,7 @@ class CreateTestNewApplicationSubmit(TestCase):
                 'orderCode': Application.objects.get(application_id=self.app_id).order_code
             }
         )
+
         self.assertEqual(r.status_code, 200)
 
     def TestNewApplicationSubmit(self):

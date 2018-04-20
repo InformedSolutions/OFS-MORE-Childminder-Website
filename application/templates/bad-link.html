@@ -5,14 +5,14 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    <div class="grid-row">
-        <h1 class="form-title heading-large">
-            Bad link
-        </h1>
-        <p>You have navigated to a bad link.</p>
-        <p>Please try logging back in to your account <a href="{{ URL_PREFIX }}/existing-application/">here</a>.</p>
-    </div>
-</div>
+ <h1 class="form-title heading-large">
+    Link already used
+</h1>
+
+<p>The link we sent you can only be used once.</p>
+
+<p>
+    <a href="{% url 'Existing-Email' %}">Send another link</a>.
+</p>
 
 {% endblock %}
