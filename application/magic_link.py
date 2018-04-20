@@ -8,7 +8,6 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 import json
 import os
 import random
-import sys
 
 import requests
 import string
@@ -23,7 +22,7 @@ from django.urls import reverse
 
 from . import login_redirect_helper
 from .middleware import CustomAuthenticationHandler
-from .forms import EmailLoginForm, VerifyPhoneForm
+from .forms import VerifyPhoneForm
 from .models import Application, UserDetails
 
 log = logging.getLogger('django.server')
@@ -143,7 +142,6 @@ def validate_magic_link(request, id):
                 acc.save()
                 return response
 
-
             phone = acc.mobile_number
             rand_num = generate_random(5, 'code')
             expiry = int(time.time())
@@ -191,7 +189,7 @@ def sms_verification(request):
                 else:
                     return HttpResponseRedirect(reverse('Security-Code') + '?id=' + id)
     variables = {'form': form, 'id': id,
-                 'phone_number':acc.mobile_number[-3:],
+                 'phone_number': acc.mobile_number[-3:],
                  'url': reverse('Security-Question') + '?id=' + str(
                      application.application_id)}
     return render(request, 'verify-phone.html', variables)
@@ -235,8 +233,9 @@ def resend_code(request):
                 else:
                     return HttpResponseRedirect(reverse('Resend-Code') + '?id=' + id)
     variables = {'form': form, 'id': id,
-                 'phone_number':acc.mobile_number[-3:],
+                 'phone_number': acc.mobile_number[-3:],
                  'url': reverse('Security-Question') + '?id=' + str(
                      application.application_id)}
     return render(request, 'resend-security-code.html', variables)
+
 

@@ -1,4 +1,3 @@
-
 import collections
 import time
 
@@ -12,68 +11,11 @@ from django.shortcuts import render
 from ..table_util import create_tables, Table, submit_link_setter
 from ..summary_page_data import contact_info_link_dict, contact_info_name_dict
 from .. import magic_link, status
-from ..business_logic import login_contact_logic, reset_declaration, login_contact_logic_phone
+from ..business_logic import reset_declaration, login_contact_logic_phone
 from ..forms import ContactEmailForm, ContactPhoneForm, ContactSummaryForm
-from ..middleware import CustomAuthenticationHandler
 from ..models import Application, UserDetails
 
 
-"""
-Method returning the template for the Your login and contact details: phone number page (for a given application)
-and navigating to the Your login and contact details: question page when successfully completed
-"""
-
-
-def update_email(request):
-    """
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Your login and contact details: email template
-    """
-
-    if request.method == 'GET':
-        app_id = request.GET["id"]
-        form = ContactEmailForm()
-        form.check_flag()
-        application = Application.objects.get(pk=app_id)
-
-        variables = {
-            'form': form,
-            'application_id': app_id,
-            'login_details_status': application.login_details_status,
-            'childcare_type_status': application.childcare_type_status
-        }
-
-        return render(request, 'update-email.html', variables)
-
-    if request.method == 'POST':
-        app_id = request.POST["id"]
-        application = Application.objects.get(pk=app_id)
-        acc = UserDetails.objects.get(application_id=app_id)
-        form = ContactEmailForm(request.POST)
-        form.remove_flag()
-
-        if form.is_valid():
-            # Send login e-mail link if applicant has previously applied
-            email = form.cleaned_data['email_address']
-            if acc.email == email:
-                return HttpResponseRedirect(reverse('Contact-Summary-View') + '?id=' + app_id)
-            elif UserDetails.objects.filter(email=email).exists():
-                return HttpResponseRedirect(reverse('Update-Email-Sent') + '?email=')
-            else:
-                # Update User_Details record
-                update_magic_link(email, app_id)
-                return HttpResponseRedirect(reverse('Update-Email-Sent') +'?email=' +email)
-
-            return render(request,'update-email.html',{'form':form, 'application_id':app_id})
-        else:
-            variables = {
-                'form': form,
-                'application_id': app_id,
-                'login_details_status': application.login_details_status,
-                'childcare_type_status': application.childcare_type_status
-            }
-
-            return render(request, 'update-email.html', variables)
 
 
 def contact_phone(request):
@@ -92,7 +34,7 @@ def contact_phone(request):
         acc = UserDetails.objects.get(application_id=app_id)
         if len(acc.mobile_number) == 0 and 'f' not in request.GET:
             flag = '&f=1'
-            return HttpResponseRedirect(reverse('Contact-Phone-View')+'?id='+app_id + flag)
+            return HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + app_id + flag)
         variables = {
             'form': form,
             'application_id': app_id,
@@ -211,19 +153,3 @@ def contact_summary(request):
         return render(request, 'contact-summary.html', variables)
 
 
-def update_magic_link(email, app_id):
-    """
-    Send magic link
-    :param request:
-    :param email:
-    :return:
-    """
-    if UserDetails.objects.filter(application_id=app_id).exists():
-        acc = UserDetails.objects.get(application_id=app_id)
-        link = magic_link.generate_random(12, "link")
-        expiry = int(time.time())
-        acc.email_expiry_date = expiry
-        acc.magic_link_email = link
-        acc.save()
-        # Note url has been updated to use the domain set in the settings
-        magic_link.magic_link_email(email, str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link +'?email='+email)
