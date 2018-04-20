@@ -650,6 +650,75 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
 
+    def test_invalid_email_raises_error_box(self):
+        self.assert_invalid_email_raises_error_box()
+
+    @try_except_method
+    def assert_invalid_email_raises_error_box(self):
+        """
+        Tests that passing an invalid email address to the email form raises validation error.
+        """
+        selenium_task_executor.navigate_to_base_url()
+        selenium_task_executor.register_email_address("invalid_email")
+        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
+        selenium_task_executor.get_driver().find_element_by_class_name("form-group-error")
+
+    def test_invalid_phone_number_raises_error(self):
+        self.assert_invalid_phone_number_raises_error()
+
+    @try_except_method
+    def assert_invalid_phone_number_raises_error(self):
+        """
+        Tests that passing an invalid phone number to the phone number form raises a validation error
+        """
+        selenium_task_executor.navigate_to_base_url()
+        selenium_task_executor.register_email_address("test_email@email.com")
+        selenium_task_executor.get_driver().find_element_by_id("id_mobile_number").send_keys('a')
+        selenium_task_executor.get_driver().find_element_by_id("id_add_phone_number").send_keys('a')
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
+        selenium_task_executor.get_driver().find_element_by_class_name("form-group-error")
+
+    def test_unticked_age_groups_raises_error(self):
+        self.assert_unticked_age_groups_raises_error()
+
+    @try_except_method
+    def assert_unticked_age_groups_raises_error(self):
+        """
+        Tests that not selecting any age groups raises a validation error.
+        """
+        selenium_task_executor.navigate_to_base_url()
+        selenium_task_executor.complete_your_login_details(email_address="test@test.com",
+                                                           phone_number='07754000000',
+                                                           additional_phone_number=None)
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
+        selenium_task_executor.get_driver().find_element_by_class_name("form-group-error")
+
+    def test_unticked_overnight_care_box_raises_error(self):
+        self.assert_unticked_overnight_care_box_raises_error()
+
+    @try_except_method
+    def assert_unticked_overnight_care_box_raises_error(self):
+        """
+        Tests that not selecting yes/no on overnight care raises a validation error.
+        """
+        selenium_task_executor.navigate_to_base_url()
+        selenium_task_executor.complete_your_login_details(email_address="test@test.com",
+                                                           phone_number='07754000000',
+                                                           additional_phone_number=None)
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_type_of_childcare_0-group").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
+        selenium_task_executor.get_driver().find_element_by_class_name("form-group-error")
+
+    def test_entering_validation_email_link_twice_raises_error(self):
+        self.assert_entering_validation_email_link_twice_raises_error()
+
     def complete_full_question_set(self):
         """
         Helper method for completing all questions in an application
