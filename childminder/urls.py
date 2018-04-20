@@ -97,7 +97,7 @@ urlpatterns = [
     url(r'^validate/(?P<id>[\w-]+)/$', magic_link.validate_magic_link, name='Validate-Email'),
     url(r'^security-code/', magic_link.sms_verification, name='Security-Code'),
     url(r'^email-sent/', TemplateView.as_view(template_name='email-sent.html'), name='Email-Sent-Template'),
-    url(r'^start/', views.start_page),
+    url(r'^start/', views.start_page, name='Start-Page-View'),
     url(r'^confirmation/', views.payment_confirmation, name='Payment-Confirmation'),
     url(r'^next-steps/documents/', views.documents_needed, name='Next-Steps-Documents'),
     url(r'^next-steps/home/', views.home_ready, name='Next-Steps-Home'),

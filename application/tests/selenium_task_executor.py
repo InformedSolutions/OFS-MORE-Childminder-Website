@@ -75,6 +75,24 @@ class SeleniumTaskExecutor:
         driver.find_element_by_id("id_email_address").send_keys(email_address)
         driver.find_element_by_xpath("//input[@value='Continue']").click()
 
+    def sign_back_in(self, email_address):
+        """
+        Selenium steps for signing back into an application
+        :param email_address: the email address to be used during the sign in process.
+        """
+        driver = self.get_driver()
+        self.navigate_to_base_url()
+        driver.find_element_by_xpath("//input[@value='Start now']").click()
+        driver.find_element_by_id("id_acc_selection_1-label").click()
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+
+        driver.find_element_by_id("id_email_address").send_keys(email_address)
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+        self.navigate_to_email_validation_url()
+        sms_validation_code = os.environ.get('SMS_VALIDATION_CODE')
+        driver.find_element_by_id("id_magic_link_sms").send_keys(sms_validation_code)
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+
     def navigate_to_email_validation_url(self):
         """
         Selenium steps for navigating to the email validation page in the login journey

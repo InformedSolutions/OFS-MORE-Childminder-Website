@@ -26,20 +26,30 @@
     <div class="content">
       <a href="#proposition-links" class="js-header-toggle menu" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">{% trans 'Menu' %}</a>
       <nav id="proposition-menu">
-        <a href="{{ URL_PREFIX }}" id="proposition-name">
-          {% block proposition %}Register as a childminder{% endblock %}
-        </a>
+          {% block proposition %}
+              {% if AUTHENTICATED %}
+                <a href="{% url 'Task-List-View' %}?id={{ id }}" id="proposition-name">
+                     Register as a childminder
+                </a>
+              {% else %}
+                <a href="{{ URL_PREFIX }}" id="proposition-name">
+                   Register as a childminder
+                </a>
+              {% endif %}
+          {% endblock %}
         {% block proposition_menu %}
            <ul id="proposition-links">
                {% if AUTHENTICATED %}
-                   <li>
-                       <a href="{% url 'Costs-View' %}?id={{ id }}">Costs</a>
-                   </li>
+                   {% if not HIDE_COSTS %}
+                       <li>
+                           <a href="{% url 'Costs-View' %}?id={{ id }}">Costs</a>
+                       </li>
+                   {% endif %}
                    <li>
                       <a href="{% url 'Help-And-Advice-View' %}?id={{ id }}">Help</a>
                    </li>
                    <li>
-                      <a href="{% url 'Application-Saved-View' %}?id={{ id }} ">Sign out</a>
+                      <a href="{% url 'Application-Saved-View' %}">Sign out</a>
                    </li>
                {% else %}
                     <li>

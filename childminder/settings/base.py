@@ -38,6 +38,8 @@ PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
 EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
 
+TEST_NOTIFY_CONNECTION = True
+
 # INSTALLED DJANGO APPLICATIONS
 
 BUILTIN_APPS = [
@@ -93,6 +95,7 @@ TEMPLATES = [
                 "application.middleware.globalise_url_prefix",
                 "application.middleware.globalise_server_name",
                 'govuk_template_base.context_processors.govuk_template_base',
+                "application.middleware.hide_costs_link",
             ],
         },
     },

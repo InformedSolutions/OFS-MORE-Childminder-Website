@@ -9,8 +9,13 @@
         <header class="page-heading page-heading-with-context">
             <h1 class="heading-xlarge">Register as a childminder list</h1>
             <p><span style="font-weight: bold;">Your application:</span> {{ registers }}</p>
-            <p><span style="font-weight: bold;">Fee:</span> {{ fee }} (<a href="{% url 'Costs-View' %}?id={{ id }}">more about costs</a>)</p>
-            <br>
+
+            {% if not HIDE_COSTS %}
+                <p><span style="font-weight: bold;">Fee:</span> {{ fee }}</p>
+            {% endif %}
+
+            <br/>
+
             {% if arc_comment is not None %}
                 <div class="panel panel-border-narrow arc-comment">
                     <strong class="bold-small">
@@ -84,8 +89,8 @@
         <div class="form-group">
             <input type="hidden" value="{{ id }}" name="id"/>
             <a href="{% url 'Application-Saved-View' %}?id={{ id }}" class="button-secondary button-save-and-exit">Save and exit</a>
-            <br>
-            <br>
+            <br/>
+            <br/>
             {% if can_cancel %}
                 <a href="{% url 'Cancel-Application' %}?id={{ id }}">Cancel application</a>
             {% endif %}
