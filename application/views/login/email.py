@@ -136,7 +136,7 @@ def send_magic_link(email):
         acc.magic_link_email = link
         acc.save()
         # Note url has been updated to use the domain set in the settings
-        magic_link.magic_link_email(email, str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link +'?email='+email)
+        magic_link.magic_link_email(email, str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link)
 
 
 
