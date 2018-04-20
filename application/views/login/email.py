@@ -5,7 +5,6 @@ and contact details: phone number page when successfully completed; business log
 is applied to either create or update the associated User_Details record;
 the page redirects `the applicant to the login page if they have previously applied
 """
-import sys
 import time
 
 from django.conf import settings
@@ -19,6 +18,58 @@ from application import magic_link
 from ...utils import test_notify
 from ...forms import ContactEmailForm
 from ...models import UserDetails, Application
+
+def update_email(request):
+    """
+    This method returns a page to update your email address
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your login and contact details: email template
+    """
+
+    if request.method == 'GET':
+        app_id = request.GET["id"]
+        form = ContactEmailForm()
+        form.check_flag()
+        application = Application.objects.get(pk=app_id)
+
+        variables = {
+            'form': form,
+            'application_id': app_id,
+            'login_details_status': application.login_details_status,
+            'childcare_type_status': application.childcare_type_status
+        }
+
+        return render(request, 'update-email.html', variables)
+
+    if request.method == 'POST':
+        app_id = request.POST["id"]
+        application = Application.objects.get(pk=app_id)
+        acc = UserDetails.objects.get(application_id=app_id)
+        form = ContactEmailForm(request.POST)
+        form.remove_flag()
+
+        if form.is_valid():
+            # Send login e-mail link if applicant has previously applied
+            email = form.cleaned_data['email_address']
+            if acc.email == email:
+                return HttpResponseRedirect(reverse('Contact-Summary-View') + '?id=' + app_id)
+            elif UserDetails.objects.filter(email=email).exists():
+                return HttpResponseRedirect(reverse('Update-Email-Sent') + '?email=')
+            else:
+                # Update User_Details record
+                update_magic_link(email, app_id)
+                return HttpResponseRedirect(reverse('Update-Email-Sent') + '?email=' + email)
+
+            return render(request, 'update-email.html', {'form': form, 'application_id': app_id})
+        else:
+            variables = {
+                'form': form,
+                'application_id': app_id,
+                'login_details_status': application.login_details_status,
+                'childcare_type_status': application.childcare_type_status
+            }
+
+            return render(request, 'update-email.html', variables)
 
 
 def email_resent(request):
@@ -140,6 +191,23 @@ def send_magic_link(email):
         magic_link.magic_link_email(email, str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link)
 
 
+def update_magic_link(email, app_id):
+    """
+    Send magic link
+    :param request:
+    :param email:
+    :return:
+    """
+    if UserDetails.objects.filter(application_id=app_id).exists():
+        acc = UserDetails.objects.get(application_id=app_id)
+        link = magic_link.generate_random(12, "link")
+        expiry = int(time.time())
+        acc.email_expiry_date = expiry
+        acc.magic_link_email = link
+        acc.save()
+        # Note url has been updated to use the domain set in the settings
+        magic_link.magic_link_email(email,
+                                    str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link + '?email=' + email)
 
 
 def create_new_app():
@@ -172,3 +240,5 @@ def create_new_app():
     )
 
     return user
+
+

@@ -12,6 +12,7 @@ from django.views.generic import TemplateView
 
 from application import views, magic_link, security_question, utils
 
+
 urlpatterns = [
     url(r'^$', views.start_page, name='start-page.html'),
     url(r'^task-list/', views.task_list, name='Task-List-View'),
