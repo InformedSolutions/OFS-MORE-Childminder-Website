@@ -88,10 +88,14 @@ def generate_random(digits, type):
     """
     if type == 'code':
         r = ''.join([random.choice(string.digits) for n in range(digits)])
+        if settings.EXECUTING_AS_TEST == 'True':
+            os.environ['SMS_VALIDATION_CODE'] = r
+        else:
+            print(r)
     elif type == 'link':
         r = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(digits)])
     r = r.upper()
-    print(r)
+
     return r
 
 

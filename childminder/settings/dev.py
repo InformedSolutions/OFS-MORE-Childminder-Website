@@ -15,6 +15,8 @@ INTERNAL_IPS += [socket.gethostbyname(socket.gethostname())[:-1] + '1']
 
 ALLOWED_HOSTS = ['*']
 
+TEST_NOTIFY_CONNECTION = False
+
 DEV_APPS = [
     'debug_toolbar',
     'django_extensions'
