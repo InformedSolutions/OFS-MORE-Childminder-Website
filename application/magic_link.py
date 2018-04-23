@@ -87,7 +87,7 @@ def generate_random(digits, type):
     :return:
     """
     if type == 'code':
-        r = ''.join([random.choice(string.digits) for n in range(digits)])
+        r = ''.join([random.choice(string.digits[1:]) for n in range(digits)])
         if settings.EXECUTING_AS_TEST == 'True':
             os.environ['SMS_VALIDATION_CODE'] = r
         else:
