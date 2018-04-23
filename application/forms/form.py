@@ -279,6 +279,10 @@ class VerifyPhoneForm(ChildminderForms):
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
         self.magic_link_email = kwargs.pop('id')
+        try:
+            self.correct_sms_code = kwargs.pop('correct_sms_code')
+        except:
+            self.correct_sms_code = None
         super(VerifyPhoneForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
 
@@ -293,6 +297,8 @@ class VerifyPhoneForm(ChildminderForms):
             raise forms.ValidationError('The code must be 5 digits.  You have entered fewer than 5 digits')
         if len(magic_link_sms)>5:
             raise forms.ValidationError('The code must be 5 digits.  You have entered more than 5 digits')
+        if magic_link_sms != self.correct_sms_code:
+            raise forms.ValidationError('Invalid code. Check the code we sent to your mobile.')
         return magic_link_sms
 
 
