@@ -719,6 +719,21 @@ class ApplyAsAChildminder(LiveServerTestCase):
     def test_entering_validation_email_link_twice_raises_error(self):
         self.assert_entering_validation_email_link_twice_raises_error()
 
+    @try_except_method
+    def assert_entering_validation_email_link_twice_raises_error(self):
+        """
+        Tests that using email link for sign-in more than once returns a 'bad link' page.
+        """
+        self.create_standard_eyfs_application()
+        selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
+        selenium_task_executor.navigate_to_email_validation_url()
+
+        validation_url = os.environ.get('EMAIL_VALIDATION_URL')
+        selenium_task_executor.get_driver().get(validation_url)
+        selenium_task_executor.get_driver().get(validation_url)
+
+        self.assertEqual("Security code expired", selenium_task_executor.get_driver().find_element_by_class_name("form-title").text)
+
     def complete_full_question_set(self):
         """
         Helper method for completing all questions in an application
