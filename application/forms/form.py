@@ -270,7 +270,7 @@ class VerifyPhoneForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    magic_link_sms = forms.IntegerField(label='Security code', required=True)
+    magic_link_sms = forms.IntegerField(label='Security code', required=True, error_messages={'required': 'Please enter the 5 digit code we sent to your mobile'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -293,8 +293,6 @@ class VerifyPhoneForm(ChildminderForms):
             raise forms.ValidationError('The code must be 5 digits.  You have entered fewer than 5 digits')
         if len(magic_link_sms)>5:
             raise forms.ValidationError('The code must be 5 digits.  You have entered more than 5 digits')
-        if len(magic_link_sms)==0:
-            raise forms.ValidationError('Please enter the 5 digit code we sent to your mobile')
         return magic_link_sms
 
 
