@@ -118,7 +118,7 @@ USE_TZ = True
 URL_PREFIX = '/childminder'
 STATIC_URL = URL_PREFIX + '/static/'
 
-AUTHENTICATION_URL = URL_PREFIX + '/existing-application/'
+AUTHENTICATION_URL = URL_PREFIX + '/sign-in/'
 
 AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/$',
