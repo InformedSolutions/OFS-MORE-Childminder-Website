@@ -87,6 +87,7 @@ class TypeOfChildcareOvernightCareForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    error_summary_title ='There was a problem on this page'
 
     options = (
         ('True', 'Yes'),
