@@ -4,6 +4,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
+from django.views.decorators.cache import never_cache
 from timeline_logger.models import TimelineLog
 
 from .. import status
@@ -150,9 +151,6 @@ def declaration_summary(request, print=False):
             'cautions_convictions': dbs_record.cautions_convictions,
             'declaration': dbs_record.send_certificate_declare,
             'send_hdb_declare': hdb_record.send_hdb_declare,
-            # 'eyfs_understand': eyfs_record.eyfs_understand,
-            # 'eyfs_training_declare': eyfs_record.eyfs_training_declare,
-            # 'share_info_declare': eyfs_record.share_info_declare,
             'first_reference_first_name': first_reference_record.first_name,
             'first_reference_last_name': first_reference_record.last_name,
             'first_reference_relationship': first_reference_record.relationship,
@@ -243,6 +241,7 @@ def declaration_intro(request):
             return render(request, 'declaration-intro.html', variables)
 
 
+@never_cache
 def declaration_declaration(request):
     """
     Method returning the template for the Declaration page (for a given application) and navigating to
@@ -259,6 +258,16 @@ def declaration_declaration(request):
         confirmation_of_declaration_form = DeclarationConfirmationOfDeclarationForm(id=application_id_local)
         consent_to_sharing_form = DeclarationConsentToSharingForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
+
+        # If application is already submitted redirect them to the awaiting review page
+        if application.application_status == 'SUBMITTED' and application.order_code is not None:
+            variables = {
+                'application_id': application_id_local,
+                'order_code': application.order_code,
+            }
+            return render(request, 'payment-confirmation.html', variables)
+
+
         variables = {
             'confirmation_of_understanding_form': confirmation_of_understanding_form,
             'confirmation_of_declaration_form': confirmation_of_declaration_form,
@@ -333,7 +342,16 @@ def declaration_declaration(request):
                         extra_data={'user_type': 'applicant', 'action': 're-submitted by', 'entity': 'application'}
                     )
 
-                    return HttpResponseRedirect(reverse('Awaiting-Review-View') + '?id=' + application_id_local + '&resubmitted=1')
+                    # If a resubmission return application status to submitted and forward to the confirmation page
+                    application.application_status = "SUBMITTED"
+                    application.save()
+
+                    variables = {
+                        'application_id': application_id_local,
+                        'order_code': application.order_code,
+                    }
+
+                    return render(request, 'payment-confirmation.html', variables)
 
                 return HttpResponseRedirect(settings.URL_PREFIX + '/payment?id=' + application_id_local)
             else:

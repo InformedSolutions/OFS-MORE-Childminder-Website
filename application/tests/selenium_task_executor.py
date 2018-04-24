@@ -2,7 +2,9 @@ import os
 import random
 
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.select import Select
+from selenium.webdriver.support.wait import WebDriverWait
 
 
 class SeleniumTaskExecutor:
@@ -88,6 +90,10 @@ class SeleniumTaskExecutor:
 
         driver.find_element_by_id("id_email_address").send_keys(email_address)
         driver.find_element_by_xpath("//input[@value='Continue']").click()
+
+        WebDriverWait(driver, 10).until(
+            expected_conditions.title_contains("Check your email"))
+
         self.navigate_to_email_validation_url()
         sms_validation_code = os.environ.get('SMS_VALIDATION_CODE')
         driver.find_element_by_id("id_magic_link_sms").send_keys(sms_validation_code)
