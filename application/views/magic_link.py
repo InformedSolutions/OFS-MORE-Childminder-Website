@@ -138,6 +138,8 @@ def validate_magic_link(request, id):
                 acc.save()
                 response = HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + str(app_id))
                 CustomAuthenticationHandler.create_session(response, acc.email)
+                acc.email_expiry_date = 0
+                acc.save()
                 return response
 
             phone = acc.mobile_number
@@ -235,5 +237,4 @@ def resend_code(request):
                  'url': reverse('Security-Question') + '?id=' + str(
                      application.application_id)}
     return render(request, 'resend-security-code.html', variables)
-
 

@@ -12,6 +12,6 @@ def help_and_advice(request):
     """
     application_id_local = request.GET.get('id')
     context = {
-        'application_id': application_id_local
+        'id': application_id_local
     }
     return render(request, 'help-and-advice.html', context)

@@ -13,6 +13,7 @@ from django.views.generic import TemplateView
 from application import views, utils
 from application.views import security_question, magic_link
 
+
 urlpatterns = [
     url(r'^$', views.start_page, name='start-page.html'),
     url(r'^task-list/', views.task_list, name='Task-List-View'),
@@ -105,7 +106,6 @@ urlpatterns = [
     url(r'^next-steps/interview/', views.prepare_for_interview, name='Next-Steps-Interview'),
     url(r'^code-expired/', TemplateView.as_view(template_name='code-expired.html')),
     url(r'^bad-link/', TemplateView.as_view(template_name='bad-link.html')),
-    url(r'^link-resolution-error/', TemplateView.as_view(template_name='link-resolution-error.html')),
     url(r'^sign-in/question/(?P<id>[\w-]+)/$', security_question.question, name='Security-QuestionP'),
     url(r'^sign-in/question/$', security_question.question, name='Security-Question'),
     url(r'^djga/', include('google_analytics.urls')),
