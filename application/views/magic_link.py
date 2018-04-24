@@ -20,10 +20,10 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from . import login_redirect_helper
-from .middleware import CustomAuthenticationHandler
-from .forms import VerifyPhoneForm
-from .models import Application, UserDetails
+from application import login_redirect_helper
+from application.middleware import CustomAuthenticationHandler
+from application.forms import VerifyPhoneForm
+from application.models import Application, UserDetails
 
 log = logging.getLogger('django.server')
 
@@ -237,5 +237,4 @@ def resend_code(request):
                  'url': reverse('Security-Question') + '?id=' + str(
                      application.application_id)}
     return render(request, 'resend-security-code.html', variables)
-
 
