@@ -118,7 +118,7 @@
     Your house and car insurance also need to be up to date.
 </p>
 
-{% if AUTHENTICATED %}
+{% if id and AUTHENTICATED %}
     <a href="{% url 'Task-List-View' %}?id={{ id }}" class="button">Return to application</a>
 {% endif %}
 

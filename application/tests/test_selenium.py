@@ -11,6 +11,8 @@ from django.test import LiveServerTestCase, override_settings, tag
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 from .selenium_task_executor import SeleniumTaskExecutor
 
@@ -399,6 +401,33 @@ class ApplyAsAChildminder(LiveServerTestCase):
             selenium_task_executor.get_driver().find_element_by_link_text('more about costs')
 
     @try_except_method
+    def test_declaration_cannot_be_replayed(self):
+        self.assert_declaration_cannot_be_replayed()
+
+    def assert_declaration_cannot_be_replayed(self):
+        """
+        Tests that the costs link is not shown if an application has been returned to the applicant
+        """
+        # Load fixtures to populate a test application
+        call_command("loaddata", "test_returned_application.json", verbosity=0)
+
+        # Note that this email address is loaded from fixture
+        selenium_task_executor.sign_back_in('test@informed.com')
+
+        selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_change_declare").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm']").click()
+
+        WebDriverWait(selenium_task_executor.get_driver(), 10).until(
+            expected_conditions.title_contains("Payment confirmed"))
+
+        selenium_task_executor.get_driver().back()
+
+        # Check user is redirected to the summary
+        self.assertEqual("Payment confirmed", selenium_task_executor.get_driver().title)
+
+
+    @try_except_method
     def test_can_access_help_without_authenticating(self):
         self.assert_can_access_help_without_authenticating()
 
@@ -421,6 +450,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.create_standard_eyfs_application()
         selenium_task_executor.get_driver().find_element_by_link_text('Help').click()
         self.assertEqual("Help and advice", selenium_task_executor.get_driver().title)
+        selenium_task_executor.get_driver().find_element_by_link_text("Return to application").click()
+        self.assertEqual("Register as a childminder", selenium_task_executor.get_driver().title)
 
     @try_except_method
     def test_can_access_costs(self):

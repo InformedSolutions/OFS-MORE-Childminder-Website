@@ -39,7 +39,7 @@
           {% endblock %}
         {% block proposition_menu %}
            <ul id="proposition-links">
-               {% if AUTHENTICATED %}
+               {% if id and AUTHENTICATED %}
                    {% if not HIDE_COSTS %}
                        <li>
                            <a href="{% url 'Costs-View' %}?id={{ id }}">Costs</a>
