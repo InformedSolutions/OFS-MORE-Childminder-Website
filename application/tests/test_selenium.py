@@ -727,12 +727,41 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.create_standard_eyfs_application()
         selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
         selenium_task_executor.navigate_to_email_validation_url()
-
-        validation_url = os.environ.get('EMAIL_VALIDATION_URL')
-        selenium_task_executor.get_driver().get(validation_url)
-        selenium_task_executor.get_driver().get(validation_url)
+        selenium_task_executor.navigate_to_email_validation_url()
 
         self.assertEqual("Security code expired", selenium_task_executor.get_driver().find_element_by_class_name("form-title").text)
+
+    def test_entering_invalid_sms_code_raises_error(self):
+        self.assert_entering_invalid_sms_code_raises_error()
+
+    @try_except_method
+    def assert_entering_invalid_sms_code_raises_error(self):
+        '''
+        Tests that entering invalid sms code (none at all, too short, too long or incorrect) raises error.
+        '''
+
+        self.create_standard_eyfs_application()
+        selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
+        selenium_task_executor.navigate_to_email_validation_url()
+
+        # Test no code entered.
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
+
+        # Test too short a code entered.
+        selenium_task_executor.get_driver().find_element_by_name('magic_link_sms').send_keys('1')
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
+
+        # Test too long a code entered.
+        selenium_task_executor.get_driver().find_element_by_name('magic_link_sms').send_keys('123456')
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
+
+        # Test incorrect code entered.
+        selenium_task_executor.get_driver().find_element_by_name('magic_link_sms').send_keys('10101')
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
 
     def complete_full_question_set(self):
         """
