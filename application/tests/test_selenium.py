@@ -421,6 +421,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.create_standard_eyfs_application()
         selenium_task_executor.get_driver().find_element_by_link_text('Help').click()
         self.assertEqual("Help and advice", selenium_task_executor.get_driver().title)
+        selenium_task_executor.get_driver().find_element_by_link_text("Return to application").click()
+        self.assertEqual("Register as a childminder", selenium_task_executor.get_driver().title)
 
     @try_except_method
     def test_can_access_costs(self):
