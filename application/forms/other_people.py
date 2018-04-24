@@ -101,7 +101,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         """
         first_name = self.cleaned_data['first_name']
         if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
-            raise forms.ValidationError('TBC')
+            raise forms.ValidationError('First name can only have letters')
         if len(first_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less')
         return first_name
@@ -114,7 +114,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         middle_names = self.cleaned_data['middle_names']
         if middle_names != '':
             if re.match("^[A-zÀ-ÿ- ]+$", middle_names) is None:
-                raise forms.ValidationError('TBC')
+                raise forms.ValidationError('Middle names can only have letters')
             if len(middle_names) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less')
         return middle_names
@@ -126,7 +126,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         """
         last_name = self.cleaned_data['last_name']
         if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
-            raise forms.ValidationError('TBC')
+            raise forms.ValidationError('Last name can only have letters')
         if len(last_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less')
         return last_name
@@ -143,7 +143,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         today = date.today()
         age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
         if age < 16:
-            raise forms.ValidationError('TBC')
+            raise forms.ValidationError('Only include details of anyone aged 16 or over on this page')
         if len(str(birth_year)) < 4:
             raise forms.ValidationError('Please enter the whole year (4 digits)')
         return birth_day, birth_month, birth_year
@@ -190,9 +190,9 @@ class OtherPeopleAdultDBSForm(ChildminderForms):
         """
         dbs_certificate_number = self.cleaned_data['dbs_certificate_number']
         if len(str(dbs_certificate_number)) > 12:
-            raise forms.ValidationError('TBC')
+            raise forms.ValidationError('Check your certificate: the number should be 12 digits long')
         if len(str(dbs_certificate_number)) < 12:
-            raise forms.ValidationError('TBC')
+            raise forms.ValidationError('Check your certificate: the number should be 12 digits long')
         return dbs_certificate_number
 
 
@@ -309,7 +309,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
         """
         first_name = self.cleaned_data['first_name']
         if re.match("^[A-zÀ-ÿ- ]+$", first_name) is None:
-            raise forms.ValidationError('TBC')
+            raise forms.ValidationError('First name can only have letters')
         if len(first_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less')
         return first_name
@@ -322,7 +322,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
         middle_names = self.cleaned_data['middle_names']
         if middle_names != '':
             if re.match("^[A-zÀ-ÿ- ]+$", middle_names) is None:
-                raise forms.ValidationError('TBC')
+                raise forms.ValidationError('Middle names can only have letters')
             if len(middle_names) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less')
         return middle_names
@@ -334,7 +334,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
         """
         last_name = self.cleaned_data['last_name']
         if re.match("^[A-zÀ-ÿ- ]+$", last_name) is None:
-            raise forms.ValidationError('TBC')
+            raise forms.ValidationError('Last name can only have letters')
         if len(last_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less')
         return last_name
@@ -351,7 +351,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
         today = date.today()
         age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
         if age >= 16:
-            raise forms.ValidationError('TBC')
+            raise forms.ValidationError('Please only use this page for children aged under 16')
         if len(str(birth_year)) < 4:
             raise forms.ValidationError('Please enter the whole year (4 digits)')
         return birth_day, birth_month, birth_year
