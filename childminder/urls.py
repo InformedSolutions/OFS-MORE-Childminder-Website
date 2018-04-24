@@ -10,7 +10,8 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.views.generic import TemplateView
 
-from application import views, magic_link, security_question, utils
+from application import views, utils
+from application.views import security_question, magic_link
 
 
 urlpatterns = [

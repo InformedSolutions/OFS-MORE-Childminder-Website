@@ -10,9 +10,9 @@ from django.shortcuts import render
 
 from ..table_util import create_tables, Table, submit_link_setter
 from ..summary_page_data import contact_info_link_dict, contact_info_name_dict
-from .. import magic_link, status
+from .. import status
 from ..business_logic import reset_declaration, login_contact_logic_phone
-from ..forms import ContactEmailForm, ContactPhoneForm, ContactSummaryForm
+from ..forms import ContactPhoneForm, ContactSummaryForm
 from ..models import Application, UserDetails
 
 

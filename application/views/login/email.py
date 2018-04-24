@@ -14,7 +14,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from timeline_logger.models import TimelineLog
 
-from .. import magic_link
+from application.views import magic_link
 from ...utils import test_notify
 from ...forms import ContactEmailForm
 from ...models import UserDetails, Application
@@ -144,7 +144,7 @@ def email_page(request, page):
 
         form = ContactEmailForm(request.POST)
         if form.is_valid():
-            if settings.TEST_NOTIFY_CONNECTION and not test_notify():
+            if not test_notify():
                 return HttpResponseRedirect(reverse('Service-Down'))
 
             # Send login e-mail link if applicant has previously applied
