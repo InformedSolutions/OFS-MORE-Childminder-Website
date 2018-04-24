@@ -8,7 +8,6 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 import json
 import os
 import random
-import sys
 
 import requests
 import string
@@ -23,7 +22,7 @@ from django.urls import reverse
 
 from . import login_redirect_helper
 from .middleware import CustomAuthenticationHandler
-from .forms import EmailLoginForm, VerifyPhoneForm
+from .forms import VerifyPhoneForm
 from .models import Application, UserDetails
 
 log = logging.getLogger('django.server')
@@ -36,6 +35,7 @@ def magic_link_email(email, link_id):
     :param link_id: string containing the magic link ID related to an application
     :return: an email
     """
+
     base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
     notification_request = {
@@ -127,14 +127,21 @@ def validate_magic_link(request, id):
         app = Application.objects.get(application_id=app_id)
         exp = acc.email_expiry_date
         if not has_expired(exp) and len(id) > 0:
+            acc.email_expiry_date = 0
+            if 'email' in request.GET:
+                acc.email = request.GET['email']
+                acc.save()
+                response = HttpResponseRedirect(reverse('Task-List-View') + '?id=' + str(app_id))
+                CustomAuthenticationHandler.create_session(response, acc.email)
+                return response
             if len(acc.mobile_number) == 0:
+                acc.save()
                 response = HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + str(app_id))
                 CustomAuthenticationHandler.create_session(response, acc.email)
                 acc.email_expiry_date = 0
                 acc.save()
                 return response
 
-            acc.email_expiry_date = 0
             phone = acc.mobile_number
             rand_num = generate_random(5, 'code')
             expiry = int(time.time())
@@ -179,7 +186,7 @@ def sms_verification(request):
                 # Forward back onto application
                 return response
     variables = {'form': form, 'id': id,
-                 'phone_number':acc.mobile_number[-3:],
+                 'phone_number': acc.mobile_number[-3:],
                  'url': reverse('Security-Question') + '?id=' + str(
                      application.application_id)}
     return render(request, 'verify-phone.html', variables)
@@ -220,7 +227,9 @@ def resend_code(request):
                 # Forward back onto application
                 return response
     variables = {'form': form, 'id': id,
-                 'phone_number':acc.mobile_number[-3:],
+                 'phone_number': acc.mobile_number[-3:],
                  'url': reverse('Security-Question') + '?id=' + str(
                      application.application_id)}
     return render(request, 'resend-security-code.html', variables)
+
+
