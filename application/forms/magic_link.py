@@ -12,7 +12,7 @@ class VerifyPhoneForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    magic_link_sms = forms.IntegerField(label='Security code', required=True)
+    magic_link_sms = forms.IntegerField(label='Security code', required=True, error_messages={'required': 'Please enter the 5 digit code we sent to your mobile'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -21,6 +21,10 @@ class VerifyPhoneForm(ChildminderForms):
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
         self.magic_link_email = kwargs.pop('id')
+        try:
+            self.correct_sms_code = kwargs.pop('correct_sms_code')
+        except:
+            self.correct_sms_code = None
         super(VerifyPhoneForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
 
@@ -29,12 +33,12 @@ class VerifyPhoneForm(ChildminderForms):
         SMS code validation
         :return: string
         """
-        magic_link_sms = str(self.cleaned_data['magic_link_sms']).zfill(5)
+        magic_link_sms = str(self.cleaned_data['magic_link_sms'])
 
-        if len(magic_link_sms) < 5:
+        if len(magic_link_sms)<5:
             raise forms.ValidationError('The code must be 5 digits.  You have entered fewer than 5 digits')
-        if len(magic_link_sms) > 5:
+        if len(magic_link_sms)>5:
             raise forms.ValidationError('The code must be 5 digits.  You have entered more than 5 digits')
-        if len(magic_link_sms) == 0:
-            raise forms.ValidationError('Please enter the 5 digit code we sent to your mobile')
+        if magic_link_sms != self.correct_sms_code:
+            raise forms.ValidationError('Invalid code. Check the code we sent to your mobile.')
         return magic_link_sms
