@@ -207,24 +207,20 @@ def resend_code(request):
     app = acc.application_id
     application = Application.objects.get(application_id=app.pk)
     if request.method == 'POST':
-        form = VerifyPhoneForm(request.POST, id=id)
         code = request.POST['magic_link_sms']
+        form = VerifyPhoneForm(request.POST, id=id, correct_sms_code=acc.magic_link_sms)
         if len(code) > 0:
             exp = acc.sms_expiry_date
             if form.is_valid() and not has_expired(exp):
-                if code == acc.magic_link_sms:
-                    response = login_redirect_helper.redirect_by_status(app)
+                response = login_redirect_helper.redirect_by_status(app)
 
-                    # Create session issue custom cookie to user
-                    CustomAuthenticationHandler.create_session(response, acc.email)
+                # Create session issue custom cookie to user
+                CustomAuthenticationHandler.create_session(response, acc.email)
 
-                    # Forward back onto application
-                    return response
-                else:
-                    return HttpResponseRedirect(reverse('Resend-Code') + '?id=' + id)
+                # Forward back onto application
+                return response
     variables = {'form': form, 'id': id,
                  'phone_number':acc.mobile_number[-3:],
                  'url': reverse('Security-Question') + '?id=' + str(
                      application.application_id)}
     return render(request, 'resend-security-code.html', variables)
-
