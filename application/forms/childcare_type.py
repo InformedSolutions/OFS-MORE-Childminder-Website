@@ -95,7 +95,7 @@ class TypeOfChildcareOvernightCareForm(ChildminderForms):
 
     overnight_care = forms.ChoiceField(label='Will you be looking after children overnight?', choices=options,
                                        widget=InlineRadioSelect, required=True,
-                                       error_messages={'required': 'TBC'})
+                                       error_messages={'required': 'Please select one'})
 
     def __init__(self, *args, **kwargs):
         """
