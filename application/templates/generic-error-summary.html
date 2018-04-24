@@ -11,8 +11,9 @@
       {% for row in table.row_list %}
         <li class="field-error">
           <ul>
-
+              {% if row.back_link != '' %}
               <a href="{% url row.back_link %}?id={{application_id}}{{other_people_numbers}}">{{ row.error }}</a>
+              {% endif %}
           </ul>
 
         </li>

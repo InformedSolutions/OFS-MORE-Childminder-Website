@@ -2542,6 +2542,12 @@ div.error-summary ul.error-summary-list {
   background-color: #b10e1e;
 }
 
+.task-disabled {
+    background-color: #BFC1C3;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
 .task-do-last {
   background-color: #FFFFFF;
   outline: 3px;

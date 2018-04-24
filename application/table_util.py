@@ -119,8 +119,10 @@ def table_creator(object_list, field_names, data_names, table_names, table_error
             for row in row_data:
                 local_row = Row(row[0], row[1], row[2], row[3], '')
                 temp_table.add_row(local_row)
+
         # Store any errors for each row in the row itself and add the table to the table list
         temp_table.get_errors()
+
         table_list.append(temp_table)
     table_to_title = zip(table_list, table_names, table_error_names)
 
@@ -168,6 +170,9 @@ def create_tables(tables_values, page_name_dict, page_link_dict):
 
         # Once all rows have been addded to the object, get errors can be called, getting any errors for all of the rows
         table['table_object'].get_errors()
+        for row in table['table_object'].row_list:
+            if row.error == '':
+                row.back_link = ''
         table['table_object'].title = table['title']
         table['table_object'].error_summary_title = table['error_summary_title']
         # An extra part to the back links must be added for the other people pages, if this detail is passed, its added
