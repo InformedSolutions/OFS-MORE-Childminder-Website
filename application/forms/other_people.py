@@ -60,6 +60,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    error_summary_title = 'There was a problem with the details'
 
     first_name = forms.CharField(label='First name', required=True)
     middle_names = forms.CharField(label='Middle names (if they have any)', required=False)
@@ -156,6 +157,7 @@ class OtherPeopleAdultDBSForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    error_summary_title ='There was a problem with your DBS details'
 
     widget_instance = NumberInput()
     widget_instance.input_classes = 'form-control form-control-1-4'
@@ -268,6 +270,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    error_summary_title = 'There was a problem with the details'
 
     first_name = forms.CharField(label='First name', required=True)
     middle_names = forms.CharField(label='Middle names (if they have any)', required=False)
