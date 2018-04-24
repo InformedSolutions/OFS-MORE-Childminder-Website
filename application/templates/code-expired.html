@@ -1,16 +1,18 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Code expired{% endblock %}
+{% block page_title %}Bad link{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
-<h1 class="form-title heading-large">
-    Security code expired
+ <h1 class="form-title heading-large">
+    Link already used
 </h1>
 
-<p>Your security code has expired.</p>
+<p>The link we sent you can only be used once.</p>
 
-<p>Please try logging back in to your account <a href="{{ URL_PREFIX }}/existing-application/">here</a>.</p>
+<p>
+    <a href="{% url 'Existing-Email' %}">Send another link</a>.
+</p>
 
 {% endblock %}
