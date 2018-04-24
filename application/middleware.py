@@ -119,7 +119,7 @@ def hide_costs_link(request):
     application_id = request.GET.get('id')
 
     # If an application id is not quoted in the request
-    if application_id is None:
+    if application_id is None or len(application_id) == 0:
         return {'HIDE_COSTS': False}
 
     # Test whether application is in further information status
