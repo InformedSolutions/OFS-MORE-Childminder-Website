@@ -130,6 +130,8 @@ def validate_magic_link(request, id):
             if len(acc.mobile_number) == 0:
                 response = HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + str(app_id))
                 CustomAuthenticationHandler.create_session(response, acc.email)
+                acc.email_expiry_date = 0
+                acc.save()
                 return response
 
             acc.email_expiry_date = 0
