@@ -38,6 +38,7 @@ class ContactPhoneForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    error_summary_title ='There was a problem with your phone number'
 
     mobile_number = forms.CharField(label='Mobile phone number')
     add_phone_number = forms.CharField(label='Additional phone number (optional)', required=False)
