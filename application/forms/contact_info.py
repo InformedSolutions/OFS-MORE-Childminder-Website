@@ -68,9 +68,9 @@ class ContactPhoneForm(ChildminderForms):
         mobile_number = self.cleaned_data['mobile_number']
         no_space_mobile_number = mobile_number.replace(' ', '')
         if re.match("^(07\d{8,12}|447\d{7,11})$", no_space_mobile_number) is None:
-            raise forms.ValidationError('TBC')
+            raise forms.ValidationError('Please enter a valid mobile number')
         if len(no_space_mobile_number) > 11:
-            raise forms.ValidationError('TBC')
+            raise forms.ValidationError('Please enter a valid mobile number')
         return mobile_number
 
     def clean_add_phone_number(self):
@@ -82,9 +82,9 @@ class ContactPhoneForm(ChildminderForms):
         no_space_add_phone_number = add_phone_number.replace(' ', '')
         if add_phone_number != '':
             if re.match("^(0\d{8,12}|447\d{7,11})$", no_space_add_phone_number) is None:
-                raise forms.ValidationError('TBC')
+                raise forms.ValidationError('Please enter a valid mobile number')
             if len(no_space_add_phone_number) > 11:
-                raise forms.ValidationError('TBC')
+                raise forms.ValidationError('Please enter a valid mobile number')
         return add_phone_number
 
 
