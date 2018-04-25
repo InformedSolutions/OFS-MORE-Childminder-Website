@@ -115,6 +115,9 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Confirm selection
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
 
+        WebDriverWait(selenium_task_executor.get_driver(), 10).until(
+            expected_conditions.title_contains("Childcare Register"))
+
         self.assertEqual("Childcare Register",
                          selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/form/div/h1").text)
 
@@ -400,6 +403,13 @@ class ApplyAsAChildminder(LiveServerTestCase):
         with self.assertRaises(NoSuchElementException):
             selenium_task_executor.get_driver().find_element_by_link_text('more about costs')
 
+        # Test that the grayed out class is present (for unflagged tasks which are disabled)
+        self.assertTrue(selenium_task_executor.get_driver().find_element_by_class_name('grayed-out'))
+
+        # Test that the task-disabled class is present (for unflagged tasks which are disabled)
+        self.assertTrue(selenium_task_executor.get_driver().find_element_by_class_name('task-disabled'))
+
+
     @try_except_method
     def test_declaration_cannot_be_replayed(self):
         self.assert_declaration_cannot_be_replayed()
@@ -414,7 +424,19 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Note that this email address is loaded from fixture
         selenium_task_executor.sign_back_in('test@informed.com')
 
+        selenium_task_executor.get_driver().find_element_by_id("health").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//a[contains(@href,'health/booklet/')]").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_background_check_declare").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_inspect_home_declare").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_interview_declare").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_share_info_declare").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_display_contact_details_on_web").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_information_correct_declare").click()
         selenium_task_executor.get_driver().find_element_by_id("id_change_declare").click()
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm']").click()
 
