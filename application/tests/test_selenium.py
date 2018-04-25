@@ -425,8 +425,18 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_task_executor.sign_back_in('test@informed.com')
 
         selenium_task_executor.get_driver().find_element_by_id("health").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//a[contains(@href,'health/booklet/')]").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_background_check_declare").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_inspect_home_declare").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_interview_declare").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_share_info_declare").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_display_contact_details_on_web").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_information_correct_declare").click()
         selenium_task_executor.get_driver().find_element_by_id("id_change_declare").click()
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm']").click()
 
