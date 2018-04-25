@@ -11,9 +11,10 @@ class SecurityQuestionForm(ChildminderForms):
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
+    error_summary_title = 'There was a problem with your answer'
     auto_replace_widgets = True
     answer = None
-    security_answer = forms.CharField(label='')
+    security_answer = forms.CharField(label='', required=True, error_messages={'required': 'Please give an answer'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -27,12 +28,8 @@ class SecurityQuestionForm(ChildminderForms):
 
     def clean_security_answer(self):
         security_answer = self.cleaned_data['security_answer']
-        if len(security_answer) == 0:
-            self.error = 'empty'
-            raise forms.ValidationError('empty')
-        elif self.answer.replace(' ', '') != security_answer.replace(' ', ''):
-            self.error = 'wrong'
-            raise forms.ValidationError('wrong')
+        if self.answer.replace(' ', '') != security_answer.replace(' ', ''):
+            raise forms.ValidationError('Your answer must match what you told us in your application')
 
         return security_answer
 
@@ -42,10 +39,11 @@ class SecurityDateForm(ChildminderForms):
     GOV.UK form for the Your personal details: date of birth page
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'error-summary.html'
+    error_summary_template_name = 'standard-error-summary.html'
+    error_summary_title = 'There was a problem with your answer'
     auto_replace_widgets = True
 
-    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980')
+    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980' , required=True, error_messages={'required': 'Please give an answer'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -68,11 +66,6 @@ class SecurityDateForm(ChildminderForms):
         birth_month = str(self.cleaned_data['date_of_birth'].month)
         birth_year = str(self.cleaned_data['date_of_birth'].year)
         if self.day != birth_day or self.month != birth_month or self.year != birth_year:
-            self.error = 'wrong'
-            raise forms.ValidationError('wrong')
-
-        if len(birth_year) == 0 or len(birth_day) == 0 or len(birth_month) == 0:
-            self.error = 'empty'
-            raise forms.ValidationError('empty')
+            raise forms.ValidationError('Your answer must match what you told us in your application')
 
         return birth_day, birth_month, birth_year

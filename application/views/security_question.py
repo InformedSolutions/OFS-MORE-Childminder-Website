@@ -43,29 +43,23 @@ def question(request):
         application = Application.objects.get(pk=app_id)
         acc = UserDetails.objects.get(application_id=application)
         security_question = acc.security_question
-        if forms == True:
+        valid_forms = [form.is_valid() for form in forms]
 
+        if all(valid_forms):
             response = login_redirect_helper.redirect_by_status(application)
             # Create session issue custom cookie to user
             CustomAuthenticationHandler.create_session(response, acc.email)
 
             # Forward back onto application
             return response
-        else:
-            error_message = ''
-            if 'wrong' in str(forms):
-                error_message = 'Your answer must match what you told us in your application'
-            if 'empty' in str(forms):
-                error_message = 'Please give an answer'
 
-            variables = {
-                'forms': get_forms(app_id, question),
-                'question': question,
-                'application_id': app_id,
-                'label': get_label(question),
-                'error': error_message
-            }
-            return render(request, 'security-question.html', variables)
+        variables = {
+            'forms': forms,
+            'question': question,
+            'application_id': app_id,
+            'label': get_label(question)
+        }
+        return render(request, 'security-question.html', variables)
 
 
 def get_label(q):
@@ -128,21 +122,7 @@ def post_forms(question, r, app_id):
     if 'dbs' in question:
         form_list.append(SecurityQuestionForm(r, answer=field_answer))
 
-    return validate_forms(form_list)
-
-
-def validate_forms(forms):
-    for i in forms:
-        if i.is_valid():
-            try:
-                i.clean_security_answer()
-            except Exception as ex:
-                return ex
-        elif hasattr(i, 'error'):
-            return i.error
-        else:
-            return 'empty'
-    return True
+    return form_list
 
 
 def get_forms(app_id, question):

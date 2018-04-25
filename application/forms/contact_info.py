@@ -14,8 +14,9 @@ class ContactEmailForm(ChildminderForms):
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
+    error_summary_title = 'There was a problem with your email'
     auto_replace_widgets = True
-    email_address = forms.EmailField()
+    email_address = forms.EmailField(required=True, error_messages={'required': "Please enter an email address"})
 
     def clean_email_address(self):
         """
@@ -26,8 +27,6 @@ class ContactEmailForm(ChildminderForms):
         # RegEx for valid e-mail addresses
         if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
             raise forms.ValidationError('Please enter a valid email address')
-        if len(email_address) == 0:
-            raise forms.ValidationError('Please enter an email address')
         return email_address
 
 
@@ -40,7 +39,7 @@ class ContactPhoneForm(ChildminderForms):
     auto_replace_widgets = True
     error_summary_title ='There was a problem with your phone number'
 
-    mobile_number = forms.CharField(label='Mobile phone number')
+    mobile_number = forms.CharField(label='Mobile phone number', required=True, error_messages={'required': "Please enter a mobile number"})
     add_phone_number = forms.CharField(label='Additional phone number (optional)', required=False)
 
     def __init__(self, *args, **kwargs):

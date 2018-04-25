@@ -37,9 +37,9 @@ class VerifyPhoneForm(ChildminderForms):
         magic_link_sms = str(self.cleaned_data['magic_link_sms'])
 
         if len(magic_link_sms)<5:
-            raise forms.ValidationError('The code must be 5 digits.  You have entered fewer than 5 digits')
+            raise forms.ValidationError('The code must be 5 digits. You have entered fewer than 5 digits')
         if len(magic_link_sms)>5:
-            raise forms.ValidationError('The code must be 5 digits.  You have entered more than 5 digits')
+            raise forms.ValidationError('The code must be 5 digits. You have entered more than 5 digits')
         if magic_link_sms != self.correct_sms_code:
             raise forms.ValidationError('Invalid code. Check the code we sent to your mobile.')
         return magic_link_sms

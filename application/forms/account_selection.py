@@ -12,6 +12,7 @@ class AccountSelection(ChildminderForms):
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'error-summary.html'
+    error_summary_title = 'There was a problem on this page'
     auto_replace_widgets = True
 
     options = (
