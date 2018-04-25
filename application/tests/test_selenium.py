@@ -115,6 +115,9 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Confirm selection
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
 
+        WebDriverWait(selenium_task_executor.get_driver(), 10).until(
+            expected_conditions.title_contains("Childcare Register"))
+
         self.assertEqual("Childcare Register",
                          selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/form/div/h1").text)
 
@@ -399,6 +402,13 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Test that costs link is not shown above task list
         with self.assertRaises(NoSuchElementException):
             selenium_task_executor.get_driver().find_element_by_link_text('more about costs')
+
+        # Test that the grayed out class is present (for unflagged tasks which are disabled)
+        self.assertTrue(selenium_task_executor.get_driver().find_element_by_class_name('grayed-out'))
+
+        # Test that the task-disabled class is present (for unflagged tasks which are disabled)
+        self.assertTrue(selenium_task_executor.get_driver().find_element_by_class_name('task-disabled'))
+
 
     @try_except_method
     def test_declaration_cannot_be_replayed(self):
