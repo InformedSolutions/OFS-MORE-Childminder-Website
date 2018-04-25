@@ -424,6 +424,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Note that this email address is loaded from fixture
         selenium_task_executor.sign_back_in('test@informed.com')
 
+        selenium_task_executor.get_driver().find_element_by_id("health").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
         selenium_task_executor.get_driver().find_element_by_id("id_change_declare").click()
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm']").click()
