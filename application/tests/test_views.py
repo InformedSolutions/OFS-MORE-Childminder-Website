@@ -14,7 +14,6 @@ from django.test import TestCase
 from django.urls import resolve, reverse
 
 from application import models
-from application.magic_link import sms_verification
 from application.views import (application_saved,
                                card_payment_details,
                                contact_phone,

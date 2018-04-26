@@ -135,6 +135,32 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
         self.assertEqual(Application.objects.get(pk=self.app_id).childcare_type_status, "COMPLETED")
 
+    def TestUpdateEmail(self):
+        """Update email address field"""
+        r = self.client.post(reverse('Contact-Email-View'), {'id': self.app_id, 'email_address': 'y@y.com'})
+
+        self.assertEqual(r.status_code, 302)
+        self.assertIsNot('y@y.com', UserDetails.objects.get(application_id=self.app_id).email)
+
+    def TestVerifyPhone(self):
+        """Test update email address process- update, validate and redirect"""
+        self.TestUpdateEmail()
+        self.TestValidateEmail()
+        r = self.client.post(reverse('Security-Code') + '?id=' + str(self.app_id), {'id': self.app_id,
+                                                                                    'magic_link_sms': UserDetails.objects.get(
+                                                                                        application_id=self.app_id).magic_link_sms})
+        self.assertEqual(r.status_code, 302)
+
+    def TestSecurityQuestion(self):
+        """Test """
+        self.TestAppEmail()
+        self.TestValidateEmail()
+        r = self.client.post(reverse('Security-Question'), {'id': self.app_id,
+                                                            'security_answer': UserDetails.objects.get(
+                                                                application_id=self.app_id).mobile_number})
+
+        self.assertEqual(r.status_code, 302)
+
     def TestAppPersonalDetailsNames(self, data=None):
         """Submit your name in Personal details task"""
 
@@ -481,6 +507,8 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestContactSummaryView()
         self.TestTypeOfChildcareAgeGroups()
         self.TestTypeOfChildcareOvernightCare()
+        self.TestVerifyPhone()
+        self.TestSecurityQuestion()
         self.AppTestTypeOfChildcareRegister()
 
         self.TestAppPersonalDetailsNames()

@@ -11,6 +11,8 @@ from django.test import LiveServerTestCase, override_settings, tag
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support import expected_conditions
+from selenium.webdriver.support.wait import WebDriverWait
 
 from .selenium_task_executor import SeleniumTaskExecutor
 
@@ -112,6 +114,9 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         # Confirm selection
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        WebDriverWait(selenium_task_executor.get_driver(), 10).until(
+            expected_conditions.title_contains("Childcare Register"))
 
         self.assertEqual("Childcare Register",
                          selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/form/div/h1").text)
@@ -398,6 +403,52 @@ class ApplyAsAChildminder(LiveServerTestCase):
         with self.assertRaises(NoSuchElementException):
             selenium_task_executor.get_driver().find_element_by_link_text('more about costs')
 
+        # Test that the grayed out class is present (for unflagged tasks which are disabled)
+        self.assertTrue(selenium_task_executor.get_driver().find_element_by_class_name('grayed-out'))
+
+        # Test that the task-disabled class is present (for unflagged tasks which are disabled)
+        self.assertTrue(selenium_task_executor.get_driver().find_element_by_class_name('task-disabled'))
+
+
+    @try_except_method
+    def test_declaration_cannot_be_replayed(self):
+        self.assert_declaration_cannot_be_replayed()
+
+    def assert_declaration_cannot_be_replayed(self):
+        """
+        Tests that the costs link is not shown if an application has been returned to the applicant
+        """
+        # Load fixtures to populate a test application
+        call_command("loaddata", "test_returned_application.json", verbosity=0)
+
+        # Note that this email address is loaded from fixture
+        selenium_task_executor.sign_back_in('test@informed.com')
+
+        selenium_task_executor.get_driver().find_element_by_id("health").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//a[contains(@href,'health/booklet/')]").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_background_check_declare").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_inspect_home_declare").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_interview_declare").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_share_info_declare").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_display_contact_details_on_web").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_information_correct_declare").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_change_declare").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm']").click()
+
+        WebDriverWait(selenium_task_executor.get_driver(), 10).until(
+            expected_conditions.title_contains("Payment confirmed"))
+
+        selenium_task_executor.get_driver().back()
+
+        # Check user is redirected to the summary
+        self.assertEqual("Payment confirmed", selenium_task_executor.get_driver().title)
+
+
     @try_except_method
     def test_can_access_help_without_authenticating(self):
         self.assert_can_access_help_without_authenticating()
@@ -421,6 +472,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.create_standard_eyfs_application()
         selenium_task_executor.get_driver().find_element_by_link_text('Help').click()
         self.assertEqual("Help and advice", selenium_task_executor.get_driver().title)
+        selenium_task_executor.get_driver().find_element_by_link_text("Return to application").click()
+        self.assertEqual("Register as a childminder", selenium_task_executor.get_driver().title)
 
     @try_except_method
     def test_can_access_costs(self):
@@ -729,7 +782,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_task_executor.navigate_to_email_validation_url()
         selenium_task_executor.navigate_to_email_validation_url()
 
-        self.assertEqual("Security code expired", selenium_task_executor.get_driver().find_element_by_class_name("form-title").text)
+        self.assertEqual("Security code expired",
+                         selenium_task_executor.get_driver().find_element_by_class_name("form-title").text)
 
     def test_entering_invalid_sms_code_raises_error(self):
         self.assert_entering_invalid_sms_code_raises_error()
@@ -804,7 +858,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_task_executor.complete_people_in_your_home_task(
             True,
             faker.first_name(), faker.first_name(), faker.last_name_female(),
-            random.randint(1, 29), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
+            random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
             True, faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 14, self.current_year - 1),
             'Child'
@@ -848,4 +902,3 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_driver.quit()
         super(ApplyAsAChildminder, self).tearDown()
         self.assertEqual([], self.verification_errors)
-

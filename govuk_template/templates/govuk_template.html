@@ -27,7 +27,7 @@
       <a href="#proposition-links" class="js-header-toggle menu" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">{% trans 'Menu' %}</a>
       <nav id="proposition-menu">
           {% block proposition %}
-              {% if AUTHENTICATED %}
+              {% if id and AUTHENTICATED %}
                 <a href="{% url 'Task-List-View' %}?id={{ id }}" id="proposition-name">
                      Register as a childminder
                 </a>
@@ -39,7 +39,7 @@
           {% endblock %}
         {% block proposition_menu %}
            <ul id="proposition-links">
-               {% if AUTHENTICATED %}
+               {% if id and AUTHENTICATED %}
                    {% if not HIDE_COSTS %}
                        <li>
                            <a href="{% url 'Costs-View' %}?id={{ id }}">Costs</a>

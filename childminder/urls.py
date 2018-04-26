@@ -10,7 +10,9 @@ from django.conf import settings
 from django.conf.urls import url, include
 from django.views.generic import TemplateView
 
-from application import views, magic_link, security_question, utils
+from application import views, utils
+from application.views import security_question, magic_link
+
 
 urlpatterns = [
     url(r'^$', views.start_page, name='start-page.html'),
@@ -21,7 +23,7 @@ urlpatterns = [
     url(r'^childcare/local-authority/', views.local_authority_links, name='Local-Authority-View'),
     url(r'^childcare/overnight-care/', views.overnight_care, name='Type-Of-Childcare-Overnight-Care-View'),
     url(r'^childcare/summary/', views.childcare_type_summary, name='Type-Of-Childcare-Summary-View'),
-    url(r'^account/email/', views.contact_email, name='Contact-Email-View'),
+    url(r'^account/email/', views.update_email, name='Contact-Email-View'),
     url(r'^account/phone/', views.contact_phone, name='Contact-Phone-View'),
     url(r'^account/summary/', views.contact_summary, name='Contact-Summary-View'),
     url(r'^personal-details/$', views.personal_details_guidance, name='Personal-Details-Guidance-View'),
@@ -104,7 +106,6 @@ urlpatterns = [
     url(r'^next-steps/interview/', views.prepare_for_interview, name='Next-Steps-Interview'),
     url(r'^code-expired/', TemplateView.as_view(template_name='code-expired.html')),
     url(r'^bad-link/', TemplateView.as_view(template_name='bad-link.html')),
-    url(r'^link-resolution-error/', TemplateView.as_view(template_name='link-resolution-error.html')),
     url(r'^sign-in/question/(?P<id>[\w-]+)/$', security_question.question, name='Security-QuestionP'),
     url(r'^sign-in/question/$', security_question.question, name='Security-Question'),
     url(r'^djga/', include('google_analytics.urls')),
@@ -121,6 +122,7 @@ urlpatterns = [
     url(r'^new-application/email-sent/$', views.login.check_email, name='New-Email-Sent'),
     url(r'^sign-in/$', views.login.existing_email, name='Existing-Email'),
     url(r'^sign-in/check-email/$', views.login.check_email, name='Existing-Email-Sent'),
+    url(r'^account/check-email/$', views.login.check_email, name='Update-Email-Sent'),
     url(r'^sign-in/new-application/$', views.login.account_selection, name='Account-Selection'),
     url(r'^service-unavailable/$', utils.service_down, name='Service-Down'),
     url(r'^email-resent/$', views.login.email_resent, name='Email-Resent'),

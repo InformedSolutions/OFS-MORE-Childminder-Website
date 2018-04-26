@@ -55,6 +55,10 @@ def can_cancel(application):
 
 
 def test_notify():
+    # If running exclusively as a test return true to avoid overuse of the notify API
+    if settings.EXECUTING_AS_TEST:
+        return True
+
     if test_notify_connection():
         return True
     else:
