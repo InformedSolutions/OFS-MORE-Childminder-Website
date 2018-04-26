@@ -703,10 +703,10 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
 
+    @try_except_method
     def test_invalid_email_raises_error_box(self):
         self.assert_invalid_email_raises_error_box()
 
-    @try_except_method
     def assert_invalid_email_raises_error_box(self):
         """
         Tests that passing an invalid email address to the email form raises validation error.
@@ -716,10 +716,10 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
         selenium_task_executor.get_driver().find_element_by_class_name("form-group-error")
 
+    @try_except_method
     def test_invalid_phone_number_raises_error(self):
         self.assert_invalid_phone_number_raises_error()
 
-    @try_except_method
     def assert_invalid_phone_number_raises_error(self):
         """
         Tests that passing an invalid phone number to the phone number form raises a validation error
@@ -732,10 +732,10 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
         selenium_task_executor.get_driver().find_element_by_class_name("form-group-error")
 
+    @try_except_method
     def test_unticked_age_groups_raises_error(self):
         self.assert_unticked_age_groups_raises_error()
 
-    @try_except_method
     def assert_unticked_age_groups_raises_error(self):
         """
         Tests that not selecting any age groups raises a validation error.
@@ -749,10 +749,10 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
         selenium_task_executor.get_driver().find_element_by_class_name("form-group-error")
 
+    @try_except_method
     def test_unticked_overnight_care_box_raises_error(self):
         self.assert_unticked_overnight_care_box_raises_error()
 
-    @try_except_method
     def assert_unticked_overnight_care_box_raises_error(self):
         """
         Tests that not selecting yes/no on overnight care raises a validation error.
@@ -769,10 +769,10 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
         selenium_task_executor.get_driver().find_element_by_class_name("form-group-error")
 
+    @try_except_method
     def test_entering_validation_email_link_twice_raises_error(self):
         self.assert_entering_validation_email_link_twice_raises_error()
 
-    @try_except_method
     def assert_entering_validation_email_link_twice_raises_error(self):
         """
         Tests that using email link for sign-in more than once returns a 'bad link' page.
@@ -785,10 +785,10 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertEqual("Security code expired",
                          selenium_task_executor.get_driver().find_element_by_class_name("form-title").text)
 
+    @try_except_method
     def test_entering_invalid_sms_code_raises_error(self):
         self.assert_entering_invalid_sms_code_raises_error()
 
-    @try_except_method
     def assert_entering_invalid_sms_code_raises_error(self):
         '''
         Tests that entering invalid sms code (none at all, too short, too long or incorrect) raises error.
