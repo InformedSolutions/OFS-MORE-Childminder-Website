@@ -27,7 +27,7 @@
       <a href="#proposition-links" class="js-header-toggle menu" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">{% trans 'Menu' %}</a>
       <nav id="proposition-menu">
           {% block proposition %}
-              {% if id and AUTHENTICATED %}
+              {% if id and AUTHENTICATED and task_list_link %}
                 <a href="{% url 'Task-List-View' %}?id={{ id }}" id="proposition-name">
                      Register as a childminder
                 </a>
