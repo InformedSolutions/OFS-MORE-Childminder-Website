@@ -818,6 +818,54 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
 
     @try_except_method
+    def test_invalid_mobile_security_question_raises_error(self):
+        self.assert_invalid_mobile_security_question_raises_error()
+
+    def assert_invalid_mobile_security_question_raises_error(self):
+        '''
+        Test that invalid response to mobile number security question form raises validation error.
+
+        4 different login scenarios:
+            - App contains user DBS: Ask for DBS Certificate No.
+            - User given details of whom they live with: Ask for DoB for eldest person in home.
+            - User has completed personal details: Ask for DoB and postcode.
+            * If none of above, ask for user's phone number.
+        '''
+        email_address = "example@example.com"
+        phone_number = "07754000000"
+
+        # Complete login details.
+        selenium_task_executor.navigate_to_base_url()
+        selenium_task_executor.complete_your_login_details(email_address, phone_number, additional_phone_number=None)
+        selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
+
+        # Start sign in process.
+        selenium_task_executor.navigate_to_base_url()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Start now']").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_acc_selection_1-label").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+
+        selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(email_address)
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+
+        WebDriverWait(selenium_task_executor.get_driver(), 10).until(
+            expected_conditions.title_contains("Check your email"))
+
+        # Reach SMS validation page.
+        selenium_task_executor.navigate_to_email_validation_url()
+
+        # Select 'Don't have your phone?' to trigger security question.
+        selenium_task_executor.get_driver().find_element_by_xpath(u'//p[text()="Don\'t have your phone?"]').click()
+
+        # Test no number, too short a mobile number, too long a mobile number and incorrect mobile number.
+        test_numbers = ['', '0', '123456789012', '07754000001']
+        for test_number in test_numbers:
+            selenium_task_executor.get_driver().find_element_by_name("security_answer").send_keys(test_number)
+            selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+            self.assertIn("problem", selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+            selenium_task_executor.get_driver().find_element_by_id('back').click()  # Go back to remove errors from previous test_number.
+
+    @try_except_method
     def test_save_and_continue_childcare_address_redirects_to_manual_entry(self):
         self.assert_save_and_continue_childcare_address_redirects_to_manual_entry()
 
