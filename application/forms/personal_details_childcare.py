@@ -85,7 +85,7 @@ class PersonalDetailsChildcareAddressManualForm(ChildminderForms):
             self.fields['town'].initial = childcare_address.town
             self.fields['county'].initial = childcare_address.county
             self.fields['postcode'].initial = childcare_address.postcode
-            self.pk = childcare_address.child_id
+            self.pk = childcare_address.home_address_id
             self.field_list = ['street_name_and_number', 'street_name_and_number2', 'town', 'county', 'postcode']
 
     def clean_street_name_and_number(self):
