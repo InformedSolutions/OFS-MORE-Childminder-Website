@@ -794,22 +794,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         Tests that entering invalid sms code (none at all, too short, too long or incorrect) raises error.
         '''
         test_email = self.create_standard_eyfs_application()
-
-        # Start sign in process.
-        selenium_task_executor.navigate_to_base_url()
-        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Start now']").click()
-        selenium_task_executor.get_driver().find_element_by_id("id_acc_selection_1-label").click()
-        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
-
-        # Generate new validation link (was previously used in standard_eyfs_application).
-        selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(test_email)
-        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
-
-        WebDriverWait(selenium_task_executor.get_driver(), 10).until(
-            expected_conditions.title_contains("Check your email"))
-
-        # Reach SMS validation page.
-        selenium_task_executor.navigate_to_email_validation_url()
+        selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
+        selenium_task_executor.navigate_to_SMS_validation_page(test_email)
 
         # Test no code, too short a code, too long a code and incorrect code.
         test_codes = ['', '1', '123456', '10101']
@@ -835,22 +821,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         '''
         test_email = self.create_standard_eyfs_application()
         selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
-
-        # Start sign in process.
-        selenium_task_executor.navigate_to_base_url()
-        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Start now']").click()
-        selenium_task_executor.get_driver().find_element_by_id("id_acc_selection_1-label").click()
-        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
-
-        # Generate new validation link (was previously used in standard_eyfs_application).
-        selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(test_email)
-        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
-
-        WebDriverWait(selenium_task_executor.get_driver(), 10).until(
-            expected_conditions.title_contains("Check your email"))
-
-        # Reach SMS validation page.
-        selenium_task_executor.navigate_to_email_validation_url()
+        selenium_task_executor.navigate_to_SMS_validation_page(test_email)
 
         # Select 'Don't have your phone?' to trigger security question.
         selenium_task_executor.get_driver().find_element_by_xpath(u'//p[text()="Don\'t have your phone?"]').click()
