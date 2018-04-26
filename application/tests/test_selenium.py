@@ -793,29 +793,31 @@ class ApplyAsAChildminder(LiveServerTestCase):
         '''
         Tests that entering invalid sms code (none at all, too short, too long or incorrect) raises error.
         '''
+        test_email = self.create_standard_eyfs_application()
 
-        self.create_standard_eyfs_application()
-        selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
+        # Start sign in process.
+        selenium_task_executor.navigate_to_base_url()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Start now']").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_acc_selection_1-label").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+
+        # Generate new validation link (was previously used in standard_eyfs_application).
+        selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(test_email)
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+
+        WebDriverWait(selenium_task_executor.get_driver(), 10).until(
+            expected_conditions.title_contains("Check your email"))
+
+        # Reach SMS validation page.
         selenium_task_executor.navigate_to_email_validation_url()
 
-        # Test no code entered.
-        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
-        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
-
-        # Test too short a code entered.
-        selenium_task_executor.get_driver().find_element_by_name('magic_link_sms').send_keys('1')
-        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
-        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
-
-        # Test too long a code entered.
-        selenium_task_executor.get_driver().find_element_by_name('magic_link_sms').send_keys('123456')
-        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
-        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
-
-        # Test incorrect code entered.
-        selenium_task_executor.get_driver().find_element_by_name('magic_link_sms').send_keys('10101')
-        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
-        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
+        # Test no code, too short a code, too long a code and incorrect code.
+        test_codes = ['', '1', '123456', '10101']
+        for code in test_codes:
+            selenium_task_executor.get_driver().find_element_by_name('magic_link_sms').clear()  # Clear form of previous code.
+            selenium_task_executor.get_driver().find_element_by_name('magic_link_sms').send_keys(code)
+            selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+            self.assertIn("problem", selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
 
     @try_except_method
     def test_invalid_mobile_security_question_raises_error(self):
@@ -831,12 +833,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
             - User has completed personal details: Ask for DoB and postcode.
             * If none of above, ask for user's phone number.
         '''
-        email_address = "example@example.com"
-        phone_number = "07754000000"
-
-        # Complete login details.
-        selenium_task_executor.navigate_to_base_url()
-        selenium_task_executor.complete_your_login_details(email_address, phone_number, additional_phone_number=None)
+        test_email = self.create_standard_eyfs_application()
         selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
 
         # Start sign in process.
@@ -845,7 +842,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_task_executor.get_driver().find_element_by_id("id_acc_selection_1-label").click()
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
-        selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(email_address)
+        # Generate new validation link (was previously used in standard_eyfs_application).
+        selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(test_email)
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
         WebDriverWait(selenium_task_executor.get_driver(), 10).until(
