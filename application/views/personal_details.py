@@ -840,8 +840,6 @@ def personal_details_summary(request):
 
         form = PersonalDetailsSummaryForm()
         application = Application.get_id(app_id=app_id)
-        status.update(app_id,
-                      'personal_details_status', 'COMPLETED')
         variables = {
             'form': form,
             'application_id': app_id,
