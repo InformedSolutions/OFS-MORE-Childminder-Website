@@ -9,6 +9,7 @@ These environment variables have to be defined before running Childminder:
 
 | Name                   | Description                                                                           |
 | ---------------------- | ------------------------------------------------------------------------------------- |
+| PYTHONUBUFFERED                 | Force stdin, stdout and stderr to be totally unbuffered                               |
 | PROJECT_SETTINGS                | Defines which settings file to use. For each environment there's separate config file |
 | APP_NOTIFY_URL                  | URL for notify-gateway service                                                        |
 | APP_PAYMENT_URL                 | URL for payment-gateway service                                                       |
