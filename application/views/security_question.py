@@ -151,15 +151,14 @@ def get_security_question(app_id):
     app = Application.objects.get(pk=app_id)
     acc = UserDetails.objects.get(application_id=app_id)
     question = ''
-    if len(acc.mobile_number) != 0:
+    if app.criminal_record_check_status == 'COMPLETED':
+        question = 'dbs'
+    elif app.people_in_home_status == 'COMPLETED':
+        question = 'oldest'
+    elif app.personal_details_status == 'COMPLETED':
+        question = 'postcode'
+    elif len(acc.mobile_number) != 0:
         question = 'mobile'
-        if app.personal_details_status == 'COMPLETED':
-            # set form to ask for birth day and postcode
-            question = 'postcode'
-            if app.people_in_home_status == 'COMPLETED':
-                question = 'oldest'
-            elif app.criminal_record_check_status == 'COMPLETED':
-                question = 'dbs'
     return question
 
 
