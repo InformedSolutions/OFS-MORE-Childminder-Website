@@ -849,6 +849,9 @@ def personal_details_summary(request):
         }
         variables = submit_link_setter(variables, table_list, 'personal_details', app_id)
 
+        if not sum([table.get_error_amount() for table in variables['table_list']]):  # If no errors found.
+            status.update(app_id, 'personal_details_status', 'COMPLETED')
+
         return render(request, 'generic-summary-template.html', variables)
 
     if request.method == 'POST':
