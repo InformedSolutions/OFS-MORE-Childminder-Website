@@ -14,7 +14,7 @@ import os
 from django.conf import settings
 
 
-def send_email(email, link_id, template_id='ecd2a788-257b-4bb9-8784-5aed82bcbb92'):
+def send_email(email, link_id, template_id):
     """
     Method to send an email using the Notify Gateway API
     :param email: string contarining the e-mail address to send the e-mail to
@@ -47,7 +47,7 @@ def send_email(email, link_id, template_id='ecd2a788-257b-4bb9-8784-5aed82bcbb92
     return r
 
 
-def send_text(phone, link_id, template_id='d285f17b-8534-4110-ba6c-e7e788eeafb2'):
+def send_text(phone, link_id, template_id):
     """
     Method to send an SMS verification code using the Notify Gateway API
     :param phone: string containing the phone number to send the code to
