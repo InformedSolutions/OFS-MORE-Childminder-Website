@@ -44,9 +44,6 @@ def magic_link_email(email, link_id, template_id='ecd2a788-257b-4bb9-8784-5aed82
     else:
         print(link_id)
 
-    class personalisation:
-        link = link_id
-
     personalisation = {"link": link_id}
 
     return send_email(email, personalisation, template_id)
@@ -64,8 +61,6 @@ def magic_link_text(phone, link_id, template_id='d285f17b-8534-4110-ba6c-e7e788e
     # If executing login function in test mode override phone number
     if settings.EXECUTING_AS_TEST == 'True':
         phone = '07700900111'
-
-    personalisation = {"link": link_id}
 
     personalisation = personalisation
 
