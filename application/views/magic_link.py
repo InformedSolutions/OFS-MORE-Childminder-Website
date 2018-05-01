@@ -29,15 +29,14 @@ from application.notify import send_email, send_text
 log = logging.getLogger('django.server')
 
 
-def magic_link_email(email, link_id, template_id='ecd2a788-257b-4bb9-8784-5aed82bcbb92'):
+def magic_link_email(email, link_id):
     """
     Method to send a magic link email using notify.py
     :param email: string contarining the e-mail address to send the e-mail to
     :param link_id: string containing the magic link ID related to an application
-    :param template_id: string containing the templateId of the notification request (defaults to default  magic_link template_id)
     :return: an email
     """
-    # If executing login function in test mode set env variable for later retrieval by test code and override email address
+    # If executing login function in test mode set env variable for later retrieval by test code, override email address
     if settings.EXECUTING_AS_TEST == 'True':
         os.environ['EMAIL_VALIDATION_URL'] = link_id
         email = 'simulate-delivered@notifications.service.gov.uk'
@@ -45,16 +44,16 @@ def magic_link_email(email, link_id, template_id='ecd2a788-257b-4bb9-8784-5aed82
         print(link_id)
 
     personalisation = {"link": link_id}
+    template_id = 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
 
     return send_email(email, personalisation, template_id)
 
 
-def magic_link_text(phone, link_id, template_id='d285f17b-8534-4110-ba6c-e7e788eeafb2'):
+def magic_link_text(phone, link_id):
     """
     Method to send a magic link sms using notify.py
     :param phone: string containing the phone number to send the code to
     :param link_id: string containing the magic link ID related to an application
-    :param template_id: string containing the templateId of the notification request
     :return: an email
     """
 
@@ -62,7 +61,8 @@ def magic_link_text(phone, link_id, template_id='d285f17b-8534-4110-ba6c-e7e788e
     if settings.EXECUTING_AS_TEST == 'True':
         phone = '07700900111'
 
-    personalisation = personalisation
+    personalisation = {"link": link_id}
+    template_id = 'd285f17b-8534-4110-ba6c-e7e788eeafb2'
 
     return send_text(phone, personalisation, template_id)
 
