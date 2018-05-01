@@ -5,11 +5,11 @@
 
 ## Todo's before PR
 
-- [ ] Rebase from develop
+- [ ] Branch has been rebased against develop
 - [ ] Unit tests passed (`make test`)
-- [ ] PR naming according our [guide](https://github.com/InformedSolutions/OFS-MORE-DevOps-Tooling/wiki/Commits-guideline)
+- [ ] PR named appropriately - see [guide](https://github.com/InformedSolutions/OFS-MORE-DevOps-Tooling/wiki/Commits-guideline)
 - [ ] PR description describes the overall goals of PR commits
-- [ ] Templates been checked with relevant user-story
+- [ ] Templates have been checked against the relevant user-story
 
 ## Migrations
 
@@ -22,9 +22,8 @@
 Please refer to PR [guide](https://github.com/InformedSolutions/OFS-MORE-DevOps-Tooling/wiki/Pull-requests#how-to-submit-a-pull-request)
 
 - [ ] Specified reviewers (even if it's yourself)
-- [ ] Specified assigneses (those who'll merge)
+- [ ] Specified assignees (those who'll merge)
 - [ ] Specified labels
-- [ ] Specified milestone
 
 ## PR review
 
