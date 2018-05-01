@@ -36,7 +36,7 @@ def magic_link_email(email, link_id):
     :param link_id: string containing the magic link ID related to an application
     :return: an email
     """
-    # If executing login function in test mode set env variable for later retrieval by test cod
+    # If executing login function in test mode set env variable for later retrieval by test code
     if settings.EXECUTING_AS_TEST == 'True':
         os.environ['EMAIL_VALIDATION_URL'] = link_id
     else:
