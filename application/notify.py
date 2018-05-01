@@ -26,6 +26,10 @@ def send_email(email, personalisation, template_id):
     base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
 
+    # If executing function in test mode set env variable for later retrieval by test code, override email address
+    if settings.EXECUTING_AS_TEST == 'True':
+        email = 'simulate-delivered@notifications.service.gov.uk'
+
     notification_request = {
         'email': email,
         'personalisation': personalisation,
@@ -48,6 +52,10 @@ def send_text(phone, personalisation, template_id):
     """
     base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
+
+    # If executing function in test mode override phone number
+    if settings.EXECUTING_AS_TEST == 'True':
+        phone = '07700900111'
 
     notification_request = {
         'phoneNumber': phone,

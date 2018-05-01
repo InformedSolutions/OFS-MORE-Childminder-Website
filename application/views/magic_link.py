@@ -36,10 +36,9 @@ def magic_link_email(email, link_id):
     :param link_id: string containing the magic link ID related to an application
     :return: an email
     """
-    # If executing login function in test mode set env variable for later retrieval by test code, override email address
+    # If executing login function in test mode set env variable for later retrieval by test cod
     if settings.EXECUTING_AS_TEST == 'True':
         os.environ['EMAIL_VALIDATION_URL'] = link_id
-        email = 'simulate-delivered@notifications.service.gov.uk'
     else:
         print(link_id)
 
@@ -56,10 +55,6 @@ def magic_link_text(phone, link_id):
     :param link_id: string containing the magic link ID related to an application
     :return: an email
     """
-
-    # If executing login function in test mode override phone number
-    if settings.EXECUTING_AS_TEST == 'True':
-        phone = '07700900111'
 
     personalisation = {"link": link_id}
     template_id = 'd285f17b-8534-4110-ba6c-e7e788eeafb2'
