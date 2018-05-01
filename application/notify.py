@@ -14,11 +14,12 @@ import os
 from django.conf import settings
 
 
-def send_email(email, link_id):
+def send_email(email, link_id, template_id='ecd2a788-257b-4bb9-8784-5aed82bcbb92'):
     """
-    Method to send a magic link email using the Notify Gateway API
-    :param email: string containing the e-mail address to send the e-mail to
+    Method to send an email using the Notify Gateway API
+    :param email: string contarining the e-mail address to send the e-mail to
     :param link_id: string containing the magic link ID related to an application
+    :param template_id: string containing the templateId of the notification request
     :return: an email
     """
 
@@ -37,7 +38,7 @@ def send_email(email, link_id):
         'personalisation': {
             'link': link_id
         },
-        'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
+        'templateId': template_id
     }
     r = requests.post(base_request_url + '/api/v1/notifications/email/',
                       json.dumps(notification_request),
@@ -46,16 +47,18 @@ def send_email(email, link_id):
     return r
 
 
-def send_text(phone, link_id):
+def send_text(phone, link_id, template_id='d285f17b-8534-4110-ba6c-e7e788eeafb2'):
     """
     Method to send an SMS verification code using the Notify Gateway API
     :param phone: string containing the phone number to send the code to
     :param link_id: string containing the magic link ID related to an application
+    :param template_id: string containing the templateId of the notification request
     :return: an SMS
     """
     base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
 
+    # If executing login function in test mode override phone number
     if settings.EXECUTING_AS_TEST == 'True':
         phone = '07700900111'
     else:
@@ -66,7 +69,7 @@ def send_text(phone, link_id):
             'link': link_id
         },
         'phoneNumber': phone,
-        'templateId': 'd285f17b-8534-4110-ba6c-e7e788eeafb2'
+        'templateId': template_id
     }
     r = requests.post(base_request_url + '/api/v1/notifications/sms/', json.dumps(notification_request),
                       headers=header)

@@ -29,12 +29,26 @@ from application.notify import send_email, send_text
 log = logging.getLogger('django.server')
 
 
-def magic_link_email(email, link_id):
-    send_email(email, link_id)
+def magic_link_email(email, link_id, template_id=None):
+    """
+    Method to send a magic link email using notify.py
+    :param email: string contarining the e-mail address to send the e-mail to
+    :param link_id: string containing the magic link ID related to an application
+    :param template_id: string containing the templateId of the notification request
+    :return: an email
+    """
+    return send_email(email, link_id, template_id)
 
 
-def magic_link_text(email, link_id):
-    send_text(email, link_id)
+def magic_link_text(email, link_id, template_id=None):
+    """
+    Method to send a magic link email using notify.py
+    :param email: string contarining the e-mail address to send the e-mail to
+    :param link_id: string containing the magic link ID related to an application
+    :param template_id: string containing the templateId of the notification request
+    :return: an email
+    """
+    return send_text(email, link_id, template_id)
 
 
 def generate_random(digits, type):
