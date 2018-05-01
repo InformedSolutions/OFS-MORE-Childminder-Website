@@ -29,26 +29,47 @@ from application.notify import send_email, send_text
 log = logging.getLogger('django.server')
 
 
-def magic_link_email(email, link_id):
+def magic_link_email(email, link_id, template_id='ecd2a788-257b-4bb9-8784-5aed82bcbb92'):
     """
     Method to send a magic link email using notify.py
     :param email: string contarining the e-mail address to send the e-mail to
     :param link_id: string containing the magic link ID related to an application
+    :param template_id: string containing the templateId of the notification request (defaults to default  magic_link template_id)
     :return: an email
     """
-    template_id='ecd2a788-257b-4bb9-8784-5aed82bcbb92'
-    return send_email(email, link_id, template_id)
+    # If executing login function in test mode set env variable for later retrieval by test code and override email address
+    if settings.EXECUTING_AS_TEST == 'True':
+        os.environ['EMAIL_VALIDATION_URL'] = link_id
+        email = 'simulate-delivered@notifications.service.gov.uk'
+    else:
+        print(link_id)
+
+    class personalisation:
+        link = link_id
+
+    personalisation = {"link": link_id}
+
+    return send_email(email, personalisation, template_id)
 
 
-def magic_link_text(email, link_id):
+def magic_link_text(phone, link_id, template_id='d285f17b-8534-4110-ba6c-e7e788eeafb2'):
     """
-    Method to send a magic link email using notify.py
-    :param email: string contarining the e-mail address to send the e-mail to
+    Method to send a magic link sms using notify.py
+    :param phone: string containing the phone number to send the code to
     :param link_id: string containing the magic link ID related to an application
+    :param template_id: string containing the templateId of the notification request
     :return: an email
     """
-    template_id = 'd285f17b-8534-4110-ba6c-e7e788eeafb2'
-    return send_text(email, link_id, template_id)
+
+    # If executing login function in test mode override phone number
+    if settings.EXECUTING_AS_TEST == 'True':
+        phone = '07700900111'
+
+    personalisation = {"link": link_id}
+
+    personalisation = personalisation
+
+    return send_text(phone, personalisation, template_id)
 
 
 def generate_random(digits, type):
