@@ -24,59 +24,17 @@ from application import login_redirect_helper
 from application.middleware import CustomAuthenticationHandler
 from application.forms import VerifyPhoneForm
 from application.models import Application, UserDetails
+from application.notify import send_email, send_text
 
 log = logging.getLogger('django.server')
 
 
 def magic_link_email(email, link_id):
-    """
-    Method to send a magic link email using the Notify Gateway API
-    :param email: string containing the e-mail address to send the e-mail to
-    :param link_id: string containing the magic link ID related to an application
-    :return: an email
-    """
-
-    base_request_url = settings.NOTIFY_URL
-    header = {'content-type': 'application/json'}
-    notification_request = {
-        'email': email,
-        'personalisation': {
-            'link': link_id
-        },
-        'templateId': 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
-    }
-    r = requests.post(base_request_url + '/api/v1/notifications/email/',
-                      json.dumps(notification_request),
-                      headers=header)
-
-    # If executing login function in test mode set env variable for later retrieval by test code
-    if settings.EXECUTING_AS_TEST == 'True':
-        os.environ['EMAIL_VALIDATION_URL'] = link_id
-    else:
-        print(link_id)
-
-    return r
+    send_email(email, link_id)
 
 
-def magic_link_text(phone, link_id):
-    """
-    Method to send an SMS verification code using the Notify Gateway API
-    :param phone: string containing the phone number to send the code to
-    :param link_id: string containing the magic link ID related to an application
-    :return: an SMS
-    """
-    base_request_url = settings.NOTIFY_URL
-    header = {'content-type': 'application/json'}
-    notification_request = {
-        'personalisation': {
-            'link': link_id
-        },
-        'phoneNumber': phone,
-        'templateId': 'd285f17b-8534-4110-ba6c-e7e788eeafb2'
-    }
-    r = requests.post(base_request_url + '/api/v1/notifications/sms/', json.dumps(notification_request),
-                      headers=header)
-    return r
+def magic_link_text(email, link_id):
+    send_text(email, link_id)
 
 
 def generate_random(digits, type):
