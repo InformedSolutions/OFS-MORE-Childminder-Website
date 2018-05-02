@@ -646,6 +646,11 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.assertEqual("We've sent a link to {}".format(first_email), selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/p").text)
 
+        # Try to grab email validation URL.
+        # Should redirect to bad link; no email validation link sent for preexsiting email.
+        selenium_task_executor.navigate_to_email_validation_url()
+        self.assertEqual('Bad link',  selenium_task_executor.get_driver().title)
+
     @try_except_method
     def test_cannot_create_multiple_applications_using_same_email(self):
         self.assert_cannot_create_multiple_applications_using_same_email()
