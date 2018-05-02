@@ -31,7 +31,7 @@ def magic_link_email(email, link_id):
     Method to send a magic link email using notify.py
     :param email: string containing the e-mail address to send the e-mail to
     :param link_id: string containing the magic link ID related to an application
-    :return :class:`Response <Response>` object containing http request response
+    :return: :class:`Response <Response>` object containing http request response
     """
     # If executing login function in test mode set env variable for later retrieval by test code
     if settings.EXECUTING_AS_TEST == 'True':
@@ -50,7 +50,7 @@ def magic_link_text(phone, link_id):
     Method to send a magic link sms using notify.py
     :param phone: string containing the phone number to send the code to
     :param link_id: string containing the magic link ID related to an application
-    :return :class:`Response <Response>` object containing http request response
+    :return: :class:`Response <Response>` object containing http request response
     """
 
     personalisation = {"link": link_id}
