@@ -5,11 +5,8 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 """
 
-import json
 import os
 import random
-
-import requests
 import string
 import time
 import logging

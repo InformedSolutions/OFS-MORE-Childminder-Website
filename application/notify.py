@@ -10,7 +10,6 @@ Handler for dispatching email notifications via the GOV.UK notify gateway api.
 import json
 
 import requests
-import os
 from django.conf import settings
 
 
