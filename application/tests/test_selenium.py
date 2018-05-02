@@ -825,9 +825,43 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         # Select 'Don't have your phone?' to trigger security question.
         selenium_task_executor.get_driver().find_element_by_xpath(u'//p[text()="Don\'t have your phone?"]').click()
+        self.assertIn("Mobile", selenium_task_executor.get_driver().find_element_by_class_name("heading-small").text)
 
         # Test no number, too short a mobile number, too long a mobile number and incorrect mobile number.
         test_numbers = ['', '0', '123456789012', '07754000001']
+        for test_number in test_numbers:
+            selenium_task_executor.get_driver().find_element_by_name("security_answer").send_keys(test_number)
+            selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+            self.assertIn("problem", selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+            selenium_task_executor.get_driver().find_element_by_id('back').click()  # Go back to remove errors from previous test_number.
+
+    @try_except_method
+    def test_invalid_dbs_security_question_raises_error(self):
+        self.assert_invalid_dbs_security_question_raises_error()
+
+    def assert_invalid_dbs_security_question_raises_error(self):
+        '''
+        Test that invalid response to mobile number security question form raises validation error.
+
+        4 different login scenarios:
+            - App contains user DBS: Ask for DBS Certificate No.
+            - User given details of whom they live with: Ask for DoB for eldest person in home.
+            - User has completed personal details: Ask for DoB and postcode.
+            * If none of above, ask for user's phone number.
+        '''
+        test_email = self.create_standard_eyfs_application()
+        test_dbs = '123456789101'
+        selenium_task_executor.complete_dbs_task(test_dbs, True)
+
+        selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
+        selenium_task_executor.navigate_to_SMS_validation_page(test_email)
+
+        # Select 'Don't have your phone?' to trigger security question.
+        selenium_task_executor.get_driver().find_element_by_xpath(u'//p[text()="Don\'t have your phone?"]').click()
+        self.assertIn("DBS", selenium_task_executor.get_driver().find_element_by_class_name("heading-small").text)
+
+        # Test no DBS number, too short a DBS number, too long a DBS number and an incorrect DBS number.
+        test_numbers = ['', '1', '0123456789101112', '987654321987']
         for test_number in test_numbers:
             selenium_task_executor.get_driver().find_element_by_name("security_answer").send_keys(test_number)
             selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
