@@ -841,7 +841,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
     def assert_invalid_personal_details_security_question_raises_error(self):
         '''
-        Test that invalid response to mobile number security question form raises validation error.
+        Test that invalid response to postcode security question form raises validation error.
 
         4 different login scenarios:
             - App contains user DBS: Ask for DBS Certificate No.
@@ -885,7 +885,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
     def assert_invalid_eldest_dob_security_question_raises_error(self):
         '''
-        Test that invalid response to mobile number security question form raises validation error.
+        Test that invalid response to eldest person at home's DoB security question form raises validation error.
 
         4 different login scenarios:
             - App contains user DBS: Ask for DBS Certificate No.
@@ -934,7 +934,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
     def assert_invalid_dbs_security_question_raises_error(self):
         '''
-        Test that invalid response to mobile number security question form raises validation error.
+        Test that invalid response to DBS number security question form raises validation error.
 
         4 different login scenarios:
             - App contains user DBS: Ask for DBS Certificate No.
