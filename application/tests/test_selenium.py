@@ -836,6 +836,55 @@ class ApplyAsAChildminder(LiveServerTestCase):
             selenium_task_executor.get_driver().find_element_by_id('back').click()  # Go back to remove errors from previous test_number.
 
     @try_except_method
+    def test_invalid_eldest_dob_security_question_raises_error(self):
+        self.assert_invalid_eldest_dob_security_question_raises_error()
+
+    def assert_invalid_eldest_dob_security_question_raises_error(self):
+        '''
+        Test that invalid response to mobile number security question form raises validation error.
+
+        4 different login scenarios:
+            - App contains user DBS: Ask for DBS Certificate No.
+            - User given details of whom they live with: Ask for DoB for eldest person in home.
+            - User has completed personal details: Ask for DoB and postcode.
+            * If none of above, ask for user's phone number.
+        '''
+        test_email = self.create_standard_eyfs_application()
+        selenium_task_executor.complete_people_in_your_home_task(True,
+            faker.first_name(), faker.first_name(), faker.last_name_female(),
+            1, 1, 1985, 'Friend', 121212121212,
+            True, faker.first_name(), faker.first_name(), faker.last_name_female(),
+            random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 14, self.current_year - 1),
+            'Child'
+        )
+        selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
+        selenium_task_executor.navigate_to_SMS_validation_page(test_email)
+
+        # Select 'Don't have your phone?' to trigger security question.
+        selenium_task_executor.get_driver().find_element_by_xpath(u'//p[text()="Don\'t have your phone?"]').click()
+        self.assertEqual("Please enter the date of birth of the eldest person living in your home.",
+                         selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/form/div/p[2]").text)
+
+        test_DoBs = [
+            ['', '2', '1666'],    # No day value.
+            ['2', '', '1666'],    # No month value.
+            ['2', '2', ''],       # No year value.
+            ['50', '2', '1666'],  # Invalid day value.
+            ['2', '20', '1666'],  # Invalid moth value.
+            ['2', '2', '123'],    # Distant past.
+            ['2', '2', '12345'],  # Future year.
+            ['2', '2', '1666']    # Incorrect DoB.
+        ]
+
+        for DoB in test_DoBs:
+            for index, value in enumerate(DoB):
+                selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_{}".format(index)).clear()
+                selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_{}".format(index)).send_keys(value)
+
+            selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+            self.assertIn("problem", selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+
+    @try_except_method
     def test_invalid_dbs_security_question_raises_error(self):
         self.assert_invalid_dbs_security_question_raises_error()
 
