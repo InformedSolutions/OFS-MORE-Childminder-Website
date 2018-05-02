@@ -836,6 +836,50 @@ class ApplyAsAChildminder(LiveServerTestCase):
             selenium_task_executor.get_driver().find_element_by_id('back').click()  # Go back to remove errors from previous test_number.
 
     @try_except_method
+    def test_invalid_personal_details_security_question_raises_error(self):
+        self.assert_invalid_personal_details_security_question_raises_error()
+
+    def assert_invalid_personal_details_security_question_raises_error(self):
+        '''
+        Test that invalid response to mobile number security question form raises validation error.
+
+        4 different login scenarios:
+            - App contains user DBS: Ask for DBS Certificate No.
+            - User given details of whom they live with: Ask for DoB for eldest person in home.
+            - User has completed personal details: Ask for DoB and postcode.
+            * If none of above, ask for user's phone number.
+        '''
+        test_email = self.create_standard_eyfs_application()
+        # Fill out personal details.
+        selenium_task_executor.complete_personal_details(forename="Gael",
+                                                         middle_name="Viaros",
+                                                         surname="Givet",
+                                                         dob_day="1",
+                                                         dob_month="1",
+                                                         dob_year="1985",
+                                                         is_location_of_care=True)
+        selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
+        selenium_task_executor.navigate_to_SMS_validation_page(test_email)
+
+        # Select 'Don't have your phone?' to trigger security question.
+        selenium_task_executor.get_driver().find_element_by_xpath(u'//p[text()="Don\'t have your phone?"]').click()
+        self.assertEqual("Please enter your postcode and date of birth.",
+                         selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/form/div/p[2]").text)
+
+        # Populate DoB form with correct values - same validation already covered in test_invalid_eldest_dob_security_question_raises_error.
+        DoB = ['1', '1', '1985']
+        for index, value in enumerate(DoB):
+            selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_{}".format(index)).send_keys(value)
+
+        # Test for postcode validation messages. Test no code, invalid code and incorrect code.
+        postcodes = ['', 'abc', 'SW1 1AA']
+        for postcode in postcodes:
+            selenium_task_executor.get_driver().find_element_by_id("id_security_answer").clear()
+            selenium_task_executor.get_driver().find_element_by_id("id_security_answer").send_keys(postcode)
+            selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+            self.assertIn("problem", selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+
+    @try_except_method
     def test_invalid_eldest_dob_security_question_raises_error(self):
         self.assert_invalid_eldest_dob_security_question_raises_error()
 
