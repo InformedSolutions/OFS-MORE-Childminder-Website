@@ -19,7 +19,7 @@ def send_email(email, personalisation, template_id):
     :param email: string containing the e-mail address to send the e-mail to
     :param personalisation: object containing the personalisation related to an application
     :param template_id: string containing the templateId of the notification request
-    :return: http response code
+    :return :class:`Response <Response>` object containing http request response
     """
 
     base_request_url = settings.NOTIFY_URL
