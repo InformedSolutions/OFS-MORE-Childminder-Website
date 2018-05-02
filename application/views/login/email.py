@@ -54,7 +54,9 @@ def update_email(request):
             if acc.email == email:
                 return HttpResponseRedirect(reverse('Contact-Summary-View') + '?id=' + app_id)
             elif UserDetails.objects.filter(email=email).exists():
-                return HttpResponseRedirect(reverse('Update-Email-Sent') + '?email=')
+                if settings.DEBUG:
+                    print ("You will not see an email validation link printed because an account already exists with that email.")
+                return HttpResponseRedirect(reverse('Update-Email-Sent') + '?email=' +email)
             else:
                 # Update User_Details record
                 update_magic_link(email, app_id)
