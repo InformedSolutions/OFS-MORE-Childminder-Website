@@ -32,6 +32,7 @@ def magic_link_email(email, link_id):
     :param email: string containing the e-mail address to send the e-mail to
     :param link_id: string containing the magic link ID related to an application
     :return: :class:`Response <Response>` object containing http request response
+    :rtype: requests.Response
     """
     # If executing login function in test mode set env variable for later retrieval by test code
     if settings.EXECUTING_AS_TEST == 'True':
@@ -51,6 +52,7 @@ def magic_link_text(phone, link_id):
     :param phone: string containing the phone number to send the code to
     :param link_id: string containing the magic link ID related to an application
     :return: :class:`Response <Response>` object containing http request response
+    :rtype: requests.Response
     """
 
     personalisation = {"link": link_id}

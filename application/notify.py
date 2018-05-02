@@ -20,6 +20,7 @@ def send_email(email, personalisation, template_id):
     :param personalisation: object containing the personalisation related to an application
     :param template_id: string containing the templateId of the notification request
     :return: :class:`Response <Response>` object containing http request response
+    :rtype: requests.Response
     """
 
     base_request_url = settings.NOTIFY_URL
@@ -48,6 +49,7 @@ def send_text(phone, personalisation, template_id):
     :param personalisation: object containing the personalisation related to an application
     :param template_id: string containing the templateId of the notification request
     :return: :class:`Response <Response>` object containing http request response
+    :rtype: requests.Response
     """
     base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
