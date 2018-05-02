@@ -625,6 +625,28 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertEqual("Update your first aid training", selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/form/div/h1").text)
 
     @try_except_method
+    def test_cannot_change_email_to_preexisting_one(self):
+        self.assert_cannot_change_email_to_preexisting_one()
+
+    def assert_cannot_change_email_to_preexisting_one(self):
+        """
+        Complete application contact details then attempt to change email to one which exists under another application.
+        Should .......
+        """
+        first_email = self.create_standard_eyfs_application()
+        second_email = self.create_standard_eyfs_application()
+
+        # Click through to changing email for second account.
+        selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='account_details']/td/a/strong").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='email_address']/td/a").click()
+
+        # Change email of second account to the first one.
+        selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(first_email)
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+
+        self.assertEqual("We've sent a link to {}".format(first_email), selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/p").text)
+
+    @try_except_method
     def test_cannot_create_multiple_applications_using_same_email(self):
         self.assert_cannot_create_multiple_applications_using_same_email()
 
