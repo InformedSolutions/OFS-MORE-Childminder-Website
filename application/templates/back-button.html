@@ -1,5 +1,11 @@
 <!-- Back button -->
-<a href="{{ request.META.HTTP_REFERER }}" class="link-back"
-   style="margin-right: 10px; line-height: 28px" alt='Back to application list' id="back">
+<a href="#" class="link-back visually-hidden aria-hidden" onclick="window.history.back()" id="back">
     Back
 </a>
+
+<script type="text/javascript">
+    window.onload = function () {
+        $("#back").removeClass('visually-hidden')
+        $("#back").removeClass('aria-hidden')
+    };
+</script>

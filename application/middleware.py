@@ -145,5 +145,20 @@ def globalise_authentication_flag(request):
     Middleware function to expose a flag to all templates to determine whether a user is authenticated.
     """
     user_is_authenticated = CustomAuthenticationHandler.get_session_user(request) is not None
-    return {'AUTHENTICATED': user_is_authenticated}
+    return   {'AUTHENTICATED': user_is_authenticated}
+
+
+def register_as_childminder_link_location(request):
+    """
+    Middleware function to decider the loaction of the link in the govuk_template page header dependant
+    on application status
+    """
+    application_id = request.GET.get('id')
+    if application_id is not None:
+        application = Application.objects.get(pk=application_id)
+
+        if application.application_status not in ['ARC_REVIEW', 'CYGNUM_REVIEW', 'SUBMITTED']:
+            return {'task_list_link': True}
+
+    return {'task_list_link': False}
 
