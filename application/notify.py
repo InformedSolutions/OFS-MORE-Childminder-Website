@@ -16,10 +16,10 @@ from django.conf import settings
 def send_email(email, personalisation, template_id):
     """
     Method to send an email using the Notify Gateway API
-    :param email: string contarining the e-mail address to send the e-mail to
+    :param email: string containing the e-mail address to send the e-mail to
     :param personalisation: object containing the personalisation related to an application
     :param template_id: string containing the templateId of the notification request
-    :return: an email
+    :return: http response code
     """
 
     base_request_url = settings.NOTIFY_URL
@@ -47,7 +47,7 @@ def send_text(phone, personalisation, template_id):
     :param phone: string containing the phone number to send the code to
     :param personalisation: object containing the personalisation related to an application
     :param template_id: string containing the templateId of the notification request
-    :return: an SMS
+    :return: http response code
     """
     base_request_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
