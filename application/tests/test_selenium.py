@@ -730,6 +730,309 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
 
+    @try_except_method
+    def test_invalid_email_raises_error_box(self):
+        self.assert_invalid_email_raises_error_box()
+
+    def assert_invalid_email_raises_error_box(self):
+        """
+        Tests that passing an invalid email address to the email form raises validation error.
+        """
+        selenium_task_executor.navigate_to_base_url()
+        selenium_task_executor.register_email_address("invalid_email")
+        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
+        selenium_task_executor.get_driver().find_element_by_class_name("form-group-error")
+
+    @try_except_method
+    def test_invalid_phone_number_raises_error(self):
+        self.assert_invalid_phone_number_raises_error()
+
+    def assert_invalid_phone_number_raises_error(self):
+        """
+        Tests that passing an invalid phone number to the phone number form raises a validation error
+        """
+        selenium_task_executor.navigate_to_base_url()
+        selenium_task_executor.register_email_address("test_email@email.com")
+        selenium_task_executor.navigate_to_email_validation_url()
+        selenium_task_executor.get_driver().find_element_by_id("id_mobile_number").send_keys('a')
+        selenium_task_executor.get_driver().find_element_by_id("id_add_phone_number").send_keys('a')
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
+        selenium_task_executor.get_driver().find_element_by_class_name("form-group-error")
+
+    @try_except_method
+    def test_unticked_age_groups_raises_error(self):
+        self.assert_unticked_age_groups_raises_error()
+
+    def assert_unticked_age_groups_raises_error(self):
+        """
+        Tests that not selecting any age groups raises a validation error.
+        """
+        selenium_task_executor.navigate_to_base_url()
+        selenium_task_executor.complete_your_login_details(email_address="test@test.com",
+                                                           phone_number='07754000000',
+                                                           additional_phone_number=None)
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
+        selenium_task_executor.get_driver().find_element_by_class_name("form-group-error")
+
+    @try_except_method
+    def test_unticked_overnight_care_box_raises_error(self):
+        self.assert_unticked_overnight_care_box_raises_error()
+
+    def assert_unticked_overnight_care_box_raises_error(self):
+        """
+        Tests that not selecting yes/no on overnight care raises a validation error.
+        """
+        selenium_task_executor.navigate_to_base_url()
+        selenium_task_executor.complete_your_login_details(email_address="test@test.com",
+                                                           phone_number='07754000000',
+                                                           additional_phone_number=None)
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_type_of_childcare_0").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
+        selenium_task_executor.get_driver().find_element_by_class_name("form-group-error")
+
+    @try_except_method
+    def test_entering_validation_email_link_twice_raises_error(self):
+        self.assert_entering_validation_email_link_twice_raises_error()
+
+    def assert_entering_validation_email_link_twice_raises_error(self):
+        """
+        Tests that using email link for sign-in more than once returns a 'bad link' page.
+        """
+        self.create_standard_eyfs_application()
+        selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
+        selenium_task_executor.navigate_to_email_validation_url()
+        selenium_task_executor.navigate_to_email_validation_url()
+
+        self.assertEqual("Link already used",
+                         selenium_task_executor.get_driver().find_element_by_class_name("form-title").text)
+
+    @try_except_method
+    def test_entering_invalid_sms_code_raises_error(self):
+        self.assert_entering_invalid_sms_code_raises_error()
+
+    def assert_entering_invalid_sms_code_raises_error(self):
+        '''
+        Tests that entering invalid sms code (none at all, too short, too long or incorrect) raises error.
+        '''
+        test_email = self.create_standard_eyfs_application()
+        selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
+        selenium_task_executor.navigate_to_SMS_validation_page(test_email)
+
+        # Test no code, too short a code, too long a code and incorrect code.
+        test_codes = ['', '1', '123456', '10101']
+        for code in test_codes:
+            selenium_task_executor.get_driver().find_element_by_name('magic_link_sms').clear()  # Clear form of previous code.
+            selenium_task_executor.get_driver().find_element_by_name('magic_link_sms').send_keys(code)
+            selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+            self.assertIn("problem", selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+
+    @try_except_method
+    def test_invalid_mobile_security_question_raises_error(self):
+        self.assert_invalid_mobile_security_question_raises_error()
+
+    def assert_invalid_mobile_security_question_raises_error(self):
+        '''
+        Test that invalid response to mobile number security question form raises validation error.
+
+        4 different login scenarios:
+            - App contains user DBS: Ask for DBS Certificate No.
+            - User given details of whom they live with: Ask for DoB for eldest person in home.
+            - User has completed personal details: Ask for DoB and postcode.
+            * If none of above, ask for user's phone number.
+        '''
+        test_email = self.create_standard_eyfs_application()
+        selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
+        selenium_task_executor.navigate_to_SMS_validation_page(test_email)
+
+        # Select 'Don't have your phone?' to trigger security question.
+        selenium_task_executor.get_driver().find_element_by_xpath(u'//p[text()="Don\'t have your phone?"]').click()
+        self.assertIn("Mobile", selenium_task_executor.get_driver().find_element_by_class_name("heading-small").text)
+
+        # Test no number, too short a mobile number, too long a mobile number and incorrect mobile number.
+        test_numbers = ['', '0', '123456789012', '07754000001']
+        for test_number in test_numbers:
+            selenium_task_executor.get_driver().find_element_by_name("security_answer").clear()
+            selenium_task_executor.get_driver().find_element_by_name("security_answer").send_keys(test_number)
+            selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+            self.assertIn("problem", selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+
+    @try_except_method
+    def test_invalid_personal_details_security_question_raises_error(self):
+        self.assert_invalid_personal_details_security_question_raises_error()
+
+    def assert_invalid_personal_details_security_question_raises_error(self):
+        '''
+        Test that invalid response to postcode security question form raises validation error.
+
+        4 different login scenarios:
+            - App contains user DBS: Ask for DBS Certificate No.
+            - User given details of whom they live with: Ask for DoB for eldest person in home.
+            - User has completed personal details: Ask for DoB and postcode.
+            * If none of above, ask for user's phone number.
+        '''
+        test_email = self.create_standard_eyfs_application()
+        # Fill out personal details.
+        selenium_task_executor.complete_personal_details(forename="Gael",
+                                                         middle_name="Viaros",
+                                                         surname="Givet",
+                                                         dob_day="1",
+                                                         dob_month="1",
+                                                         dob_year="1985",
+                                                         is_location_of_care=True)
+        selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
+        selenium_task_executor.navigate_to_SMS_validation_page(test_email)
+
+        # Select 'Don't have your phone?' to trigger security question.
+        selenium_task_executor.get_driver().find_element_by_xpath(u'//p[text()="Don\'t have your phone?"]').click()
+        self.assertEqual("Please enter your postcode and date of birth.",
+                         selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/form/div/p[2]").text)
+
+        # Populate DoB form with correct values - same validation already covered in test_invalid_eldest_dob_security_question_raises_error.
+        DoB = ['1', '1', '1985']
+        for index, value in enumerate(DoB):
+            selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_{}".format(index)).send_keys(value)
+
+        # Test for postcode validation messages. Test no code, invalid code and incorrect code.
+        postcodes = ['', 'abc', 'SW1 1AA']
+        for postcode in postcodes:
+            selenium_task_executor.get_driver().find_element_by_id("id_security_answer").clear()
+            selenium_task_executor.get_driver().find_element_by_id("id_security_answer").send_keys(postcode)
+            selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+            self.assertIn("problem", selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+
+    # @try_except_method
+    # def test_invalid_eldest_dob_security_question_raises_error(self):
+    #     self.assert_invalid_eldest_dob_security_question_raises_error()
+
+    def assert_invalid_eldest_dob_security_question_raises_error(self):
+        '''
+        Test that invalid response to eldest person at home's DoB security question form raises validation error.
+
+        4 different login scenarios:
+            - App contains user DBS: Ask for DBS Certificate No.
+            - User given details of whom they live with: Ask for DoB for eldest person in home.
+            - User has completed personal details: Ask for DoB and postcode.
+            * If none of above, ask for user's phone number.
+        '''
+        test_email = self.create_standard_eyfs_application()
+        selenium_task_executor.complete_people_in_your_home_task(True,
+            faker.first_name(), faker.first_name(), faker.last_name_female(),
+            1, 1, 1985, 'Friend', 121212121212,
+            True, faker.first_name(), faker.first_name(), faker.last_name_female(),
+            random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 14, self.current_year - 1),
+            'Child'
+        )
+        selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
+        selenium_task_executor.navigate_to_SMS_validation_page(test_email)
+
+        # Select 'Don't have your phone?' to trigger security question.
+        selenium_task_executor.get_driver().find_element_by_xpath(u'//p[text()="Don\'t have your phone?"]').click()
+        self.assertEqual("Please enter the date of birth of the eldest person living in your home.",
+                         selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/form/div/p[2]").text)
+
+        test_DoBs = [
+            ['', '2', '1666'],    # No day value.
+            ['2', '', '1666'],    # No month value.
+            ['2', '2', ''],       # No year value.
+            ['50', '2', '1666'],  # Invalid day value.
+            ['2', '20', '1666'],  # Invalid moth value.
+            ['2', '2', '123'],    # Distant past.
+            ['2', '2', '12345'],  # Future year.
+            ['2', '2', '1666']    # Incorrect DoB.
+        ]
+
+        for DoB in test_DoBs:
+            for index, value in enumerate(DoB):
+                selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_{}".format(index)).clear()
+                selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_{}".format(index)).send_keys(value)
+
+            selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+            self.assertIn("problem", selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+
+    @try_except_method
+    def test_invalid_dbs_security_question_raises_error(self):
+        self.assert_invalid_dbs_security_question_raises_error()
+
+    def assert_invalid_dbs_security_question_raises_error(self):
+        '''
+        Test that invalid response to DBS number security question form raises validation error.
+
+        4 different login scenarios:
+            - App contains user DBS: Ask for DBS Certificate No.
+            - User given details of whom they live with: Ask for DoB for eldest person in home.
+            - User has completed personal details: Ask for DoB and postcode.
+            * If none of above, ask for user's phone number.
+        '''
+        test_email = self.create_standard_eyfs_application()
+        test_dbs = '123456789101'
+        selenium_task_executor.complete_dbs_task(test_dbs, True)
+
+        selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
+        selenium_task_executor.navigate_to_SMS_validation_page(test_email)
+
+        # Select 'Don't have your phone?' to trigger security question.
+        selenium_task_executor.get_driver().find_element_by_xpath(u'//p[text()="Don\'t have your phone?"]').click()
+        self.assertIn("DBS", selenium_task_executor.get_driver().find_element_by_class_name("heading-small").text)
+
+        # Test no DBS number, too short a DBS number, too long a DBS number and an incorrect DBS number.
+        test_numbers = ['', '1', '0123456789101112', '987654321987']
+        for test_number in test_numbers:
+            selenium_task_executor.get_driver().find_element_by_name("security_answer").clear()
+            selenium_task_executor.get_driver().find_element_by_name("security_answer").send_keys(test_number)
+            selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+            self.assertIn("problem", selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+
+    @try_except_method
+    def test_save_and_continue_childcare_address_redirects_to_manual_entry(self):
+        self.assert_save_and_continue_childcare_address_redirects_to_manual_entry()
+
+    def assert_save_and_continue_childcare_address_redirects_to_manual_entry(self):
+        '''
+        Tests that clicking 'Save and continue' when adding a new childcare address redirects correctly.
+        '''
+        selenium_task_executor.navigate_to_base_url()
+        selenium_task_executor.complete_your_login_details(email_address="example@example.com",
+                                                           phone_number="07754000000",
+                                                           additional_phone_number=None)
+        selenium_task_executor.complete_type_of_childcare(zero_to_five=True,
+                                                          five_to_seven=False,
+                                                          eight_or_over=False,
+                                                          providing_overnight_care=True)
+        selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='personal_details']/td/a/span").click()
+
+        # Complete personal details necessary to reach childcare address.
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_first_name").send_keys("Paul")
+        selenium_task_executor.get_driver().find_element_by_id("id_middle_names").send_keys("Thomas")
+        selenium_task_executor.get_driver().find_element_by_id("id_last_name").send_keys("Anderson")
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_0").send_keys("06")
+        selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_1").send_keys("06")
+        selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_2").send_keys("1906")
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        selenium_task_executor.select_test_address()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        # Select home address != chlidcare address.
+        selenium_task_executor.get_driver().find_element_by_id("id_location_of_care_1").click()
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        # Fill out postcode form to prevent validation error before clicking 'Save and Continue'.
+        selenium_task_executor.get_driver().find_element_by_id("id_postcode").send_keys("SW1 1AA")
+
+        # Select Save and Continue to trigger redirect.
+        selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        self.assertEqual(selenium_task_executor.get_driver().find_element_by_class_name("form-title").text, "Enter childcare address")
+
     def complete_full_question_set(self):
         """
         Helper method for completing all questions in an application
