@@ -19,7 +19,6 @@ from ..forms import (FirstAidTrainingDeclarationForm,
                      FirstAidTrainingSummaryForm,
                      FirstAidTrainingTrainingForm)
 from ..models import (Application,
-
                       FirstAidTraining)
 
 
@@ -109,7 +108,7 @@ def first_aid_training_details(request):
                 certificate_year, certificate_month, certificate_day)
             today = date.today()
             certificate_date_difference = today - certificate_date
-            certificate_age = certificate_date_difference.days / 365
+            certificate_age = float(certificate_date_difference.days) / 365.  # Must be a float for Python division.
             if certificate_age < 2.5:
                 return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/certificate?id=' + application_id_local)
             elif 2.5 <= certificate_age < 3:
@@ -234,7 +233,7 @@ def first_aid_training_training(request):
             first_aid_record.save()
             status.update(application_id_local,
                           'first_aid_training_status', 'NOT_STARTED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
