@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 # Server name for showing server that responded to request under load balancing conditions
-SERVER_LABEL = os.environ.get('SERVER_LABEL', 'Test_1')
+SERVER_LABEL = os.environ.get('SERVER_LABEL')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
