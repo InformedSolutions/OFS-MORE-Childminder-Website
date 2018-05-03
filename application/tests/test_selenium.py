@@ -858,10 +858,10 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Test no number, too short a mobile number, too long a mobile number and incorrect mobile number.
         test_numbers = ['', '0', '123456789012', '07754000001']
         for test_number in test_numbers:
+            selenium_task_executor.get_driver().find_element_by_name("security_answer").clear()
             selenium_task_executor.get_driver().find_element_by_name("security_answer").send_keys(test_number)
             selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
             self.assertIn("problem", selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
-            selenium_task_executor.get_driver().find_element_by_id('back').click()  # Go back to remove errors from previous test_number.
 
     @try_except_method
     def test_invalid_personal_details_security_question_raises_error(self):
