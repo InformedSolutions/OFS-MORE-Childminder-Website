@@ -23,6 +23,7 @@ from application.forms import VerifyPhoneForm
 from application.models import Application, UserDetails
 from application.notify import send_email, send_text
 
+
 log = logging.getLogger('django.server')
 
 

@@ -3,6 +3,9 @@ from django.db import models
 from .base import TASK_STATUS
 
 class Arc(models.Model):
+    """
+    Model for the ARC table.
+    """
     application_id = models.UUIDField(primary_key=True, default=uuid4)
     user_id = models.CharField(max_length=50, blank=True)
     last_accessed = models.CharField(max_length=50)

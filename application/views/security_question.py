@@ -8,7 +8,6 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 from django.shortcuts import render
 
 from application.forms import SecurityQuestionForm, SecurityDateForm
-from application.utils import date_combiner
 from application import login_redirect_helper
 from application.middleware import CustomAuthenticationHandler
 from application.models import Application, UserDetails, ApplicantHomeAddress, ApplicantPersonalDetails, AdultInHome, \
@@ -63,6 +62,11 @@ def question(request):
 
 
 def get_label(q):
+    """
+    Method to get the label that describes the type of question to be asked, given the question.
+    :param q: Question to be asked.
+    :return: str that describes the type of question.
+    """
     if 'mobile' in q:
         return 'Mobile Number'
     if 'postcode' in q:
@@ -74,6 +78,12 @@ def get_label(q):
 
 
 def get_answer(question, app_id):
+    """
+    Method to return the correct answer to the security question for a given applicant.
+    :param question: Question to be asked.
+    :param app_id: ID of the applicant of whom the security question is being asked.
+    :return: dict object containing correct question answer and, if applicable, the correct date answer.
+    """
     date = []
     app = Application.objects.get(application_id=app_id)
     acc = UserDetails.objects.get(application_id=app)
@@ -102,6 +112,15 @@ def get_answer(question, app_id):
 
 
 def post_forms(question, r, app_id):
+    """
+    Method to create list of forms instantiated with information entered by returning applicant and
+    the correct answers for a given application. The form will later perform a validation to check if the answers
+    are correct.
+    :param question:
+    :param r: request.POST object.
+    :param app_id: ID for application of whom security question is being asked.
+    :return: list of forms instantiated with corresponding information.
+    """
     form_list = []
     answer = get_answer(question, app_id)
     field_answer = answer['question']
@@ -126,6 +145,12 @@ def post_forms(question, r, app_id):
 
 
 def get_forms(app_id, question):
+    """
+    Method to create list of forms instantiated with the correct answer to the security questions for a given appliacant.
+    :param app_id: application ID of whom security question is being asked.
+    :param question: Type of security question to be asked.
+    :return: list of forms instantiated with the correct answer to each question.
+    """
     form_list = []
     app = Application.objects.get(application_id=app_id)
     acc = UserDetails.objects.get(application_id=app)
@@ -148,6 +173,11 @@ def get_forms(app_id, question):
 
 
 def get_security_question(app_id):
+    """
+    Method to determine security question to be asked, based on extent to which application is complete.
+    :param app_id: ID of application of whom the secrity question is being asked.
+    :return: str which identifies the type of question to be asked.
+    """
     app = Application.objects.get(pk=app_id)
     acc = UserDetails.objects.get(application_id=app_id)
     question = ''
@@ -163,6 +193,11 @@ def get_security_question(app_id):
 
 
 def get_oldest(list):
+    """
+    Method to determine the oldest person in the house and return their date of birth.
+    :param list: Lsit of objects representing the people in the house.
+    :return: dict of date of birth for the oldest person.
+    """
     oldest = {'birth_day': list[0].birth_day, 'birth_month': list[0].birth_month, 'birth_year': list[0].birth_year}
     for i in list:
         if i.birth_year <= oldest['birth_year']:

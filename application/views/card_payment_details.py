@@ -14,8 +14,6 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.views.decorators.cache import never_cache
 
-from timeline_logger.models import TimelineLog
-
 from .. import payment
 from ..forms import PaymentDetailsForm
 from ..models import Application, UserDetails, ApplicantPersonalDetails, ApplicantName
