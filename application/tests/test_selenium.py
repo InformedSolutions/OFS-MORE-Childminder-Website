@@ -790,7 +790,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
                                                            phone_number='07754000000',
                                                            additional_phone_number=None)
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
-        selenium_task_executor.get_driver().find_element_by_id("id_type_of_childcare_0-group").click()
+        selenium_task_executor.get_driver().find_element_by_id("id_type_of_childcare_0").click()
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
