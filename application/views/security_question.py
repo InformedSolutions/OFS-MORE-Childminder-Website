@@ -8,7 +8,6 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 from django.shortcuts import render
 
 from application.forms import SecurityQuestionForm, SecurityDateForm
-from application.utils import date_combiner
 from application import login_redirect_helper
 from application.middleware import CustomAuthenticationHandler
 from application.models import Application, UserDetails, ApplicantHomeAddress, ApplicantPersonalDetails, AdultInHome, \
@@ -42,7 +41,6 @@ def question(request):
         forms = post_forms(question, request.POST, app_id)
         application = Application.objects.get(pk=app_id)
         acc = UserDetails.objects.get(application_id=application)
-        security_question = acc.security_question
         valid_forms = [form.is_valid() for form in forms]
 
         if all(valid_forms):

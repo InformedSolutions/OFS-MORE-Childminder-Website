@@ -907,9 +907,9 @@ class ApplyAsAChildminder(LiveServerTestCase):
             selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
             self.assertIn("problem", selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
 
-    # @try_except_method
-    # def test_invalid_eldest_dob_security_question_raises_error(self):
-    #     self.assert_invalid_eldest_dob_security_question_raises_error()
+    @try_except_method
+    def test_invalid_eldest_dob_security_question_raises_error(self):
+        self.assert_invalid_eldest_dob_security_question_raises_error()
 
     def assert_invalid_eldest_dob_security_question_raises_error(self):
         '''
