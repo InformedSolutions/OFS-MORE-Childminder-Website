@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}New application{% endblock %}
+{% block page_title %}Your email address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -15,8 +15,9 @@
             <h1 class="form-title heading-large">
                 Your email address
             </h1>
-            <p>Enter your email addresss so you can save your application.</p>
-            <p>We will send you a link so you can come back at any time.</p>
+            <p>Enter a new email address.</p>
+            <p>We will send you a link to confirm the email.</p>
+            <p>Make sure only you can access it.</p>
             {{form.as_div}}
             {% csrf_token %}
             <input type="submit" class="button" value="Continue" alt='Continue'>
