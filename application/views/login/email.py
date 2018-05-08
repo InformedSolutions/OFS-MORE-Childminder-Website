@@ -56,7 +56,7 @@ def update_email(request):
             elif UserDetails.objects.filter(email=email).exists():
                 if settings.DEBUG:
                     print ("You will not see an email validation link printed because an account already exists with that email.")
-                return HttpResponseRedirect(reverse('Update-Email-Sent') + '?email=' +email)
+                return HttpResponseRedirect(reverse('Update-Email-Sent') + '?email=' + email)
             else:
                 # Update User_Details record
                 update_magic_link(email, app_id)
@@ -100,6 +100,10 @@ def check_email(request):
     variables = {
         'email': email
     }
+
+    if 'check-email-change' in request.path:  # Have the template know which url to use in 'resend link' button.
+        variables['changing_email'] = True
+
     return render(request, 'email-sent.html', variables)
 
 
