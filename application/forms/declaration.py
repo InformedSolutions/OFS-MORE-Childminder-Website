@@ -43,6 +43,35 @@ class DeclarationConfirmationOfUnderstandingForm(ChildminderForms):
                 self.fields['share_info_declare'].initial = '0'
 
 
+class DeclarationConfirmationOfUnderstandingReturnedForm(ChildminderForms):
+    """
+    GOV.UK form for the Declaration: declaration page (returned)
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    auto_replace_widgets = True
+
+    share_info_declare = forms.BooleanField(label='share information with other organisations', required=True)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Declaration: declaration form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(DeclarationConfirmationOfUnderstandingReturnedForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
+        # If information was previously entered, display it on the form
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            share_info_declare = Application.objects.get(
+                application_id=self.application_id_local).share_info_declare
+            if share_info_declare is True:
+                self.fields['share_info_declare'].initial = '1'
+            elif share_info_declare is False:
+                self.fields['share_info_declare'].initial = '0'
+
+
 class DeclarationConfirmationOfDeclarationForm(ChildminderForms):
     """
     GOV.UK form for the Declaration: declaration page

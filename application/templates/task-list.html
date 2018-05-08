@@ -9,9 +9,7 @@
         <header class="page-heading page-heading-with-context">
             <h1 class="heading-xlarge">Register as a childminder list</h1>
             <p><span style="font-weight: bold;">Your application:</span> {{ registers }}</p>
-            {% if not HIDE_COSTS %}
-                <p><span style="font-weight: bold;">Fee:</span> {{ fee }}</p>
-            {% endif %}
+            <p><span style="font-weight: bold;">Fee:</span> {{ fee }}</p>
             <br>
             {% if application_status == 'FURTHER_INFORMATION' %}
             <h2 class="p">Update the sections in red to apply.</h2>
@@ -59,7 +57,7 @@
                                     {% elif task.status == 'FLAGGED' %}
                                         <a href="{% url task.status_url %}?id={{ id }}">
                                             <span class="task-name">{{ task.description }}</span>
-                                            <strong class="task-finished task-returned" alt="{{ task.name }}: Returned">UpdateS</strong>
+                                            <strong class="task-finished task-returned" alt="{{ task.name }}: Returned">Update</strong>
                                         </a>
                                     {% elif task.status == 'COMPLETED' %}
                                         {% if application_status != 'FURTHER_INFORMATION' %}
