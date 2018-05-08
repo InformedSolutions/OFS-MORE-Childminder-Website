@@ -11,8 +11,7 @@ from .. import status
 from ..forms import (DeclarationIntroForm,
                      DeclarationConfirmationOfUnderstandingForm,
                      DeclarationConfirmationOfDeclarationForm,
-                     DeclarationSummaryForm, DeclarationConsentToSharingForm,
-                     DeclarationConfirmationOfUnderstandingReturnedForm)
+                     DeclarationSummaryForm, DeclarationConsentToSharingForm)
 from ..models import (AdultInHome,
                       ApplicantHomeAddress,
                       ApplicantName,
@@ -257,55 +256,29 @@ def declaration_declaration(request):
     if request.method == 'GET':
 
         application_id_local = request.GET["id"]
+        confirmation_of_understanding_form = DeclarationConfirmationOfUnderstandingForm(id=application_id_local)
+        confirmation_of_declaration_form = DeclarationConfirmationOfDeclarationForm(id=application_id_local)
+        consent_to_sharing_form = DeclarationConsentToSharingForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
 
-        if application.application_status != 'FURTHER_INFORMATION':
-
-            confirmation_of_understanding_form = DeclarationConfirmationOfUnderstandingForm(id=application_id_local)
-            confirmation_of_declaration_form = DeclarationConfirmationOfDeclarationForm(id=application_id_local)
-            consent_to_sharing_form = DeclarationConsentToSharingForm(id=application_id_local)
-
-            # If application is already submitted redirect them to the awaiting review page
-            if application.application_status == 'SUBMITTED' and application.order_code is not None:
-                variables = {
-                    'application_id': application_id_local,
-                    'order_code': application.order_code,
-                }
-                return render(request, 'payment-confirmation.html', variables)
-
-
+        # If application is already submitted redirect them to the awaiting review page
+        if application.application_status == 'SUBMITTED' and application.order_code is not None:
             variables = {
-                'confirmation_of_understanding_form': confirmation_of_understanding_form,
-                'confirmation_of_declaration_form': confirmation_of_declaration_form,
-                'consent_to_sharing_form': consent_to_sharing_form,
                 'application_id': application_id_local,
-                'declarations_status': application.declarations_status,
+                'order_code': application.order_code,
             }
-            return render(request, 'declaration-declaration.html', variables)
+            return render(request, 'payment-confirmation.html', variables)
 
-        else:
 
-            confirmation_of_understanding_form = DeclarationConfirmationOfUnderstandingReturnedForm(id=application_id_local)
-            confirmation_of_declaration_form = DeclarationConfirmationOfDeclarationForm(id=application_id_local)
-            consent_to_sharing_form = DeclarationConsentToSharingForm(id=application_id_local)
-
-            # If application is already submitted redirect them to the awaiting review page
-            if application.application_status == 'SUBMITTED' and application.order_code is not None:
-                variables = {
-                    'application_id': application_id_local,
-                    'order_code': application.order_code,
-                }
-                return render(request, 'payment-confirmation.html', variables)
-
-            variables = {
-                'confirmation_of_understanding_form': confirmation_of_understanding_form,
-                'confirmation_of_declaration_form': confirmation_of_declaration_form,
-                'consent_to_sharing_form': consent_to_sharing_form,
-                'application_id': application_id_local,
-                'declarations_status': application.declarations_status,
-                'is_resubmission': application.application_status == 'FURTHER_INFORMATION'
-            }
-            return render(request, 'declaration-declaration.html', variables)
+        variables = {
+            'confirmation_of_understanding_form': confirmation_of_understanding_form,
+            'confirmation_of_declaration_form': confirmation_of_declaration_form,
+            'consent_to_sharing_form': consent_to_sharing_form,
+            'application_id': application_id_local,
+            'declarations_status': application.declarations_status,
+            'is_resubmission': application.application_status == 'FURTHER_INFORMATION',
+        }
+        return render(request, 'declaration-declaration.html', variables)
 
     if request.method == 'POST':
 
@@ -313,54 +286,74 @@ def declaration_declaration(request):
         application = Application.objects.get(
             application_id=application_id_local)
 
-        if application.application_status != 'FURTHER_INFORMATION':
+        confirmation_of_understanding_form = DeclarationConfirmationOfUnderstandingForm(
+            request.POST, id=application_id_local)
+        confirmation_of_understanding_form.error_summary_title = 'There is a problem with ' \
+                                                                 'this form (I understand that Ofsted will)'
 
-            confirmation_of_understanding_form = DeclarationConfirmationOfUnderstandingForm(
-                request.POST, id=application_id_local)
-            confirmation_of_understanding_form.error_summary_title = 'There is a problem with ' \
-                                                                     'this form (I understand that Ofsted will)'
+        confirmation_of_declaration_form = DeclarationConfirmationOfDeclarationForm(
+            request.POST, id=application_id_local)
+        confirmation_of_declaration_form.error_summary_title = 'There is a problem with this form (I declare that)'
 
-            confirmation_of_declaration_form = DeclarationConfirmationOfDeclarationForm(
-                request.POST, id=application_id_local)
-            confirmation_of_declaration_form.error_summary_title = 'There is a problem with this form (I declare that)'
+        consent_to_sharing_form = DeclarationConsentToSharingForm(request.POST, id=application_id_local)
 
-            consent_to_sharing_form = DeclarationConsentToSharingForm(request.POST, id=application_id_local)
+        # Validate both forms (sets of checkboxes)
+        if confirmation_of_understanding_form.is_valid():
+            background_check_declare = confirmation_of_understanding_form.cleaned_data.get(
+                'background_check_declare')
+            inspect_home_declare = confirmation_of_understanding_form.cleaned_data.get(
+                'inspect_home_declare')
+            interview_declare = confirmation_of_understanding_form.cleaned_data.get('interview_declare')
+            share_info_declare = confirmation_of_understanding_form.cleaned_data.get('share_info_declare')
+            application.background_check_declare = background_check_declare
+            application.inspect_home_declare = inspect_home_declare
+            application.interview_declare = interview_declare
+            application.share_info_declare = share_info_declare
+            application.save()
+            application.date_updated = current_date
+            application.save()
 
-            # Validate both forms (sets of checkboxes)
-            if confirmation_of_understanding_form.is_valid():
-                background_check_declare = confirmation_of_understanding_form.cleaned_data.get(
-                    'background_check_declare')
-                inspect_home_declare = confirmation_of_understanding_form.cleaned_data.get(
-                    'inspect_home_declare')
-                interview_declare = confirmation_of_understanding_form.cleaned_data.get('interview_declare')
-                share_info_declare = confirmation_of_understanding_form.cleaned_data.get('share_info_declare')
-                application.background_check_declare = background_check_declare
-                application.inspect_home_declare = inspect_home_declare
-                application.interview_declare = interview_declare
-                application.share_info_declare = share_info_declare
+            if consent_to_sharing_form.is_valid():
+                display_contact_details_on_web = consent_to_sharing_form.cleaned_data.get('display_contact_details_on_web')
+                application.display_contact_details_on_web = display_contact_details_on_web
                 application.save()
                 application.date_updated = current_date
                 application.save()
 
-                if consent_to_sharing_form.is_valid():
-                    display_contact_details_on_web = consent_to_sharing_form.cleaned_data.get('display_contact_details_on_web')
-                    application.display_contact_details_on_web = display_contact_details_on_web
-                    application.save()
-                    application.date_updated = current_date
+            if confirmation_of_declaration_form.is_valid():
+                information_correct_declare = confirmation_of_declaration_form.cleaned_data.get(
+                    'information_correct_declare')
+                application.information_correct_declare = information_correct_declare
+                change_declare = confirmation_of_declaration_form.cleaned_data.get(
+                    'change_declare')
+                application.change_declare = change_declare
+                application.save()
+                application.date_updated = current_date
+                application.save()
+                status.update(application_id_local,
+                              'declarations_status', 'COMPLETED')
+
+                if application.application_status == 'FURTHER_INFORMATION':
+
+                    # In cases where a resubmission is being made,
+                    # payment is no a valid trigger so this becomes the appropriate trigger resubmission audit
+                    TimelineLog.objects.create(
+                        content_object=application,
+                        user=None,
+                        template='timeline_logger/application_action.txt',
+                        extra_data={'user_type': 'applicant', 'action': 're-submitted by', 'entity': 'application'}
+                    )
+
+                    # If a resubmission return application status to submitted and forward to the confirmation page
+                    application.application_status = "SUBMITTED"
                     application.save()
 
-                if confirmation_of_declaration_form.is_valid():
-                    information_correct_declare = confirmation_of_declaration_form.cleaned_data.get(
-                        'information_correct_declare')
-                    application.information_correct_declare = information_correct_declare
-                    change_declare = confirmation_of_declaration_form.cleaned_data.get(
-                        'change_declare')
-                    application.change_declare = change_declare
-                    application.save()
-                    application.date_updated = current_date
-                    application.save()
-                    status.update(application_id_local,
-                                  'declarations_status', 'COMPLETED')
+                    variables = {
+                        'application_id': application_id_local,
+                        'order_code': application.order_code,
+                    }
+
+                    return render(request, 'payment-confirmation-resubmitted.html', variables)
 
                 return HttpResponseRedirect(settings.URL_PREFIX + '/payment?id=' + application_id_local)
 
@@ -372,83 +365,12 @@ def declaration_declaration(request):
                     'application_id': application_id_local
                 }
                 return render(request, 'declaration-declaration.html', variables)
-
         else:
 
-            confirmation_of_understanding_form = DeclarationConfirmationOfUnderstandingReturnedForm(
-                request.POST, id=application_id_local)
-            confirmation_of_understanding_form.error_summary_title = 'There is a problem with ' \
-                                                                     'this form (I understand that Ofsted will)'
-
-            confirmation_of_declaration_form = DeclarationConfirmationOfDeclarationForm(
-                request.POST, id=application_id_local)
-            confirmation_of_declaration_form.error_summary_title = 'There is a problem with this form (I declare that)'
-
-            consent_to_sharing_form = DeclarationConsentToSharingForm(request.POST, id=application_id_local)
-
-            # Validate both forms (sets of checkboxes)
-            if confirmation_of_understanding_form.is_valid():
-                background_check_declare = confirmation_of_understanding_form.cleaned_data.get(
-                    'background_check_declare')
-                inspect_home_declare = confirmation_of_understanding_form.cleaned_data.get(
-                    'inspect_home_declare')
-                interview_declare = confirmation_of_understanding_form.cleaned_data.get('interview_declare')
-                share_info_declare = confirmation_of_understanding_form.cleaned_data.get('share_info_declare')
-                application.background_check_declare = background_check_declare
-                application.inspect_home_declare = inspect_home_declare
-                application.interview_declare = interview_declare
-                application.share_info_declare = share_info_declare
-                application.save()
-                application.date_updated = current_date
-                application.save()
-
-                if consent_to_sharing_form.is_valid():
-                    display_contact_details_on_web = consent_to_sharing_form.cleaned_data.get(
-                        'display_contact_details_on_web')
-                    application.display_contact_details_on_web = display_contact_details_on_web
-                    application.save()
-                    application.date_updated = current_date
-                    application.save()
-
-                if confirmation_of_declaration_form.is_valid():
-                    information_correct_declare = confirmation_of_declaration_form.cleaned_data.get(
-                        'information_correct_declare')
-                    application.information_correct_declare = information_correct_declare
-                    change_declare = confirmation_of_declaration_form.cleaned_data.get(
-                        'change_declare')
-                    application.change_declare = change_declare
-                    application.save()
-                    application.date_updated = current_date
-                    application.save()
-                    status.update(application_id_local,
-                                  'declarations_status', 'COMPLETED')
-
-                # In cases where a resubmission is being made,
-                # payment is no a valid trigger so this becomes the appropriate trigger resubmission audit
-                TimelineLog.objects.create(
-                    content_object=application,
-                    user=None,
-                    template='timeline_logger/application_action.txt',
-                    extra_data={'user_type': 'applicant', 'action': 're-submitted by', 'entity': 'application'}
-                )
-
-                # If a resubmission return application status to submitted and forward to the confirmation page
-                application.application_status = "SUBMITTED"
-                application.save()
-
-                variables = {
-                    'application_id': application_id_local,
-                    'order_code': application.order_code,
-                }
-
-                return render(request, 'payment-confirmation.html', variables)
-
-            else:
-                variables = {
-                    'confirmation_of_understanding_form': confirmation_of_understanding_form,
-                    'confirmation_of_declaration_form': confirmation_of_declaration_form,
-                    'consent_to_sharing_form': consent_to_sharing_form,
-                    'application_id': application_id_local,
-                    'is_resubmission': application.application_status == 'FURTHER_INFORMATION'
-                }
-                return render(request, 'declaration-declaration.html', variables)
+            variables = {
+                'confirmation_of_understanding_form': confirmation_of_understanding_form,
+                'confirmation_of_declaration_form': confirmation_of_declaration_form,
+                'consent_to_sharing_form': consent_to_sharing_form,
+                'application_id': application_id_local
+            }
+            return render(request, 'declaration-declaration.html', variables)
