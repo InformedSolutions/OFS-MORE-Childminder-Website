@@ -78,7 +78,7 @@ def task_list(request):
                 {
                     'name': 'account_details',  # This is CSS class (Not recommended to store it here)
                     'status': application.login_details_status,
-                    'description': "Your login details",
+                    'description': "Your sign in details",
                     'status_url': None,  # Will be filled later
                     'status_urls': [  # Available urls for each status
                         {'status': 'COMPLETED', 'url': 'Contact-Summary-View'},
