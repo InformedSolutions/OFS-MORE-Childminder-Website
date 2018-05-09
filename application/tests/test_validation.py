@@ -16,33 +16,40 @@ class TestUserdetailsValidation(TestCase):
 
     def test_correct_email(self):
         test_email = 'erik.odense@gmail.com'
-        assert (re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is not None)
+        assert (re.match("^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is not None)
 
     def test_correct_email2(self):
         test_email = 'erikodense123@gmail.com'
-        assert (re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is not None)
+        assert (re.match("^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is not None)
 
     def test_correct_email3(self):
         test_email = 'erik.tolstrup.odense@gmail.com'
-        assert (re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is not None)
+        assert (re.match("^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is not None)
+
+    def test_correct_email4(self):
+        test_email = 'erik.tolstrup.o\'dense@gmail.com'
+        assert (re.match("^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is not None)
 
     def test_incorrect_email(self):
         test_email = 'erik.odense'
-        assert (re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is None)
+        assert (re.match("^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is None)
 
     def test_incorrect_email2(self):
         test_email = 'erik.odense@'
-        assert (re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is None)
+        assert (re.match("^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is None)
 
     def test_incorrect_email3(self):
         test_email = 'erik.odense@gmail'
-        assert (re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is None)
+        assert (re.match("^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is None)
 
     # Test validation for incorrect email
     def test_incorrect_email4(self):
         test_email = 'erik.odense@gmail.'
+        assert (re.match("^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is None)
 
-        assert (re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is None)
+    def test_incorrect_email5(self):
+        test_email = 'erik.o\'dense@gmail'
+        assert (re.match("^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email) is None)
 
     def test_correct_mobile_number(self):
         test_mobile_number = '07783446526'
@@ -99,59 +106,63 @@ class TestPersonalDetailsValidation(TestCase):
 
     def test_correct_name(self):
         test_name = 'Erik'
-        assert (re.match("^[A-zÀ-ÿ- ]+$", test_name) is not None)
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
 
     def test_correct_name2(self):
         test_name = 'Anne-Marie'
-        assert (re.match("^[A-zÀ-ÿ- ]+$", test_name) is not None)
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
 
     def test_correct_name3(self):
         test_name = 'erik'
-        assert (re.match("^[A-zÀ-ÿ- ]+$", test_name) is not None)
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
 
     def test_correct_name4(self):
         test_name = 'anne-marie'
-        assert (re.match("^[A-zÀ-ÿ- ]+$", test_name) is not None)
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
 
     def test_correct_name5(self):
         test_name = 'Eun Ji'
-        assert (re.match("^[A-zÀ-ÿ- ]+$", test_name) is not None)
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
 
     def test_correct_name6(self):
         test_name = 'Gülay'
-        assert (re.match("^[A-zÀ-ÿ- ]+$", test_name) is not None)
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
 
     def test_correct_name7(self):
         test_name = 'Anthí'
-        assert (re.match("^[A-zÀ-ÿ- ]+$", test_name) is not None)
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
+
+    def test_correct_name8(self):
+        test_name = 'O\'Brien'
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
 
     def test_incorrect_name(self):
         test_name = '1234'
-        assert (re.match("^[A-zÀ-ÿ- ]+$", test_name) is None)
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is None)
 
     def test_incorrect_name2(self):
         test_name = '1234a'
-        assert (re.match("^[A-zÀ-ÿ- ]+$", test_name) is None)
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is None)
 
     def test_incorrect_name3(self):
         test_name = '1234A'
-        assert (re.match("^[A-zÀ-ÿ- ]+$", test_name) is None)
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is None)
 
     def test_incorrect_name4(self):
         test_name = '1234-'
-        assert (re.match("^[A-zÀ-ÿ- ]+$", test_name) is None)
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is None)
 
     def test_incorrect_name5(self):
         test_name = '1234-a'
-        assert (re.match("^[A-zÀ-ÿ- ]+$", test_name) is None)
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is None)
 
     def test_incorrect_name6(self):
         test_name = '1234-A'
-        assert (re.match("^[A-zÀ-ÿ- ]+$", test_name) is None)
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is None)
 
     def test_incorrect_name7(self):
         test_name = '1234-Aa'
-        assert (re.match("^[A-zÀ-ÿ- ]+$", test_name) is None)
+        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is None)
 
     def test_legal_age_to_childmind(self):
         test_applicant_dob = date(1995, 4, 20)

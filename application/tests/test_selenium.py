@@ -731,6 +731,57 @@ class ApplyAsAChildminder(LiveServerTestCase):
         selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
 
     @try_except_method
+    def test_can_create_application_using_email_with_apostrophe_and_hyphen(self):
+        self.assert_can_create_application_using_email_with_apostrophe_and_hyphen()
+
+    def assert_can_create_application_using_email_with_apostrophe_and_hyphen(self):
+        """
+        Test to ensure a user can enter an email where the name includes an apostrophe and/or hyphen
+        """
+        selenium_task_executor.navigate_to_base_url()
+
+        test_email = 'Alfie-James.O\'Brien@emailtestworld.com'
+        test_phone_number = selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = selenium_task_executor.generate_random_mobile_number()
+
+        selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+        selenium_task_executor.complete_type_of_childcare(True, False, False, True)
+
+        # Check task status set to done
+        self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='account_details']/td/a/strong").text)
+        self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='children']/td/a/strong").text)
+
+        selenium_task_executor.navigate_to_base_url()
+        selenium_task_executor.register_email_address(test_email)
+
+        self.assertEqual("Check your email", selenium_task_executor.get_driver().title)
+
+    @try_except_method
+    def test_can_complete_people_in_your_home_task_with_other_adults_and_children_containing_apostrophe_in_name(self):
+        self.assert_can_complete_people_in_your_home_task_with_other_adults_and_children_containing_apostrophe_in_name()
+
+    def assert_can_complete_people_in_your_home_task_with_other_adults_and_children_containing_apostrophe_in_name(self):
+        """
+        Tests that the people in your home task can still be completed when answering Yes to the question
+        'Does anyone aged 16 or over live or work in your home?' but No to the question 'Do you live with any children under 16?'
+        """
+        self.create_standard_eyfs_application()
+
+        selenium_task_executor.complete_people_in_your_home_task(
+            True,
+            "Dan-D'arcy", "John-O'Paul", "Omar-O\'Leary",
+            random.randint(1, 29), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
+            True, "Billie'o-Jo", "Bri'an-James", "O\'Malley-Micheals",
+            random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 14, self.current_year - 1),
+            'Child'
+        )
+
+        self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='other_people']/td/a/strong").text)
+
+    @try_except_method
     def test_invalid_email_raises_error_box(self):
         self.assert_invalid_email_raises_error_box()
 
@@ -1032,6 +1083,57 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Select Save and Continue to trigger redirect.
         selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
         self.assertEqual(selenium_task_executor.get_driver().find_element_by_class_name("form-title").text, "Enter childcare address")
+
+    @try_except_method
+    def test_can_create_application_using_email_with_apostrophe_and_hyphen(self):
+        self.assert_can_create_application_using_email_with_apostrophe_and_hyphen()
+
+    def assert_can_create_application_using_email_with_apostrophe_and_hyphen(self):
+        """
+        Test to ensure a user can enter an email where the name includes an apostrophe and/or hyphen
+        """
+        selenium_task_executor.navigate_to_base_url()
+
+        test_email = 'Alfie-James.O\'Brien@emailtestworld.com'
+        test_phone_number = selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = selenium_task_executor.generate_random_mobile_number()
+
+        selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+        selenium_task_executor.complete_type_of_childcare(True, False, False, True)
+
+        # Check task status set to done
+        self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='account_details']/td/a/strong").text)
+        self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='children']/td/a/strong").text)
+
+        selenium_task_executor.navigate_to_base_url()
+        selenium_task_executor.register_email_address(test_email)
+
+        self.assertEqual("Check your email", selenium_task_executor.get_driver().title)
+
+    @try_except_method
+    def test_can_complete_people_in_your_home_task_with_other_adults_and_children_containing_apostrophe_in_name(self):
+        self.assert_can_complete_people_in_your_home_task_with_other_adults_and_children_containing_apostrophe_in_name()
+
+    def assert_can_complete_people_in_your_home_task_with_other_adults_and_children_containing_apostrophe_in_name(self):
+        """
+        Tests that the people in your home task can still be completed when answering Yes to the question
+        'Does anyone aged 16 or over live or work in your home?' but No to the question 'Do you live with any children under 16?'
+        """
+        self.create_standard_eyfs_application()
+
+        selenium_task_executor.complete_people_in_your_home_task(
+            True,
+            "Dan-D'arcy", "John-O'Paul", "Omar-O\'Leary",
+            random.randint(1, 29), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
+            True, "Billie'o-Jo", "Bri'an-James", "O\'Malley-Micheals",
+            random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 14, self.current_year - 1),
+            'Child'
+        )
+
+        self.assertEqual("Done", selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='other_people']/td/a/strong").text)
 
     def complete_full_question_set(self):
         """
