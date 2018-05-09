@@ -1,4 +1,3 @@
-"""Method returning the template for the Documents you need for the visit page"""
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render

@@ -61,11 +61,6 @@ def task_list(request):
             registers = 'Childcare Register (voluntary part)'
             fee = '£103'
 
-        ##
-
-
-
-
         """
         Variables which are passed to the template
         """
