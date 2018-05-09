@@ -15,7 +15,7 @@ from django.shortcuts import render
 from timeline_logger.models import TimelineLog
 
 from application.views import magic_link
-from ...utils import test_notify
+from ...utils import test_notify, build_url
 from ...forms import ContactEmailForm
 from ...models import UserDetails, Application
 
@@ -60,7 +60,8 @@ def update_email(request):
             else:
                 # Update User_Details record
                 update_magic_link(email, app_id)
-                return HttpResponseRedirect(reverse('Update-Email-Sent') + '?email=' + email)
+                redirect_url = build_url('Update-Email-Sent', get={'email': email, 'id': app_id})
+                return HttpResponseRedirect(redirect_url)
 
             return render(request, 'update-email.html', {'form': form, 'application_id': app_id})
         else:
@@ -81,9 +82,14 @@ def email_resent(request):
     :return: Http responsne
     """
     email = request.GET['email']
-    if len(email) > 0:
-        # Resend magic link
-        send_magic_link(email)
+    id = request.GET.get('id')
+
+    if id is not None:
+        update_magic_link(email=email, app_id=id)
+    else:
+        if len(email) > 0:
+            send_magic_link(email)  # Resend magic link
+
     variables = {
         'email': email
     }
@@ -97,12 +103,18 @@ def check_email(request):
     :return: Http response
     """
     email = request.GET['email']
-    variables = {
-        'email': email
-    }
 
-    if 'check-email-change' in request.path:  # Have the template know which url to use in 'resend link' button.
-        variables['changing_email'] = True
+    # Have the template know which url to use in 'resend link' button.
+    if 'check-email-change' in request.path:
+        id = request.GET.get('id')
+        resend_url = build_url('Update-Email-Resent', get={'email': email, 'id': id})  # If updating email.
+    else:
+        resend_url = "/childminder/email-resent/?email=" + email  # If signing in.
+
+    variables = {
+        'email': email,
+        'resend_url': resend_url,
+    }
 
     return render(request, 'email-sent.html', variables)
 
