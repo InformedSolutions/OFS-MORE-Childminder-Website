@@ -57,7 +57,7 @@ class SecurityDateForm(ChildminderForms):
         super(SecurityDateForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
 
-    def clean_security_answer(self):
+    def clean_date_of_birth (self):
         """
         Date of birth validation (calculate if age is less than 18)
         :return: birth day, birth month, birth year

@@ -41,7 +41,6 @@ def question(request):
         forms = post_forms(question, request.POST, app_id)
         application = Application.objects.get(pk=app_id)
         acc = UserDetails.objects.get(application_id=application)
-        security_question = acc.security_question
         valid_forms = [form.is_valid() for form in forms]
 
         if all(valid_forms):
