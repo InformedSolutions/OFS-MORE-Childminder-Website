@@ -12,6 +12,7 @@ from django.utils import timezone
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.views import View
 from timeline_logger.models import TimelineLog
 
 from application.views import magic_link
@@ -19,29 +20,73 @@ from ...utils import test_notify, build_url
 from ...forms import ContactEmailForm
 from ...models import UserDetails, Application
 
-def update_email(request):
-    """
-    This method returns a page to update your email address
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Your login and contact details: email template
-    """
 
-    if request.method == 'GET':
+class NewUserSignInView(View):
+    """
+    This class handles the requests for a new user signing in.
+    """
+    def get(self, request):
+        variables = {'form': ContactEmailForm()}
+        return render(request, 'contact-email.html', variables)
+
+    def post(self, request):
+        form = ContactEmailForm(request.POST)
+        if form.is_valid():
+            if not test_notify():
+                return HttpResponseRedirect(reverse('Service-Down'))
+
+            email = form.cleaned_data['email_address']
+
+            if UserDetails.objects.filter(email=email).exists():
+                send_magic_link(email)
+                return HttpResponseRedirect(reverse('Existing-Email-Sent') + '?email=' + email)
+            else:
+                acc = create_new_app()
+                acc.email = email
+                acc.save()
+                send_magic_link(email)
+                return HttpResponseRedirect(reverse('New-Email-Sent') + '?email=' + email)
+
+        return render(request, 'contact-email.html', {'form': form})
+
+
+class ExistingUserSignInView(View):
+    """
+    This class handles the requests for an existing user signing in.
+    """
+    def get(self, request):
+        variables = {'form': ContactEmailForm()}
+        return render(request, 'existing-application.html', variables)
+
+    def post(self, request):
+        form = ContactEmailForm(request.POST)
+        if form.is_valid():
+            if not test_notify():
+                return HttpResponseRedirect(reverse('Service-Down'))
+
+            email = form.cleaned_data['email_address']
+
+            if UserDetails.objects.filter(email=email).exists():
+                send_magic_link(email)
+
+            return HttpResponseRedirect(reverse('Existing-Email-Sent') + '?email=' + email)
+
+        return render(request, 'existing-application.html', {'form': form})
+
+
+class UpdateEmailView(View):
+    """
+    This class handles the requests for an existing user updating their email address.
+    """
+    def get(self, request):
         app_id = request.GET["id"]
         form = ContactEmailForm()
         form.check_flag()
         application = Application.objects.get(pk=app_id)
 
-        variables = {
-            'form': form,
-            'application_id': app_id,
-            'login_details_status': application.login_details_status,
-            'childcare_type_status': application.childcare_type_status
-        }
+        return self.render_update_email_template(request, form=form, application=application)
 
-        return render(request, 'update-email.html', variables)
-
-    if request.method == 'POST':
+    def post(self, request):
         app_id = request.POST["id"]
         application = Application.objects.get(pk=app_id)
         acc = UserDetails.objects.get(application_id=app_id)
@@ -49,45 +94,70 @@ def update_email(request):
         form.remove_flag()
 
         if form.is_valid():
-            # Send login e-mail link if applicant has previously applied
             email = form.cleaned_data['email_address']
+
             if acc.email == email:
                 return HttpResponseRedirect(reverse('Contact-Summary-View') + '?id=' + app_id)
+
             elif UserDetails.objects.filter(email=email).exists():
                 if settings.DEBUG:
                     print ("You will not see an email validation link printed because an account already exists with that email.")
                 return HttpResponseRedirect(reverse('Update-Email-Sent') + '?email=' + email)
+
             else:
-                # Update User_Details record
                 update_magic_link(email, app_id)
                 redirect_url = build_url('Update-Email-Sent', get={'email': email, 'id': app_id})
                 return HttpResponseRedirect(redirect_url)
-
-            return render(request, 'update-email.html', {'form': form, 'application_id': app_id})
         else:
-            variables = {
-                'form': form,
-                'application_id': app_id,
-                'login_details_status': application.login_details_status,
-                'childcare_type_status': application.childcare_type_status
-            }
+            return self.render_update_email_template(request, form=form, application=application)
 
-            return render(request, 'update-email.html', variables)
+    def render_update_email_template(self, request, form, application):
+        variables = {
+            'form': form,
+            'application_id': application.application_id,
+            'login_details_status': application.login_details_status,
+            'childcare_type_status': application.childcare_type_status
+        }
+        return render(request, 'update-email.html', variables)
 
 
-def email_resent(request):
+def update_email_link_resent(request):
+    """
+    :param request:
+    :return:
+    """
+    email = request.GET['email']
+    id = request.GET['id']
+    update_magic_link(email=email, app_id=id)
+    variables = {
+        'email': email
+    }
+    return render(request, 'resend-email.html', variables)
+
+
+def update_email_link_sent(request):
+    """
+    :param request:
+    :return:
+    """
+    email = request.GET['email']
+    id = request.GET.get('id')
+    resend_url = build_url('Update-Email-Resent', get={'email': email, 'id': id})
+    variables = {
+        'email': email,
+        'resend_url': resend_url,
+    }
+    return render(request, 'email-sent.html', variables)
+
+
+def login_email_link_resent(request):
     """
     Resend email page
     :param request: Http request
     :return: Http responsne
     """
     email = request.GET['email']
-    id = request.GET.get('id')
-
-    if id is not None:
-        update_magic_link(email=email, app_id=id)
-    else:
-        if len(email) > 0:
+    if len(email) > 0:
             send_magic_link(email)  # Resend magic link
 
     variables = {
@@ -96,20 +166,14 @@ def email_resent(request):
     return render(request, 'resend-email.html', variables)
 
 
-def check_email(request):
+def login_email_link_sent(request):
     """
     Check email page
     :param request: Http request
     :return: Http response
     """
     email = request.GET['email']
-
-    # Have the template know which url to use in 'resend link' button.
-    if 'check-email-change' in request.path:
-        id = request.GET.get('id')
-        resend_url = build_url('Update-Email-Resent', get={'email': email, 'id': id})  # If updating email.
-    else:
-        resend_url = "/childminder/email-resent/?email=" + email  # If signing in.
+    resend_url = "/childminder/email-resent/?email=" + email
 
     variables = {
         'email': email,
@@ -117,78 +181,6 @@ def check_email(request):
     }
 
     return render(request, 'email-sent.html', variables)
-
-
-def new_email(request):
-    """
-    New application sign up form (enter email)
-    :param request: Http request
-    :return: Http response
-    """
-    if request.method == 'GET':
-        variables = {
-            'form': ContactEmailForm()
-        }
-
-        return render(request, 'contact-email.html', variables)
-    else:
-        return email_page(request, 'new')
-
-
-def existing_email(request):
-    """
-    Existing user sign in form (enter email)
-    :param request: Http request
-    :return: Http response
-    """
-    if request.method == 'GET':
-        variables = {
-            'form': ContactEmailForm()
-        }
-
-        return render(request, 'existing-application.html', variables)
-    else:
-        return email_page(request, 'existing')
-
-
-def email_page(request, page):
-    """
-    This is the functionality behind the new/existing user sign in/up pages
-    :param page: whether the request is for a new application or an existing one
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Your login and contact details: email template
-    """
-    if request.method == 'POST':
-
-        form = ContactEmailForm(request.POST)
-        if form.is_valid():
-            if not test_notify():
-                return HttpResponseRedirect(reverse('Service-Down'))
-
-            # Send login e-mail link if applicant has previously applied
-            email = form.cleaned_data['email_address']
-            if UserDetails.objects.filter(email=email).exists():
-                send_magic_link(email)
-                return HttpResponseRedirect(reverse('Existing-Email-Sent') + '?email=' + email)
-
-            elif page == 'new':
-                # Create Application & User Details
-                acc = create_new_app()
-                acc.email = email
-                acc.save()
-                send_magic_link(email)
-                return HttpResponseRedirect(reverse('New-Email-Sent') + '?email=' + email)
-
-            elif page == 'existing':
-                return HttpResponseRedirect(reverse('Existing-Email-Sent') + '?email=' + email)
-
-            # If the form has validation errors
-            return render(request, 'contact-email.html', {'form': form})
-
-        elif page == 'existing':
-            return render(request, 'existing-application.html', {'form': form})
-        elif page == 'new':
-            return render(request, 'contact-email.html', {'form': form})
 
 
 def send_magic_link(email):
