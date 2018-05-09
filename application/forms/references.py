@@ -152,7 +152,7 @@ class ReferenceFirstReferenceAddressManualForm(ChildminderForms):
                            error_messages={'required': "Please enter the name of the town or city"})
     county = forms.CharField(label='County (optional)', required=False)
     postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter the referee's postcode"})
-    country = forms.CharField(label='Country (optional)', required=True)
+    country = forms.CharField(label='Country', required=True)
 
     def __init__(self, *args, **kwargs):
         """
@@ -450,7 +450,7 @@ class ReferenceSecondReferenceAddressManualForm(ChildminderForms):
                            error_messages={'required': "Please enter the name of the town or city"})
     county = forms.CharField(label='County (optional)', required=False)
     postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter the referee's postcode"})
-    country = forms.CharField(label='Country (optional)', required=True)
+    country = forms.CharField(label='Country', required=True)
 
     def __init__(self, *args, **kwargs):
         """
