@@ -49,21 +49,14 @@ def capture_screenshot(func):
 @tag('selenium')
 @override_settings(ALLOWED_HOSTS=['*'])
 class ApplyAsAChildminder(LiveServerTestCase):
+    __port = 8000
 
-    def __init__(self):
-        super(ApplyAsAChildminder, self).__init__()
-        self.__port = 8000
+    if os.environ.get('LOCAL_self.selenium_driver') == 'True':
+        __host = '127.0.0.1'
+    else:
+        __host = '0.0.0.0'
 
-        if os.environ.get('LOCAL_self.selenium_driver') == 'True':
-            self.__host = '127.0.0.1'
-        else:
-            self.__host = '0.0.0.0'
-
-        self.current_year = datetime.now().year
-        self.selenium_driver = None
-        self.selenium_task_executor = None
-
-        self.setUp()
+    current_year = datetime.now().year
 
     def setUp(self):
         base_url = os.environ.get('DJANGO_LIVE_TEST_SERVER_ADDRESS')
@@ -90,7 +83,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         global selenium_driver_out
         selenium_driver_out = self.selenium_driver
 
-        super().setUp()
+        super(ApplyAsAChildminder, self).setUp()
 
     @try_except_method
     def test_shown_both_parts_guidance(self):

@@ -1,4 +1,4 @@
-from .test_views import *
+from .view_parent import *
 
 
 class PaymentTest(ViewsTest):
