@@ -1,5 +1,6 @@
 import os
 import random
+import time
 
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
@@ -127,6 +128,11 @@ class SeleniumTaskExecutor:
         """
         driver = self.get_driver()
         validation_url = os.environ.get('EMAIL_VALIDATION_URL')
+
+        if validation_url is None:
+            time.sleep(1)
+            return self.navigate_to_email_validation_url()
+
         driver.get(validation_url)
 
     def complete_your_login_details(self, email_address, phone_number, additional_phone_number):
