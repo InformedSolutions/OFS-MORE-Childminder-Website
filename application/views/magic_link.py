@@ -23,12 +23,13 @@ from application.forms import VerifyPhoneForm
 from application.models import Application, UserDetails
 from application.notify import send_email, send_text
 
+
 log = logging.getLogger('django.server')
 
 
-def magic_link_email(email, link_id):
+def magic_link_confirmation_email(email, link_id):
     """
-    Method to send a magic link email using notify.py
+    Method to send a magic link email, using notify.py, to allow applicant to log in
     :param email: string containing the e-mail address to send the e-mail to
     :param link_id: string containing the magic link ID related to an application
     :return: :class:`Response <Response>` object containing http request response
@@ -42,6 +43,26 @@ def magic_link_email(email, link_id):
 
     personalisation = {"link": link_id}
     template_id = 'ecd2a788-257b-4bb9-8784-5aed82bcbb92'
+
+    return send_email(email, personalisation, template_id)
+
+
+def magic_link_update_email(email, link_id):
+    """
+    Method to send a magic link email, using notify.py, to update an applicant's email
+    :param email: string containing the e-mail address to send the e-mail to
+    :param link_id: string containing the magic link ID related to an application
+    :return: :class:`Response <Response>` object containing http request response
+    :rtype: requests.Response
+    """
+    # If executing login function in test mode set env variable for later retrieval by test code
+    if settings.EXECUTING_AS_TEST == 'True':
+        os.environ['EMAIL_VALIDATION_URL'] = link_id
+    else:
+        print(link_id)
+
+    personalisation = {"link": link_id}
+    template_id = 'c778438a-c3fb-47e0-ad8a-936021abb1c8'
 
     return send_email(email, personalisation, template_id)
 
@@ -106,7 +127,6 @@ def validate_magic_link(request, id):
     try:
         acc = UserDetails.objects.get(magic_link_email=id)
         app_id = acc.application_id.pk
-        app = Application.objects.get(application_id=app_id)
         exp = acc.email_expiry_date
         if not has_expired(exp) and len(id) > 0:
             acc.email_expiry_date = 0
