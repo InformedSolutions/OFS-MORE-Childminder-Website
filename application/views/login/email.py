@@ -1,10 +1,3 @@
-"""
-Method returning the template for the Your login and contact details:
-email page (for a given application) and navigating to the Your login
-and contact details: phone number page when successfully completed; business logic
-is applied to either create or update the associated User_Details record;
-the page redirects `the applicant to the login page if they have previously applied
-"""
 import time
 
 from django.conf import settings
@@ -26,8 +19,7 @@ class NewUserSignInView(View):
     This class handles the requests for a new user signing in.
     """
     def get(self, request):
-        variables = {'form': ContactEmailForm()}
-        return render(request, 'contact-email.html', variables)
+        return render(request, 'contact-email.html', context={'form': ContactEmailForm()})
 
     def post(self, request):
         form = ContactEmailForm(request.POST)
@@ -55,8 +47,7 @@ class ExistingUserSignInView(View):
     This class handles the requests for an existing user signing in.
     """
     def get(self, request):
-        variables = {'form': ContactEmailForm()}
-        return render(request, 'existing-application.html', variables)
+        return render(request, 'existing-application.html', context={'form': ContactEmailForm()})
 
     def post(self, request):
         form = ContactEmailForm(request.POST)
@@ -105,6 +96,7 @@ class UpdateEmailView(View):
                 return HttpResponseRedirect(reverse('Update-Email-Sent') + '?email=' + email)
 
             else:
+                # Send an email to the new email adddress, with the account's ID in the link.
                 update_magic_link(email, app_id)
                 redirect_url = build_url('Update-Email-Sent', get={'email': email, 'id': app_id})
                 return HttpResponseRedirect(redirect_url)
@@ -119,51 +111,6 @@ class UpdateEmailView(View):
             'childcare_type_status': application.childcare_type_status
         }
         return render(request, 'update-email.html', variables)
-
-
-def update_email_link_resent(request):
-    """
-    :param request:
-    :return:
-    """
-    email = request.GET['email']
-    id = request.GET['id']
-    update_magic_link(email=email, app_id=id)
-    variables = {
-        'email': email
-    }
-    return render(request, 'resend-email.html', variables)
-
-
-def update_email_link_sent(request):
-    """
-    :param request:
-    :return:
-    """
-    email = request.GET['email']
-    id = request.GET.get('id')
-    resend_url = build_url('Update-Email-Resent', get={'email': email, 'id': id})
-    variables = {
-        'email': email,
-        'resend_url': resend_url,
-    }
-    return render(request, 'email-sent.html', variables)
-
-
-def login_email_link_resent(request):
-    """
-    Resend email page
-    :param request: Http request
-    :return: Http responsne
-    """
-    email = request.GET['email']
-    if len(email) > 0:
-            send_magic_link(email)  # Resend magic link
-
-    variables = {
-        'email': email
-    }
-    return render(request, 'resend-email.html', variables)
 
 
 def login_email_link_sent(request):
@@ -183,41 +130,87 @@ def login_email_link_sent(request):
     return render(request, 'email-sent.html', variables)
 
 
+def login_email_link_resent(request):
+    """
+    Resend email page
+    :param request: Http request
+    :return: Http responsne
+    """
+    email = request.GET['email']
+
+    if len(email) > 0:
+            send_magic_link(email)  # Resend magic link
+
+    return render(request, 'resend-email.html', context={'email': email})
+
+
+def update_email_link_sent(request):
+    """
+    :param request:
+    :return:
+    """
+    email = request.GET['email']
+    id = request.GET.get('id')
+
+    # Build url with app_id so that update_email_link_resent may use it, if 'resend email' clicked.
+    resend_url = build_url('Update-Email-Resent', get={'email': email, 'id': id})
+
+    variables = {
+        'email': email,
+        'resend_url': resend_url,
+    }
+    return render(request, 'email-sent.html', variables)
+
+
+def update_email_link_resent(request):
+    """
+    :param request:
+    :return:
+    """
+    email = request.GET['email']
+    id = request.GET['id']
+    update_magic_link(email=email, app_id=id)
+
+    return render(request, 'resend-email.html', context={'email': email})
+
+
 def send_magic_link(email):
     """
-    Send magic link
-    :param request:
-    :param email:
-    :return:
+    Send email containing link to access an account.
+    :param email: email address for the account to be accessed.
     """
     if UserDetails.objects.filter(email=email).exists():
         acc = UserDetails.objects.get(email=email)
-        link = magic_link.generate_random(12, "link")
-        expiry = int(time.time())
-        acc.email_expiry_date = expiry
-        acc.magic_link_email = link
-        acc.save()
+        link = create_account_magic_link(account=acc)
         # Note url has been updated to use the domain set in the settings
-        magic_link.magic_link_email(email, str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link)
+        magic_link.magic_link_confirmation_email(email,
+                                                 str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link)
 
 
 def update_magic_link(email, app_id):
     """
-    Send magic link
-    :param request:
-    :param email:
-    :return:
+    Send email containing link to change an account's email.
+
+    Pass email to magic_link_update_email() as query string for magic_link.validate_url() to use in changing account's
+    email address.
+    :param email: The new email address for the account.
+    :param app_id: ID for the account whose email is to be changed.
     """
     if UserDetails.objects.filter(application_id=app_id).exists():
         acc = UserDetails.objects.get(application_id=app_id)
-        link = magic_link.generate_random(12, "link")
-        expiry = int(time.time())
-        acc.email_expiry_date = expiry
-        acc.magic_link_email = link
-        acc.save()
+        link = create_account_magic_link(account=acc)
         # Note url has been updated to use the domain set in the settings
-        magic_link.magic_link_email(email,
-                                    str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link + '?email=' + email)
+        magic_link.magic_link_update_email(email,
+                                           str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link + '?email=' + email)
+
+
+def create_account_magic_link(account):
+    link = magic_link.generate_random(12, "link")
+    expiry = int(time.time())
+    account.email_expiry_date = expiry
+    account.magic_link_email = link
+    account.save()
+    return link
 
 
 def create_new_app():
@@ -250,5 +243,4 @@ def create_new_app():
     )
 
     return user
-
 
