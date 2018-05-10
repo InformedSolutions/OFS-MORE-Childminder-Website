@@ -1,0 +1,396 @@
+.button-start,
+.button-get-started {
+  background-image: url("../images/icon-pointer.png");
+}
+
+.find-address-button {
+   margin-left: 10px;
+}
+
+@media (max-width: 639px) {
+    .find-address-button {
+       margin-top: 10px;
+       margin-left: 0;
+    }
+}
+
+.summary-column {
+    word-wrap: break-word;
+    width: 40%;
+    border-bottom: 1px solid #bfc1c3 !important;
+}
+
+.error-row {
+    padding-left: 10px;
+    border-bottom: none;
+    border-left: 5px solid #b10e1e;
+}
+.find-address-button {
+   margin-left: 10px;
+}
+
+@media (max-width: 639px) {
+    .find-address-button {
+       margin-top: 10px;
+       margin-left: 0;
+    }
+}
+
+.text-before-button {
+    margin-bottom: 30px;
+}
+
+@media (max-width: 639px) {
+    .text-before-button {
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 639px) {
+    .task-name{
+        width: 70%
+    }
+}
+
+@media print
+{
+    .no-print, .no-print *
+    {
+        display: none !important;
+    }
+}
+
+.top-padded {
+    padding-top: 10px;
+}
+
+.task-list {
+  margin-top: 30px;
+}
+
+@media (min-width: 641px) {
+  .task-list {
+    margin-top: 60px;
+  }
+}
+
+.task-list-section {
+  display: table;
+  font-family: "nta", Arial, sans-serif;
+  font-weight: 700;
+  text-transform: none;
+  font-size: 18px;
+  line-height: 1.2;
+  padding-bottom: 5px;
+}
+
+@media (min-width: 641px) {
+  .task-list-section {
+    font-size: 24px;
+    line-height: 1.25;
+  }
+}
+
+.task-list-section-number {
+  display: table-cell;
+  padding-right: 5px;
+}
+
+@media (min-width: 641px) {
+  .task-list-section-number {
+    min-width: 35px;
+    padding-right: 0;
+  }
+}
+
+.task-list-items {
+  margin-bottom: 30px;
+}
+
+@media (min-width: 641px) {
+  .task-list-items {
+    margin-bottom: 60px;
+  }
+}
+
+@media (min-width: 641px) {
+  .task-list-items {
+    padding-left: 35px;
+  }
+}
+
+.task-list-item {
+  border-bottom: 1px solid #bfc1c3;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+.task-list-item:first-child {
+  border-top: 1px solid #bfc1c3;
+}
+
+.task-name {
+  width: 66.66667%;
+  float: left;
+}
+
+
+
+.grayed-out {
+  color: #BFC1C3;
+  pointer-events: none;
+}
+
+.task-completed {
+  display: -moz-inline-stack;
+  display: inline-block;
+  margin: 0 8px 0 0;
+  padding: 2px 5px 0;
+  font-family: "nta", Arial, sans-serif;
+  font-weight: 700;
+  text-transform: none;
+  font-size: 14px;
+  line-height: 1.14286;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  color: #fff;
+  background-color: #005ea5;
+  float: right;
+  margin-right: 0;
+  padding-top: 3px;
+}
+
+@media (min-width: 641px) {
+  .task-completed {
+    font-size: 16px;
+    line-height: 1.25;
+  }
+}
+
+.task-group {
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.task-title {
+  font-size: 24px;
+  font-weight: 400;
+}
+
+@media only screen and (max-width: 768px) {
+  .task-group {
+    font-size: 24px;
+    font-weight: 700;
+  }
+}
+
+.task {
+  font-size: 24px;
+  font-weight: 700;
+  color: #005ea5;
+}
+
+.task-name {
+  font-size: 24px;
+  font-weight: bold;
+  width: 80%;
+}
+
+.task-number {
+  margin-right: 32px;
+}
+
+.task-name:hover {
+  text-decoration: underline;
+}
+
+.task-description {
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.task-tag {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 0 0 0;
+  padding: 3px 6px 0;
+  font-family: "nta", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.25;
+  font-weight: 700;
+  text-transform: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  text-decoration: none;
+  color: #fff;
+  background-color: #0b0c0c;
+}
+
+.task-finished {
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 0 0 0;
+  padding: 3px 0px 0;
+  font-family: "nta", Arial, sans-serif;
+  font-size: 24px;
+  line-height: 1.25;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 1px;
+  text-decoration: none;
+  color: #FFFFFF;
+  background-color: #005ea5;
+  width: 20%;
+  text-align: center;
+}
+
+@media (max-width: 639px) {
+    .task-finished{
+        width: 30%
+    }
+}
+
+.task-name-no-margin {
+  font-size: 19px;
+  font-weight: 400;
+}
+
+.task-heading {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.task-description {
+  font-size: 19px;
+  font-weight: 400;
+  color: #0B0C0C;
+}
+
+#other-people2 .addedPerson fieldset {
+  margin-bottom: 20px;
+}
+
+div.error-summary ul.error-summary-list {
+  padding-bottom: 0;
+  list-style-type: none;
+}
+
+.error_div {
+  border-left: 5px solid #b10e1e;
+  padding-left: 15px;
+}
+
+.error_message {
+  color: #b10e1e;
+  font-weight: bold;
+}
+
+.error-message {
+  color: #b10e1e;
+  font-weight: bold;
+}
+
+.error-container {
+  margin: 0px;
+}
+
+.error-text {
+  padding-left: 10px;
+}
+
+#radio-or {
+  clear: both;
+  padding-left: 7px;
+  margin-bottom: 10px;
+}
+
+.form-card-date .form-group-month {
+  float: left;
+  width: 14%;
+}
+
+.form-card-date .form-group-year {
+  float: left;
+  width: 50%;
+}
+
+.task-in-progress {
+  background-color: #6F777B;
+}
+
+.task-to-do {
+  background-color: #BFC1C3;
+}
+
+.task-returned {
+  background-color: #b10e1e;
+}
+
+.task-disabled {
+    background-color: #BFC1C3;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+
+.task-do-last {
+  background-color: #FFFFFF;
+  outline: 3px;
+  outline-color: #6F777B;
+  outline-style: solid;
+  color: #6F777B;
+  width: calc(20% - 6px);
+  margin: 0px 3px 0px 3px;
+}
+
+@media (max-width: 639px) {
+    .task-do-last{
+        width: calc(30% - 6px) !important
+    }
+}
+
+.button-secondary {
+  display: block !important;
+  background-color: #eee;
+  color: #000;
+}
+
+.button-add-another {
+  margin-top: 15px;
+}
+
+.button-save-and-exit {
+  margin-left: 0;
+  display: inline-block !important
+}
+
+.button-add-another, .button-save-and-exit {
+  position: relative;
+  display: -moz-inline-stack;
+  display: inline-block;
+  border: none;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-appearance: none;
+  -webkit-box-shadow: 0 2px 0 #003618;
+  -moz-box-shadow: 0 2px 0 #003618;
+  box-shadow: 0 2px 0 #003618;
+  font-size: 1em;
+  line-height: 1.25;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  cursor: pointer;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  padding: 0.5263157895em 0.7894736842em 0.2631578947em 0.7894736842em;
+  vertical-align: top;
+}
+
+.check-your-answers .change-answer {
+  text-align: right;
+  font-weight: bold;
+  padding-right: 0;
+  width: 20%;
+}
