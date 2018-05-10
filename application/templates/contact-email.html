@@ -16,8 +16,8 @@
                 Start a new application
             </h1>
             <p>Enter your email address.</p>
+            <p>Make sure only you can access it.</p>
             <p>We will send you a link to confirm your email.</p>
-            <p>We will also use it to contact you. </p>
             {{form.as_div}}
             {% csrf_token %}
             <input type="submit" class="button" value="Continue" alt='Continue'>
