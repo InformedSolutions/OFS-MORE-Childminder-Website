@@ -11,7 +11,7 @@
             <h1 class="bold-large">Thank you for applying</h1>
             <br>
             <p>
-                Your reference number is
+                Your application number is
                 <br>
                 <br>
                 <strong class="heading-medium">{{order_code}}</strong>
@@ -24,61 +24,50 @@
             <table class="check-your-answers">
                 <thead>
                 <tr>
-                    <th>Item</th>
-                    <th>Price</th>
+                    <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td>Register to be a childminder application fee</td>
+                    <td>Application fee</td>
                     <td>&#163;35.00</td>
                 </tr>
                 </tbody>
-                <tfoot>
-                <tr>
-                    <td><span class="bold-small">Total</span></td>
-                    <td><span class="bold-small">&#163;35.00</span></td>
-                </tr>
-                </tfoot>
             </table>
         </div>
         <h2 class="heading-medium">
             Your application details
         </h2>
-        <p>We have sent you a copy of your application by email.</p>
         <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print"
                                            style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
-            <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print page</a></p>
-        <p style="margin-left: 20px;"><img src="{% static 'download-button.png' %}" alt="Download"
-                                           style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
-            <a href="">Download application</a></p>
+            <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print this page</a></p>
         <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print"
                                            style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
-            <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print application</a></p>
+            <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print your application</a></p>
         <h2 class="heading-medium">
-            What happens next
+            Send your documents
         </h2>
-        <p>Ofsted staff will:</p>
+        <p>We need:</p>
         <ul class="list-bullet" style="margin-bottom: 20px; margin-left: 20px;">
-            <li>review your application</li>
-            <li>ask for references</li>
-            <li>carry out checks with social services</li>
-            <li>check the health booklet</li>
-            <li>arrange for an inspector to visit</li>
+            <li>your health declaration booklet</li>
+            <li>your DBS certificate</li>
         </ul>
-        <p>All this usually takes about 3 months in total.</p>
-        <p>There can be delays if information is missing or we have to wait for references or social services
-            checks.</p>
-        <p>Once all the checks have been done, an inspector will call you to arrange a date when they can visit.</p>
-        <p>The inspector will tell you their recommendation on the day of the visit.</p>
-        <h2 class="heading-medium">
-            More about next steps
-        </h2>
-        <ul class="list-bullet" style="margin-left: 20px;">
-            <li><a href="{{ URL_PREFIX }}/next-steps/documents?id={{application_id}}">Documents you need for the visit</a></li>
-            <li><a href="{{ URL_PREFIX }}/next-steps/home?id={{application_id}}">Get your home ready</a></li>
-            <li><a href="{{ URL_PREFIX }}/next-steps/interview?id={{application_id}}">Prepare for your interview</a></li>
-        </ul>
+        <p>Send your original documents (not photocopies) to:</p>
+        <p style="margin-left: 40px;">
+            Applications team
+            <br>
+            Ofsted
+            <br>
+            Piccadilly Gate
+            <br>
+            Store Street
+            <br>
+            Manchester
+            <br>
+            M1 2WD
+        </p>
+        <p>We will not review your application without them.</p>
     </div>
 </div>
 

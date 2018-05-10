@@ -24,7 +24,7 @@
     <tbody>
     <tr>
         <td>
-            Application fee
+            Application fee (not refundable)
         </td>
         <td>
             £35
@@ -68,6 +68,27 @@
         <tr>
             <th colspan="2">
                 <div class="heading-medium">
+                    Health declaration booklet
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            GP to fill in and sign booklet
+        </td>
+        <td>
+            £90 (approx)
+        </td>
+    </tr>
+</table>
+
+<table>
+    <thead>
+        <tr>
+            <th colspan="2">
+                <div class="heading-medium">
                     Training
                 </div>
             </th>
@@ -79,15 +100,15 @@
             Paediatric first aid course
         </td>
         <td>
-            £100 to £200 (approx)
+            £80 to £200 (approx)
         </td>
     </tr>
      <tr>
         <td>
-            Early years training (if you need it)
+            Early years training
         </td>
         <td>
-            £200 (approx)
+            £20 to £200 (approx)
         </td>
     </tr>
 </table>
@@ -109,7 +130,28 @@
             Public liability insurance
         </td>
         <td>
-            £100 (approx)
+            £25 to £100 (approx)
+        </td>
+    </tr>
+</table>
+
+    <table>
+    <thead>
+        <tr>
+            <th colspan="2">
+                <div class="heading-medium">
+                    Digital personal details records
+                </div>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            Keep digital records of children - <a href="https://ico.org.uk/for-organisations/register/">Register with ICO</a>
+        </td>
+        <td>
+            £35
         </td>
     </tr>
 </table>
@@ -119,7 +161,7 @@
 </p>
 
 {% if id and AUTHENTICATED %}
-    <a href="{% url 'Task-List-View' %}?id={{ id }}" class="button">Return to application</a>
+    {% include 'return-to-list.html' %}
 {% endif %}
 
 {% endblock %}

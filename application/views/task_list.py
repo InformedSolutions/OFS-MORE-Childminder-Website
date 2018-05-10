@@ -105,7 +105,7 @@ def task_list(request):
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'Personal-Details-Summary-View'},
                         {'status': 'FLAGGED', 'url': 'Personal-Details-Summary-View'},
-                        {'status': 'OTHER', 'url': 'Personal-Details-Guidance-View'}
+                        {'status': 'OTHER', 'url': 'Personal-Details-Name-View'}
                     ],
                 },
                 {

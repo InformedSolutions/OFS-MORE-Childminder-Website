@@ -35,7 +35,7 @@
             {{email}}
         </td>
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/account/email?id={{application_id}}#id_email_address"
+            <a href="{% url 'Contact-Email-View' %}?id={{application_id}}#id_email_address"
                alt='Change email address'>
                 Change <span class="visuallyhidden">email address</span>
             </a>
@@ -49,7 +49,7 @@
             {{mobile_number}}
         </td>
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/account/phone?id={{application_id}}#id_mobile_number"
+            <a href="{% url 'Contact-Phone-View' %}?id={{application_id}}#id_mobile_number"
                alt='Change mobile number'>
                 Change <span class="visuallyhidden">mobile number</span>
             </a>
@@ -63,7 +63,7 @@
             {{add_phone_number}}
         </td>
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/account/phone?id={{application_id}}#id_add_phone_number"
+            <a href="{% url 'Contact-Phone-View' %}?id={{application_id}}#id_add_phone_number"
                alt='Change landline number'>
                 Change <span class="visuallyhidden">landline number</span>
             </a>
@@ -102,13 +102,13 @@
 <br>
 <div class="form-group">
     {% if childcare_type_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
-    <form action="{{ URL_PREFIX }}/task-list?id={{application_id}}" method="get">
+    <form action="{% url 'Task-List-View' %}?id={{application_id}}" method="get">
         <input type="submit" class="button" value="Confirm and continue"/>
         <input type="hidden" value="{{application_id}}" name="id"/>
     </form>
     {% endif %}
     {% if childcare_type_status != 'COMPLETED' %}
-    <form action="{{ URL_PREFIX }}/childcare/guidance?id={{application_id}}" method="get">
+    <form action="{% url 'Type-Of-Childcare-Guidance-View' %}?id={{application_id}}" method="get">
         <input type="submit" class="button" value="Confirm and continue"/>
         <input type="hidden" value="{{application_id}}" name="id"/>
     </form>

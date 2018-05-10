@@ -20,7 +20,7 @@
         <p>Where will you be looking after the children?</p>
         {{form.as_div}}
         {% csrf_token %}
-        <a href="{{ URL_PREFIX }}/personal-details/childcare-address?id={{application_id}}" name="manual"
+        <a href="{% url 'Personal-Details-Childcare-Address-View' %}?id={{application_id}}" name="manual"
            id="manual">Use postcode search</a>
         <br>
         <br>
@@ -29,9 +29,7 @@
     </div>
     <br>
     <!-- Return to task list -->
-    <div class="form-group">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
+{% include 'return-to-list.html' %}
 </form>
 
 {% endblock %}

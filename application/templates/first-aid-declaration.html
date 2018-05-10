@@ -16,18 +16,13 @@
             First aid training certificate
         </h1>
         <p>An inspector will ask to see your certificate when they visit your home.</p>
-        <h2 class="form-title heading-medium">
-            I declare that:
-        </h2>
-        {{form.as_div}}
+        <p class="text-before-button">You must show the inspector your certificate.</p>
         {% csrf_token %}
-        <input type="submit" class="button" value="Continue" alt='Continue to declaration'>
+        <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
     <!-- Return to task list -->
-    <div class="form-group">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
+    {% include 'return-to-list.html' %}
 </form>
 
 {% endblock %}

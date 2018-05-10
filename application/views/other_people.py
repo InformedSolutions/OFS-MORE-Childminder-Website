@@ -347,7 +347,7 @@ def other_people_adult_dbs(request):
             if application.people_in_home_status != 'COMPLETED':
                 status.update(application_id_local,
                               'people_in_home_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/adult-permission?id=' +
+            return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/children-question?id=' +
                                         application_id_local + '&adults=' + number_of_adults, variables)
         # If there is an invalid form
         elif False in valid_list:

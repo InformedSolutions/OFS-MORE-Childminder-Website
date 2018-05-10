@@ -133,7 +133,7 @@ def first_aid_training_declaration(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = FirstAidTrainingDeclarationForm(id=application_id_local)
+        form = FirstAidTrainingDeclarationForm()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -143,15 +143,8 @@ def first_aid_training_declaration(request):
         return render(request, 'first-aid-declaration.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = FirstAidTrainingDeclarationForm(
-            request.POST, id=application_id_local)
+        form = FirstAidTrainingDeclarationForm(request.POST)
         if form.is_valid():
-            declaration = form.cleaned_data.get('declaration')
-            first_aid_record = FirstAidTraining.objects.get(
-                application_id=application_id_local)
-            first_aid_record.show_certificate = declaration
-            first_aid_record.renew_certificate = False
-            first_aid_record.save()
             status.update(application_id_local,
                           'first_aid_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
@@ -173,7 +166,7 @@ def first_aid_training_renew(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = FirstAidTrainingRenewForm(id=application_id_local)
+        form = FirstAidTrainingRenewForm()
         form.check_flag()
         application = Application.objects.get(pk=application_id_local)
         variables = {
@@ -184,17 +177,10 @@ def first_aid_training_renew(request):
         return render(request, 'first-aid-renew.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = FirstAidTrainingRenewForm(request.POST, id=application_id_local)
+        form = FirstAidTrainingRenewForm(request.POST)
         form.remove_flag()
         if form.is_valid():
-            renew = form.cleaned_data.get('renew')
-            first_aid_record = FirstAidTraining.objects.get(
-                application_id=application_id_local)
-            first_aid_record.renew_certificate = renew
-            first_aid_record.show_certificate = False
-            first_aid_record.save()
-            status.update(application_id_local,
-                          'first_aid_training_status', 'COMPLETED')
+            status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem on this page'
@@ -208,7 +194,7 @@ def first_aid_training_renew(request):
 def first_aid_training_training(request):
     """
     Method returning the template for the First aid training: training page (for a given application)
-    and navigating to the First aid training: summary page when successfully completed
+    and navigating to the task list
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered First aid training: training template
     """
@@ -226,11 +212,6 @@ def first_aid_training_training(request):
         application_id_local = request.POST["id"]
         form = FirstAidTrainingTrainingForm(request.POST)
         if form.is_valid():
-            first_aid_record = FirstAidTraining.objects.get(
-                application_id=application_id_local)
-            first_aid_record.show_certificate = False
-            first_aid_record.renew_certificate = False
-            first_aid_record.save()
             status.update(application_id_local,
                           'first_aid_training_status', 'NOT_STARTED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
@@ -258,25 +239,13 @@ def first_aid_training_summary(request):
 
         first_aid_fields = collections.OrderedDict([
             ('first_aid_training_organisation', first_aid_record.training_organisation),
-            ('title_of_training_course', first_aid_record.course_title),
-            ('course_date', '/'.join([str(first_aid_record.course_day), str(first_aid_record.course_month),
-                                     str(first_aid_record.course_year)]))
+            ('title_of_training_course', first_aid_record.course_title)
         ])
-
-        if first_aid_record.renew_certificate is True:
-            first_aid_fields['renew_certificate'] = first_aid_record.renew_certificate
-        else:
-            first_aid_fields['renew_certificate'] = None
-
-        if first_aid_record.show_certificate is True:
-            first_aid_fields['show_certificate'] = first_aid_record.show_certificate
-        else:
-            first_aid_fields['show_certificate'] = None
 
         first_aid_table = collections.OrderedDict({
             'table_object': Table([first_aid_record.pk]),
             'fields': first_aid_fields,
-            'title': 'First aid training',
+            'title': '',
             'error_summary_title': 'There is something wrong with your first aid training'
         })
 

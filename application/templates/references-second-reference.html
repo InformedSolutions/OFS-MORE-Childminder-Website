@@ -25,9 +25,7 @@
     </div>
     </br>
     <!-- Return to task list -->
-    <div class="form-group">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
+{% include 'return-to-list.html' %}
 </form>
 
 {% endblock %}

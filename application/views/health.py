@@ -62,7 +62,7 @@ def health_booklet(request):
     current_date = timezone.now()
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        form = HealthBookletForm(id=application_id_local)
+        form = HealthBookletForm()
         application = Application.objects.get(pk=application_id_local)
         variables = {
             'form': form,
@@ -72,18 +72,12 @@ def health_booklet(request):
         return render(request, 'health-booklet.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = HealthBookletForm(request.POST, id=application_id_local)
+        form = HealthBookletForm(request.POST)
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
-            # Create or update Health_Declaration_Booklet record
-            hdb_record = health_check_logic(application_id_local, form)
-            hdb_record.save()
-            application.date_updated = current_date
-            application.save()
             reset_declaration(application)
             if application.health_status != 'COMPLETED':
-                status.update(application_id_local,
-                              'health_status', 'COMPLETED')
+                status.update(application_id_local, 'health_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/health/check-answers?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem with this page.'
@@ -103,36 +97,19 @@ def health_check_answers(request):
     """
     if request.method == 'GET':
         application_id_local = request.GET["id"]
-        health_record = HealthDeclarationBooklet.objects.get(
-            application_id=application_id_local)
-        send_hdb_declare = health_record.send_hdb_declare
-        form = HealthBookletForm(id=application_id_local)
+        form = HealthBookletForm()
         application = Application.objects.get(pk=application_id_local)
-
-        health_fields = collections.OrderedDict([('health_submission_consent', send_hdb_declare)])
-
-        health_table = collections.OrderedDict({
-            'table_object': Table([health_record.pk]),
-            'fields': health_fields,
-            'title': 'Your health',
-            'error_summary_title': 'There is something wrong with your health'
-        })
-
-        table_list = create_tables([health_table], health_name_dict, health_link_dict)
 
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'table_list': table_list,
-            'health_status': application.health_status,
-            'page_title': 'Check your answers: your health'
+            'health_status': application.health_status
         }
-        variables = submit_link_setter(variables, table_list, 'health', application_id_local)
 
-        return render(request, 'generic-summary-template.html', variables)
+        return render(request, 'health-summary.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = HealthBookletForm(request.POST, id=application_id_local)
+        form = HealthBookletForm(request.POST)
         if form.is_valid():
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:

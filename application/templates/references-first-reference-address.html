@@ -53,7 +53,7 @@
         </div>
         {% endif %}
         {% csrf_token %}
-        <a href="{{ URL_PREFIX }}/references/enter-first-reference-address?id={{application_id}}"
+        <a href="{% url 'References-Enter-First-Reference-Address-View' %}?id={{application_id}}"
            name="manual" id="manual">Enter address manually</a>
         <br>
         <br>
@@ -61,9 +61,7 @@
     </div>
     <br>
     <!-- Return to task list -->
-    <div class="form-group">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
+{% include 'return-to-list.html' %}
 </form>
 
 {% endblock %}

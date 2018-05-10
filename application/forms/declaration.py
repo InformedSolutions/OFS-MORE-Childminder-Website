@@ -22,9 +22,6 @@ class DeclarationConfirmationOfUnderstandingForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    background_check_declare = forms.BooleanField(label='carry out background checks', required=True)
-    inspect_home_declare = forms.BooleanField(label='inspect my home', required=True)
-    interview_declare = forms.BooleanField(label='interview me', required=True)
     share_info_declare = forms.BooleanField(label='share information with other organisations', required=True)
 
     def __init__(self, *args, **kwargs):
@@ -38,24 +35,6 @@ class DeclarationConfirmationOfUnderstandingForm(ChildminderForms):
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
-            background_check_declare = Application.objects.get(
-                application_id=self.application_id_local).background_check_declare
-            if background_check_declare is True:
-                self.fields['background_check_declare'].initial = '1'
-            elif background_check_declare is False:
-                self.fields['background_check_declare'].initial = '0'
-            inspect_home_declare = Application.objects.get(
-                application_id=self.application_id_local).inspect_home_declare
-            if inspect_home_declare is True:
-                self.fields['inspect_home_declare'].initial = '1'
-            elif inspect_home_declare is False:
-                self.fields['inspect_home_declare'].initial = '0'
-            interview_declare = Application.objects.get(
-                application_id=self.application_id_local).interview_declare
-            if interview_declare is True:
-                self.fields['interview_declare'].initial = '1'
-            elif interview_declare is False:
-                self.fields['interview_declare'].initial = '0'
             share_info_declare = Application.objects.get(
                 application_id=self.application_id_local).share_info_declare
             if share_info_declare is True:

@@ -36,7 +36,7 @@
         </td>
         {% endif %}
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/personal-details/your-name?id={{application_id}}" alt='Change your name'>
+            <a href="{% url 'Personal-Details-Name-View' %}?id={{application_id}}" alt='Change your name'>
                 Change <span class="visuallyhidden">your name</span>
             </a>
         </td>
@@ -95,7 +95,7 @@
         </td>
         {% endif %}
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/personal-details/your-date-of-birth?id={{application_id}}" alt='Change your date of birth'>
+            <a href="{% url 'Personal-Details-DOB-View' %}?id={{application_id}}" alt='Change your date of birth'>
                 Change <span class="visuallyhidden">your date of birth</span>
             </a>
         </td>
@@ -164,7 +164,7 @@
         </td>
         {% endif %}
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/personal-details/enter-home-address?id={{application_id}}"
+            <a href="{% url 'Personal-Details-Home-Address-Manual-View %}?id={{application_id}}"
                alt='Change your home address'>
                 Change <span class="visuallyhidden">your home address</span>
             </a>
@@ -222,7 +222,7 @@
         {% endif %}
         {% endif %}
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/personal-details/home-address-details?id={{application_id}}"
+            <a href="{% url 'Personal-Details-Location-Of-Care-View' %}?id={{application_id}}"
                alt='Change childcare address'>
                 Change <span class="visuallyhidden">childcare address</span>
             </a>
@@ -232,7 +232,7 @@
 </table>
 <br>
 <div class="form-group">
-    <form action="{{ URL_PREFIX }}/task-list?id={{application_id}}" method="get">
+    <form action="{% url 'Task-List-View' %}?id={{application_id}}" method="get">
         <input type="submit" class="button" value="Confirm and continue"/>
         <input type="hidden" value="{{application_id}}" name="id"/>
     </form>

@@ -5,7 +5,7 @@
 
 {% block inner_content %}
 
-<h1 class="form-title heading-large">Check your answers: your health</h1>
+<h1 class="form-title heading-large">Check your answers: health declaration booklet</h1>
 <table class="check-your-answers form-group" style="table-layout: fixed; width: 100%">
 <colgroup>
         <col style="width:40%">
@@ -13,32 +13,21 @@
         <col style="width:20%">
 </colgroup>
     <thead>
-    <tr>
-        <th colspan="3">
-            <div class="heading-medium">
-                Your health
-            </div>
-        </th>
-    </tr>
+        <td></td>
+        <td></td>
+        <td></td>
     </thead>
     <tbody>
     <tr>
         <td>
-            Will you submit a health declaration booklet to Ofsted?
+            I will post the completed booklet to Ofsted
         </td>
-        {% if send_hdb_declare is True %}
         <td style="word-wrap: break-word">
             Yes
         </td>
-        {% elif send_hdb_declare is False %}
-        <td style="word-wrap: break-word">
-            No
-        </td>
-        {% endif %}
         <td class="change-answer">
-            <a href="{% url 'Health-Booklet-View' %}?id={{application_id}}#id_send_hdb_declare-group"
-               alt='Change answer on sending health declaration booklet to Ofsted?'>
-                Change <span class="visuallyhidden">answer on sending health declaration booklet to Ofsted?</span>
+            <a href="{% url 'Health-Booklet-View' %}?id={{application_id}}" alt='Download booklet'>
+                Download booklet
             </a>
         </td>
     </tr>
@@ -46,7 +35,7 @@
 </table>
 <br>
 <div class="form-group">
-    <form action="{% url 'Task-List-View %}?id={{application_id}}" method="get">
+    <form action="{% url 'Task-List-View' %}?id={{application_id}}" method="get">
         <input type="submit" class="button" value="Confirm and continue"/>
         <input type="hidden" value="{{application_id}}" name="id"/>
     </form>

@@ -351,15 +351,13 @@
     </table>
     <br>
     <div class="form-group grid-row">
-        <form action="{{ URL_PREFIX }}/payment" method="get">
+        <form action="{% url 'Payment-View' %}" method="get">
             <input type="submit" class="button" value="Save and continue"/>
             <input type="hidden" value="{{application_id}}" name="id"/>
         </form>
     </div>
     <input type="hidden" value="{{application_id}}" name="id"/>
-    <div class="form-group grid-row">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
+    {% include 'return-to-list.html' %}
 </div>
 
 {% endblock %}

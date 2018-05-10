@@ -106,6 +106,7 @@ def type_of_childcare_age_groups(request):
             childcare_type_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
 
             return HttpResponseRedirect(reverse('Type-Of-Childcare-Register-View') + '?id=' + app_id)
         else:
@@ -261,7 +262,7 @@ def childcare_type_summary(request):
         childcare_type_table = collections.OrderedDict({
             'table_object': Table([childcare_record.pk]),
             'fields': childcare_type_fields,
-            'title': 'Type of childcare',
+            'title': '',
             'error_summary_title': 'There is something wrong with your type of childcare'
         })
 

@@ -380,7 +380,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Card number must be 5454... due to this being a Worldpay API test value
         test_cvc = ''.join(str(random.randint(0, 9)) for _ in range(3))
         self.selenium_task_executor.complete_payment(True, 'Visa', '5454545454545454', str(random.randint(1, 12)),
-                                                     str(random.randint(self.current_year + 1, self.current_year + 5)),
+                                                     str(random.randint(20, 30)),
                                                      faker.name(),
                                                      test_cvc)
 
@@ -473,14 +473,11 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.get_driver().find_element_by_id("health").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//a[contains(@href,'health/booklet/')]").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
-        self.selenium_task_executor.get_driver().find_element_by_id("id_background_check_declare").click()
-        self.selenium_task_executor.get_driver().find_element_by_id("id_inspect_home_declare").click()
-        self.selenium_task_executor.get_driver().find_element_by_id("id_interview_declare").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_share_info_declare").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_display_contact_details_on_web").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_information_correct_declare").click()
@@ -531,7 +528,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         test_email = self.create_standard_eyfs_application()
         self.selenium_task_executor.navigate_to_base_url()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Start now']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Sign in']").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_acc_selection_1-label").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(test_email)
@@ -562,6 +559,10 @@ class ApplyAsAChildminder(LiveServerTestCase):
             random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 2, self.current_year - 1),
             False
         )
+
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
 
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='first_aid']/td/a/strong").text)
@@ -750,7 +751,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
                          self.selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='health']/td/a/span").click()
-        self.assertEqual("Check your answers: your health",
+        self.assertEqual("Check your answers: health declaration booklet",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
                              "//main[@id='content']/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
@@ -796,6 +797,10 @@ class ApplyAsAChildminder(LiveServerTestCase):
             random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 2, self.current_year - 1),
             False
         )
+
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
 
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='first_aid']/td/a/strong").text)

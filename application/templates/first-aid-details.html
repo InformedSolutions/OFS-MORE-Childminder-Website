@@ -14,26 +14,17 @@
         <h1 class="form-title heading-large">
             First aid training details
         </h1>
-        <p>Please give details of your paediatric first aid training certificate.</p>
+        <p>We need to check that you can keep children safe.</p>
+        <p>Please give details of your paediatric first aid training course.</p>
         <details role="group">
             <summary role="button" aria-controls="details-content-0" aria-expanded="false">
                 <span class="summary">Where can I get training?<span class="visuallyhidden">Click to expand</span></span>
             </summary>
             <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-                <p>Lots of organisations provide training, such as the Red Cross and St John Ambulance.</p>
-                <p>Make sure you go on a full paediatric first aid course. This should last at least 12 hours. It is
-                    usually a 2-day course.</p>
-                <p>Ask your council for details of courses in your area.</p>
-                <ul class="list-bullet list-item-wrapper">
-                    <li><a href="https://www.gov.uk/find-local-council" target="_blank">Find your local council</a>
-                    </li>
-                    <li>
-                        <a href="https://www.redcrossfirstaidtraining.co.uk/Courses/First-aid-at-work-courses-uk-mainland/Scheduled-courses/Paediatric-first-aid.aspx"
-                           target="_blank">Red Cross course</a></li>
-                    <li>
-                        <a href="http://www.sja.org.uk/sja/training-courses/first-aid-courses/paediatric-first-aid.aspx"
-                           target="_blank">St John Ambulance course</a></li>
-                </ul>
+                <p>Lots of organisations provide training, such as the <a href="https://www.redcrossfirstaidtraining.co.uk/Courses/First-aid-at-work-courses-uk-mainland/Scheduled-courses/Paediatric-first-aid.aspx"
+                                                                          target="_blank">Red Cross</a> and <a href="http://www.sja.org.uk/sja/training-courses/first-aid-courses/paediatric-first-aid.aspx"
+                                                                                                               target="_blank">St John Ambulance</a>.</p>
+                <p><a href="https://www.gov.uk/find-local-council" target="_blank">Ask your council</a> for details of courses in your area.</p>
             </div>
             <br>
         </details>
@@ -45,9 +36,7 @@
     </div>
     </br>
     <!-- Return to task list -->
-    <div class="form-group">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
+    {% include 'return-to-list.html' %}
 </form>
 
 {% endblock %}

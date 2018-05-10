@@ -56,8 +56,6 @@ def declaration_summary(request, print=False):
             application_id=application_id_local)
         dbs_record = CriminalRecordCheck.objects.get(
             application_id=application_id_local)
-        hdb_record = HealthDeclarationBooklet.objects.get(
-            application_id=application_id_local)
         eyfs_record = EYFS.objects.get(application_id=application_id_local)
         eyfs_course_date = ' '.join([str(eyfs_record.eyfs_course_date_day), calendar.month_name[eyfs_record.eyfs_course_date_month], str(eyfs_record.eyfs_course_date_year)])
         first_reference_record = Reference.objects.get(
@@ -152,9 +150,9 @@ def declaration_summary(request, print=False):
             'dbs_certificate_number': dbs_record.dbs_certificate_number,
             'cautions_convictions': dbs_record.cautions_convictions,
             'declaration': dbs_record.send_certificate_declare,
-            'send_hdb_declare': hdb_record.send_hdb_declare,
-            'eyfs_course_name' : eyfs_record.eyfs_course_name,
-            'eyfs_course_date' : eyfs_course_date,
+            'send_hdb_declare': True,
+            'eyfs_course_name': eyfs_record.eyfs_course_name,
+            'eyfs_course_date': eyfs_course_date,
             'first_reference_first_name': first_reference_record.first_name,
             'first_reference_last_name': first_reference_record.last_name,
             'first_reference_relationship': first_reference_record.relationship,

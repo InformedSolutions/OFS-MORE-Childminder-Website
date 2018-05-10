@@ -63,7 +63,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
     error_summary_title = 'There was a problem with the details'
 
     first_name = forms.CharField(label='First name', required=True)
-    middle_names = forms.CharField(label='Middle names (if they have any)', required=False)
+    middle_names = forms.CharField(label='Middle names (if you have any on your DBS check)', required=False)
     last_name = forms.CharField(label='Last name', required=True)
     date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980')
     relationship = forms.CharField(label='How are they related to you?', help_text='For instance, husband or daughter',

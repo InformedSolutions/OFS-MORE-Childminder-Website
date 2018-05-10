@@ -32,7 +32,7 @@ class TypeOfChildcareAgeGroupsForm(ChildminderForms):
         required=True,
         widget=CheckboxSelectMultiple,
         choices=CHILDCARE_AGE_CHOICES,
-        label='What age groups will you be caring for?',
+        label='What age groups could you be caring for?',
         help_text='Tick all that apply'
     )
 
