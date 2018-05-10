@@ -1,12 +1,4 @@
-import datetime
-import json
-import re
-from uuid import UUID
-
-from django.conf import settings
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.views.decorators.cache import never_cache
 
 from application.views.declaration import declaration_summary
 

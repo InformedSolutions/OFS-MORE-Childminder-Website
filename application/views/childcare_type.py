@@ -164,8 +164,6 @@ def type_of_childcare_register(request):
         elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
             return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + app_id)
 
-        ###
-
     if request.method == 'POST':
 
         app_id = request.POST["id"]
@@ -283,10 +281,11 @@ def childcare_type_summary(request):
 
 def local_authority_links(request):
     """
-
-    :param request:
-    :return:
+    View to return cancel application if 0-5 childcare_age_groups isn't selected.
+    :param request: a request object used to generate the HttpResponse.
+    :return: an HttpResponse object with the correct rendered cancel application page.
     """
+
     if request.method == 'GET':
 
         app_id = request.GET["id"]

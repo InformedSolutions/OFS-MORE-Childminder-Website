@@ -13,5 +13,8 @@ from .criminal_record_check import *
 from .eyfs import *
 from .firstaid_training import *
 from .health_declaration_booklet import *
+from .previous_address import *
+from .previous_name import *
+from .previous_registration_details import *
 from .reference import *
 from .user_details import *

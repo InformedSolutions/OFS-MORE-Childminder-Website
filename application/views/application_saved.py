@@ -1,4 +1,6 @@
-"""Method returning the template for the Application saved page (for a given application)"""
+"""
+Method returning the template for the Application saved page (for a given application)
+"""
 
 from django.shortcuts import render
 

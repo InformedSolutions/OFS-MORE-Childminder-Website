@@ -25,7 +25,7 @@ class ContactEmailForm(ChildminderForms):
         """
         email_address = self.cleaned_data['email_address']
         # RegEx for valid e-mail addresses
-        if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
+        if re.match("^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
             raise forms.ValidationError('Please enter a valid email address')
         return email_address
 

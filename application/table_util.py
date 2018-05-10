@@ -10,6 +10,7 @@ from django.urls import reverse
 from .models import ArcComments, Application
 from .summary_page_data import submit_link_dict, back_link_dict
 
+
 class Table:
     """
     Table data structure use in generic summary template, this is used as a container for the list of rows with values

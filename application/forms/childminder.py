@@ -5,6 +5,11 @@ from ..models import ArcComments
 
 
 class ChildminderForms(GOVUKForm):
+    """
+    Parent class of all later forms.
+    Contains methods for checking the existence, and the removing, of flags from the ARC user.
+    """
+
     pk = ''
     field_list = []
 

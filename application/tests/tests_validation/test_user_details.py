@@ -10,7 +10,7 @@ from django.test import TestCase
 
 
 def testing_email(test_email):
-    return re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email)
+    return re.match("^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email)
 
 
 def testing_mobile_number(test_mobile_number):
@@ -32,11 +32,13 @@ class TestUserDetailsValidation(TestCase):
         self.correct_emails = ['erik.odense@gmail.com',
                                'erikodense123@gmail.com',
                                'erikodense123@gmail.com',
-                               'erik.tolstrup.odense@gmail.com']
+                               'erik.tolstrup.odense@gmail.com',
+                               'erik.tolstrup.o\'dense@gmail.com']
         self.incorrect_emails = ['erik.odense',
                                  'erik.odense@',
                                  'erik.odense@gmail',
-                                 'erik.odense@gmail.']
+                                 'erik.odense@gmail.',
+                                 'erik.o\'dense@gmail']
 
         self.correct_numbers = ['0161445627']
         self.incorrect_numbers = ['161445627']

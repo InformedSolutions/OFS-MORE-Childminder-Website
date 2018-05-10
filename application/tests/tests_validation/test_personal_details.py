@@ -3,8 +3,17 @@ import re
 from datetime import date
 from django.test import TestCase
 
+def test_name(name):
+    return re.match("^[A-zÀ-ÿ- ']+$", test_name)
+
 
 class TestPersonalDetailsValidation(TestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.correct_names = []
+        self.incorrect_names = []
+
 
     def test_correct_name(self):
         test_name = 'Erik'

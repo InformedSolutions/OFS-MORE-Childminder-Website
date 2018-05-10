@@ -40,7 +40,7 @@ class Widget(widgets.Widget):
 # Creating a base multi-widget class
 class MultiWidget(widgets.MultiWidget, Widget):
     """
-    A class used to definte a base widget that has the ability to contain multiple widgets
+    A class used to define a base widget that has the ability to contain multiple widgets
     """
     subwidget_group_classes = ()
     subwidget_label_classes = ()

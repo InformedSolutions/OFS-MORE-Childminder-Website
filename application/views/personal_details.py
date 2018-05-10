@@ -1,7 +1,3 @@
-"""
-Method returning the template for the Your personal details: guidance page (for a given application)
-and navigating to the Your login and contact details: name page when successfully completed
-"""
 import collections
 
 from django.utils import timezone
@@ -11,7 +7,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from ..table_util import Table, Row, create_tables, submit_link_setter
+from ..table_util import Table, create_tables, submit_link_setter
 from .. summary_page_data import personal_details_name_dict, personal_details_link_dict
 from .. import address_helper, status
 from ..business_logic import (multiple_childcare_address_logic,
@@ -37,6 +33,8 @@ from ..models import (ApplicantHomeAddress,
 
 def personal_details_guidance(request):
     """
+    Method returning the template for the Your personal details: guidance page (for a given application)
+    and navigating to the Your login and contact details: name page when successfully completed
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your personal details: guidance template
     """
@@ -72,15 +70,11 @@ def personal_details_guidance(request):
         return render(request, 'personal-details-guidance.html', variables)
 
 
-"""
-Method returning the template for the Your personal details: name page (for a given application)
-and navigating to the Your personal details: date of birth page when successfully completed;
-business logic is applied to either create or update the associated Applicant_Name record
-"""
-
-
 def personal_details_name(request):
     """
+    Method returning the template for the Your personal details: name page (for a given application)
+    and navigating to the Your personal details: date of birth page when successfully completed;
+    business logic is applied to either create or update the associated Applicant_Name record.
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your personal details: name template
     """
@@ -131,14 +125,10 @@ def personal_details_name(request):
             return render(request, 'personal-details-name.html', variables)
 
 
-"""
-Method returning the template for the Your personal details: date of birth page (for a given application)
-and navigating to the Your personal details: home address page when successfully completed;
-"""
-
-
 def personal_details_dob(request):
     """
+    Method returning the template for the Your personal details: date of birth page (for a given application)
+    and navigating to the Your personal details: home address page when successfully completed;
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your personal details: date of birth template
     """
@@ -190,15 +180,11 @@ def personal_details_dob(request):
             return render(request, 'personal-details-dob.html', variables)
 
 
-"""
-Method returning the template for the Your personal details: home address page (for a given application)
-and navigating to the Your personal details: location of care page when successfully completed;
-business logic is applied to either create or update the associated Applicant_Name record
-"""
-
-
 def personal_details_home_address(request):
     """
+    Method returning the template for the Your personal details: home address page (for a given application)
+    and navigating to the Your personal details: location of care page when successfully completed;
+    business logic is applied to either create or update the associated Applicant_Name record.
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your personal details: home address template
     """
@@ -276,15 +262,11 @@ def personal_details_home_address(request):
             return render(request, 'personal-details-home-address.html', variables)
 
 
-"""
-Method returning the template for the Your personal details: select home address page (for a given application)
-and navigating to the Your personal details: location of care page when successfully completed;
-business logic is applied to either create or update the associated Applicant_Name record
-"""
-
-
 def personal_details_home_address_select(request):
     """
+    Method returning the template for the Your personal details: select home address page (for a given application)
+    and navigating to the Your personal details: location of care page when successfully completed;
+    business logic is applied to either create or update the associated Applicant_Name record.
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your personal details: home address template
     """
@@ -390,14 +372,10 @@ def personal_details_home_address_select(request):
             return render(request, 'personal-details-home-address-lookup.html', variables)
 
 
-"""
-Method returning the template for the Your personal details: location of care page (for a given application)
-and navigating to the Your personal details: childcare or summary page when successfully completed;
-"""
-
-
 def personal_details_location_of_care(request):
     """
+    Method returning the template for the Your personal details: location of care page (for a given application)
+    and navigating to the Your personal details: childcare or summary page when successfully completed.
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your personal details: location of care template
     """
@@ -477,14 +455,10 @@ def personal_details_location_of_care(request):
             return render(request, 'personal-details-location-of-care.html', variables)
 
 
-"""
-Method returning the template for the Your personal details: childcare address page (for a given application)
-and navigating to the Your personal details: summary page when successfully completed;
-"""
-
-
 def personal_details_childcare_address(request):
     """
+    Method returning the template for the Your personal details: childcare address page (for a given application)
+    and navigating to the Your personal details: summary page when successfully completed.
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your personal details: childcare template
     """
@@ -561,18 +535,14 @@ def personal_details_childcare_address(request):
             return render(request, 'personal-details-childcare-address.html', variables)
 
 
-"""
-Method returning the template for the Your personal details: select childcare address page (for a given
-application) and navigating to the Your personal details: location of care page when successfully completed;
-business logic is applied to either create or update the associated Applicant_Name record
-"""
-
-
 def personal_details_childcare_address_select(request):
     """
-        :param request: a request object used to generate the HttpResponse
-        :return: an HttpResponse object with the rendered Your personal details: childcare address template
-        """
+    Method returning the template for the Your personal details: select childcare address page (for a given
+    application) and navigating to the Your personal details: location of care page when successfully completed;
+    business logic is applied to either create or update the associated Applicant_Name record
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your personal details: childcare address template
+    """
 
     current_date = timezone.now()
 
@@ -840,8 +810,6 @@ def personal_details_summary(request):
 
         form = PersonalDetailsSummaryForm()
         application = Application.get_id(app_id=app_id)
-        status.update(app_id,
-                      'personal_details_status', 'COMPLETED')
         variables = {
             'form': form,
             'application_id': app_id,
@@ -850,6 +818,9 @@ def personal_details_summary(request):
             'personal_details_status': application.personal_details_status
         }
         variables = submit_link_setter(variables, table_list, 'personal_details', app_id)
+
+        if not sum([table.get_error_amount() for table in variables['table_list']]):  # If no errors found.
+            status.update(app_id, 'personal_details_status', 'COMPLETED')
 
         return render(request, 'generic-summary-template.html', variables)
 

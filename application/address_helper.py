@@ -11,6 +11,9 @@ from django.conf import settings
 
 
 class AddressHelper:
+    """
+    Class containing helper methods when dealing with address details.
+    """
 
     @staticmethod
     def create_address_lookup_list(postcode):
