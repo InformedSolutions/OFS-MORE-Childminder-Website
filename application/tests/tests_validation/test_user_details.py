@@ -51,7 +51,7 @@ class TestUserDetailsValidation(TestCase):
                                  '0778abcdrewr',
                                  "07783'4352"]
 
-        self.incorrect_number_length = ['0778344652645677754', '07783446526']
+        self.incorrect_number_length = ['0778344652645677754', '0778344652644']
         self.correct_number_length = ['07397389736', '37317329736']
 
     def test_correct_emails(self):
