@@ -99,9 +99,8 @@
     </tr>
     </tbody>
 </table>
-<br>
-<div class="form-group">
-    {% if childcare_type_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
+
+{% if childcare_type_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
     <form action="{% url 'Task-List-View' %}?id={{application_id}}" method="get">
         <input type="submit" class="button" value="Confirm and continue"/>
         <input type="hidden" value="{{application_id}}" name="id"/>
@@ -112,8 +111,6 @@
         <input type="submit" class="button" value="Confirm and continue"/>
         <input type="hidden" value="{{application_id}}" name="id"/>
     </form>
-    {% endif %}
-</div>
-<br>
+{% endif %}
 
 {% endblock %}

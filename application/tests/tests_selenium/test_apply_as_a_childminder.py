@@ -959,46 +959,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
             self.assertIn("problem",
                           self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
 
-    @try_except_method
-    def test_save_and_continue_childcare_address_redirects_to_manual_entry(self):
-        '''
-        Tests that clicking 'Save and continue' when adding a new childcare address redirects correctly.
-        '''
-        self.selenium_task_executor.navigate_to_base_url()
-        self.selenium_task_executor.complete_your_login_details(email_address="example@example.com",
-                                                           phone_number="07754000000",
-                                                           additional_phone_number=None)
-        self.selenium_task_executor.complete_type_of_childcare(zero_to_five=True,
-                                                          five_to_seven=False,
-                                                          eight_or_over=False,
-                                                          providing_overnight_care=True)
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='personal_details']/td/a/span").click()
-
-        # Complete personal details necessary to reach childcare address.
-        self.selenium_task_executor.get_driver().find_element_by_id("id_first_name").send_keys("Paul")
-        self.selenium_task_executor.get_driver().find_element_by_id("id_middle_names").send_keys("Thomas")
-        self.selenium_task_executor.get_driver().find_element_by_id("id_last_name").send_keys("Anderson")
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
-
-        self.selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_0").send_keys("06")
-        self.selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_1").send_keys("06")
-        self.selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_2").send_keys("1906")
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
-
-        self.selenium_task_executor.select_test_address()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
-
-        # Select home address != chlidcare address.
-        self.selenium_task_executor.get_driver().find_element_by_id("id_location_of_care_1").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
-
-        # Fill out postcode form to prevent validation error before clicking 'Save and Continue'.
-        self.selenium_task_executor.get_driver().find_element_by_id("id_postcode").send_keys("SW1 1AA")
-
-        # Select Save and Continue to trigger redirect.
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
-        self.assertEqual(self.selenium_task_executor.get_driver().find_element_by_class_name("form-title").text,
-                         "Enter childcare address")
 
     @try_except_method
     def test_can_create_application_using_email_with_apostrophe_and_hyphen(self):

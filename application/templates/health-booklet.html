@@ -32,11 +32,9 @@
         {% csrf_token %}
         <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </br>
-        </br>
-        <!-- Return to task list -->
-        {% include 'return-to-list.html' %}
     </form>
 </div>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

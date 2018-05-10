@@ -3,6 +3,11 @@
   background-image: url("../images/icon-pointer.png");
 }
 
+.button {
+  display: block;
+  margin-top: 15px;
+}
+
 .find-address-button {
    margin-left: 10px;
 }
@@ -386,6 +391,10 @@ div.error-summary ul.error-summary-list {
   box-sizing: border-box;
   padding: 0.5263157895em 0.7894736842em 0.2631578947em 0.7894736842em;
   vertical-align: top;
+}
+
+.check-your-answers {
+  margin-bottom: 30px;
 }
 
 .check-your-answers .change-answer {

@@ -26,17 +26,14 @@
                                                                                                                target="_blank">St John Ambulance</a>.</p>
                 <p><a href="https://www.gov.uk/find-local-council" target="_blank">Ask your council</a> for details of courses in your area.</p>
             </div>
-            <br>
         </details>
-        <br>
         {{form.as_div}}
         {% csrf_token %}
         <input type="submit" class="button" value="Save and continue">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
-    </br>
-    <!-- Return to task list -->
-    {% include 'return-to-list.html' %}
 </form>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

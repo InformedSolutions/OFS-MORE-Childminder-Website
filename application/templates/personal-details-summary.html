@@ -230,13 +230,12 @@
     </tr>
     </tbody>
 </table>
-<br>
+
 <div class="form-group">
     <form action="{% url 'Task-List-View' %}?id={{application_id}}" method="get">
         <input type="submit" class="button" value="Confirm and continue"/>
         <input type="hidden" value="{{application_id}}" name="id"/>
     </form>
 </div>
-<br>
 
 {% endblock %}

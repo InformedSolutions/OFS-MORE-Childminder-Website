@@ -19,8 +19,6 @@
         </h1>
         {{form.as_div}}
         {% csrf_token %}
-        <br>
-        <br>
         <a href="{% url 'Personal-Details-Home-Address-View' %}?id={{application_id}}" name="manual"
            id="manual">Use postcode search</a>
     </div>
@@ -28,9 +26,8 @@
         <input type="submit" class="button" value="Save and continue">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
-    <br>
-    <!-- Return to task list -->
-{% include 'return-to-list.html' %}
 </form>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

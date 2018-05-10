@@ -8,6 +8,7 @@
 <div>
     <h1 class="form-title heading-large">Check your answers: first aid training</h1>
 </div>
+
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
     <colgroup>
         <col class="summary-column">
@@ -114,13 +115,10 @@
     {% endif %}
     </tbody>
 </table>
-<br>
-<div class="form-group">
-    <form action="{% url 'Task-List-View' %}?id={{application_id}}" method="get">
-        <input type="submit" class="button" value="Confirm and continue"/>
-        <input type="hidden" value="{{application_id}}" name="id"/>
-    </form>
-</div>
-<br>
+
+<form action="{% url 'Task-List-View' %}?id={{application_id}}" method="get">
+    <input type="submit" class="button" value="Confirm and continue"/>
+    <input type="hidden" value="{{application_id}}" name="id"/>
+</form>
 
 {% endblock %}

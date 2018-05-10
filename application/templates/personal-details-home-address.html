@@ -54,13 +54,10 @@
         {% csrf_token %}
         <a href="{% url 'Personal-Details-Home-Address-Manual-View' %}?id={{application_id}}"
            name="manual" id="manual">Enter address manually</a>
-        <br>
-        <br>
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
-    <br>
-    <!-- Return to task list -->
-{% include 'return-to-list.html' %}
 </form>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

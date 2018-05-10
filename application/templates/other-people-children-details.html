@@ -31,19 +31,14 @@
         {% endfor %}
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>
-        <br>
-        <br>
         <input type="submit" class="button-save-and-exit" style="margin-left: 0px;" name="add_child"
                value="Add another child">
-        <br>
-        <br>
         <input type="submit" class="button" name="submit" value="Save and continue">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         <input type="hidden" id="children" name="children" value="{{number_of_children}}"/>
     </div>
 </form>
-</br>
-<!-- Return to task list -->
+
 {% include 'return-to-list.html' %}
 
 {% endblock %}

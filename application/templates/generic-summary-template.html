@@ -74,11 +74,10 @@
 </table>
 
 {% endfor %}
-<br/>
-<div class="form-group">
-    <form action="{{ submit_link|default:"/task-list/"}}?id={{application_id}}" method="get">
-        <input type="submit" class="button" value="Confirm and continue"/>
-        <input type="hidden" value="{{application_id}}" name="id"/>
-    </form>
-</div>
-    {% endblock %}
+
+<form action="{{ submit_link|default:"/task-list/"}}?id={{application_id}}" method="get">
+    <input type="submit" class="button" value="Confirm and continue"/>
+    <input type="hidden" value="{{application_id}}" name="id"/>
+</form>
+
+{% endblock %}
