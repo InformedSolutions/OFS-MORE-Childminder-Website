@@ -118,6 +118,17 @@ def task_list(request):
                     ],
                 },
                 {
+                    'name': 'eyfs',
+                    'status': application.eyfs_training_status,
+                    'description': "Early Years training",
+                    'status_url': None,
+                    'status_urls': [
+                        {'status': 'COMPLETED', 'url': 'EYFS-Summary-View'},
+                        {'status': 'FLAGGED', 'url': 'EYFS-Summary-View'},
+                        {'status': 'OTHER', 'url': 'EYFS-Guidance-View'}
+                    ],
+                },
+                {
                     'name': 'health',
                     'status': application.health_status,
                     'description': "Health declaration booklet",

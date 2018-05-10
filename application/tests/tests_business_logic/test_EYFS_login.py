@@ -53,9 +53,10 @@ class TestEYFSLogic(TestCase):
         EYFS.objects.create(
             eyfs_id=(UUID(test_eyfs_id)),
             application_id=Application.objects.get(application_id=test_application_id),
-            eyfs_understand='True',
-            eyfs_training_declare='True',
-            share_info_declare='True'
+            eyfs_course_name='course name',
+            eyfs_course_date_day=20,
+            eyfs_course_date_month=2,
+            eyfs_course_date_year=2018
         )
         assert (EYFS.objects.filter(application_id=test_application_id).count() > 0)
 

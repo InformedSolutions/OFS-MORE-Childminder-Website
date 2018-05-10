@@ -514,6 +514,50 @@
     </tr>
     </tbody>
 </table>
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Early Years training
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Title of training course
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{eyfs_course_name}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/early-years/details?id={{application_id}}#id_eyfs_course_name" alt="Update the title of your training course">
+                Change <span class="visuallyhidden">the title of your training course</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Date you completed course
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{eyfs_course_date}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{{ URL_PREFIX }}/early-years/details?id={{application_id}}#id_eyfs_course_date_0" alt="Update the date you completed your training course">
+                Change <span class="visuallyhidden">the date you completed your training course</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
     <colgroup>
         <col class="summary-column">

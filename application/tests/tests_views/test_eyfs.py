@@ -1,67 +1,55 @@
 from .view_parent import *
 
 
-class EYFSTest(ViewsTest):
+class EYFSTest(TestCase):
 
-    # def test_url_resolves_to_page(self):
-    #    found = resolve(settings.URL_PREFIX + '/eyfs/guidance/')
-    #    self.assertEqual(found.func, eyfs_guidance)
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/early-years/')
+        self.assertEqual(found.func, eyfs_guidance)
 
-    # def test_page_not_displayed_without_id(self):
-    #    c = Client()
-    #    try:
-    #        c.get(settings.URL_PREFIX + '/eyfs/guidance?id=')
-    #        self.assertEqual(1, 0)
-    #    except:
-    #        self.assertEqual(0, 0)
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/early-years?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
 
-    # def test_url_resolves_to_page(self):
-    #    found = resolve(settings.URL_PREFIX + '/eyfs/knowledge/')
-    #    self.assertEqual(found.func, eyfs_knowledge)
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/early-years/details/')
+        self.assertEqual(found.func, eyfs_details)
 
-    # def test_page_not_displayed_without_id(self):
-    #    c = Client()
-    #    try:
-    #        c.get(settings.URL_PREFIX + '/eyfs/knowledge?id=')
-    #        self.assertEqual(1, 0)
-    #    except:
-    #        self.assertEqual(0, 0)
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/early-years/details?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
 
-    # def test_url_resolves_to_page(self):
-    #    found = resolve(settings.URL_PREFIX + '/eyfs/training/')
-    #    self.assertEqual(found.func, eyfs_training)
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/early-years/certificate/')
+        self.assertEqual(found.func, eyfs_certificate)
 
-    # def test_page_not_displayed_without_id(self):
-    #    c = Client()
-    #    try:
-    #        c.get(settings.URL_PREFIX + '/eyfs/training?id=')
-    #        self.assertEqual(1, 0)
-    #    except:
-    #        self.assertEqual(0, 0)
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/early-years/certificate?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
 
-    # def test_url_resolves_to_page(self):
-    #    found = resolve(settings.URL_PREFIX + '/eyfs/questions/')
-    #    self.assertEqual(found.func, eyfs_questions)
+    def test_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/early-years/check-answers/')
+        self.assertEqual(found.func, eyfs_summary)
 
-    # def test_page_not_displayed_without_id(self):
-    #    c = Client()
-    #    try:
-    #        c.get(settings.URL_PREFIX + '/eyfs/questions?id=')
-    #        self.assertEqual(1, 0)
-    #    except:
-    #        self.assertEqual(0, 0)
-
-    # def test_url_resolves_to_page(self):
-    #    found = resolve(settings.URL_PREFIX + '/eyfs/summary/')
-    #    self.assertEqual(found.func, eyfs_summary)
-
-    # def test_page_not_displayed_without_id(self):
-    #    c = Client()
-    #    try:
-    #        c.get(settings.URL_PREFIX + '/eyfs/summary?id=')
-    #        self.assertEqual(1, 0)
-    #    except:
-    #        self.assertEqual(0, 0)
+    def test_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/early-years/check-answers?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
 
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'

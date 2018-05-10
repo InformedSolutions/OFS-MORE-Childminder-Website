@@ -286,6 +286,34 @@ class SeleniumTaskExecutor:
         # Confirm task summary
         driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
 
+    def complete_eyfs_details(self, course_name, completion_date_day, completion_date_month, completion_date_year):
+        """
+        Selenium steps for completing the eyfs details task
+        :param course_name: the name of the course to be set
+        :param completion_date_day: the day value for an applicant's certification date
+        :param completion_date_month: the month value for an applicant's certification date
+        :param completion_date_year: the year value for an applicant's certification date
+        """
+        driver = self.get_driver()
+
+        driver.find_element_by_xpath("//tr[@id='eyfs']/td/a/span").click()
+
+        # Guidance page
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+
+        # Training details
+        driver.find_element_by_id("id_eyfs_course_name").send_keys(course_name)
+        driver.find_element_by_id("id_eyfs_course_date_0").send_keys(completion_date_day)
+        driver.find_element_by_id("id_eyfs_course_date_1").send_keys(completion_date_month)
+        driver.find_element_by_id("id_eyfs_course_date_2").send_keys(completion_date_year)
+        driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        # Certificate page
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+
+        # Confirm task summary
+        driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
+
     def complete_health_declaration_task(self):
         """
         Selenium steps for completing the health declaration task

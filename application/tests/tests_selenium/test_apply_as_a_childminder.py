@@ -566,6 +566,14 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='first_aid']/td/a/strong").text)
 
+        self.selenium_task_executor.complete_eyfs_details(
+            faker.company(),
+            random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 2, self.current_year - 1)
+        )
+
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='eyfs']/td/a/strong").text)
+
         self.selenium_task_executor.complete_health_declaration_task()
 
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
@@ -737,6 +745,10 @@ class ApplyAsAChildminder(LiveServerTestCase):
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
                              "//main[@id='content']/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='eyfs']/td/a/span").click()
+        self.assertEqual("Check your answers: early years training",
+                         self.selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/h1").text)
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='health']/td/a/span").click()
         self.assertEqual("Check your answers: your health",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
@@ -787,6 +799,14 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='first_aid']/td/a/strong").text)
+
+        self.selenium_task_executor.complete_eyfs_details(
+            faker.company(),
+            random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 2, self.current_year - 1)
+        )
+
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='eyfs']/td/a/strong").text)
 
         self.selenium_task_executor.complete_health_declaration_task()
 
