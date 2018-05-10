@@ -10,8 +10,7 @@ from django.test import Client, TestCase
 
 from timeline_logger.models import TimelineLog
 
-from application.middleware import CustomAuthenticationHandler
-from application.models import Application, UserDetails, ApplicantName, ApplicantPersonalDetails, ApplicantHomeAddress, \
+from ...models import Application, UserDetails, ApplicantName, ApplicantPersonalDetails, ApplicantHomeAddress, \
     ChildcareType, Reference, AdultInHome, Arc, ChildInHome, CriminalRecordCheck, EYFS
 from datetime import datetime
 
@@ -61,6 +60,9 @@ class CreateTestNewApplicationSubmit(TestCase):
                 pk=self.app_id
             ).application_status == "DRAFTING"
         )
+        
+        
+    
 
     def TestAppPhone(self):
         """Submit phone"""
