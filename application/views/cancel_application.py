@@ -64,5 +64,10 @@ def cr_cancel_app_confirmation(request):
 
 
 def delete_app(app_id):
+    """
+    Method for deleting an existing application.
+    :param app_id: ID of the app to be deleted.
+    :return: None.
+    """
     if Application.objects.filter(application_id=app_id).exists():
         Application.objects.get(application_id=app_id).delete()

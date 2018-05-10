@@ -10,10 +10,9 @@ from django.test import Client, TestCase
 
 from timeline_logger.models import TimelineLog
 
-from application.middleware import CustomAuthenticationHandler
-from application.models import Application, UserDetails, ApplicantName, ApplicantPersonalDetails, ApplicantHomeAddress, \
+from ...models import Application, UserDetails, ApplicantName, ApplicantPersonalDetails, ApplicantHomeAddress, \
     ChildcareType, Reference, AdultInHome, Arc, ChildInHome, CriminalRecordCheck, EYFS
-
+from datetime import datetime
 
 class CreateTestNewApplicationSubmit(TestCase):
     """
@@ -61,6 +60,9 @@ class CreateTestNewApplicationSubmit(TestCase):
                 pk=self.app_id
             ).application_status == "DRAFTING"
         )
+        
+        
+    
 
     def TestAppPhone(self):
         """Submit phone"""
@@ -142,9 +144,26 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
         self.assertIsNot('y@y.com', UserDetails.objects.get(application_id=self.app_id).email)
 
+    def TestUpdateEmailApostrophe(self):
+        """Update email address field with apostrophe """
+        r = self.client.post(reverse('Contact-Email-View'), {'id': self.app_id, 'email_address': 'yapostrophe\'@y.com'})
+
+        self.assertEqual(r.status_code, 302)
+        self.assertIsNot('yapostrophe\'@y.com', UserDetails.objects.get(application_id=self.app_id).email)
+
+
     def TestVerifyPhone(self):
         """Test update email address process- update, validate and redirect"""
         self.TestUpdateEmail()
+        self.TestValidateEmail()
+        r = self.client.post(reverse('Security-Code') + '?id=' + str(self.app_id), {'id': self.app_id,
+                                                                                    'magic_link_sms': UserDetails.objects.get(
+                                                                                        application_id=self.app_id).magic_link_sms})
+        self.assertEqual(r.status_code, 302)
+
+    def TestVerifyPhoneEmailApostrophe(self):
+        """Test update email address process with apostrophe in email- update, validate and redirect"""
+        self.TestUpdateEmailApostrophe()
         self.TestValidateEmail()
         r = self.client.post(reverse('Security-Code') + '?id=' + str(self.app_id), {'id': self.app_id,
                                                                                     'magic_link_sms': UserDetails.objects.get(
@@ -167,9 +186,9 @@ class CreateTestNewApplicationSubmit(TestCase):
         if not data:
             data = {
                 'id': self.app_id,
-                'first_name': "Arthur",
-                'middle_names': "Conan",
-                'last_name': "Doyle"
+                'first_name': "John-D'Arthur",
+                'middle_names': "Conan-Da'vey",
+                'last_name': "O'Doyle"
             }
 
         r = self.client.post(reverse('Personal-Details-Name-View'), data)
@@ -315,6 +334,68 @@ class CreateTestNewApplicationSubmit(TestCase):
         )
         self.assertEqual(r.status_code, 302)
 
+    def TestAppOtherPeopleAdultsDetails(self):
+        """Submit other people"""
+        data = {
+            'id': self.app_id,
+            'adults': '1',
+            '1-first_name': 'Joseph-Christ\'Opher',
+            '1-middle_names': 'Pet\'r-Ivor',
+            '1-last_name': 'Chris-J\'oe',
+            '1-relationship': 'Son',
+            '1-date_of_birth_0': '16',
+            '1-date_of_birth_1': '6',
+            '1-date_of_birth_2': '1984',
+            'submit': 1
+
+        }
+
+        r = self.client.post(reverse('Other-People-Adult-Details-View'), data)
+
+        self.assertEqual(r.status_code, 302)
+
+        self.assertEqual(r.wsgi_request.POST['1-first_name'],
+                         data['1-first_name'])
+
+        self.assertEqual(r.wsgi_request.POST['1-middle_names'],
+                         data['1-middle_names'])
+
+        self.assertEqual(r.wsgi_request.POST['1-last_name'],
+                         data['1-last_name'])
+
+        self.assertEqual(r.wsgi_request.POST['1-relationship'],
+                         data['1-relationship'])
+
+        self.assertEqual(r.wsgi_request.POST['1-date_of_birth_0'],
+                         data['1-date_of_birth_0'])
+
+        self.assertEqual(r.wsgi_request.POST['1-date_of_birth_1'],
+                         data['1-date_of_birth_1'])
+
+        self.assertEqual(r.wsgi_request.POST['1-date_of_birth_2'],
+                         data['1-date_of_birth_2'])
+
+    def TestAppPersonalDetailsDOB(self):
+        """Submit DOB"""
+        data = {
+            'id': self.app_id,
+            'date_of_birth_0': 12,
+            'date_of_birth_1': 3,
+            'date_of_birth_2': 1987
+        }
+
+        r = self.client.post(reverse('Personal-Details-DOB-View'), data)
+        self.assertEqual(r.status_code, 302)
+
+        p_id = ApplicantPersonalDetails.objects.get(
+            application_id=Application.objects.get(pk=self.app_id)).personal_detail_id
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_day,
+                         data['date_of_birth_0'])
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_month,
+                         data['date_of_birth_1'])
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_year,
+                         data['date_of_birth_2'])
+
     def TestAppOtherPeopleChildren(self):
         """Submit other children"""
         r = self.client.post(
@@ -325,6 +406,50 @@ class CreateTestNewApplicationSubmit(TestCase):
             }
         )
         self.assertEqual(r.status_code, 302)
+
+    def TestAppOtherPeopleChildrenDetails(self):
+        """Submit other people"""
+        # get a birth date year that is actually valid for a child (within the last 10 years from now will do)
+        birth_year = str(datetime.now().year - 10)
+
+        data = {
+            'id': self.app_id,
+            'children': '1',
+            '1-first_name': 'Joseph-Christ\'Opher',
+            '1-middle_names': 'Pet\'r-Ivor',
+            '1-last_name': 'Chris-J\'oe',
+            '1-relationship': 'Son',
+            '1-date_of_birth_0': '16',
+            '1-date_of_birth_1': '6',
+            '1-date_of_birth_2': birth_year,
+            'submit': 1
+
+        }
+
+        r = self.client.post(reverse('Other-People-Children-Details-View'), data)
+
+        self.assertEqual(r.status_code, 302)
+
+        self.assertEqual(r.wsgi_request.POST['1-first_name'],
+                         data['1-first_name'])
+
+        self.assertEqual(r.wsgi_request.POST['1-middle_names'],
+                         data['1-middle_names'])
+
+        self.assertEqual(r.wsgi_request.POST['1-last_name'],
+                         data['1-last_name'])
+
+        self.assertEqual(r.wsgi_request.POST['1-relationship'],
+                         data['1-relationship'])
+
+        self.assertEqual(r.wsgi_request.POST['1-date_of_birth_0'],
+                         data['1-date_of_birth_0'])
+
+        self.assertEqual(r.wsgi_request.POST['1-date_of_birth_1'],
+                         data['1-date_of_birth_1'])
+
+        self.assertEqual(r.wsgi_request.POST['1-date_of_birth_2'],
+                         data['1-date_of_birth_2'])
 
     def TestAppOtherPeopleSummary(self):
         """Submit Other People Summary"""
@@ -508,6 +633,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestTypeOfChildcareAgeGroups()
         self.TestTypeOfChildcareOvernightCare()
         self.TestVerifyPhone()
+        self.TestVerifyPhoneEmailApostrophe()
         self.TestSecurityQuestion()
         self.AppTestTypeOfChildcareRegister()
 
@@ -526,6 +652,9 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestAppOtherPeopleAdults()
         self.TestAppOtherPeopleChildren()
         self.TestAppOtherPeopleSummary()
+
+        self.TestAppOtherPeopleAdultsDetails()
+        self.TestAppOtherPeopleChildrenDetails()
 
         self.TestAppFirstReferenceName()
         self.TestAppFirstReferenceAddress()

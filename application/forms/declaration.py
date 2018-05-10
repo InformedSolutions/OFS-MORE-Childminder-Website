@@ -1,11 +1,6 @@
 from django import forms
 
 from application.forms.childminder import ChildminderForms
-from application.models import (Application)
-from application.forms_helper import full_stop_stripper
-from django import forms
-
-from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (Application)
 

@@ -3,7 +3,6 @@ from govuk_forms.widgets import InlineRadioSelect, RadioSelect
 
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
-from application.models import (ChildcareType)
 
 
 class AccountSelection(ChildminderForms):
