@@ -49,19 +49,19 @@ def capture_screenshot(func):
 @tag('selenium')
 @override_settings(ALLOWED_HOSTS=['*'])
 class ApplyAsAChildminder(LiveServerTestCase):
-    __port = 8000
+    port = 8000
 
-    if os.environ.get('LOCAL_self.selenium_driver') == 'True':
-        __host = '127.0.0.1'
+    if os.environ.get('LOCAL_SELENIUM_DRIVER') == 'True':
+        host = '127.0.0.1'
     else:
-        __host = '0.0.0.0'
+        host = '0.0.0.0'
 
     current_year = datetime.now().year
 
     def setUp(self):
         base_url = os.environ.get('DJANGO_LIVE_TEST_SERVER_ADDRESS')
 
-        if os.environ.get('LOCAL_self.selenium_driver') == 'True':
+        if os.environ.get('LOCAL_SELENIUM_DRIVER') == 'True':
             # If running on a windows host, make sure to drop the
             # geckodriver.exe into your Python/Scripts installation folder
             self.selenium_driver = webdriver.Firefox()
