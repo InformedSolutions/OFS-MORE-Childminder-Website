@@ -9,6 +9,7 @@ based on whether they have previously completed the task or not.
 """
 
 from django.shortcuts import render
+from django.views.decorators.cache import never_cache
 
 from application.models import (
     Application,
@@ -20,6 +21,7 @@ from application.models import (
 from application.utils import can_cancel
 
 
+@never_cache
 def task_list(request):
     """
     Method returning the template for the task-list (with current task status) for an applicant's application;
