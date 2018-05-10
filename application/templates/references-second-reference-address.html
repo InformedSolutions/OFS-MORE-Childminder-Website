@@ -19,11 +19,14 @@
         <p>Please give the address for your second referee.</p>
         {% if not form.errors %}
         <div id="id_postcode-group" class="form-group-required form-group">
-            <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
-                {{form.postcode.label}}
-            </label>
-            {{form.postcode}}
-            <input type="submit" class="button button-search find-address-button" value="Find address" name="postcode-search">
+            <div class="text-before-button">
+                <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
+                    {{form.postcode.label}}
+                </label>
+                {{form.postcode}}
+            </div>
+            <input type="submit" class="button button-submit" value="Find address"
+                   name="postcode-search">
         </div>
         {% elif form.errors %}
         <div id="id_postcode-group" class="form-group-error form-group-required form-group">
@@ -35,6 +38,7 @@
                     {{error}}
                 {% endfor %}
             </span>
+            <div class="text-before-button">
             {% if form.postcode.initial is not None %}
             <input type="text" name="postcode" class="form-control-error form-control"
                    value="{{form.postcode.initial}}" required="" id="id_postcode">
@@ -42,7 +46,9 @@
             <input type="text" name="postcode" class="form-control-error form-control"
                    value="" required="" id="id_postcode">
             {% endif %}
-            <input type="submit" class="button button-search find-address-button" value="Find postcode" name="postcode-search">
+            </div>
+            <input type="submit" class="button button-search find-address-button" value="Find postcode"
+                   name="postcode-search">
         </div>
         {% endif %}
         {% csrf_token %}
@@ -50,7 +56,6 @@
            name="manual" id="manual">Enter address manually</a>
         <br>
         <br>
-        <input type="submit" class="button button-submit" value="Save and continue" name="submit">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
     <br>

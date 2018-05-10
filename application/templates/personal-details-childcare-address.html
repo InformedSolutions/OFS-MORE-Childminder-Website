@@ -20,11 +20,13 @@
         <p>Where will you be looking after the children?</p>
         {% if not form.errors %}
         <div id="id_postcode-group" class="form-group-required form-group">
-            <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
-                {{form.postcode.label}}
-            </label>
-            {{form.postcode}}
-            <input type="submit" class="button button-search find-address-button" value="Find address"
+            <div class="text-before-button">
+                <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
+                    {{form.postcode.label}}
+                </label>
+                {{form.postcode}}
+            </div>
+            <input type="submit" class="button button-submit" value="Find address"
                    name="postcode-search">
         </div>
         {% elif form.errors %}
@@ -37,14 +39,16 @@
                     {{error}}
                 {% endfor %}
             </span>
-            {% if form.postcode.initial is not None %}
-            <input type="text" name="postcode" class="form-control-error form-control"
-                   value="{{form.postcode.initial}}" required="" id="id_postcode">
-            {% elif form.postcode.initial is None %}
-            <input type="text" name="postcode" class="form-control-error form-control"
-                   value="" required="" id="id_postcode">
-            {% endif %}
-            <input type="submit" class="button button-search find-address-button" value="Find address"
+            <div class="text-before-button">
+                {% if form.postcode.initial is not None %}
+                <input type="text" name="postcode" class="form-control-error form-control"
+                       value="{{form.postcode.initial}}" required="" id="id_postcode">
+                {% elif form.postcode.initial is None %}
+                <input type="text" name="postcode" class="form-control-error form-control"
+                       value="" required="" id="id_postcode">
+                {% endif %}
+            </div>
+            <input type="submit" class="button button-submit" value="Find address"
                    name="postcode-search">
         </div>
         {% endif %}
