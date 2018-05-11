@@ -24,6 +24,7 @@
         {{consent_to_sharing_form.as_div}}
 
         <h3 class="heading-small">
+            {% if declaration_status
             By continuing, I confirm that:
         </h3>
         {{confirmation_of_declaration_form.as_div}}

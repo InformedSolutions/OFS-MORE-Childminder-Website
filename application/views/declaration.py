@@ -11,7 +11,8 @@ from .. import status
 from ..forms import (DeclarationIntroForm,
                      DeclarationConfirmationOfUnderstandingForm,
                      DeclarationConfirmationOfDeclarationForm,
-                     DeclarationSummaryForm, DeclarationConsentToSharingForm)
+                     DeclarationConsentToSharingForm,
+                     DeclarationSummaryForm)
 from ..models import (AdultInHome,
                       ApplicantHomeAddress,
                       ApplicantName,
@@ -20,9 +21,8 @@ from ..models import (AdultInHome,
                       ChildInHome,
                       ChildcareType,
                       CriminalRecordCheck,
-                      FirstAidTraining,
-                      HealthDeclarationBooklet,
                       EYFS,
+                      FirstAidTraining,
                       Reference,
                       UserDetails)
 
@@ -57,7 +57,9 @@ def declaration_summary(request, print=False):
         dbs_record = CriminalRecordCheck.objects.get(
             application_id=application_id_local)
         eyfs_record = EYFS.objects.get(application_id=application_id_local)
-        eyfs_course_date = ' '.join([str(eyfs_record.eyfs_course_date_day), calendar.month_name[eyfs_record.eyfs_course_date_month], str(eyfs_record.eyfs_course_date_year)])
+        eyfs_course_date = ' '.join(
+            [str(eyfs_record.eyfs_course_date_day), calendar.month_name[eyfs_record.eyfs_course_date_month],
+             str(eyfs_record.eyfs_course_date_year)])
         first_reference_record = Reference.objects.get(
             application_id=application_id_local, reference=1)
         second_reference_record = Reference.objects.get(
@@ -269,7 +271,6 @@ def declaration_declaration(request):
             }
             return render(request, 'payment-confirmation.html', variables)
 
-
         variables = {
             'confirmation_of_understanding_form': confirmation_of_understanding_form,
             'confirmation_of_declaration_form': confirmation_of_declaration_form,
@@ -299,22 +300,15 @@ def declaration_declaration(request):
 
         # Validate both forms (sets of checkboxes)
         if confirmation_of_understanding_form.is_valid():
-            background_check_declare = confirmation_of_understanding_form.cleaned_data.get(
-                'background_check_declare')
-            inspect_home_declare = confirmation_of_understanding_form.cleaned_data.get(
-                'inspect_home_declare')
-            interview_declare = confirmation_of_understanding_form.cleaned_data.get('interview_declare')
             share_info_declare = confirmation_of_understanding_form.cleaned_data.get('share_info_declare')
-            application.background_check_declare = background_check_declare
-            application.inspect_home_declare = inspect_home_declare
-            application.interview_declare = interview_declare
             application.share_info_declare = share_info_declare
             application.save()
             application.date_updated = current_date
             application.save()
 
             if consent_to_sharing_form.is_valid():
-                display_contact_details_on_web = consent_to_sharing_form.cleaned_data.get('display_contact_details_on_web')
+                display_contact_details_on_web = consent_to_sharing_form.cleaned_data.get(
+                    'display_contact_details_on_web')
                 application.display_contact_details_on_web = display_contact_details_on_web
                 application.save()
                 application.date_updated = current_date
@@ -334,7 +328,6 @@ def declaration_declaration(request):
                               'declarations_status', 'COMPLETED')
 
                 if application.application_status == 'FURTHER_INFORMATION':
-
                     # In cases where a resubmission is being made,
                     # payment is no a valid trigger so this becomes the appropriate trigger resubmission audit
                     TimelineLog.objects.create(
