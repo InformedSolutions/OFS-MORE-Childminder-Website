@@ -5,7 +5,7 @@ class LoginAndContactDetailsTest(ViewsTest):
 
     def test_url_resolves_to_email_page(self):
         found = resolve(settings.URL_PREFIX + '/new-application/')
-        self.assertEqual(found.func, new_email)
+        self.assertEqual(found.func.view_class, NewUserSignInView.as_view().view_class)
 
     def test_email_page_not_displayed_without_id(self):
         c = Client()
