@@ -23,10 +23,10 @@
     </thead>
     <tbody>
     <tr>
-        <td>
+        <td width="66%">
             Application fee (not refundable)
         </td>
-        <td>
+        <td width="33%">
             £35
         </td>
     </tr>
@@ -46,18 +46,18 @@
     </thead>
     <tbody>
     <tr>
-        <td>
+        <td width="66%">
             Your criminal record (DBS) check
         </td>
-        <td>
+        <td width="33%">
             £52.10
         </td>
     </tr>
      <tr>
-        <td>
+        <td width="66%">
             Checks for adults in your home
         </td>
-        <td>
+        <td width="33%">
             £52.10 each
         </td>
     </tr>
@@ -75,10 +75,10 @@
     </thead>
     <tbody>
     <tr>
-        <td>
+        <td width="66%">
             GP to fill in and sign booklet
         </td>
-        <td>
+        <td width="33%">
             £90 (approx)
         </td>
     </tr>
@@ -96,18 +96,18 @@
     </thead>
     <tbody>
     <tr>
-        <td>
+        <td width="66%">
             Paediatric first aid course
         </td>
-        <td>
+        <td width="33%">
             £80 to £200 (approx)
         </td>
     </tr>
      <tr>
-        <td>
+        <td width="66%">
             Early years training
         </td>
-        <td>
+        <td width="33%">
             £20 to £200 (approx)
         </td>
     </tr>
@@ -126,10 +126,10 @@
     </thead>
     <tbody>
     <tr>
-        <td>
+        <td width="66%">
             Public liability insurance
         </td>
-        <td>
+        <td width="33%">
             £25 to £100 (approx)
         </td>
     </tr>
@@ -147,21 +147,21 @@
     </thead>
     <tbody>
     <tr>
-        <td>
+        <td width="66%">
             Keep digital records of children - <a href="https://ico.org.uk/for-organisations/register/">Register with ICO</a>
         </td>
-        <td>
+        <td width="33%">
             £35
         </td>
     </tr>
 </table>
 
-<p class="top-padded">
+<p class="top-padded text-before-button">
     Your house and car insurance also need to be up to date.
 </p>
 
 {% if id and AUTHENTICATED %}
-    {% include 'return-to-list.html' %}
+    <a href="{% url 'Task-List-View' %}?id={{id}}">Return to application</a>
 {% endif %}
 
 {% endblock %}
