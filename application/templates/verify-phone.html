@@ -19,11 +19,9 @@
     {% csrf_token %}
 
     <div class="form-group">
-        <a href="{{ URL_PREFIX }}/code-resent?id={{id}}&f=1">Didn't get a code?</a>
+        <a href="{% url 'Resend-Code' %}?id={{id}}&f=1">Didn't get a code?</a>
         <a href="{{ url }}"><p>Don't have your phone?</p></a>
         <input type="submit" class="button" value="Continue" alt="Continue">
-        </br>
-        </br>
     </div>
 
 </form>

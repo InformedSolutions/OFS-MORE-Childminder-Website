@@ -222,7 +222,7 @@ def create_new_app():
         personal_details_status='NOT_STARTED',
         childcare_type_status='NOT_STARTED',
         first_aid_training_status='NOT_STARTED',
-        eyfs_training_status='COMPLETED',
+        eyfs_training_status='NOT_STARTED',
         criminal_record_check_status='NOT_STARTED',
         health_status='NOT_STARTED',
         references_status='NOT_STARTED',

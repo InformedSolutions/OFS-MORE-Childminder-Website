@@ -9,6 +9,7 @@ based on whether they have previously completed the task or not.
 """
 
 from django.shortcuts import render
+from django.views.decorators.cache import never_cache
 
 from application.models import (
     Application,
@@ -20,6 +21,7 @@ from application.models import (
 from application.utils import can_cancel
 
 
+@never_cache
 def task_list(request):
     """
     Method returning the template for the task-list (with current task status) for an applicant's application;
@@ -36,14 +38,6 @@ def task_list(request):
         zero_to_five_status = childcare_record.zero_to_five
         five_to_eight_status = childcare_record.five_to_eight
         eight_plus_status = childcare_record.eight_plus
-
-        #Instantiate arc_comment
-        arc_comment = None
-
-        # If an ARC review has been undertaken
-        if Arc.objects.filter(application_id=application_id):
-            arc = Arc.objects.get(application_id=application_id)
-            arc_comment = arc.comments
 
         # See childcare_type move to seperate method/file
 
@@ -69,11 +63,6 @@ def task_list(request):
             registers = 'Childcare Register (voluntary part)'
             fee = '£103'
 
-        ##
-
-
-
-
         """
         Variables which are passed to the template
         """
@@ -82,7 +71,6 @@ def task_list(request):
             'id': application_id,
             'all_complete': False,
             'registers': registers,
-            'arc_comment': arc_comment,
             'fee': fee,
             'can_cancel': can_cancel(application),
             'application_status': application.application_status,
@@ -117,7 +105,7 @@ def task_list(request):
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'Personal-Details-Summary-View'},
                         {'status': 'FLAGGED', 'url': 'Personal-Details-Summary-View'},
-                        {'status': 'OTHER', 'url': 'Personal-Details-Guidance-View'}
+                        {'status': 'OTHER', 'url': 'Personal-Details-Name-View'}
                     ],
                 },
                 {
@@ -129,6 +117,17 @@ def task_list(request):
                         {'status': 'COMPLETED', 'url': 'First-Aid-Training-Summary-View'},
                         {'status': 'FLAGGED', 'url': 'First-Aid-Training-Summary-View'},
                         {'status': 'OTHER', 'url': 'First-Aid-Training-Guidance-View'}
+                    ],
+                },
+                {
+                    'name': 'eyfs',
+                    'status': application.eyfs_training_status,
+                    'description': "Early Years training",
+                    'status_url': None,
+                    'status_urls': [
+                        {'status': 'COMPLETED', 'url': 'EYFS-Summary-View'},
+                        {'status': 'FLAGGED', 'url': 'EYFS-Summary-View'},
+                        {'status': 'OTHER', 'url': 'EYFS-Guidance-View'}
                     ],
                 },
                 {

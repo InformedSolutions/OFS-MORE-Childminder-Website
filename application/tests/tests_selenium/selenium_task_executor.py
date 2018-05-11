@@ -1,5 +1,6 @@
 import os
 import random
+import time
 
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
@@ -70,7 +71,7 @@ class SeleniumTaskExecutor:
         Selenium steps for registering an email address against an application
         """
         driver = self.get_driver()
-        driver.find_element_by_xpath("//input[@value='Start now']").click()
+        driver.find_element_by_xpath("//input[@value='Sign in']").click()
         driver.find_element_by_id("id_acc_selection_0-label").click()
         driver.find_element_by_xpath("//input[@value='Continue']").click()
 
@@ -84,7 +85,7 @@ class SeleniumTaskExecutor:
         """
         driver = self.get_driver()
         self.navigate_to_base_url()
-        driver.find_element_by_xpath("//input[@value='Start now']").click()
+        driver.find_element_by_xpath("//input[@value='Sign in']").click()
         driver.find_element_by_id("id_acc_selection_1-label").click()
         driver.find_element_by_xpath("//input[@value='Continue']").click()
 
@@ -107,7 +108,7 @@ class SeleniumTaskExecutor:
         driver = self.get_driver()
         # Start sign in process.
         self.navigate_to_base_url()
-        driver.find_element_by_xpath("//input[@value='Start now']").click()
+        driver.find_element_by_xpath("//input[@value='Sign in']").click()
         driver.find_element_by_id("id_acc_selection_1-label").click()
         driver.find_element_by_xpath("//input[@value='Continue']").click()
 
@@ -127,6 +128,11 @@ class SeleniumTaskExecutor:
         """
         driver = self.get_driver()
         validation_url = os.environ.get('EMAIL_VALIDATION_URL')
+
+        if validation_url is None:
+            time.sleep(1)
+            return self.navigate_to_email_validation_url()
+
         driver.get(validation_url)
 
     def complete_your_login_details(self, email_address, phone_number, additional_phone_number):
@@ -207,9 +213,6 @@ class SeleniumTaskExecutor:
 
         driver.find_element_by_xpath("//tr[@id='personal_details']/td/a/span").click()
 
-        # Guidance page
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
-
         driver.find_element_by_id("id_first_name").send_keys(forename)
 
         if middle_name is not None:
@@ -275,12 +278,29 @@ class SeleniumTaskExecutor:
         driver.find_element_by_id("id_course_date_2").send_keys(completion_date_year)
         driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
-        # Yield early return if the page stating a user must update their training is expected
-        if expect_update_page is True:
-            return
+    def complete_eyfs_details(self, course_name, completion_date_day, completion_date_month, completion_date_year):
+        """
+        Selenium steps for completing the eyfs details task
+        :param course_name: the name of the course to be set
+        :param completion_date_day: the day value for an applicant's certification date
+        :param completion_date_month: the month value for an applicant's certification date
+        :param completion_date_year: the year value for an applicant's certification date
+        """
+        driver = self.get_driver()
 
-        # Confirm declaration
-        driver.find_element_by_id("id_declaration").click()
+        driver.find_element_by_xpath("//tr[@id='eyfs']/td/a/span").click()
+
+        # Guidance page
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+
+        # Training details
+        driver.find_element_by_id("id_eyfs_course_name").send_keys(course_name)
+        driver.find_element_by_id("id_eyfs_course_date_0").send_keys(completion_date_day)
+        driver.find_element_by_id("id_eyfs_course_date_1").send_keys(completion_date_month)
+        driver.find_element_by_id("id_eyfs_course_date_2").send_keys(completion_date_year)
+        driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        # Certificate page
         driver.find_element_by_xpath("//input[@value='Continue']").click()
 
         # Confirm task summary
@@ -297,8 +317,7 @@ class SeleniumTaskExecutor:
         # Guidance page
         driver.find_element_by_xpath("//input[@value='Continue']").click()
 
-        driver.find_element_by_id("id_send_hdb_declare").click()
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
+        driver.find_element_by_xpath("//input[@value='Save and continue']").click()
         driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
 
     def complete_dbs_task(self, dbs_number, has_convictions):
@@ -322,17 +341,17 @@ class SeleniumTaskExecutor:
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
             # Task summary
             driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
-            return
 
-        driver.find_element_by_id("id_convictions_0").click()
-        driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+        elif has_convictions is True:
 
-        # Confirm will send DBS certificate
-        driver.find_element_by_id("id_declaration").click()
-        driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+            driver.find_element_by_id("id_convictions_0").click()
+            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
-        # Task summary
-        driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
+            # Confirm will send DBS certificate
+            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+
+            # Task summary
+            driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
 
     def complete_people_in_your_home_task(self, other_adults_in_home, other_adult_forename, other_adult_middle_name,
                                           other_adult_surname,
@@ -379,8 +398,6 @@ class SeleniumTaskExecutor:
             driver.find_element_by_id("id_1-relationship").send_keys(other_adult_relationship)
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
             driver.find_element_by_id("id_1-dbs_certificate_number").send_keys(other_adult_dbs)
-            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
-            driver.find_element_by_id("id_1-permission_declare-label").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
         else:
             driver.find_element_by_id("id_adults_in_home_1").click()
@@ -498,7 +515,7 @@ class SeleniumTaskExecutor:
             driver.find_element_by_id("id_expiry_date_1").send_keys(expiry_date_year)
             driver.find_element_by_id("id_cardholders_name").send_keys(cardholder_name)
             driver.find_element_by_id("id_card_security_code").send_keys(cvc)
-            driver.find_element_by_xpath("//input[@value='Make payment and apply']").click()
+            driver.find_element_by_xpath("//input[@value='Pay and apply']").click()
         else:
             driver.find_element_by_id("id_payment_method_1").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
@@ -510,9 +527,6 @@ class SeleniumTaskExecutor:
         """
         driver = self.get_driver()
 
-        driver.find_element_by_id("id_background_check_declare").click()
-        driver.find_element_by_id("id_inspect_home_declare").click()
-        driver.find_element_by_id("id_interview_declare").click()
         driver.find_element_by_id("id_share_info_declare").click()
         driver.find_element_by_id("id_information_correct_declare-label").click()
         driver.find_element_by_id("id_change_declare").click()

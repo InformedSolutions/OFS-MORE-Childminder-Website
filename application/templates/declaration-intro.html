@@ -11,9 +11,9 @@
     <h1 class="form-title heading-large">
         Declaration
     </h1>
-    <p>Ofsted will have to check your details, inspect your home and interview you after you apply.</p>
-    <p>We need your permission to carry out checks and share information with local councils.</p>
-    <p>We may need to share your details with other organisations for legal reasons, for instance if there are concerns around protecting children.</p>
+    <p>We need to share your information with other organisations for:</p>
+    <li style="margin-left: 30px;">background checks</li>
+    <li class="text-before-button" style="margin-left: 30px;">legal reasons, for instance if there are concerns around protecting children.</li>
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         {{form.as_div}}
         {% csrf_token %}

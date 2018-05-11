@@ -9,7 +9,6 @@
 
 {% block inner_content %}
 
-<!-- Back Button -->
 {% include "back-button.html" %}
 
 
@@ -17,7 +16,6 @@
 {{ form.error_summary }}
 {% endfor %}
 
-<!-- Form -->
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <h1 class="form-title heading-large">
         Your sign in question
@@ -38,9 +36,7 @@
 </form>
 <!-- If applicant has previously completed this task, allow user to return to task list -->
 {% if login_details_status == 'COMPLETED' %}
-<div class="form-group">
-    <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-</div>
+{% include 'return-to-list.html' %}
 {% endif %}
 
 {% endblock %}

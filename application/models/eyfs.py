@@ -9,9 +9,10 @@ class EYFS(models.Model):
     eyfs_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(
         Application, on_delete=models.CASCADE, db_column='application_id')
-    eyfs_understand = models.NullBooleanField(blank=True, null=True, default=None)
-    eyfs_training_declare = models.NullBooleanField(blank=True, null=True, default=None)
-    share_info_declare = models.NullBooleanField(blank=True, null=True, default=None)
+    eyfs_course_name = models.CharField(max_length=50, blank=True, )
+    eyfs_course_date_day = models.IntegerField(blank=True, null=True)
+    eyfs_course_date_month = models.IntegerField(blank=True, null=True)
+    eyfs_course_date_year = models.IntegerField(blank=True, null=True)
 
     @property
     def timelog_fields(self):
@@ -27,9 +28,10 @@ class EYFS(models.Model):
         """
 
         return (
-            'eyfs_understand',
-            'eyfs_training_declare',
-            'share_info_declare'
+            'eyfs_course_name',
+            'eyfs_course_date_day',
+            'eyfs_course_date_month',
+            'eyfs_course_date_year'
         )
 
     @classmethod

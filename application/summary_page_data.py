@@ -18,7 +18,7 @@ dbs_summary_dict = collections.OrderedDict({'data_names': ['dbs_certificate_numb
                                             'back_url_names': ['DBS-Check-DBS-Details-View',
                                                                'DBS-Check-DBS-Details-View',
                                                                'DBS-Check-Upload-DBS-View'],
-                                            'table_names': ['Check your answers: your criminal record check'],
+                                            'table_names': [''],
                                             'table_error_names': ['There was a problem with your criminal record check'],
                                             'page_title': 'Check your answers: criminal record (DBS) check'
                                             })

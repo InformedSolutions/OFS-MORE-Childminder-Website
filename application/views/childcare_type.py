@@ -106,6 +106,7 @@ def type_of_childcare_age_groups(request):
             childcare_type_record.save()
             application.date_updated = current_date
             application.save()
+            reset_declaration(application)
 
             return HttpResponseRedirect(reverse('Type-Of-Childcare-Register-View') + '?id=' + app_id)
         else:
@@ -163,8 +164,6 @@ def type_of_childcare_register(request):
             return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + app_id)
         elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
             return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + app_id)
-
-        ###
 
     if request.method == 'POST':
 
@@ -263,7 +262,7 @@ def childcare_type_summary(request):
         childcare_type_table = collections.OrderedDict({
             'table_object': Table([childcare_record.pk]),
             'fields': childcare_type_fields,
-            'title': 'Type of childcare',
+            'title': '',
             'error_summary_title': 'There is something wrong with your type of childcare'
         })
 
@@ -283,10 +282,11 @@ def childcare_type_summary(request):
 
 def local_authority_links(request):
     """
-
-    :param request:
-    :return:
+    View to return cancel application if 0-5 childcare_age_groups isn't selected.
+    :param request: a request object used to generate the HttpResponse.
+    :return: an HttpResponse object with the correct rendered cancel application page.
     """
+
     if request.method == 'GET':
 
         app_id = request.GET["id"]

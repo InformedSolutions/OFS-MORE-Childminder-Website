@@ -13,12 +13,6 @@
     <h1 class="form-title heading-large">
         Your declaration
     </h1>
-    {% if is_resubmission %}
-        <p style="font-weight: bold;">Please reconfirm that you understand the next steps and want to continue.</p>
-    {% else %}
-        <p style="font-weight: bold;">Please confirm that you understand the next steps and want to continue.</p>
-    {% endif %}
-
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <h3 class="heading-small">
             I understand that Ofsted will:
@@ -31,9 +25,21 @@
         {{consent_to_sharing_form.as_div}}
 
         <h3 class="heading-small">
-            I declare that:
+            By continuing, I confirm that:
         </h3>
         {{confirmation_of_declaration_form.as_div}}
+
+        <p>
+            <img src="{% static 'icon-important-2x.png' %}" alt="Important"
+                        style="height: 40px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
+            <b class="bold">Your application can be refused if you:</b>
+            <div class="bold" style="margin-left: 100px;">
+                <ul style="list-style-type:disc">
+                    <li>give us false information</li>
+                    <li class="text-before-button">if you hide information.</li>
+                </ul>
+            </div>
+        </p>
 
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>

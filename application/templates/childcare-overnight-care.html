@@ -16,7 +16,6 @@
         <h1 class="form-title heading-large">
             Overnight care
         </h1>
-
         {{form.as_div}}
         {% csrf_token %}
         <input type="submit" class="button" value="Save and continue" alt='Continue to summary'>
@@ -25,9 +24,7 @@
 </form>
 
 {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
-    <div class="form group">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
+    {% include 'return-to-list.html' %}
 {% endif %}
 
 {% endblock %}

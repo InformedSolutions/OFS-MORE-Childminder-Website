@@ -12,43 +12,44 @@
         <h1 class="form-title heading-large">
             Type of childcare
         </h1>
-        <p>You need to say what age groups you will be looking after.</p>
-        <p>This is so you can join the right register.</p>
+        <p>You need to say what age groups you could be looking after.</p>
+        <p>This is so you can join the right registers.</p>
         <div class="form-group">
             <table>
                 <thead>
                     <tr>
                         <th>Age of children</th>
                         <th>Register</th>
+                        <th>Cost</th>
                     </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td>0 to 5</td>
                     <td>Early Years</td>
+                    <td>&#163;35</td>
                 </tr>
                 <tr>
                     <td>5 to 7</td>
                     <td>Childcare (compulsory part)</td>
+                    <td>&#163;103</td>
                 </tr>
                 <tr>
                     <td>8 or older</td>
                     <td>Childcare (voluntary part)</td>
+                    <td>&#163;103</td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <br>
-        <p class="text-before-button">It's free to join the Childcare Register if you're already on or applying to the Early Years Register.</p>
+        <p class="text-before-button">It costs &#163;35 to join both registers.</p>
         {% csrf_token %}
         {{form.as_div}}
         <input type="hidden" value="{{application_id}}" name="id"/>
         <input type="submit" class="button" value="Continue">
     </div>
     {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
-    <div class="form group">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
+        {% include 'return-to-list.html' %}
     {% endif %}
 </form>
 

@@ -1,31 +1,28 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Early Years knowledge{% endblock %}
+{% block page_title %}Early years training{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
-<div class="column-full">
-    {% include "back-button.html" %}
-    {{form.error_summary}}
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Early years knowledge
-            </h1>
-            <p>You need to understand the Early Years Foundation Stage.</p>
-            <p>These are the rules for caring for young children.</p>
-            <p>An inspector will test your knowledge when they visit your home.</p>
-            {% csrf_token %}
-            {{form.as_div}}
-            <input type="hidden" value="{{application_id}}" name="id"/>
-            <input type="submit" class="button" value="Continue">
-            <br>
-            <br>
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    </form>
-</div>
+{% include "back-button.html" %}
+{{form.error_summary}}
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Early years training
+        </h1>
+        <p>You will need to go on a training course to understand the Early Years Foundation Stage (EYFS) standards.</p>
+        <p>These are the rules for caring for young children.</p>
+        <p><a href="https://www.gov.uk/find-local-council">Ask your council</a> for details of courses in your area.</p>
+        {% csrf_token %}
+        {{form.as_div}}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" value="Continue">
+    </div>
+</form>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

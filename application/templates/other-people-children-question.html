@@ -17,12 +17,12 @@
             Children in your home
         </h1>
         <p>We need to know about any children under 16 who live in your home.</p>
-        <p>This is to check you won't be looking after too many children.</p>
+        <p>These children will not affect the number of children you can look after.</p>
         <details role="group">
             <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">How many children can I look after?</span>
             </summary>
             <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-                <p>Each childminder can look after up to six children under the age of 8.</p>
+                <p>Each childminder can look after up to 6 children under the age of 8.</p>
                 <p>Three of these children can be under 5.</p>
                 <p>You can look after more children if you have an assistant.</p>
             </div>
@@ -34,11 +34,8 @@
         <input type="submit" class="button" value="Save and continue">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
-    </br>
-    <!-- Return to task list -->
-    <div class="form-group">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
 </form>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

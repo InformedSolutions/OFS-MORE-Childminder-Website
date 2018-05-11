@@ -30,7 +30,7 @@
             {{first_reference_first_name}} {{first_reference_last_name}}
         </td>
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Change full name for referee 1">
+            <a href="{% url 'References-First-Reference-View' %}?id={{application_id}}" alt="Change full name for referee 1">
                 Change <span class="visuallyhidden">full name for referee 1</span>
             </a>
         </td>
@@ -43,7 +43,7 @@
             {{first_reference_relationship}}
         </td>
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Change how referee 1 knows you">
+            <a href="{% url 'References-First-Reference-View' %}?id={{application_id}}" alt="Change how referee 1 knows you">
                 Change <span class="visuallyhidden">how referee 1 knows you</span>
             </a>
         </td>
@@ -56,7 +56,7 @@
             {{first_reference_years_known}} years, {{first_reference_months_known}} months
         </td>
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Change how long referee 1 has known you for">
+            <a href="{% url 'References-First-Reference-View' %}?id={{application_id}}" alt="Change how long referee 1 has known you for">
                 Change <span class="visuallyhidden">how long referee 1 has known you for</span>
             </a>
         </td>
@@ -115,7 +115,7 @@
         </td>
         {% endif %}
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/references/enter-first-reference-address?id={{application_id}}" alt="Change address for referee 1">
+            <a href="{% url 'References-Enter-First-Reference-Address-View' %}?id={{application_id}}" alt="Change address for referee 1">
                 Change <span class="visuallyhidden">address for referee 1</span>
             </a>
         </td>
@@ -128,7 +128,7 @@
             {{first_reference_phone_number}}
         </td>
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/references/first-reference-contact-details?id={{application_id}}" alt="Change phone number for referee 1">
+            <a href="{% url 'References-First-Reference-Contact-Details-View' %}?id={{application_id}}" alt="Change phone number for referee 1">
                 Change <span class="visuallyhidden">phone number for referee 1</span>
             </a>
         </td>
@@ -141,7 +141,7 @@
             {{first_reference_email}}
         </td>
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/references/first-reference-contact-details?id={{application_id}}" alt="Change email address for referee 1">
+            <a href="{% url 'References-First-Reference-Contact-Details-View' %}?id={{application_id}}" alt="Change email address for referee 1">
                 Change <span class="visuallyhidden">email address for referee 1</span>
             </a>
         </td>
@@ -172,7 +172,7 @@
             {{second_reference_first_name}} {{second_reference_last_name}}
         </td>
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Change full name for referee 2">
+            <a href="{% url 'References-Second-Reference-View' %}?id={{application_id}}" alt="Change full name for referee 2">
                 Change <span class="visuallyhidden">full name for referee 2</span>
             </a>
         </td>
@@ -185,7 +185,7 @@
             {{second_reference_relationship}}
         </td>
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Change how referee 2 knows you">
+            <a href="{% url 'References-Second-Reference-View' %}?id={{application_id}}" alt="Change how referee 2 knows you">
                 Change <span class="visuallyhidden">how referee 2 knows you</span>
             </a>
         </td>
@@ -198,7 +198,7 @@
             {{second_reference_years_known}} years, {{second_reference_months_known}} months
         </td>
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Change how long referee 2 has known you for">
+            <a href="{% url 'References-Second-Reference-View' %}?id={{application_id}}" alt="Change how long referee 2 has known you for">
                 Change <span class="visuallyhidden">how long referee 2 has known you for</span>
             </a>
         </td>
@@ -257,7 +257,7 @@
         </td>
         {% endif %}
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/references/enter-second-reference-address?id={{application_id}}" alt="Change address for referee 2">
+            <a href="{% url 'References-Enter-Second-Reference-Address-View' %}?id={{application_id}}" alt="Change address for referee 2">
                 Change <span class="visuallyhidden">address for referee 2</span>
             </a>
         </td>
@@ -270,7 +270,7 @@
             {{second_reference_phone_number}}
         </td>
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/references/second-reference-contact-details?id={{application_id}}" alt="Change phone number for referee 2">
+            <a href="{% url 'References-Second-Reference-Contact-Details' %}?id={{application_id}}" alt="Change phone number for referee 2">
                 Change <span class="visuallyhidden">phone number for referee 2</span>
             </a>
         </td>
@@ -283,20 +283,19 @@
             {{second_reference_email}}
         </td>
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/references/second-reference-contact-details?id={{application_id}}" alt="Change email address for referee 2">
+            <a href="{% url 'References-Second-Reference-Contact-Details' %}?id={{application_id}}" alt="Change email address for referee 2">
                 Change <span class="visuallyhidden">email address for referee 2</span>
             </a>
         </td>
     </tr>
     </tbody>
 </table>
-<br>
+
 <div class="form-group">
-    <form action="{{ URL_PREFIX }}/task-list?id={{application_id}}" method="get">
+    <form action="{% url 'Task-List-View' %}?id={{application_id}}" method="get">
         <input type="submit" class="button" value="Confirm and continue"/>
         <input type="hidden" value="{{application_id}}" name="id"/>
     </form>
 </div>
-<br>
 
 {% endblock %}

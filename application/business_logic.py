@@ -312,7 +312,7 @@ def first_aid_logic(application_id_local, form):
     return first_aid_training_record
 
 
-def eyfs_knowledge_logic(application_id_local, form):
+def eyfs_details_logic(application_id_local, form):
     """
     Business logic to create or update an EYFS record
     :param application_id_local: A string object containing the current application ID
@@ -320,52 +320,20 @@ def eyfs_knowledge_logic(application_id_local, form):
     :return: an EYFS object to be saved
     """
     this_application = Application.objects.get(application_id=application_id_local)
-    eyfs_understand = form.cleaned_data.get('eyfs_understand')
+    eyfs_course_name = form.cleaned_data.get('eyfs_course_name')
+    eyfs_course_date_day = form.cleaned_data.get('eyfs_course_date').day
+    eyfs_course_date_month = form.cleaned_data.get('eyfs_course_date').month
+    eyfs_course_date_year = form.cleaned_data.get('eyfs_course_date').year
     # If the user entered information for this task for the first time
     if EYFS.objects.filter(application_id=application_id_local).count() == 0:
-        eyfs_record = EYFS(eyfs_understand=eyfs_understand, application_id=this_application)
+        eyfs_record = EYFS(eyfs_course_name=eyfs_course_name, eyfs_course_date_day=eyfs_course_date_day, eyfs_course_date_month=eyfs_course_date_month, eyfs_course_date_year=eyfs_course_date_year, application_id=this_application)
     # If the user previously entered information for this task
     elif EYFS.objects.filter(application_id=application_id_local).count() > 0:
         eyfs_record = EYFS.objects.get(application_id=application_id_local)
-        eyfs_record.eyfs_understand = eyfs_understand
-    return eyfs_record
-
-
-def eyfs_training_logic(application_id_local, form):
-    """
-    Business logic to create or update an EYFS record
-    :param application_id_local: A string object containing the current application ID
-    :param form: A form object containing the data to be stored
-    :return: an EYFS object to be saved
-    """
-    this_application = Application.objects.get(application_id=application_id_local)
-    eyfs_training_declare = form.cleaned_data.get('eyfs_training_declare')
-    # If the user entered information for this task for the first time
-    if EYFS.objects.filter(application_id=application_id_local).count() == 0:
-        eyfs_record = EYFS(eyfs_training_declare=eyfs_training_declare, application_id=this_application)
-    # If the user previously entered information for this task
-    elif EYFS.objects.filter(application_id=application_id_local).count() > 0:
-        eyfs_record = EYFS.objects.get(application_id=application_id_local)
-        eyfs_record.eyfs_training_declare = eyfs_training_declare
-    return eyfs_record
-
-
-def eyfs_questions_logic(application_id_local, form):
-    """
-    Business logic to create or update an EYFS record
-    :param application_id_local: A string object containing the current application ID
-    :param form: A form object containing the data to be stored
-    :return: an EYFS object to be saved
-    """
-    this_application = Application.objects.get(application_id=application_id_local)
-    share_info_declare = form.cleaned_data.get('share_info_declare')
-    # If the user entered information for this task for the first time
-    if EYFS.objects.filter(application_id=application_id_local).count() == 0:
-        eyfs_record = EYFS(share_info_declare=share_info_declare, application_id=this_application)
-    # If the user previously entered information for this task
-    elif EYFS.objects.filter(application_id=application_id_local).count() > 0:
-        eyfs_record = EYFS.objects.get(application_id=application_id_local)
-        eyfs_record.share_info_declare = share_info_declare
+        eyfs_record.eyfs_course_name = eyfs_course_name
+        eyfs_record.eyfs_course_date_day = eyfs_course_date_day
+        eyfs_record.eyfs_course_date_month = eyfs_course_date_month
+        eyfs_record.eyfs_course_date_year = eyfs_course_date_year
     return eyfs_record
 
 

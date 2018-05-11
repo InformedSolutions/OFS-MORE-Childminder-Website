@@ -26,7 +26,7 @@ class FirstAidTrainingDetailsForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    first_aid_training_organisation = forms.CharField(label='First aid training organisation', error_messages={
+    first_aid_training_organisation = forms.CharField(label='Training organisation', error_messages={
         'required': 'Please enter the title of your course'})
     title_of_training_course = forms.CharField(label='Title of training course', error_messages={
         'required': 'Please enter the title of the course'})
@@ -104,24 +104,6 @@ class FirstAidTrainingDeclarationForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    declaration = forms.BooleanField(label='I will show my first aid certificate to the inspector', required=True,
-                                     error_messages={
-                                         'required': 'You must agree to show your certificate to the inspector'})
-
-    def __init__(self, *args, **kwargs):
-        """
-        Method to configure the initialisation of the First aid training: declaration form
-        :param args: arguments passed to the form
-        :param kwargs: keyword arguments passed to the form, e.g. application ID
-        """
-        self.application_id_local = kwargs.pop('id')
-        super(FirstAidTrainingDeclarationForm, self).__init__(*args, **kwargs)
-        full_stop_stripper(self)
-        # If information was previously entered, display it on the form
-        if FirstAidTraining.objects.filter(application_id=self.application_id_local).count() > 0:
-            first_aid_record = FirstAidTraining.objects.get(application_id=self.application_id_local)
-            self.fields['declaration'].initial = first_aid_record.show_certificate
-
 
 class FirstAidTrainingRenewForm(ChildminderForms):
     """
@@ -130,23 +112,6 @@ class FirstAidTrainingRenewForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
-
-    renew = forms.BooleanField(label='I will renew my first aid certificate in the next few months', required=True,
-                               error_messages={'required': 'You must agree to renew your first aid certificate'})
-
-    def __init__(self, *args, **kwargs):
-        """
-        Method to configure the initialisation of the First aid training: renew form
-        :param args: arguments passed to the form
-        :param kwargs: keyword arguments passed to the form, e.g. application ID
-        """
-        self.application_id_local = kwargs.pop('id')
-        super(FirstAidTrainingRenewForm, self).__init__(*args, **kwargs)
-        full_stop_stripper(self)
-        # If information was previously entered, display it on the form
-        if FirstAidTraining.objects.filter(application_id=self.application_id_local).count() > 0:
-            first_aid_record = FirstAidTraining.objects.get(application_id=self.application_id_local)
-            self.fields['renew'].initial = first_aid_record.renew_certificate
 
 
 class FirstAidTrainingTrainingForm(ChildminderForms):

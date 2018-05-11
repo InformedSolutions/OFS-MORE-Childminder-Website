@@ -28,7 +28,7 @@ class PersonalDetailsNameForm(ChildminderForms):
     auto_replace_widgets = True
 
     first_name = forms.CharField(label='First name', error_messages={'required': 'Please enter your first name'})
-    middle_names = forms.CharField(label='Middle names (if you have any)', required=False)
+    middle_names = forms.CharField(label='Middle names (if you have any on your DBS check)', required=False)
     last_name = forms.CharField(label='Last name', error_messages={'required': 'Please enter your last name'})
 
     def __init__(self, *args, **kwargs):

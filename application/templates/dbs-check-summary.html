@@ -31,7 +31,7 @@
             {{dbs_certificate_number}}
         </td>
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/criminal-record/your-details?id={{application_id}}#id_dbs_certificate_number-group"
+            <a href="{% url 'DBS-Check-DBS-Details-View' %}?id={{application_id}}#id_dbs_certificate_number-group"
                alt='Change DBS certificate number'>
                 Change <span class="visuallyhidden">DBS certificate number</span>
             </a>
@@ -51,7 +51,7 @@
         </td>
         {% endif %}
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/criminal-record/your-details?id={{application_id}}#id_convictions-group"
+            <a href="{% url 'DBS-Check-DBS-Details-View' %}?id={{application_id}}#id_convictions-group"
                alt='Change answer on cautions or convictions?'>
                 Change <span class="visuallyhidden">answer on cautions or convictions?</span>
             </a>
@@ -72,7 +72,7 @@
         </td>
         {% endif %}
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/criminal-record/post-certificate?id={{application_id}}#id_declaration-group"
+            <a href="{% url 'DBS-Check-Upload-DBS-View' %}?id={{application_id}}#id_declaration-group"
                alt='Change will you send your DBS certificate to Ofsted'>
                 Change <span class="visuallyhidden">answer on sending DBS certificate to Ofsted</span>
             </a>
@@ -83,7 +83,7 @@
 </table>
 <br>
 <div class="form-group">
-    <form action="{{ URL_PREFIX}}/task-list?id={{application_id}}" method="get">
+    <form action="{% url 'Task-List-View' %}?id={{application_id}}" method="get">
         <input type="submit" class="button" value="Confirm and continue"/>
         <input type="hidden" value="{{application_id}}" name="id"/>
     </form>

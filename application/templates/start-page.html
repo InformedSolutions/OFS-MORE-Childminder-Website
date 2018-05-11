@@ -19,34 +19,26 @@
         <ul class="list list-bullet" style="margin-left: 30px;">
             <li>criminal record (DBS) certificate</li>
             <li>DBS certificates for anyone over 16 in your home</li>
+            <li>training to understand the Early Years Foundation Stage (EYFS) standards</li>
             <li>paediatric first aid certificate</li>
             <li>health declaration booklet</li>
             <li>2 references</li>
         </ul>
-
-        <h2 class="heading-medium">
-            Childcare training
-        </h2>
-        <p>You will have to show how you will follow the Early Years Foundation Stage standards for children under 5.</p>
-        <p>You should go on a training course if you don't know how you will meet the standards.</p>
-        <p>Contact your council for details of courses in your area.</p>
-
         <h2 class="heading-medium">
             How much it costs
         </h2>
         <p>It usually costs &#163;35 to register with Ofsted.</p>
-        <p>You will have to pay for your own DBS and health checks, training and equipment.</p>
-        <p>Find out <a href="https://www.gov.uk/guidance/register-as-a-childminder-quick-guide#registration-fees">more about costs</a>.</p>
+        <p>It costs the same to renew every year.</p>
+        <p>Find out about <a href="https://www.gov.uk/guidance/register-as-a-childminder-quick-guide#registration-fees">other costs</a>.</p>
 
         <h2 class="heading-medium">
             How long it takes
         </h2>
         <p>It should take you 30 minutes to fill in this form.</p>
-        <p>It takes about 3 months to register with Ofsted.</p>
-        <p>An inspector will visit your home if you will be looking after children aged 5 or under.</p>
-        <br>
-        <form action="{{ URL_PREFIX }}/sign-in/new-application" method="get">
-            <input type=submit class="button button-start" value="Start now">
+        <p>It usually takes up to 12 weeks to register with Ofsted.</p>
+        <p class="text-before-button">An inspector will visit your home if you will be looking after children aged 5 or under.</p>
+        <form action="{% url 'Account-Selection' %}" method="get">
+            <input type=submit class="button button-start" value="Sign in">
         </form>
     </div>
     <div class="column-one-third">
@@ -55,7 +47,6 @@
         </h2>
         <p><a href="https://www.gov.uk/guidance/register-as-a-childminder-quick-guide">Register as a childminder: quick guide</a></p>
         <p><a href="https://www.gov.uk/early-years-foundation-stage">Early years foundation stage</a></p>
-        <p><a href="https://www.gov.uk/find-local-council">Find your local council</a></p>
     </div>
 </div>
 

@@ -6,7 +6,7 @@
 {% block inner_content %}
 <link href="{% static 'stylesheets/govuk-template-print.css' %}" media="print" rel="stylesheet" />
 <div class="{{ print_class }}">
-    <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
+    <a href="{% url 'Task-List-View' %}?id={{application_id}}" class="link-back"
        style="margin-right: 10px; line-height: 28px">
         Back
     </a>
@@ -44,7 +44,7 @@
             {{login_details_email}}
         </td>
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/account/email?id={{application_id}}#id_email_address" alt="Update your email">
+            <a href="{% url 'Contact-Email-View' %}?id={{application_id}}#id_email_address" alt="Update your email">
                 Change <span class="visuallyhidden">email</span>
             </a>
         </td>
@@ -57,7 +57,7 @@
             {{login_details_mobile_number}}
         </td>
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/account/phone?id={{application_id}}#id_mobile_number" alt="Update your mobile phone number">
+            <a href="{% url 'Contact-Phone-View' %}?id={{application_id}}#id_mobile_number" alt="Update your mobile phone number">
                 Change <span class="visuallyhidden">mobile phone number</span>
             </a>
         </td>
@@ -70,7 +70,7 @@
             {{login_details_alternative_phone_number}}
         </td>
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/account/phone?id={{application_id}}#id_add_phone_number" alt="Update your alternative phone number">
+            <a href="{% url 'Contact-Phone-View' %}?id={{application_id}}#id_add_phone_number" alt="Update your alternative phone number">
                 Change <span class="visuallyhidden">alternative phone number</span>
             </a>
         </td>
@@ -107,7 +107,7 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/childcare/age-groups?id={{application_id}}#id_type_of_childcare_0" alt="Update whether you plan to look after 0 to 5 year olds">
+            <a href="{% url 'Type-Of-Childcare-Age-Groups-View' %}?id={{application_id}}#id_type_of_childcare_0" alt="Update whether you plan to look after 0 to 5 year olds">
                 Change <span class="visuallyhidden">0 to 5</span>
             </a>
         </td>
@@ -126,7 +126,7 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/childcare/age-groups?id={{application_id}}#id_type_of_childcare_1" alt="Update whether you plan to look after 5 to 7 year olds">
+            <a href="{% url 'Type-Of-Childcare-Age-Groups-View' %}?id={{application_id}}#id_type_of_childcare_1" alt="Update whether you plan to look after 5 to 7 year olds">
                 Change <span class="visuallyhidden">5 to 7</span>
             </a>
         </td>
@@ -145,7 +145,7 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/childcare/age-groups?id={{application_id}}#id_type_of_childcare_2" alt="Update whether you plan to look at children of 8 years and older">
+            <a href="{% url 'Type-Of-Childcare-Age-Groups-View' %}}?id={{application_id}}#id_type_of_childcare_2" alt="Update whether you plan to look at children of 8 years and older">
                 Change <span class="visuallyhidden">8 and older</span>
             </a>
         </td>
@@ -190,7 +190,7 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/childcare/age-groups?id={{application_id}}" alt="Update your registers">
+            <a href="{% url 'Type-Of-Childcare-Age-Groups-View' %}?id={{application_id}}" alt="Update your registers">
                 Change <span class="visuallyhidden">registers</span>
             </a>
         </td>
@@ -227,7 +227,7 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/personal-details/your-name/?id={{application_id}}" alt="Update your name">
+            <a href="{% url 'Personal-Details-Name-View' %}?id={{application_id}}" alt="Update your name">
                 Change <span class="visuallyhidden">your name</span>
             </a>
         </td>
@@ -286,7 +286,7 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/personal-details/your-date-of-birth/?id={{application_id}}" alt="Update your date of birth">
+            <a href="{% url 'Personal-Details-DOB-View' %}?id={{application_id}}" alt="Update your date of birth">
                 Change <span class="visuallyhidden">date of birth</span>
             </a>
         </td>
@@ -336,7 +336,7 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/personal-details/your-home-address/?id={{application_id}}&manual=True&lookup=False"
+            <a href="{% url 'Personal-Details-Home-Address-View' %}?id={{application_id}}&manual=True&lookup=False"
                alt='Update your home address'>
                 Change <span class="visuallyhidden">home address</span>
             </a>
@@ -351,7 +351,7 @@
             Same as home address
         </td>
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/personal-details/childcare-address/?id={{application_id}}"
+            <a href="{% url 'Personal-Details-Childcare-Address-View' %}?id={{application_id}}"
                alt='Update your childcare address'>
                 Change <span class="visuallyhidden">childcare address</span>
             </a>
@@ -399,7 +399,7 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/personal-details/childcare-address?id={{application_id}}&manual=True&lookup=False"
+            <a href="{% url 'Personal-Details-Childcare-Address-View' %}?id={{application_id}}&manual=True&lookup=False"
                alt='Update your childcare address'>
                 Change <span class="visuallyhidden">childcare address</span>
             </a>
@@ -432,7 +432,7 @@
             {{first_aid_training_organisation}}
         </td>
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/first-aid/details?id={{application_id}}#id_first_aid_training_organisation"
+            <a href="{% url 'First-Aid-Training-Details-View' %}?id={{application_id}}#id_first_aid_training_organisation"
                alt='Update your first aid training provider'>
                 Change <span class="visuallyhidden">first aid training provider</span>
             </a>
@@ -446,7 +446,7 @@
             {{first_aid_training_course}}
         </td>
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/first-aid/details?id={{application_id}}#id_title_of_training_course"
+            <a href="{% url 'First-Aid-Training-Details-View' %}?id={{application_id}}#id_title_of_training_course"
                alt='Update your first aid training course title'>
                 Change <span class="visuallyhidden">course title</span>
             </a>
@@ -506,7 +506,7 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/first-aid/details?id={{application_id}}"
+            <a href="{% url 'First-Aid-Training-Details-View' %}?id={{application_id}}"
                alt='Update your first aid certificate date'>
                 Change <span class="visuallyhidden">date of first aid certificate</span>
             </a>
@@ -514,7 +514,7 @@
     </tr>
     </tbody>
 </table>
-<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+<table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
         <col class="summary-column">
@@ -524,7 +524,7 @@
     <tr>
         <th colspan="{% if print_class %}2{% else %}3{% endif %}">
             <div class="heading-medium">
-                Criminal record checks
+                Early Years training
             </div>
         </th>
     </tr>
@@ -532,60 +532,30 @@
     <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            DBS certificate number
+            Title of training course
         </td>
         <td style="word-wrap: break-word" class=summary-column>
-            {{dbs_certificate_number}}
+            {{eyfs_course_name}}
         </td>
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/criminal-record/your-details/?id={{application_id}}#id_dbs_certificate_number"
-               alt='Update your DBS certificate number'>
-                Change <span class="visuallyhidden">DBS certificate number</span>
+            <a href="{{ URL_PREFIX }}/early-years/details?id={{application_id}}#id_eyfs_course_name" alt="Update the title of your training course">
+                Change <span class="visuallyhidden">the title of your training course</span>
             </a>
         </td>
     </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Do you have any cautions or convictions?
+            Date you completed course
         </td>
-        {% if cautions_convictions is True %}
         <td style="word-wrap: break-word" class=summary-column>
-            Yes
+            {{eyfs_course_date}}
         </td>
-        {% elif cautions_convictions is False %}
-        <td style="word-wrap: break-word" class=summary-column>
-            No
-        </td>
-        {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/criminal-record/your-details/?id={{application_id}}"
-               alt='Update whether you have any cautions or convictions?'>
-                Change <span class="visuallyhidden">do you have any cautions or convictions?</span>
+            <a href="{{ URL_PREFIX }}/early-years/details?id={{application_id}}#id_eyfs_course_date_0" alt="Update the date you completed your training course">
+                Change <span class="visuallyhidden">the date you completed your training course</span>
             </a>
         </td>
     </tr>
-    {% if cautions_convictions is True %}
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Will you send your DBS certificate to Ofsted?
-        </td>
-        {% if declaration is True %}
-        <td style="word-wrap: break-word" class=summary-column>
-            Yes
-        </td>
-        {% elif declaration is False %}
-        <td style="word-wrap: break-word" class=summary-column>
-            No
-        </td>
-        {% endif %}
-        <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/criminal-record/post-certificate/?id={{application_id}}#id_declaration"
-               alt='Update whether you will send your DBS certificate to Ofsted?'>
-                Change <span class="visuallyhidden">will you send your DBS certificate to Ofsted?</span>
-            </a>
-        </td>
-    </tr>
-    {% endif %}
     </tbody>
 </table>
 <table class="check-your-answers">
@@ -618,7 +588,7 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/health/booklet?id={{application_id}}#id_send_hdb_declare" alt="Update your declaration to send a Health Declaration Booklet to Ofsted">
+            <a href="{% url 'Health-Booklet-View' %}?id={{application_id}}#id_send_hdb_declare" alt="Update your declaration to send a Health Declaration Booklet to Ofsted">
                 Change <span class="visuallyhidden">your declaration to provide a Health Declaration Booklet</span>
             </a>
         </td>
@@ -635,7 +605,7 @@
     <tr>
         <th colspan="{% if print_class %}2{% else %}3{% endif %}">
             <div class="heading-medium">
-                First reference
+                Criminal record checks
             </div>
         </th>
     </tr>
@@ -643,270 +613,60 @@
     <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Full name
+            DBS certificate number
         </td>
         <td style="word-wrap: break-word" class=summary-column>
-            {{first_reference_first_name}} {{first_reference_last_name}}
+            {{dbs_certificate_number}}
         </td>
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Update your first reference's name">
-                Change
+            <a href="{% url 'DBS-Check-DBS-Details-View' %}?id={{application_id}}#id_dbs_certificate_number"
+               alt='Update your DBS certificate number'>
+                Change <span class="visuallyhidden">DBS certificate number</span>
             </a>
         </td>
     </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            How they know you
+            Do you have any cautions or convictions?
         </td>
+        {% if cautions_convictions is True %}
         <td style="word-wrap: break-word" class=summary-column>
-            {{first_reference_relationship}}
+            Yes
         </td>
-        <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}#id_relationship" alt="Update your first reference's relationship">
-                Change
-            </a>
-        </td>
-    </tr>
-    <tr>
+        {% elif cautions_convictions is False %}
         <td style="word-wrap: break-word" class=summary-column>
-            Known for
-        </td>
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_reference_years_known}} years, {{first_reference_months_known}} months
-        </td>
-        <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/references/first-reference?id={{application_id}}" alt="Update your first reference's time known">
-                Change
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Address
-        </td>
-        {% if first_reference_street_line2 and first_reference_county %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_reference_street_line1}}
-            </br>
-            {{first_reference_street_line2}}
-            </br>
-            {{first_reference_town}}
-            </br>
-            {{first_reference_county}}
-            </br>
-            {{first_reference_postcode}}
-            </br>
-            {{first_reference_country}}
-        </td>
-        {% elif first_reference_street_line2 and not first_reference_county %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_reference_street_line1}}
-            </br>
-            {{first_reference_street_line2}}
-            </br>
-            {{first_reference_town}}
-            </br>
-            {{first_reference_postcode}}
-            </br>
-            {{first_reference_country}}
-        </td>
-        {% elif not first_reference_street_line2 and first_reference_county %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_reference_street_line1}}
-            </br>
-            {{first_reference_town}}
-            </br>
-            {{first_reference_county}}
-            </br>
-            {{first_reference_postcode}}
-            </br>
-            {{first_reference_country}}
-        </td>
-        {% elif not first_reference_street_line2 and not first_reference_county %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_reference_street_line1}}
-            </br>
-            {{first_reference_town}}
-            </br>
-            {{first_reference_postcode}}
-            </br>
-            {{first_reference_country}}
+            No
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/references/first-reference-address?id={{application_id}}&manual=True&lookup=False" alt="Update your first reference's address">
-                Change
+            <a href="{% url 'DBS-Check-DBS-Details-View' %}?id={{application_id}}"
+               alt='Update whether you have any cautions or convictions?'>
+                Change <span class="visuallyhidden">do you have any cautions or convictions?</span>
             </a>
         </td>
     </tr>
+    {% if cautions_convictions is True %}
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Phone number
+            Will you send your DBS certificate to Ofsted?
         </td>
+        {% if declaration is True %}
         <td style="word-wrap: break-word" class=summary-column>
-            {{first_reference_phone_number}}
+            Yes
         </td>
-        <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/references/first-reference-contact-details?id={{application_id}}#id_phone_number" alt="Update your first reference's phone number">
-                Change
-            </a>
-        </td>
-    </tr>
-    <tr>
+        {% elif declaration is False %}
         <td style="word-wrap: break-word" class=summary-column>
-            Email address
-        </td>
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_reference_email}}
-        </td>
-        <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/references/first-reference-contact-details?id={{application_id}}#id_email_address" alt="Update your first reference's email">
-                Change
-            </a>
-        </td>
-    </tr>
-    </tbody>
-</table>
-<table class="check-your-answers" style="table-layout: fixed; width: 100%">
-    <colgroup>
-        <col class="summary-column">
-        <col class="summary-column">
-        <col class="change-answer {{ print_class }}">
-    </colgroup>
-    <thead>
-    <tr>
-        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-            <div class="heading-medium">
-                Second reference
-            </div>
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Full name
-        </td>
-        <td style="word-wrap: break-word" class=summary-column>
-            {{second_reference_first_name}} {{second_reference_last_name}}
-        </td>
-        <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Update your second reference's name">
-                Change
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            How they know you
-        </td>
-        <td style="word-wrap: break-word" class=summary-column>
-            {{second_reference_relationship}}
-        </td>
-        <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}#id_relationship" alt="Update your second reference's relationship">
-                Change
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Known for
-        </td>
-        <td style="word-wrap: break-word" class=summary-column>
-            {{second_reference_years_known}} years, {{second_reference_months_known}} months
-        </td>
-        <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/references/second-reference?id={{application_id}}" alt="Update your second reference's time known">
-                Change
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Address
-        </td>
-        {% if second_reference_street_line2 and second_reference_county %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{second_reference_street_line1}}
-            </br>
-            {{second_reference_street_line2}}
-            </br>
-            {{second_reference_town}}
-            </br>
-            {{second_reference_county}}
-            </br>
-            {{second_reference_postcode}}
-            </br>
-            {{second_reference_country}}
-        </td>
-        {% elif second_reference_street_line2 and not second_reference_county %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{second_reference_street_line1}}
-            </br>
-            {{second_reference_street_line2}}
-            </br>
-            {{second_reference_town}}
-            </br>
-            {{second_reference_postcode}}
-            </br>
-            {{second_reference_country}}
-        </td>
-        {% elif not second_reference_street_line2 and second_reference_county %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{second_reference_street_line1}}
-            </br>
-            {{second_reference_town}}
-            </br>
-            {{second_reference_county}}
-            </br>
-            {{second_reference_postcode}}
-            </br>
-            {{second_reference_country}}
-        </td>
-        {% elif not second_reference_street_line2 and not second_reference_county %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{second_reference_street_line1}}
-            </br>
-            {{second_reference_town}}
-            </br>
-            {{second_reference_postcode}}
-            </br>
-            {{second_reference_country}}
+            No
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/references/second-reference-address?id={{application_id}}&manual=True&lookup=False" alt="Update your second reference's address">
-                Change
+            <a href="{% url 'DBS-Check-Upload-DBS-View' %}?id={{application_id}}#id_declaration"
+               alt='Update whether you will send your DBS certificate to Ofsted?'>
+                Change <span class="visuallyhidden">will you send your DBS certificate to Ofsted?</span>
             </a>
         </td>
     </tr>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Phone number
-        </td>
-        <td style="word-wrap: break-word" class=summary-column>
-            {{second_reference_phone_number}}
-        </td>
-        <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/references/second-reference-contact-details?id={{application_id}}#id_phone_number" alt="Update your second reference's phone number">
-                Change
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Email address
-        </td>
-        <td style="word-wrap: break-word" class=summary-column>
-            {{second_reference_email}}
-        </td>
-        <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/references/second-reference-contact-details?id={{application_id}}#id_email_address" alt="Update your second reference's email">
-                Change
-            </a>
-        </td>
-    </tr>
+    {% endif %}
     </tbody>
 </table>
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
@@ -939,7 +699,7 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/other-people/adult-question?id={{application_id}}"
+            <a href="{% url 'Other-People-Adult-Question-View' %}?id={{application_id}}"
                alt='Update the adults in your home'>
                 Change <span class="visuallyhidden">adults in your home</span>
             </a>
@@ -977,7 +737,7 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/other-people/children-question?id={{application_id}}"
+            <a href="{% url 'Other-People-Children-Question-View' %}?id={{application_id}}"
                alt='Update the children in your home'>
                 Change <span class="visuallyhidden">children in your home</span>
             </a>
@@ -1010,7 +770,7 @@
             {{name}}
         </td>
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+            <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Update the adult's name">
                 Change <span class="visuallyhidden">adult name</span>
             </a>
@@ -1070,7 +830,7 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+            <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Update the adult's date of birth">
                 Change <span class="visuallyhidden">date of birth</span>
             </a>
@@ -1084,7 +844,7 @@
             {{relationship}}
         </td>
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+            <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Update the adult's relationship">
                 Change <span class="visuallyhidden">adult relationship</span>
             </a>
@@ -1098,29 +858,9 @@
             {{dbs_certificate_number}}
         </td>
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/other-people/adult-dbs?id={{application_id}}&adults={{number_of_adults}}"
+            <a href="{% url 'Other-People-Adult-DBS-View' %}?id={{application_id}}&adults={{number_of_adults}}"
                alt="Update the adult's DBS certificate number">
                 Change <span class="visuallyhidden">adult DBS certificate number</span>
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Permission for checks
-        </td>
-        {% if permission is True %}
-        <td style="word-wrap: break-word" class=summary-column>
-            Yes
-        </td>
-        {% elif permission is False %}
-        <td style="word-wrap: break-word" class=summary-column>
-            No
-        </td>
-        {% endif %}
-        <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/other-people/adult-permission?id={{application_id}}&adults={{number_of_adults}}"
-               alt="Update the adult's permission for checks">
-                Change <span class="visuallyhidden">adult permission for checks</span>
             </a>
         </td>
     </tr>
@@ -1152,7 +892,7 @@
             {{name}}
         </td>
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}&remove=0"
+            <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
                alt="Update the child's name">
                 Change <span class="visuallyhidden">child name</span>
             </a>
@@ -1212,7 +952,7 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}&remove=0"
+            <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
                alt="Update the child's date of birth">
                 Change <span class="visuallyhidden">date of birth</span>
             </a>
@@ -1226,7 +966,7 @@
             {{relationship}}
         </td>
         <td class="change-answer {{ print_class }}">
-            <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}&remove=0"
+            <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
                alt="Update the child's relationship">
                 Change <span class="visuallyhidden">child relationship</span>
             </a>
@@ -1235,6 +975,290 @@
     </tbody>
 </table>
 {% endfor %}
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                First reference
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Full name
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_first_name}} {{first_reference_last_name}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'References-First-Reference-View' %}?id={{application_id}}" alt="Update your first reference's name">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            How they know you
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_relationship}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'References-First-Reference-View' %}?id={{application_id}}#id_relationship" alt="Update your first reference's relationship">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Known for
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_years_known}} years, {{first_reference_months_known}} months
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'References-First-Reference-View' %}?id={{application_id}}" alt="Update your first reference's time known">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Address
+        </td>
+        {% if first_reference_street_line2 and first_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_street_line1}}
+            </br>
+            {{first_reference_street_line2}}
+            </br>
+            {{first_reference_town}}
+            </br>
+            {{first_reference_county}}
+            </br>
+            {{first_reference_postcode}}
+            </br>
+            {{first_reference_country}}
+        </td>
+        {% elif first_reference_street_line2 and not first_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_street_line1}}
+            </br>
+            {{first_reference_street_line2}}
+            </br>
+            {{first_reference_town}}
+            </br>
+            {{first_reference_postcode}}
+            </br>
+            {{first_reference_country}}
+        </td>
+        {% elif not first_reference_street_line2 and first_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_street_line1}}
+            </br>
+            {{first_reference_town}}
+            </br>
+            {{first_reference_county}}
+            </br>
+            {{first_reference_postcode}}
+            </br>
+            {{first_reference_country}}
+        </td>
+        {% elif not first_reference_street_line2 and not first_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_street_line1}}
+            </br>
+            {{first_reference_town}}
+            </br>
+            {{first_reference_postcode}}
+            </br>
+            {{first_reference_country}}
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'References-First-Reference-Address-View' %}?id={{application_id}}&manual=True&lookup=False" alt="Update your first reference's address">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Phone number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_phone_number}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'References-First-Reference-Contact-Details-View' %}?id={{application_id}}#id_phone_number" alt="Update your first reference's phone number">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Email address
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_email}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'References-First-Reference-Contact-Details-View' %}?id={{application_id}}#id_email_address" alt="Update your first reference's email">
+                Change
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Second reference
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Full name
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_first_name}} {{second_reference_last_name}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'References-Second-Reference-View' %}?id={{application_id}}" alt="Update your second reference's name">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            How they know you
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_relationship}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'References-Second-Reference-View' %}?id={{application_id}}#id_relationship" alt="Update your second reference's relationship">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Known for
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_years_known}} years, {{second_reference_months_known}} months
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'References-Second-Reference-View' %}?id={{application_id}}" alt="Update your second reference's time known">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Address
+        </td>
+        {% if second_reference_street_line2 and second_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_street_line1}}
+            </br>
+            {{second_reference_street_line2}}
+            </br>
+            {{second_reference_town}}
+            </br>
+            {{second_reference_county}}
+            </br>
+            {{second_reference_postcode}}
+            </br>
+            {{second_reference_country}}
+        </td>
+        {% elif second_reference_street_line2 and not second_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_street_line1}}
+            </br>
+            {{second_reference_street_line2}}
+            </br>
+            {{second_reference_town}}
+            </br>
+            {{second_reference_postcode}}
+            </br>
+            {{second_reference_country}}
+        </td>
+        {% elif not second_reference_street_line2 and second_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_street_line1}}
+            </br>
+            {{second_reference_town}}
+            </br>
+            {{second_reference_county}}
+            </br>
+            {{second_reference_postcode}}
+            </br>
+            {{second_reference_country}}
+        </td>
+        {% elif not second_reference_street_line2 and not second_reference_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_street_line1}}
+            </br>
+            {{second_reference_town}}
+            </br>
+            {{second_reference_postcode}}
+            </br>
+            {{second_reference_country}}
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'References-Second-Reference-Address-View' %}?id={{application_id}}&manual=True&lookup=False" alt="Update your second reference's address">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Phone number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_phone_number}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'References-Second-Reference-Contact-Details-View' %}?id={{application_id}}#id_phone_number" alt="Update your second reference's phone number">
+                Change
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Email address
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_email}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'References-Second-Reference-Contact-Details-View' %}?id={{application_id}}#id_email_address" alt="Update your second reference's email">
+                Change
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
 <br>
 {% if not print %}
 <div class="{{ print_class }} form-group">
@@ -1253,13 +1277,11 @@
 </div>
 {% endif %}
 {% if not print %}
-<div class="form-group">
-    <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-</div>
+{% include 'return-to-list.html' %}
 {% endif %}
 {% if print %}
 <div class="form-group">
-    <a href="{{URL_PREFIX}}/confirmation/?id={{application_id}}&orderCode={{order_code}}">Return to confirmation</a>
+    <a href="{% url 'Payment-Confirmation' %}?id={{application_id}}&orderCode={{order_code}}">Return to confirmation</a>
 </div>
 {% endif %}
 <input type="hidden" value="{{application_id}}" name="id"/>

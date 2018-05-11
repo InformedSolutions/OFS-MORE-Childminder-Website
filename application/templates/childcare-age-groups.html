@@ -15,7 +15,6 @@
         <h1 class="form-title heading-large">
             Ages of the children
         </h1>
-
         {{form.as_div}}
         {% csrf_token %}
         <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
@@ -24,9 +23,7 @@
 </form>
 
 {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
-    <div class="form group">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
+{% include 'return-to-list.html' %}
 {% endif %}
 
 {% endblock %}

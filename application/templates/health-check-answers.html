@@ -5,9 +5,7 @@
 
 {% block inner_content %}
 
-<div>
-    <h1 class="form-title heading-large">Check your answers: your health</h1>
-</div>
+<h1 class="form-title heading-large">Check your answers: your health</h1>
 <table class="check-your-answers form-group" style="table-layout: fixed; width: 100%">
 <colgroup>
         <col style="width:40%">
@@ -38,7 +36,7 @@
         </td>
         {% endif %}
         <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/health/booklet?id={{application_id}}#id_send_hdb_declare-group"
+            <a href="{% url 'Health-Booklet-View' %}?id={{application_id}}#id_send_hdb_declare-group"
                alt='Change answer on sending health declaration booklet to Ofsted?'>
                 Change <span class="visuallyhidden">answer on sending health declaration booklet to Ofsted?</span>
             </a>
@@ -46,13 +44,10 @@
     </tr>
     </tbody>
 </table>
-<br>
-<div class="form-group">
-    <form action="{{ URL_PREFIX }}/task-list?id={{application_id}}" method="get">
-        <input type="submit" class="button" value="Confirm and continue"/>
-        <input type="hidden" value="{{application_id}}" name="id"/>
-    </form>
-</div>
-<br>
+
+<form action="{% url 'Task-List-View %}?id={{application_id}}" method="get">
+    <input type="submit" class="button" value="Confirm and continue"/>
+    <input type="hidden" value="{{application_id}}" name="id"/>
+</form>
 
 {% endblock %}

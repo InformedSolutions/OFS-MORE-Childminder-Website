@@ -20,20 +20,15 @@
         <p>Please give the address for your first referee.</p>
         {{form.as_div}}
         {% csrf_token %}
-        <br>
-        <br>
-        <a href="{{ URL_PREFIX }}/references/first-reference-address?id={{application_id}}"
+        <a href="{% url 'References-First-Reference-Address-View' %}?id={{application_id}}"
            name="manual" id="manual">Use postcode search</a>
         <br>
         <br>
         <input type="submit" class="button" value="Save and continue">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
-    <br>
-    <!-- Return to task list -->
-    <div class="form-group">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
 </form>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

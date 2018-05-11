@@ -1,7 +1,5 @@
 import collections
-import time
 
-from django.conf import settings
 from django.utils import timezone
 
 from django.core.urlresolvers import reverse
@@ -14,8 +12,6 @@ from .. import status
 from ..business_logic import reset_declaration, login_contact_logic_phone
 from ..forms import ContactPhoneForm, ContactSummaryForm
 from ..models import Application, UserDetails
-
-
 
 
 def contact_phone(request):
@@ -76,14 +72,10 @@ def contact_phone(request):
             return render(request, 'contact-phone.html', variables)
 
 
-"""
-Method returning the template for the Your login and contact details: summary page (for a given application)
-displaying entered data for this task and navigating to the Type of childcare page when successfully completed
-"""
-
-
 def contact_summary(request):
     """
+    Method returning the template for the Your login and contact details: summary page (for a given application)
+    displaying entered data for this task and navigating to the Type of childcare page when successfully completed
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your login and contact details: summary template
     """
@@ -151,5 +143,4 @@ def contact_summary(request):
         }
 
         return render(request, 'contact-summary.html', variables)
-
 

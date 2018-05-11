@@ -12,34 +12,15 @@
         <h1 class="form-title heading-large">
             Post your DBS certificate
         </h1>
-        <p>You will have to send your original DBS certificate to Ofsted.</p>
-        <p>We need this to check details of any cautions or convictions.</p>
-        <p>Please send your original certificate (not a photocopy) to:</p>
-        <p>
-            Ofsted
-            </br>
-            Piccadilly Gate
-            </br>
-            Store Street
-            </br>
-            Manchester
-            </br>
-            M1 2WD
-        </p>
-        <p>We will check your certificate and send it back to you.</p>
-        <h2 class="form-title heading-medium">
-            I declare that:
-        </h2>
-        {{form.as_div}}
+        <p>We need your certificate to check details of any cautions or convictions.</p>
+        <p>You must send your original certificate (not a photocopy) to Ofsted.</p>
+        <p class="text-before-button">We will check your certificate and send it back to you.</p>
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>
         <input type="submit" class="button" value="Save and continue">
     </div>
-    <div class="form-group">
-        <div class="form-group">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    </div>
 </form>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

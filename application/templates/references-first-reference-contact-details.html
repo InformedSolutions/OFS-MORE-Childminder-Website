@@ -23,10 +23,8 @@
         <input type="submit" class="button" value="Save and continue">
         <input type="hidden" name="id" value="{{application_id}}"/>
     </div>
-    </br>
-    <div class="form-group">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
 </form>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

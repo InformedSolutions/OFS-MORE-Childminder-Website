@@ -9,9 +9,7 @@ from urllib.parse import urlencode
 
 import requests
 from django.conf import settings
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse
 
 from .models import Application, Reference, CriminalRecordCheck, EYFS, HealthDeclarationBooklet, ChildInHome, \
     ChildcareType, FirstAidTraining, ApplicantPersonalDetails, ApplicantName, ApplicantHomeAddress, AdultInHome
@@ -19,9 +17,9 @@ from .models import Application, Reference, CriminalRecordCheck, EYFS, HealthDec
 
 def get_app_task_models(app_id):
     """
-
-    :param self:
-    :return:
+    Fucntion to get the models corresponding to each task for a given application.
+    :param app_id: ID of the application.
+    :return: dict whose keys are the models for each task with values that are the IDs of the task.
     """
 
     if app_id:
@@ -67,6 +65,10 @@ def test_notify():
 
 
 def test_notify_settings():
+    """
+    Function to check if url for notify app is defined.
+    return; Bool
+    """
     url = settings.NOTIFY_URL
     if 'url' in locals():
         return True
@@ -75,6 +77,10 @@ def test_notify_settings():
 
 
 def test_notify_connection():
+    """
+    Function to test connection with Notify API.
+    :return: Bool
+    """
     try:
         # Test Sending Email
         header = {'content-type': 'application/json'}
@@ -97,6 +103,11 @@ def test_notify_connection():
 
 
 def service_down(request):
+    """
+    View to be returned when the servie is down.
+    :param request: request used to generate HttpResponse.
+    :return: rendered service-down.html template.
+    """
     return render(request, 'service-down.html')
 
 

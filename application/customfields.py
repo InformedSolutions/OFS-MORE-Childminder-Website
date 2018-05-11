@@ -40,7 +40,7 @@ class Widget(widgets.Widget):
 # Creating a base multi-widget class
 class MultiWidget(widgets.MultiWidget, Widget):
     """
-    A class used to definte a base widget that has the ability to contain multiple widgets
+    A class used to define a base widget that has the ability to contain multiple widgets
     """
     subwidget_group_classes = ()
     subwidget_label_classes = ()
@@ -502,8 +502,9 @@ class CustomYearField(forms.IntegerField):
         self.current_year = now().year
         self.century = 100 * (self.current_year // 100)
         if era_boundary is None:
-            # 2-digit dates are a minimum of 10 years ago by default
-            era_boundary = self.current_year - self.century - 10
+            # Interpret two-digit dates as this century if they are before the current year
+            # otherwise interpret them as a year from the previous century
+            era_boundary = self.current_year - self.century
         self.era_boundary = era_boundary
         bounds_error = gettext('Please check the date of the course') % {
             'current_year': self.current_year

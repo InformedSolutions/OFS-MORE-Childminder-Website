@@ -37,7 +37,7 @@
             </td>
             {% endif %}
             <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/other-people/adult-question?id={{application_id}}" alt='Change adults in your home'>
+                <a href="{% url 'Other-People-Adult-Question-View' %}?id={{application_id}}" alt='Change adults in your home'>
                     Change <span class="visuallyhidden">adults in your home</span>
                 </a>
             </td>
@@ -74,7 +74,7 @@
             </td>
             {% endif %}
             <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/other-people/children-question?id={{application_id}}" alt='Change children in your home'>
+                <a href="{% url 'Other-People-Children-Question-View' %}?id={{application_id}}" alt='Change children in your home'>
                     Change <span class="visuallyhidden">children in your home</span>
                 </a>
             </td>
@@ -106,7 +106,7 @@
                 {{name}}
             </td>
             <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{number_of_adults}}&remove=0" alt='Change adult name'>
+                <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0" alt='Change adult name'>
                     Change <span class="visuallyhidden">adult name</span>
                 </a>
             </td>
@@ -165,7 +165,7 @@
             </td>
             {% endif %}
             <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{number_of_adults}}&remove=0" alt='Change adult date of birth'>
+                <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0" alt='Change adult date of birth'>
                     Change <span class="visuallyhidden">date of birth</span>
                 </a>
             </td>
@@ -178,7 +178,7 @@
                 {{relationship}}
             </td>
             <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{number_of_adults}}&remove=0" alt='Change adult relationship'>
+                <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0" alt='Change adult relationship'>
                     Change <span class="visuallyhidden">adult relationship</span>
                 </a>
             </td>
@@ -191,27 +191,8 @@
                 {{dbs_certificate_number}}
             </td>
             <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/other-people/adult-dbs?id={{application_id}}&adults={{number_of_adults}}" alt='Change adult DBS certificate number'>
+                <a href="{% url 'Other-People-Adult-DBS-View' %}?id={{application_id}}&adults={{number_of_adults}}" alt='Change adult DBS certificate number'>
                     Change <span class="visuallyhidden">adult DBS certificate number</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Permission for checks
-            </td>
-            {% if permission is True %}
-            <td style="word-wrap: break-word" class=summary-column>
-                Yes
-            </td>
-            {% elif permission is False %}
-            <td style="word-wrap: break-word" class=summary-column>
-                No
-            </td>
-            {% endif %}
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/other-people/adult-permission?id={{application_id}}&adults={{number_of_adults}}" alt='Change adult permission for checks'>
-                    Change <span class="visuallyhidden">adult permission for checks</span>
                 </a>
             </td>
         </tr>
@@ -243,7 +224,7 @@
                 {{name}}
             </td>
             <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}&remove=0" alt='Change child name'>
+                <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0" alt='Change child name'>
                     Change <span class="visuallyhidden">child name</span>
                 </a>
             </td>
@@ -302,7 +283,7 @@
             </td>
             {% endif %}
             <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}&remove=0" alt='Change child date of birth'>
+                <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0" alt='Change child date of birth'>
                     Change <span class="visuallyhidden">date of birth</span>
                 </a>
             </td>
@@ -315,7 +296,7 @@
                 {{relationship}}
             </td>
             <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/other-people/children-details?id={{application_id}}&children={{number_of_children}}&remove=0" alt='Change child relationship'>
+                <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0" alt='Change child relationship'>
                     Change <span class="visuallyhidden">child relationship</span>
                 </a>
             </td>
@@ -323,13 +304,12 @@
         </tbody>
     </table>
     {% endfor %}
-    <br>
+
     <div class="form-group">
-        <form action="{{ URL_PREFIX }}/task-list?id={{application_id}}" method="get">
+        <form action="{% url 'Task-List-View' %}?id={{application_id}}" method="get">
             <input type="submit" class="button" value="Confirm and continue"/>
             <input type="hidden" value="{{application_id}}" name="id"/>
         </form>
     </div>
-    <br>
 
 {% endblock %}

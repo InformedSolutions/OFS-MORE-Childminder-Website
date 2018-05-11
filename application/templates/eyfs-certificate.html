@@ -1,0 +1,29 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Early years training certificate{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<!-- Initialise error summary for page -->
+{{form.error_summary}}
+
+<div class="form-group">
+    <h1 class="form-title heading-large">
+        Early years training certificate
+    </h1>
+    <p>An inspector will ask to see your certificate when they visit your home.</p>
+    <p>You must show your EYFS training certificate to the inspector.</p>
+    <p>They will also check how you will meet the Standards.</p>
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Continue" alt='Continue to declaration'>
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </form>
+</div>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}
