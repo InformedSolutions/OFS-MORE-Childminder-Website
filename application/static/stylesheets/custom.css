@@ -51,12 +51,6 @@
     }
 }
 
-@media (max-width: 639px) {
-    .task-name{
-        width: 70%
-    }
-}
-
 @media print
 {
     .no-print, .no-print *
@@ -200,6 +194,12 @@
   font-size: 24px;
   font-weight: bold;
   width: 80%;
+}
+
+@media (max-width: 639px) {
+    .task-name{
+        width: 70%
+    }
 }
 
 .task-number {
