@@ -7,32 +7,34 @@
 
 {% include "back-button.html" %}
 {{form.error_summary}}
-<!-- Form -->
-<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    <!-- Content -->
-    <div class="form-group">
-        <h1 class="form-title heading-large">
-            First aid training details
-        </h1>
-        <p>We need to check that you can keep children safe.</p>
-        <p>Please give details of your paediatric first aid training course.</p>
-        <details role="group">
-            <summary role="button" aria-controls="details-content-0" aria-expanded="false">
-                <span class="summary">Where can I get training?<span class="visuallyhidden">Click to expand</span></span>
-            </summary>
-            <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-                <p>Lots of organisations provide training, such as the <a href="https://www.redcrossfirstaidtraining.co.uk/Courses/First-aid-at-work-courses-uk-mainland/Scheduled-courses/Paediatric-first-aid.aspx"
-                                                                          target="_blank">Red Cross</a> and <a href="http://www.sja.org.uk/sja/training-courses/first-aid-courses/paediatric-first-aid.aspx"
-                                                                                                               target="_blank">St John Ambulance</a>.</p>
-                <p><a href="https://www.gov.uk/find-local-council" target="_blank">Ask your council</a> for details of courses in your area.</p>
-            </div>
-        </details>
+
+<h1 class="form-title heading-large">
+    First aid training details
+</h1>
+<p>We need to check that you can keep children safe.</p>
+<p>Please give details of your paediatric first aid training course.</p>
+
+<details role="group">
+    <summary role="button" aria-controls="details-content-0" aria-expanded="false">
+        <span class="summary">Where can I get training?<span class="visuallyhidden">Click to expand</span></span>
+    </summary>
+
+    <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+        <p>Lots of organisations provide training, such as the <a href="https://www.redcrossfirstaidtraining.co.uk/Courses/First-aid-at-work-courses-uk-mainland/Scheduled-courses/Paediatric-first-aid.aspx"
+                                                                  target="_blank">Red Cross</a> and <a href="http://www.sja.org.uk/sja/training-courses/first-aid-courses/paediatric-first-aid.aspx"
+                                                                                                       target="_blank">St John Ambulance</a>.</p>
+        <p><a href="https://www.gov.uk/find-local-council" target="_blank">Ask your council</a> for details of courses in your area.</p>
+    </div>
+</details>
+
+<div class="form-group top-padded">
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         {{form.as_div}}
         {% csrf_token %}
         <input type="submit" class="button" value="Save and continue">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-    </div>
-</form>
+    </form>
+</div>
 
 {% include 'return-to-list.html' %}
 
