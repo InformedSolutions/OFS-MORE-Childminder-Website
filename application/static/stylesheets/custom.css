@@ -4,8 +4,20 @@
 }
 
 .button {
-  display: block;
   margin-top: 15px;
+  display: -moz-inline-stack;
+  display: inline-block;
+  width: fit-content;
+}
+
+@media (max-width: 639px) {
+  .button {
+    width: 100%;
+  }
+}
+
+.button[type=submit] {
+    display: block;
 }
 
 .find-address-button {
@@ -360,13 +372,39 @@ div.error-summary ul.error-summary-list {
   color: #000;
 }
 
+@media (max-width: 641px) {
+    .button-secondary {
+      width: 100% !important;
+      text-align: center;
+    }
+}
+
+.button-secondary, .button-secondary:visited, .button-secondary:focus {
+  display: block !important;
+  width: fit-content;
+  background-color: #eee;
+  color: #000;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.button-secondary:hover {
+  background-color: #C0C0C0;
+}
+
+.button-secondary-inline {
+  background-color: #eee;
+  color: #000;
+}
+
 .button-add-another {
   margin-top: 15px;
 }
 
 .button-save-and-exit {
   margin-left: 0;
-  display: inline-block !important
+  display: block !important;
+  width: fit-content;
 }
 
 .button-add-another, .button-save-and-exit {
@@ -402,4 +440,12 @@ div.error-summary ul.error-summary-list {
   font-weight: bold;
   padding-right: 0;
   width: 20%;
+}
+
+.one-third {
+  width: 33%;
+}
+
+.two-thirds {
+  width: 66%;
 }

@@ -1,4 +1,4 @@
-<a href="#" class="link-back visually-hidden aria-hidden" onclick="window.history.back()" id="back">
+<a href="#" class="link-back visually-hidden aria-hidden" id="back">
     Back
 </a>
 
@@ -6,5 +6,10 @@
     window.onload = function () {
         $("#back").removeClass('visually-hidden')
         $("#back").removeClass('aria-hidden')
+
+        $("#back").click(function(event) {
+            event.preventDefault();
+            history.back(1);
+        });
     };
 </script>

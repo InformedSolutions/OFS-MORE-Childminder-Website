@@ -673,11 +673,16 @@ def references_summary(request):
         form = ReferenceSummaryForm()
         application = Application.objects.get(pk=application_id_local)
 
+        first_years_known_str = "year" if first_reference_years_known == 1 else "years"
+        first_months_known_str = "month" if first_reference_months_known == 1 else "months"
+        second_years_known_str = "year" if second_reference_years_known == 1 else "years"
+        second_months_known_str = "month" if second_reference_months_known == 1 else "months"
+
         first_reference_fields = collections.OrderedDict([
             ('full_name', ' '.join([first_reference_first_name, first_reference_last_name])),
             ('relationship', first_reference_relationship),
-            ('known_for', ' '.join([str(first_reference_years_known), 'years,',
-                                   str(first_reference_months_known), 'months'])),
+            ('known_for', ' '.join([str(first_reference_years_known), first_years_known_str,
+                                   str(first_reference_months_known), first_months_known_str])),
             ('address', ' '.join([first_reference_street_line1, (first_reference_street_line2 or ''),
                                  first_reference_town, (first_reference_county or ''),
                                  first_reference_postcode, first_reference_country])),
@@ -694,7 +699,8 @@ def references_summary(request):
         second_reference_fields = collections.OrderedDict([
             ('full_name', ' '.join([second_reference_first_name, second_reference_last_name])),
             ('relationship', second_reference_relationship),
-            ('known_for', ' '.join([str(second_reference_years_known), 'years,',str(second_reference_months_known), 'months'])),
+            ('known_for', ' '.join([str(second_reference_years_known), second_years_known_str,
+                                    str(second_reference_months_known), second_months_known_str])),
             ('address', ' '.join([second_reference_street_line1, (second_reference_street_line2 or ''),
                                   second_reference_town, (second_reference_county or ''),
                                   second_reference_postcode, second_reference_country])),

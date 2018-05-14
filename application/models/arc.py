@@ -16,7 +16,7 @@ class Arc(models.Model):
     childcare_type_review = models.CharField(choices=TASK_STATUS, max_length=50)
     personal_details_review = models.CharField(choices=TASK_STATUS, max_length=50)
     first_aid_review = models.CharField(choices=TASK_STATUS, max_length=50)
-    eyfs_review = models.CharField(choices=TASK_STATUS, max_length=50)
+    eyfs_review = models.CharField(choices=TASK_STATUS, max_length=50, blank=True)
     dbs_review = models.CharField(choices=TASK_STATUS, max_length=50)
     health_review = models.CharField(choices=TASK_STATUS, max_length=50)
     references_review = models.CharField(choices=TASK_STATUS, max_length=50)

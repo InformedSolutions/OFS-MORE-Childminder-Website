@@ -87,7 +87,7 @@
     <tr>
         <th colspan="{% if print_class %}2{% else %}3{% endif %}">
             <div class="heading-medium">
-                Childcare Type
+                Type of childcare
             </div>
         </th>
     </tr>
@@ -418,7 +418,7 @@
     <tr>
         <th colspan="{% if print_class %}2{% else %}3{% endif %}">
             <div class="heading-medium">
-                Your first aid certificate
+                First aid training
             </div>
         </th>
     </tr>
@@ -568,7 +568,7 @@
     <tr>
         <th colspan="{% if print_class %}2{% else %}3{% endif %}">
             <div class="heading-medium">
-                Health checks
+                Health declaration booklet
             </div>
         </th>
     </tr>
@@ -605,7 +605,7 @@
     <tr>
         <th colspan="{% if print_class %}2{% else %}3{% endif %}">
             <div class="heading-medium">
-                Criminal record checks
+                Criminal record (DBS) check
             </div>
         </th>
     </tr>
@@ -645,28 +645,6 @@
             </a>
         </td>
     </tr>
-    {% if cautions_convictions is True %}
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Will you send your DBS certificate to Ofsted?
-        </td>
-        {% if declaration is True %}
-        <td style="word-wrap: break-word" class=summary-column>
-            Yes
-        </td>
-        {% elif declaration is False %}
-        <td style="word-wrap: break-word" class=summary-column>
-            No
-        </td>
-        {% endif %}
-        <td class="change-answer {{ print_class }}">
-            <a href="{% url 'DBS-Check-Upload-DBS-View' %}?id={{application_id}}#id_declaration"
-               alt='Update whether you will send your DBS certificate to Ofsted?'>
-                Change <span class="visuallyhidden">will you send your DBS certificate to Ofsted?</span>
-            </a>
-        </td>
-    </tr>
-    {% endif %}
     </tbody>
 </table>
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
@@ -1022,7 +1000,7 @@
             Known for
         </td>
         <td style="word-wrap: break-word" class=summary-column>
-            {{first_reference_years_known}} years, {{first_reference_months_known}} months
+            {{first_reference_years_known}} year{% if first_reference_years_known != 1 %}s{% endif %}, {{first_reference_months_known}} month{% if first_reference_months_known != 1 %}s{% endif %}
         </td>
         <td class="change-answer {{ print_class }}">
             <a href="{% url 'References-First-Reference-View' %}?id={{application_id}}" alt="Update your first reference's time known">
@@ -1164,7 +1142,7 @@
             Known for
         </td>
         <td style="word-wrap: break-word" class=summary-column>
-            {{second_reference_years_known}} years, {{second_reference_months_known}} months
+            {{second_reference_years_known}} year{% if second_reference_years_known != 1 %}s{% endif %}, {{second_reference_months_known}} month{% if second_reference_months_known != 1 %}s{% endif %}
         </td>
         <td class="change-answer {{ print_class }}">
             <a href="{% url 'References-Second-Reference-View' %}?id={{application_id}}" alt="Update your second reference's time known">

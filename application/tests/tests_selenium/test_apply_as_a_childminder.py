@@ -206,6 +206,72 @@ class ApplyAsAChildminder(LiveServerTestCase):
                              "//main[@id='content']/form/div/h1").text)
 
     @try_except_method
+    def test_must_fill_out_childcare_type_before_task_list(self):
+        """
+        Test to make sure the correct guidance page gets shown when only minding children of all ages
+        """
+        self.selenium_task_executor.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+
+        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+
+        # Guidance page
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+
+        # Try to get to task list
+        self.selenium_task_executor.get_driver().find_element_by_id("proposition-name").click()
+
+        self.assertEqual("Type of childcare",
+                         self.selenium_task_executor.get_driver().find_element_by_xpath(
+                             "//main[@id='content']/form/div/h1").text)
+
+    @try_except_method
+    def test_can_return_to_task_list_from_help_and_costs_when_authenticated(self):
+        """
+        Test to make sure the correct guidance page gets shown when only minding children of all ages
+        """
+        self.selenium_task_executor.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+
+        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number,
+                                                                test_alt_phone_number)
+
+        # Guidance page
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+
+        # Choose 0-5 year olds option
+        self.selenium_task_executor.get_driver().find_element_by_id("id_type_of_childcare_0").click()
+
+        # Confirm selection
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        # Costs page
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='proposition-links']/li[1]/a").click()
+
+        # Go back to task list
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='content']/a[2]").click()
+
+        self.assertEqual("Register as a childminder list",
+                         self.selenium_task_executor.get_driver().find_element_by_xpath(
+                             "//*[@id='content']/div[2]/div/header/h1").text)
+
+        # Help page
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='proposition-links']/li[2]/a").click()
+
+        # Go back to task list
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='content']/a[3]").click()
+
+        self.assertEqual("Register as a childminder list",
+                         self.selenium_task_executor.get_driver().find_element_by_xpath(
+                             "//*[@id='content']/div[2]/div/header/h1").text)
+
+    @try_except_method
     def test_can_complete_personal_details_task_when_location_of_care_is_same_as_home_address(self):
         """
         Test to make sure a user can choose Yes to the question Is this where you will be looking after the children?
@@ -232,6 +298,19 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.create_standard_eyfs_application()
 
         test_dbs = ''.join(str(random.randint(1, 9)) for _ in range(12))
+        self.selenium_task_executor.complete_dbs_task(test_dbs, False)
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='dbs']/td/a/strong").text)
+
+    @try_except_method
+    def test_can_complete_dbs_number_with_leading_zeros(self):
+        """
+        Tests the Criminal record (DBS) check task can be completed when the DBS number starts with a '0' and is
+        otherwise valid.
+        """
+        self.create_standard_eyfs_application()
+
+        test_dbs = '000000000012'
         self.selenium_task_executor.complete_dbs_task(test_dbs, False)
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='dbs']/td/a/strong").text)

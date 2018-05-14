@@ -2,3 +2,4 @@ django_extensions
 pydotplus
 pylint
 pylint-django
+coverage

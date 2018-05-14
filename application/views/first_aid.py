@@ -2,6 +2,7 @@ import collections
 
 from django.utils import timezone
 from datetime import date
+import calendar
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -239,7 +240,8 @@ def first_aid_training_summary(request):
 
         first_aid_fields = collections.OrderedDict([
             ('first_aid_training_organisation', first_aid_record.training_organisation),
-            ('title_of_training_course', first_aid_record.course_title)
+            ('title_of_training_course', first_aid_record.course_title),
+            ('course_date', ' '.join([str(first_aid_record.course_day), calendar.month_name[first_aid_record.course_month], str(first_aid_record.course_year)]))
         ])
 
         first_aid_table = collections.OrderedDict({
