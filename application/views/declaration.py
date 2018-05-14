@@ -337,26 +337,7 @@ def declaration_declaration(request):
                         extra_data={'user_type': 'applicant', 'action': 're-submitted by', 'entity': 'application'}
                     )
 
-                    # Determine which tasks have been updated
-                    updated_list = []
-                    if application.login_details_arc_flagged is True:
-                        updated_list.append('Your sign in details')
-                    if application.childcare_type_arc_flagged is True:
-                        updated_list.append('Type of childcare')
-                    if application.personal_details_arc_flagged is True:
-                        updated_list.append('Your personal details')
-                    if application.first_aid_training_arc_flagged is True:
-                        updated_list.append('First aid training')
-                    if application.criminal_record_check_arc_flagged is True:
-                        updated_list.append('Criminal record (DBS) check')
-                    if application.eyfs_training_arc_flagged is True:
-                        updated_list.append('Early years training')
-                    if application.health_arc_flagged is True:
-                        updated_list.append('Health declaration booklet')
-                    if application.people_in_home_arc_flagged is True:
-                        updated_list.append('People in your home')
-                    if application.references_arc_flagged is True:
-                        updated_list.append('References')
+                    updated_list = generate_list_of_updated_tasks(application_id_local)
 
                     # If a resubmission return application status to submitted and forward to the confirmation page
                     application.application_status = "SUBMITTED"
@@ -389,3 +370,37 @@ def declaration_declaration(request):
                 'application_id': application_id_local
             }
             return render(request, 'declaration-declaration.html', variables)
+
+
+def generate_list_of_updated_tasks(application_id):
+    """
+    Method to generate a list of flagged tasks that have been updated
+    :param application_id:
+    :return: a list of updated tasks
+    """
+
+    application = Application.objects.get(pk=application_id)
+
+    # Determine which tasks have been updated
+    updated_list = []
+
+    if application.login_details_arc_flagged is True:
+        updated_list.append('Your sign in details')
+    if application.childcare_type_arc_flagged is True:
+        updated_list.append('Type of childcare')
+    if application.personal_details_arc_flagged is True:
+        updated_list.append('Your personal details')
+    if application.first_aid_training_arc_flagged is True:
+        updated_list.append('First aid training')
+    if application.criminal_record_check_arc_flagged is True:
+        updated_list.append('Criminal record (DBS) check')
+    if application.eyfs_training_arc_flagged is True:
+        updated_list.append('Early years training')
+    if application.health_arc_flagged is True:
+        updated_list.append('Health declaration booklet')
+    if application.people_in_home_arc_flagged is True:
+        updated_list.append('People in your home')
+    if application.references_arc_flagged is True:
+        updated_list.append('References')
+
+    return updated_list
