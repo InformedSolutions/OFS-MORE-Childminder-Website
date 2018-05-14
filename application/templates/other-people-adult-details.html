@@ -33,6 +33,10 @@
         {% endfor %}
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>
+
+        <!-- button to be triggered should a user press Enter rather than click a button -->
+        <input type="submit" class="button js-hidden" name="submit" value="Save and continue">
+
         <input type="submit" class="button-secondary button-add-another" name="add_person" value="Add another person">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>

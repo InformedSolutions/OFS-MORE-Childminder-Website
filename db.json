@@ -234,8 +234,7 @@
   "fields": {
     "application_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
     "dbs_certificate_number": "121212121212",
-    "cautions_convictions": false,
-    "send_certificate_declare": null
+    "cautions_convictions": false
   }
 },
 {
