@@ -68,10 +68,17 @@
                                                 <strong class="task-finished" alt="{{ task.name }}: Done">Done</strong>
                                             </a>
                                         {% elif task.arc_flagged is False %}
+                                            {% if application_status == 'FURTHER_INFORMATION' %}
                                             <a href="" style="pointer-events: none;">
                                                 <span class="task-name grayed-out">{{ task.description }}</span>
                                                 <strong class="task-finished task-disabled" alt="{{ task.name }}: Done">Done</strong>
                                             </a>
+                                            {% else %}
+                                            <a href="{% url task.status_url %}?id={{ id }}">
+                                                <span class="task-name">{{ task.description }}</span>
+                                                <strong class="task-finished" alt="{{ task.name }}: Done">Done</strong>
+                                            </a>
+                                            {% endif %}
                                         {% else %}
                                             <a href="{% url task.status_url %}?id={{ id }}">
                                                 <span class="task-name">{{ task.description }}</span>
