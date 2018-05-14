@@ -29,6 +29,14 @@ class ContactEmailForm(ChildminderForms):
             raise forms.ValidationError('Please enter a valid email address')
         return email_address
 
+    def __init__(self, *args, **kwargs):
+        super(ContactEmailForm, self).__init__(*args, **kwargs)
+
+        # Remove full stop from error message, if required. N.B. full-stop-stripper won't work here.
+        if self.errors is not None:
+            if self.errors['email_address'].data[0].message == "Enter a valid email address.":
+                self.errors['email_address'].data[0].message = "Please enter a valid email address"
+
 
 class ContactPhoneForm(ChildminderForms):
     """
