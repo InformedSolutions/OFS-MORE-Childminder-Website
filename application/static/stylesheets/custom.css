@@ -10,6 +10,12 @@
   width: fit-content;
 }
 
+@media (max-width: 639px) {
+  .button {
+    width: 100%;
+  }
+}
+
 .button[type=submit] {
     display: block;
 }
@@ -369,6 +375,7 @@ div.error-summary ul.error-summary-list {
 @media (max-width: 641px) {
     .button-secondary {
       width: 100% !important;
+      text-align: center;
     }
 }
 
