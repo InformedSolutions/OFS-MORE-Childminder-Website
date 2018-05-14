@@ -337,6 +337,27 @@ def declaration_declaration(request):
                         extra_data={'user_type': 'applicant', 'action': 're-submitted by', 'entity': 'application'}
                     )
 
+                    # Determine which tasks have been updated
+                    updated_list = []
+                    if application.login_details_arc_flagged is True:
+                        updated_list.append('Your sign in details')
+                    if application.childcare_type_arc_flagged is True:
+                        updated_list.append('Type of childcare')
+                    if application.personal_details_arc_flagged is True:
+                        updated_list.append('Your personal details')
+                    if application.first_aid_training_arc_flagged is True:
+                        updated_list.append('First aid training')
+                    if application.criminal_record_check_arc_flagged is True:
+                        updated_list.append('Criminal record (DBS) check')
+                    if application.eyfs_training_arc_flagged is True:
+                        updated_list.append('Early years training')
+                    if application.health_arc_flagged is True:
+                        updated_list.append('Health declaration booklet')
+                    if application.people_in_home_arc_flagged is True:
+                        updated_list.append('People in your home')
+                    if application.references_arc_flagged is True:
+                        updated_list.append('References')
+
                     # If a resubmission return application status to submitted and forward to the confirmation page
                     application.application_status = "SUBMITTED"
                     application.save()
@@ -344,6 +365,7 @@ def declaration_declaration(request):
                     variables = {
                         'application_id': application_id_local,
                         'order_code': application.order_code,
+                        'updated_list': updated_list
                     }
 
                     return render(request, 'payment-confirmation-resubmitted.html', variables)

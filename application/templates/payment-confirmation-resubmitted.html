@@ -22,7 +22,8 @@
         </h2>
         <div class="form-group">
             You have updated the following:
-            {% for task in update %}
+            {% for task in update_list %}
+                <li>{{ task }}</li>
             {% endfor %}
         </div>
         <h2 class="heading-medium">
