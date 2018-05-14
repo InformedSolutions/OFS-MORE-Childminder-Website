@@ -9,6 +9,8 @@ based on whether they have previously completed the task or not.
 """
 
 from django.shortcuts import render
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.views.decorators.cache import never_cache
 
 from application.models import (
@@ -34,7 +36,12 @@ def task_list(request):
 
         application_id = request.GET["id"]
         application = Application.objects.get(pk=application_id)
-        childcare_record = ChildcareType.objects.get(application_id=application_id)
+        childcare_record = None
+        try:
+            childcare_record = ChildcareType.objects.get(application_id=application_id)
+        except Exception as e:
+            return HttpResponseRedirect(reverse("Type-Of-Childcare-Guidance-View") + '?id=' + application_id)
+
         zero_to_five_status = childcare_record.zero_to_five
         five_to_eight_status = childcare_record.five_to_eight
         eight_plus_status = childcare_record.eight_plus

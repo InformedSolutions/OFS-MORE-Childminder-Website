@@ -151,7 +151,6 @@ def declaration_summary(request, print=False):
             'first_aid_certificate_year': first_aid_record.course_year,
             'dbs_certificate_number': dbs_record.dbs_certificate_number,
             'cautions_convictions': dbs_record.cautions_convictions,
-            'declaration': dbs_record.send_certificate_declare,
             'send_hdb_declare': True,
             'eyfs_course_name': eyfs_record.eyfs_course_name,
             'eyfs_course_date': eyfs_course_date,

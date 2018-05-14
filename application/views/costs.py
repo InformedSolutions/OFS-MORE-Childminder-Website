@@ -12,7 +12,7 @@ def costs(request):
     """
     application_id_local = request.GET.get('id')
     context = {
-        'id': application_id_local
+        'application_id': application_id_local
     }
     return render(request, 'costs-guidance.html', context)
 

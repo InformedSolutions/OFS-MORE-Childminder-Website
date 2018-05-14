@@ -12,15 +12,14 @@
     {{form.error_summary}}
 {% endfor %}
 
-<!-- Form -->
+<h1 class="form-title heading-large">
+    Details of adults in your home
+</h1>
+<p>Please give details of everyone aged 16 or over.</p>
+<p>The names must match the ones in their criminal record (DBS) checks.</p>
+
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    <!-- Content -->
     <div class="form-group">
-        <h1 class="form-title heading-large">
-            Details of adults in your home
-        </h1>
-        <p>Please give details of everyone aged 16 or over.</p>
-        <p>The names must match the ones in their criminal record (DBS) checks.</p>
         {% for form in form_list %}
         <h2 class="form-title heading-medium">
             Person {{form.prefix}}
@@ -34,11 +33,13 @@
         {% endfor %}
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>
+
+        <!-- button to be triggered should a user press Enter rather than click a button -->
+        <input type="submit" class="button js-hidden" name="submit" value="Save and continue">
+
         <input type="submit" class="button-secondary button-add-another" name="add_person" value="Add another person">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
-        <br>
-        <br>
         <input type="submit" class="button" name="submit" value="Save and continue">
     </div>
 </form>
