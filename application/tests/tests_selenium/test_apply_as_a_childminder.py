@@ -303,6 +303,19 @@ class ApplyAsAChildminder(LiveServerTestCase):
             "//tr[@id='dbs']/td/a/strong").text)
 
     @try_except_method
+    def test_can_complete_dbs_number_with_leading_zeros(self):
+        """
+        Tests the Criminal record (DBS) check task can be completed when the DBS number starts with a '0' and is
+        otherwise valid.
+        """
+        self.create_standard_eyfs_application()
+
+        test_dbs = '000000000012'
+        self.selenium_task_executor.complete_dbs_task(test_dbs, False)
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='dbs']/td/a/strong").text)
+
+    @try_except_method
     def test_can_complete_people_in_your_home_task_without_other_adults_but_with_other_children(self):
         """
         Tests that the people in your home task can still be completed when answering No to the question
