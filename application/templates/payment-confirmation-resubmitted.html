@@ -17,15 +17,19 @@
                 <strong class="heading-medium">{{order_code}}</strong>
             </p>
         </div>
-        <h2 class="heading-medium">
-            Update summary
-        </h2>
-        <div class="form-group">
-            You have updated the following:
-            {% for task in update_list %}
-                <li>{{ task }}</li>
-            {% endfor %}
-        </div>
+        {% if updated_list %}
+            <h2 class="heading-medium">
+                Update summary
+            </h2>
+            <div class="form-group">
+                You have updated the following:
+                <ul class="list-bullet top-padded">
+                    {% for task in updated_list %}
+                        <li>{{ task }}</li>
+                    {% endfor %}
+                 </ul>
+            </div>
+        {% endif %}
         <h2 class="heading-medium">
             Your application details
         </h2>
@@ -39,14 +43,14 @@
             What's next
         </h2>
         <p>Ofsted will:</p>
-        <ul class="list-bullet" style="margin-bottom: 20px; margin-left: 20px;">
+        <ul class="list-bullet">
             <li>review your application again</li>
             <li>ask for references</li>
             <li>carry out background checks with other organisations</li>
             <li>check the health declaration booklet</li>
             <li>arrange for an inspector to visit</li>
         </ul>
-        <p>All this usually takes up to 12 weeks.</p>
+        <p class="top-padded">All this usually takes up to 12 weeks.</p>
         <p>There can be delays if information is missing or we have to wait for references or background services
             checks.</p>
         <p>Once all the checks have been done, an inspector will call you to arrange a date when they can visit.</p>

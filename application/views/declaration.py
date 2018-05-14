@@ -339,8 +339,8 @@ def declaration_declaration(request):
                     updated_list = generate_list_of_updated_tasks(application_id_local)
 
                     # If a resubmission return application status to submitted and forward to the confirmation page
-                    application.application_status = "SUBMITTED"
-                    application.save()
+                    #application.application_status = "SUBMITTED"
+                    #application.save()
 
                     variables = {
                         'application_id': application_id_local,
