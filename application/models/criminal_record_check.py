@@ -11,7 +11,6 @@ class CriminalRecordCheck(models.Model):
         Application, on_delete=models.CASCADE, db_column='application_id')
     dbs_certificate_number = models.CharField(max_length=50, blank=True)
     cautions_convictions = models.BooleanField(blank=True)
-    send_certificate_declare = models.NullBooleanField(blank=True)
 
     @property
     def timelog_fields(self):
@@ -28,8 +27,7 @@ class CriminalRecordCheck(models.Model):
 
         return (
             'dbs_certificate_number',
-            'cautions_convictions',
-            'send_certificate_declare'
+            'cautions_convictions'
         )
 
     @classmethod

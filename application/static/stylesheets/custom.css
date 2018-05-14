@@ -396,7 +396,8 @@ div.error-summary ul.error-summary-list {
 
 .button-save-and-exit {
   margin-left: 0;
-  display: inline-block !important;
+  display: block !important;
+  width: fit-content;
 }
 
 .button-add-another, .button-save-and-exit {

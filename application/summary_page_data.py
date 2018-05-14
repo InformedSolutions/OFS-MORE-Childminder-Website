@@ -12,12 +12,10 @@ childcare_type_link_dict = collections.OrderedDict([('childcare_age_groups', 'Ty
 
 ###
 
-dbs_summary_dict = collections.OrderedDict({'data_names': ['dbs_certificate_number', 'cautions_convictions', 'send_certificate_declare'],
-                                            'display_names': ['DBS certificate number', 'Do you have any cautions or convictions?',
-                                                              'Will you send your DBS certificate to Ofsted?'],
+dbs_summary_dict = collections.OrderedDict({'data_names': ['dbs_certificate_number', 'cautions_convictions'],
+                                            'display_names': ['DBS certificate number', 'Do you have any cautions or convictions?'],
                                             'back_url_names': ['DBS-Check-DBS-Details-View',
-                                                               'DBS-Check-DBS-Details-View',
-                                                               'DBS-Check-Upload-DBS-View'],
+                                                               'DBS-Check-DBS-Details-View'],
                                             'table_names': [''],
                                             'table_error_names': ['There was a problem with your criminal record check'],
                                             'page_title': 'Check your answers: criminal record (DBS) check'
