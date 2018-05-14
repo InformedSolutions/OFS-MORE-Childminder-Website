@@ -404,3 +404,11 @@ div.error-summary ul.error-summary-list {
   padding-right: 0;
   width: 20%;
 }
+
+.one-third {
+  width: 33%;
+}
+
+.two-thirds {
+  width: 66%;
+}
