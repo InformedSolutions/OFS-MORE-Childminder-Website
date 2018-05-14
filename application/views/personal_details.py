@@ -102,14 +102,14 @@ def personal_details_name(request):
         application = Application.objects.get(pk=app_id)
 
         if form.is_valid():
-            if application.personal_details_status != 'COMPLETED':
-                status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
             # Create or update Applicant_Names record
             applicant_names_record = personal_name_logic(application, form)
             applicant_names_record.save()
             application.date_updated = current_date
             application.save()
+            if application.personal_details_status != 'COMPLETED':
+                status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
             reset_declaration(application)
 
             return HttpResponseRedirect(

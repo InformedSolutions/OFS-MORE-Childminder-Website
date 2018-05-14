@@ -4,8 +4,9 @@
 }
 
 .button {
-  display: block;
   margin-top: 15px;
+  display: block;
+  width: fit-content;
 }
 
 .find-address-button {
@@ -366,7 +367,7 @@ div.error-summary ul.error-summary-list {
 
 .button-save-and-exit {
   margin-left: 0;
-  display: inline-block !important
+  display: inline-block !important;
 }
 
 .button-add-another, .button-save-and-exit {
