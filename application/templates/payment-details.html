@@ -30,8 +30,8 @@
         <p>You will be taken to Worldpay. Ofsted does not keep a record of your card details.</p>
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>
-        <input type="submit" class="button" style="float:left;" value="Pay and apply">
-        <a href="{% url 'Task-List-View' %}?id={{ id }}" class="button-secondary button-save-and-exit" style="margin-left: 30px; margin-top: 15px;">Save and return</a>
+        <input type="submit" class="button" value="Pay and apply">
+        <a href="{% url 'Task-List-View' %}?id={{ id }}" class="button-secondary button-save-and-exit">Save and return</a>
     </div>
 </form>
 

@@ -5,7 +5,8 @@
 
 .button {
   margin-top: 15px;
-  display: block;
+  display: -moz-inline-stack;
+  display: inline-block;
   width: fit-content;
 }
 
@@ -357,6 +358,30 @@ div.error-summary ul.error-summary-list {
 
 .button-secondary {
   display: block !important;
+  background-color: #eee;
+  color: #000;
+}
+
+@media (max-width: 641px) {
+    .button-secondary {
+      width: 100% !important;
+    }
+}
+
+.button-secondary, .button-secondary:visited, .button-secondary:focus {
+  display: block !important;
+  width: fit-content;
+  background-color: #eee;
+  color: #000;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.button-secondary:hover {
+  background-color: #C0C0C0;
+}
+
+.button-secondary-inline {
   background-color: #eee;
   color: #000;
 }
