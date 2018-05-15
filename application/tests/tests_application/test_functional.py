@@ -638,8 +638,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestContactSummaryView()
         self.TestTypeOfChildcareAgeGroups()
         self.TestTypeOfChildcareOvernightCare()
-        self.TestVerifyPhone()
-        self.TestVerifyPhoneEmailApostrophe()
         self.TestSecurityQuestion()
         self.AppTestTypeOfChildcareRegister()
 
@@ -648,6 +646,9 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestAppPersonalDetailsHomeAddress()
         self.TestAppPersonalDetailsHomeAddressDetails()
         self.TestAppPersonalDetailsSummaryView()
+
+        self.TestVerifyPhone()
+        self.TestVerifyPhoneEmailApostrophe()
 
         self.TestAppFirstAid()
         self.TestAppFirstAidCert()
