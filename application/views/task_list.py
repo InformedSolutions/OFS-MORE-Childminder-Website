@@ -175,6 +175,7 @@ def task_list(request):
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'Other-People-Summary-View'},
                         {'status': 'FLAGGED', 'url': 'Other-People-Summary-View'},
+                        {'status': 'WAITING', 'url': 'Other-People-Summary-View'},
                         {'status': 'OTHER', 'url': 'Other-People-Guidance-View'}
                     ],
                 },
@@ -207,7 +208,7 @@ def task_list(request):
             ]
         }
 
-    if len([task for task in context['tasks'] if task['status'] in ['IN_PROGRESS', 'NOT_STARTED']]) < 1:
+    if len([task for task in context['tasks'] if task['status'] in ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED']]) < 1:
         context['all_complete'] = True
     else:
         context['all_complete'] = False
