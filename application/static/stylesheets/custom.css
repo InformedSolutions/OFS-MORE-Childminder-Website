@@ -383,7 +383,7 @@ div.error-summary ul.error-summary-list {
   display: block !important;
   width: fit-content;
   background-color: #eee;
-  color: #000;
+  color: #000 !important;
   margin-top: 15px;
   margin-bottom: 15px;
 }
@@ -394,7 +394,7 @@ div.error-summary ul.error-summary-list {
 
 .button-secondary-inline {
   background-color: #eee;
-  color: #000;
+  color: #000 !important;
 }
 
 .button-add-another {
@@ -408,6 +408,7 @@ div.error-summary ul.error-summary-list {
 }
 
 .button-add-another, .button-save-and-exit {
+  color: #000 !important;
   position: relative;
   display: table !important;
   border: none;
