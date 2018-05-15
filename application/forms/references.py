@@ -368,6 +368,8 @@ class SecondReferenceForm(ChildminderForms):
         :return: string
         """
         first_name = self.cleaned_data['first_name']
+        if re.match("^[A-zÀ-ÿ- ']+$", first_name) is None:
+            raise forms.ValidationError('First name can only have letters')
         if len(first_name) > 100:
             raise forms.ValidationError("Referee's first name must be under 100 characters long")
         return first_name
@@ -378,6 +380,8 @@ class SecondReferenceForm(ChildminderForms):
         :return: string
         """
         last_name = self.cleaned_data['last_name']
+        if re.match("^[A-zÀ-ÿ- ']+$", last_name) is None:
+            raise forms.ValidationError('Last name can only have letters')
         if len(last_name) > 100:
             raise forms.ValidationError("Referee's last name must be under 100 characters long")
         return last_name
