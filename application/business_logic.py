@@ -620,9 +620,8 @@ def reset_declaration(application):
     """
     if application.declarations_status == 'COMPLETED':
         application.declarations_status = 'NOT_STARTED'
-        application.background_check_declare = None
-        application.share_info_declare = None
         application.inspect_home_declare = None
-        application.interview_declare = None
+        application.display_contact_details_on_web = None
         application.information_correct_declare = None
+        application.change_declare = None
         application.save()
