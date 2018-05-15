@@ -11,7 +11,8 @@ from .. import status
 from ..forms import (DeclarationIntroForm,
                      DeclarationConfirmationOfUnderstandingForm,
                      DeclarationConfirmationOfDeclarationForm,
-                     DeclarationSummaryForm, DeclarationConsentToSharingForm)
+                     DeclarationConsentToSharingForm,
+                     DeclarationSummaryForm)
 from ..models import (AdultInHome,
                       ApplicantHomeAddress,
                       ApplicantName,
@@ -20,9 +21,8 @@ from ..models import (AdultInHome,
                       ChildInHome,
                       ChildcareType,
                       CriminalRecordCheck,
-                      FirstAidTraining,
-                      HealthDeclarationBooklet,
                       EYFS,
+                      FirstAidTraining,
                       Reference,
                       UserDetails)
 
@@ -57,7 +57,9 @@ def declaration_summary(request, print=False):
         dbs_record = CriminalRecordCheck.objects.get(
             application_id=application_id_local)
         eyfs_record = EYFS.objects.get(application_id=application_id_local)
-        eyfs_course_date = ' '.join([str(eyfs_record.eyfs_course_date_day), calendar.month_name[eyfs_record.eyfs_course_date_month], str(eyfs_record.eyfs_course_date_year)])
+        eyfs_course_date = ' '.join(
+            [str(eyfs_record.eyfs_course_date_day), calendar.month_name[eyfs_record.eyfs_course_date_month],
+             str(eyfs_record.eyfs_course_date_year)])
         first_reference_record = Reference.objects.get(
             application_id=application_id_local, reference=1)
         second_reference_record = Reference.objects.get(
@@ -268,7 +270,6 @@ def declaration_declaration(request):
             }
             return render(request, 'payment-confirmation.html', variables)
 
-
         variables = {
             'confirmation_of_understanding_form': confirmation_of_understanding_form,
             'confirmation_of_declaration_form': confirmation_of_declaration_form,
@@ -298,22 +299,15 @@ def declaration_declaration(request):
 
         # Validate both forms (sets of checkboxes)
         if confirmation_of_understanding_form.is_valid():
-            background_check_declare = confirmation_of_understanding_form.cleaned_data.get(
-                'background_check_declare')
-            inspect_home_declare = confirmation_of_understanding_form.cleaned_data.get(
-                'inspect_home_declare')
-            interview_declare = confirmation_of_understanding_form.cleaned_data.get('interview_declare')
             share_info_declare = confirmation_of_understanding_form.cleaned_data.get('share_info_declare')
-            application.background_check_declare = background_check_declare
-            application.inspect_home_declare = inspect_home_declare
-            application.interview_declare = interview_declare
             application.share_info_declare = share_info_declare
             application.save()
             application.date_updated = current_date
             application.save()
 
             if consent_to_sharing_form.is_valid():
-                display_contact_details_on_web = consent_to_sharing_form.cleaned_data.get('display_contact_details_on_web')
+                display_contact_details_on_web = consent_to_sharing_form.cleaned_data.get(
+                    'display_contact_details_on_web')
                 application.display_contact_details_on_web = display_contact_details_on_web
                 application.save()
                 application.date_updated = current_date
@@ -333,7 +327,6 @@ def declaration_declaration(request):
                               'declarations_status', 'COMPLETED')
 
                 if application.application_status == 'FURTHER_INFORMATION':
-
                     # In cases where a resubmission is being made,
                     # payment is no a valid trigger so this becomes the appropriate trigger resubmission audit
                     TimelineLog.objects.create(
@@ -343,6 +336,8 @@ def declaration_declaration(request):
                         extra_data={'user_type': 'applicant', 'action': 're-submitted by', 'entity': 'application'}
                     )
 
+                    updated_list = generate_list_of_updated_tasks(application_id_local)
+
                     # If a resubmission return application status to submitted and forward to the confirmation page
                     application.application_status = "SUBMITTED"
                     application.save()
@@ -350,11 +345,13 @@ def declaration_declaration(request):
                     variables = {
                         'application_id': application_id_local,
                         'order_code': application.order_code,
+                        'updated_list': updated_list
                     }
 
-                    return render(request, 'payment-confirmation.html', variables)
+                    return render(request, 'payment-confirmation-resubmitted.html', variables)
 
                 return HttpResponseRedirect(settings.URL_PREFIX + '/payment?id=' + application_id_local)
+
             else:
                 variables = {
                     'confirmation_of_understanding_form': confirmation_of_understanding_form,
@@ -364,6 +361,7 @@ def declaration_declaration(request):
                 }
                 return render(request, 'declaration-declaration.html', variables)
         else:
+
             variables = {
                 'confirmation_of_understanding_form': confirmation_of_understanding_form,
                 'confirmation_of_declaration_form': confirmation_of_declaration_form,
@@ -371,3 +369,37 @@ def declaration_declaration(request):
                 'application_id': application_id_local
             }
             return render(request, 'declaration-declaration.html', variables)
+
+
+def generate_list_of_updated_tasks(application_id):
+    """
+    Method to generate a list of flagged tasks that have been updated
+    :param application_id:
+    :return: a list of updated tasks
+    """
+
+    application = Application.objects.get(pk=application_id)
+
+    # Determine which tasks have been updated
+    updated_list = []
+
+    if application.login_details_arc_flagged is True:
+        updated_list.append('Your sign in details')
+    if application.childcare_type_arc_flagged is True:
+        updated_list.append('Type of childcare')
+    if application.personal_details_arc_flagged is True:
+        updated_list.append('Your personal details')
+    if application.first_aid_training_arc_flagged is True:
+        updated_list.append('First aid training')
+    if application.criminal_record_check_arc_flagged is True:
+        updated_list.append('Criminal record (DBS) check')
+    if application.eyfs_training_arc_flagged is True:
+        updated_list.append('Early years training')
+    if application.health_arc_flagged is True:
+        updated_list.append('Health declaration booklet')
+    if application.people_in_home_arc_flagged is True:
+        updated_list.append('People in your home')
+    if application.references_arc_flagged is True:
+        updated_list.append('References')
+
+    return updated_list

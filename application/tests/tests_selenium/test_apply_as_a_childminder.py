@@ -16,8 +16,6 @@ from selenium.webdriver.support.wait import WebDriverWait
 
 from .selenium_task_executor import SeleniumTaskExecutor
 
-from ...models import Application
-
 from faker import Faker
 
 # Configure faker to use english locale
@@ -478,6 +476,40 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         # Check user is redirected to the summary
         self.assertEqual("Payment confirmed", self.selenium_task_executor.get_driver().title)
+
+    @try_except_method
+    def test_updated_tasks_are_listed_in_confirmation_page(self):
+        """
+        Tests that the costs link is not shown if an application has been returned to the applicant
+        """
+        # Load fixtures to populate a test application
+        call_command("loaddata", "test_returned_application.json", verbosity=0)
+
+        # Note that this email address is loaded from fixture
+        self.selenium_task_executor.sign_back_in('test@informed.com')
+
+        self.selenium_task_executor.get_driver().find_element_by_id("health").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//a[contains(@href,'health/booklet/')]").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        # Verify that the updated task is still accessible
+        self.selenium_task_executor.get_driver().find_element_by_id("health").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        self.selenium_task_executor.get_driver().find_element_by_id("id_share_info_declare").click()
+        self.selenium_task_executor.get_driver().find_element_by_id("id_display_contact_details_on_web").click()
+        self.selenium_task_executor.get_driver().find_element_by_id("id_information_correct_declare").click()
+        self.selenium_task_executor.get_driver().find_element_by_id("id_change_declare").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm']").click()
+
+        WebDriverWait(self.selenium_task_executor.get_driver(), 10).until(
+            expected_conditions.title_contains("Payment confirmed"))
+
+        # Check if the updated task is listed on the confirmation page
+        self.selenium_task_executor.get_driver().find_elements_by_xpath(
+            "//*[contains(text(), 'Health declaration booklet')]")
 
     @try_except_method
     def test_can_access_help_without_authenticating(self):

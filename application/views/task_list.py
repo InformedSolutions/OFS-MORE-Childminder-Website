@@ -85,7 +85,8 @@ def task_list(request):
                 {
                     'name': 'account_details',  # This is CSS class (Not recommended to store it here)
                     'status': application.login_details_status,
-                    'description': "Your login details",
+                    'arc_flagged': application.login_details_arc_flagged,
+                    'description': "Your sign in details",
                     'status_url': None,  # Will be filled later
                     'status_urls': [  # Available urls for each status
                         {'status': 'COMPLETED', 'url': 'Contact-Summary-View'},
@@ -96,6 +97,7 @@ def task_list(request):
                 {
                     'name': 'children',
                     'status': application.childcare_type_status,
+                    'arc_flagged': application.childcare_type_arc_flagged,
                     'description': "Type of childcare",
                     'status_url': None,
                     'status_urls': [
@@ -107,6 +109,7 @@ def task_list(request):
                 {
                     'name': 'personal_details',
                     'status': application.personal_details_status,
+                    'arc_flagged': application.personal_details_arc_flagged,
                     'description': "Your personal details",
                     'status_url': None,
                     'status_urls': [
@@ -118,6 +121,7 @@ def task_list(request):
                 {
                     'name': 'first_aid',
                     'status': application.first_aid_training_status,
+                    'arc_flagged': application.first_aid_training_arc_flagged,
                     'description': "First aid training",
                     'status_url': None,
                     'status_urls': [
@@ -129,6 +133,7 @@ def task_list(request):
                 {
                     'name': 'eyfs',
                     'status': application.eyfs_training_status,
+                    'arc_flagged': application.eyfs_training_arc_flagged,
                     'description': "Early Years training",
                     'status_url': None,
                     'status_urls': [
@@ -140,6 +145,7 @@ def task_list(request):
                 {
                     'name': 'health',
                     'status': application.health_status,
+                    'arc_flagged': application.health_arc_flagged,
                     'description': "Health declaration booklet",
                     'status_url': None,
                     'status_urls': [
@@ -151,6 +157,7 @@ def task_list(request):
                 {
                     'name': 'dbs',
                     'status': application.criminal_record_check_status,
+                    'arc_flagged': application.criminal_record_check_arc_flagged,
                     'description': "Criminal record (DBS) check",
                     'status_url': None,
                     'status_urls': [
@@ -162,6 +169,7 @@ def task_list(request):
                 {
                     'name': 'other_people',
                     'status': application.people_in_home_status,
+                    'arc_flagged': application.people_in_home_arc_flagged,
                     'description': "People in your home",
                     'status_url': None,
                     'status_urls': [
@@ -173,6 +181,7 @@ def task_list(request):
                 {
                     'name': 'references',
                     'status': application.references_status,
+                    'arc_flagged': application.references_arc_flagged,
                     'description': "References",
                     'status_url': None,
                     'status_urls': [
@@ -184,6 +193,7 @@ def task_list(request):
                 {
                     'name': 'review',
                     'status': None,
+                    'arc_flagged': application.application_status,
                     # If application is being resubmitted (i.e. is not drafting,
                     # set declaration task name to read "Declaration" only)
                     'description':

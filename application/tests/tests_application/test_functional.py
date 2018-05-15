@@ -4,15 +4,25 @@ Functional tests for views
 NOTE! If it throws you status 200, that means form submission is failing!
 
 """
+from datetime import datetime
 
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
 
 from timeline_logger.models import TimelineLog
 
-from ...models import Application, UserDetails, ApplicantName, ApplicantPersonalDetails, ApplicantHomeAddress, \
-    ChildcareType, Reference, AdultInHome, Arc, ChildInHome, CriminalRecordCheck, EYFS
-from datetime import datetime
+from ...models import (AdultInHome,
+                       ApplicantHomeAddress,
+                       ApplicantName,
+                       ApplicantPersonalDetails,
+                       Application,
+                       ChildcareType,
+                       ChildInHome,
+                       CriminalRecordCheck,
+                       EYFS,
+                       Reference,
+                       UserDetails)
+
 
 class CreateTestNewApplicationSubmit(TestCase):
     """
@@ -60,9 +70,6 @@ class CreateTestNewApplicationSubmit(TestCase):
                 pk=self.app_id
             ).application_status == "DRAFTING"
         )
-        
-        
-    
 
     def TestAppPhone(self):
         """Submit phone"""
@@ -150,7 +157,6 @@ class CreateTestNewApplicationSubmit(TestCase):
 
         self.assertEqual(r.status_code, 302)
         self.assertIsNot('yapostrophe\'@y.com', UserDetails.objects.get(application_id=self.app_id).email)
-
 
     def TestVerifyPhone(self):
         """Test update email address process- update, validate and redirect"""
