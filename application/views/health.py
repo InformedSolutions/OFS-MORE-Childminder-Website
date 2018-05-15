@@ -75,6 +75,10 @@ def health_booklet(request):
         form = HealthBookletForm(request.POST)
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
+            hdb_record = health_check_logic(application_id_local, form)
+            hdb_record.save()
+            application.date_updated = current_date
+            application.save()
             reset_declaration(application)
             if application.health_status != 'COMPLETED':
                 status.update(application_id_local, 'health_status', 'COMPLETED')

@@ -449,7 +449,7 @@ def health_check_logic(application_id_local, form):
     :return: an HealthDeclarationBooklet object to be saved
     """
     this_application = Application.objects.get(application_id=application_id_local)
-    send_hdb_declare = form.cleaned_data.get('send_hdb_declare')
+    send_hdb_declare = True
     # If the user entered information for this task for the first time
     if HealthDeclarationBooklet.objects.filter(application_id=application_id_local).count() == 0:
         hdb_record = HealthDeclarationBooklet(send_hdb_declare=send_hdb_declare, application_id=this_application)
