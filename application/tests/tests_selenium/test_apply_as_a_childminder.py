@@ -670,7 +670,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(first_email)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
-        self.assertEqual("We've sent a link to {}".format(first_email),
+        self.assertEqual("We've sent a link to {}.".format(first_email),
                          self.selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/p").text)
 
         # Try to grab email validation URL.
