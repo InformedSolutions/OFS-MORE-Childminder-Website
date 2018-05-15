@@ -71,6 +71,7 @@ def first_aid_training_details(request):
     :return: an HttpResponse object with the rendered First aid training: details template
     """
     current_date = timezone.now()
+
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = FirstAidTrainingDetailsForm(id=application_id_local)
@@ -82,40 +83,39 @@ def first_aid_training_details(request):
             'first_aid_training_status': application.first_aid_training_status
         }
         return render(request, 'first-aid-details.html', variables)
+
     if request.method == 'POST':
         application_id_local = request.POST["id"]
 
         # Reset status to in progress as question can change status of overall task
-        status.update(application_id_local,
-                      'first_aid_training_status', 'IN_PROGRESS')
-
-        form = FirstAidTrainingDetailsForm(
-            request.POST, id=application_id_local)
+        status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
+        form = FirstAidTrainingDetailsForm(request.POST, id=application_id_local)
         form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
+
         if form.is_valid():
-            # Create or update First_Aid_Training record
-            first_aid_training_record = first_aid_logic(
-                application_id_local, form)
+            # Calculate certificate age and determine which page to navigate to.
+            certif_day, certif_month, certif_year = form.cleaned_data.get('course_date')
+            certificate_date = date(certif_year, certif_month, certif_day)
+            today = date.today()
+            certificate_date_difference = today - certificate_date
+            certificate_age = certificate_date_difference.days / 365  # Integer division can return float in Python 3.
+
+            if certificate_age >= 3:
+                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/update?id=' + application_id_local)
+
+            # If certificate not out-of-date, update  First_Aid_Training record.
+            first_aid_training_record = first_aid_logic(application_id_local, form)
             first_aid_training_record.save()
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
-            # Calculate certificate age and determine which page to navigate to
-            certificate_day = form.cleaned_data.get('course_date')[0]
-            certificate_month = form.cleaned_data.get('course_date')[1]
-            certificate_year = form.cleaned_data.get('course_date')[2]
-            certificate_date = date(
-                certificate_year, certificate_month, certificate_day)
-            today = date.today()
-            certificate_date_difference = today - certificate_date
-            certificate_age = float(certificate_date_difference.days) / 365.  # Must be a float for Python division.
-            if certificate_age < 2.5:
-                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/certificate?id=' + application_id_local)
-            elif 2.5 <= certificate_age < 3:
+
+            if 2.5 <= certificate_age < 3:
                 return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/renew?id=' + application_id_local)
-            elif certificate_age >= 3:
-                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/update?id=' + application_id_local)
+            else:
+                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/certificate?id=' + application_id_local)
+
         else:
             form.error_summary_title = 'There was a problem with your course details'
             variables = {
