@@ -134,7 +134,7 @@ def login_email_link_resent(request):
     """
     Resend email page
     :param request: Http request
-    :return: Http responsne
+    :return: Http response
     """
     email = request.GET['email']
 
