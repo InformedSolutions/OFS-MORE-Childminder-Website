@@ -608,7 +608,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_people_in_your_home_task(
             True,
             faker.first_name(), faker.first_name(), faker.last_name_female(),
-            random.randint(1, 29), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
+            random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
             True, faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 14, self.current_year - 1),
             'Child'
