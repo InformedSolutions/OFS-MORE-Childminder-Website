@@ -18,7 +18,7 @@
         <p class="text-before-button">You can finish this section when you have completed your course.</p>
         {{form.as_div}}
         {% csrf_token %}
-        <input type="submit" class="button" value="Save and continue">
+        <input type="submit" class="button" value="Continue">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
 </form>
