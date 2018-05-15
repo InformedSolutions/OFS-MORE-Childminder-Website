@@ -47,7 +47,7 @@ def magic_link_confirmation_email(email, link_id):
     return send_email(email, personalisation, template_id)
 
 
-def magic_link_update_email(email, link_id):
+def magic_link_update_email(email, first_name, link_id):
     """
     Method to send a magic link email, using notify.py, to update an applicant's email
     :param email: string containing the e-mail address to send the e-mail to
@@ -61,7 +61,8 @@ def magic_link_update_email(email, link_id):
     else:
         print(link_id)
 
-    personalisation = {"link": link_id}
+    personalisation = {"link": link_id,
+                       "first name": first_name}
     template_id = 'c778438a-c3fb-47e0-ad8a-936021abb1c8'
 
     return send_email(email, personalisation, template_id)
