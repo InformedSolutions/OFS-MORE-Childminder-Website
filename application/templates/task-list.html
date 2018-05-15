@@ -2,8 +2,6 @@
 {% load static %}
 {% load govuk_template_base %}
 {% block page_title %}Register as a childminder{% endblock %}
-
-
 {% block inner_content %}
 
 <div class="grid-row">
@@ -11,7 +9,9 @@
         <header class="page-heading page-heading-with-context">
             <h1 class="heading-xlarge">Register as a childminder list</h1>
             <p><span style="font-weight: bold;">Your application:</span> {{ registers }}</p>
-            <p><span style="font-weight: bold;">Fee:</span> {{ fee }}</p>
+            {% if not HIDE_COSTS %}
+                <p><span style="font-weight: bold;">Fee:</span> {{ fee }}</p>
+            {% endif %}
             <br>
             {% if application_status == 'FURTHER_INFORMATION' %}
             <h2 class="p">Update the sections in red to apply.</h2>
