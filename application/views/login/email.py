@@ -199,7 +199,13 @@ def update_magic_link(email, app_id):
     if UserDetails.objects.filter(application_id=app_id).exists():
         acc = UserDetails.objects.get(application_id=app_id)
         link = create_account_magic_link(account=acc)
-        first_name = ApplicantName.objects.get(application_id=app_id).first_name
+        first_name = 'applicant'
+
+        try:
+            first_name = ApplicantName.objects.get(application_id=app_id).first_name
+        except:
+            pass
+
         # Note url has been updated to use the domain set in the settings
         magic_link.magic_link_update_email(email,
                                            first_name,
