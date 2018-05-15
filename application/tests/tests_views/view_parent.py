@@ -80,7 +80,7 @@ from ...views import (application_saved,
                       type_of_childcare_age_groups,
                       type_of_childcare_guidance,
                       type_of_childcare_register)
-from ...views.login import new_email, account_selection, existing_email
+from ...views.login import account_selection, NewUserSignInView, ExistingUserSignInView
 from ...models import Application, UserDetails
 
 

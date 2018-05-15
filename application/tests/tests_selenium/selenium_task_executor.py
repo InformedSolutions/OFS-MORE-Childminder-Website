@@ -135,6 +135,8 @@ class SeleniumTaskExecutor:
 
         driver.get(validation_url)
 
+        return validation_url
+
     def complete_your_login_details(self, email_address, phone_number, additional_phone_number):
         """
         Selenium steps to create a new application by completing the login details task

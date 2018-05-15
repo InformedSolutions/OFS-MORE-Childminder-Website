@@ -702,7 +702,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(first_email)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
-        self.assertEqual("We've sent a link to {}".format(first_email),
+        self.assertEqual("We've sent a link to {}.".format(first_email),
                          self.selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/p").text)
 
         # Try to grab email validation URL.
@@ -1115,6 +1115,58 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='other_people']/td/a/strong").text)
+
+    @try_except_method
+    def test_user_can_change_email_address(self):
+        """
+         Test that a user can change the email address associated with their account.
+        """
+        self.create_standard_eyfs_application()
+        new_email = "plant@walle.com"
+
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='account_details']/td/a/strong").click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text("Change Your email").click()
+        self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").click()
+        self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").clear()
+        self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(new_email)
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+
+        WebDriverWait(self.selenium_task_executor.get_driver(), 10).until(expected_conditions.title_contains("Check your email"))
+        self.selenium_task_executor.navigate_to_email_validation_url()
+
+        # From task list, go to the account details and check that the email has changed.
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='account_details']/td/a/strong").click()
+        self.assertEqual(new_email, self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='email_address']/td[2]").text)
+
+    @try_except_method
+    def test_user_can_use_resend_link_when_changing_email(self):
+        self.create_standard_eyfs_application()
+        new_email = "eva@walle.com"
+
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='account_details']/td/a/strong").click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text("Change Your email").click()
+        self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").click()
+        self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").clear()
+        self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(new_email)
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+
+        # Confirm change email address.
+        WebDriverWait(self.selenium_task_executor.get_driver(), 10).until(expected_conditions.title_contains("Check your email"))
+
+        # We need to store the first validation url to confirm that it has changed upon clicking 'resend email'.
+        first_validation_url = None
+        while first_validation_url is None:
+            first_validation_url = os.environ.get('EMAIL_VALIDATION_URL')
+
+        self.selenium_task_executor.get_driver().find_element_by_link_text("resend the email").click()
+        second_validation_url = self.selenium_task_executor.navigate_to_email_validation_url()
+
+        # From task list, go to the account details and check that the email has changed.
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='account_details']/td/a/strong").click()
+        self.assertEqual(new_email, self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='email_address']/td[2]").text)
+
+        # Assert that the validation url changed; that is, that the 'resend email' link did indeed resend the email.
+        self.assertNotEqual(first_validation_url, second_validation_url)
 
     def complete_full_question_set(self):
         """
