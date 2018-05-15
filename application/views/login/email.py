@@ -11,7 +11,7 @@ from timeline_logger.models import TimelineLog
 from application.views import magic_link
 from ...utils import test_notify, build_url
 from ...forms import ContactEmailForm
-from ...models import UserDetails, Application
+from ...models import UserDetails, Application, ApplicantName
 
 
 class NewUserSignInView(View):
@@ -199,8 +199,10 @@ def update_magic_link(email, app_id):
     if UserDetails.objects.filter(application_id=app_id).exists():
         acc = UserDetails.objects.get(application_id=app_id)
         link = create_account_magic_link(account=acc)
+        first_name = ApplicantName.objects.get(application_id=app_id).first_name
         # Note url has been updated to use the domain set in the settings
         magic_link.magic_link_update_email(email,
+                                           first_name,
                                            str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link + '?email=' + email)
 
 
