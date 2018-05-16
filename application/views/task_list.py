@@ -134,7 +134,7 @@ def task_list(request):
                     'name': 'eyfs',
                     'status': application.eyfs_training_status,
                     'arc_flagged': application.eyfs_training_arc_flagged,
-                    'description': "Early Years training",
+                    'description': "Early years training",
                     'status_url': None,
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'EYFS-Summary-View'},

@@ -12,6 +12,9 @@
             {% if not HIDE_COSTS %}
                 <p><span style="font-weight: bold;">Fee:</span> {{ fee }}</p>
             {% endif %}
+            {% if application_status == 'FURTHER_INFORMATION' %}
+                <p><span style="font-weight: bold;">Fee:</span> {{ fee }}</p>
+            {% endif %}
             <br>
             {% if application_status == 'FURTHER_INFORMATION' %}
             <h2 class="p">Update the sections in red to apply.</h2>
