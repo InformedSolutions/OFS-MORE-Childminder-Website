@@ -255,7 +255,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Go back to task list
         self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='content']/a[2]").click()
 
-        self.assertEqual("Register as a childminder list",
+        self.assertEqual("Register as a childminder",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
                              "//*[@id='content']/div[2]/div/header/h1").text)
 
@@ -265,7 +265,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Go back to task list
         self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='content']/a[3]").click()
 
-        self.assertEqual("Register as a childminder list",
+        self.assertEqual("Register as a childminder",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
                              "//*[@id='content']/div[2]/div/header/h1").text)
 
