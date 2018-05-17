@@ -622,6 +622,7 @@ def reset_declaration(application):
         application.declarations_status = 'NOT_STARTED'
         application.share_info_declare = None
         application.display_contact_details_on_web = None
+        application.suitable_declare = None
         application.information_correct_declare = None
         application.change_declare = None
         application.save()
@@ -630,6 +631,7 @@ def reset_declaration(application):
         application.declarations_status = 'NOT_STARTED'
         application.share_info_declare = None
         application.display_contact_details_on_web = None
+        application.suitable_declare = None
         application.information_correct_declare = None
         application.change_declare = None
         application.save()
