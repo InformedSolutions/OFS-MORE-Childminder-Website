@@ -58,6 +58,7 @@ class Application(models.Model):
     declarations_status = models.CharField(choices=TASK_STATUS, max_length=50)
     share_info_declare = models.NullBooleanField(blank=True, null=True, default=None)
     display_contact_details_on_web = models.NullBooleanField(blank=True, null=True, default=None)
+    suitable_declare = models.NullBooleanField(blank=True, null=True, default=None)
     information_correct_declare = models.NullBooleanField(blank=True, null=True, default=None)
     change_declare = models.NullBooleanField(blank=True, null=True, default=None)
     date_created = models.DateTimeField(blank=True, null=True)
