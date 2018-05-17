@@ -8,6 +8,7 @@ from datetime import datetime
 
 from django.core.urlresolvers import reverse
 from django.test import Client, TestCase
+from django.urls import resolve
 
 from timeline_logger.models import TimelineLog
 
@@ -22,6 +23,8 @@ from ...models import (AdultInHome,
                        EYFS,
                        Reference,
                        UserDetails)
+
+from application.views import magic_link, security_question
 
 
 class CreateTestNewApplicationSubmit(TestCase):
@@ -158,6 +161,21 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
         self.assertIsNot('yapostrophe\'@y.com', UserDetails.objects.get(application_id=self.app_id).email)
 
+    def TestEmailValidationDoesNotCountAsResend(self):
+        self.assertIs(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
+
+    def TestResendCodeIncrementsCount(self):
+        r = self.client.post(reverse('Resend-Code') + '?id=' + str(self.app_id))
+
+        self.assertIs(1, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
+
+    def TestResendCodeRedirectsToSMSPage(self):
+        r = self.client.post(reverse('Resend-Code') + '?id=' + str(self.app_id))
+
+        self.assertEqual(r.status_code, 302)
+        found = resolve(r.url)
+        self.assertEqual(found.func.view_class, magic_link.SMSValidationView.as_view().view_class)
+
     def TestVerifyPhone(self):
         """Test update email address process- update, validate and redirect"""
         self.TestUpdateEmail()
@@ -166,6 +184,39 @@ class CreateTestNewApplicationSubmit(TestCase):
                                                                                     'magic_link_sms': UserDetails.objects.get(
                                                                                         application_id=self.app_id).magic_link_sms})
         self.assertEqual(r.status_code, 302)
+
+    def TestFourthSMSResendRedirectsToSecurityQuestion(self):
+        UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts = 0
+
+        for n in range(3):
+            r = self.client.post(reverse('Resend-Code') + '?id=' + str(self.app_id))
+
+        r = self.client.get(reverse('Resend-Code') + '?id=' + str(self.app_id))
+        found = resolve(r.url.split('?')[0])
+
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(found.func, security_question.question)
+
+    def TestSMSLoginResetsSMSResendNumber(self):
+        acc = UserDetails.objects.get(application_id=self.app_id)
+        acc.sms_resend_attempts  = 10  # Some non-zero value.
+        correct_sms_code = acc.magic_link_sms
+        acc.save()
+
+        r = self.client.post(reverse('Security-Code') + '?id=' + str(self.app_id),
+                             {'id': self.app_id, 'magic_link_sms': correct_sms_code})
+
+        self.assertIs(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
+
+    def TestSecurityQuestionLoginResetsSMSResendNumber(self):
+        acc = UserDetails.objects.get(application_id=self.app_id)
+        acc.sms_resend_attempts  = 10  # Some non-zero value.
+        acc.save()
+        # security_answer = CriminalRecordCheck.objects.get(application_id=self.app_id).dbs_certificate_number
+        security_answer = acc.mobile_number
+        r = self.client.post(reverse('Security-Question') + '?id=' + str(self.app_id), {'id': self.app_id, 'security_answer': security_answer})
+
+        self.assertIs(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
 
     def TestVerifyPhoneEmailApostrophe(self):
         """Test update email address process with apostrophe in email- update, validate and redirect"""
@@ -635,6 +686,14 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestAppEmail()
         self.TestValidateEmail()
         self.TestAppPhone()
+
+        self.TestEmailValidationDoesNotCountAsResend()
+        self.TestResendCodeIncrementsCount()
+        self.TestResendCodeRedirectsToSMSPage()
+        self.TestFourthSMSResendRedirectsToSecurityQuestion()
+        self.TestSMSLoginResetsSMSResendNumber()
+        self.TestSecurityQuestionLoginResetsSMSResendNumber()
+
         self.TestContactSummaryView()
         self.TestTypeOfChildcareAgeGroups()
         self.TestTypeOfChildcareOvernightCare()
