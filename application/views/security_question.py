@@ -48,6 +48,9 @@ def question(request):
             # Create session issue custom cookie to user
             CustomAuthenticationHandler.create_session(response, acc.email)
 
+            acc.sms_resend_attempts = 0
+            acc.save()
+
             # Forward back onto application
             return response
 
