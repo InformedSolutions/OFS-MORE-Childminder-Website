@@ -1178,13 +1178,11 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_link_text('Sign out')
         self.selenium_task_executor.navigate_to_SMS_validation_page(test_email)
 
-        self.selenium_task_executor.get_driver().find_element_by_link_text("Didn't receive a code?").click()
         for n in range(2):
+            self.selenium_task_executor.get_driver().find_element_by_link_text("Didn't receive a code?").click()
             self.selenium_task_executor.get_driver().find_element_by_id("id_send_new_code_button").click()
-            self.selenium_task_executor.get_driver().find_element_by_link_text("Stil didn't get a code?").click()
 
-        self.selenium_task_executor.get_driver().find_element_by_id("id_send_new_code_button").click()
-        self.selenium_task_executor.get_driver().find_element_by_link_text("Didn't get a code?").click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text("Still didn't get a code?").click()
         self.assertEqual("Sign in question", self.selenium_task_executor.get_driver().title)
 
     def complete_full_question_set(self):
