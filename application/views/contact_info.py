@@ -101,7 +101,7 @@ def contact_summary(request):
         contact_info_table = collections.OrderedDict({
             'table_object': Table([user_details.pk]),
             'fields': contact_info_fields,
-            'title': 'Your login details',
+            'title': '',
             'error_summary_title': 'There is something wrong with your login details'
         })
 
@@ -112,7 +112,7 @@ def contact_summary(request):
             'form': form,
             'application_id': app_id,
             'table_list': table_list,
-            'page_title': 'Check your answers: your login details',
+            'page_title': 'Check your answers: your sign in details',
             'login_details_status': application.login_details_status,
             'childcare_type_status': application.childcare_type_status
         }
