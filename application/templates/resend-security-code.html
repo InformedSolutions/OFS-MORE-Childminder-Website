@@ -1,31 +1,21 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Security code resent{% endblock %}
+{% block page_title %}Send new security code{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
+{% include "back-button.html" %}
 
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
+<h1 class="form-title heading-large">
+    Send new security code
+</h1>
 
-<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    <h1 class="form-title heading-large">
-        Enter security code
-    </h1>
-    <p>We have resent a 5 digit security code by text to *********{{ phone_number }}.</p>
-    <p>This can take a minute or so to arrive.</p>
-    <p>This runs out in 24 hours.</p>
-    {{form.as_div}}
+<p>If you do not recieve the text message, you can send a new code.</p>
+
+<form method="post">
     {% csrf_token %}
-
-    <div class="form-group">
-        <a href="{% url 'Resend-Code' %}?id={{id}}&f=1">Didn't get a code?</a>
-    </div>
-        <input type="submit" class="button" value="Continue" alt="Continue">
-        </br>
-        </br>
-    </div>
-
+    <input type="submit" class="button" value="Send new code" alt="Send new code">
 </form>
+
 
 {% endblock %}
