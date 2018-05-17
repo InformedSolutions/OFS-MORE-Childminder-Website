@@ -51,6 +51,8 @@ class DeclarationConfirmationOfDeclarationForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
+    suitable_declare = forms.BooleanField(label='I am suitable to look after children', required=True,
+                                          error_messages={'required': 'You need to confirm this'})
     information_correct_declare = forms.BooleanField(label='the information I have given is correct', required=True,
                                                      error_messages={'required': 'You need to confirm this'})
     change_declare = forms.BooleanField(label='I will tell Ofsted if this information changes', required=True,
@@ -67,13 +69,23 @@ class DeclarationConfirmationOfDeclarationForm(ChildminderForms):
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            suitable_declare = Application.objects.get(application_id=self.application_id_local).suitable_declare
+
+            if suitable_declare is True:
+                self.fields['suitable_declare'].initial = '1'
+            elif suitable_declare is False:
+                self.fields['suitable_declare'].initial = '0'
+
             information_correct_declare = Application.objects.get(
                 application_id=self.application_id_local).information_correct_declare
+
             if information_correct_declare is True:
                 self.fields['information_correct_declare'].initial = '1'
             elif information_correct_declare is False:
                 self.fields['information_correct_declare'].initial = '0'
+
             change_declare = Application.objects.get(application_id=self.application_id_local).change_declare
+
             if change_declare is True:
                 self.fields['change_declare'].initial = '1'
             elif change_declare is False:
