@@ -178,7 +178,7 @@
     "magic_link_email": null,
     "magic_link_sms": null,
     "sms_resend_attempts": 0,
-    "sms_resend_attempts_expiry_date": 0,
+    "sms_resend_attempts_expiry_date": 0
   }
 }
 ]
