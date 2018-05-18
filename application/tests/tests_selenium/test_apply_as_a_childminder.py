@@ -1181,7 +1181,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.navigate_to_SMS_validation_page(test_email)
 
         for n in range(2):
-            self.selenium_task_executor.get_driver().find_element_by_link_text("Didn't receive a code?").click()
+            self.selenium_task_executor.get_driver().find_element_by_link_text("Didn't get a code?").click()
             self.selenium_task_executor.get_driver().find_element_by_id("id_send_new_code_button").click()
 
         self.selenium_task_executor.get_driver().find_element_by_link_text("Still didn't get a code?").click()
