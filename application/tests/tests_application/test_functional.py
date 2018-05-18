@@ -162,18 +162,23 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertIsNot('yapostrophe\'@y.com', UserDetails.objects.get(application_id=self.app_id).email)
 
     def TestEmailValidationDoesNotCountAsResend(self):
-        self.assertIs(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
+        self.TestUpdateEmail()
+        self.TestValidateEmail()
+
+        self.assertEqual(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
+        self.assertEqual(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts_expiriy_date)
 
     def TestResendCodeIncrementsCount(self):
         r = self.client.post(reverse('Resend-Code') + '?id=' + str(self.app_id))
 
-        self.assertIs(1, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
+        self.assertEqual(1, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
+        self.assertNotEqual(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts_expiriy_date)
 
     def TestResendCodeRedirectsToSMSPage(self):
         r = self.client.post(reverse('Resend-Code') + '?id=' + str(self.app_id))
+        found = resolve(r.url)
 
         self.assertEqual(r.status_code, 302)
-        found = resolve(r.url)
         self.assertEqual(found.func.view_class, magic_link.SMSValidationView.as_view().view_class)
 
     def TestVerifyPhone(self):
