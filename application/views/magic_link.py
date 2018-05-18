@@ -159,7 +159,7 @@ def validate_magic_link(request, id):
         exception_data = traceback.format_exc().splitlines()
         exception_array = [exception_data[-3:]]
         log.error(exception_array)
-        return HttpResponseRedirect(settings.URL_PREFIX + '/bad-link/')
+        return HttpResponseRedirect(settings.URL_PREFIX + '/link-used/')
 
 
 def sms_verification(request):
