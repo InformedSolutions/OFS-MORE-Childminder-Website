@@ -25,4 +25,9 @@ class Migration(migrations.Migration):
             name='sms_resend_attempts',
             field=models.IntegerField(blank=True, default=0, null=True),
         ),
+        migrations.AddField(
+            model_name='userdetails',
+            name='sms_resend_attempts_expiry_date',
+            field=models.IntegerField(blank=True, default=0, null=True),
+        ),
     ]
