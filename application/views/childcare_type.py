@@ -264,7 +264,7 @@ def childcare_type_summary(request):
             'table_object': Table([childcare_record.pk]),
             'fields': childcare_type_fields,
             'title': '',
-            'error_summary_title': 'There is something wrong with your type of childcare'
+            'error_summary_title': 'There was a problem'
         })
 
         table_list = create_tables([childcare_type_table], childcare_type_name_dict, childcare_type_link_dict)

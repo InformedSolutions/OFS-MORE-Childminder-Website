@@ -108,7 +108,7 @@ def contact_summary(request):
             'table_object': Table([user_details.pk]),
             'fields': contact_info_fields,
             'title': '',
-            'error_summary_title': 'There was a problem with this section'
+            'error_summary_title': 'There was a problem'
         })
 
         table_list = create_tables([contact_info_table], contact_info_name_dict, contact_info_link_dict)
