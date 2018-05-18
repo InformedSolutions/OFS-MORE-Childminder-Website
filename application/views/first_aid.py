@@ -214,7 +214,7 @@ def first_aid_training_training(request):
         form = FirstAidTrainingTrainingForm(request.POST)
         if form.is_valid():
             status.update(application_id_local,
-                          'first_aid_training_status', 'NOT_STARTED')
+                          'first_aid_training_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
         else:
             variables = {
