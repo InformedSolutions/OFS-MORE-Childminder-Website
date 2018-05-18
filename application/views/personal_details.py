@@ -152,6 +152,11 @@ def personal_details_dob(request):
         form = PersonalDetailsDOBForm(id=app_id)
         form.check_flag()
         application = Application.get_id(app_id=app_id)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem on this page'
+
         variables = {
             'form': form,
             'application_id': app_id,
@@ -215,6 +220,11 @@ def personal_details_home_address(request):
         application = Application.get_id(app_id=app_id)
         form = PersonalDetailsHomeAddressForm(id=app_id)
         form.check_flag()
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem on this page'
+
         variables = {
             'form': form,
             'application_id': app_id,
@@ -310,6 +320,11 @@ def personal_details_home_address_select(request):
 
         if len(addresses) != 0:
             form = PersonalDetailsHomeAddressLookupForm(id=app_id, choices=addresses)
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem on this page'
+
             variables = {
                 'form': form,
                 'application_id': app_id,
@@ -321,6 +336,11 @@ def personal_details_home_address_select(request):
 
         else:
             form = PersonalDetailsHomeAddressForm(id=app_id)
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem on this page'
+
             variables = {
                 'form': form,
                 'application_id': app_id,
@@ -436,6 +456,11 @@ def personal_details_location_of_care(request):
 
         form = PersonalDetailsLocationOfCareForm(id=app_id)
         form.check_flag()
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem on this page'
+
         variables = {
             'form': form,
             'application_id': app_id,
@@ -509,6 +534,11 @@ def personal_details_childcare_address(request):
         app_id = request.GET["id"]
         application = Application.get_id(app_id=app_id)
         form = PersonalDetailsChildcareAddressForm(id=app_id)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem on this page'
+
         variables = {
             'form': form,
             'application_id': app_id,
@@ -605,6 +635,11 @@ def personal_details_childcare_address_select(request):
 
         if len(addresses) != 0:
             form = PersonalDetailsChildcareAddressLookupForm(id=app_id, choices=addresses)
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem on this page'
+
             variables = {
                 'form': form,
                 'application_id': app_id,
@@ -615,6 +650,11 @@ def personal_details_childcare_address_select(request):
 
         else:
             form = PersonalDetailsChildcareAddressForm(id=app_id)
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem on this page'
+
             variables = {
                 'form': form,
                 'application_id': app_id,
@@ -719,6 +759,11 @@ def personal_details_childcare_address_manual(request):
         application = Application.get_id(app_id=app_id)
         form = PersonalDetailsChildcareAddressManualForm(id=app_id)
         form.check_flag()
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem on this page'
+
         variables = {
             'form': form,
             'application_id': app_id,
