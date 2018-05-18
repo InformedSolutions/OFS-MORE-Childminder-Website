@@ -174,15 +174,17 @@ def dbs_check_summary(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
+        application = Application.objects.get(pk=application_id_local)
         object_list = [[criminal_record_check]]
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            dbs_summary_dict['table_error_names'] = 'There was a problem on this page'
 
         table_list = table_creator(object_list, dbs_summary_dict['display_names'], dbs_summary_dict['data_names'],
                                    dbs_summary_dict['table_names'], dbs_summary_dict['table_error_names'],
                                    dbs_summary_dict['back_url_names'])
 
         form = DBSCheckSummaryForm()
-
-        application = Application.objects.get(pk=application_id_local)
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
