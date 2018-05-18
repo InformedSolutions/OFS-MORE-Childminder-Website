@@ -79,6 +79,11 @@ def type_of_childcare_age_groups(request):
         app_id = request.GET["id"]
         form = TypeOfChildcareAgeGroupsForm(id=app_id)
         application = Application.get_id(app_id=app_id)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem on this page'
+
         variables = {
             'form': form,
             'application_id': app_id,
@@ -181,6 +186,11 @@ def overnight_care(request):
         app_id = request.GET["id"]
         form = TypeOfChildcareOvernightCareForm(id=app_id)
         application = Application.get_id(app_id=app_id)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem on this page'
+
         variables = {
             'form': form,
             'application_id': app_id,
