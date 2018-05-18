@@ -61,18 +61,28 @@ def login_contact_logic(application_id_local, form):
     return login_and_contact_details_record
 
 
-def login_contact_logic_phone(application_id_local, form):
+def login_contact_logic_mobile_phone(application_id_local, form):
     """
-    Business logic to create or update a User_Details record with phone number details
+    Business logic to create or update a User_Details record with mobile phone number details
     :param application_id_local: A string object containing the current application ID
     :param form: A form object containing the data to be stored
     :return: a UserDetails object to be saved
     """
     this_application = UserDetails.objects.get(application_id=application_id_local)
     mobile_number = form.cleaned_data.get('mobile_number')
-    add_phone_number = form.cleaned_data.get('add_phone_number')
-    #login_and_contact_details_record = this_application.login_id
     this_application.mobile_number = mobile_number
+    return this_application
+
+
+def login_contact_logic_add_phone(application_id_local, form):
+    """
+    Business logic to create or update a User_Details record with additional phone number details
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: a UserDetails object to be saved
+    """
+    this_application = UserDetails.objects.get(application_id=application_id_local)
+    add_phone_number = form.cleaned_data.get('add_phone_number')
     this_application.add_phone_number = add_phone_number
     return this_application
 
