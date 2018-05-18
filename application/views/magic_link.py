@@ -169,16 +169,17 @@ class SMSValidationView(View):
         application = Application.objects.get(pk=id)
         acc = UserDetails.objects.get(application_id=application)
         form = VerifyPhoneForm(id=id)
-        #
-        # if request.session.get('sms_resend_attempts') is None:
-        #     request.session['sms_resend_attempts'] = 1
-        # elif request.session
+
+        # Max 3 resend attempts in 24 hours.
+        if has_expired(acc.sms_resend_attempts_expiry_date):
+            acc.sms_resend_attempts_expiry_date = 0
 
         variables = {
             'form': form,
-             'id': id,
-             'phone_number': acc.mobile_number[-3:],
-             'url': reverse('Security-Question') + '?id=' + str(application.application_id)
+            'id': id,
+            'phone_number': acc.mobile_number[-3:],
+            'url': reverse('Security-Question') + '?id=' + str(application.application_id),
+            'sms_resend_attempts': acc.sms_resend_attempts,
         }
         return render(request, template_name='verify-phone.html', context=variables)
 
@@ -205,9 +206,10 @@ class SMSValidationView(View):
 
         variables = {
             'form': form,
-             'id': id,
-             'phone_number': acc.mobile_number[-3:],
-             'url': reverse('Security-Question') + '?id=' + str(application.application_id)
+            'id': id,
+            'phone_number': acc.mobile_number[-3:],
+            'url': reverse('Security-Question') + '?id=' + str(application.application_id),
+            'sms_resend_atempts': acc.sms_resend_attempts,
         }
         return render(request, template_name='verify-phone.html', context=variables)
 
@@ -229,7 +231,12 @@ class ResendSMSCodeView(View):
         acc.sms_expiry_date = int(time.time())
         new_sms_code = generate_random(5, 'code')
         acc.magic_link_sms = new_sms_code
-        magic_link_text(mobile_number, new_sms_code).status_code
+        magic_link_text(mobile_number, new_sms_code)
+
+        # Max 3 resend attempts in 24 hours.
+        if acc.sms_resend_attempts == 0:
+            acc.sms_resend_attempts_expiry_date = int(time.time())
+
         acc.sms_resend_attempts += 1
         acc.save()
         return HttpResponseRedirect(reverse('Security-Code') + '?id=' + id)
