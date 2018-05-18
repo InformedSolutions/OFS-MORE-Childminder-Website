@@ -530,6 +530,7 @@ class SeleniumTaskExecutor:
         driver = self.get_driver()
 
         driver.find_element_by_id("id_share_info_declare").click()
+        driver.find_element_by_id("id_suitable_declare").click()
         driver.find_element_by_id("id_information_correct_declare-label").click()
         driver.find_element_by_id("id_change_declare").click()
         driver.find_element_by_xpath("//input[@value='Confirm and pay your fee']").click()

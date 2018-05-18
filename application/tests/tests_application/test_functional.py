@@ -631,12 +631,10 @@ class CreateTestNewApplicationSubmit(TestCase):
             reverse('Declaration-Declaration-View'),
             {
                 'id': self.app_id,
-                'background_check_declare': 'on',
-                'inspect_home_declare': 'on',
-                'interview_declare': 'on',
-                'change_declare': 'on',
+                'suitable_declare': 'on',
                 'share_info_declare': 'on',
                 'information_correct_declare': 'on',
+                'change_declare': 'on'
             }
         )
         self.assertEqual(r.status_code, 302)

@@ -255,7 +255,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Go back to task list
         self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='content']/a[2]").click()
 
-        self.assertEqual("Register as a childminder list",
+        self.assertEqual("Register as a childminder",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
                              "//*[@id='content']/div[2]/div/header/h1").text)
 
@@ -265,7 +265,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Go back to task list
         self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='content']/a[3]").click()
 
-        self.assertEqual("Register as a childminder list",
+        self.assertEqual("Register as a childminder",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
                              "//*[@id='content']/div[2]/div/header/h1").text)
 
@@ -465,6 +465,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_share_info_declare").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_display_contact_details_on_web").click()
+        self.selenium_task_executor.get_driver().find_element_by_id("id_suitable_declare").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_information_correct_declare").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_change_declare").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm']").click()
@@ -500,6 +501,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_share_info_declare").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_display_contact_details_on_web").click()
+        self.selenium_task_executor.get_driver().find_element_by_id("id_suitable_declare").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_information_correct_declare").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_change_declare").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm']").click()
