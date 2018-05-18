@@ -19,7 +19,7 @@
         </h1>
         <p>Please give details of the children you live with.</p>
         {% for form in form_list %}
-        <h2 class="form-title heading-medium">
+        <h2 class="form-title heading-medium" id="person{{form.prefix}}">
             Child {{form.prefix}}
         </h2>
         {{form.as_div}}

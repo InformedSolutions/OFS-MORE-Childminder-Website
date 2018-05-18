@@ -21,7 +21,7 @@
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <div class="form-group">
         {% for form in form_list %}
-        <h2 class="form-title heading-medium">
+        <h2 class="form-title heading-medium" id="person{{form.prefix}}">
             Person {{form.prefix}}
         </h2>
         {{form.as_div}}
