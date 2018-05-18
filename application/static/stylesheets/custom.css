@@ -3,6 +3,11 @@
   background-image: url("../images/icon-pointer.png");
 }
 
+.icon-important {
+  background-image: url("../images/icon-important.png") !important;
+  margin-left: 10px;
+}
+
 .button {
   margin-top: 15px;
   display: -moz-inline-stack;

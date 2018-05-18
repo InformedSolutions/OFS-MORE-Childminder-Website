@@ -312,7 +312,7 @@ class CreateTestNewApplicationSubmit(TestCase):
 
         data = {
             'id': self.app_id,
-            'location_of_care': True,
+            'childcare_location': True,
         }
 
         r = self.client.post(
