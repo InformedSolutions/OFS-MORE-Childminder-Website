@@ -107,13 +107,14 @@ def contact_summary(request):
         contact_info_table = collections.OrderedDict({
             'table_object': Table([user_details.pk]),
             'fields': contact_info_fields,
-            'title': 'Your login details',
-            'error_summary_title': 'There is something wrong with your login details'
+            'title': '',
+            'error_summary_title': 'There was a problem with this section'
         })
 
         table_list = create_tables([contact_info_table], contact_info_name_dict, contact_info_link_dict)
 
         form = ContactSummaryForm()
+
         variables = {
             'form': form,
             'application_id': app_id,

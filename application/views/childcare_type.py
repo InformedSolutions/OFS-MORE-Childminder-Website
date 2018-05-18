@@ -64,15 +64,11 @@ def type_of_childcare_guidance(request):
         return render(request, 'childcare-guidance.html', variables)
 
 
-"""
-Method returning the template for the Type of childcare: age groups page (for a given application) and navigating
-to the task list when successfully completed; business logic is applied to either create or update the
-associated Childcare_Type record
-"""
-
-
 def type_of_childcare_age_groups(request):
     """
+    Method returning the template for the Type of childcare: age groups page (for a given application) and navigating
+    to the task list when successfully completed; business logic is applied to either create or update the
+    associated Childcare_Type record
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Type of childcare: age groups template
     """
@@ -88,7 +84,6 @@ def type_of_childcare_age_groups(request):
             'application_id': app_id,
             'childcare_type_status': application.childcare_type_status,
             'login_details_status': application.login_details_status,
-
         }
 
         return render(request, 'childcare-age-groups.html', variables)
@@ -111,6 +106,11 @@ def type_of_childcare_age_groups(request):
             return HttpResponseRedirect(reverse('Type-Of-Childcare-Register-View') + '?id=' + app_id)
         else:
 
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem on this page'
+
             variables = {
                 'form': form,
                 'application_id': app_id,
@@ -119,14 +119,10 @@ def type_of_childcare_age_groups(request):
             return render(request, 'childcare-age-groups.html', variables)
 
 
-"""
-Method returning the template for the correct Type of childcare: register page (for a given application)
-and navigating to the task list when successfully confirmed
-"""
-
-
 def type_of_childcare_register(request):
     """
+    Method returning the template for the correct Type of childcare: register page (for a given application)
+    and navigating to the task list when successfully confirmed
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the correct rendered Type of childcare: register template
     """
@@ -213,6 +209,11 @@ def overnight_care(request):
 
         else:
 
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem on this page'
+
             variables = {
                 'form': form,
                 'application_id': app_id,
@@ -257,7 +258,7 @@ def childcare_type_summary(request):
         childcare_type_fields = collections.OrderedDict([
             ('childcare_age_groups', childcare_age_groups),
             ('overnight_care', childcare_record.overnight_care),
-        ] )
+        ])
 
         childcare_type_table = collections.OrderedDict({
             'table_object': Table([childcare_record.pk]),
