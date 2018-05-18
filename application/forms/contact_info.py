@@ -43,11 +43,12 @@ class ContactPhoneForm(ChildminderForms):
     GOV.UK form for the Your login and contact details: phone page
     """
     field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
-    error_summary_title ='There was a problem with your phone number'
+    error_summary_template_name = 'standard-error-summary.html'
+    error_summary_title = 'There was a problem with your phone number'
 
-    mobile_number = forms.CharField(label='Mobile phone number', required=True, error_messages={'required': "Please enter a mobile number"})
+    mobile_number = forms.CharField(label='Mobile phone number', required=True,
+                                    error_messages={'required': "Please enter a mobile number"})
     add_phone_number = forms.CharField(label='Additional phone number (optional)', required=False)
 
     def __init__(self, *args, **kwargs):
@@ -56,6 +57,7 @@ class ContactPhoneForm(ChildminderForms):
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
+
         self.application_id_local = kwargs.pop('id')
         super(ContactPhoneForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
