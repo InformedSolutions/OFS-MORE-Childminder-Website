@@ -166,13 +166,13 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestValidateEmail()
 
         self.assertEqual(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
-        self.assertEqual(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts_expiriy_date)
+        self.assertEqual(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts_expiry_date)
 
     def TestResendCodeIncrementsCount(self):
         r = self.client.post(reverse('Resend-Code') + '?id=' + str(self.app_id))
 
         self.assertEqual(1, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
-        self.assertNotEqual(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts_expiriy_date)
+        self.assertNotEqual(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts_expiry_date)
 
     def TestResendCodeRedirectsToSMSPage(self):
         r = self.client.post(reverse('Resend-Code') + '?id=' + str(self.app_id))
