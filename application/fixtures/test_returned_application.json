@@ -177,8 +177,8 @@
     "sms_expiry_date": null,
     "magic_link_email": null,
     "magic_link_sms": null,
-    "security_question": "test",
-    "security_answer": "test"
+    "sms_resend_attempts": 0,
+    "sms_resend_attempts_expiry_date": 0,
   }
 }
 ]
