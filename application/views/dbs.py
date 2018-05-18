@@ -66,6 +66,11 @@ def dbs_check_dbs_details(request):
         form = DBSCheckDBSDetailsForm(id=application_id_local)
         form.check_flag()
         application = Application.objects.get(pk=application_id_local)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem on this page'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -99,6 +104,11 @@ def dbs_check_dbs_details(request):
                     settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem with your DBS details'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem on this page'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -118,6 +128,11 @@ def dbs_check_upload_dbs(request):
         application_id_local = request.GET["id"]
         form = DBSCheckUploadDBSForm()
         application = Application.objects.get(pk=application_id_local)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem on this page'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -134,7 +149,13 @@ def dbs_check_upload_dbs(request):
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
         else:
+
             form.error_summary_title = 'There was a problem on this page'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem on this page'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -162,6 +183,11 @@ def dbs_check_summary(request):
         form = DBSCheckSummaryForm()
 
         application = Application.objects.get(pk=application_id_local)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -180,6 +206,11 @@ def dbs_check_summary(request):
         if form.is_valid():
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local
