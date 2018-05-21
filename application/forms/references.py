@@ -95,11 +95,7 @@ class FirstReferenceForm(ChildminderForms):
         """
         years_known = self.cleaned_data['time_known'][1]
         months_known = self.cleaned_data['time_known'][0]
-        if months_known != 0:
-            reference_known_time = years_known + (months_known / 12)
-        elif months_known == 0:
-            reference_known_time = years_known
-        if reference_known_time < 1:
+        if (years_known + (months_known / 12) if months_known != 0 else years_known) < 1:
             raise forms.ValidationError('You must have known the referee for at least 1 year')
         return years_known, months_known
 
@@ -397,11 +393,7 @@ class SecondReferenceForm(ChildminderForms):
         """
         years_known = self.cleaned_data['time_known'][1]
         months_known = self.cleaned_data['time_known'][0]
-        if months_known != 0:
-            reference_known_time = years_known + (months_known / 12)
-        elif months_known == 0:
-            reference_known_time = years_known
-        if reference_known_time < 1:
+        if (years_known + (months_known / 12) if months_known != 0 else years_known) < 1:
             raise forms.ValidationError('You must have known the referee for at least 1 year')
         return years_known, months_known
 
@@ -615,7 +607,7 @@ class ReferenceSecondReferenceContactForm(ChildminderForms):
         phone_number = self.cleaned_data['phone_number']
         no_space_phone_number = phone_number.replace(' ', '')
         if phone_number != '':
-            if len(no_space_phone_number) > 14:
+            if re.match("^(0\d{8,12}|447\d{7,11})$", no_space_phone_number) is None:
                 raise forms.ValidationError('Please enter a valid phone number')
         return phone_number
 

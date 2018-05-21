@@ -333,7 +333,7 @@ def declaration_declaration(request):
                         content_object=application,
                         user=None,
                         template='timeline_logger/application_action.txt',
-                        extra_data={'user_type': 'applicant', 'action': 're-submitted by', 'entity': 'application'}
+                        extra_data={'user_type': 'applicant', 'action': 'resubmitted by', 'entity': 'application'}
                     )
 
                     updated_list = generate_list_of_updated_tasks(application_id_local)
