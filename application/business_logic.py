@@ -224,7 +224,7 @@ def personal_location_of_care_logic(application_id_local, form):
     :return: an ApplicantHomeAddress object to be saved
     """
     this_application = Application.objects.get(application_id=application_id_local)
-    location_of_care = form.cleaned_data.get('location_of_care')
+    location_of_care = form.cleaned_data.get('childcare_location')
     # Retrieve the personal_details_id corresponding to the application
     personal_detail_record = ApplicantPersonalDetails.objects.get(application_id=this_application)
     personal_detail_id = personal_detail_record.personal_detail_id

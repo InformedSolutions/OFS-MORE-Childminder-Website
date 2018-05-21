@@ -182,7 +182,7 @@ class PersonalDetailsLocationOfCareForm(ChildminderForms):
         ('True', 'Yes'),
         ('False', 'No')
     )
-    location_of_care = forms.ChoiceField(label='Is this where you will be looking after the children?', choices=options,
+    childcare_location = forms.ChoiceField(label='Is this where you will be looking after the children?', choices=options,
                                          widget=InlineRadioSelect, required=True,
                                          error_messages={'required': 'Please answer yes or no'})
 
@@ -199,5 +199,8 @@ class PersonalDetailsLocationOfCareForm(ChildminderForms):
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
         if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
-            self.fields['location_of_care'].initial = ApplicantHomeAddress.objects.get(
-                personal_detail_id=personal_detail_id, current_address=True).childcare_address
+            address = ApplicantHomeAddress.objects.get(
+                personal_detail_id=personal_detail_id, current_address=True)
+            self.fields['childcare_location'].initial = address.childcare_address
+            self.field_list = ['childcare_location']
+            self.pk = address.pk
