@@ -85,6 +85,11 @@ def other_people_adult_question(request):
         form = OtherPeopleAdultQuestionForm(id=application_id_local)
         form.check_flag()
         application = Application.objects.get(pk=application_id_local)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem on this page'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -131,6 +136,11 @@ def other_people_adult_question(request):
                 return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/children-question?id=' +
                                             application_id_local)
         else:
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem on this page'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -172,7 +182,11 @@ def other_people_adult_details(request):
             form = OtherPeopleAdultDetailsForm(
                 id=application_id_local, adult=i, prefix=i)
             form.check_flag()
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = "There was a problem on this page (Person " + str(i) + ")"
             form_list.append(form)
+
         variables = {
             'form_list': form_list,
             'application_id': application_id_local,
@@ -212,6 +226,9 @@ def other_people_adult_details(request):
             form_list.append(form)
             form.error_summary_title = 'There is a problem with this form (Person ' + str(
                 i) + ')'
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = "There was a problem on this page (Person " + str(i) + ")"
             if form.is_valid():
                 adult_record = other_people_adult_details_logic(
                     application_id_local, form, i)
@@ -293,6 +310,9 @@ def other_people_adult_dbs(request):
                 name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
             form = OtherPeopleAdultDBSForm(
                 id=application_id_local, adult=i, prefix=i, name=name)
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = "There was a problem on this page (Person " + str(i) + ")"
             form_list.append(form)
         variables = {
             'form_list': form_list,
@@ -326,6 +346,9 @@ def other_people_adult_dbs(request):
             form_list.append(form)
             form.error_summary_title = 'There is a problem with this form (Person ' + str(
                 i) + ')'
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = "There was a problem on this page (Person " + str(i) + ")"
             if form.is_valid():
                 adult_record = AdultInHome.objects.get(
                     application_id=application_id_local, adult=i)
@@ -378,6 +401,9 @@ def other_people_adult_permission(request):
         for i in range(1, number_of_adults + 1):
             form = OtherPeopleAdultPermissionForm(
                 id=application_id_local, adult=i, prefix=i)
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = "There was a problem on this page (Person " + str(i) + ")"
             form_list.append(form)
         variables = {
             'form_list': form_list,
@@ -404,6 +430,9 @@ def other_people_adult_permission(request):
             form_list.append(form)
             form.error_summary_title = 'There is a problem with this form (Person ' + str(
                 i) + ')'
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = "There was a problem on this page (Person " + str(i) + ")"
             if form.is_valid():
                 adult_record = AdultInHome.objects.get(
                     application_id=application_id_local, adult=i)
@@ -455,6 +484,9 @@ def other_people_children_question(request):
         number_of_adults = AdultInHome.objects.filter(
             application_id=application_id_local).count()
         adults_in_home = application.adults_in_home
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = "There was a problem on this page"
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -499,6 +531,9 @@ def other_people_children_question(request):
                 reset_declaration(application)
                 return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/summary?id=' + application_id_local)
         else:
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = "There was a problem on this page"
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -537,6 +572,9 @@ def other_people_children_details(request):
         for i in range(1, number_of_children + 1):
             form = OtherPeopleChildrenDetailsForm(
                 id=application_id_local, child=i, prefix=i)
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = "There was a problem on this page (Child " + str(i) + ")"
             form_list.append(form)
             form.check_flag()
         variables = {
@@ -578,8 +616,10 @@ def other_people_children_details(request):
                 request.POST, id=application_id_local, child=i, prefix=i)
             form.remove_flag()
             form_list.append(form)
-            form.error_summary_title = 'There is a problem with this form (Child ' + str(
-                i) + ')'
+            form.error_summary_title = 'There is a problem with this form (Child ' + str(i) + ')'
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = "There was a problem on this page (Person " + str(i) + ")"
             if form.is_valid():
                 child_record = other_people_children_details_logic(
                     application_id_local, form, i)
@@ -769,6 +809,15 @@ def other_people_summary(request):
                 'title': name,
                 'error_summary_title': ('There is something wrong with a persons details (' + name + ')')
             })
+
+            if application.people_in_home_status == 'FURTHER_INFORMATION':
+                other_adult_table = collections.OrderedDict({
+                    'table_object': Table([adult.pk]),
+                    'fields': other_adult_fields,
+                    'title': name,
+                    'error_summary_title': 'There was a problem'
+                })
+
             adult_table_list.append(other_adult_table)
         back_link_addition = '&adults=' + str((len(adult_table_list))) + '&remove=0'
         for table in adult_table_list:
@@ -795,6 +844,14 @@ def other_people_summary(request):
                 'error_summary_title': ('There is something wrong with a persons details (' + name + ')')
             })
 
+            if application.people_in_home_status == 'FURTHER_INFORMATION':
+                other_child_table = collections.OrderedDict({
+                    'table_object': Table([child.pk]),
+                    'fields': other_child_fields,
+                    'title': name,
+                    'error_summary_title': 'There was a problem'
+                })
+
             child_table_list.append(other_child_table)
         back_link_addition = '&children=' + str(len(child_table_list)) + '&remove=0'
         for table in child_table_list:
@@ -818,6 +875,14 @@ def other_people_summary(request):
             'error_summary_title': 'There is a problem with the adults in your home'
         })
 
+        if application.people_in_home_status == 'FURTHER_INFORMATION':
+            adult_table = collections.OrderedDict({
+                'table_object': Table([application_id_local]),
+                'fields': {'adults_in_home': adults_in_home},
+                'title': 'Adults in your home',
+                'error_summary_title': 'There was a problem'
+            })
+
         child_table = collections.OrderedDict({
             'table_object': Table([application_id_local]),
             'fields': {'children_in_home': children_in_home},
@@ -825,10 +890,22 @@ def other_people_summary(request):
             'error_summary_title': 'There is a problem with the children in your home'
         })
 
+        if application.people_in_home_status == 'FURTHER_INFORMATION':
+            child_table = collections.OrderedDict({
+                'table_object': Table([application_id_local]),
+                'fields': {'children_in_home': children_in_home},
+                'title': 'Children in your home',
+                'error_summary_title': 'There was a problem'
+            })
+
         adult_table = create_tables([adult_table], other_adult_summary_name_dict, other_adult_summary_link_dict)
         child_table = create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
 
         table_list = adult_table + child_table + adult_table_list + child_table_list
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = "There was a problem"
 
         variables = {
             'page_title': 'Check your answers: people in your home',
@@ -845,12 +922,16 @@ def other_people_summary(request):
         return render(request, 'generic-summary-template.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
+        application = Application.objects.get(pk=application_id_local)
         form = OtherPeopleSummaryForm()
         if form.is_valid():
             status.update(application_id_local,
                           'people_in_home_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = "There was a problem"
             variables = {
                 'form': form,
                 'application_id': application_id_local
