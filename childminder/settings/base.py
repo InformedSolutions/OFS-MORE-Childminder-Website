@@ -172,3 +172,21 @@ SETTINGS_EXPORT = [
     'DEBUG'
 ]
 
+# Regex Validation Strings
+REGEX = {
+    "EMAIL": "^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$",
+    "MOBILE": "^(07\d{8,12}|447\d{7,11})$",
+    "PHONE": "^(0\d{8,12}|447\d{7,11})$",
+    "POSTCODE_UPPERCASE": "^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$",
+    "LAST_NAME": "^[A-zÀ-ÿ- ']+$",
+    "MIDDLE_NAME": "^[A-zÀ-ÿ- ']+$",
+    "FIRST_NAME": "^[A-zÀ-ÿ- ']+$",
+    "TOWN": "^[A-Za-z- ]+$",
+    "COUNTY": "^[A-Za-z- ]+$",
+    "COUNTRY": "^[A-Za-z- ]+$",
+    "VISA": "^4[0-9]{12}(?:[0-9]{3})?$",
+    "MASTERCARD": "^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$",
+    "AMERICAN_EXPRESS": "^3[47][0-9]{13}$",
+    "MAESTRO": "^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$",
+    "CARD_SECURITY_NUMBER": "^[0-9]{3,4}$"
+}

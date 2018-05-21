@@ -2,6 +2,7 @@ import re
 from datetime import date
 
 from django import forms
+from django.conf import settings
 from govuk_forms.widgets import InlineRadioSelect, NumberInput
 
 from application.customfields import CustomSplitDateFieldDOB
@@ -101,7 +102,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         :return: string
         """
         first_name = self.cleaned_data['first_name']
-        if re.match("^[A-zÀ-ÿ- ']+$", first_name) is None:
+        if re.match(settings.REGEX['FIRST_NAME'], first_name) is None:
             raise forms.ValidationError('First name can only have letters')
         if len(first_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less')
@@ -114,7 +115,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         """
         middle_names = self.cleaned_data['middle_names']
         if middle_names != '':
-            if re.match("^[A-zÀ-ÿ- ']+$", middle_names) is None:
+            if re.match(settings.REGEX['MIDDLE_NAME'], middle_names) is None:
                 raise forms.ValidationError('Middle names can only have letters')
             if len(middle_names) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less')
@@ -126,7 +127,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         :return: string
         """
         last_name = self.cleaned_data['last_name']
-        if re.match("^[A-zÀ-ÿ- ']+$", last_name) is None:
+        if re.match(settings.REGEX['LAST_NAME'], last_name) is None:
             raise forms.ValidationError('Last name can only have letters')
         if len(last_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less')
@@ -311,7 +312,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
         :return: string
         """
         first_name = self.cleaned_data['first_name']
-        if re.match("^[A-zÀ-ÿ- ']+$", first_name) is None:
+        if re.match(settings.REGEX['FIRST_NAME'], first_name) is None:
             raise forms.ValidationError('First name can only have letters')
         if len(first_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less')
@@ -324,7 +325,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
         """
         middle_names = self.cleaned_data['middle_names']
         if middle_names != '':
-            if re.match("^[A-zÀ-ÿ- ']+$", middle_names) is None:
+            if re.match(settings.REGEX['MIDDLE_NAME'], middle_names) is None:
                 raise forms.ValidationError('Middle names can only have letters')
             if len(middle_names) > 100:
                 raise forms.ValidationError('Please enter 100 characters or less')
@@ -336,7 +337,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
         :return: string
         """
         last_name = self.cleaned_data['last_name']
-        if re.match("^[A-zÀ-ÿ- ']+$", last_name) is None:
+        if re.match(settings.REGEX['LAST_NAME'], last_name) is None:
             raise forms.ValidationError('Last name can only have letters')
         if len(last_name) > 100:
             raise forms.ValidationError('Please enter 100 characters or less')

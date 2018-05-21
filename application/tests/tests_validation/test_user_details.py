@@ -6,19 +6,20 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 import re
 
+from django.conf import settings
 from django.test import TestCase
 
 
 def testing_email(test_email):
-    return re.match("^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email)
+    return re.match(settings.REGEX['EMAIL'], test_email)
 
 
 def testing_mobile_number(test_mobile_number):
-    return re.match("^(07\d{8,12}|447\d{7,11})$", test_mobile_number)
+    return re.match(settings.REGEX['MOBILE'], test_mobile_number)
 
 
 def testing_phone_number(test_phone_number):
-    return re.match("^(0\d{8,12}|447\d{7,11})$", test_phone_number)
+    return re.match(settings.REGEX['PHONE'], test_phone_number)
 
 
 def testing_number_length(test_phone_number):

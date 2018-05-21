@@ -1,6 +1,7 @@
 import re
 
 from django import forms
+from django.conf import settings
 
 from application.customfields import TimeKnownField
 from application.forms.childminder import ChildminderForms
@@ -60,7 +61,7 @@ class FirstReferenceForm(ChildminderForms):
         :return: string
         """
         first_name = self.cleaned_data['first_name']
-        if re.match("^[A-zÀ-ÿ- ']+$", first_name) is None:
+        if re.match(settings.REGEX['FIRST_NAME'], first_name) is None:
             raise forms.ValidationError('First name can only have letters')
         if len(first_name) > 100:
             raise forms.ValidationError("Referee's first name must be under 100 characters long")
@@ -72,7 +73,7 @@ class FirstReferenceForm(ChildminderForms):
         :return: string
         """
         last_name = self.cleaned_data['last_name']
-        if re.match("^[A-zÀ-ÿ- ']+$", last_name) is None:
+        if re.match(settings.REGEX['LAST_NAME'], last_name) is None:
             raise forms.ValidationError('Last name can only have letters')
         if len(last_name) > 100:
             raise forms.ValidationError("Referee's last name must be under 100 characters long")
@@ -132,7 +133,7 @@ class ReferenceFirstReferenceAddressForm(ChildminderForms):
         postcode = self.cleaned_data['postcode']
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
-        if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
+        if re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None:
             raise forms.ValidationError('Enter a valid UK postcode or enter the address manually')
         return postcode
 
@@ -202,7 +203,7 @@ class ReferenceFirstReferenceAddressManualForm(ChildminderForms):
         :return: string
         """
         town = self.cleaned_data['town']
-        if re.match("^[A-Za-z- ]+$", town) is None:
+        if re.match(settings.REGEX['TOWN'], town) is None:
             raise forms.ValidationError('Please spell out the name of the town or city using letters')
         if len(town) > 50:
             raise forms.ValidationError('The name of the town or city must be under 50 characters long')
@@ -215,7 +216,7 @@ class ReferenceFirstReferenceAddressManualForm(ChildminderForms):
         """
         county = self.cleaned_data['county']
         if county != '':
-            if re.match("^[A-Za-z- ]+$", county) is None:
+            if re.match(settings.REGEX['COUNTY'], county) is None:
                 raise forms.ValidationError('Please spell out the name of the county using letters')
             if len(county) > 50:
                 raise forms.ValidationError('The name of the county must be under 50 characters long')
@@ -229,7 +230,7 @@ class ReferenceFirstReferenceAddressManualForm(ChildminderForms):
         postcode = self.cleaned_data['postcode']
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
-        if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
+        if re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None:
             raise forms.ValidationError('Please enter a valid postcode')
         return postcode
 
@@ -240,7 +241,7 @@ class ReferenceFirstReferenceAddressManualForm(ChildminderForms):
         """
         country = self.cleaned_data['country']
         if country != '':
-            if re.match("^[A-Za-z- ]+$", country) is None:
+            if re.match(settings.REGEX['COUNTRY'],country) is None:
                 raise forms.ValidationError('Please spell out the name of the country using letters')
             if len(country) > 50:
                 raise forms.ValidationError('The name of the country must be under 50 characters long')
@@ -308,7 +309,7 @@ class ReferenceFirstReferenceContactForm(ChildminderForms):
         phone_number = self.cleaned_data['phone_number']
         no_space_phone_number = phone_number.replace(' ', '')
         if phone_number != '':
-            if re.match("^(0\d{8,12}|447\d{7,11})$", no_space_phone_number) is None:
+            if re.match(settings.REGEX['PHONE'], no_space_phone_number) is None:
                 raise forms.ValidationError('Please enter a valid phone number')
         return phone_number
 
@@ -318,7 +319,7 @@ class ReferenceFirstReferenceContactForm(ChildminderForms):
         :return: string
         """
         email_address = self.cleaned_data['email_address']
-        if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
+        if re.match(settings.REGEX['EMAIL'], email_address) is None:
             raise forms.ValidationError('Please enter a valid email address')
         if len(email_address) > 100:
             raise forms.ValidationError('Please enter 100 characters or less')
@@ -368,7 +369,7 @@ class SecondReferenceForm(ChildminderForms):
         :return: string
         """
         first_name = self.cleaned_data['first_name']
-        if re.match("^[A-zÀ-ÿ- ']+$", first_name) is None:
+        if re.match(settings.REGEX['FIRST_NAME'], first_name) is None:
             raise forms.ValidationError('First name can only have letters')
         if len(first_name) > 100:
             raise forms.ValidationError("Referee's first name must be under 100 characters long")
@@ -380,7 +381,7 @@ class SecondReferenceForm(ChildminderForms):
         :return: string
         """
         last_name = self.cleaned_data['last_name']
-        if re.match("^[A-zÀ-ÿ- ']+$", last_name) is None:
+        if re.match(settings.REGEX['LAST_NAME'], last_name) is None:
             raise forms.ValidationError('Last name can only have letters')
         if len(last_name) > 100:
             raise forms.ValidationError("Referee's last name must be under 100 characters long")
@@ -430,7 +431,7 @@ class ReferenceSecondReferenceAddressForm(ChildminderForms):
         postcode = self.cleaned_data['postcode']
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
-        if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
+        if re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None:
             raise forms.ValidationError('Enter a valid UK postcode or enter the address manually')
         return postcode
 
@@ -500,7 +501,7 @@ class ReferenceSecondReferenceAddressManualForm(ChildminderForms):
         :return: string
         """
         town = self.cleaned_data['town']
-        if re.match("^[A-Za-z- ]+$", town) is None:
+        if re.match(settings.REGEX['TOWN'], town) is None:
             raise forms.ValidationError('Please spell out the name of the town or city using letters')
         if len(town) > 50:
             raise forms.ValidationError('The name of the town or city must be under 50 characters long')
@@ -513,7 +514,7 @@ class ReferenceSecondReferenceAddressManualForm(ChildminderForms):
         """
         county = self.cleaned_data['county']
         if county != '':
-            if re.match("^[A-Za-z- ]+$", county) is None:
+            if re.match(settings.REGEX['COUNTY'], county) is None:
                 raise forms.ValidationError('Please spell out the name of the county using letters')
             if len(county) > 50:
                 raise forms.ValidationError('The name of the county must be under 50 characters long')
@@ -527,7 +528,7 @@ class ReferenceSecondReferenceAddressManualForm(ChildminderForms):
         postcode = self.cleaned_data['postcode']
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
-        if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
+        if re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None:
             raise forms.ValidationError('Please enter a valid postcode')
         return postcode
 
@@ -538,7 +539,7 @@ class ReferenceSecondReferenceAddressManualForm(ChildminderForms):
         """
         country = self.cleaned_data['country']
         if country != '':
-            if re.match("^[A-Za-z- ]+$", country) is None:
+            if re.match(settings.REGEX['COUNTRY'],country) is None:
                 raise forms.ValidationError('Please spell out the name of the country using letters')
             if len(country) > 50:
                 raise forms.ValidationError('The name of the country must be under 50 characters long')
@@ -617,7 +618,7 @@ class ReferenceSecondReferenceContactForm(ChildminderForms):
         :return: string
         """
         email_address = self.cleaned_data['email_address']
-        if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
+        if re.match(settings.REGEX['EMAIL'], email_address) is None:
             raise forms.ValidationError('Please enter a valid email address')
         if len(email_address) > 100:
             raise forms.ValidationError('Please enter 100 characters or less')
