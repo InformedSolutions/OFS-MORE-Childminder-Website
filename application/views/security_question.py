@@ -185,7 +185,7 @@ def get_security_question(app_id):
     question = ''
     if app.criminal_record_check_status == 'COMPLETED':
         question = 'dbs'
-    elif app.people_in_home_status == 'COMPLETED':
+    elif app.people_in_home_status == 'COMPLETED' or app.people_in_home_status == 'WAITING':
         question = 'oldest'
     elif app.personal_details_status == 'COMPLETED':
         question = 'postcode'

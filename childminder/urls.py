@@ -12,7 +12,8 @@ from django.views.generic import TemplateView
 
 from application import views, utils
 from application.views import security_question, magic_link
-
+from application.views.other_people_health_check import health_check_login, dob_auth, current_treatment, guidance, \
+    declaration, serious_illness, hospital_admission, summary, thank_you
 
 urlpatterns = [
     url(r'^$', views.start_page, name='start-page.html'),
@@ -83,16 +84,37 @@ urlpatterns = [
     url(r'^references/check-answers/', views.references_summary, name='References-Summary-View'),
     url(r'^other-people/guidance/', views.other_people_guidance, name='Other-People-Guidance-View'),
     url(r'^other-people/adult-question/', views.other_people_adult_question, name='Other-People-Adult-Question-View'),
-    url(r'^other-people/adult-details/', views.other_people_adult_details, name='Other-People-Adult-Details-View'),
+    url(r'^people/adults-details/', views.other_people_adult_details, name='Other-People-Adult-Details-View'),
     url(r'^other-people/adult-dbs/', views.other_people_adult_dbs, name='Other-People-Adult-DBS-View'),
-    url(r'^other-people/adult-permission/', views.other_people_adult_permission,
-        name='Other-People-Adult-Permission-View'),
     url(r'^other-people/children-question/', views.other_people_children_question,
         name='Other-People-Children-Question-View'),
     url(r'^other-people/children-details/', views.other_people_children_details,
         name='Other-People-Children-Details-View'),
     url(r'^other-people/approaching-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
     url(r'^other-people/summary/', views.other_people_summary, name='Other-People-Summary-View'),
+
+    url(r'^health-check/(?P<id>[\w-]+)/$', health_check_login.validate_magic_link, name='Health-Check-Authentication'),
+    url(r'^health-check/birth-date', dob_auth.DobAuthView.as_view(), name='Health-Check-Dob'),
+    url(r'^health-check/adults', guidance.Guidance.as_view(), name='Health-Check-Guidance'),
+    url(r'^health-check/current-treatment', current_treatment.CurrentTreatment.as_view(), name='Health-Check-Current'),
+    url(r'^health-check/serious-illness$', serious_illness.SeriousIllnessStartView.as_view(),
+        name='Health-Check-Serious-Start'),
+    url(r'^health-check/more-serious-illness', serious_illness.MoreSeriousIllnessesView.as_view(),
+        name='Health-Check-Serious-More'),
+    url(r'^health-check/serious-illness/edit', serious_illness.SeriousIllnessEditView.as_view(),  name='Health-Check-Serious-Edit'),
+    url(r'^health-check/serious-illness-details$', serious_illness.SeriousIllnessView.as_view(), name='Health-Check-Serious'),
+    url(r'^health-check/hospital/start', hospital_admission.HospitalAdmissionStartView.as_view(), name='Health-Check-Hospital-Start'),
+    url(r'^health-check/more-hospital', hospital_admission.MoreHospitalAdmissionsView.as_view(), name='Health-Check-Hospital-More'),
+    url(r'^health-check/hospital/edit', hospital_admission.HospitalAdmissionEditView.as_view(),  name='Health-Check-Hospital-Edit'),
+    url(r'^health-check/hospital-details', hospital_admission.HospitalAdmissionView.as_view(), name='Health-Check-Hospital'),
+
+    url(r'^health-check/check-answers', summary.Summary.as_view(), name='Health-Check-Summary'),
+    url(r'^health-check/declaration', declaration.Declaration.as_view(), name='Health-Check-Declaration'),
+    url(r'^health-check/thank-you', thank_you.ThankYou.as_view(), name='Health-Check-Thank-You'),
+    url(r'^people/check-answers/', views.other_people_summary, name='Other-People-Summary-View'),
+    url(r'^people/contacted/', views.other_people_email_confirmation, name='Other-People-Email-Confirmation-View'),
+    url(r'^people/resend-email/', views.other_people_resend_email, name='Other-People-Resend-Email-View'),
+    url(r'^people/email-resent/', views.other_people_resend_confirmation, name='Other-People-Resend-Confirmation-View'),
     url(r'^declaration/', views.declaration_intro, name='Declaration-Intro-View'),
     url(r'^your-declaration/', views.declaration_declaration, name='Declaration-Declaration-View'),
     url(r'^check-answers/', views.declaration_summary, name='Declaration-Summary-View'),

@@ -117,7 +117,7 @@ def payment_email(email, name):
             "firstName": name
         },
         "reference": "string",
-        "templateId": "9c677777-95e0-424a-aaca-f9a4eec3c6b2"
+        "templateId": "a741fed2-7948-4b1a-b44a-fec8485ec700"
     }
     response = requests.post(base_url + "/api/v1/notifications/email/", json.dumps(payload),
                              headers=header)

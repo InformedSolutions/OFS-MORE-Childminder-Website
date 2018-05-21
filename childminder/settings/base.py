@@ -144,6 +144,7 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/help-advice/',
     r'^' + URL_PREFIX + '/costs/',
     r'^' + URL_PREFIX + '/application-saved/$',
+    r'^' + URL_PREFIX + '/health-check/(?P<id>[\w-]+)/$'
 )
 
 STATICFILES_FINDERS = [
