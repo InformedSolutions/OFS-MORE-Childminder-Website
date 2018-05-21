@@ -101,7 +101,7 @@ urlpatterns = [
     url(r'^paypal-payment-completion/', views.paypal_payment_completion, name='Paypal-Payment-Completion-View'),
     url(r'^application-saved/', views.application_saved, name='Application-Saved-View'),
     url(r'^validate/(?P<id>[\w-]+)/$', magic_link.validate_magic_link, name='Validate-Email'),
-    url(r'^security-code/', magic_link.sms_verification, name='Security-Code'),
+    url(r'^security-code/', magic_link.SMSValidationView.as_view(), name='Security-Code'),
     url(r'^email-sent/', TemplateView.as_view(template_name='email-sent.html'), name='Email-Sent-Template'),
     url(r'^start/', views.start_page, name='Start-Page-View'),
     url(r'^confirmation/', views.payment_confirmation, name='Payment-Confirmation'),
@@ -131,7 +131,7 @@ urlpatterns = [
     url(r'^sign-in/new-application/$', views.login.account_selection, name='Account-Selection'),
     url(r'^service-unavailable/$', utils.service_down, name='Service-Down'),
     url(r'^email-resent/$', views.login.login_email_link_resent, name='Email-Resent'),
-    url(r'^code-resent/$', magic_link.resend_code, name='Resend-Code'),
+    url(r'^new-code/$', magic_link.ResendSMSCodeView.as_view(), name='Resend-Code'),
     url(r'^help-advice/$', views.help_and_advice, name='Help-And-Advice-View'),
 ]
 

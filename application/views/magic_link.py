@@ -16,6 +16,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.views import View
 
 from application import login_redirect_helper
 from application.middleware import CustomAuthenticationHandler
@@ -162,76 +163,81 @@ def validate_magic_link(request, id):
         return HttpResponseRedirect(settings.URL_PREFIX + '/link-used/')
 
 
-def sms_verification(request):
-    """
-    Method to display the SMS code verification page
-    :param request: request to display the SMS verification page
-    :return: HttpResponse displaying the SMS verification page
-    """
-    id = request.GET['id']
-    app = Application.objects.get(pk=id)
-    acc = UserDetails.objects.get(application_id=app)
+class SMSValidationView(View):
+    def get(self, request):
+        id = request.GET['id']
+        application = Application.objects.get(pk=id)
+        acc = UserDetails.objects.get(application_id=application)
+        form = VerifyPhoneForm(id=id)
 
-    form = VerifyPhoneForm(id=id)
-    app = acc.application_id
-    application = Application.objects.get(application_id=app.pk)
-    if request.method == 'POST':
+        # Max 3 resend attempts in 24 hours.
+        if has_expired(acc.sms_resend_attempts_expiry_date):
+            acc.sms_resend_attempts_expiry_date = 0
+
+        variables = {
+            'form': form,
+            'id': id,
+            'phone_number': acc.mobile_number[-3:],
+            'url': reverse('Security-Question') + '?id=' + str(application.application_id),
+            'sms_resend_attempts': acc.sms_resend_attempts,
+        }
+        return render(request, template_name='verify-phone.html', context=variables)
+
+    def post(self, request):
+        id = request.GET['id']
+        application = Application.objects.get(pk=id)
+        acc = UserDetails.objects.get(application_id=application)
         code = request.POST['magic_link_sms']
         form = VerifyPhoneForm(request.POST, id=id, correct_sms_code=acc.magic_link_sms)
         if len(code) > 0:
             exp = acc.sms_expiry_date
+
             if form.is_valid() and not has_expired(exp):
-                response = login_redirect_helper.redirect_by_status(app)
+                response = login_redirect_helper.redirect_by_status(application)
 
                 # Create session issue custom cookie to user
                 CustomAuthenticationHandler.create_session(response, acc.email)
 
+                acc.sms_resend_attempts = 0
+                acc.save()
+
                 # Forward back onto application
                 return response
-    variables = {'form': form, 'id': id,
-                 'phone_number': acc.mobile_number[-3:],
-                 'url': reverse('Security-Question') + '?id=' + str(
-                     application.application_id)}
-    return render(request, 'verify-phone.html', variables)
+
+        variables = {
+            'form': form,
+            'id': id,
+            'phone_number': acc.mobile_number[-3:],
+            'url': reverse('Security-Question') + '?id=' + str(application.application_id),
+            'sms_resend_atempts': acc.sms_resend_attempts,
+        }
+        return render(request, template_name='verify-phone.html', context=variables)
 
 
-def resend_code(request):
-    """
-    Method to display the SMS code verification page
-    :param request: request to display the SMS verification page
-    :return: HttpResponse displaying the SMS verification page
-    """
-    id = request.GET['id']
-    app = Application.objects.get(pk=id)
-    acc = UserDetails.objects.get(application_id=app)
-    if 'f' in request.GET.keys():
-        phone = acc.mobile_number
-        g = generate_random(5, 'code')
-        expiry = int(time.time())
-        acc.magic_link_sms = g
-        acc.sms_expiry_date = expiry
+class ResendSMSCodeView(View):
+    def get(self, request):
+        id = request.GET['id']
+        acc = UserDetails.objects.get(application_id=id)
+
+        if acc.sms_resend_attempts >= 3:
+            return HttpResponseRedirect(reverse('Security-Question') + '?id=' + id)
+        else:
+            return render(request, 'resend-security-code.html', context={'id': id})
+
+    def post(self, request):
+        id = request.GET['id']
+        acc = UserDetails.objects.get(application_id=id)
+        mobile_number = acc.mobile_number
+        acc.sms_expiry_date = int(time.time())
+        new_sms_code = generate_random(5, 'code')
+        acc.magic_link_sms = new_sms_code
+        magic_link_text(mobile_number, new_sms_code)
+
+        # Max 3 resend attempts in 24 hours.
+        if acc.sms_resend_attempts == 0:
+            acc.sms_resend_attempts_expiry_date = int(time.time())
+
+        acc.sms_resend_attempts += 1
         acc.save()
-        magic_link_text(phone, g).status_code
-        return HttpResponseRedirect(reverse('Resend-Code') + '?id=' + id)
-    form = VerifyPhoneForm(id=id)
-    app = acc.application_id
-    application = Application.objects.get(application_id=app.pk)
-    if request.method == 'POST':
-        code = request.POST['magic_link_sms']
-        form = VerifyPhoneForm(request.POST, id=id, correct_sms_code=acc.magic_link_sms)
-        if len(code) > 0:
-            exp = acc.sms_expiry_date
-            if form.is_valid() and not has_expired(exp):
-                response = login_redirect_helper.redirect_by_status(app)
-
-                # Create session issue custom cookie to user
-                CustomAuthenticationHandler.create_session(response, acc.email)
-
-                # Forward back onto application
-                return response
-    variables = {'form': form, 'id': id,
-                 'phone_number': acc.mobile_number[-3:],
-                 'url': reverse('Security-Question') + '?id=' + str(
-                     application.application_id)}
-    return render(request, 'resend-security-code.html', variables)
+        return HttpResponseRedirect(reverse('Security-Code') + '?id=' + id)
 

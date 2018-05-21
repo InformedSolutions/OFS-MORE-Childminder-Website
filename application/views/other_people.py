@@ -254,7 +254,7 @@ def other_people_adult_details(request):
                 add_adult_string = str(add_adult)
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/other-people/adult-details?id=' +
-                    application_id_local + '&adults=' + add_adult_string + '&remove=0',
+                    application_id_local + '&adults=' + add_adult_string + '&remove=0#person' + add_adult_string,
                     variables)
             # If there is an invalid form
             elif False in valid_list:
@@ -657,7 +657,7 @@ def other_people_children_details(request):
                 add_child_string = str(add_child)
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/other-people/children-details?id=' +
-                    application_id_local + '&children=' + add_child_string + '&remove=0',
+                    application_id_local + '&children=' + add_child_string + '&remove=0#person' + add_child_string,
                     variables)
             # If there is an invalid form
             elif False in valid_list:
