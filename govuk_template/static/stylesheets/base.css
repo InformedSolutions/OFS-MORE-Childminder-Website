@@ -1690,7 +1690,6 @@ input[type=number] {
     .task-completed {
       font-size: 16px;
       line-height: 1.25; } }
-
 @-moz-document regexp('.*') {
   details summary:not([tabindex]) {
     display: list-item;

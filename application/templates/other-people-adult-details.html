@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}People in your home{% endblock %}
+{% block page_title %}Details of adults in your home{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -27,7 +27,7 @@
         {{form.as_div}}
         {% if remove_button is True %}
             <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{remove_adult}}&remove={{form.prefix}}"
-               style="margin-left: 0px;"><b>Remove person</b>
+               style="margin-left: 0px;"><b>Remove this person</b>
             </a>
         {% endif %}
         {% endfor %}
@@ -40,7 +40,7 @@
         <input type="submit" class="button-secondary button-add-another" name="add_person" value="Add another person">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
-        <input type="submit" class="button" name="submit" value="Save and continue">
+        <input type="submit" class="button" name="submit" value="Save and continue" id="adult-details-save">
     </div>
 </form>
 

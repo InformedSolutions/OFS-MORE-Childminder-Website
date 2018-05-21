@@ -1,7 +1,6 @@
 """
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- middleware.py --
-
 @author: Informed Solutions
 """
 
@@ -145,7 +144,7 @@ def globalise_authentication_flag(request):
     Middleware function to expose a flag to all templates to determine whether a user is authenticated.
     """
     user_is_authenticated = CustomAuthenticationHandler.get_session_user(request) is not None
-    return   {'AUTHENTICATED': user_is_authenticated}
+    return {'AUTHENTICATED': user_is_authenticated}
 
 
 def register_as_childminder_link_location(request):
@@ -161,4 +160,3 @@ def register_as_childminder_link_location(request):
             return {'task_list_link': True}
 
     return {'task_list_link': False}
-

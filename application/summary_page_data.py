@@ -74,18 +74,21 @@ health_name_dict = collections.OrderedDict(
 health_link_dict = collections.OrderedDict([('health_submission_consent', 'Health-Booklet-View')])
 
 ###
+other_adult_name_dict = collections.OrderedDict([('health_check_status', 'Health check status'),
+                                                 ('full_name', 'Name'),
+                                                ('date_of_birth', 'Date of birth'),
+                                                ('relationship', 'Relationship'),
+                                                ('email', 'Email address'),
+                                                ('dbs_certificate_number', 'DBS certificate number'),
+                                                ('permission', 'Permission for checks')])
 
-other_adult_name_dict = collections.OrderedDict([('full_name', 'Name'),
-                                                 ('date_of_birth', 'Date of birth'),
-                                                 ('relationship', 'Relationship'),
-                                                 ('dbs_certificate_number', 'DBS certificate number'),
-                                                 ('permission', 'Permission for checks')])
-
-other_adult_link_dict = collections.OrderedDict([('full_name', 'Other-People-Adult-Details-View'),
-                                                 ('date_of_birth', 'Other-People-Adult-Details-View'),
-                                                 ('relationship', 'Other-People-Adult-Details-View'),
-                                                 ('dbs_certificate_number', 'Other-People-Adult-DBS-View'),
-                                                 ('permission', 'Other-People-Adult-Permission-View')])
+other_adult_link_dict = collections.OrderedDict([('health_check_status', 'Other-People-Resend-Email-View'),
+                                                ('full_name', 'Other-People-Adult-Details-View'),
+                                                ('date_of_birth', 'Other-People-Adult-Details-View'),
+                                                ('relationship', 'Other-People-Adult-Details-View'),
+                                                ('email', 'Other-People-Adult-Details-View'),
+                                                ('dbs_certificate_number', 'Other-People-Adult-DBS-View'),
+                                                ('permission', 'Other-People-Adult-Permission-View')])
 
 ###
 
