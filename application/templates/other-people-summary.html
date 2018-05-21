@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}People in your home{% endblock %}
+{% block page_title %}Check your answers: people in your home{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -81,7 +81,7 @@
         </tr>
         </tbody>
     </table>
-    {% for name, day, month, year, relationship, dbs_certificate_number, permission in adult_lists %}
+    {% for name, day, month, year, relationship, dbs_certificate_number in adult_lists %}
     <table class="check-your-answers">
         <colgroup>
             <col class="summary-column">
@@ -106,7 +106,7 @@
                 {{name}}
             </td>
             <td class="change-answer">
-                <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0" alt='Change adult name'>
+                <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0" alt='Change name'>
                     Change <span class="visuallyhidden">adult name</span>
                 </a>
             </td>
@@ -165,7 +165,7 @@
             </td>
             {% endif %}
             <td class="change-answer">
-                <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0" alt='Change adult date of birth'>
+                <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0" alt='Change date of birth'>
                     Change <span class="visuallyhidden">date of birth</span>
                 </a>
             </td>
@@ -178,7 +178,7 @@
                 {{relationship}}
             </td>
             <td class="change-answer">
-                <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0" alt='Change adult relationship'>
+                <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0" alt='Change relationship'>
                     Change <span class="visuallyhidden">adult relationship</span>
                 </a>
             </td>

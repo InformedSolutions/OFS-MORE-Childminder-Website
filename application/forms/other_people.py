@@ -62,12 +62,19 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
     auto_replace_widgets = True
     error_summary_title = 'There was a problem with the details'
 
-    first_name = forms.CharField(label='First name', required=True)
+    first_name = forms.CharField(label='First name', required=True,
+                                 error_messages={'required': "Please enter their first name"})
     middle_names = forms.CharField(label='Middle names (if you have any on your DBS check)', required=False)
-    last_name = forms.CharField(label='Last name', required=True)
-    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980')
+    last_name = forms.CharField(label='Last name', required=True,
+                                error_messages={'required': "Please enter their last name"})
+    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980', error_messages={
+        'required': "Please enter the full date, including the day, month and year"})
     relationship = forms.CharField(label='How are they related to you?', help_text='For instance, husband or daughter',
-                                   required=True)
+                                   required=True,
+                                   error_messages={'required': "Please say how the person is related to you"})
+    email_address = forms.CharField(label='Email address',
+                                    help_text='They need to answer simple questions about their health.', required=True,
+                                    error_messages={'required': "Please enter an  email address"})
 
     def __init__(self, *args, **kwargs):
         """
@@ -92,8 +99,10 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
             self.fields['last_name'].initial = adult_record.last_name
             self.fields['date_of_birth'].initial = [birth_day, birth_month, birth_year]
             self.fields['relationship'].initial = adult_record.relationship
+            self.fields['email_address'].initial = adult_record.email
             self.pk = adult_record.adult_id
-            self.field_list = ['first_name', 'middle_names', 'last_name', 'date_of_birth', 'relationship']
+            self.field_list = ['first_name', 'middle_names', 'last_name', 'date_of_birth', 'relationship',
+                               'email_address']
 
     def clean_first_name(self):
         """
@@ -101,10 +110,8 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         :return: string
         """
         first_name = self.cleaned_data['first_name']
-        if re.match("^[A-zÀ-ÿ- ']+$", first_name) is None:
-            raise forms.ValidationError('First name can only have letters')
         if len(first_name) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less')
+            raise forms.ValidationError('First name must be under 100 characters long')
         return first_name
 
     def clean_middle_names(self):
@@ -114,10 +121,8 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         """
         middle_names = self.cleaned_data['middle_names']
         if middle_names != '':
-            if re.match("^[A-zÀ-ÿ- ']+$", middle_names) is None:
-                raise forms.ValidationError('Middle names can only have letters')
             if len(middle_names) > 100:
-                raise forms.ValidationError('Please enter 100 characters or less')
+                raise forms.ValidationError('Middle names must be under 100 characters long')
         return middle_names
 
     def clean_last_name(self):
@@ -126,10 +131,8 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         :return: string
         """
         last_name = self.cleaned_data['last_name']
-        if re.match("^[A-zÀ-ÿ- ']+$", last_name) is None:
-            raise forms.ValidationError('Last name can only have letters')
         if len(last_name) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less')
+            raise forms.ValidationError('Last name must be under 100 characters long')
         return last_name
 
     def clean_date_of_birth(self):
@@ -149,6 +152,17 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
             raise forms.ValidationError('Please enter the whole year (4 digits)')
         return birth_day, birth_month, birth_year
 
+    def clean_email_address(self):
+        """
+        Email address validation
+        :return: string
+        """
+        email_address = self.cleaned_data['email_address']
+        # RegEx for valid e-mail addresses
+        if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
+            raise forms.ValidationError('Please enter a valid email address')
+        return email_address
+
 
 class OtherPeopleAdultDBSForm(ChildminderForms):
     """
@@ -157,7 +171,7 @@ class OtherPeopleAdultDBSForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
-    error_summary_title ='There was a problem with your DBS details'
+    error_summary_title = 'There was a problem with your DBS details'
 
     widget_instance = NumberInput()
     widget_instance.input_classes = 'form-control form-control-1-4'
@@ -205,31 +219,6 @@ class OtherPeopleAdultPermissionForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
-
-    permission_declare = forms.BooleanField(required=True)
-
-    def __init__(self, *args, **kwargs):
-        """
-        Method to configure the initialisation of the People in your home: adult permission form
-        :param args: arguments passed to the form
-        :param kwargs: keyword arguments passed to the form, e.g. application ID
-        """
-        self.application_id_local = kwargs.pop('id')
-        self.adult = kwargs.pop('adult')
-        super(OtherPeopleAdultPermissionForm, self).__init__(*args, **kwargs)
-        full_stop_stripper(self)
-        adult = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
-        first_name = adult.first_name
-        middle_names = adult.middle_names
-        last_name = adult.last_name
-        if middle_names != '':
-            self.fields['permission_declare'].label = first_name + ' ' + middle_names + ' ' + last_name
-        elif middle_names == '':
-            self.fields['permission_declare'].label = first_name + ' ' + last_name
-        # If information was previously entered, display it on the form
-        if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).count() > 0:
-            adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
-            self.fields['permission_declare'].initial = adult_record.permission_declare
 
 
 class OtherPeopleChildrenQuestionForm(ChildminderForms):
@@ -385,3 +374,24 @@ class OtherPeopleSummaryForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+
+
+class OtherPeopleEmailConfirmationForm(ChildminderForms):
+    """
+    GOV.UK form for the People in your home: email confirmation page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    auto_replace_widgets = True
+
+
+class OtherPeopleResendEmailForm(ChildminderForms):
+    """
+    GOV.UK form for the People in your home: email confirmation page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    auto_replace_widgets = True
+
+    def clean(self):
+        cleaned_data = super(OtherPeopleResendEmailForm, self).clean()

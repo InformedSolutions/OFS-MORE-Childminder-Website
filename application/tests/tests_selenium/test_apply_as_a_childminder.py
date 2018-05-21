@@ -73,7 +73,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
             )
 
         self.selenium_driver.maximize_window()
-        self.selenium_driver.implicitly_wait(20)
+        self.selenium_driver.implicitly_wait(30)
 
         self.verification_errors = []
         self.accept_next_alert = True
@@ -319,15 +319,15 @@ class ApplyAsAChildminder(LiveServerTestCase):
         Tests that the people in your home task can still be completed when answering No to the question
         'Does anyone aged 16 or over live or work in your home?'
         """
-        self.create_standard_eyfs_application()
+        applicant_email = self.create_standard_eyfs_application()
 
         self.selenium_task_executor.complete_people_in_your_home_task(
             False,
             None, None, None,
             None, None, None, None, None,
-            True, faker.first_name(), faker.first_name(), faker.last_name_female(),
+            faker.email(), True, faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 14, self.current_year - 1),
-            'Child'
+            'Child', applicant_email
         )
 
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
@@ -339,15 +339,15 @@ class ApplyAsAChildminder(LiveServerTestCase):
         Tests that the people in your home task can still be completed when answering Yes to the question
         'Does anyone aged 16 or over live or work in your home?' but No to the question 'Do you live with any children under 16?'
         """
-        self.create_standard_eyfs_application()
+        applicant_email = self.create_standard_eyfs_application()
 
         self.selenium_task_executor.complete_people_in_your_home_task(
             True,
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 29), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
-            False, None, None, None,
+            faker.email(), False, None, None, None,
             None, None, None,
-            None
+            None, applicant_email
         )
 
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
@@ -530,8 +530,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.create_standard_eyfs_application()
         self.selenium_task_executor.get_driver().find_element_by_link_text('Help').click()
         self.assertEqual("Help and advice", self.selenium_task_executor.get_driver().title)
-        self.selenium_task_executor.get_driver().find_element_by_link_text("Return to application").click()
-        self.assertEqual("Register as a childminder", self.selenium_task_executor.get_driver().title)
 
     @try_except_method
     def test_can_access_costs(self):
@@ -561,7 +559,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         Test to exercise the largest set of questions possible within a childminder application
         """
-        self.create_standard_eyfs_application()
+        applicant_email = self.create_standard_eyfs_application()
 
         # Below DOB means they are an adult so do not fire validation triggers
         self.selenium_task_executor.complete_personal_details(
@@ -608,12 +606,12 @@ class ApplyAsAChildminder(LiveServerTestCase):
             "//tr[@id='eyfs']/td/a/strong").text)
 
         self.selenium_task_executor.complete_people_in_your_home_task(
-            True,
+            False,
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
-            True, faker.first_name(), faker.first_name(), faker.last_name_female(),
+            faker.email(), True, faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 14, self.current_year - 1),
-            'Child'
+            'Child', applicant_email
         )
 
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
@@ -809,26 +807,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertEqual("Check your email", self.selenium_task_executor.get_driver().title)
 
     @try_except_method
-    def test_can_complete_people_in_your_home_task_with_other_adults_and_children_containing_apostrophe_in_name(self):
-        """
-        Tests that the people in your home task can still be completed when answering Yes to the question
-        'Does anyone aged 16 or over live or work in your home?' but No to the question 'Do you live with any children under 16?'
-        """
-        self.create_standard_eyfs_application()
-
-        self.selenium_task_executor.complete_people_in_your_home_task(
-            True,
-            "Dan-D'arcy", "John-O'Paul", "Omar-O\'Leary",
-            random.randint(1, 29), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
-            True, "Billie'o-Jo", "Bri'an-James", "O\'Malley-Micheals",
-            random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 14, self.current_year - 1),
-            'Child'
-        )
-
-        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
-            "//tr[@id='other_people']/td/a/strong").text)
-
-    @try_except_method
     def test_invalid_email_raises_error_box(self):
         """
         Tests that passing an invalid email address to the email form raises validation error.
@@ -999,12 +977,12 @@ class ApplyAsAChildminder(LiveServerTestCase):
                                                                  faker.first_name(), faker.first_name(),
                                                                  faker.last_name_female(),
                                                                  1, 1, 1985, 'Friend', 121212121212,
-                                                                 True, faker.first_name(), faker.first_name(),
+                                                                 faker.email(), True, faker.first_name(), faker.first_name(),
                                                                  faker.last_name_female(),
                                                                  random.randint(1, 28), random.randint(1, 12),
                                                                  random.randint(self.current_year - 14,
                                                                                 self.current_year - 1),
-                                                                 'Child'
+                                                                 'Child', test_email
                                                                  )
 
         try:
@@ -1041,6 +1019,27 @@ class ApplyAsAChildminder(LiveServerTestCase):
             self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
             self.assertIn("problem",
                           self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+
+    @try_except_method
+    def test_can_complete_people_in_your_home_task_with_other_adults_and_children_containing_apostrophe_in_name(self):
+        """
+        Tests that the people in your home task can still be completed when answering Yes to the question
+        'Does anyone aged 16 or over live or work in your home?' but No to the question 'Do you live with any children under 16?'
+        """
+        applicant_email = self.create_standard_eyfs_application()
+
+        self.selenium_task_executor.complete_people_in_your_home_task(
+            True,
+            "Dan-D'arcy", "John-O'Paul", "Omar-O\'Leary",
+            random.randint(1, 29), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
+            faker.email(), True, "Billie'o-Jo", "Bri'an-James", "O\'Malley-Micheals",
+            random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 14, self.current_year - 1),
+            'Child', applicant_email
+        )
+
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='other_people']/td/a/strong").text)
+
 
     @try_except_method
     def test_invalid_dbs_security_question_raises_error(self):
@@ -1104,15 +1103,15 @@ class ApplyAsAChildminder(LiveServerTestCase):
         Tests that the people in your home task can still be completed when answering Yes to the question
         'Does anyone aged 16 or over live or work in your home?' but No to the question 'Do you live with any children under 16?'
         """
-        self.create_standard_eyfs_application()
+        applicant_email = self.create_standard_eyfs_application()
 
         self.selenium_task_executor.complete_people_in_your_home_task(
             True,
             "Dan-D'arcy", "John-O'Paul", "Omar-O\'Leary",
             random.randint(1, 29), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
-            True, "Billie'o-Jo", "Bri'an-James", "O\'Malley-Micheals",
+            faker.email(), True, "Billie'o-Jo", "Bri'an-James", "O\'Malley-Micheals",
             random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 14, self.current_year - 1),
-            'Child'
+            'Child', applicant_email
         )
 
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
@@ -1191,7 +1190,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         Helper method for completing all questions in an application
         """
-        self.create_standard_eyfs_application()
+        applicant_email = self.create_standard_eyfs_application()
 
         # Below DOB means they are an adult so do not fire validation triggers
         self.selenium_task_executor.complete_personal_details(
@@ -1241,9 +1240,9 @@ class ApplyAsAChildminder(LiveServerTestCase):
             True,
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
-            True, faker.first_name(), faker.first_name(), faker.last_name_female(),
+            faker.email(), True, faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 14, self.current_year - 1),
-            'Child'
+            'Child', applicant_email=applicant_email
         )
 
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(

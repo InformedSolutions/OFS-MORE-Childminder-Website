@@ -9,7 +9,9 @@ from urllib.parse import urlencode
 
 import requests
 from django.conf import settings
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.utils.http import urlencode
 from django.core.urlresolvers import reverse
 
 from .models import Application, Reference, CriminalRecordCheck, EYFS, HealthDeclarationBooklet, ChildInHome, \

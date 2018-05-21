@@ -1,0 +1,34 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Your declaration{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+{% block proposition_menu %}
+{% endblock %}
+{% block inner_content %}
+{% include 'back-button.html' %}
+
+<h1 class="form-title heading-large">Declaration</h1>
+<p>Ofsted will check your details.</p>
+<p>We will also carry out background checks with social services as well as other agencies.</p>
+<p><a href="">Leaflet on background checks</a> (PDF, 174KB, 1 page)</p>
+
+<br />
+<p class="bold">By continuing you confirm that:</p>
+<ul class="list list-bullet">
+    <li>the information you have given in this form is correct</li>
+    <li>you consent to Ofsted carrying out background checks</li>
+</ul>
+<div class="notice">
+  <i class="icon icon-important icon-ofsted-download" style="background-image: url(/childminder/static/images/icon-important.png)">
+    <span class="visually-hidden">Warning</span>
+  </i>
+  <strong class="bold-small">
+    The childminder’s application can be refused if you give us false or misleading information.
+  </strong>
+</div>
+
+<br />
+
+<a href="{{ thank_you_url }}" class="button">Continue</a>
+
+{% endblock %}

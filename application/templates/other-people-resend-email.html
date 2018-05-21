@@ -1,0 +1,31 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Resend email{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+{% block inner_content %}
+{% include "back-button.html" %}
+{% if resend_limit %}
+    {% include "resend_error.html" %}
+{% endif %}
+
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Resend email
+        </h1>
+        <p>{{name}}: {{email}}</p>
+        <p><a href="{% url 'Other-People-Summary-View' %}?id={{application_id}}">I want to change the email address</a></p>
+        <br>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button-secondary button-add-another" name="resend_email" value="Resend email">
+        <br>
+        <input type="submit" class="button" name="save_and_continue" value="Save and continue">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+        <input type="hidden" id="adult" name="adult" value="{{adult}}"/>
+    </div>
+</form>
+
+{% endblock %}
