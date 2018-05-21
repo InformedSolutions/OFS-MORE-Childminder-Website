@@ -178,19 +178,6 @@ def dbs_check_summary(request):
         application = Application.objects.get(pk=application_id_local)
         object_list = [[criminal_record_check]]
 
-        if application.application_status == 'FURTHER_INFORMATION':
-            dbs_summary_dict = collections.OrderedDict(
-                {'data_names': ['dbs_certificate_number', 'cautions_convictions'],
-                 'display_names': ['DBS certificate number',
-                                   'Do you have any cautions or convictions?'],
-                 'back_url_names': ['DBS-Check-DBS-Details-View',
-                                    'DBS-Check-DBS-Details-View'],
-                 'table_names': [''],
-                 'table_error_names': [
-                     'There was a problem'],
-                 'page_title': 'Check your answers: criminal record (DBS) check'
-                 })
-
         table_list = table_creator(object_list, dbs_summary_dict['display_names'], dbs_summary_dict['data_names'],
                                    dbs_summary_dict['table_names'], dbs_summary_dict['table_error_names'],
                                    dbs_summary_dict['back_url_names'])
