@@ -38,37 +38,34 @@ class ContactEmailForm(ChildminderForms):
                 self.errors['email_address'].data[0].message = "Please enter a valid email address"
 
 
-class ContactPhoneForm(ChildminderForms):
+class ContactMobilePhoneForm(ChildminderForms):
     """
-    GOV.UK form for the Your login and contact details: phone page
+    GOV.UK form for the Your login and contact details: phone page (mobile number)
     """
     field_label_classes = 'form-label-bold'
     auto_replace_widgets = True
-    error_summary_template_name = 'standard-error-summary.html'
     error_summary_title = 'There was a problem with your phone number'
 
-    mobile_number = forms.CharField(label='Mobile phone number', required=True,
+    mobile_number = forms.CharField(label='Your mobile number', required=True,
                                     error_messages={'required': "Please enter a mobile number"})
-    add_phone_number = forms.CharField(label='Additional phone number (optional)', required=False)
 
     def __init__(self, *args, **kwargs):
         """
-        Method to configure the initialisation of the Your login and contact details: phone form
+        Method to configure the initialisation of the Your login and contact details: mobile phone form
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
 
         self.application_id_local = kwargs.pop('id')
-        super(ContactPhoneForm, self).__init__(*args, **kwargs)
+        super(ContactMobilePhoneForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
             this_user = UserDetails.objects.get(application_id=self.application_id_local)
             login_id = this_user.login_id
             self.fields['mobile_number'].initial = UserDetails.objects.get(login_id=login_id).mobile_number
-            self.fields['add_phone_number'].initial = UserDetails.objects.get(login_id=login_id).add_phone_number
             self.pk = login_id
-            self.field_list = ['mobile_number', 'add_phone_number']
+            self.field_list = ['mobile_number']
 
     def clean_mobile_number(self):
         """
@@ -82,6 +79,35 @@ class ContactPhoneForm(ChildminderForms):
         if len(no_space_mobile_number) > 11:
             raise forms.ValidationError('Please enter a valid mobile number')
         return mobile_number
+
+
+class ContactAddPhoneForm(ChildminderForms):
+    """
+    GOV.UK form for the Your login and contact details: phone page (additional phone number)
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    auto_replace_widgets = True
+    error_summary_title = 'There was a problem with your phone number'
+
+    add_phone_number = forms.CharField(label='Other phone number (optional)', required=False)
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your login and contact details: additional phone form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(ContactAddPhoneForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
+        # If information was previously entered, display it on the form
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            this_user = UserDetails.objects.get(application_id=self.application_id_local)
+            login_id = this_user.login_id
+            self.fields['add_phone_number'].initial = UserDetails.objects.get(login_id=login_id).add_phone_number
+            self.pk = login_id
+            self.field_list = ['add_phone_number']
 
     def clean_add_phone_number(self):
         """

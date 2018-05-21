@@ -16,8 +16,8 @@ class UserDetails(models.Model):
     sms_expiry_date = models.IntegerField(blank=True, null=True)
     magic_link_email = models.CharField(max_length=100, blank=True, null=True)
     magic_link_sms = models.CharField(max_length=100, blank=True, null=True)
-    security_question = models.CharField(max_length=100, blank=True, null=True)
-    security_answer = models.CharField(max_length=100, blank=True, null=True)
+    sms_resend_attempts = models.IntegerField(default=0, blank=True, null=True)
+    sms_resend_attempts_expiry_date = models.IntegerField(default=0, blank=True, null=True)
 
     @property
     def timelog_fields(self):
@@ -36,8 +36,6 @@ class UserDetails(models.Model):
             'email',
             'mobile_number',
             'add_phone_number',
-            'security_question',
-            'security_answer'
         )
 
     class Meta:
