@@ -5,6 +5,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from ..summary_page_data import dbs_summary_dict
+import collections
 from ..table_util import table_creator, submit_link_setter
 from .. import status
 from ..business_logic import (dbs_check_logic,
@@ -178,7 +179,17 @@ def dbs_check_summary(request):
         object_list = [[criminal_record_check]]
 
         if application.application_status == 'FURTHER_INFORMATION':
-            dbs_summary_dict['table_error_names'] = 'There was a problem on this page'
+            dbs_summary_dict = collections.OrderedDict(
+                {'data_names': ['dbs_certificate_number', 'cautions_convictions'],
+                 'display_names': ['DBS certificate number',
+                                   'Do you have any cautions or convictions?'],
+                 'back_url_names': ['DBS-Check-DBS-Details-View',
+                                    'DBS-Check-DBS-Details-View'],
+                 'table_names': [''],
+                 'table_error_names': [
+                     'There was a problem'],
+                 'page_title': 'Check your answers: criminal record (DBS) check'
+                 })
 
         table_list = table_creator(object_list, dbs_summary_dict['display_names'], dbs_summary_dict['data_names'],
                                    dbs_summary_dict['table_names'], dbs_summary_dict['table_error_names'],
@@ -188,7 +199,6 @@ def dbs_check_summary(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
