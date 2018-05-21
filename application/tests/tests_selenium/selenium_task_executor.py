@@ -245,7 +245,7 @@ class SeleniumTaskExecutor:
             driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
             return
 
-        driver.find_element_by_id("id_location_of_care_1").click()
+        driver.find_element_by_id("id_childcare_location_1").click()
         driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
         # Childcare location address
