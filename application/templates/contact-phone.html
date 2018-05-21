@@ -8,17 +8,20 @@
 {% include "back-button.html" %}
 
 <!-- Initialise error summary for page -->
-{{form.error_summary}}
+{{mobile_form.error_summary}}
+{{add_phone_form.error_summary}}
 <!-- Form -->
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <div class="form-group">
         <h1 class="form-title heading-large">
             Your phone number
         </h1>
-        <p>Please let us know the best phone number to ring or text you on.</p>
-        <p>We will send a code to your mobile when you log back in.</p>
-        {{form.as_div}}
+        <p>We will send a code to your mobile when you sign in next time.</p>
+        {{mobile_form.as_div}}
+        <p>Let us know if you have another number, like a landline phone.</p>
+        {{add_phone_form.as_div}}
         {% csrf_token %}
+        <p>We will use the numbers to contact you.</p>
         <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
         <input type="hidden" name="id" value="{{application_id}}"/>
     </div>
