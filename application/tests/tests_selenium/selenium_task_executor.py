@@ -350,7 +350,7 @@ class SeleniumTaskExecutor:
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
             # Confirm will send DBS certificate
-            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+            driver.find_element_by_id("dbs-upload-continue").click()
 
             # Task summary
             driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
