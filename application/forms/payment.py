@@ -90,17 +90,16 @@ class PaymentDetailsForm(ChildminderForms):
             raise forms.ValidationError('Please check the number on your card')
         if settings.VISA_VALIDATION:
             if card_type == 'visa':
-                if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:
+                if re.match(settings.REGEX['VISA'], card_number) is None:
                     raise forms.ValidationError('Please check the number on your card')
         if card_type == 'mastercard':
-            if re.match("^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$",
-                        card_number) is None:
+            if re.match(settings.REGEX['MASTERCARD'], card_number) is None:
                 raise forms.ValidationError('Please check the number on your card')
         elif card_type == 'american_express':
-            if re.match("^3[47][0-9]{13}$", card_number) is None:
+            if re.match(settings.REGEX['AMERICAN_EXPRESS'], card_number) is None:
                 raise forms.ValidationError('Please check the number on your card')
         elif card_type == 'maestro':
-            if re.match("^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$", card_number) is None:
+            if re.match(settings.REGEX['MAESTRO'], card_number) is None:
                 raise forms.ValidationError('Please check the number on your card')
         return card_number
 
@@ -135,5 +134,5 @@ class PaymentDetailsForm(ChildminderForms):
         :return: string
         """
         card_security_code = str(self.cleaned_data['card_security_code'])
-        if re.match("^[0-9]{3,4}$", card_security_code) is None:
+        if re.match(settings.REGEX['CARD_SECURITY_NUMBER'], card_security_code) is None:
             raise forms.ValidationError('The code should be 3 or 4 digits long')

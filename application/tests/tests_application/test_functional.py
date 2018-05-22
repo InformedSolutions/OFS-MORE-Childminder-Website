@@ -24,7 +24,7 @@ from ...models import (AdultInHome,
                        Reference,
                        UserDetails)
 
-from application.views import magic_link, security_question
+from ...views import magic_link, security_question
 
 
 class CreateTestNewApplicationSubmit(TestCase):
@@ -38,6 +38,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.order_id = None
 
         self.TestNewApplicationSubmit()
+        super().setUp()
 
     def TestAppInit(self):
         """Start application"""
