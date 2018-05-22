@@ -77,6 +77,8 @@ def declaration_summary(request, print=False):
         adult_birth_year_list = []
         adult_relationship_list = []
         adult_dbs_list = []
+        adult_health_check_status_list = []
+        adult_email_list = []
         application = Application.objects.get(pk=application_id_local)
         for adult in adults_list:
             # For each adult, append the correct attribute (e.g. name, relationship) to the relevant list
@@ -91,9 +93,11 @@ def declaration_summary(request, print=False):
             adult_birth_year_list.append(adult.birth_year)
             adult_relationship_list.append(adult.relationship)
             adult_dbs_list.append(adult.dbs_certificate_number)
+            adult_health_check_status_list.append(adult.health_check_status)
+            adult_email_list.append(adult.email)
         # Zip the appended lists together for the HTML to simultaneously parse
         adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
-                          adult_relationship_list, adult_dbs_list)
+                          adult_relationship_list, adult_dbs_list, adult_health_check_status_list, adult_email_list)
         # Generate lists of data for adults in your home, to be iteratively displayed on the summary page
         # The HTML will then parse through each list simultaneously, to display the correct data for each adult
         child_name_list = []
@@ -125,6 +129,7 @@ def declaration_summary(request, print=False):
             'childcare_type_zero_to_five': childcare_record.zero_to_five,
             'childcare_type_five_to_eight': childcare_record.five_to_eight,
             'childcare_type_eight_plus': childcare_record.eight_plus,
+            'childcare_overnight': childcare_record.overnight_care,
             'personal_details_first_name': applicant_name_record.first_name,
             'personal_details_middle_names': applicant_name_record.middle_names,
             'personal_details_last_name': applicant_name_record.last_name,
