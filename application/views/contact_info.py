@@ -33,6 +33,11 @@ def contact_phone(request):
         if len(acc.mobile_number) == 0 and 'f' not in request.GET:
             flag = '&f=1'
             return HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + app_id + flag)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem on this page'
+
         variables = {
             'mobile_form': mobile_form,
             'add_phone_form': add_phone_form,
@@ -78,6 +83,12 @@ def contact_phone(request):
                 return HttpResponseRedirect(reverse('Contact-Summary-View') + '?id=' + app_id + flag)
 
         else:
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem on this page'
+
             variables = {
                 'mobile_form': mobile_form,
                 'add_phone_form': add_phone_form,
@@ -119,12 +130,13 @@ def contact_summary(request):
             'table_object': Table([user_details.pk]),
             'fields': contact_info_fields,
             'title': '',
-            'error_summary_title': 'There is something wrong with your login details'
+            'error_summary_title': 'There was a problem'
         })
 
         table_list = create_tables([contact_info_table], contact_info_name_dict, contact_info_link_dict)
 
         form = ContactSummaryForm()
+
         variables = {
             'form': form,
             'application_id': app_id,
