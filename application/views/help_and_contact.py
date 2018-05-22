@@ -6,11 +6,11 @@ from ..utils import build_url
 from ..models import Application
 
 
-def help_and_advice(request):
+def help_and_contact(request):
     """
-    Renders the help and advice page
+    Renders the help and contact page
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Help and Advice template
+    :return: an HttpResponse object with the rendered Help and Contact template
     """
     application_id_local = request.GET.get('id')
 
@@ -39,4 +39,4 @@ def help_and_advice(request):
         # build url to be passed to the return button
         context['return_url'] = build_url(return_view, get=url_params)
 
-    return render(request, 'help-and-advice.html', context)
+    return render(request, 'help-and-contact.html', context)
