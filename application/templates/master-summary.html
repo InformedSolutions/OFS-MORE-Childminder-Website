@@ -95,39 +95,15 @@
     <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            What age groups will you be caring for?
+            Looking after 0 to 5 year olds?
         </td>
-        {% if childcare_type_zero_to_five is True and childcare_type_five_to_eight is False and childcare_type_eight_plus is False %}
+        {% if childcare_type_zero_to_five is True %}
         <td style="word-wrap: break-word" class=summary-column>
-            0 to 5 year olds
+            Yes
         </td>
-        {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is True and childcare_type_eight_plus is False %}
+        {% elif childcare_type_zero_to_five is False %}
         <td style="word-wrap: break-word" class=summary-column>
-            0 to 5 year olds, 5 to 7 year olds
-        </td>
-        {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is True and childcare_type_eight_plus is True %}
-        <td style="word-wrap: break-word" class=summary-column>
-            0 to 5 year olds, 5 to 7 year olds, 8 years or older
-        </td>
-        {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is True and childcare_type_eight_plus is False %}
-        <td style="word-wrap: break-word" class=summary-column>
-            5 to 7 year olds
-        </td>
-        {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is False and childcare_type_eight_plus is True %}
-        <td style="word-wrap: break-word" class=summary-column>
-            0 to 5 year olds, 8 years or older
-        </td>
-        {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is False and childcare_type_eight_plus is True %}
-        <td style="word-wrap: break-word" class=summary-column>
-            8 years or older
-        </td>
-        {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is True and childcare_type_eight_plus is True %}
-        <td style="word-wrap: break-word" class=summary-column>
-            5 to 7 year olds, 8 years or older
-        </td>
-        {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is False and childcare_type_eight_plus is False %}
-        <td style="word-wrap: break-word" class=summary-column>
-            None
+            No
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
@@ -138,7 +114,93 @@
     </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Will you be looking after children overnight?
+            Looking after 5 to 7 year olds?
+        </td>
+        {% if childcare_type_five_to_eight is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif childcare_type_five_to_eight is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'Type-Of-Childcare-Age-Groups-View' %}?id={{application_id}}#id_type_of_childcare_1" alt="Update whether you plan to look after 0 to 5 year olds">
+                Change <span class="visuallyhidden">0 to 5</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Looking after 8 years and older?
+        </td>
+        {% if childcare_type_eight_plus is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif childcare_type_eight_plus is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'Type-Of-Childcare-Age-Groups-View' %}?id={{application_id}}#id_type_of_childcare_2" alt="Update whether you plan to look after 0 to 5 year olds">
+                Change <span class="visuallyhidden">0 to 5</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Registers
+        </td>
+        {% if childcare_type_zero_to_five is True and childcare_type_five_to_eight is True and childcare_type_eight_plus is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Early Years Register
+            <br>
+            Childcare Register
+        </td>
+        {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is True and childcare_type_eight_plus is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Early Years Register
+            <br>
+            Childcare Register
+        </td>
+        {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is False and childcare_type_eight_plus is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Early Years Register
+            <br>
+            Childcare Register
+        </td>
+        {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is True and childcare_type_eight_plus is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Childcare Register (compulsory & voluntary parts)
+        </td>
+        {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is False and childcare_type_eight_plus is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Early Years Register
+        </td>
+        {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is True and childcare_type_eight_plus is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Childcare Register (compulsory part)
+            Yes
+        </td>
+        {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is False and childcare_type_eight_plus is True %}
+        {% elif childcare_overnight is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Childcare Register (voluntary part)
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            <a href="{% url 'Type-Of-Childcare-Age-Groups-View' %}?id={{application_id}}" alt="Update your registers">
+                Change <span class="visuallyhidden">registers</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Looking after children overnight?
         </td>
         {% if childcare_overnight is True %}
         <td style="word-wrap: break-word" class=summary-column>
@@ -167,7 +229,7 @@
     <tr>
         <th colspan="{% if print_class %}2{% else %}3{% endif %}">
             <div class="heading-medium">
-                Your name and date of birth
+                Your personal details
             </div>
         </th>
     </tr>
@@ -194,7 +256,7 @@
     </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Your date of birth
+            Date of birth
         </td>
         {% if personal_details_birth_month == 1 %}
         <td style="word-wrap: break-word" class=summary-column>
@@ -251,27 +313,9 @@
             </a>
         </td>
     </tr>
-    </tbody>
-</table>
-<table class="check-your-answers">
-    <colgroup>
-        <col class="summary-column">
-        <col class="summary-column">
-        <col class="change-answer {{ print_class }}">
-    </colgroup>
-    <thead>
-    <tr>
-        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-            <div class="heading-medium">
-                Your home address
-            </div>
-        </th>
-    </tr>
-    </thead>
-    <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Home address
+            Your home address
         </td>
         {% if home_address_street_line2 and home_address_county %}
         <td style="word-wrap: break-word" class=summary-column>
@@ -433,7 +477,7 @@
     </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Date you completed your course
+            Date you completed course
         </td>
         {% if first_aid_certificate_month == 1 %}
         <td style="word-wrap: break-word" class=summary-column>
@@ -555,7 +599,7 @@
     <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            I will post the completed booklet to Ofsted?
+            I will post the completed booklet to Ofsted
         </td>
         {% if send_hdb_declare is True %}
         <td style="word-wrap: break-word" class=summary-column>
@@ -606,7 +650,7 @@
     </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Do you have any cautions or convictions?
+            Do you have any criminal cautions or convictions?
         </td>
         {% if cautions_convictions is True %}
         <td style="word-wrap: break-word" class=summary-column>
@@ -644,7 +688,7 @@
     <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Do you live with anyone who is 16 or over?
+            Does anyone aged 16 or over live or work in your home?
         </td>
         {% if adults_in_home is True %}
         <td style="word-wrap: break-word" class=summary-column>
@@ -819,7 +863,7 @@
     </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Email address
+            Email
         </td>
         <td style="word-wrap: break-word" class=summary-column>
             {{email}}
@@ -974,7 +1018,7 @@
     <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Full name
+            Name
         </td>
         <td style="word-wrap: break-word" class=summary-column>
             {{first_reference_first_name}} {{first_reference_last_name}}
