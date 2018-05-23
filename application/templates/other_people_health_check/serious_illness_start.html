@@ -7,6 +7,8 @@
 {% block inner_content %}
 {% include 'back-button.html' %}
 
+{{ form.error_summary }}
+
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     {% csrf_token %}
     <h1 class="form-title heading-large">Any serious illnesses</h1>
