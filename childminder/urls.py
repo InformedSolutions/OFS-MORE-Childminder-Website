@@ -130,7 +130,6 @@ urlpatterns = [
     url(r'^next-steps/documents/', views.documents_needed, name='Next-Steps-Documents'),
     url(r'^next-steps/home/', views.home_ready, name='Next-Steps-Home'),
     url(r'^next-steps/interview/', views.prepare_for_interview, name='Next-Steps-Interview'),
-    url(r'^code-expired/', TemplateView.as_view(template_name='code-expired.html')),
     url(r'^link-used/', TemplateView.as_view(template_name='bad-link.html')),
     url(r'^sign-in/question/(?P<id>[\w-]+)/$', security_question.question, name='Security-QuestionP'),
     url(r'^sign-in/question/$', security_question.question, name='Security-Question'),
