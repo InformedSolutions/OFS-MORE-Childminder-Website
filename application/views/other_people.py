@@ -709,12 +709,12 @@ def other_people_summary(request):
                     ('dbs_certificate_number', adult.dbs_certificate_number),
                 ])
 
-                other_adult_table = collections.OrderedDict({
-                    'table_object': Table([adult.pk]),
-                    'fields': other_adult_fields,
-                    'title': name,
-                    'error_summary_title': ('There was a problem (' + name + ')')
-                })
+            other_adult_table = collections.OrderedDict({
+                'table_object': Table([adult.pk]),
+                'fields': other_adult_fields,
+                'title': name,
+                'error_summary_title': ('There was a problem (' + name + ')')
+            })
 
             adult_table_list.append(other_adult_table)
         back_link_addition = '&adults=' + str((len(adult_table_list))) + '&remove=0'
@@ -734,7 +734,6 @@ def other_people_summary(request):
                                             str(child.birth_year)])),
                 ('relationship', child.relationship)
             ])
-
 
             other_child_table = collections.OrderedDict({
                 'table_object': Table([child.pk]),
