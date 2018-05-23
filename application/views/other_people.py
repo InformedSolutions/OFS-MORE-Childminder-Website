@@ -888,21 +888,22 @@ def other_people_email_confirmation(request):
         # For each household member, generate a unique link to access their health check page
         # and send an e-mail
         for adult in adults:
-            adult.token = ''.join([random.choice(string.digits[1:]) for n in range(7)])
-            email = adult.email
-            base_url = settings.PUBLIC_APPLICATION_URL
-            personalisation = {"link": base_url +
-                                       reverse('Health-Check-Authentication', kwargs={'id': adult.token}).replace('/childminder', ''),
-                               "firstName": adult.first_name,
-                               "ApplicantName": applicant_name_formatted}
-            print(personalisation['link'])
-            r = send_email(email, personalisation, template_id)
-            if settings.EXECUTING_AS_TEST == 'True':
-                os.environ['EMAIL_VALIDATION_URL'] = os.environ['EMAIL_VALIDATION_URL'] + " " + str(personalisation['link'])
+            if adult.health_check_status != 'Done':
+                adult.token = ''.join([random.choice(string.digits[1:]) for n in range(7)])
+                email = adult.email
+                base_url = settings.PUBLIC_APPLICATION_URL
+                personalisation = {"link": base_url +
+                                           reverse('Health-Check-Authentication', kwargs={'id': adult.token}).replace('/childminder', ''),
+                                   "firstName": adult.first_name,
+                                   "ApplicantName": applicant_name_formatted}
+                print(personalisation['link'])
+                r = send_email(email, personalisation, template_id)
+                if settings.EXECUTING_AS_TEST == 'True':
+                    os.environ['EMAIL_VALIDATION_URL'] = os.environ['EMAIL_VALIDATION_URL'] + " " + str(personalisation['link'])
 
-            # Set a timestamp when the e-mail was last send (for later use in resend e-mail logic)
-            adult.email_resent_timestamp = datetime.now(pytz.utc)
-            adult.save()
+                # Set a timestamp when the e-mail was last send (for later use in resend e-mail logic)
+                adult.email_resent_timestamp = datetime.now(pytz.utc)
+                adult.save()
 
         variables = {
             'form': form,
