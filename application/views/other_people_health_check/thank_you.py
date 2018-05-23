@@ -16,8 +16,8 @@ class ThankYou(BaseTemplateView):
         response = super().get(request=self.request)
         adult_record = AdultInHome.objects.get(pk=self.request.GET.get('person_id'))
         adult_name = ' '.join([adult_record.first_name , (adult_record.middle_names or '') ,adult_record.last_name])
-        application = Application.objects.get(pk=adult_record.application_id)
-        user_details = Application.objects.get(application_id=application)
+        application = Application.objects.get(application_id=adult_record.application_id_id)
+        user_details = UserDetails.objects.get(application_id=application.application_id)
 
         try:
             applicant = ApplicantName.objects.get(application_id=adult_record.application_id)
