@@ -709,20 +709,11 @@ def other_people_summary(request):
                     ('dbs_certificate_number', adult.dbs_certificate_number),
                 ])
 
-            if application.people_in_home_status == 'FURTHER_INFORMATION':
                 other_adult_table = collections.OrderedDict({
                     'table_object': Table([adult.pk]),
                     'fields': other_adult_fields,
                     'title': name,
-                    'error_summary_title': 'There was a problem'
-                })
-
-            else:
-                other_adult_table = collections.OrderedDict({
-                    'table_object': Table([adult.pk]),
-                    'fields': other_adult_fields,
-                    'title': name,
-                    'error_summary_title': ('There is something wrong with a persons details (' + name + ')')
+                    'error_summary_title': ('There was a problem (' + name + ')')
                 })
 
             adult_table_list.append(other_adult_table)
@@ -744,20 +735,13 @@ def other_people_summary(request):
                 ('relationship', child.relationship)
             ])
 
-            if application.people_in_home_status == 'FURTHER_INFORMATION':
-                other_child_table = collections.OrderedDict({
-                    'table_object': Table([child.pk]),
-                    'fields': other_child_fields,
-                    'title': name,
-                    'error_summary_title': 'There was a problem'
-                })
-            else:
-                other_child_table = collections.OrderedDict({
-                    'table_object': Table([child.pk]),
-                    'fields': other_child_fields,
-                    'title': name,
-                    'error_summary_title': ('There is something wrong with a persons details (' + name + ')')
-                })
+
+            other_child_table = collections.OrderedDict({
+                'table_object': Table([child.pk]),
+                'fields': other_child_fields,
+                'title': name,
+                'error_summary_title': ('There was a problem (' + name + ')')
+            })
 
             child_table_list.append(other_child_table)
         back_link_addition = '&children=' + str(len(child_table_list)) + '&remove=0'
@@ -775,35 +759,19 @@ def other_people_summary(request):
         else:
             children_in_home = True
 
-        if application.people_in_home_status == 'FURTHER_INFORMATION':
-            adult_table = collections.OrderedDict({
-                'table_object': Table([application_id_local]),
-                'fields': {'adults_in_home': adults_in_home},
-                'title': 'Adults in your home',
-                'error_summary_title': 'There was a problem'
-            })
-        else:
-            adult_table = collections.OrderedDict({
-                'table_object': Table([application_id_local]),
-                'fields': {'adults_in_home': adults_in_home},
-                'title': 'Adults in your home',
-                'error_summary_title': 'There is a problem with the adults in your home'
-            })
+        adult_table = collections.OrderedDict({
+            'table_object': Table([application_id_local]),
+            'fields': {'adults_in_home': adults_in_home},
+            'title': 'Adults in your home',
+            'error_summary_title': 'There was a problem'
+        })
 
         child_table = collections.OrderedDict({
             'table_object': Table([application_id_local]),
             'fields': {'children_in_home': children_in_home},
             'title': 'Children in your home',
-            'error_summary_title': 'There is a problem with the children in your home'
+            'error_summary_title': 'There was a problem'
         })
-
-        if application.people_in_home_status == 'FURTHER_INFORMATION':
-            child_table = collections.OrderedDict({
-                'table_object': Table([application_id_local]),
-                'fields': {'children_in_home': children_in_home},
-                'title': 'Children in your home',
-                'error_summary_title': 'There was a problem'
-            })
 
         adult_table = create_tables([adult_table], other_adult_summary_name_dict, other_adult_summary_link_dict)
         child_table = create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
