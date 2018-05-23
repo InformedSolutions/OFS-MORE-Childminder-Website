@@ -76,6 +76,9 @@ def first_aid_training_details(request):
         form = FirstAidTrainingDetailsForm(id=application_id_local)
         form.check_flag()
         application = Application.objects.get(pk=application_id_local)
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem on this page'
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -117,6 +120,11 @@ def first_aid_training_details(request):
 
         else:
             form.error_summary_title = 'There was a problem with your course details'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem on this page'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -249,7 +257,7 @@ def first_aid_training_summary(request):
             'table_object': Table([first_aid_record.pk]),
             'fields': first_aid_fields,
             'title': '',
-            'error_summary_title': 'There is something wrong with your first aid training',
+            'error_summary_title': 'There was a problem',
         })
 
         table_list = create_tables([first_aid_table], first_aid_name_dict, first_aid_link_dict, first_aid_change_link_description_dict)
