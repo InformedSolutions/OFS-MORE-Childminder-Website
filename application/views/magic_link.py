@@ -175,7 +175,7 @@ def validate_magic_link(request, id):
             magic_link_text(phone, rand_num)
             return HttpResponseRedirect(settings.URL_PREFIX + '/security-code/?id=' + str(app_id))
         else:
-            return HttpResponseRedirect(settings.URL_PREFIX + '/code-expired/')
+            return HttpResponseRedirect(settings.URL_PREFIX + '/link-used/')
     except Exception as ex:
         exception_data = traceback.format_exc().splitlines()
         exception_array = [exception_data[-3:]]
