@@ -109,5 +109,5 @@ class MoreHospitalAdmissions(ChildminderForms):
     )
 
     more_illnesses = forms.ChoiceField(choices=choices, widget=InlineRadioSelect, required=True,
-                                       label='Have you been admitted to hospital any other times in the past 2 years?',
+                                       label='Have you had any other hospital admissions in the last 2 years?',
                                        error_messages={'required': 'Please answer yes or no'})
