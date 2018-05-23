@@ -103,10 +103,10 @@ other_child_link_dict = collections.OrderedDict([('full_name', 'Other-People-Chi
 # The below dictionaries are for the two tables at the top of the other people summary page
 
 other_adult_summary_name_dict = collections.OrderedDict(
-    [('adults_in_home', 'Do you live with anyone who is 16 or over')])
+    [('adults_in_home', 'Do you live with anyone who is 16 or over?')])
 other_adult_summary_link_dict = collections.OrderedDict([('adults_in_home', 'Other-People-Adult-Question-View')])
 
-other_child_summary_name_dict = collections.OrderedDict([('children_in_home', 'Do you live with any children')])
+other_child_summary_name_dict = collections.OrderedDict([('children_in_home', 'Do you live with any children?')])
 other_child_summary_link_dict = collections.OrderedDict([('children_in_home', 'Other-People-Children-Question-View')])
 
 ###
