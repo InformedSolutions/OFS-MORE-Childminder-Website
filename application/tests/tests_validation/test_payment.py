@@ -26,12 +26,6 @@ class TestPaymentValidation(TestCase):
                                 '6759649826438453212455452132345445',
                                 '675964982643845?']
 
-        self.valid_american_express = ['378282246310005']
-        self.invalid_american_express = ['3782822',
-                                         '37828224631000?',
-                                         '378282246310005097533568',
-                                         '37828224631000a']
-
         self.valid_security_number = ['123']
         self.invalid_security_number = ['1', '123445435346', '12a', '12?']
 
@@ -40,10 +34,6 @@ class TestPaymentValidation(TestCase):
     @staticmethod
     def check_visa_number(number):
         return re.match(settings.REGEX['VISA'], number)
-
-    @staticmethod
-    def check_american_express_number(number):
-        return re.match(settings.REGEX['AMERICAN_EXPRESS'], number)
 
     @staticmethod
     def check_maestro_number(number):
@@ -70,13 +60,6 @@ class TestPaymentValidation(TestCase):
 
         for inval in self.invalid_mastercard:
             assert (self.check_mastercard_number(inval) is None)
-
-    def test_american_express(self):
-        for val in self.valid_american_express:
-            assert (self.check_american_express_number(val) is not None)
-
-        for inval in self.invalid_american_express:
-            assert (self.check_american_express_number(inval) is None)
 
     def test_maestro(self):
         for val in self.valid_maestro:

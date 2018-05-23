@@ -66,6 +66,8 @@ first_aid_link_dict = collections.OrderedDict([('first_aid_training_organisation
                                                ('renew_certificate', 'First-Aid-Training-Renew-View'),
                                                ('show_certificate', 'First-Aid-Training-Declaration-View')])
 
+first_aid_change_link_description_dict = collections.OrderedDict([('course_date', 'course completion date')])
+
 ###
 
 health_name_dict = collections.OrderedDict(

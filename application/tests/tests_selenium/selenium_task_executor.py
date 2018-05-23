@@ -434,7 +434,6 @@ class SeleniumTaskExecutor:
 
             for email_link in email_link_list:
                 self.complete_health_check(email_link, other_adult_dob_day, other_adult_dob_month, other_adult_dob_year)
-        #return
             self.sign_back_in(applicant_email)
 
 
