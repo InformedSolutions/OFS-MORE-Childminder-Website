@@ -1,0 +1,43 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Hospital admissions{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+{% block proposition_menu %}
+{% endblock %}
+{% block inner_content %}
+{% include 'back-button.html' %}
+
+{{ form.error_summary }}
+
+
+
+
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    {% csrf_token %}
+    <div class = "form-group">
+        <h1 class="form-title heading-large">{% if illness_id %}Edit Hospital Admission{% else %}Hospital Admissions{% endif %}</h1>
+        {% if illnesses %}
+            <table class="check-your-answers" style="table-layout: fixed; width: 100%">
+                <tr>
+                    <th class="bold">Hospital Admission</th>
+                    <th class="bold">Date admitted</th>
+                    <th class="bold">Date discharged</th>
+                    <th></th>
+                </tr>
+                {% for illness in illnesses %}
+                <tr>
+                    <td>{{ illness.description }}</td>
+                    <td>{{ illness.start_date|date:"d m Y" }}</td>
+                    <td>{{ illness.end_date|date:"d m Y" }}</td>
+                    <td class="change-answer"><a href="{% url 'Health-Check-Hospital' %}?person_id={{person_id}}&action=Delete&illness_id={{illness.pk}}">Remove</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+        {{ form }}
+        <div class="js-hidden" id="test"></div>
+        <input type="submit" name="action" class="button" value="Continue">
+    </div>
+</form>
+
+{% endblock %}

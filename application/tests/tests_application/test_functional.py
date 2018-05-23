@@ -406,6 +406,7 @@ class CreateTestNewApplicationSubmit(TestCase):
             '1-middle_names': 'Pet\'r-Ivor',
             '1-last_name': 'Chris-J\'oe',
             '1-relationship': 'Son',
+            '1-email_address': 'test@email.com',
             '1-date_of_birth_0': '16',
             '1-date_of_birth_1': '6',
             '1-date_of_birth_2': '1984',
@@ -518,8 +519,6 @@ class CreateTestNewApplicationSubmit(TestCase):
         """Submit Other People Summary"""
         r = self.client.get(reverse('Other-People-Summary-View'), {'id': self.app_id})
         self.assertEqual(r.status_code, 200)
-
-        self.assertEqual(Application.objects.get(pk=self.app_id).people_in_home_status, "COMPLETED")
 
     def TestAppFirstReferenceName(self):
         """Submit first reference name"""

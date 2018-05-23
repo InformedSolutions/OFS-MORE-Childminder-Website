@@ -47,7 +47,6 @@ def childcare_type_logic(application_id_local, form):
 
 
 def login_contact_logic(application_id_local, form):
-
     """
     Business logic to create or update a User_Details record with e-mail address details
     :param application_id_local: A string object containing the current application ID
@@ -105,10 +104,10 @@ def personal_name_logic(app_id, form):
 
         # Create an empty ApplicantPersonalDetails object to generate a p_id
         personal_details_record = ApplicantPersonalDetails(
-                birth_day=None,
-                birth_month=None,
-                birth_year=None,
-                application_id=app_obj
+            birth_day=None,
+            birth_month=None,
+            birth_year=None,
+            application_id=app_obj
         )
 
         personal_details_record.save()
@@ -200,7 +199,7 @@ def personal_home_address_logic(app_id, form):
         )
         home_address_record.save()
 
-   # If the user previously entered information for this task
+    # If the user previously entered information for this task
     elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).exists():
 
         home_address_record = ApplicantHomeAddress.objects.get(
@@ -486,11 +485,13 @@ def other_people_adult_details_logic(application_id_local, form, adult):
     birth_month = form.cleaned_data.get('date_of_birth')[1]
     birth_year = form.cleaned_data.get('date_of_birth')[2]
     relationship = form.cleaned_data.get('relationship')
+    email = form.cleaned_data.get('email_address')
     # If the user entered information for this task for the first time
     if AdultInHome.objects.filter(application_id=this_application, adult=adult).count() == 0:
         adult_record = AdultInHome(first_name=first_name, middle_names=middle_names, last_name=last_name,
                                    birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
-                                   relationship=relationship, application_id=this_application, adult=adult)
+                                   relationship=relationship, email=email, application_id=this_application, adult=adult,
+                                   email_resent=0)
     # If the user previously entered information for this task
     elif AdultInHome.objects.filter(application_id=this_application, adult=adult).count() > 0:
         adult_record = AdultInHome.objects.get(application_id=this_application, adult=adult)
@@ -501,6 +502,8 @@ def other_people_adult_details_logic(application_id_local, form, adult):
         adult_record.birth_month = birth_month
         adult_record.birth_year = birth_year
         adult_record.relationship = relationship
+        adult_record.email = email
+        adult_record.email_resent = 0
     return adult_record
 
 
@@ -511,8 +514,14 @@ def remove_adult(application_id_local, remove_person):
     :param remove_person: adult to remove (integer)
     :return:
     """
+    application = Application.objects.get(pk=application_id_local)
+
     if AdultInHome.objects.filter(application_id=application_id_local, adult=remove_person).exists() is True:
         AdultInHome.objects.get(application_id=application_id_local, adult=remove_person).delete()
+        # Reset task status to WAITING if adults are updated
+        if application.people_in_home_status == 'WAITING':
+            application.people_in_home_status == 'IN_PROGRESS'
+            application.save()
 
 
 def rearrange_adults(number_of_adults, application_id_local):
@@ -522,6 +531,8 @@ def rearrange_adults(number_of_adults, application_id_local):
     :param application_id_local: current application ID
     :return:
     """
+    application = Application.objects.get(pk=application_id_local)
+    
     for i in range(1, number_of_adults + 1):
         # If there is a gap in the sequence of adult numbers
         if AdultInHome.objects.filter(application_id=application_id_local, adult=i).count() == 0:
@@ -531,6 +542,10 @@ def rearrange_adults(number_of_adults, application_id_local):
                 next_adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=next_adult)
                 next_adult_record.adult = i
                 next_adult_record.save()
+                # Reset task status to WAITING if adults are updated
+                if application.people_in_home_status == 'WAITING':
+                    application.people_in_home_status = 'IN_PROGRESS'
+                    application.save()
 
 
 def remove_child(application_id_local, remove_person):

@@ -51,10 +51,6 @@ class OtherPeopleTest(ViewsTest):
         except:
             self.assertEqual(0, 0)
 
-    def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/other-people/adult-permission/')
-        self.assertEqual(found.func, other_people_adult_permission)
-
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:

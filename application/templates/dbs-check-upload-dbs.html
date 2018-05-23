@@ -17,7 +17,7 @@
         <p class="text-before-button">We will check your certificate and send it back to you.</p>
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>
-        <input type="submit" class="button" value="Save and continue">
+        <input type="submit" class="button" id="dbs-upload-continue" value="Save and continue">
     </div>
 </form>
 
