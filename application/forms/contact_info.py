@@ -77,8 +77,6 @@ class ContactMobilePhoneForm(ChildminderForms):
         no_space_mobile_number = mobile_number.replace(' ', '')
         if re.match(settings.REGEX['MOBILE'], no_space_mobile_number) is None:
             raise forms.ValidationError('Please enter a valid mobile number')
-        if len(no_space_mobile_number) > 11:
-            raise forms.ValidationError('Please enter a valid mobile number')
         return mobile_number
 
 
@@ -119,8 +117,6 @@ class ContactAddPhoneForm(ChildminderForms):
         no_space_add_phone_number = add_phone_number.replace(' ', '')
         if add_phone_number != '':
             if re.match(settings.REGEX['PHONE'], no_space_add_phone_number) is None:
-                raise forms.ValidationError('Please enter a valid phone number')
-            if len(no_space_add_phone_number) > 11:
                 raise forms.ValidationError('Please enter a valid phone number')
         return add_phone_number
 
