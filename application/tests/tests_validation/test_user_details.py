@@ -41,10 +41,24 @@ class TestUserDetailsValidation(TestCase):
                                  'erik.odense@gmail.',
                                  'erik.o\'dense@gmail']
 
-        self.correct_numbers = ['0161445627']
+        self.correct_numbers = ['0161445627',
+                                '01398378738',
+                                '0729837873',
+                                '013983782',
+                                '093983787383',
+                                '0739837873833',
+                                '073983787383',
+                                '+4473983787383',
+                                '004473983787383']
         self.incorrect_numbers = ['161445627']
 
-        self.correct_mobile = ['07783446526']
+        self.correct_mobile = ['07783446526',
+                               '07398378738',
+                               '0739837873',
+                               '073983787383',
+                               '+4473983787383',
+                               '4473983787383',
+                               '004473983787383']
         self.incorrect_mobile = ['7783446526',
                                  '08783446526',
                                  '0778344652645677754',
