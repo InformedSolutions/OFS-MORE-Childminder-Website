@@ -141,7 +141,7 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/new-application/',
     r'^' + URL_PREFIX + '/new-application/check-email/',
     r'^' + URL_PREFIX + '/service-unavailable/',
-    r'^' + URL_PREFIX + '/help-advice/',
+    r'^' + URL_PREFIX + '/help-contact/',
     r'^' + URL_PREFIX + '/costs/',
     r'^' + URL_PREFIX + '/application-saved/$',
     r'^' + URL_PREFIX + '/health-check/(?P<id>[\w-]+)/$'
@@ -187,7 +187,6 @@ REGEX = {
     "COUNTRY": "^[A-Za-z- ]+$",
     "VISA": "^4[0-9]{12}(?:[0-9]{3})?$",
     "MASTERCARD": "^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$",
-    "AMERICAN_EXPRESS": "^3[47][0-9]{13}$",
     "MAESTRO": "^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$",
     "CARD_SECURITY_NUMBER": "^[0-9]{3,4}$"
 }

@@ -73,7 +73,7 @@ class Row:
     Class to contain a specific row rendered in a table on the generic summary template
     """
 
-    def __init__(self, data_name, row_name, value, back_link, error):
+    def __init__(self, data_name, row_name, value, back_link, error, change_link_description=None):
         """
         Standard init for all necessary fields
         :param data_name: The name of the field as stored in the database
@@ -81,6 +81,7 @@ class Row:
         :param value: The value of the field
         :param back_link: The view which, when reversed, redirects to the page where the value is defined
         :param error: The error associated with the field, empty by default, only populated on table.get_errors
+        :param change_link_description: An optional change link textual description value
         """
 
         self.data_name = data_name
@@ -88,6 +89,9 @@ class Row:
         self.value = value
         self.back_link = back_link
         self.error = error
+
+        if change_link_description is not None:
+            self.change_link_description = change_link_description
 
 
 def table_creator(object_list, field_names, data_names, table_names, table_error_names, back_url_names):
@@ -147,7 +151,7 @@ def field_mapper(data_object, field_names, data_dictionary={}):
     return data_dictionary
 
 
-def create_tables(tables_values, page_name_dict, page_link_dict):
+def create_tables(tables_values, page_name_dict, page_link_dict, change_link_description_dict=None):
     """
     Function to create a list of table objects
     :param tables_values: A list of dictionaries containing all the details of the  tables to be rendered on the page
@@ -163,7 +167,11 @@ def create_tables(tables_values, page_name_dict, page_link_dict):
         # Each iteration of table will be a dictionary (see a call of this funciton for the definition of this)
         for key, value in table['fields'].items():
             # Create a row object as defined above, using the data name as the key
-            temp_row = Row(key, page_name_dict[key], value, page_link_dict[key], '')
+            if change_link_description_dict is not None \
+                    and change_link_description_dict.get(key) is not None:
+                temp_row = Row(key, page_name_dict[key], value, page_link_dict[key], '', change_link_description_dict.get(key))
+            else:
+                temp_row = Row(key, page_name_dict[key], value, page_link_dict[key], '')
             # The actual table object is passed into the function without rows, the row is added here
             table['table_object'].add_row(temp_row)
 

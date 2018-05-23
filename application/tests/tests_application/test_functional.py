@@ -59,6 +59,31 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.assertEqual(r.status_code, 302)
         self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
 
+    def TestReturnToApp(self):
+        """Tests returning to application for both a new and existing email."""
+
+        self.email = 'omelette.du.fromage@gmail.com'
+        new_email = 'cheese.omelette@gmail.com'
+
+        r = self.client.post(
+            reverse('Existing-Email'),
+            {
+                'email_address': self.email
+            }
+        )
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
+
+        self.assertEqual(False, UserDetails.objects.filter(email=new_email).exists())
+        r = self.client.post(
+            reverse('Existing-Email'),
+            {
+                'email_address': new_email
+            }
+        )
+        self.assertEqual(r.status_code, 302)  # Create account for new email and send link.
+        self.assertEqual(new_email, UserDetails.objects.get(email=new_email).email)
+
     def TestValidateEmail(self):
         """Validate Email"""
 
@@ -689,6 +714,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestAppEmail()
         self.TestValidateEmail()
         self.TestAppPhone()
+        self.TestReturnToApp()
 
         self.TestEmailValidationDoesNotCountAsResend()
         self.TestResendCodeIncrementsCount()

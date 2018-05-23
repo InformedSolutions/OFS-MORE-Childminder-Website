@@ -69,6 +69,26 @@ def magic_link_update_email(email, first_name, link_id):
     return send_email(email, personalisation, template_id)
 
 
+def magic_link_non_existent_email(email, link_id):
+    """
+    Method to send a magic link email, using notify.py, to allow applicant to log in
+    :param email: string containing the e-mail address to send the e-mail to
+    :param link_id: string containing the magic link ID related to an application
+    :return: :class:`Response <Response>` object containing http request response
+    :rtype: requests.Response
+    """
+    # If executing login function in test mode set env variable for later retrieval by test code
+    if settings.EXECUTING_AS_TEST == 'True':
+        os.environ['EMAIL_VALIDATION_URL'] = link_id
+    else:
+        print(link_id)
+
+    personalisation = {"link": link_id}
+    template_id = 'd2d7958a-269a-45c3-b66d-da8ec1911380'
+
+    return send_email(email, personalisation, template_id)
+
+
 def magic_link_text(phone, link_id):
     """
     Method to send a magic link sms using notify.py

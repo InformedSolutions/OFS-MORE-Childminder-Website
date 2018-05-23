@@ -2,7 +2,6 @@ import collections
 
 from django.utils import timezone
 from datetime import date
-import calendar
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -10,7 +9,7 @@ from django.shortcuts import render
 
 from .. import status
 from ..table_util import Table, create_tables, submit_link_setter
-from ..summary_page_data import first_aid_name_dict, first_aid_link_dict
+from ..summary_page_data import first_aid_name_dict, first_aid_link_dict, first_aid_change_link_description_dict
 from ..business_logic import (first_aid_logic,
                               reset_declaration)
 from ..forms import (FirstAidTrainingDeclarationForm,
@@ -241,17 +240,19 @@ def first_aid_training_summary(request):
         first_aid_fields = collections.OrderedDict([
             ('first_aid_training_organisation', first_aid_record.training_organisation),
             ('title_of_training_course', first_aid_record.course_title),
-            ('course_date', ' '.join([str(first_aid_record.course_day), calendar.month_name[first_aid_record.course_month], str(first_aid_record.course_year)]))
+            ('course_date', '/'.join([str(first_aid_record.course_day).zfill(2),
+                                      str(first_aid_record.course_month).zfill(2),
+                                      str(first_aid_record.course_year)]))
         ])
 
         first_aid_table = collections.OrderedDict({
             'table_object': Table([first_aid_record.pk]),
             'fields': first_aid_fields,
             'title': '',
-            'error_summary_title': 'There is something wrong with your first aid training'
+            'error_summary_title': 'There is something wrong with your first aid training',
         })
 
-        table_list = create_tables([first_aid_table], first_aid_name_dict, first_aid_link_dict)
+        table_list = create_tables([first_aid_table], first_aid_name_dict, first_aid_link_dict, first_aid_change_link_description_dict)
 
         variables = {
             'form': form,

@@ -263,7 +263,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='proposition-links']/li[2]/a").click()
 
         # Go back to task list
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='content']/a[3]").click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text("Return to application").click()
 
         self.assertEqual("Register as a childminder",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
@@ -519,8 +519,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         Tests the help page can be accessed without logging in.
         """
         self.selenium_task_executor.navigate_to_base_url()
-        self.selenium_task_executor.get_driver().find_element_by_link_text('Help').click()
-        self.assertEqual("Help and advice", self.selenium_task_executor.get_driver().title)
+        self.selenium_task_executor.get_driver().find_element_by_link_text('Help and contacts').click()
+        self.assertEqual("Help and contacts", self.selenium_task_executor.get_driver().title)
 
     @try_except_method
     def test_can_access_help_when_authenticated(self):
@@ -528,8 +528,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         Tests the help page can be accessed once logged in.
         """
         self.create_standard_eyfs_application()
-        self.selenium_task_executor.get_driver().find_element_by_link_text('Help').click()
-        self.assertEqual("Help and advice", self.selenium_task_executor.get_driver().title)
+        self.selenium_task_executor.get_driver().find_element_by_link_text('Help and contacts').click()
+        self.assertEqual("Help and contacts", self.selenium_task_executor.get_driver().title)
 
     @try_except_method
     def test_can_access_costs(self):

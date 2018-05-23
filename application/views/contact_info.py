@@ -127,12 +127,13 @@ def contact_summary(request):
             'table_object': Table([user_details.pk]),
             'fields': contact_info_fields,
             'title': '',
-            'error_summary_title': 'There is something wrong with your login details'
+            'error_summary_title': 'There was a problem'
         })
 
         table_list = create_tables([contact_info_table], contact_info_name_dict, contact_info_link_dict)
 
         form = ContactSummaryForm()
+
         variables = {
             'form': form,
             'application_id': app_id,
