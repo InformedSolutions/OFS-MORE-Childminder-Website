@@ -69,8 +69,13 @@ class UpdateEmailView(View):
     """
     def get(self, request):
         app_id = request.GET["id"]
+        application = Application.objects.get(pk=app_id)
         form = ContactEmailForm()
         form.check_flag()
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+
         application = Application.objects.get(pk=app_id)
 
         return self.render_update_email_template(request, form=form, application=application)
@@ -99,6 +104,10 @@ class UpdateEmailView(View):
                 redirect_url = build_url('Update-Email-Sent', get={'email': email, 'id': app_id})
                 return HttpResponseRedirect(redirect_url)
         else:
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+
             return self.render_update_email_template(request, form=form, application=application)
 
     def render_update_email_template(self, request, form, application):
