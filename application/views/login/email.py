@@ -2,6 +2,7 @@ import time
 
 from django.conf import settings
 from django.utils import timezone
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -30,10 +31,10 @@ class NewUserSignInView(View):
             email = form.cleaned_data['email_address']
 
             if UserDetails.objects.filter(email=email).exists():
-                send_magic_link(email)
+                send_magic_link(email)  # acc created here so conditional must be made before then.
                 return HttpResponseRedirect(reverse('Existing-Email-Sent') + '?email=' + email)
             else:
-                acc = create_new_app()
+                acc = create_new_app()  # Create new account here such that send_magic_link sends correct email.
                 acc.email = email
                 acc.save()
                 send_magic_link(email)
@@ -56,10 +57,7 @@ class ExistingUserSignInView(View):
                 return HttpResponseRedirect(reverse('Service-Down'))
 
             email = form.cleaned_data['email_address']
-
-            if UserDetails.objects.filter(email=email).exists():
-                send_magic_link(email)
-
+            send_magic_link(email)
             return HttpResponseRedirect(reverse('Existing-Email-Sent') + '?email=' + email)
 
         return render(request, 'existing-application.html', {'form': form})
@@ -179,12 +177,17 @@ def send_magic_link(email):
     Send email containing link to access an account.
     :param email: email address for the account to be accessed.
     """
-    if UserDetails.objects.filter(email=email).exists():
+    try:
         acc = UserDetails.objects.get(email=email)
-        link = create_account_magic_link(account=acc)
-        # Note url has been updated to use the domain set in the settings
-        magic_link.magic_link_confirmation_email(email,
-                                                 str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link)
+        email_func = magic_link.magic_link_confirmation_email
+
+    except ObjectDoesNotExist:  # if acc doesn't exist, create one and send corresponding email.
+        acc = create_new_app()
+        acc.email = email
+        email_func = magic_link.magic_link_non_existent_email
+
+    link = create_account_magic_link(account=acc)  # acc.save() called in here.
+    email_func(email, str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link)
 
 
 def update_magic_link(email, app_id):
@@ -199,17 +202,14 @@ def update_magic_link(email, app_id):
     if UserDetails.objects.filter(application_id=app_id).exists():
         acc = UserDetails.objects.get(application_id=app_id)
         link = create_account_magic_link(account=acc)
-        first_name = 'applicant'
 
         try:
             first_name = ApplicantName.objects.get(application_id=app_id).first_name
-        except:
-            pass
+        except ObjectDoesNotExist:
+            first_name = 'applicant'
 
-        # Note url has been updated to use the domain set in the settings
-        magic_link.magic_link_update_email(email,
-                                           first_name,
-                                           str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link + '?email=' + email)
+        full_link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link + '?email=' + email
+        magic_link.magic_link_update_email(email, first_name, full_link)
 
 
 def create_account_magic_link(account):

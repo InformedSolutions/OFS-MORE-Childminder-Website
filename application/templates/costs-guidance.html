@@ -32,7 +32,7 @@
     </tr>
 </table>
 
-<p class="top-padded">The fee is £103 if you are only caring for children aged over 5.</p>
+<p class="top-padded">The annual renewal fee is £35.</p>
 
 <table>
     <thead>
@@ -108,7 +108,7 @@
             Early years training
         </td>
         <td class="one-third">
-            £20 to £200 (approx)
+            £60 to £200 (approx)
         </td>
     </tr>
 </table>
@@ -161,7 +161,7 @@
 </p>
 
 {% if id and AUTHENTICATED %}
-    <a href="{% url 'Task-List-View' %}?id={{id}}">Return to application</a>
+   <a href="{{ return_url }}" class="button">Return to application</a>
 {% endif %}
 
 {% endblock %}

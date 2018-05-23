@@ -6,11 +6,13 @@
     </h2>
     <ul class="error-summary-list">
     {% with other_people_numbers=table.other_people_numbers %}
-      <p>Please review the following errors: </p>
+      <p>You need to update the following: </p>
       {% for row in table.row_list %}
         <li class="field-error">
           <ul>
-              <a href="{% url row.back_link %}?id={{application_id}}{{other_people_numbers}}">{{ row.error }}</a>
+              {% if row.error %}
+              <a href="{% url row.back_link %}?id={{application_id}}{{other_people_numbers}}">{{ row.row_name }}</a>
+              {% endif %}
           </ul>
         </li>
       {% endfor %}

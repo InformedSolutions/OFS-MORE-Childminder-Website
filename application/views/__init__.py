@@ -22,4 +22,4 @@ from .print_handler import *
 from .costs import *
 from .cancel_application import *
 from .login import *
-from .help_and_advice import *
+from .help_and_contact import *

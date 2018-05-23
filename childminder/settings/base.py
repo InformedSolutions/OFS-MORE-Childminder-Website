@@ -141,7 +141,7 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/new-application/',
     r'^' + URL_PREFIX + '/new-application/check-email/',
     r'^' + URL_PREFIX + '/service-unavailable/',
-    r'^' + URL_PREFIX + '/help-advice/',
+    r'^' + URL_PREFIX + '/help-contact/',
     r'^' + URL_PREFIX + '/costs/',
     r'^' + URL_PREFIX + '/application-saved/$',
     r'^' + URL_PREFIX + '/health-check/(?P<id>[\w-]+)/$'
