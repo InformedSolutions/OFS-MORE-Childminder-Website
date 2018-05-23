@@ -46,7 +46,7 @@ def validate_magic_link(request, id):
             CustomAuthenticationHandler.create_session(response, person.email)
             return response
         else:
-            return render(request, 'code-expired.html')
+            return render(request, 'bad-link.html')
 
     except Exception as ex:
         exception_data = traceback.format_exc().splitlines()
