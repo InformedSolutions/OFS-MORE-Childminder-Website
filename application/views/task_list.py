@@ -208,7 +208,7 @@ def task_list(request):
             ]
         }
 
-    if len([task for task in context['tasks'] if task['status'] in ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED']]) < 1:
+    if len([task for task in context['tasks'] if task['status'] in ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]) < 1:
         context['all_complete'] = True
     else:
         context['all_complete'] = False
