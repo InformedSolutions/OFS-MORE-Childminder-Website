@@ -708,7 +708,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Try to grab email validation URL.
         # Should redirect to bad link; no email validation link sent for preexsiting email.
         self.selenium_task_executor.navigate_to_email_validation_url()
-        self.assertEqual('Bad link', self.selenium_task_executor.get_driver().title)
+        self.assertEqual('Link used already', self.selenium_task_executor.get_driver().title)
 
     @try_except_method
     def test_cannot_create_multiple_applications_using_same_email(self):
@@ -871,7 +871,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.navigate_to_email_validation_url()
         self.selenium_task_executor.navigate_to_email_validation_url()
 
-        self.assertEqual("Link already used",
+        self.assertEqual("Link used already",
                          self.selenium_task_executor.get_driver().find_element_by_class_name("form-title").text)
 
     @try_except_method
