@@ -2,6 +2,8 @@
 {% block page_title %}Check your answers: your health{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
+{% load alt_text_extras %}
+
 {% block proposition_menu %}
 {% endblock %}
 {% block inner_content %}
@@ -26,14 +28,14 @@
         <tr>
             <td class=summary-column> Are you currently being treated by your GP, another doctor or a hospital?</td>
             <td class=summary-column> {{ current_treatment_bool|yesno:"Yes,No" }} </td>
-            <td class="change-answer"><a href="{% url 'Health-Check-Current' %}?person_id={{person_id}}">Change</a></td>
+            <td class="change-answer"><a href="{% url 'Health-Check-Current' %}?person_id={{person_id}}" alt="Change answer on current treatments">Change</a></td>
         </tr>
         {% if current_treatment_bool %}
         {% for treatment in current_treatment_set %}
         <tr>
             <td class=summary-column>Details of the illness or condition</td>
             <td class=summary-column>{{ treatment.description }}</td>
-            <td class="change-answer"><a href="{% url 'Health-Check-Current' %}?person_id={{person_id}}">Change</a></td>
+            <td class="change-answer"><a href="{% url 'Health-Check-Current' %}?person_id={{person_id}}" alt="Change illness or condition">Change</a></td>
         </tr>
         {% endfor %}
         {% endif %}
@@ -57,14 +59,14 @@
         <tr>
             <td class=summary-column>Have you had any serious illnesses within the last 5 years?</td>
             <td class=summary-column>{{ serious_illness_bool|yesno:"Yes,No" }}</td>
-            <td class="change-answer"><a href="{% url 'Health-Check-Serious-Start' %}?person_id={{person_id}}">Change</a></td>
+            <td class="change-answer"><a href="{% url 'Health-Check-Serious-Start' %}?person_id={{person_id}}" alt="Change answer on serious illness in the last 5 years">Change</a></td>
         </tr>
         {% if serious_illness_bool %}
         {% for illness in serious_illness_set %}
         <tr>
             <td class=summary-column>{{ illness.description }}</td>
             <td class=summary-column>{{ illness.start_date|date:"d m Y" }} to {{ illness.end_date|date:"d m Y" }}</td>
-            <td class="change-answer"><a href="{% url 'Health-Check-Serious-Edit' %}?person_id={{person_id}}&illness_id={{illness.illness_id}}">Change</a></td>
+            <td class="change-answer"><a href="{% url 'Health-Check-Serious-Edit' %}?person_id={{person_id}}&illness_id={{illness.illness_id}}" alt = "Change {{ forloop.counter|inflect }} illness">Change</a></td>
         </tr>
         {% endfor %}
         {% endif %}
@@ -88,14 +90,14 @@
         <tr>
             <td>Have you been admitted to hospital in the last 2 years?</td>
             <td>{{ hospital_admission_bool|yesno:"Yes,No" }}</td>
-            <td class="change-answer"><a href="{% url 'Health-Check-Hospital-Start' %}?person_id={{person_id}}">Change</a></td>
+            <td class="change-answer"><a href="{% url 'Health-Check-Hospital-Start' %}?person_id={{person_id}}" alt="Change answer on hospital admission in the last 2 years">Change</a></td>
         </tr>
         {% if hospital_admission_bool %}
         {% for illness in hospital_admission_set %}
         <tr>
             <td>{{ illness.description }}</td>
             <td>{{ illness.start_date|date:"d m Y" }} to {{ illness.end_date|date:"d m Y" }}</td>
-            <td class="change-answer"><a href="{% url 'Health-Check-Hospital-Edit' %}?person_id={{person_id}}&illness_id={{illness.illness_id}}">Change</a></td>
+            <td class="change-answer"><a href="{% url 'Health-Check-Hospital-Edit' %}?person_id={{person_id}}&illness_id={{illness.illness_id}}" alt="Change {{ forloop.counter|inflect }} admission reason">Change</a></td>
         </tr>
         {% endfor %}
         {% endif %}
