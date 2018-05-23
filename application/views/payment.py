@@ -9,7 +9,7 @@ from timeline_logger.models import TimelineLog
 from .. import payment
 from ..forms import (PaymentForm)
 from ..models import (Application)
-
+from ..models import (CriminalRecordCheck)
 
 def paypal_payment_completion(request):
     if request.method == 'GET':
@@ -44,9 +44,12 @@ def payment_confirmation(request):
         order_code = request.GET['orderCode']
         # If the payment has been successfully processed
         if payment.check_payment(order_code) == 200:
+            CriminalRecordCheck.objects.get(application_id=application_id_local)
+            criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
             variables = {
                 'application_id': application_id_local,
                 'order_code': request.GET["orderCode"],
+                'conviction': criminal_record_check.cautions_convictions
             }
             local_app = Application.objects.get(
                 application_id=application_id_local)

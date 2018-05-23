@@ -263,9 +263,11 @@ def declaration_declaration(request):
 
         # If application is already submitted redirect them to the awaiting review page
         if application.application_status == 'SUBMITTED' and application.order_code is not None:
+            criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
             variables = {
                 'application_id': application_id_local,
                 'order_code': application.order_code,
+                'conviction': criminal_record_check.cautions_convictions
             }
             return render(request, 'payment-confirmation.html', variables)
 
@@ -348,9 +350,11 @@ def declaration_declaration(request):
                     application.application_status = "SUBMITTED"
                     application.save()
 
+                    criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
                     variables = {
                         'application_id': application_id_local,
                         'order_code': application.order_code,
+                        'conviction': criminal_record_check.cautions_convictions
                     }
 
                     return render(request, 'payment-confirmation.html', variables)
