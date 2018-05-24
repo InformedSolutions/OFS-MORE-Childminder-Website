@@ -17,7 +17,7 @@ def prepare_for_interview(request):
     if request.method == 'GET':
         application_id_local = request.GET['id']
         order_code = Application.objects.get(
-            pk=application_id_local).order_code
+            pk=application_id_local).application_reference
         form = PrepareForInterviewForm()
         variables = {
             'application_id': application_id_local,
@@ -30,7 +30,7 @@ def prepare_for_interview(request):
 
         application_id_local = request.POST["id"]
         order_code = Application.objects.get(
-            pk=application_id_local).order_code
+            pk=application_id_local).application_reference
         form = PrepareForInterviewForm(request.POST)
 
         if form.is_valid():
