@@ -30,6 +30,7 @@ class HospitalAdmission(ChildminderForms):
     """
     Form to record any hospital admission of the applicant
     """
+    error_summary_title = 'There was a problem on this page'
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
@@ -39,7 +40,7 @@ class HospitalAdmission(ChildminderForms):
         (False, 'No'),
     )
 
-    illness_details = forms.CharField(label='Tell us why you were admitted',
+    illness_details = forms.CharField(label='Tell us why you were admitted to hospital',
                                       widget=forms.Textarea(), required=True,
                                       error_messages={'required': 'Tell us why you were admitted'})
 

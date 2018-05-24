@@ -872,7 +872,7 @@ def personal_details_summary(request):
         postcode = applicant_home_address_record.postcode
         location_of_childcare = applicant_home_address_record.childcare_address
         applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                              childcare_address=True)
+                                                                              childcare_address=True, )
         childcare_street_line1 = applicant_childcare_address_record.street_line1
         childcare_street_line2 = applicant_childcare_address_record.street_line2
         childcare_town = applicant_childcare_address_record.town

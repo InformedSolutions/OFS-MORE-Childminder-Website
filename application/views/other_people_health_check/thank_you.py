@@ -29,11 +29,12 @@ class ThankYou(BaseTemplateView):
         if adult_record.health_check_status == 'To do':
             template_id = '8f5713f5-4437-479e-9fcc-262d0306f58c'
             email = user_details.email
-            link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + create_account_magic_link(application)
+            link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + create_account_magic_link(user_details)
             personalisation = {"link": link,
                                "firstName": firstname,
                                "Household Member Name": adult_name}
             r = send_email(email, personalisation, template_id)
+            print(link)
 
             adult_record.health_check_status = 'Done'
             adult_record.save()
@@ -49,10 +50,12 @@ class ThankYou(BaseTemplateView):
 
             template_id = '0acc42fa-9ba0-4c5e-8171-e49c08c22b67'
             email = user_details.email
+            link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + create_account_magic_link(user_details)
             personalisation = {"link": link,
-                               "firstName": adult_record.first_name,
+                               "firstName": firstname,
                                "ApplicantName": firstname}
             r = send_email(email, personalisation, template_id)
+            print(link)
 
             update(adult_record.application_id_id, 'people_in_home_status', 'COMPLETED')
 

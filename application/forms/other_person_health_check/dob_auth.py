@@ -3,7 +3,7 @@ from datetime import date
 from django import forms
 from django.core.exceptions import ObjectDoesNotExist
 
-from application.customfields import CustomSplitDateFieldDOB
+from application.customfields import CustomSplitDateFieldDOB, CustomSplitDateField
 from application.forms.childminder import ChildminderForms
 from govuk_forms.fields import SplitDateField
 

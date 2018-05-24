@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Serious Illnesses{% endblock %}
+{% block page_title %}Serious illnesses{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 {% block proposition_menu %}
@@ -17,8 +17,8 @@
         <table class="check-your-answers" style="table-layout: fixed; width: 100%">
             <tr>
                 <th class="bold">Illness</th>
-                <th class="bold">Start Date</th>
-                <th class="bold">End Date</th>
+                <th class="bold">Start date</th>
+                <th class="bold">End date</th>
                 <th></th>
             </tr>
             {% for illness in illnesses %}
@@ -32,6 +32,7 @@
         </table>
         {% endif %}
         {{ form }}
+        <p>You can tell us about any other illnesses on the next page.</p>
         <div class="js-hidden" id="test"></div>
         <input type="submit" name="action" class="button" value="Continue">
     </div>

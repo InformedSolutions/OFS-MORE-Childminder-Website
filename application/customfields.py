@@ -438,7 +438,7 @@ class CustomYearFieldDOB(forms.IntegerField):
 
     def clean(self, value):
         value = self.to_python(value)
-        if len(str(value)) > 4:
+        if len(str(value)) < 4:
             raise forms.ValidationError('Please enter the whole year (4 digits)')
         if value < 1900:
             raise forms.ValidationError('Please check the year')
