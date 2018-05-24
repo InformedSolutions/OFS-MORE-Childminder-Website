@@ -44,10 +44,7 @@ class HospitalAdmissionStartView(BaseFormView):
         if decision == 'True':
             # If there are already hospital record and this is reached, then it has been referred to from the summary
             # page, therefore the only question you need to change is this one before going back
-            if existing_records.exists():
-                self.success_url = 'Health-Check-Summary'
-            else:
-                self.success_url = 'Health-Check-Hospital'
+            self.success_url = 'Health-Check-Hospital'
         else:
             # If they've said no, but there are already records, then they've changed their mind from the summary page
             if existing_records.exists():
