@@ -94,14 +94,9 @@
 {% endblock %}
 
 {% block footer_support_links %}
-  {% get_service_settings as service_settings %}
-  {% if service_settings.has_footer_links %}
     <ul>
-      {% for link in service_settings.footer_links.all %}
-        <li><a href="{{ link.url }}">{{ link.localised_name }}</a></li>
-      {% endfor %}
+        <li><a href="https://www.gov.uk/government/publications/ofsted-privacy-notices/childcare-ofsted-privacy-notice">Privacy notice</a></li>
     </ul>
-  {% endif %}
 {% endblock %}
 
 {% block body_end %}
