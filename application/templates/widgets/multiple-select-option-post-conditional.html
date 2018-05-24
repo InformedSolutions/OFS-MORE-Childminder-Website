@@ -1,0 +1,4 @@
+<div id="{{ widget.attrs.id }}-group" class="multiple-choice" {% if widget.conditionally_revealed %}data-target="{{ widget.conditionally_revealed.bound_field.auto_id }}-group"{% endif %}>
+  {% include 'django/forms/widgets/input.html' %}
+  <label id="{{ widget.attrs.id }}-label" for="{{ widget.attrs.id }}">{{ widget.label }}</label>
+</div>

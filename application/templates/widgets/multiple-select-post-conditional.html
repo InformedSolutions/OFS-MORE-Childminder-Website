@@ -1,0 +1,30 @@
+{% with optgroups=widget.optgroups %}
+  {% for group, options, index in optgroups %}
+    {% if group %}
+      <fieldset id="{{ widget.attrs.id }}-{{ index }}-group">
+        <legend id="{{ widget.attrs.id }}-{{ index }}-label">{{ group }}</legend>
+    {% endif %}
+
+    {% for option in options %}
+      {% if separate_last_option %}
+        {% if is_flat_list and optgroups|length > 1 and index == optgroups|length|add:'-1' %}
+          <p class="form-block">{{ last_option_label|default:_('or') }}</p>
+        {% elif options|length > 1 and forloop.last %}
+          <p class="form-block">{{ last_option_label|default:_('or') }}</p>
+        {% endif %}
+      {% endif %}
+
+      {% include option.template_name with widget=option %}
+    {% endfor %}
+
+
+    {% if group %}
+      </fieldset>
+    {% endif %}
+  {% endfor %}
+{% for group, options, index in optgroups %}
+{% for option in options %}
+    {{ option.conditionally_revealed.html }}
+{% endfor %}
+{% endfor %}
+{% endwith %}

@@ -2,6 +2,7 @@ from django import forms
 from govuk_forms.widgets import InlineRadioSelect, RadioSelect, SeparatedRadioSelect
 
 from application.forms import ChildminderForms
+from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
 
 
 class CurrentIllness(ChildminderForms):
@@ -20,7 +21,7 @@ class CurrentIllness(ChildminderForms):
         (False, 'No'),
     )
 
-    currently_ill = forms.ChoiceField(choices=choices, widget=InlineRadioSelect, required=True,
+    currently_ill = forms.ChoiceField(choices=choices, widget=ConditionalPostInlineRadioSelect, required=True,
                                       label='Are you currently being treated by your GP, another doctor or a hospital?',
                                       error_messages={'required': 'Please answer yes or no'})
 
