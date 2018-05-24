@@ -1114,7 +1114,7 @@ def other_people_resend_confirmation(request):
         form.remove_flag()
         # Navigate back to task summary
         if form.is_valid():
-            return HttpResponseRedirect(settings.URL_PREFIX + '/people/check-answers?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
