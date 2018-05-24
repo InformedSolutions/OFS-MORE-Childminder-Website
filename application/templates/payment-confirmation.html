@@ -48,13 +48,15 @@
         <h2 class="heading-medium">
             Send your documents
         </h2>
+        {% if health_status == 'COMPLETED' and conviction %}
         <p>We need:</p>
         <ul class="list-bullet" style="margin-bottom: 20px; margin-left: 20px;">
             <li>health declaration booklet</li>
-            {% if conviction %}
             <li>DBS certificate</li>
-            {% endif %}
         </ul>
+        {% elif health_status == 'COMPLETED' %}
+        <p>We need your health declaration booklet.</p>
+        {% endif %}
         <p>Send your original documents (not photocopies) to:</p>
         <p style="margin-left: 40px;">
             Applications team

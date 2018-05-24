@@ -267,7 +267,8 @@ def declaration_declaration(request):
             variables = {
                 'application_id': application_id_local,
                 'order_code': application.order_code,
-                'conviction': criminal_record_check.cautions_convictions
+                'conviction': criminal_record_check.cautions_convictions,
+                'health_status': Application.objects.get(application_id=application_id_local).health_status
             }
             return render(request, 'payment-confirmation.html', variables)
 
@@ -354,7 +355,8 @@ def declaration_declaration(request):
                     variables = {
                         'application_id': application_id_local,
                         'order_code': application.order_code,
-                        'conviction': criminal_record_check.cautions_convictions
+                        'conviction': criminal_record_check.cautions_convictions,
+                        'health_status': Application.objects.get(application_id=application_id_local).health_status
                     }
 
                     return render(request, 'payment-confirmation.html', variables)
