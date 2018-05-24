@@ -37,8 +37,13 @@ class SeriousIllnessStartView(BaseFormView):
         else:
             adult_record.serious_illness = False
             if existing_records.exists():
+
                 existing_records.delete()
-            self.success_url = 'Health-Check-Hospital-Start'
+            if HealthCheckHospital.objects.filter(person_id=adult_record).exists():
+                self.success_url = 'Health-Check-Summary'
+            else:
+                self.success_url = 'Health-Check-Hospital-Start'
+
 
         adult_record.serious_illness = decision
         adult_record.save()
