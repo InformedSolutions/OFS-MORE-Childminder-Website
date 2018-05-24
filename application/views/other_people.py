@@ -14,6 +14,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
+from application.utils import build_url
 from .. import status
 from ..table_util import create_tables, Table, submit_link_setter
 from ..summary_page_data import other_adult_link_dict, other_adult_name_dict, other_child_link_dict, \
@@ -839,6 +840,10 @@ def other_people_email_confirmation(request):
         # Send health check e-mail to each household member
         # Generate parameters for Notify e-mail template
         template_id = '1e3c066a-4bbe-4743-b6b1-1d52ac291caf'
+
+        if all([adult.email_resent_timestamp is not None for adult in adults]):
+            print('Hi')
+            return HttpResponseRedirect(build_url('Task-List-View', get={'id': application_id_local}))
 
         try:
             applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
