@@ -194,11 +194,17 @@ class SMSValidationView(View):
         if has_expired(acc.sms_resend_attempts_expiry_date):
             acc.sms_resend_attempts_expiry_date = 0
 
+        if request.META.get('HTTP_REFERER') is not None:  # If they have come from email valdiation link, this is None.
+            code_resent = True
+        else:
+            code_resent = False
+
         variables = {
             'form': form,
             'id': id,
             'phone_number': acc.mobile_number[-3:],
             'url': reverse('Security-Question') + '?id=' + str(application.application_id),
+            'code_resent': code_resent,
             'sms_resend_attempts': acc.sms_resend_attempts,
         }
         return render(request, template_name='verify-phone.html', context=variables)
