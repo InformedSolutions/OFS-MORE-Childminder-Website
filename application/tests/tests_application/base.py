@@ -653,3 +653,41 @@ class ApplicationTestBase(object):
         )
 
         self.assertEqual(r.status_code, 200)
+
+    def TestAppArcFlaggedStatuses(self):
+        """Test that field_arc_flagged is false once successful declaration has been made."""
+        app = Application.objects.get(application_id=self.app_id)
+
+        flagged_fields_to_check = (
+            "childcare_type_arc_flagged",
+            "criminal_record_check_arc_flagged",
+            "eyfs_training_arc_flagged",
+            "first_aid_training_arc_flagged",
+            "health_arc_flagged",
+            "login_details_arc_flagged",
+            "people_in_home_arc_flagged",
+            "personal_details_arc_flagged",
+            "references_arc_flagged"
+        )
+
+        for field in flagged_fields_to_check:
+            setattr(app, field, True)  # Set flagged_fields to true.
+
+        app.save()
+
+        r = self.client.post(
+            reverse('Declaration-Declaration-View'),
+            {
+                'id': self.app_id,
+                'share_info_declare': True,
+                'suitable_declare': True,
+                'information_correct_declare': True,
+                'change_declare': True,
+                'display_contact_details_on_web': True
+            }
+        )
+
+        app = Application.objects.get(application_id=self.app_id)
+
+        for field in flagged_fields_to_check:
+            self.assertFalse(getattr(app, field))  # Assert flagged_fields are false.

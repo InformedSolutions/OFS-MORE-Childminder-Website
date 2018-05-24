@@ -4,6 +4,8 @@ Functional tests for views
 NOTE! If it throws you status 200, that means form submission is failing!
 
 """
+from datetime import datetime
+
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 from django.urls import resolve
@@ -142,6 +144,7 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
         self.TestReferencesSummary()
 
         self.TestAppDeclaration()
+        self.TestAppArcFlaggedStatuses()
         self.TestAppPaymentCreditDetails()
         self.TestAppPaymentConfirmation()
 
