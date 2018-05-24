@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Your account{% endblock %}
+{% block page_title %}Your phone number{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -7,15 +7,19 @@
 
 {% include "back-button.html" %}
 
-<!-- Initialise error summary for page -->
 {{mobile_form.error_summary}}
 {{add_phone_form.error_summary}}
-<!-- Form -->
+
+<h1 class="form-title heading-large">
+    Your phone number
+</h1>
+
+<p>Please let us know the best phone number to ring or text you on.</p>
+
+<p>We will send a code to your mobile when you log back in.</p>
+
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <div class="form-group">
-        <h1 class="form-title heading-large">
-            Your phone number
-        </h1>
         <p>We will send a code to your mobile when you sign in next time.</p>
         {{mobile_form.as_div}}
         <p>Let us know if you have another number, like a landline phone.</p>
@@ -25,6 +29,7 @@
         <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
         <input type="hidden" name="id" value="{{application_id}}"/>
     </div>
+
     <!-- If applicant has previously completed this task, allow user to return to task list -->
     {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
         {% include 'return-to-list.html' %}

@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.utils import timezone
 import calendar
 
@@ -266,10 +267,10 @@ def declaration_declaration(request):
         application = Application.objects.get(pk=application_id_local)
 
         # If application is already submitted redirect them to the awaiting review page
-        if application.application_status == 'SUBMITTED' and application.order_code is not None:
+        if application.application_status == 'SUBMITTED' and application.application_reference is not None:
             variables = {
                 'application_id': application_id_local,
-                'order_code': application.order_code,
+                'order_code': application.application_reference,
             }
             return render(request, 'payment-confirmation.html', variables)
 
@@ -347,13 +348,13 @@ def declaration_declaration(request):
 
                     variables = {
                         'application_id': application_id_local,
-                        'order_code': application.order_code,
+                        'order_code': application.application_reference,
                         'updated_list': updated_list
                     }
 
                     return render(request, 'payment-confirmation-resubmitted.html', variables)
 
-                return HttpResponseRedirect(settings.URL_PREFIX + '/payment?id=' + application_id_local)
+                return HttpResponseRedirect(reverse('Payment-Details-View') + '?id=' + application_id_local)
 
             else:
                 variables = {

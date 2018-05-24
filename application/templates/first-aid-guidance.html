@@ -1,20 +1,26 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Update your first aid training{% endblock %}
+{% block page_title %}First aid training{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
 {% include "back-button.html" %}
-<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+
+<h1 class="form-title heading-large">
+    First aid training
+</h1>
+
+<p>You will need to go on a full paediatric first aid course.</p>
+
+<p>The course should last at least 12 hours. It is usually a 2-day course.</p>
+
+<p>Courses cost between &#163;80 and &#163;200.</p>
+
+<p class="text-before-button">You must renew your training every 3 years to keep it up to date.</p>
+
+<form method="post" class="form-group" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <div class="form-group">
-        <h1 class="form-title heading-large">
-            First aid training
-        </h1>
-        <p>You will need to go on a full paediatric first aid course.</p>
-        <p>The course should last at least 12 hours. It is usually a 2-day course.</p>
-        <p>Courses cost between &#163;80 and &#163;200.</p>
-        <p class="text-before-button">You must renew your training every 3 years to keep it up to date.</p>
         {{form.as_div}}
         {% csrf_token %}
         <input type="submit" class="button button-submit" value="Continue">

@@ -7,11 +7,9 @@
 
 {% include "back-button.html" %}
 
-<!-- Initialise error summary for page -->
 {{form.error_summary}}
-<!-- Form -->
+
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    <!-- Content -->
     <div class="form-group">
         <h1 class="form-title heading-large">
             Children in your home

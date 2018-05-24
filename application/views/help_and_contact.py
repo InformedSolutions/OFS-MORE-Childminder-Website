@@ -26,7 +26,7 @@ def help_and_contact(request):
         # render either confirmation or task list view, depending on if application has been submitted
         if status == 'SUBMITTED':
             return_view = 'Payment-Confirmation'
-            url_params['orderCode'] = str(application.order_code)
+            url_params['orderCode'] = str(application.application_reference)
         elif status == 'ARC_REVIEW':
             return_view = 'Awaiting-Review-View'
             url_params['orderCode'] = str(application.order_code)

@@ -9,7 +9,7 @@ from django.shortcuts import render
 from django.views import View
 from timeline_logger.models import TimelineLog
 
-from application.views import magic_link
+from ...views import magic_link
 from ...utils import test_notify, build_url
 from ...forms import ContactEmailForm
 from ...models import UserDetails, Application, ApplicantName
@@ -248,7 +248,7 @@ def create_new_app():
         date_created=timezone.now(),
         date_updated=timezone.now(),
         date_accepted=None,
-        order_code=None
+        application_reference=None
     )
     user = UserDetails.objects.create(application_id=application)
 

@@ -8,7 +8,9 @@
         <li class="non-field-error">{{ error }}</li>
       {% endfor %}
 
-      <p>You need to do the following: </p>
+      {% if field_errors %}
+        <p>You need to do the following: </p>
+      {% endif %}
 
       {% for field, field_errors in field_errors.items %}
         <li class="field-error {% if field.is_hidden %}hidden-field-error{% endif %}">

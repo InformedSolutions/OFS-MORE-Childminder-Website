@@ -7,27 +7,27 @@
 
 {% include "back-button.html" %}
 
-<!-- Initialise error summary for page -->
 {{form.error_summary}}
 
-<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <h1 class="form-title heading-large">
-            Pay by debit or credit card
-        </h1>
+<h1 class="form-title heading-large">
+    Pay by debit or credit card
+</h1>
 
-    <p class="form-group">
-        <img src="{% static 'card-types.png' %}" alt="accepted-cards-visa-maestro-mastercard-amex"
-             style="height: 40px;"/>
-    </p>
-    <div class="form-group">
-        <p>We accept Visa, Maestro, MasterCard and American Express cards.</p>
-        <p>
-            You are paying <span class="bold-small">&#163;35</span> to <span class="bold-small">apply to be a childminder</span>.
-        </p>
-    </div>
+<p class="form-group">
+    <img src="{% static 'card-types.png' %}" alt="accepted card logos"
+         style="height: 40px;"/>
+</p>
+
+<p>We accept Visa, Maestro and MasterCard cards.</p>
+
+<p>
+    You are paying <span class="bold-small">&#163;35</span> to <span class="bold-small">apply to be a childminder</span>.
+</p>
+
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <div class="form-group">
         {{form.as_div}}
-        <p>You will be taken to Worldpay. Ofsted does not keep a record of your card details.</p>
+        <p>Ofsted does not keep a record of your card details.</p>
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>
         <input type="submit" class="button" value="Pay and apply">

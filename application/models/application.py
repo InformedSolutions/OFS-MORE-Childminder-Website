@@ -1,4 +1,6 @@
 from uuid import uuid4
+
+from django.core.validators import RegexValidator
 from django.db import models
 
 
@@ -64,8 +66,9 @@ class Application(models.Model):
     date_created = models.DateTimeField(blank=True, null=True)
     date_updated = models.DateTimeField(blank=True, null=True)
     date_accepted = models.DateTimeField(blank=True, null=True)
-    order_code = models.UUIDField(blank=True, null=True)
     date_submitted = models.DateTimeField(blank=True, null=True)
+    application_reference = models.CharField(blank=True, null=True, max_length=9,
+                                             validators=[RegexValidator(r'(\w{2})([0-9]{7})')])
 
     @classmethod
     def get_id(cls, app_id):

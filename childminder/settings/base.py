@@ -40,6 +40,11 @@ EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
 
 TEST_NOTIFY_CONNECTION = True
 
+APPLICATION_PREFIX = 'CM'
+
+PAYMENT_PROCESSING_ATTEMPTS = 3
+PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS = 10
+
 # INSTALLED DJANGO APPLICATIONS
 
 BUILTIN_APPS = [
@@ -145,6 +150,8 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/application-saved/$',
     r'^' + URL_PREFIX + '/health-check/(?P<id>[\w-]+)/$'
 )
+
+SECURE_BROWSER_XSS_FILTER = True
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',

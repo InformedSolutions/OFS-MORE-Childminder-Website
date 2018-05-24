@@ -7,16 +7,20 @@
 
 {% include "back-button.html" %}
 {{form.error_summary}}
-<!-- Form -->
+
+<h1 class="form-title heading-large">
+    Renew your first aid training
+</h1>
+
+<p>Your certificate is only valid for 3 years and will run out in the next few months.</p>
+
+<p>You will have to go on a 12-hour paediatric first aid course to renew your training.</p>
+
+<p>You must renew your first aid training in the next few months.</p>
+
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <!-- Content -->
     <div class="form-group">
-        <h1 class="form-title heading-large">
-            Renew your first aid training
-        </h1>
-        <p>Your certificate is only valid for 3 years and will run out in the next few months.</p>
-        <p>You will have to go on a 12-hour paediatric first aid course to renew your training.</p>
-        <p>You must renew your first aid training in the next few months.</p>
         {% csrf_token %}
         <input type="submit" class="button" value="Save and continue">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>

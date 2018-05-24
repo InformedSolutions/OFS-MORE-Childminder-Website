@@ -1,20 +1,23 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Type of childcare{% endblock %}
+{% block page_title %}Childcare Register (compulsory part){% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 {% include "back-button.html" %}
 
-<!-- Form -->
+<h1 class="form-title heading-large">
+    Childcare Register (compulsory part)
+</h1>
+
+<p>You will be joining the compulsory part of the Childcare Register.</p>
+
+<p>It costs &#163;103 to apply.</p>
+
+<p class="text-before-button">This will let you look after children aged 5 to 7.</p>
+
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <div class="form-group grid-row">
-        <h1 class="form-title heading-large">
-            Childcare Register (compulsory part)
-        </h1>
-        <p>You will be joining the compulsory part of the Childcare Register.</p>
-        <p>It costs &#163;103 to apply.</p>
-        <p class="text-before-button">This will let you look after children aged 5 to 7.</p>
         {% csrf_token %}
         {{form.as_div}}
         <input type="hidden" value="{{application_id}}" name="id"/>

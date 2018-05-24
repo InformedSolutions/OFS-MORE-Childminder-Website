@@ -60,7 +60,6 @@ class TypeOfChildcareTest(ViewsTest):
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
             date_accepted=None,
-            order_code=None
         )
         user = UserDetails.objects.create(
             application_id=test_app,

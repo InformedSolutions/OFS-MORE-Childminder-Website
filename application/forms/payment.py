@@ -3,28 +3,10 @@ from datetime import date
 
 from django import forms
 from django.conf import settings
-from govuk_forms.widgets import RadioSelect
 
 from ..customfields import ExpirySplitDateField, ExpirySplitDateWidget
 from ..forms.childminder import ChildminderForms
 from ..forms_helper import full_stop_stripper
-
-
-class PaymentForm(ChildminderForms):
-    """
-    GOV.UK form for the Payment selection page
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
-    auto_replace_widgets = True
-
-    options = (
-        ('Credit', 'Credit or debit card'),
-        ('PayPal', 'PayPal')
-    )
-    payment_method = forms.ChoiceField(label='How would you like to pay?', choices=options,
-                                       widget=RadioSelect, required=True,
-                                       error_messages={'required': 'Please select how you would like to pay'})
 
 
 class PaymentDetailsForm(ChildminderForms):
@@ -35,19 +17,10 @@ class PaymentDetailsForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    options = (
-        ('a', 'Alpha'),
-        ('b', 'Beta')
-    )
-    grouped_options = (
-        ('First', options),
-        ('Second', (('c', 'Gamma'), ('d', 'Delta'))),
-    )
     card_type_options = (
         (None, '(Please select)'),
         ('visa', 'Visa'),
         ('mastercard', 'Mastercard'),
-        ('american_express', 'American Express'),
         ('maestro', 'Maestro')
     )
     card_type = forms.ChoiceField(label='Card type', choices=card_type_options, required=True,
@@ -94,9 +67,6 @@ class PaymentDetailsForm(ChildminderForms):
                     raise forms.ValidationError('Please check the number on your card')
         if card_type == 'mastercard':
             if re.match(settings.REGEX['MASTERCARD'], card_number) is None:
-                raise forms.ValidationError('Please check the number on your card')
-        elif card_type == 'american_express':
-            if re.match(settings.REGEX['AMERICAN_EXPRESS'], card_number) is None:
                 raise forms.ValidationError('Please check the number on your card')
         elif card_type == 'maestro':
             if re.match(settings.REGEX['MAESTRO'], card_number) is None:

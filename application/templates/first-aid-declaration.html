@@ -6,23 +6,25 @@
 {% block inner_content %}
 
 {% include "back-button.html" %}
+
 {{form.error_summary}}
 
-<!-- Form -->
-<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    <!-- Content -->
-    <div class="form-group">
-        <h1 class="form-title heading-large">
-            First aid training certificate
-        </h1>
-        <p>An inspector will ask to see your certificate when they visit your home.</p>
-        <p class="text-before-button">You must show the inspector your certificate.</p>
-        {% csrf_token %}
-        <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
-        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-    </div>
+<h1 class="form-title heading-large">
+    First aid training certificate
+</h1>
+
+<p>An inspector will ask to see your certificate when they visit your home.</p>
+
+<p class="text-before-button">You must show the inspector your certificate.</p>
+
+<form method="post" class="form-group" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    {% csrf_token %}
+    <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
 </form>
 
-{% include 'return-to-list.html' %}
+<div class="top-padded">
+    {% include 'return-to-list.html' %}
+</div>
 
 {% endblock %}
