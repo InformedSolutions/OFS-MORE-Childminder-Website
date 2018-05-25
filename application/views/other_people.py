@@ -681,7 +681,7 @@ def other_people_summary(request):
             name = ' '.join([adult.first_name, (adult.middle_names or ''), adult.last_name])
             birth_date = ' '.join([str(adult.birth_day), calendar.month_name[adult.birth_month], str(adult.birth_year)])
 
-            if application.people_in_home_status == 'IN_PROGRESS' and any([adult.email_resent_timestamp is not None for adult in adults_list]):
+            if application.people_in_home_status == 'IN_PROGRESS' and any([adult.email_resent_timestamp is None for adult in adults_list]):
 
                 other_adult_fields = collections.OrderedDict([
                     ('full_name', name),
@@ -700,6 +700,9 @@ def other_people_summary(request):
                     ('email', adult.email),
                     ('dbs_certificate_number', adult.dbs_certificate_number),
                 ])
+
+                if adult.health_check_status == 'To do':
+                    status.update(application_id_local, 'people_in_home_status', 'WAITING')
 
             other_adult_table = collections.OrderedDict({
                 'table_object': Table([adult.pk]),
@@ -786,8 +789,8 @@ def other_people_summary(request):
         variables = submit_link_setter(variables, table_list, 'people_in_home', application_id_local)
 
         # If reaching the summary page for the first time
-        if application.people_in_home_status == 'IN_PROGRESS':
-            if application.adults_in_home is True:
+        if application.people_in_home_status == 'IN_PROGRESS' or 'WAITING':
+            if application.adults_in_home is True and any([adult.email_resent_timestamp is None for adult in adults_list]):
                 variables['submit_link'] = reverse('Other-People-Email-Confirmation-View')
             elif application.adults_in_home is False:
                 status.update(application_id_local, 'people_in_home_status', 'COMPLETED')

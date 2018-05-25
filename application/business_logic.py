@@ -488,7 +488,10 @@ def other_people_adult_details_logic(application_id_local, form, adult):
     email = form.cleaned_data.get('email_address')
     # If the user entered information for this task for the first time
     if AdultInHome.objects.filter(application_id=this_application, adult=adult).exists():
+
         adult_record = AdultInHome.objects.get(application_id=this_application, adult=adult)
+        if adult_record.email != email:
+            adult_record.email_resent_timestamp = None
         adult_record.first_name = first_name
         adult_record.middle_names = middle_names
         adult_record.last_name = last_name
@@ -498,7 +501,7 @@ def other_people_adult_details_logic(application_id_local, form, adult):
         adult_record.relationship = relationship
         adult_record.email = email
         adult_record.email_resent = 0
-        adult_record.email_resent_timestamp = None
+
 
     # If the user previously entered information for this task
     else:
