@@ -13,7 +13,6 @@ from timeline_logger.models import TimelineLog
 from ...models import Application, UserDetails, ApplicantName, ApplicantPersonalDetails, ApplicantHomeAddress, \
     ChildcareType, Reference, AdultInHome, Arc, ChildInHome, CriminalRecordCheck, EYFS
 from datetime import datetime
-from uuid import UUID
 
 class CreateTestNewApplicationSubmit(TestCase):
     """
