@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Hospital Admissions{% endblock %}
+{% block page_title %}Hospital admissions{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 {% block proposition_menu %}
@@ -11,7 +11,7 @@
 
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     {% csrf_token %}
-    <h1 class="form-title heading-large">Any Hospital Admissions</h1>
+    <h1 class="form-title heading-large">Hospital admissions</h1>
     {{ form }}
     <input type="submit" name="action" class="button" value="Continue">
 </form>
