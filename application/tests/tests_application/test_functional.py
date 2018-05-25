@@ -624,9 +624,9 @@ class CreateTestNewApplicationSubmit(TestCase):
     def TestAppPaymentConfirmationWithHealthBookletNoConviction(self):
         """Send Payment Confirmation"""
 
-        CriminalRecordCheckNew = CriminalRecordCheck.objects.get(application_id=self.app_id)
-        CriminalRecordCheckNew.cautions_convictions = False
-        CriminalRecordCheckNew.save()
+        criminal_record_check = CriminalRecordCheck.objects.get(application_id=self.app_id)
+        criminal_record_check.cautions_convictions = False
+        criminal_record_check.save()
 
         r = self.client.get(
             reverse('Payment-Confirmation'),
@@ -642,9 +642,9 @@ class CreateTestNewApplicationSubmit(TestCase):
     def TestAppPaymentConfirmationWithHealthBookletAndConviction(self):
         """Send Payment Confirmation"""
 
-        CriminalRecordCheckNew = CriminalRecordCheck.objects.get(application_id=self.app_id)
-        CriminalRecordCheckNew.cautions_convictions = True
-        CriminalRecordCheckNew.save()
+        criminal_record_check = CriminalRecordCheck.objects.get(application_id=self.app_id)
+        criminal_record_check.cautions_convictions = True
+        criminal_record_check.save()
 
         r = self.client.get(
             reverse('Payment-Confirmation'),
