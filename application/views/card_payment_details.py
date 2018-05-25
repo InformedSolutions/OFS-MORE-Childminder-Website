@@ -129,7 +129,7 @@ def card_payment_post_handler(request):
             return __yield_general_processing_error_to_user(request, form, app_id)
 
     # Sleep thread to allow for transaction processing time by Worldpay service
-    time.sleep(settings.PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS)
+    time.sleep(int(settings.PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS))
 
     # Check at this point whether Worldpay has marked the payment as authorised
     payment_status_response_raw = payment_service.check_payment(payment_reference)
@@ -150,7 +150,7 @@ def card_payment_post_handler(request):
         # been attempted but was not successful in which case a new order should be attempted.
         __rollback_payment_submission_status(application)
         return __yield_general_processing_error_to_user(request, form, application.application_id)
-    elif parsed_payment_response.get('lastEvent') == "ERROR":
+    if parsed_payment_response.get('lastEvent') == "ERROR":
         return __yield_general_processing_error_to_user(request, form, application.application_id)
     else:
         if 'processing_attempts' in request.META:
