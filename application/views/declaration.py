@@ -318,11 +318,14 @@ def declaration_declaration(request):
                 application.save()
 
             if confirmation_of_declaration_form.is_valid():
+                suitable_declare = confirmation_of_declaration_form.cleaned_data.get('suitable_declare')
                 information_correct_declare = confirmation_of_declaration_form.cleaned_data.get(
                     'information_correct_declare')
                 application.information_correct_declare = information_correct_declare
                 change_declare = confirmation_of_declaration_form.cleaned_data.get(
                     'change_declare')
+                application.suitable_declare = suitable_declare
+                application.save()
                 application.change_declare = change_declare
                 application.save()
                 application.date_updated = current_date
