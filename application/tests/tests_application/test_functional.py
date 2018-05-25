@@ -621,8 +621,32 @@ class CreateTestNewApplicationSubmit(TestCase):
 
         self.assertEqual(r.status_code, 200)
 
+    def TestAppPaymentConfirmationWithNoHealthBookletNoConviction(self):
+        """Send Payment Confirmation"""
+        application = Application.objects.get(application_id=self.app_id)
+        application.health_status = 'NOT_STARTED'
+        application.save()
+
+        criminal_record_check = CriminalRecordCheck.objects.get(application_id=self.app_id)
+        criminal_record_check.cautions_convictions = False
+        criminal_record_check.save()
+
+        r = self.client.get(
+            reverse('Payment-Confirmation'),
+            {
+                'id': self.app_id,
+                'orderCode': Application.objects.get(application_id=self.app_id).order_code,
+            }
+        )
+        self.assertEqual(r.status_code, 200)
+        self.assertNotContains(r, '<p>We need your health declaration booklet.</p>')
+        self.assertNotContains(r, '<li>DBS certificate</li>')
+
     def TestAppPaymentConfirmationWithHealthBookletNoConviction(self):
         """Send Payment Confirmation"""
+        application = Application.objects.get(application_id=self.app_id)
+        application.health_status = 'COMPLETED'
+        application.save()
 
         criminal_record_check = CriminalRecordCheck.objects.get(application_id=self.app_id)
         criminal_record_check.cautions_convictions = False
@@ -641,6 +665,9 @@ class CreateTestNewApplicationSubmit(TestCase):
 
     def TestAppPaymentConfirmationWithHealthBookletAndConviction(self):
         """Send Payment Confirmation"""
+        application = Application.objects.get(application_id=self.app_id)
+        application.health_status = 'COMPLETED'
+        application.save()
 
         criminal_record_check = CriminalRecordCheck.objects.get(application_id=self.app_id)
         criminal_record_check.cautions_convictions = True
@@ -654,6 +681,7 @@ class CreateTestNewApplicationSubmit(TestCase):
             }
         )
         self.assertEqual(r.status_code, 200)
+        self.assertContains(r, '<li>health declaration booklet</li>')
         self.assertContains(r, '<li>DBS certificate</li>')
 
     def TestNewApplicationSubmit(self):
@@ -705,6 +733,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestAppPaymentConfirmation()
         self.TestAppPaymentConfirmationWithHealthBookletNoConviction()
         self.TestAppPaymentConfirmationWithHealthBookletAndConviction()
+        self.TestAppPaymentConfirmationWithNoHealthBookletNoConviction()
 
     def test_application_submit(self):
         """TestAppPaymentConfirmationWithHealthBookletAndConviction
