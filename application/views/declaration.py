@@ -330,8 +330,6 @@ def declaration_declaration(request):
                 application.save()
                 application.date_updated = current_date
                 application.save()
-                status.update(application_id_local,
-                              'declarations_status', 'COMPLETED')
 
                 if application.application_status == 'FURTHER_INFORMATION':
                     # In cases where a resubmission is being made,
@@ -356,6 +354,8 @@ def declaration_declaration(request):
                     }
 
                     clear_arc_flagged_statuses(application_id_local)
+
+                    status.update(application_id_local, 'declarations_status', 'COMPLETED')
 
                     return render(request, 'payment-confirmation-resubmitted.html', variables)
 
