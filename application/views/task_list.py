@@ -46,7 +46,7 @@ def task_list(request):
         five_to_eight_status = childcare_record.five_to_eight
         eight_plus_status = childcare_record.eight_plus
 
-        # See childcare_type move to seperate method/file
+        # See childcare_type move to separate method/file
 
         if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
             registers = 'Early Years and Childcare Register (both parts)'

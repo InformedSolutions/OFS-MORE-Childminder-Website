@@ -54,7 +54,7 @@ personal_details_link_dict = collections.OrderedDict([('name', 'Personal-Details
 
 first_aid_name_dict = collections.OrderedDict([('first_aid_training_organisation', 'Training organisation'),
                                                ('title_of_training_course', 'Title of training course'),
-                                               ('course_date', 'Date you completed your course'),
+                                               ('course_date', 'Date you completed course'),
                                                ('renew_certificate',
                                                 'Will you renew your certificate in the next few months?'),
                                                ('show_certificate',
@@ -67,6 +67,17 @@ first_aid_link_dict = collections.OrderedDict([('first_aid_training_organisation
                                                ('show_certificate', 'First-Aid-Training-Declaration-View')])
 
 first_aid_change_link_description_dict = collections.OrderedDict([('course_date', 'course completion date')])
+
+###
+
+eyfs_name_dict = collections.OrderedDict([('eyfs_course_name', 'Title of training course'),
+                                               ('eyfs_course_date', 'Date you completed course')])
+
+eyfs_link_dict = collections.OrderedDict([('eyfs_course_name', 'EYFS-Details-View'),
+                                               ('eyfs_course_date', 'EYFS-Details-View')])
+
+eyfs_change_link_description_dict = collections.OrderedDict([('eyfs_course_name', 'course title'),
+                                                             ('eyfs_course_date', 'course completion date')])
 
 ###
 
@@ -153,6 +164,7 @@ submit_link_dict = collections.OrderedDict([('login_details', 'Contact-Email-Vie
                                             ('type_of_childcare', 'Type-Of-Childcare-Guidance-View'),
                                             ('personal_details', 'Personal-Details-Guidance-View'),
                                             ('first_aid_training', 'First-Aid-Training-Guidance-View'),
+                                            ('eyfs_training', 'EYFS-Guidance-View'),
                                             ('criminal_record_check', 'DBS-Check-Guidance-View'),
                                             ('health', 'Health-Intro-View'),
                                             ('references', 'References-Intro-View'),
@@ -162,6 +174,7 @@ back_link_dict = collections.OrderedDict([('login_details', 'Question-View'),
                                           ('type_of_childcare', 'Type-Of-Childcare-Guidance-View'),
                                           ('personal_details', 'Personal-Details-Location-Of-Care-View'),
                                           ('first_aid_training', 'First-Aid-Training-Details-View'),
+                                            ('eyfs_training', 'EYFS-Details-View'),
                                           ('criminal_record_check', 'DBS-Check-DBS-Details-View'),
                                           ('health', 'Health-Booklet-View'),
                                           ('references', 'References-Second-Reference-Contact-Details-View'),

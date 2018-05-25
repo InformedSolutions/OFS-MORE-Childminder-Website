@@ -197,6 +197,7 @@ def dbs_check_summary(request):
         variables = submit_link_setter(variables, table_list, 'criminal_record_check', application_id_local)
 
         return render(request, 'generic-summary-template.html', variables)
+
     if request.method == 'POST':
 
         application_id_local = request.POST["id"]

@@ -451,7 +451,7 @@ class CustomSplitDateField(forms.MultiValueField):
     widget = SplitDateWidget
     hidden_widget = SplitHiddenDateWidget
     default_error_messages = {
-        'invalid': _('Enter a valid date')
+        'invalid': _('Please check the date of the course')
     }
 
     def __init__(self, bounds_error=None, min_value=2000, *args, **kwargs):
@@ -479,7 +479,11 @@ class CustomSplitDateField(forms.MultiValueField):
             try:
                 if any(item in self.empty_values for item in data_list):
                     raise ValueError
-                return datetime.date(data_list[2], data_list[1], data_list[0])
+                date_compressed = datetime.date(data_list[2], data_list[1], data_list[0])
+                if date_compressed > now().date():
+                    raise ValueError
+                else:
+                    return date_compressed
             except ValueError:
                 raise forms.ValidationError(self.error_messages['invalid'], code='invalid')
         return None

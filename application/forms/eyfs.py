@@ -47,7 +47,8 @@ class EYFSDetailsForm(ChildminderForms):
                                                                 eyfs_record.eyfs_course_date_month,
                                                                 eyfs_record.eyfs_course_date_year)
             self.fields['eyfs_course_date'].initial = [course_day, course_month, course_year]
-            self.field_list = ['eyfs_course_date']
+            self.pk = eyfs_record.eyfs_id
+            self.field_list = ['eyfs_course_name','eyfs_course_date']
 
     def clean_eyfs_course_name(self):
         """

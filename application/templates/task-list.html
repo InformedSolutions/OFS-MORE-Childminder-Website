@@ -59,7 +59,7 @@
                                             <span class="task-name">{{ task.description }}</span>
                                             <strong class="task-finished task-in-progress" alt="{{ task.name }}: Started">Started</strong>
                                         </a>
-                                    {% elif task.status == 'FLAGGED' and task.arc_flagged is True %}
+                                    {% elif task.status == 'FLAGGED' or task.arc_flagged is True %}
                                         <a href="{% url task.status_url %}?id={{ id }}">
                                             <span class="task-name">{{ task.description }}</span>
                                             <strong class="task-finished task-returned" alt="{{ task.name }}: Returned">Update</strong>

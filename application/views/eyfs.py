@@ -1,9 +1,12 @@
 from django.utils import timezone
 import calendar
+import collections
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from ..table_util import Table, create_tables, submit_link_setter
+from ..summary_page_data import eyfs_name_dict, eyfs_link_dict, eyfs_change_link_description_dict
 
 from .. import status
 from ..business_logic import (eyfs_details_logic,
@@ -65,6 +68,7 @@ def eyfs_details(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = EYFSDetailsForm(id=application_id_local)
+        form.check_flag()
         application = Application.objects.get(pk=application_id_local)
 
         if application.application_status == 'FURTHER_INFORMATION':
@@ -80,6 +84,7 @@ def eyfs_details(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = EYFSDetailsForm(request.POST, id=application_id_local)
+        form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.eyfs_training_status != 'COMPLETED':
@@ -156,30 +161,32 @@ def eyfs_summary(request):
         eyfs_record = EYFS.objects.get(application_id=application_id_local)
         form = EYFSSummaryForm()
         application = Application.objects.get(pk=application_id_local)
-        course_date = ' '.join([str(eyfs_record.eyfs_course_date_day), calendar.month_name[eyfs_record.eyfs_course_date_month], str(eyfs_record.eyfs_course_date_year)])
+
+        eyfs_fields = collections.OrderedDict([
+            ('eyfs_course_name', eyfs_record.eyfs_course_name),
+            ('eyfs_course_date', '/'.join([str(eyfs_record.eyfs_course_date_day).zfill(2),
+                                      str(eyfs_record.eyfs_course_date_month).zfill(2),
+                                      str(eyfs_record.eyfs_course_date_year)]))
+        ])
+
+        eyfs_table = collections.OrderedDict({
+            'table_object': Table([eyfs_record.pk]),
+            'fields': eyfs_fields,
+            'title': '',
+            'error_summary_title': 'There was a problem',
+        })
+
+        table_list = create_tables([eyfs_table], eyfs_name_dict,
+                                   eyfs_link_dict, eyfs_change_link_description_dict)
+
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'eyfs_course_name': eyfs_record.eyfs_course_name,
-            'eyfs_course_date': course_date,
+            'table_list': table_list,
+            'page_title': 'Check your answers: early years training',
             'eyfs_training_status': application.eyfs_training_status,
         }
-        return render(request, 'eyfs-summary.html', variables)
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = EYFSSummaryForm(request.POST)
-        application = Application.objects.get(pk=application_id_local)
-        if form.is_valid():
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
-        else:
 
-            if application.application_status == 'FURTHER_INFORMATION':
+        variables = submit_link_setter(variables, table_list, 'eyfs_training', application_id_local)
 
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem'
-
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'eyfs-summary.html', variables)
+        return render(request, 'generic-summary-template.html', variables)
