@@ -13,6 +13,7 @@ from timeline_logger.models import TimelineLog
 from ...models import Application, UserDetails, ApplicantName, ApplicantPersonalDetails, ApplicantHomeAddress, \
     ChildcareType, Reference, AdultInHome, Arc, ChildInHome, CriminalRecordCheck, EYFS
 from datetime import datetime
+from uuid import UUID
 
 class CreateTestNewApplicationSubmit(TestCase):
     """
@@ -621,6 +622,41 @@ class CreateTestNewApplicationSubmit(TestCase):
 
         self.assertEqual(r.status_code, 200)
 
+    def TestAppPaymentConfirmationWithHealthBookletNoConviction(self):
+        """Send Payment Confirmation"""
+
+        CriminalRecordCheckNew = CriminalRecordCheck.objects.get(application_id=self.app_id)
+        CriminalRecordCheckNew.cautions_convictions = False
+        CriminalRecordCheckNew.save()
+
+        r = self.client.get(
+            reverse('Payment-Confirmation'),
+            {
+                'id': self.app_id,
+                'orderCode': Application.objects.get(application_id=self.app_id).order_code,
+            }
+        )
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, '<p>We need your health declaration booklet.</p>')
+        self.assertNotContains(r, '<li>DBS certificate</li>')
+
+    def TestAppPaymentConfirmationWithHealthBookletAndConviction(self):
+        """Send Payment Confirmation"""
+
+        CriminalRecordCheckNew = CriminalRecordCheck.objects.get(application_id=self.app_id)
+        CriminalRecordCheckNew.cautions_convictions = True
+        CriminalRecordCheckNew.save()
+
+        r = self.client.get(
+            reverse('Payment-Confirmation'),
+            {
+                'id': self.app_id,
+                'orderCode': Application.objects.get(application_id=self.app_id).order_code,
+            }
+        )
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, '<li>DBS certificate</li>')
+
     def TestNewApplicationSubmit(self):
         """Submit whole application"""
 
@@ -668,9 +704,11 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestAppPaymentMethod()
         self.TestAppPaymentCreditDetails()
         self.TestAppPaymentConfirmation()
+        self.TestAppPaymentConfirmationWithHealthBookletNoConviction()
+        self.TestAppPaymentConfirmationWithHealthBookletAndConviction()
 
     def test_application_submit(self):
-        """
+        """TestAppPaymentConfirmationWithHealthBookletAndConviction
         Test if application been submitted
         """
         self.assertTrue(Application.objects.filter(application_id=self.app_id).exists())
