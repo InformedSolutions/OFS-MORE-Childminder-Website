@@ -352,7 +352,11 @@ def declaration_declaration(request):
                         'updated_list': updated_list
                     }
 
+                    clear_arc_flagged_statuses(application_id_local)
+
                     return render(request, 'payment-confirmation-resubmitted.html', variables)
+
+                clear_arc_flagged_statuses(application_id_local)
 
                 return HttpResponseRedirect(reverse('Payment-Details-View') + '?id=' + application_id_local)
 
@@ -365,7 +369,6 @@ def declaration_declaration(request):
                 }
                 return render(request, 'declaration-declaration.html', variables)
         else:
-
             variables = {
                 'confirmation_of_understanding_form': confirmation_of_understanding_form,
                 'confirmation_of_declaration_form': confirmation_of_declaration_form,
@@ -407,3 +410,27 @@ def generate_list_of_updated_tasks(application_id):
         updated_list.append('References')
 
     return updated_list
+
+
+def clear_arc_flagged_statuses(application_id):
+    """
+    Method to clear flagged statues from Application fields.
+    """
+    application = Application.objects.get(pk=application_id)
+
+    flagged_fields_to_check = (
+        "childcare_type_arc_flagged",
+        "criminal_record_check_arc_flagged",
+        "eyfs_training_arc_flagged",
+        "first_aid_training_arc_flagged",
+        "health_arc_flagged",
+        "login_details_arc_flagged",
+        "people_in_home_arc_flagged",
+        "personal_details_arc_flagged",
+        "references_arc_flagged"
+    )
+
+    for field in flagged_fields_to_check:
+        setattr(application, field, False)
+
+    return application.save()
