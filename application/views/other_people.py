@@ -996,7 +996,6 @@ def other_people_resend_email(request):
                         print(personalisation['link'])
                         # Send e-mail to household member
                         r = send_email(email, personalisation, template_id)
-                        print(r)
                         # Update email resend count
                         email_resent = adult_record.email_resent
                         if email_resent is not None:
