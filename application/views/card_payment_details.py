@@ -176,6 +176,8 @@ def card_payment_post_handler(request):
         else:
             request.META['processing_attempts'] = 1
 
+        print('Recursing')
+
         # Retry processing of payment
         return card_payment_details(request)
 
