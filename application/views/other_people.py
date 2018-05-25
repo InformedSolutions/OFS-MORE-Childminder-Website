@@ -108,10 +108,10 @@ def other_people_adult_question(request):
         return render(request, 'other-people-adult-question.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        application = Application.objects.get(pk=application_id_local)
 
         # Reset status to in progress as question can change status of overall task
         status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+        application = Application.objects.get(pk=application_id_local)
 
         form = OtherPeopleAdultQuestionForm(
             request.POST, id=application_id_local)
