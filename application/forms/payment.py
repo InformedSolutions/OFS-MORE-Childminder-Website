@@ -103,6 +103,6 @@ class PaymentDetailsForm(ChildminderForms):
         Card security code validation
         :return: string
         """
-        card_security_code = str(self.cleaned_data['card_security_code'])
+        card_security_code = str(self.data['card_security_code'])
         if re.match(settings.REGEX['CARD_SECURITY_NUMBER'], card_security_code) is None:
             raise forms.ValidationError('The code should be 3 or 4 digits long')
