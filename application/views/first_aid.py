@@ -78,7 +78,7 @@ def first_aid_training_details(request):
         application = Application.objects.get(pk=application_id_local)
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -123,7 +123,7 @@ def first_aid_training_details(request):
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -152,12 +152,12 @@ def first_aid_training_declaration(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = FirstAidTrainingDeclarationForm(request.POST)
+        application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             status.update(application_id_local,
                           'first_aid_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
         else:
-            form.error_summary_title = 'There was a problem on this page'
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -186,12 +186,12 @@ def first_aid_training_renew(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = FirstAidTrainingRenewForm(request.POST)
+        application = Application.objects.get(pk=application_id_local)
         form.remove_flag()
         if form.is_valid():
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
         else:
-            form.error_summary_title = 'There was a problem on this page'
             variables = {
                 'form': form,
                 'application_id': application_id_local

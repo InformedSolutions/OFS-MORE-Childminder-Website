@@ -82,7 +82,7 @@ def type_of_childcare_age_groups(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -114,7 +114,7 @@ def type_of_childcare_age_groups(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -189,7 +189,7 @@ def overnight_care(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -222,7 +222,7 @@ def overnight_care(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,

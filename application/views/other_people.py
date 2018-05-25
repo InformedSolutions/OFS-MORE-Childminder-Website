@@ -98,7 +98,7 @@ def other_people_adult_question(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -144,7 +144,7 @@ def other_people_adult_question(request):
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -189,7 +189,7 @@ def other_people_adult_details(request):
             form.check_flag()
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem on this page (Person " + str(i) + ")"
+                form.error_summary_title = "There was a problem (Person " + str(i) + ")"
             form_list.append(form)
 
         variables = {
@@ -231,7 +231,7 @@ def other_people_adult_details(request):
                 i) + ')'
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem on this page (Person " + str(i) + ")"
+                form.error_summary_title = "There was a problem (Person " + str(i) + ")"
             if form.is_valid():
                 adult_record = other_people_adult_details_logic(
                     application_id_local, form, i)
@@ -317,7 +317,7 @@ def other_people_adult_dbs(request):
                 id=application_id_local, adult=i, prefix=i, name=name)
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem on this page (Person " + str(i) + ")"
+                form.error_summary_title = "There was a problem (Person " + str(i) + ")"
             form_list.append(form)
         variables = {
             'form_list': form_list,
@@ -350,7 +350,7 @@ def other_people_adult_dbs(request):
                 i) + ')'
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem on this page (Person " + str(i) + ")"
+                form.error_summary_title = "There was a problem (Person " + str(i) + ")"
             if form.is_valid():
                 adult_record = AdultInHome.objects.get(
                     application_id=application_id_local, adult=i)
@@ -401,7 +401,7 @@ def other_people_children_question(request):
         adults_in_home = application.adults_in_home
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = "There was a problem on this page"
+            form.error_summary_title = "There was a problem"
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -441,7 +441,7 @@ def other_people_children_question(request):
         else:
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem on this page"
+                form.error_summary_title = "There was a problem"
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -482,7 +482,7 @@ def other_people_children_details(request):
                 id=application_id_local, child=i, prefix=i)
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem on this page (Child " + str(i) + ")"
+                form.error_summary_title = "There was a problem (Child " + str(i) + ")"
             form_list.append(form)
             form.check_flag()
         variables = {
@@ -524,7 +524,7 @@ def other_people_children_details(request):
             form.error_summary_title = 'There is a problem with this form (Child ' + str(i) + ')'
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem on this page (Person " + str(i) + ")"
+                form.error_summary_title = "There was a problem (Person " + str(i) + ")"
             if form.is_valid():
                 child_record = other_people_children_details_logic(
                     application_id_local, form, i)

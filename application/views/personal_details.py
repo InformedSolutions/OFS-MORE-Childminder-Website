@@ -89,7 +89,7 @@ def personal_details_name(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -127,7 +127,7 @@ def personal_details_name(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -155,7 +155,7 @@ def personal_details_dob(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -194,7 +194,7 @@ def personal_details_dob(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -223,7 +223,7 @@ def personal_details_home_address(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -287,7 +287,7 @@ def personal_details_home_address(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -323,7 +323,7 @@ def personal_details_home_address_select(request):
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -339,7 +339,7 @@ def personal_details_home_address_select(request):
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -413,7 +413,7 @@ def personal_details_home_address_select(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'postcode': postcode,
@@ -459,7 +459,7 @@ def personal_details_location_of_care(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -510,7 +510,7 @@ def personal_details_location_of_care(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -537,7 +537,7 @@ def personal_details_childcare_address(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -601,7 +601,7 @@ def personal_details_childcare_address(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -638,7 +638,7 @@ def personal_details_childcare_address_select(request):
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -653,7 +653,7 @@ def personal_details_childcare_address_select(request):
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -732,7 +732,7 @@ def personal_details_childcare_address_select(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'postcode': postcode,
@@ -762,7 +762,7 @@ def personal_details_childcare_address_manual(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -831,7 +831,7 @@ def personal_details_childcare_address_manual(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,

@@ -36,9 +36,9 @@ def contact_phone(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             mobile_form.error_summary_template_name = 'returned-error-summary.html'
-            mobile_form.error_summary_title = 'There was a problem on this page'
+            mobile_form.error_summary_title = 'There was a problem'
             add_phone_form.error_summary_template_name = 'returned-error-summary.html'
-            add_phone_form.error_summary_title = 'There was a problem on this page'
+            add_phone_form.error_summary_title = 'There was a problem'
 
         variables = {
             'mobile_form': mobile_form,
@@ -88,9 +88,9 @@ def contact_phone(request):
 
             if application.application_status == 'FURTHER_INFORMATION':
                 mobile_form.error_summary_template_name = 'returned-error-summary.html'
-                mobile_form.error_summary_title = 'There was a problem on this page'
+                mobile_form.error_summary_title = 'There was a problem'
                 add_phone_form.error_summary_template_name = 'returned-error-summary.html'
-                add_phone_form.error_summary_title = 'There was a problem on this page'
+                add_phone_form.error_summary_title = 'There was a problem'
 
         variables = {
             'mobile_form': mobile_form,

@@ -84,7 +84,7 @@ def references_first_reference(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -116,7 +116,7 @@ def references_first_reference(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -140,7 +140,7 @@ def references_first_reference_address(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -174,7 +174,7 @@ def references_first_reference_address(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -207,7 +207,7 @@ def references_first_reference_address_select(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -224,7 +224,7 @@ def references_first_reference_address_select(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -268,7 +268,7 @@ def references_first_reference_address_select(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'postcode': postcode,
@@ -295,7 +295,7 @@ def references_first_reference_address_manual(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -342,7 +342,7 @@ def references_first_reference_address_manual(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -368,7 +368,7 @@ def references_first_reference_contact_details(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -403,7 +403,7 @@ def references_first_reference_contact_details(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -429,7 +429,7 @@ def references_second_reference(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -461,7 +461,7 @@ def references_second_reference(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -485,7 +485,7 @@ def references_second_reference_address(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -519,7 +519,7 @@ def references_second_reference_address(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -552,7 +552,7 @@ def references_second_reference_address_select(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -569,7 +569,7 @@ def references_second_reference_address_select(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -615,7 +615,7 @@ def references_second_reference_address_select(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'postcode': postcode,
@@ -642,7 +642,7 @@ def references_second_reference_address_manual(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -688,7 +688,7 @@ def references_second_reference_address_manual(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -714,7 +714,7 @@ def references_second_reference_contact_details(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -747,7 +747,7 @@ def references_second_reference_contact_details(request):
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,

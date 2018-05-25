@@ -70,7 +70,7 @@ def dbs_check_dbs_details(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -108,7 +108,7 @@ def dbs_check_dbs_details(request):
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,
@@ -132,7 +132,7 @@ def dbs_check_upload_dbs(request):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
         variables = {
             'form': form,
@@ -151,11 +151,11 @@ def dbs_check_upload_dbs(request):
                 settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
         else:
 
-            form.error_summary_title = 'There was a problem on this page'
+            form.error_summary_title = 'There was a problem'
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem on this page'
+                form.error_summary_title = 'There was a problem'
 
             variables = {
                 'form': form,

@@ -75,6 +75,7 @@ class UpdateEmailView(View):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
 
         application = Application.objects.get(pk=app_id)
 
@@ -107,6 +108,7 @@ class UpdateEmailView(View):
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
 
             return self.render_update_email_template(request, form=form, application=application)
 
