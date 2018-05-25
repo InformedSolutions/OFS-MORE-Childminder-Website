@@ -736,7 +736,7 @@ class CreateTestNewApplicationSubmit(TestCase):
         self.TestAppPaymentConfirmationWithNoHealthBookletNoConviction()
 
     def test_application_submit(self):
-        """TestAppPaymentConfirmationWithHealthBookletAndConviction
+        """
         Test if application been submitted
         """
         self.assertTrue(Application.objects.filter(application_id=self.app_id).exists())
