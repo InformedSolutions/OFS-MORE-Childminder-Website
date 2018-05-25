@@ -41,10 +41,13 @@
         </h2>
         <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print"
                                            style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
-            <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print this page</a></p>
+            <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print
+                this page</a></p>
         <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print"
                                            style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
-            <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print your application</a></p>
+            <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print
+                your application</a></p>
+        {% if health_status == 'COMPLETED' or conviction == True %}
         <h2 class="heading-medium">
             Send your documents
         </h2>
@@ -57,6 +60,7 @@
         {% elif health_status == 'COMPLETED' %}
         <p>We need your health declaration booklet.</p>
         {% endif %}
+
         <p>Send your original documents (not photocopies) to:</p>
         <p style="margin-left: 40px;">
             Applications team
@@ -72,6 +76,7 @@
             M1 2WD
         </p>
         <p>There may be delays if we do not receive them right away.</p>
+        {% endif %}
         <h2 class="heading-medium">
             Contact Us
         </h2>

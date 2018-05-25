@@ -44,12 +44,14 @@ def payment_confirmation(request):
         order_code = request.GET['orderCode']
         # If the payment has been successfully processed
         if payment.check_payment(order_code) == 200:
-            CriminalRecordCheck.objects.get(application_id=application_id_local)
-            criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
+            try:
+                conviction = CriminalRecordCheck.objects.get(application_id=application_id_local).cautions_convictions
+            except CriminalRecordCheck.DoesNotExist:
+                conviction = False
             variables = {
                 'application_id': application_id_local,
                 'order_code': request.GET["orderCode"],
-                'conviction': criminal_record_check.cautions_convictions,
+                'conviction': conviction,
                 'health_status': Application.objects.get(application_id=application_id_local).health_status
             }
             local_app = Application.objects.get(
