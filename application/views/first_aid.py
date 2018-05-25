@@ -152,7 +152,6 @@ def first_aid_training_declaration(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = FirstAidTrainingDeclarationForm(request.POST)
-        application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             status.update(application_id_local,
                           'first_aid_training_status', 'COMPLETED')
@@ -186,7 +185,6 @@ def first_aid_training_renew(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = FirstAidTrainingRenewForm(request.POST)
-        application = Application.objects.get(pk=application_id_local)
         form.remove_flag()
         if form.is_valid():
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
