@@ -11,6 +11,11 @@ class Declaration(BaseTemplateView):
     success_url_name = 'Health-Check-Declaration'
 
     def get_context_data(self, **kwargs):
+        """
+        Returns the person id and the success url for the template
+        :param kwargs:
+        :return:
+        """
         context = super().get_context_data()
 
         context['person_id'] = self.request.GET.get('person_id')

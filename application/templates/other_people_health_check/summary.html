@@ -65,7 +65,7 @@
         {% for illness in serious_illness_set %}
         <tr>
             <td class=summary-column>{{ illness.description }}</td>
-            <td class=summary-column>{{ illness.start_date|date:"d m Y" }} to {{ illness.end_date|date:"d m Y" }}</td>
+            <td class=summary-column>{{ illness.start_date|date:"d/m/Y" }} to {{ illness.end_date|date:"d/m/Y" }}</td>
             <td class="change-answer"><a href="{% url 'Health-Check-Serious-Edit' %}?person_id={{person_id}}&illness_id={{illness.illness_id}}" alt = "Change {{ forloop.counter|inflect }} illness">Change</a></td>
         </tr>
         {% endfor %}
@@ -96,7 +96,7 @@
         {% for illness in hospital_admission_set %}
         <tr>
             <td>{{ illness.description }}</td>
-            <td>{{ illness.start_date|date:"d m Y" }} to {{ illness.end_date|date:"d m Y" }}</td>
+            <td>{{ illness.start_date|date:"d/m/Y" }} to {{ illness.end_date|date:"d/m/Y" }}</td>
             <td class="change-answer"><a href="{% url 'Health-Check-Hospital-Edit' %}?person_id={{person_id}}&illness_id={{illness.illness_id}}" alt="Change {{ forloop.counter|inflect }} admission reason">Change</a></td>
         </tr>
         {% endfor %}

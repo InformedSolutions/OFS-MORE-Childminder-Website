@@ -12,12 +12,19 @@ from application.views.other_people_health_check.BaseViews import BaseFormView
 
 
 class SeriousIllnessStartView(BaseFormView):
+    """"
+    Serious Illness start class to render the initial question on whether you have been admitted to hospital
+    """
 
     template_name = 'other_people_health_check/serious_illness_start.html'
     form_class = SeriousIllnessStart
     success_url = 'Health-Check-Serious'
 
     def get_initial(self):
+        """
+        Get the initial values for the form
+        :return:
+        """
 
         initial = super().get_initial()
         adult_record = AdultInHome.objects.get(pk=self.request.GET.get('person_id'))
@@ -27,6 +34,11 @@ class SeriousIllnessStartView(BaseFormView):
         return initial
 
     def form_valid(self, form):
+        """
+        Method to redirect to the appropriate view dependant on the adults answer
+        :param form:
+        :return:
+        """
         clean = form.cleaned_data
         decision = clean['has_illnesses']
         adult_record = AdultInHome.objects.get(pk=self.request.GET.get('person_id'))
@@ -51,12 +63,16 @@ class SeriousIllnessStartView(BaseFormView):
 
 
 class SeriousIllnessView(BaseFormView):
+    """
+    View to define
+    """
 
     template_name = 'other_people_health_check/serious_illness.html'
     form_class = SeriousIllness
     success_url = 'Health-Check-Serious-More'
 
     def get_context_data(self, **kwargs):
+
         context = super().get_context_data()
         person_id = self.request.GET.get('person_id')
         person_record = AdultInHome.objects.get(pk=person_id)
@@ -67,10 +83,23 @@ class SeriousIllnessView(BaseFormView):
         return context
 
     def form_valid(self, form):
+        """
+        Method to save a serious illness record should the form be valid
+        :param form:
+        :return:
+        """
+
         illness_record = self._get_clean(form)
         illness_record.save()
 
         return super().form_valid(form)
+
+    def get_form_kwargs(self):
+        person_id = self.request.GET.get('person_id')
+        person_record = AdultInHome.objects.get(pk=person_id)
+        kwargs = super(SeriousIllnessView, self).get_form_kwargs()
+        kwargs['adult'] = person_record
+        return kwargs
 
     def get(self, request=None):
         response = super().get(request=self.request)
@@ -128,6 +157,10 @@ class SeriousIllnessEditView(BaseFormView):
     success_url = 'Health-Check-Summary'
 
     def get_initial(self):
+        """
+        Get the initial values for the form
+        :return:
+        """
 
         initial = super().get_initial()
 

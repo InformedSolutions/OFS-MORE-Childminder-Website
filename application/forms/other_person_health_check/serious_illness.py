@@ -6,6 +6,7 @@ from govuk_forms.widgets import InlineRadioSelect
 
 from application.customfields import CustomSplitDateFieldDOB, CustomSplitDateField
 from application.forms import ChildminderForms
+from application.models import AdultInHome
 
 
 class SeriousIllness(ChildminderForms):
@@ -27,10 +28,17 @@ class SeriousIllness(ChildminderForms):
                                       error_messages={'required': 'Please enter the name of the illness'})
 
     start_date = CustomSplitDateField(label='Start date', help_text='For example, 31 03 2016', error_messages={
-        'required': 'Please enter the full date, including the day, month and year'}, bounds_error='Please check the date of your illness')
+        'required': 'Please enter the full date, including the day, month and year'}, bounds_error='Please check the date of your illness',
+                                      min_value=0)
 
     end_date = CustomSplitDateField(label='End date', help_text='For example, 31 03 2016', error_messages={
-        'required': 'Please enter the full date, including the day, month and year'}, bounds_error='Please check the date of your illness')
+        'required': 'Please enter the full date, including the day, month and year'}, bounds_error='Please check the date of your illness',
+                                    min_value=0)
+
+    def __init__(self, *args, **kwargs):
+        self.person = kwargs.pop('adult')
+        super(SeriousIllness, self).__init__(*args, **kwargs)
+
 
     def clean_illness_details(self):
 
@@ -43,9 +51,9 @@ class SeriousIllness(ChildminderForms):
 
         start_date = self.cleaned_data['start_date']
         today = date.today()
-        date_diff = today - start_date
-        if date_diff.days > 1825:
-            raise forms.ValidationError('Please enter a date in the last five years')
+        date_diff = start_date - self.person.date_of_birth.date()
+        if date_diff.days < 0:
+            raise forms.ValidationError('Please enter a date after your date of birth')
         if len(str(start_date.year)) < 4:
             raise forms.ValidationError('Please enter the whole year (4 digits)')
 
@@ -61,7 +69,7 @@ class SeriousIllness(ChildminderForms):
             start_date = self.cleaned_data['start_date']
             end_date = self.cleaned_data['end_date']
             today = date.today()
-            date_diff = today - start_date
+            date_diff = today - end_date
             if date_diff.days > 1825:
                 raise forms.ValidationError('Please enter a date in the last five years')
             date_today_diff = today.year - end_date.year - (
