@@ -334,7 +334,7 @@ class ApplicationTestBase(object):
             {
                 'id': self.app_id,
                 'dbs_certificate_number': '123456789012',
-                'convictions': False
+                'cautions_convictions': False
             }
         )
         self.assertEqual(r.status_code, 302)

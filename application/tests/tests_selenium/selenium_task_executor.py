@@ -343,7 +343,7 @@ class SeleniumTaskExecutor:
         driver.find_element_by_id("id_dbs_certificate_number").send_keys(dbs_number)
 
         if has_convictions is not True:
-            driver.find_element_by_id("id_convictions_1").click()
+            driver.find_element_by_id("id_cautions_convictions_1").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
             # Task summary
             WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Check your answers: criminal record (DBS) check"))
@@ -351,7 +351,7 @@ class SeleniumTaskExecutor:
 
         elif has_convictions is True:
 
-            driver.find_element_by_id("id_convictions_0").click()
+            driver.find_element_by_id("id_cautions_convictions_0").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
             # Confirm will send DBS certificate
