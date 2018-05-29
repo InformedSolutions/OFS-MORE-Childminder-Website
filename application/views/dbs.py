@@ -94,7 +94,7 @@ def dbs_check_dbs_details(request):
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
-            cautions_convictions = form.cleaned_data['convictions']
+            cautions_convictions = form.cleaned_data['cautions_convictions']
             if cautions_convictions == 'True':
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/criminal-record/post-certificate?id=' + application_id_local)

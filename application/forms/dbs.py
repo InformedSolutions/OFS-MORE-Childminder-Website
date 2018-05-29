@@ -37,7 +37,7 @@ class DBSCheckDBSDetailsForm(ChildminderForms):
                                                 error_messages={'required': 'Please enter your DBS certificate number'},
                                                 widget=widget_instance)
 
-    convictions = forms.ChoiceField(label='Do you have any criminal cautions or convictions?',
+    cautions_convictions = forms.ChoiceField(label='Do you have any criminal cautions or convictions?',
                                     help_text='Include any information recorded on your certificate',
                                     choices=options, widget=InlineRadioSelect,
                                     required=True,
@@ -56,9 +56,9 @@ class DBSCheckDBSDetailsForm(ChildminderForms):
         if CriminalRecordCheck.objects.filter(application_id=self.application_id_local).count() > 0:
             dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id_local)
             self.fields['dbs_certificate_number'].initial = dbs_record.dbs_certificate_number
-            self.fields['convictions'].initial = dbs_record.cautions_convictions
+            self.fields['cautions_convictions'].initial = dbs_record.cautions_convictions
             self.pk = dbs_record.criminal_record_id
-            self.field_list = ['dbs_certificate_number']
+            self.field_list = ['dbs_certificate_number', 'cautions_convictions']
 
     def clean_dbs_certificate_number(self):
         """
