@@ -71,6 +71,8 @@ class UpdateEmailView(View):
         app_id = request.GET["id"]
         application = Application.objects.get(pk=app_id)
         form = ContactEmailForm()
+        form.field_list = ['email_address']
+        form.pk = UserDetails.objects.get(application_id=application).login_id
         form.check_flag()
 
         if application.application_status == 'FURTHER_INFORMATION':
@@ -106,13 +108,14 @@ class UpdateEmailView(View):
                 return HttpResponseRedirect(redirect_url)
         else:
 
-            if application.application_status == 'FURTHER_INFORMATION':
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem'
-
             return self.render_update_email_template(request, form=form, application=application)
 
     def render_update_email_template(self, request, form, application):
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': application.application_id,
