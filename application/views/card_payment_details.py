@@ -252,7 +252,8 @@ def __handle_authorised_payment(application):
         personal_detail_id=personal_detail_id)
 
     payment_service.payment_email(login_record.email,
-                                  applicant_name_record.first_name)
+                                  applicant_name_record.first_name,
+                                  application.application_reference)
 
     return __redirect_to_payment_confirmation(application)
 

@@ -62,7 +62,7 @@ def check_payment(payment_reference):
     return response
 
 
-def payment_email(email, name):
+def payment_email(email, name, application_reference):
     """
     A function to send an email through the notify gateway with a payment template, currently used to confirm a Worldpay
     card order has been successful
@@ -75,7 +75,8 @@ def payment_email(email, name):
     payload = {
         "email": email,
         "personalisation": {
-            "firstName": name
+            "firstName": name,
+            "appReference": application_reference
         },
         "reference": "string",
         "templateId": "a741fed2-7948-4b1a-b44a-fec8485ec700"
