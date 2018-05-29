@@ -25,14 +25,14 @@
     {% csrf_token %}
 
     <div class="form-group">
-        <a href="{% url 'Resend-Code' %}?id={{id}}&f=1">
-            {% if sms_resend_attempts >= 3 %}
-                Still didn't get a code?
-            {% else %}
-                Didn't get a code?
-            {% endif %}
-        </a>
-        <a href="{{ url }}"><p>Don't have your phone?</p></a>
+
+        {% if sms_resend_attempts >= 3 %}
+            <a href="{% url 'Resend-Code' %}?id={{id}}&f=1">Still didn't get a code?</a>
+        {% else %}
+            <a href="{% url 'Resend-Code' %}?id={{id}}&f=1">Didn't get a code?</a>
+            <a href="{{ url }}"><p>Don't have your phone?</a>
+        {% endif %}
+
         <input type="submit" class="button" value="Continue" alt="Continue">
     </div>
 
