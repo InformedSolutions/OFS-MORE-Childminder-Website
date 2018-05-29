@@ -57,7 +57,7 @@ class ChildminderForms(GOVUKForm):
 
         log = None
         if ArcComments.objects.filter(
-                table_pk=self.pk).count() > 0 and field == 'first_name' or 'last_name' or 'middle_names':
+                table_pk=self.pk).count() > 0 and field in ['first_name', 'last_name', 'middle_names']:
 
             if ArcComments.objects.filter(table_pk=self.pk, field_name='name').exists():
                 log = ArcComments.objects.get(table_pk=self.pk, field_name='name')
@@ -96,7 +96,7 @@ class ChildminderForms(GOVUKForm):
         log = None
         # Right now only an address as a whole can be flagged, and the message is repeated for each field
         if ArcComments.objects.filter(table_pk=self.pk).count() > 0:
-            if field == 'street_line1' or 'street_line2' or 'town' or 'county' or 'country' or 'postcode':
+            if field in ['street_line1', 'street_line2', 'town', 'county', 'country', 'postcode']:
 
                 if ArcComments.objects.filter(table_pk=self.pk, field_name='address').exists():
                     log = ArcComments.objects.get(table_pk=self.pk, field_name='address')
