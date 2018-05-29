@@ -66,6 +66,11 @@ class HospitalAdmissionView(BaseFormView):
     success_url = 'Health-Check-Hospital-More'
 
     def get_context_data(self, **kwargs):
+        """
+        Returns the form fields to be prepopulated by the view
+        :param kwargs:
+        :return:
+        """
         context = super().get_context_data()
         person_id = self.request.GET.get('person_id')
         person_record = AdultInHome.objects.get(pk=person_id)
@@ -76,12 +81,34 @@ class HospitalAdmissionView(BaseFormView):
         return context
 
     def form_valid(self, form):
+        """
+        Saves a hospital admission record, if the form is valid
+        :param form:
+        :return:
+        """
         illness_record = self._get_clean(form)
         illness_record.save()
 
         return super().form_valid(form)
 
+    def get_form_kwargs(self):
+        """
+        Returns the adult record associated with the person id to be used in start_date validations.
+        :return:
+        """
+        person_id = self.request.GET.get('person_id')
+        person_record = AdultInHome.objects.get(pk=person_id)
+        kwargs = super(HospitalAdmissionView, self).get_form_kwargs()
+        kwargs['adult'] = person_record
+        return kwargs
+
     def get(self, request=None):
+        """
+        If a get request is performed, this checks to see if a 'delete' hyperlink was followed, and removes the
+        associated record if so
+        :param request:
+        :return:
+        """
         response = super().get(request=self.request)
 
         person_id = self.request.GET.get('person_id')
@@ -94,6 +121,11 @@ class HospitalAdmissionView(BaseFormView):
         return response
 
     def _get_clean(self, form):
+        """
+        Returns a hospital admission record that contains the data from the form sent to the view
+        :param form:
+        :return:
+        """
         clean = form.cleaned_data
         description = clean['illness_details']
         start_date = clean['start_date']
@@ -111,11 +143,19 @@ class HospitalAdmissionView(BaseFormView):
 
 
 class MoreHospitalAdmissionsView(BaseFormView):
+    """
+    View to ask whether the adult has had any more hospital admissions
+    """
     template_name = 'other_people_health_check/more_hospital_admissions.html'
     form_class = MoreHospitalAdmissions
     success_url = None
 
     def form_valid(self, form):
+        """
+        If the form is valid, return them to the next or previous view dependant on the answer
+        :param form:
+        :return:
+        """
         clean = form.cleaned_data
         decision = clean['more_illnesses']
         if decision == 'True':
@@ -126,11 +166,18 @@ class MoreHospitalAdmissionsView(BaseFormView):
 
 
 class HospitalAdmissionEditView(BaseFormView):
+    """
+    View to allow editing of a single hospital illness record once submitted (this is accessed from the summary page)
+    """
     template_name = 'other_people_health_check/hospital_admission.html'
     form_class = HospitalAdmission
     success_url = 'Health-Check-Summary'
 
     def get_initial(self):
+        """
+        Populated the form instance with initial data
+        :return: a dictionary containing keys mapping to form fields and their respective initial values
+        """
 
         initial = super().get_initial()
 
@@ -145,6 +192,11 @@ class HospitalAdmissionEditView(BaseFormView):
         return initial
 
     def get_context_data(self, **kwargs):
+        """
+        Returns the form fields to be prepopulated by the view
+        :param kwargs:
+        :return:
+        """
         context = super().get_context_data()
         context['person_id'] = self.request.GET.get('person_id')
         context['illness_id'] = self.request.GET.get('illness_id')
@@ -153,6 +205,11 @@ class HospitalAdmissionEditView(BaseFormView):
         return context
 
     def form_valid(self, form):
+        """
+        Update the illness record, should it be valid
+        :param form: The form instance to be checked
+        :return:
+        """
         clean = form.cleaned_data
         description = clean['illness_details']
         start_date = clean['start_date']

@@ -454,7 +454,7 @@ class CustomSplitDateField(forms.MultiValueField):
         'invalid': _('Enter a valid date')
     }
 
-    def __init__(self, bounds_error=None, *args, **kwargs):
+    def __init__(self, bounds_error=None, min_value=2000, *args, **kwargs):
         day_bounds_error = gettext('Day must be between 1 and 31')
         month_bounds_error = gettext('Month must be between 1 and 12')
 
@@ -469,7 +469,7 @@ class CustomSplitDateField(forms.MultiValueField):
                 'max_value': month_bounds_error,
                 'invalid': gettext('Enter month as a number')
             }),
-            CustomYearField(bounds_error=bounds_error),
+            CustomYearField(bounds_error=bounds_error, min_value=min_value),
         ]
 
         super().__init__(self.fields, *args, **kwargs)
@@ -502,7 +502,7 @@ class CustomYearField(forms.IntegerField):
     Allows 2-digit year entry which is converted depending on the `era_boundary`
     """
 
-    def __init__(self, era_boundary=None, bounds_error=None, **kwargs):
+    def __init__(self, era_boundary=None, bounds_error=None, min_value=2000, **kwargs):
         self.current_year = now().year
         self.century = 100 * (self.current_year // 100)
         if era_boundary is None:
@@ -517,7 +517,7 @@ class CustomYearField(forms.IntegerField):
         else:
             bounds_error = gettext(bounds_error)
         options = {
-            'min_value': 2000,
+            'min_value': min_value,
             'max_value': self.current_year,
             'error_messages': {
                 'min_value': bounds_error,
