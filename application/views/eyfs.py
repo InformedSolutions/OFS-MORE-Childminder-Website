@@ -66,6 +66,11 @@ def eyfs_details(request):
         application_id_local = request.GET["id"]
         form = EYFSDetailsForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -88,7 +93,14 @@ def eyfs_details(request):
             reset_declaration(application)
             return HttpResponseRedirect(settings.URL_PREFIX + '/early-years/certificate?id=' + application_id_local)
         else:
+
             form.error_summary_title = 'There was a problem with your course details'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -156,9 +168,16 @@ def eyfs_summary(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = EYFSSummaryForm(request.POST)
+        application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local

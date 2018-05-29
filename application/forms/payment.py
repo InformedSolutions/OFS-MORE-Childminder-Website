@@ -3,28 +3,10 @@ from datetime import date
 
 from django import forms
 from django.conf import settings
-from govuk_forms.widgets import RadioSelect
 
-from application.customfields import ExpirySplitDateField, ExpirySplitDateWidget
-from application.forms.childminder import ChildminderForms
-from application.forms_helper import full_stop_stripper
-
-
-class PaymentForm(ChildminderForms):
-    """
-    GOV.UK form for the Payment selection page
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
-    auto_replace_widgets = True
-
-    options = (
-        ('Credit', 'Credit or debit card'),
-        ('PayPal', 'PayPal')
-    )
-    payment_method = forms.ChoiceField(label='How would you like to pay?', choices=options,
-                                       widget=RadioSelect, required=True,
-                                       error_messages={'required': 'Please select how you would like to pay'})
+from ..customfields import ExpirySplitDateField, ExpirySplitDateWidget
+from ..forms.childminder import ChildminderForms
+from ..forms_helper import full_stop_stripper
 
 
 class PaymentDetailsForm(ChildminderForms):
@@ -35,19 +17,10 @@ class PaymentDetailsForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    options = (
-        ('a', 'Alpha'),
-        ('b', 'Beta')
-    )
-    grouped_options = (
-        ('First', options),
-        ('Second', (('c', 'Gamma'), ('d', 'Delta'))),
-    )
     card_type_options = (
         (None, '(Please select)'),
         ('visa', 'Visa'),
         ('mastercard', 'Mastercard'),
-        ('american_express', 'American Express'),
         ('maestro', 'Maestro')
     )
     card_type = forms.ChoiceField(label='Card type', choices=card_type_options, required=True,
@@ -90,17 +63,13 @@ class PaymentDetailsForm(ChildminderForms):
             raise forms.ValidationError('Please check the number on your card')
         if settings.VISA_VALIDATION:
             if card_type == 'visa':
-                if re.match("^4[0-9]{12}(?:[0-9]{3})?$", card_number) is None:
+                if re.match(settings.REGEX['VISA'], card_number) is None:
                     raise forms.ValidationError('Please check the number on your card')
         if card_type == 'mastercard':
-            if re.match("^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$",
-                        card_number) is None:
-                raise forms.ValidationError('Please check the number on your card')
-        elif card_type == 'american_express':
-            if re.match("^3[47][0-9]{13}$", card_number) is None:
+            if re.match(settings.REGEX['MASTERCARD'], card_number) is None:
                 raise forms.ValidationError('Please check the number on your card')
         elif card_type == 'maestro':
-            if re.match("^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$", card_number) is None:
+            if re.match(settings.REGEX['MAESTRO'], card_number) is None:
                 raise forms.ValidationError('Please check the number on your card')
         return card_number
 
@@ -134,6 +103,6 @@ class PaymentDetailsForm(ChildminderForms):
         Card security code validation
         :return: string
         """
-        card_security_code = str(self.cleaned_data['card_security_code'])
-        if re.match("^[0-9]{3,4}$", card_security_code) is None:
+        card_security_code = str(self.data['card_security_code'])
+        if re.match(settings.REGEX['CARD_SECURITY_NUMBER'], card_security_code) is None:
             raise forms.ValidationError('The code should be 3 or 4 digits long')

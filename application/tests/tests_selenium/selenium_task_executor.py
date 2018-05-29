@@ -1,6 +1,8 @@
+import json
 import os
 import random
 import time
+from unittest import mock
 
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
@@ -135,6 +137,8 @@ class SeleniumTaskExecutor:
 
         driver.get(validation_url)
 
+        return validation_url
+
     def complete_your_login_details(self, email_address, phone_number, additional_phone_number):
         """
         Selenium steps to create a new application by completing the login details task
@@ -236,14 +240,14 @@ class SeleniumTaskExecutor:
         driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
         if is_location_of_care is True:
-            driver.find_element_by_id("id_location_of_care_0").click()
+            driver.find_element_by_id("id_childcare_location_0").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
             # Confirm task summary page
             driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
             return
 
-        driver.find_element_by_id("id_location_of_care_1").click()
+        driver.find_element_by_id("id_childcare_location_1").click()
         driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
         # Childcare location address
@@ -268,6 +272,8 @@ class SeleniumTaskExecutor:
         driver.find_element_by_xpath("//tr[@id='first_aid']/td/a/span").click()
 
         # Guidance page
+        WebDriverWait(self.get_driver(), 30).until(
+            expected_conditions.title_contains("First aid training"))
         driver.find_element_by_xpath("//input[@value='Continue']").click()
 
         # Training details
@@ -340,6 +346,7 @@ class SeleniumTaskExecutor:
             driver.find_element_by_id("id_convictions_1").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
             # Task summary
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Check your answers: criminal record (DBS) check"))
             driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
 
         elif has_convictions is True:
@@ -348,17 +355,19 @@ class SeleniumTaskExecutor:
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
             # Confirm will send DBS certificate
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Post your DBS certificate"))
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
             # Task summary
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Check your answers: criminal record (DBS) check"))
             driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
 
     def complete_people_in_your_home_task(self, other_adults_in_home, other_adult_forename, other_adult_middle_name,
-                                          other_adult_surname,
-                                          other_adult_dob_day, other_adult_dob_month, other_adult_dob_year,
-                                          other_adult_relationship, other_adult_dbs,
-                                          children_in_home, child_forename, child_middle_name, child_surname,
-                                          child_dob_day, child_dob_month, child_dob_year, child_relationship):
+                                          other_adult_surname, other_adult_dob_day, other_adult_dob_month,
+                                          other_adult_dob_year, other_adult_relationship, other_adult_dbs,
+                                          other_adult_email, children_in_home, child_forename, child_middle_name,
+                                          child_surname, child_dob_day, child_dob_month, child_dob_year,
+                                          child_relationship, applicant_email):
         """
         Selenium steps for completing the people in your home task
         :param other_adults_in_home: a boolean flag for whether an applicant has other adults living in their home
@@ -369,6 +378,7 @@ class SeleniumTaskExecutor:
         :param other_adult_dob_month: the month value for the other adult's date of birth to be set
         :param other_adult_dob_year: the year value for the other adult's date of birth to be set
         :param other_adult_relationship: the relationship to the other adult
+        :param other_adult_email: the e-mail address of the other adult
         :param other_adult_dbs: the dbs number for the other adult
         :param children_in_home: a boolean flag for whether an applicant has other children living in their home
         :param child_forename: the forename of the child to be set
@@ -378,6 +388,7 @@ class SeleniumTaskExecutor:
         :param child_dob_month: the month value for the child's date of birth to be set
         :param child_dob_year: the year value for the child's date of birth to be set
         :param child_relationship: the relationship to the other child
+        :param applicant_email: e-mail address of the applicant
         """
         driver = self.get_driver()
 
@@ -389,6 +400,11 @@ class SeleniumTaskExecutor:
         if other_adults_in_home is True:
             driver.find_element_by_id("id_adults_in_home_0").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+
+            WebDriverWait(self.get_driver(), 30).until(
+                expected_conditions.title_contains("Details of adults in your home")
+            )
+
             driver.find_element_by_id("id_1-first_name").send_keys(other_adult_forename)
             driver.find_element_by_id("id_1-middle_names").send_keys(other_adult_middle_name)
             driver.find_element_by_id("id_1-last_name").send_keys(other_adult_surname)
@@ -396,7 +412,14 @@ class SeleniumTaskExecutor:
             driver.find_element_by_id("id_1-date_of_birth_1").send_keys(other_adult_dob_month)
             driver.find_element_by_id("id_1-date_of_birth_2").send_keys(other_adult_dob_year)
             driver.find_element_by_id("id_1-relationship").send_keys(other_adult_relationship)
-            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+            driver.find_element_by_id("id_1-email_address").send_keys(other_adult_email)
+
+            # Javascript click execution is used here given element falls out of view location range
+            submit_button = driver.find_element_by_xpath("//input[@value='Save and continue']")
+            driver.execute_script("arguments[0].click();", submit_button)
+
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("People in your home"))
+
             driver.find_element_by_id("id_1-dbs_certificate_number").send_keys(other_adult_dbs)
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
         else:
@@ -404,6 +427,7 @@ class SeleniumTaskExecutor:
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
         if children_in_home is True:
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("People in your home"))
             driver.find_element_by_id("id_children_in_home_0").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
             driver.find_element_by_id("id_1-first_name").send_keys(child_forename)
@@ -413,13 +437,134 @@ class SeleniumTaskExecutor:
             driver.find_element_by_id("id_1-date_of_birth_1").send_keys(child_dob_month)
             driver.find_element_by_id("id_1-date_of_birth_2").send_keys(child_dob_year)
             driver.find_element_by_id("id_1-relationship").send_keys(child_relationship)
-            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+
+            # Javascript click execution is used here given element falls out of view location range
+            submit_button = driver.find_element_by_xpath("//input[@value='Save and continue']")
+            driver.execute_script("arguments[0].click();", submit_button)
         else:
             driver.find_element_by_id("id_children_in_home_1").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
         # Task summary confirmation
         driver.find_element_by_xpath("//input[@value='Confirm and continue']").send_keys(Keys.RETURN)
+
+        # Email confirmation page
+        if other_adults_in_home:
+            driver.find_element_by_xpath("//input[@value='Continue']").send_keys(Keys.RETURN)
+            email_link_list = os.environ['EMAIL_VALIDATION_URL'].split(" ")
+            email_link_list = [x for x in email_link_list if x]
+
+            for email_link in email_link_list:
+                self.complete_health_check(email_link, other_adult_dob_day, other_adult_dob_month, other_adult_dob_year)
+            self.sign_back_in(applicant_email)
+
+    def complete_health_check(self, email_link, other_adult_dob_day, other_adult_dob_month, other_adult_dob_year):
+        """
+        Selenium steps for completing a health check for a single email validation link
+        :param email_link: The magic link to follow to access the health check
+        :return:
+        """
+        driver = self.get_driver()
+        driver.get(email_link)
+        driver.find_element_by_link_text("Continue").click()
+        driver.find_element_by_id("id_date_of_birth_0").click()
+        driver.find_element_by_id("id_date_of_birth_0").clear()
+        driver.find_element_by_id("id_date_of_birth_0").send_keys(other_adult_dob_day)
+        driver.find_element_by_id("id_date_of_birth_1").clear()
+        driver.find_element_by_id("id_date_of_birth_1").send_keys(other_adult_dob_month)
+        driver.find_element_by_id("id_date_of_birth_2").clear()
+        driver.find_element_by_id("id_date_of_birth_2").send_keys(other_adult_dob_year)
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+        driver.find_element_by_link_text("Continue").click()
+        driver.find_element_by_id("id_currently_ill_0").click()
+        driver.find_element_by_id("id_illness_details").click()
+        driver.find_element_by_id("id_illness_details").clear()
+        driver.find_element_by_id("id_illness_details").send_keys("Current Illness Test")
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+        driver.find_element_by_id("id_has_illnesses_0").click()
+        driver.find_element_by_name("action").click()
+        driver.find_element_by_id("id_illness_details").click()
+        driver.find_element_by_id("id_illness_details").clear()
+        driver.find_element_by_id("id_illness_details").send_keys("Serious Illness Test 1")
+        driver.find_element_by_id("id_start_date_0").clear()
+        driver.find_element_by_id("id_start_date_0").send_keys("31")
+        driver.find_element_by_id("id_start_date_1").clear()
+        driver.find_element_by_id("id_start_date_1").send_keys("03")
+        driver.find_element_by_id("id_start_date_2").click()
+        driver.find_element_by_id("id_start_date_2").clear()
+        driver.find_element_by_id("id_start_date_2").send_keys("2016")
+        driver.find_element_by_id("id_end_date_0").click()
+        driver.find_element_by_id("id_end_date_0").clear()
+        driver.find_element_by_id("id_end_date_0").send_keys("4")
+        driver.find_element_by_id("id_end_date_1").clear()
+        driver.find_element_by_id("id_end_date_1").send_keys("04")
+        driver.find_element_by_id("id_end_date_2").clear()
+        driver.find_element_by_id("id_end_date_2").send_keys("2016")
+        driver.find_element_by_name("action").click()
+        driver.find_element_by_id("id_more_illnesses_0").click()
+        driver.find_element_by_name("action").click()
+        driver.find_element_by_id("id_illness_details").click()
+        driver.find_element_by_id("id_illness_details").clear()
+        driver.find_element_by_id("id_illness_details").send_keys("Serious Illness Test 2")
+        driver.find_element_by_id("id_start_date_0").clear()
+        driver.find_element_by_id("id_start_date_0").send_keys("21")
+        driver.find_element_by_id("id_start_date_1").clear()
+        driver.find_element_by_id("id_start_date_1").send_keys("01")
+        driver.find_element_by_id("id_start_date_2").clear()
+        driver.find_element_by_id("id_start_date_2").send_keys("2017")
+        driver.find_element_by_id("id_end_date_0").clear()
+        driver.find_element_by_id("id_end_date_0").send_keys("24")
+        driver.find_element_by_id("id_end_date_1").clear()
+        driver.find_element_by_id("id_end_date_1").send_keys("02")
+        driver.find_element_by_id("id_end_date_2").clear()
+        driver.find_element_by_id("id_end_date_2").send_keys("2017")
+        driver.find_element_by_name("action").click()
+        driver.find_element_by_id("id_more_illnesses_1").click()
+        driver.find_element_by_name("action").click()
+        driver.find_element_by_id("id_has_illnesses_0").click()
+        driver.find_element_by_name("action").click()
+        driver.find_element_by_id("id_illness_details").click()
+        driver.find_element_by_id("id_illness_details").clear()
+        driver.find_element_by_id("id_illness_details").send_keys("Hospital Admission 1")
+        driver.find_element_by_id("id_start_date_0").clear()
+        driver.find_element_by_id("id_start_date_0").send_keys("27")
+        driver.find_element_by_id("id_start_date_1").clear()
+        driver.find_element_by_id("id_start_date_1").send_keys("06")
+        driver.find_element_by_id("id_start_date_2").clear()
+        driver.find_element_by_id("id_start_date_2").send_keys("2017")
+        driver.find_element_by_id("id_end_date_0").clear()
+        driver.find_element_by_id("id_end_date_0").send_keys("6")
+        driver.find_element_by_id("id_end_date_1").clear()
+        driver.find_element_by_id("id_end_date_1").send_keys("9")
+        driver.find_element_by_id("id_end_date_2").clear()
+        driver.find_element_by_id("id_end_date_2").send_keys("2017")
+        driver.find_element_by_name("action").click()
+        driver.find_element_by_id("id_more_illnesses_0").click()
+        driver.find_element_by_name("action").click()
+        driver.find_element_by_id("id_illness_details").click()
+        driver.find_element_by_id("id_illness_details").clear()
+        driver.find_element_by_id("id_illness_details").send_keys("Hospital Admission 2")
+        driver.find_element_by_id("id_start_date_0").clear()
+        driver.find_element_by_id("id_start_date_0").send_keys("8")
+        driver.find_element_by_id("id_start_date_1").clear()
+        driver.find_element_by_id("id_start_date_1").send_keys("9")
+        driver.find_element_by_id("id_start_date_2").clear()
+        driver.find_element_by_id("id_start_date_2").send_keys("2017")
+        driver.find_element_by_id("id_end_date_0").clear()
+        driver.find_element_by_id("id_end_date_0").send_keys("5")
+        driver.find_element_by_id("id_end_date_1").clear()
+        driver.find_element_by_id("id_end_date_1").send_keys("6")
+        driver.find_element_by_id("id_end_date_2").clear()
+        driver.find_element_by_id("id_end_date_2").send_keys("2018")
+        driver.find_element_by_id("id_end_date_1").click()
+        driver.find_element_by_id("id_end_date_1").clear()
+        driver.find_element_by_id("id_end_date_1").send_keys("5")
+        driver.find_element_by_name("action").click()
+        driver.find_element_by_id("id_more_illnesses_1").click()
+        driver.find_element_by_name("action").click()
+        driver.find_element_by_link_text("Continue").click()
+        driver.find_element_by_link_text("Continue").click()
+
 
     def complete_references_task(self, first_reference_forename, first_reference_surname, first_reference_relationship,
                                  first_reference_time_known_months, first_reference_time_known_years,
@@ -492,7 +637,7 @@ class SeleniumTaskExecutor:
         driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
         driver.find_element_by_xpath("//input[@value='Continue']").click()
 
-    def complete_payment(self, card_payment, card_type, card_number, expiry_date_month, expiry_date_year,
+    def complete_payment(self, card_type, card_number, expiry_date_month, expiry_date_year,
                          cardholder_name, cvc):
         """
         Selenium steps for completing the payment pages
@@ -504,11 +649,39 @@ class SeleniumTaskExecutor:
         :param cardholder_name: the cardholders name to be used for payment
         :param cvc: the cvc code to be used for payment
         """
-        driver = self.get_driver()
+        with mock.patch('application.payment_service.make_payment') as post_payment_mock, \
+                mock.patch('application.payment_service.check_payment') as check_payment_mock:
 
-        if card_payment is True:
-            driver.find_element_by_id("id_payment_method_0").click()
-            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+            test_payment_response = {
+                "amount": 50000,
+                "cardHolderName": "Mr Example Cardholder",
+                "cardNumber": 5454545454545454,
+                "cvc": 352,
+                "expiryMonth": 6,
+                "expiryYear": 2018,
+                "currencyCode": "GBP",
+                "customerOrderCode": "TEST_ORDER_CODE",
+                "orderDescription": "Childminder Registration Fee"
+            }
+
+            post_payment_mock.return_value.status_code = 201
+            post_payment_mock.return_value.text = json.dumps(test_payment_response)
+
+            test_get_response = {
+                "customerOrderCode": "TEST_ORDER_CODE",
+                "paymentMethod": "ECMC-SSL",
+                "creationDate": "2018-05-16T06:45:00",
+                "lastEvent": "AUTHORISED",
+                "amount": 3500,
+                "currencyCode": "GBP"
+            }
+
+            check_payment_mock.return_value.status_code = 200
+            check_payment_mock.return_value.text = json.dumps(test_get_response)
+
+            driver = self.get_driver()
+
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Pay by debit or credit card"))
             Select(driver.find_element_by_id("id_card_type")).select_by_visible_text(card_type)
             driver.find_element_by_id("id_card_number").send_keys(card_number)
             driver.find_element_by_id("id_expiry_date_0").send_keys(expiry_date_month)
@@ -516,10 +689,6 @@ class SeleniumTaskExecutor:
             driver.find_element_by_id("id_cardholders_name").send_keys(cardholder_name)
             driver.find_element_by_id("id_card_security_code").send_keys(cvc)
             driver.find_element_by_xpath("//input[@value='Pay and apply']").click()
-        else:
-            driver.find_element_by_id("id_payment_method_1").click()
-            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
-            driver.find_element_by_id("submit-btn").click()
 
     def complete_declaration(self):
         """
@@ -528,6 +697,7 @@ class SeleniumTaskExecutor:
         driver = self.get_driver()
 
         driver.find_element_by_id("id_share_info_declare").click()
+        driver.find_element_by_id("id_suitable_declare").click()
         driver.find_element_by_id("id_information_correct_declare-label").click()
         driver.find_element_by_id("id_change_declare").click()
         driver.find_element_by_xpath("//input[@value='Confirm and pay your fee']").click()
@@ -554,4 +724,3 @@ class SeleniumTaskExecutor:
         :return: A random UK mobile phone number
         """
         return '0779' + ''.join(str(random.randint(0, 9)) for _ in range(7))
-

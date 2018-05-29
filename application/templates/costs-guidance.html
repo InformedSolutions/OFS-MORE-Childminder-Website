@@ -23,16 +23,16 @@
     </thead>
     <tbody>
     <tr>
-        <td>
+        <td class="two-thirds">
             Application fee (not refundable)
         </td>
-        <td>
+        <td class="one-third">
             £35
         </td>
     </tr>
 </table>
 
-<p class="top-padded">The fee is £103 if you are only caring for children aged over 5.</p>
+<p class="top-padded">The annual renewal fee is £35.</p>
 
 <table>
     <thead>
@@ -46,18 +46,18 @@
     </thead>
     <tbody>
     <tr>
-        <td>
+        <td class="two-thirds">
             Your criminal record (DBS) check
         </td>
-        <td>
+        <td class="one-third">
             £52.10
         </td>
     </tr>
      <tr>
-        <td>
+        <td class="two-thirds">
             Checks for adults in your home
         </td>
-        <td>
+        <td class="one-third">
             £52.10 each
         </td>
     </tr>
@@ -75,10 +75,10 @@
     </thead>
     <tbody>
     <tr>
-        <td>
+        <td class="two-thirds">
             GP to fill in and sign booklet
         </td>
-        <td>
+        <td class="one-third">
             £90 (approx)
         </td>
     </tr>
@@ -96,19 +96,19 @@
     </thead>
     <tbody>
     <tr>
-        <td>
+        <td class="two-thirds">
             Paediatric first aid course
         </td>
-        <td>
+        <td class="one-third">
             £80 to £200 (approx)
         </td>
     </tr>
      <tr>
-        <td>
+        <td class="two-thirds">
             Early years training
         </td>
-        <td>
-            £20 to £200 (approx)
+        <td class="one-third">
+            £60 to £200 (approx)
         </td>
     </tr>
 </table>
@@ -126,10 +126,10 @@
     </thead>
     <tbody>
     <tr>
-        <td>
+        <td class="two-thirds">
             Public liability insurance
         </td>
-        <td>
+        <td class="one-third">
             £25 to £100 (approx)
         </td>
     </tr>
@@ -147,21 +147,21 @@
     </thead>
     <tbody>
     <tr>
-        <td>
+        <td class="two-thirds">
             Keep digital records of children - <a href="https://ico.org.uk/for-organisations/register/">Register with ICO</a>
         </td>
-        <td>
+        <td class="one-third">
             £35
         </td>
     </tr>
 </table>
 
-<p class="top-padded">
+<p class="top-padded text-before-button">
     Your house and car insurance also need to be up to date.
 </p>
 
 {% if id and AUTHENTICATED %}
-    {% include 'return-to-list.html' %}
+   <a href="{{ return_url }}" class="button">Return to application</a>
 {% endif %}
 
 {% endblock %}

@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Your account{% endblock %}
+{% block page_title %}Check your answers: your sign in details{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -7,7 +7,7 @@
 {% include "back-button.html" %}
 
 <h1 class="form-title heading-large">
-    Check your answers: your login details
+    Check your answers: your sign in details
 </h1>
 
 <!-- Login details -->
@@ -35,7 +35,8 @@
             {{email}}
         </td>
         <td class="change-answer">
-            <a href="{% url 'Contact-Email-View' %}?id={{application_id}}#id_email_address"
+            <!--<a href="{{ URL_prefix }}/sign-in/change-email/email?id={{application_id}}#id_email_address"-->
+            <a href="{% url 'Update-Email-Resent' %}email?id={{application_id}}#id_email_address"
                alt='Change email address'>
                 Change <span class="visuallyhidden">email address</span>
             </a>

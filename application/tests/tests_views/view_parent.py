@@ -43,14 +43,12 @@ from ...views import (application_saved,
                       other_people_adult_question,
                       other_people_adult_details,
                       other_people_adult_dbs,
-                      other_people_adult_permission,
                       other_people_children_question,
                       other_people_children_details,
                       other_people_approaching_16,
                       other_people_summary,
                       payment,
                       payment_confirmation,
-                      paypal_payment_completion,
                       personal_details_childcare_address,
                       personal_details_childcare_address_manual,
                       personal_details_childcare_address_select,
@@ -80,7 +78,7 @@ from ...views import (application_saved,
                       type_of_childcare_age_groups,
                       type_of_childcare_guidance,
                       type_of_childcare_register)
-from ...views.login import new_email, account_selection, existing_email
+from ...views.login import account_selection, NewUserSignInView, ExistingUserSignInView
 from ...models import Application, UserDetails
 
 

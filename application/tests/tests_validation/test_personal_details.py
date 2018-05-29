@@ -2,9 +2,10 @@ import re
 
 from datetime import date
 from django.test import TestCase
+from django.conf import settings
 
 def test_name(name):
-    return re.match("^[A-zÀ-ÿ- ']+$", test_name)
+    return re.match(settings.REGEX['FIRST_NAME'], test_name)
 
 
 class TestPersonalDetailsValidation(TestCase):
@@ -17,63 +18,63 @@ class TestPersonalDetailsValidation(TestCase):
 
     def test_correct_name(self):
         test_name = 'Erik'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is not None)
 
     def test_correct_name2(self):
         test_name = 'Anne-Marie'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is not None)
 
     def test_correct_name3(self):
         test_name = 'erik'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is not None)
 
     def test_correct_name4(self):
         test_name = 'anne-marie'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is not None)
 
     def test_correct_name5(self):
         test_name = 'Eun Ji'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is not None)
 
     def test_correct_name6(self):
         test_name = 'Gülay'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is not None)
 
     def test_correct_name7(self):
         test_name = 'Anthí'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is not None)
 
     def test_correct_name8(self):
         test_name = 'O\'Brien'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is not None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is not None)
 
     def test_incorrect_name(self):
         test_name = '1234'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is None)
 
     def test_incorrect_name2(self):
         test_name = '1234a'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is None)
 
     def test_incorrect_name3(self):
         test_name = '1234A'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is None)
 
     def test_incorrect_name4(self):
         test_name = '1234-'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is None)
 
     def test_incorrect_name5(self):
         test_name = '1234-a'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is None)
 
     def test_incorrect_name6(self):
         test_name = '1234-A'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is None)
 
     def test_incorrect_name7(self):
         test_name = '1234-Aa'
-        assert (re.match("^[A-zÀ-ÿ- ']+$", test_name) is None)
+        assert (re.match(settings.REGEX['FIRST_NAME'], test_name) is None)
 
     def test_legal_age_to_childmind(self):
         test_applicant_dob = date(1995, 4, 20)
@@ -101,28 +102,28 @@ class TestPersonalDetailsValidation(TestCase):
         test_postcode = 'WA14 4PA'
         test_postcode_no_space = test_postcode.replace(" ", "")
         postcode_uppercase = test_postcode_no_space.upper()
-        assert (re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is not None)
+        assert (re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is not None)
 
     def test_valid_postcode_without_space(self):
         test_postcode = 'WA144PA'
         test_postcode_no_space = test_postcode.replace(" ", "")
         postcode_uppercase = test_postcode_no_space.upper()
-        assert (re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is not None)
+        assert (re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is not None)
 
     def test_invalid_postcode(self):
         test_postcode = '!%WA14'
         test_postcode_no_space = test_postcode.replace(" ", "")
         postcode_uppercase = test_postcode_no_space.upper()
-        assert (re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None)
+        assert (re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None)
 
     def test_invalid_postcode_too_long(self):
         test_postcode = 'WA14 4PAAAAAA'
         test_postcode_no_space = test_postcode.replace(" ", "")
         postcode_uppercase = test_postcode_no_space.upper()
-        assert (re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None)
+        assert (re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None)
 
     def test_invalid_postcode_too_long2(self):
         test_postcode = 'WA144PAAAAAA'
         test_postcode_no_space = test_postcode.replace(" ", "")
         postcode_uppercase = test_postcode_no_space.upper()
-        assert (re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None)
+        assert (re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None)

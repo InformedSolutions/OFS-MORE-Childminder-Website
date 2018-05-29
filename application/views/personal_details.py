@@ -86,6 +86,11 @@ def personal_details_name(request):
         form = PersonalDetailsNameForm(id=app_id)
         form.check_flag()
         application = Application.get_id(app_id=app_id)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': app_id,
@@ -102,21 +107,28 @@ def personal_details_name(request):
         application = Application.objects.get(pk=app_id)
 
         if form.is_valid():
-            if application.personal_details_status != 'COMPLETED':
-                status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
             # Create or update Applicant_Names record
             applicant_names_record = personal_name_logic(application, form)
             applicant_names_record.save()
             application.date_updated = current_date
             application.save()
+            if application.personal_details_status != 'COMPLETED':
+                status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
             reset_declaration(application)
 
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/personal-details/your-date-of-birth/?id=' + app_id)
 
         else:
+
             form.error_summary_title = 'There was a problem with your name details'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': app_id
@@ -140,6 +152,11 @@ def personal_details_dob(request):
         form = PersonalDetailsDOBForm(id=app_id)
         form.check_flag()
         application = Application.get_id(app_id=app_id)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': app_id,
@@ -171,7 +188,14 @@ def personal_details_dob(request):
                 settings.URL_PREFIX + '/personal-details/your-home-address?id=' + app_id +
                 '&manual=False&lookup=False')
         else:
+
             form.error_summary_title = 'There was a problem with your date of birth'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': app_id
@@ -196,6 +220,11 @@ def personal_details_home_address(request):
         application = Application.get_id(app_id=app_id)
         form = PersonalDetailsHomeAddressForm(id=app_id)
         form.check_flag()
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': app_id,
@@ -252,7 +281,14 @@ def personal_details_home_address(request):
                     settings.URL_PREFIX + '/personal-details/enter-home-address/?id=' + app_id)
 
         else:
+
             form.error_summary_title = 'There was a problem with your postcode'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': app_id,
@@ -284,6 +320,11 @@ def personal_details_home_address_select(request):
 
         if len(addresses) != 0:
             form = PersonalDetailsHomeAddressLookupForm(id=app_id, choices=addresses)
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': app_id,
@@ -295,6 +336,11 @@ def personal_details_home_address_select(request):
 
         else:
             form = PersonalDetailsHomeAddressForm(id=app_id)
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': app_id,
@@ -361,7 +407,14 @@ def personal_details_home_address_select(request):
             return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address-details?id=' +
                                         app_id)
         else:
+
             form.error_summary_title = 'There was a problem finding your address'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'postcode': postcode,
                 'form': form,
@@ -403,6 +456,11 @@ def personal_details_location_of_care(request):
 
         form = PersonalDetailsLocationOfCareForm(id=app_id)
         form.check_flag()
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': app_id,
@@ -422,6 +480,7 @@ def personal_details_location_of_care(request):
             application_id=app_id).personal_detail_id
         form = PersonalDetailsLocationOfCareForm(request.POST, id=app_id)
         form.remove_flag()
+        application = Application.get_id(app_id=app_id)
 
         if form.is_valid():
             # Reset status to in progress as question can change status of overall task
@@ -430,7 +489,6 @@ def personal_details_location_of_care(request):
             # Update home address record
             home_address_record = personal_location_of_care_logic(app_id, form)
             home_address_record.save()
-            application = Application.get_id(app_id=app_id)
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
@@ -446,7 +504,14 @@ def personal_details_location_of_care(request):
                 return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/childcare-address?id=' +
                                             app_id + '&manual=False&lookup=False')
         else:
+
             form.error_summary_title = 'There was a problem with your address details'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': app_id
@@ -469,6 +534,11 @@ def personal_details_childcare_address(request):
         app_id = request.GET["id"]
         application = Application.get_id(app_id=app_id)
         form = PersonalDetailsChildcareAddressForm(id=app_id)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': app_id,
@@ -525,7 +595,14 @@ def personal_details_childcare_address(request):
                                             + app_id)
 
         else:
+
             form.error_summary_title = 'There was a problem with your postcode'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': app_id,
@@ -558,6 +635,11 @@ def personal_details_childcare_address_select(request):
 
         if len(addresses) != 0:
             form = PersonalDetailsChildcareAddressLookupForm(id=app_id, choices=addresses)
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': app_id,
@@ -568,6 +650,11 @@ def personal_details_childcare_address_select(request):
 
         else:
             form = PersonalDetailsChildcareAddressForm(id=app_id)
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': app_id,
@@ -639,7 +726,14 @@ def personal_details_childcare_address_select(request):
             return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/check-answers?id=' +
                                         app_id)
         else:
+
             form.error_summary_title = 'There was a problem finding your address'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'postcode': postcode,
                 'form': form,
@@ -665,6 +759,11 @@ def personal_details_childcare_address_manual(request):
         application = Application.get_id(app_id=app_id)
         form = PersonalDetailsChildcareAddressManualForm(id=app_id)
         form.check_flag()
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': app_id,
@@ -728,6 +827,12 @@ def personal_details_childcare_address_manual(request):
         else:
 
             form.error_summary_title = 'There was a problem with your address'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': app_id,
@@ -767,7 +872,7 @@ def personal_details_summary(request):
         postcode = applicant_home_address_record.postcode
         location_of_childcare = applicant_home_address_record.childcare_address
         applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                              childcare_address=True)
+                                                                              childcare_address=True, )
         childcare_street_line1 = applicant_childcare_address_record.street_line1
         childcare_street_line2 = applicant_childcare_address_record.street_line2
         childcare_town = applicant_childcare_address_record.town
@@ -795,14 +900,14 @@ def personal_details_summary(request):
             'table_object': Table([personal_detail_id.pk, applicant_name_record.pk]),
             'fields': name_dob_table_dict,
             'title': 'Your name and date of birth',
-            'error_summary_title': 'There is something wrong with your name and date of birth'
+            'error_summary_title': 'There was a problem'
         })
 
         address_dict = collections.OrderedDict({
             'table_object': Table([applicant_home_address_record.pk, applicant_childcare_address_record.pk]),
             'fields': address_table_dict,
             'title': 'Your home address',
-            'error_summary_title': 'There is something wrong with your address'
+            'error_summary_title': 'There was a problem'
         })
 
         tables = [name_dob_dict, address_dict]

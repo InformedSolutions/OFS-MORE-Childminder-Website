@@ -7,17 +7,15 @@
 
 {% include "back-button.html" %}
 
-<!-- Initialise error summary for page -->
 {{form.error_summary}}
-<!-- Form -->
+
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    <!-- Content -->
     <div class="form-group">
         <h1 class="form-title heading-large">
             Children in your home
         </h1>
         <p>We need to know about any children under 16 who live in your home.</p>
-        <p>These children will not affect the number of children you can look after.</p>
+        <p>This is to check you won't be looking after too many children.</p>
         <details role="group">
             <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">How many children can I look after?</span>
             </summary>

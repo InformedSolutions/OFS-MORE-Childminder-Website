@@ -1,6 +1,7 @@
 import re
 
 from django import forms
+from django.conf import settings
 from govuk_forms.widgets import InlineRadioSelect
 
 from application.forms.childminder import ChildminderForms
@@ -43,7 +44,7 @@ class PersonalDetailsHomeAddressForm(ChildminderForms):
         postcode = self.cleaned_data['postcode']
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
-        if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
+        if re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None:
             raise forms.ValidationError('Please enter a valid postcode')
         return postcode
 
@@ -114,7 +115,7 @@ class PersonalDetailsHomeAddressManualForm(ChildminderForms):
         :return: string
         """
         town = self.cleaned_data['town']
-        if re.match("^[A-Za-z- ]+$", town) is None:
+        if re.match(settings.REGEX['TOWN'], town) is None:
             raise forms.ValidationError('Please spell out the name of the town or city using letters')
         if len(town) > 50:
             raise forms.ValidationError('The name of the town or city must be under 50 characters long')
@@ -127,7 +128,7 @@ class PersonalDetailsHomeAddressManualForm(ChildminderForms):
         """
         county = self.cleaned_data['county']
         if county != '':
-            if re.match("^[A-Za-z- ]+$", county) is None:
+            if re.match(settings.REGEX['COUNTY'], county) is None:
                 raise forms.ValidationError('Please spell out the name of the county using letters')
             if len(county) > 50:
                 raise forms.ValidationError('The name of the county must be under 50 characters long')
@@ -141,7 +142,7 @@ class PersonalDetailsHomeAddressManualForm(ChildminderForms):
         postcode = self.cleaned_data['postcode']
         postcode_no_space = postcode.replace(" ", "")
         postcode_uppercase = postcode_no_space.upper()
-        if re.match("^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$", postcode_uppercase) is None:
+        if re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None:
             raise forms.ValidationError('Please enter a valid postcode')
         return postcode
 
@@ -182,7 +183,7 @@ class PersonalDetailsLocationOfCareForm(ChildminderForms):
         ('True', 'Yes'),
         ('False', 'No')
     )
-    location_of_care = forms.ChoiceField(label='Is this where you will be looking after the children?', choices=options,
+    childcare_location = forms.ChoiceField(label='Is this where you will be looking after the children?', choices=options,
                                          widget=InlineRadioSelect, required=True,
                                          error_messages={'required': 'Please answer yes or no'})
 
@@ -199,5 +200,8 @@ class PersonalDetailsLocationOfCareForm(ChildminderForms):
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=self.application_id_local).personal_detail_id
         if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
-            self.fields['location_of_care'].initial = ApplicantHomeAddress.objects.get(
-                personal_detail_id=personal_detail_id, current_address=True).childcare_address
+            address = ApplicantHomeAddress.objects.get(
+                personal_detail_id=personal_detail_id, current_address=True)
+            self.fields['childcare_location'].initial = address.childcare_address
+            self.field_list = ['childcare_location']
+            self.pk = address.pk

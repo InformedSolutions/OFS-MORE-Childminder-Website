@@ -81,6 +81,11 @@ def references_first_reference(request):
         form = FirstReferenceForm(id=application_id_local)
         form.check_flag()
         application = Application.objects.get(pk=application_id_local)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -107,6 +112,12 @@ def references_first_reference(request):
                                         application_id_local)
         else:
             form.error_summary_title = "There was a problem with the referee's details"
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -126,6 +137,11 @@ def references_first_reference_address(request):
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
         form = ReferenceFirstReferenceAddressForm(id=application_id_local)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -154,6 +170,12 @@ def references_first_reference_address(request):
                                             + application_id_local)
         else:
             form.error_summary_title = "There was a problem with the referee's postcode"
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local,
@@ -181,6 +203,12 @@ def references_first_reference_address_select(request):
         if len(addresses) != 0:
             form = ReferenceFirstReferenceAddressLookupForm(
                 id=application_id_local, choices=addresses)
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local,
@@ -192,6 +220,12 @@ def references_first_reference_address_select(request):
             form = ReferenceFirstReferenceAddressForm(id=application_id_local)
             form.check_flag()
             form.errors['postcode'] = {'Please enter a valid postcode.': 'invalid'}
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local,
@@ -230,6 +264,12 @@ def references_first_reference_address_select(request):
                                         application_id_local)
         else:
             form.error_summary_title = "There was a problem finding the referee's address"
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'postcode': postcode,
                 'form': form,
@@ -252,6 +292,11 @@ def references_first_reference_address_manual(request):
         application = Application.objects.get(pk=application_id_local)
         form = ReferenceFirstReferenceAddressManualForm(id=application_id_local)
         form.check_flag()
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -263,6 +308,7 @@ def references_first_reference_address_manual(request):
         application = Application.objects.get(pk=application_id_local)
         form = ReferenceFirstReferenceAddressManualForm(request.POST, id=application_id_local)
         form.remove_flag()
+
         if form.is_valid():
             street_name_and_number = form.cleaned_data.get(
                 'street_name_and_number')
@@ -292,6 +338,12 @@ def references_first_reference_address_manual(request):
                                         application_id_local)
         else:
             form.error_summary_title = "There was a problem with the referee's address"
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local,
@@ -313,6 +365,11 @@ def references_first_reference_contact_details(request):
         form = ReferenceFirstReferenceContactForm(id=application_id_local)
         form.check_flag()
         application = Application.objects.get(pk=application_id_local)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -342,6 +399,12 @@ def references_first_reference_contact_details(request):
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference?id=' + application_id_local)
         else:
             form.error_summary_title = "There was a problem with the referee's contact details"
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -363,6 +426,11 @@ def references_second_reference(request):
         form = SecondReferenceForm(id=application_id_local)
         form.check_flag()
         application = Application.objects.get(pk=application_id_local)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -389,6 +457,12 @@ def references_second_reference(request):
                                         application_id_local + '&manual=False&lookup=False')
         else:
             form.error_summary_title = "There was a problem with the referee's details"
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -408,6 +482,11 @@ def references_second_reference_address(request):
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
         form = ReferenceSecondReferenceAddressForm(id=application_id_local)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -436,6 +515,12 @@ def references_second_reference_address(request):
                                             + application_id_local)
         else:
             form.error_summary_title = "There was a problem with the referee's postcode"
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local,
@@ -463,6 +548,12 @@ def references_second_reference_address_select(request):
         if len(addresses) != 0:
             form = ReferenceSecondReferenceAddressLookupForm(
                 id=application_id_local, choices=addresses)
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local,
@@ -474,6 +565,12 @@ def references_second_reference_address_select(request):
             form = ReferenceSecondReferenceAddressForm(id=application_id_local)
             form.check_flag()
             form.errors['postcode'] = {'Please enter a valid postcode.': 'invalid'}
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local,
@@ -514,6 +611,12 @@ def references_second_reference_address_select(request):
                                         application_id_local)
         else:
             form.error_summary_title = "There was a problem finding the referee's address"
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'postcode': postcode,
                 'form': form,
@@ -536,6 +639,11 @@ def references_second_reference_address_manual(request):
         application = Application.objects.get(pk=application_id_local)
         form = ReferenceSecondReferenceAddressManualForm(id=application_id_local)
         form.check_flag()
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -576,6 +684,12 @@ def references_second_reference_address_manual(request):
                                         application_id_local)
         else:
             form.error_summary_title = "There was a problem with the referee's address"
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local,
@@ -597,6 +711,11 @@ def references_second_reference_contact_details(request):
         form = ReferenceSecondReferenceContactForm(id=application_id_local)
         form.check_flag()
         application = Application.objects.get(pk=application_id_local)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -624,6 +743,12 @@ def references_second_reference_contact_details(request):
             return HttpResponseRedirect(settings.URL_PREFIX + '/references/check-answers?id=' + application_id_local)
         else:
             form.error_summary_title = "There was a problem with the referee's contact details"
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -673,11 +798,16 @@ def references_summary(request):
         form = ReferenceSummaryForm()
         application = Application.objects.get(pk=application_id_local)
 
+        first_years_known_str = "year" if first_reference_years_known == 1 else "years"
+        first_months_known_str = "month" if first_reference_months_known == 1 else "months"
+        second_years_known_str = "year" if second_reference_years_known == 1 else "years"
+        second_months_known_str = "month" if second_reference_months_known == 1 else "months"
+
         first_reference_fields = collections.OrderedDict([
             ('full_name', ' '.join([first_reference_first_name, first_reference_last_name])),
             ('relationship', first_reference_relationship),
-            ('known_for', ' '.join([str(first_reference_years_known), 'years,',
-                                   str(first_reference_months_known), 'months'])),
+            ('known_for', ' '.join([str(first_reference_years_known), first_years_known_str,
+                                   str(first_reference_months_known), first_months_known_str])),
             ('address', ' '.join([first_reference_street_line1, (first_reference_street_line2 or ''),
                                  first_reference_town, (first_reference_county or ''),
                                  first_reference_postcode, first_reference_country])),
@@ -687,14 +817,15 @@ def references_summary(request):
         first_reference_table = {'table_object': Table([first_reference_record.pk]),
                                  'fields': first_reference_fields,
                                  'title': 'First reference',
-                                 'error_summary_title': "There's something wrong with your first reference"}
+                                 'error_summary_title': "There was a problem (Reference 1)"}
         first_reference_table = create_tables([first_reference_table], first_reference_name_dict,
                                               first_reference_link_dict)
 
         second_reference_fields = collections.OrderedDict([
             ('full_name', ' '.join([second_reference_first_name, second_reference_last_name])),
             ('relationship', second_reference_relationship),
-            ('known_for', ' '.join([str(second_reference_years_known), 'years,',str(second_reference_months_known), 'months'])),
+            ('known_for', ' '.join([str(second_reference_years_known), second_years_known_str,
+                                    str(second_reference_months_known), second_months_known_str])),
             ('address', ' '.join([second_reference_street_line1, (second_reference_street_line2 or ''),
                                   second_reference_town, (second_reference_county or ''),
                                   second_reference_postcode, second_reference_country])),
@@ -703,7 +834,7 @@ def references_summary(request):
         second_reference_table = {'table_object': Table([second_reference_record.pk]),
                                   'fields': second_reference_fields,
                                   'title': 'Second reference',
-                                  'error_summary_title': "There's something wrong with your first reference"}
+                                  'error_summary_title': "There was a problem (Reference 2)"}
         second_reference_table = create_tables([second_reference_table], second_reference_name_dict,
                                                second_reference_link_dict)
         table_list = first_reference_table + second_reference_table

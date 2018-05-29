@@ -1,0 +1,9 @@
+[
+    {
+        "model": "application.applicationreference",
+        "pk": 1,
+        "fields": {
+            "reference": 1000000
+        }
+    }
+]

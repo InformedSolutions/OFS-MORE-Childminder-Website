@@ -3,9 +3,25 @@
   background-image: url("../images/icon-pointer.png");
 }
 
+.icon-important {
+  background-image: url("../images/icon-important.png") !important;
+  margin-left: 10px;
+}
+
 .button {
-  display: block;
   margin-top: 15px;
+  display: -moz-inline-stack;
+  display: inline-block;
+}
+
+@media (max-width: 639px) {
+  .button {
+    width: 100%;
+  }
+}
+
+.button[type=submit] {
+    display: block;
 }
 
 .find-address-button {
@@ -332,6 +348,10 @@ div.error-summary ul.error-summary-list {
   background-color: #b10e1e;
 }
 
+.task-waiting {
+  background-color: #ffa900;
+}
+
 .task-disabled {
     background-color: #BFC1C3;
     pointer-events: none;
@@ -360,19 +380,43 @@ div.error-summary ul.error-summary-list {
   color: #000;
 }
 
+@media (max-width: 641px) {
+    .button-secondary {
+      width: 100% !important;
+      text-align: center;
+    }
+}
+
+.button-secondary, .button-secondary:visited, .button-secondary:focus {
+  display: table;
+  background-color: #eee;
+  color: #000 !important;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.button-secondary:hover {
+  background-color: #C0C0C0;
+}
+
+.button-secondary-inline {
+  background-color: #eee;
+  color: #000 !important;
+}
+
 .button-add-another {
   margin-top: 15px;
 }
 
 .button-save-and-exit {
   margin-left: 0;
-  display: inline-block !important
+  display: table;
 }
 
 .button-add-another, .button-save-and-exit {
+  color: #000 !important;
   position: relative;
-  display: -moz-inline-stack;
-  display: inline-block;
+  display: table !important;
   border: none;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -402,4 +446,16 @@ div.error-summary ul.error-summary-list {
   font-weight: bold;
   padding-right: 0;
   width: 20%;
+}
+
+.one-third {
+  width: 33%;
+}
+
+.two-thirds {
+  width: 66%;
+}
+
+.list-bullet {
+  margin-left: 20px !important;
 }

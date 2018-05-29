@@ -9,6 +9,8 @@ based on whether they have previously completed the task or not.
 """
 
 from django.shortcuts import render
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 from django.views.decorators.cache import never_cache
 
 from application.models import (
@@ -34,7 +36,12 @@ def task_list(request):
 
         application_id = request.GET["id"]
         application = Application.objects.get(pk=application_id)
-        childcare_record = ChildcareType.objects.get(application_id=application_id)
+        childcare_record = None
+        try:
+            childcare_record = ChildcareType.objects.get(application_id=application_id)
+        except Exception as e:
+            return HttpResponseRedirect(reverse("Type-Of-Childcare-Guidance-View") + '?id=' + application_id)
+
         zero_to_five_status = childcare_record.zero_to_five
         five_to_eight_status = childcare_record.five_to_eight
         eight_plus_status = childcare_record.eight_plus
@@ -78,7 +85,8 @@ def task_list(request):
                 {
                     'name': 'account_details',  # This is CSS class (Not recommended to store it here)
                     'status': application.login_details_status,
-                    'description': "Your login details",
+                    'arc_flagged': application.login_details_arc_flagged,
+                    'description': "Your sign in details",
                     'status_url': None,  # Will be filled later
                     'status_urls': [  # Available urls for each status
                         {'status': 'COMPLETED', 'url': 'Contact-Summary-View'},
@@ -89,6 +97,7 @@ def task_list(request):
                 {
                     'name': 'children',
                     'status': application.childcare_type_status,
+                    'arc_flagged': application.childcare_type_arc_flagged,
                     'description': "Type of childcare",
                     'status_url': None,
                     'status_urls': [
@@ -100,6 +109,7 @@ def task_list(request):
                 {
                     'name': 'personal_details',
                     'status': application.personal_details_status,
+                    'arc_flagged': application.personal_details_arc_flagged,
                     'description': "Your personal details",
                     'status_url': None,
                     'status_urls': [
@@ -111,6 +121,7 @@ def task_list(request):
                 {
                     'name': 'first_aid',
                     'status': application.first_aid_training_status,
+                    'arc_flagged': application.first_aid_training_arc_flagged,
                     'description': "First aid training",
                     'status_url': None,
                     'status_urls': [
@@ -122,7 +133,8 @@ def task_list(request):
                 {
                     'name': 'eyfs',
                     'status': application.eyfs_training_status,
-                    'description': "Early Years training",
+                    'arc_flagged': application.eyfs_training_arc_flagged,
+                    'description': "Early years training",
                     'status_url': None,
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'EYFS-Summary-View'},
@@ -133,6 +145,7 @@ def task_list(request):
                 {
                     'name': 'health',
                     'status': application.health_status,
+                    'arc_flagged': application.health_arc_flagged,
                     'description': "Health declaration booklet",
                     'status_url': None,
                     'status_urls': [
@@ -144,6 +157,7 @@ def task_list(request):
                 {
                     'name': 'dbs',
                     'status': application.criminal_record_check_status,
+                    'arc_flagged': application.criminal_record_check_arc_flagged,
                     'description': "Criminal record (DBS) check",
                     'status_url': None,
                     'status_urls': [
@@ -155,17 +169,20 @@ def task_list(request):
                 {
                     'name': 'other_people',
                     'status': application.people_in_home_status,
+                    'arc_flagged': application.people_in_home_arc_flagged,
                     'description': "People in your home",
                     'status_url': None,
                     'status_urls': [
                         {'status': 'COMPLETED', 'url': 'Other-People-Summary-View'},
                         {'status': 'FLAGGED', 'url': 'Other-People-Summary-View'},
+                        {'status': 'WAITING', 'url': 'Other-People-Summary-View'},
                         {'status': 'OTHER', 'url': 'Other-People-Guidance-View'}
                     ],
                 },
                 {
                     'name': 'references',
                     'status': application.references_status,
+                    'arc_flagged': application.references_arc_flagged,
                     'description': "References",
                     'status_url': None,
                     'status_urls': [
@@ -177,6 +194,7 @@ def task_list(request):
                 {
                     'name': 'review',
                     'status': None,
+                    'arc_flagged': application.application_status,
                     # If application is being resubmitted (i.e. is not drafting,
                     # set declaration task name to read "Declaration" only)
                     'description':
@@ -190,7 +208,7 @@ def task_list(request):
             ]
         }
 
-    if len([task for task in context['tasks'] if task['status'] in ['IN_PROGRESS', 'NOT_STARTED']]) < 1:
+    if len([task for task in context['tasks'] if task['status'] in ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]) < 1:
         context['all_complete'] = True
     else:
         context['all_complete'] = False

@@ -64,6 +64,11 @@ def health_booklet(request):
         application_id_local = request.GET["id"]
         form = HealthBookletForm()
         application = Application.objects.get(pk=application_id_local)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -75,12 +80,16 @@ def health_booklet(request):
         form = HealthBookletForm(request.POST)
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
+            hdb_record = health_check_logic(application_id_local, form)
+            hdb_record.save()
+            application.date_updated = current_date
+            application.save()
             reset_declaration(application)
             if application.health_status != 'COMPLETED':
                 status.update(application_id_local, 'health_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/health/check-answers?id=' + application_id_local)
         else:
-            form.error_summary_title = 'There was a problem with this page.'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -100,6 +109,10 @@ def health_check_answers(request):
         form = HealthBookletForm()
         application = Application.objects.get(pk=application_id_local)
 
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -110,9 +123,16 @@ def health_check_answers(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = HealthBookletForm(request.POST)
+        application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
+
+            if application.application_status == 'FURTHER_INFORMATION':
+
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local

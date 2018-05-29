@@ -15,7 +15,7 @@ def documents_needed(request):
 
     if request.method == 'GET':
         app_id = request.GET['id']
-        order_code = Application.get_id(app_id).order_code
+        order_code = Application.get_id(app_id).application_reference
         form = DocumentsNeededForm()
         variables = {
             'application_id': app_id,

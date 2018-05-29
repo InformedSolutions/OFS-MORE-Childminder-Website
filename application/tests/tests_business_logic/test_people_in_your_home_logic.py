@@ -36,7 +36,6 @@ class TestPeopleInYourHomeLogic(TestCase):
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
             date_accepted=None,
-            order_code=None
         )
         user = UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
@@ -62,7 +61,6 @@ class TestPeopleInYourHomeLogic(TestCase):
             birth_year=0,
             relationship='',
             dbs_certificate_number=0,
-            permission_declare=True
         )
         assert (AdultInHome.objects.filter(application_id=test_application_id, adult=1).count() > 0)
 
@@ -91,7 +89,6 @@ class TestPeopleInYourHomeLogic(TestCase):
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
             date_accepted=None,
-            order_code=None
         )
         user = UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
@@ -117,7 +114,6 @@ class TestPeopleInYourHomeLogic(TestCase):
             birth_year=0,
             relationship='',
             dbs_certificate_number=0,
-            permission_declare=True
         )
         test_adult_2_id = '72fa718c-e31e-4fd6-b1c6-5bd25725a545'
         adult_delete = AdultInHome.objects.create(
@@ -132,7 +128,6 @@ class TestPeopleInYourHomeLogic(TestCase):
             birth_year=0,
             relationship='',
             dbs_certificate_number=0,
-            permission_declare=True
         )
         test_adult_3_id = 'becf38ef-45df-4ea1-888d-0d75e3223972'
         AdultInHome.objects.create(
@@ -147,7 +142,6 @@ class TestPeopleInYourHomeLogic(TestCase):
             birth_year=0,
             relationship='',
             dbs_certificate_number=0,
-            permission_declare=True
         )
         number_of_adults = AdultInHome.objects.filter(application_id=test_application_id).count()
         adult_delete.delete()
@@ -190,7 +184,6 @@ class TestPeopleInYourHomeLogic(TestCase):
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
             date_accepted=None,
-            order_code=None
         )
         user = UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
@@ -243,7 +236,6 @@ class TestPeopleInYourHomeLogic(TestCase):
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
             date_accepted=None,
-            order_code=None
         )
         user = UserDetails.objects.create(
             login_id=(UUID(test_login_id)),

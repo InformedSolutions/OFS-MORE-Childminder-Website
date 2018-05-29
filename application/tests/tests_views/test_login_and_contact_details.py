@@ -5,7 +5,7 @@ class LoginAndContactDetailsTest(ViewsTest):
 
     def test_url_resolves_to_email_page(self):
         found = resolve(settings.URL_PREFIX + '/new-application/')
-        self.assertEqual(found.func, new_email)
+        self.assertEqual(found.func.view_class, NewUserSignInView.as_view().view_class)
 
     def test_email_page_not_displayed_without_id(self):
         c = Client()
@@ -28,13 +28,13 @@ class LoginAndContactDetailsTest(ViewsTest):
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_summary_page(self):
-        found = resolve(settings.URL_PREFIX + '/account/summary/')
+        found = resolve(settings.URL_PREFIX + '/sign-in/check-answers/')
         self.assertEqual(found.func, contact_summary)
 
     def test_summary_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/account/summary/?id=')
+            c.get(settings.URL_PREFIX + '/sign-in/check-answers/?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
@@ -60,7 +60,6 @@ class LoginAndContactDetailsTest(ViewsTest):
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
             date_accepted=None,
-            order_code=None
         )
         user = models.UserDetails.objects.create(
             application_id=application,

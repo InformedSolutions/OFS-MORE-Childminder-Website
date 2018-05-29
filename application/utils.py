@@ -5,10 +5,14 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 """
 import json
+from urllib.parse import urlencode
 
 import requests
 from django.conf import settings
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.utils.http import urlencode
+from django.core.urlresolvers import reverse
 
 from .models import Application, Reference, CriminalRecordCheck, EYFS, HealthDeclarationBooklet, ChildInHome, \
     ChildcareType, FirstAidTraining, ApplicantPersonalDetails, ApplicantName, ApplicantHomeAddress, AdultInHome
@@ -134,3 +138,11 @@ def date_combiner(day, month, year):
 def date_splitter(date):
     split_date = date.split('.')
     return split_date
+
+
+def build_url(*args, **kwargs):
+    get = kwargs.pop('get', {})
+    url = reverse(*args, **kwargs)
+    if get:
+        url += '?' + urlencode(get)
+    return url

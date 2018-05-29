@@ -13,22 +13,19 @@
     "eyfs_training_status": "COMPLETED",
     "criminal_record_check_status": "COMPLETED",
     "health_status": "FLAGGED",
+    "health_arc_flagged": true,
     "references_status": "COMPLETED",
     "people_in_home_status": "COMPLETED",
     "adults_in_home": false,
     "children_in_home": false,
     "children_turning_16": false,
     "declarations_status": "COMPLETED",
-    "background_check_declare": true,
-    "inspect_home_declare": true,
-    "interview_declare": true,
     "share_info_declare": true,
     "information_correct_declare": true,
     "change_declare": null,
     "date_created": "2018-04-13T14:24:26.689Z",
     "date_updated": "2018-04-13T14:27:02.082Z",
     "date_accepted": null,
-    "order_code": "4b7abd5b-1c81-4ca3-a7ac-194de2876847",
     "date_submitted": "2018-04-13T14:27:48.559Z"
   }
 },
@@ -89,8 +86,7 @@
   "fields": {
     "application_id": "db0efe18-eec5-4ec9-887a-e93949f6b412",
     "dbs_certificate_number": "121212121212",
-    "cautions_convictions": false,
-    "send_certificate_declare": null
+    "cautions_convictions": false
   }
 },
 {
@@ -180,8 +176,8 @@
     "sms_expiry_date": null,
     "magic_link_email": null,
     "magic_link_sms": null,
-    "security_question": "test",
-    "security_answer": "test"
+    "sms_resend_attempts": 0,
+    "sms_resend_attempts_expiry_date": 0
   }
 }
 ]

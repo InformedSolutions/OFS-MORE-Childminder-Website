@@ -40,7 +40,6 @@ class TestPersonalLogic(TestCase):
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
             date_accepted=None,
-            order_code=None
         )
         test_personal_detail_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
         ApplicantPersonalDetails.objects.create(
@@ -85,7 +84,6 @@ class TestPersonalLogic(TestCase):
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
             date_accepted=None,
-            order_code=None
         )
         user = UserDetails.objects.create(
             application_id=test_app,
@@ -153,7 +151,6 @@ class TestPersonalLogic(TestCase):
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
             date_accepted=None,
-            order_code=None
         )
         user = UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
@@ -219,7 +216,6 @@ class TestPersonalLogic(TestCase):
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
             date_accepted=None,
-            order_code=None
         )
         user = UserDetails.objects.create(
             login_id=(UUID(test_login_id)),
@@ -286,7 +282,6 @@ class TestPersonalLogic(TestCase):
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
             date_accepted=None,
-            order_code=None
         )
         user = UserDetails.objects.create(
             application_id=test_app,
@@ -351,7 +346,6 @@ class TestPersonalLogic(TestCase):
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
             date_accepted=None,
-            order_code=None
         )
         user = UserDetails.objects.create(
             application_id=test_app,

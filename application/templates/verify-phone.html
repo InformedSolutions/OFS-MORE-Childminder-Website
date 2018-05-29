@@ -12,14 +12,26 @@
     <h1 class="form-title heading-large">
         Enter security code
     </h1>
-    <p>We have sent a 5 digit security code by text to *********{{ phone_number }}.</p>
+
+    {% if code_resent %}
+        <p>We have resent a 5 digit security code by text to *********{{ phone_number }}.</p>
+    {% else %}
+        <p>We have sent a 5 digit security code by text to *********{{ phone_number }}.</p>
+    {% endif %}
+
     <p>This can take a minute or so to arrive.</p>
     <p>This runs out in 24 hours.</p>
     {{form.as_div}}
     {% csrf_token %}
 
     <div class="form-group">
-        <a href="{% url 'Resend-Code' %}?id={{id}}&f=1">Didn't get a code?</a>
+        <a href="{% url 'Resend-Code' %}?id={{id}}&f=1">
+            {% if sms_resend_attempts >= 3 %}
+                Still didn't get a code?
+            {% else %}
+                Didn't get a code?
+            {% endif %}
+        </a>
         <a href="{{ url }}"><p>Don't have your phone?</p></a>
         <input type="submit" class="button" value="Continue" alt="Continue">
     </div>

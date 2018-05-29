@@ -34,7 +34,6 @@ class TestChildcareTypeLogic(TestCase):
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
             date_accepted=None,
-            order_code=None
         )
         user = UserDetails.objects.create(
             login_id=(UUID(test_login_id)),

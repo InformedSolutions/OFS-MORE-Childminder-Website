@@ -47,7 +47,6 @@ def childcare_type_logic(application_id_local, form):
 
 
 def login_contact_logic(application_id_local, form):
-
     """
     Business logic to create or update a User_Details record with e-mail address details
     :param application_id_local: A string object containing the current application ID
@@ -61,18 +60,28 @@ def login_contact_logic(application_id_local, form):
     return login_and_contact_details_record
 
 
-def login_contact_logic_phone(application_id_local, form):
+def login_contact_logic_mobile_phone(application_id_local, form):
     """
-    Business logic to create or update a User_Details record with phone number details
+    Business logic to create or update a User_Details record with mobile phone number details
     :param application_id_local: A string object containing the current application ID
     :param form: A form object containing the data to be stored
     :return: a UserDetails object to be saved
     """
     this_application = UserDetails.objects.get(application_id=application_id_local)
     mobile_number = form.cleaned_data.get('mobile_number')
-    add_phone_number = form.cleaned_data.get('add_phone_number')
-    #login_and_contact_details_record = this_application.login_id
     this_application.mobile_number = mobile_number
+    return this_application
+
+
+def login_contact_logic_add_phone(application_id_local, form):
+    """
+    Business logic to create or update a User_Details record with additional phone number details
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: a UserDetails object to be saved
+    """
+    this_application = UserDetails.objects.get(application_id=application_id_local)
+    add_phone_number = form.cleaned_data.get('add_phone_number')
     this_application.add_phone_number = add_phone_number
     return this_application
 
@@ -95,10 +104,10 @@ def personal_name_logic(app_id, form):
 
         # Create an empty ApplicantPersonalDetails object to generate a p_id
         personal_details_record = ApplicantPersonalDetails(
-                birth_day=None,
-                birth_month=None,
-                birth_year=None,
-                application_id=app_obj
+            birth_day=None,
+            birth_month=None,
+            birth_year=None,
+            application_id=app_obj
         )
 
         personal_details_record.save()
@@ -190,7 +199,7 @@ def personal_home_address_logic(app_id, form):
         )
         home_address_record.save()
 
-   # If the user previously entered information for this task
+    # If the user previously entered information for this task
     elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).exists():
 
         home_address_record = ApplicantHomeAddress.objects.get(
@@ -214,7 +223,7 @@ def personal_location_of_care_logic(application_id_local, form):
     :return: an ApplicantHomeAddress object to be saved
     """
     this_application = Application.objects.get(application_id=application_id_local)
-    location_of_care = form.cleaned_data.get('location_of_care')
+    location_of_care = form.cleaned_data.get('childcare_location')
     # Retrieve the personal_details_id corresponding to the application
     personal_detail_record = ApplicantPersonalDetails.objects.get(application_id=this_application)
     personal_detail_id = personal_detail_record.personal_detail_id
@@ -356,7 +365,6 @@ def dbs_check_logic(application_id_local, form):
         dbs_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
         dbs_record.dbs_certificate_number = dbs_certificate_number
         dbs_record.cautions_convictions = cautions_convictions
-        dbs_record.send_certificate_declare = None
     return dbs_record
 
 
@@ -380,7 +388,7 @@ def references_first_reference_logic(application_id_local, form):
                                      last_name=last_name,
                                      relationship=relationship,
                                      years_known=years_known,
-                                     months_known=years_known,
+                                     months_known=months_known,
                                      street_line1='',
                                      street_line2='',
                                      town='',
@@ -421,7 +429,7 @@ def references_second_reference_logic(application_id_local, form):
                                      last_name=last_name,
                                      relationship=relationship,
                                      years_known=years_known,
-                                     months_known=years_known,
+                                     months_known=months_known,
                                      street_line1='',
                                      street_line2='',
                                      town='',
@@ -450,7 +458,7 @@ def health_check_logic(application_id_local, form):
     :return: an HealthDeclarationBooklet object to be saved
     """
     this_application = Application.objects.get(application_id=application_id_local)
-    send_hdb_declare = form.cleaned_data.get('send_hdb_declare')
+    send_hdb_declare = True
     # If the user entered information for this task for the first time
     if HealthDeclarationBooklet.objects.filter(application_id=application_id_local).count() == 0:
         hdb_record = HealthDeclarationBooklet(send_hdb_declare=send_hdb_declare, application_id=this_application)
@@ -477,14 +485,13 @@ def other_people_adult_details_logic(application_id_local, form, adult):
     birth_month = form.cleaned_data.get('date_of_birth')[1]
     birth_year = form.cleaned_data.get('date_of_birth')[2]
     relationship = form.cleaned_data.get('relationship')
+    email = form.cleaned_data.get('email_address')
     # If the user entered information for this task for the first time
-    if AdultInHome.objects.filter(application_id=this_application, adult=adult).count() == 0:
-        adult_record = AdultInHome(first_name=first_name, middle_names=middle_names, last_name=last_name,
-                                   birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
-                                   relationship=relationship, application_id=this_application, adult=adult)
-    # If the user previously entered information for this task
-    elif AdultInHome.objects.filter(application_id=this_application, adult=adult).count() > 0:
+    if AdultInHome.objects.filter(application_id=this_application, adult=adult).exists():
+
         adult_record = AdultInHome.objects.get(application_id=this_application, adult=adult)
+        if adult_record.email != email:
+            adult_record.email_resent_timestamp = None
         adult_record.first_name = first_name
         adult_record.middle_names = middle_names
         adult_record.last_name = last_name
@@ -492,6 +499,17 @@ def other_people_adult_details_logic(application_id_local, form, adult):
         adult_record.birth_month = birth_month
         adult_record.birth_year = birth_year
         adult_record.relationship = relationship
+        adult_record.email = email
+        adult_record.email_resent = 0
+
+
+    # If the user previously entered information for this task
+    else:
+        adult_record = AdultInHome(first_name=first_name, middle_names=middle_names, last_name=last_name,
+                                   birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
+                                   relationship=relationship, email=email, application_id=this_application, adult=adult,
+                                   email_resent=0)
+
     return adult_record
 
 
@@ -502,8 +520,14 @@ def remove_adult(application_id_local, remove_person):
     :param remove_person: adult to remove (integer)
     :return:
     """
+    application = Application.objects.get(pk=application_id_local)
+
     if AdultInHome.objects.filter(application_id=application_id_local, adult=remove_person).exists() is True:
         AdultInHome.objects.get(application_id=application_id_local, adult=remove_person).delete()
+        # Reset task status to WAITING if adults are updated
+        if application.people_in_home_status == 'WAITING':
+            application.people_in_home_status == 'IN_PROGRESS'
+            application.save()
 
 
 def rearrange_adults(number_of_adults, application_id_local):
@@ -513,6 +537,8 @@ def rearrange_adults(number_of_adults, application_id_local):
     :param application_id_local: current application ID
     :return:
     """
+    application = Application.objects.get(pk=application_id_local)
+    
     for i in range(1, number_of_adults + 1):
         # If there is a gap in the sequence of adult numbers
         if AdultInHome.objects.filter(application_id=application_id_local, adult=i).count() == 0:
@@ -522,6 +548,10 @@ def rearrange_adults(number_of_adults, application_id_local):
                 next_adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=next_adult)
                 next_adult_record.adult = i
                 next_adult_record.save()
+                # Reset task status to WAITING if adults are updated
+                if application.people_in_home_status == 'WAITING':
+                    application.people_in_home_status = 'IN_PROGRESS'
+                    application.save()
 
 
 def remove_child(application_id_local, remove_person):
@@ -621,9 +651,18 @@ def reset_declaration(application):
     """
     if application.declarations_status == 'COMPLETED':
         application.declarations_status = 'NOT_STARTED'
-        application.background_check_declare = None
         application.share_info_declare = None
-        application.inspect_home_declare = None
-        application.interview_declare = None
+        application.display_contact_details_on_web = None
+        application.suitable_declare = None
         application.information_correct_declare = None
+        application.change_declare = None
+        application.save()
+
+    if application.application_status == 'FURTHER_INFORMATION':
+        application.declarations_status = 'NOT_STARTED'
+        application.share_info_declare = None
+        application.display_contact_details_on_web = None
+        application.suitable_declare = None
+        application.information_correct_declare = None
+        application.change_declare = None
         application.save()

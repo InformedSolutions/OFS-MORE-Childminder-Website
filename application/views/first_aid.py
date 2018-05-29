@@ -9,7 +9,7 @@ from django.shortcuts import render
 
 from .. import status
 from ..table_util import Table, create_tables, submit_link_setter
-from ..summary_page_data import first_aid_name_dict, first_aid_link_dict
+from ..summary_page_data import first_aid_name_dict, first_aid_link_dict, first_aid_change_link_description_dict
 from ..business_logic import (first_aid_logic,
                               reset_declaration)
 from ..forms import (FirstAidTrainingDeclarationForm,
@@ -70,53 +70,61 @@ def first_aid_training_details(request):
     :return: an HttpResponse object with the rendered First aid training: details template
     """
     current_date = timezone.now()
+
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = FirstAidTrainingDetailsForm(id=application_id_local)
         form.check_flag()
         application = Application.objects.get(pk=application_id_local)
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
         variables = {
             'form': form,
             'application_id': application_id_local,
             'first_aid_training_status': application.first_aid_training_status
         }
         return render(request, 'first-aid-details.html', variables)
+
     if request.method == 'POST':
         application_id_local = request.POST["id"]
 
         # Reset status to in progress as question can change status of overall task
-        status.update(application_id_local,
-                      'first_aid_training_status', 'IN_PROGRESS')
-
-        form = FirstAidTrainingDetailsForm(
-            request.POST, id=application_id_local)
+        status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
+        form = FirstAidTrainingDetailsForm(request.POST, id=application_id_local)
         form.remove_flag()
         application = Application.objects.get(pk=application_id_local)
+
         if form.is_valid():
-            # Create or update First_Aid_Training record
-            first_aid_training_record = first_aid_logic(
-                application_id_local, form)
+            # Calculate certificate age and determine which page to navigate to.
+            certif_day, certif_month, certif_year = form.cleaned_data.get('course_date')
+            certificate_date = date(certif_year, certif_month, certif_day)
+            today = date.today()
+            certificate_date_difference = today - certificate_date
+            certificate_age = certificate_date_difference.days / 365  # Integer division can return float in Python 3.
+
+            if certificate_age >= 3:
+                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/update?id=' + application_id_local)
+
+            # If certificate not out-of-date, update  First_Aid_Training record.
+            first_aid_training_record = first_aid_logic(application_id_local, form)
             first_aid_training_record.save()
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
-            # Calculate certificate age and determine which page to navigate to
-            certificate_day = form.cleaned_data.get('course_date')[0]
-            certificate_month = form.cleaned_data.get('course_date')[1]
-            certificate_year = form.cleaned_data.get('course_date')[2]
-            certificate_date = date(
-                certificate_year, certificate_month, certificate_day)
-            today = date.today()
-            certificate_date_difference = today - certificate_date
-            certificate_age = float(certificate_date_difference.days) / 365.  # Must be a float for Python division.
-            if certificate_age < 2.5:
-                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/certificate?id=' + application_id_local)
-            elif 2.5 <= certificate_age < 3:
+
+            if 2.5 <= certificate_age < 3:
                 return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/renew?id=' + application_id_local)
-            elif certificate_age >= 3:
-                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/update?id=' + application_id_local)
+            else:
+                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/certificate?id=' + application_id_local)
+
         else:
             form.error_summary_title = 'There was a problem with your course details'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -149,7 +157,6 @@ def first_aid_training_declaration(request):
                           'first_aid_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
         else:
-            form.error_summary_title = 'There was a problem on this page'
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -183,7 +190,6 @@ def first_aid_training_renew(request):
             status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
         else:
-            form.error_summary_title = 'There was a problem on this page'
             variables = {
                 'form': form,
                 'application_id': application_id_local
@@ -213,7 +219,7 @@ def first_aid_training_training(request):
         form = FirstAidTrainingTrainingForm(request.POST)
         if form.is_valid():
             status.update(application_id_local,
-                          'first_aid_training_status', 'NOT_STARTED')
+                          'first_aid_training_status', 'IN_PROGRESS')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
         else:
             variables = {
@@ -239,17 +245,20 @@ def first_aid_training_summary(request):
 
         first_aid_fields = collections.OrderedDict([
             ('first_aid_training_organisation', first_aid_record.training_organisation),
-            ('title_of_training_course', first_aid_record.course_title)
+            ('title_of_training_course', first_aid_record.course_title),
+            ('course_date', '/'.join([str(first_aid_record.course_day).zfill(2),
+                                      str(first_aid_record.course_month).zfill(2),
+                                      str(first_aid_record.course_year)]))
         ])
 
         first_aid_table = collections.OrderedDict({
             'table_object': Table([first_aid_record.pk]),
             'fields': first_aid_fields,
             'title': '',
-            'error_summary_title': 'There is something wrong with your first aid training'
+            'error_summary_title': 'There was a problem',
         })
 
-        table_list = create_tables([first_aid_table], first_aid_name_dict, first_aid_link_dict)
+        table_list = create_tables([first_aid_table], first_aid_name_dict, first_aid_link_dict, first_aid_change_link_description_dict)
 
         variables = {
             'form': form,

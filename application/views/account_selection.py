@@ -40,7 +40,6 @@ def account_selection(request):
             date_created=timezone.now(),
             date_updated=timezone.now(),
             date_accepted=None,
-            order_code=None
         )
         user = UserDetails.objects.create(application_id=application)
 

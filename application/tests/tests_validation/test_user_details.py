@@ -6,19 +6,20 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 import re
 
+from django.conf import settings
 from django.test import TestCase
 
 
 def testing_email(test_email):
-    return re.match("^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", test_email)
+    return re.match(settings.REGEX['EMAIL'], test_email)
 
 
 def testing_mobile_number(test_mobile_number):
-    return re.match("^(07\d{8,12}|447\d{7,11})$", test_mobile_number)
+    return re.match(settings.REGEX['MOBILE'], test_mobile_number)
 
 
 def testing_phone_number(test_phone_number):
-    return re.match("^(0\d{8,12}|447\d{7,11})$", test_phone_number)
+    return re.match(settings.REGEX['PHONE'], test_phone_number)
 
 
 def testing_number_length(test_phone_number):
@@ -40,10 +41,24 @@ class TestUserDetailsValidation(TestCase):
                                  'erik.odense@gmail.',
                                  'erik.o\'dense@gmail']
 
-        self.correct_numbers = ['0161445627']
+        self.correct_numbers = ['0161445627',
+                                '01398378738',
+                                '0729837873',
+                                '013983782',
+                                '093983787383',
+                                '0739837873833',
+                                '073983787383',
+                                '+4473983787383',
+                                '004473983787383']
         self.incorrect_numbers = ['161445627']
 
-        self.correct_mobile = ['07783446526']
+        self.correct_mobile = ['07783446526',
+                               '07398378738',
+                               '0739837873',
+                               '073983787383',
+                               '+4473983787383',
+                               '4473983787383',
+                               '004473983787383']
         self.incorrect_mobile = ['7783446526',
                                  '08783446526',
                                  '0778344652645677754',

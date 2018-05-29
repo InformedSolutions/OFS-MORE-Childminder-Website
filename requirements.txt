@@ -11,4 +11,4 @@ django-settings-export==1.2.1
 django-debug-toolbar
 selenium==3.11.0
 faker==0.8.13
-
+inflect==0.2.5

@@ -173,7 +173,6 @@
     "date_created": "2018-04-06T14:04:48.166Z",
     "date_updated": "2018-04-06T14:09:11.043Z",
     "date_accepted": null,
-    "order_code": "25267a90-4a12-499e-8a15-b9bbcef1ca4b",
     "date_submitted": "2018-04-06T14:09:22.229Z"
   }
 },
@@ -234,8 +233,7 @@
   "fields": {
     "application_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
     "dbs_certificate_number": "121212121212",
-    "cautions_convictions": false,
-    "send_certificate_declare": null
+    "cautions_convictions": false
   }
 },
 {

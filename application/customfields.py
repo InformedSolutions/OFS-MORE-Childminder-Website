@@ -438,8 +438,12 @@ class CustomYearFieldDOB(forms.IntegerField):
 
     def clean(self, value):
         value = self.to_python(value)
-        if len(str(value)) > 4:
+        if len(str(value)) < 4:
             raise forms.ValidationError('Please enter the whole year (4 digits)')
+        if value < 1900:
+            raise forms.ValidationError('Please check the year')
+        if value > now().year:
+            raise forms.ValidationError('Please check the year')
         return super().clean(value)
 
 
@@ -450,7 +454,7 @@ class CustomSplitDateField(forms.MultiValueField):
         'invalid': _('Enter a valid date')
     }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, bounds_error=None, *args, **kwargs):
         day_bounds_error = gettext('Day must be between 1 and 31')
         month_bounds_error = gettext('Month must be between 1 and 12')
 
@@ -465,7 +469,7 @@ class CustomSplitDateField(forms.MultiValueField):
                 'max_value': month_bounds_error,
                 'invalid': gettext('Enter month as a number')
             }),
-            CustomYearField(),
+            CustomYearField(bounds_error=bounds_error),
         ]
 
         super().__init__(self.fields, *args, **kwargs)
@@ -498,7 +502,7 @@ class CustomYearField(forms.IntegerField):
     Allows 2-digit year entry which is converted depending on the `era_boundary`
     """
 
-    def __init__(self, era_boundary=None, **kwargs):
+    def __init__(self, era_boundary=None, bounds_error=None, **kwargs):
         self.current_year = now().year
         self.century = 100 * (self.current_year // 100)
         if era_boundary is None:
@@ -506,9 +510,12 @@ class CustomYearField(forms.IntegerField):
             # otherwise interpret them as a year from the previous century
             era_boundary = self.current_year - self.century
         self.era_boundary = era_boundary
-        bounds_error = gettext('Please check the date of the course') % {
-            'current_year': self.current_year
-        }
+        if bounds_error is None:
+            bounds_error = gettext('Please check the date of the course') % {
+                'current_year': self.current_year
+            }
+        else:
+            bounds_error = gettext(bounds_error)
         options = {
             'min_value': 2000,
             'max_value': self.current_year,

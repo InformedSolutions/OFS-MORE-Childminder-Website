@@ -65,7 +65,8 @@ class DBSCheckDBSDetailsForm(ChildminderForms):
         DBS certificate number validation
         :return: integer
         """
-        dbs_certificate_number = self.cleaned_data['dbs_certificate_number']
+        # is_valid() call strips leading 0 required by DBS number. Use raw str input from user instead of cleaned_data.
+        dbs_certificate_number = self.data['dbs_certificate_number']
         if len(str(dbs_certificate_number)) > 12:
             raise forms.ValidationError('Check your certificate: the number should be 12 digits long')
         if len(str(dbs_certificate_number)) < 12:

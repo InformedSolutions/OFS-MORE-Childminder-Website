@@ -29,6 +29,9 @@ def personal_details_home_address_manual(request):
         application = Application.objects.get(pk=application_id_local)
         form = PersonalDetailsHomeAddressManualForm(id=application_id_local)
         form.check_flag()
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -62,6 +65,9 @@ def personal_details_home_address_manual(request):
                 reverse('Personal-Details-Location-Of-Care-View') + '?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem with your address'
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
             variables = {
                 'form': form,
                 'application_id': application_id_local,

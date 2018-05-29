@@ -1,3 +1,4 @@
+from django.urls import reverse
 from django.utils import timezone
 import calendar
 
@@ -11,7 +12,8 @@ from .. import status
 from ..forms import (DeclarationIntroForm,
                      DeclarationConfirmationOfUnderstandingForm,
                      DeclarationConfirmationOfDeclarationForm,
-                     DeclarationSummaryForm, DeclarationConsentToSharingForm)
+                     DeclarationConsentToSharingForm,
+                     DeclarationSummaryForm)
 from ..models import (AdultInHome,
                       ApplicantHomeAddress,
                       ApplicantName,
@@ -20,9 +22,9 @@ from ..models import (AdultInHome,
                       ChildInHome,
                       ChildcareType,
                       CriminalRecordCheck,
-                      FirstAidTraining,
                       HealthDeclarationBooklet,
                       EYFS,
+                      FirstAidTraining,
                       Reference,
                       UserDetails)
 
@@ -57,7 +59,9 @@ def declaration_summary(request, print=False):
         dbs_record = CriminalRecordCheck.objects.get(
             application_id=application_id_local)
         eyfs_record = EYFS.objects.get(application_id=application_id_local)
-        eyfs_course_date = ' '.join([str(eyfs_record.eyfs_course_date_day), calendar.month_name[eyfs_record.eyfs_course_date_month], str(eyfs_record.eyfs_course_date_year)])
+        eyfs_course_date = ' '.join(
+            [str(eyfs_record.eyfs_course_date_day), calendar.month_name[eyfs_record.eyfs_course_date_month],
+             str(eyfs_record.eyfs_course_date_year)])
         first_reference_record = Reference.objects.get(
             application_id=application_id_local, reference=1)
         second_reference_record = Reference.objects.get(
@@ -75,7 +79,8 @@ def declaration_summary(request, print=False):
         adult_birth_year_list = []
         adult_relationship_list = []
         adult_dbs_list = []
-        adult_permission_list = []
+        adult_health_check_status_list = []
+        adult_email_list = []
         application = Application.objects.get(pk=application_id_local)
         for adult in adults_list:
             # For each adult, append the correct attribute (e.g. name, relationship) to the relevant list
@@ -90,10 +95,11 @@ def declaration_summary(request, print=False):
             adult_birth_year_list.append(adult.birth_year)
             adult_relationship_list.append(adult.relationship)
             adult_dbs_list.append(adult.dbs_certificate_number)
-            adult_permission_list.append(adult.permission_declare)
+            adult_health_check_status_list.append(adult.health_check_status)
+            adult_email_list.append(adult.email)
         # Zip the appended lists together for the HTML to simultaneously parse
         adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
-                          adult_relationship_list, adult_dbs_list, adult_permission_list)
+                          adult_relationship_list, adult_dbs_list, adult_health_check_status_list, adult_email_list)
         # Generate lists of data for adults in your home, to be iteratively displayed on the summary page
         # The HTML will then parse through each list simultaneously, to display the correct data for each adult
         child_name_list = []
@@ -125,6 +131,7 @@ def declaration_summary(request, print=False):
             'childcare_type_zero_to_five': childcare_record.zero_to_five,
             'childcare_type_five_to_eight': childcare_record.five_to_eight,
             'childcare_type_eight_plus': childcare_record.eight_plus,
+            'childcare_overnight': childcare_record.overnight_care,
             'personal_details_first_name': applicant_name_record.first_name,
             'personal_details_middle_names': applicant_name_record.middle_names,
             'personal_details_last_name': applicant_name_record.last_name,
@@ -149,7 +156,6 @@ def declaration_summary(request, print=False):
             'first_aid_certificate_year': first_aid_record.course_year,
             'dbs_certificate_number': dbs_record.dbs_certificate_number,
             'cautions_convictions': dbs_record.cautions_convictions,
-            'declaration': dbs_record.send_certificate_declare,
             'send_hdb_declare': True,
             'eyfs_course_name': eyfs_record.eyfs_course_name,
             'eyfs_course_date': eyfs_course_date,
@@ -262,16 +268,15 @@ def declaration_declaration(request):
         application = Application.objects.get(pk=application_id_local)
 
         # If application is already submitted redirect them to the awaiting review page
-        if application.application_status == 'SUBMITTED' and application.order_code is not None:
+        if application.application_status == 'SUBMITTED' and application.application_reference is not None:
             criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
             variables = {
                 'application_id': application_id_local,
-                'order_code': application.order_code,
+                'order_code': application.application_reference,
                 'conviction': criminal_record_check.cautions_convictions,
                 'health_status': Application.objects.get(application_id=application_id_local).health_status
             }
             return render(request, 'payment-confirmation.html', variables)
-
 
         variables = {
             'confirmation_of_understanding_form': confirmation_of_understanding_form,
@@ -302,50 +307,45 @@ def declaration_declaration(request):
 
         # Validate both forms (sets of checkboxes)
         if confirmation_of_understanding_form.is_valid():
-            background_check_declare = confirmation_of_understanding_form.cleaned_data.get(
-                'background_check_declare')
-            inspect_home_declare = confirmation_of_understanding_form.cleaned_data.get(
-                'inspect_home_declare')
-            interview_declare = confirmation_of_understanding_form.cleaned_data.get('interview_declare')
             share_info_declare = confirmation_of_understanding_form.cleaned_data.get('share_info_declare')
-            application.background_check_declare = background_check_declare
-            application.inspect_home_declare = inspect_home_declare
-            application.interview_declare = interview_declare
             application.share_info_declare = share_info_declare
             application.save()
             application.date_updated = current_date
             application.save()
 
             if consent_to_sharing_form.is_valid():
-                display_contact_details_on_web = consent_to_sharing_form.cleaned_data.get('display_contact_details_on_web')
+                display_contact_details_on_web = consent_to_sharing_form.cleaned_data.get(
+                    'display_contact_details_on_web')
                 application.display_contact_details_on_web = display_contact_details_on_web
                 application.save()
                 application.date_updated = current_date
                 application.save()
 
             if confirmation_of_declaration_form.is_valid():
+                suitable_declare = confirmation_of_declaration_form.cleaned_data.get('suitable_declare')
                 information_correct_declare = confirmation_of_declaration_form.cleaned_data.get(
                     'information_correct_declare')
                 application.information_correct_declare = information_correct_declare
                 change_declare = confirmation_of_declaration_form.cleaned_data.get(
                     'change_declare')
+                application.suitable_declare = suitable_declare
+                application.save()
                 application.change_declare = change_declare
                 application.save()
                 application.date_updated = current_date
                 application.save()
-                status.update(application_id_local,
-                              'declarations_status', 'COMPLETED')
 
                 if application.application_status == 'FURTHER_INFORMATION':
-
                     # In cases where a resubmission is being made,
                     # payment is no a valid trigger so this becomes the appropriate trigger resubmission audit
                     TimelineLog.objects.create(
                         content_object=application,
                         user=None,
                         template='timeline_logger/application_action.txt',
-                        extra_data={'user_type': 'applicant', 'action': 're-submitted by', 'entity': 'application'}
+                        extra_data={'user_type': 'applicant', 'action': 'resubmitted by', 'entity': 'application'}
                     )
+
+                    updated_list = generate_list_of_updated_tasks(application_id_local)
 
                     # If a resubmission return application status to submitted and forward to the confirmation page
                     application.application_status = "SUBMITTED"
@@ -356,12 +356,20 @@ def declaration_declaration(request):
                         'application_id': application_id_local,
                         'order_code': application.order_code,
                         'conviction': criminal_record_check.cautions_convictions,
-                        'health_status': Application.objects.get(application_id=application_id_local).health_status
+                        'health_status': Application.objects.get(application_id=application_id_local).health_status,
+                        'updated_list': updated_list
                     }
 
-                    return render(request, 'payment-confirmation.html', variables)
+                    clear_arc_flagged_statuses(application_id_local)
 
-                return HttpResponseRedirect(settings.URL_PREFIX + '/payment?id=' + application_id_local)
+                    status.update(application_id_local, 'declarations_status', 'COMPLETED')
+
+                    return render(request, 'payment-confirmation-resubmitted.html', variables)
+
+                clear_arc_flagged_statuses(application_id_local)
+
+                return HttpResponseRedirect(reverse('Payment-Details-View') + '?id=' + application_id_local)
+
             else:
                 variables = {
                     'confirmation_of_understanding_form': confirmation_of_understanding_form,
@@ -378,3 +386,61 @@ def declaration_declaration(request):
                 'application_id': application_id_local
             }
             return render(request, 'declaration-declaration.html', variables)
+
+
+def generate_list_of_updated_tasks(application_id):
+    """
+    Method to generate a list of flagged tasks that have been updated
+    :param application_id:
+    :return: a list of updated tasks
+    """
+
+    application = Application.objects.get(pk=application_id)
+
+    # Determine which tasks have been updated
+    updated_list = []
+
+    if application.login_details_arc_flagged is True:
+        updated_list.append('Your sign in details')
+    if application.childcare_type_arc_flagged is True:
+        updated_list.append('Type of childcare')
+    if application.personal_details_arc_flagged is True:
+        updated_list.append('Your personal details')
+    if application.first_aid_training_arc_flagged is True:
+        updated_list.append('First aid training')
+    if application.criminal_record_check_arc_flagged is True:
+        updated_list.append('Criminal record (DBS) check')
+    if application.eyfs_training_arc_flagged is True:
+        updated_list.append('Early years training')
+    if application.health_arc_flagged is True:
+        updated_list.append('Health declaration booklet')
+    if application.people_in_home_arc_flagged is True:
+        updated_list.append('People in your home')
+    if application.references_arc_flagged is True:
+        updated_list.append('References')
+
+    return updated_list
+
+
+def clear_arc_flagged_statuses(application_id):
+    """
+    Method to clear flagged statues from Application fields.
+    """
+    application = Application.objects.get(pk=application_id)
+
+    flagged_fields_to_check = (
+        "childcare_type_arc_flagged",
+        "criminal_record_check_arc_flagged",
+        "eyfs_training_arc_flagged",
+        "first_aid_training_arc_flagged",
+        "health_arc_flagged",
+        "login_details_arc_flagged",
+        "people_in_home_arc_flagged",
+        "personal_details_arc_flagged",
+        "references_arc_flagged"
+    )
+
+    for field in flagged_fields_to_check:
+        setattr(application, field, False)
+
+    return application.save()

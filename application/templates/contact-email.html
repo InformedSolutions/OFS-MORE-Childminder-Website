@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}New application{% endblock %}
+{% block page_title %}Start a new application{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -7,21 +7,18 @@
 
 {% include "back-button.html" %}
 
-    {{form.error_summary}}
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group">
-            <h1 class="form-title heading-large">
-                Start a new application
-            </h1>
-            <p>Enter your email address.</p>
-            <p>Make sure only you can access it.</p>
-            <p>We will send you a link to confirm your email.</p>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Continue" alt='Continue'>
-        </div>
-    </form>
+{{form.error_summary}}
+
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <h1 class="form-title heading-large">
+        Start a new application
+    </h1>
+    <p>Enter your email address.</p>
+    <p>Make sure only you can access it.</p>
+    <p>We will send you a link to confirm your email.</p>
+    {{form.as_div}}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Continue" alt='Continue'>
+</form>
 
 {% endblock %}

@@ -18,25 +18,28 @@
             I understand that Ofsted will:
         </h3>
         {{confirmation_of_understanding_form.as_div}}
-
         <h3 class="heading-small">
             I am happy for Ofsted to:
         </h3>
         {{consent_to_sharing_form.as_div}}
 
         <h3 class="heading-small">
+            {% if is_resubmission %}
+            By continuing, I reconfirm that:
+            {% else %}
             By continuing, I confirm that:
+            {% endif %}
         </h3>
         {{confirmation_of_declaration_form.as_div}}
 
         <p>
             <img src="{% static 'icon-important-2x.png' %}" alt="Important"
                         style="height: 40px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
-            <b class="bold">Your application can be refused if you:</b>
-            <div class="bold" style="margin-left: 100px;">
-                <ul style="list-style-type:disc">
+            <b class="bold">You can be disqualified if you:</b>
+            <div class="bold">
+                <ul class="list-bullet">
                     <li>give us false information</li>
-                    <li class="text-before-button">if you hide information.</li>
+                    <li>hide information</li>
                 </ul>
             </div>
         </p>

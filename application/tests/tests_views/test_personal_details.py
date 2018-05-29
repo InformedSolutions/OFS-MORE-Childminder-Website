@@ -157,7 +157,6 @@ class PersonalDetailsTest(ViewsTest):
             date_created=datetime.datetime.today(),
             date_updated=datetime.datetime.today(),
             date_accepted=None,
-            order_code=None
         )
         user = models.UserDetails.objects.create(
             application_id=application,

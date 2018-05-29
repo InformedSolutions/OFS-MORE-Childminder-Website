@@ -8,7 +8,11 @@
       {% for field, field_errors in field_errors.items %}
         <li class="field-error {% if field.is_hidden %}hidden-field-error{% endif %}">
             {% for field_error in field_errors %}
-              <a {% if not field.is_hidden %}href="#{{ field.auto_id }}-label"{% endif %}>{{ field_error }}</a>
+            <ul>
+                <li class = "field-error">
+                    <a {% if not field.is_hidden %}href="#{{ field.auto_id }}-label"{% endif %}>{{ field_error }}</a>
+                </li>
+            </ul>
             {% endfor %}
         </li>
       {% endfor %}
