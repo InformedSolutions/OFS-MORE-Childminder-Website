@@ -108,10 +108,10 @@ def other_people_adult_question(request):
         return render(request, 'other-people-adult-question.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        application = Application.objects.get(pk=application_id_local)
 
         # Reset status to in progress as question can change status of overall task
         status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
+        application = Application.objects.get(pk=application_id_local)
 
         form = OtherPeopleAdultQuestionForm(
             request.POST, id=application_id_local)
@@ -671,26 +671,17 @@ def other_people_summary(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
-        adult_health_check_status_list = []
-        adult_name_list = []
-        adult_birth_day_list = []
-        adult_birth_month_list = []
-        adult_birth_year_list = []
-        adult_relationship_list = []
-        adult_email_list = []
-        adult_dbs_list = []
         children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
         form = OtherPeopleSummaryForm()
         application = Application.objects.get(pk=application_id_local)
         adult_table_list = []
+
         for adult in adults_list:
-            if adult.middle_names != '':
-                name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
-            elif adult.middle_names == '':
-                name = adult.first_name + ' ' + adult.last_name
+
+            name = ' '.join([adult.first_name, (adult.middle_names or ''), adult.last_name])
             birth_date = ' '.join([str(adult.birth_day), calendar.month_name[adult.birth_month], str(adult.birth_year)])
 
-            if application.people_in_home_status == 'IN_PROGRESS':
+            if application.people_in_home_status == 'IN_PROGRESS' and any([adult.email_resent_timestamp is None for adult in adults_list]):
 
                 other_adult_fields = collections.OrderedDict([
                     ('full_name', name),
@@ -710,6 +701,9 @@ def other_people_summary(request):
                     ('dbs_certificate_number', adult.dbs_certificate_number),
                 ])
 
+                if adult.health_check_status == 'To do':
+                    status.update(application_id_local, 'people_in_home_status', 'WAITING')
+
             other_adult_table = collections.OrderedDict({
                 'table_object': Table([adult.pk]),
                 'fields': other_adult_fields,
@@ -718,17 +712,17 @@ def other_people_summary(request):
             })
 
             adult_table_list.append(other_adult_table)
+
         back_link_addition = '&adults=' + str((len(adult_table_list))) + '&remove=0'
+
         for table in adult_table_list:
             table['other_people_numbers'] = back_link_addition
         adult_table_list = create_tables(adult_table_list, other_adult_name_dict, other_adult_link_dict)
 
         child_table_list = []
         for child in children_list:
-            if child.middle_names != '':
-                name = child.first_name + ' ' + child.middle_names + ' ' + child.last_name
-            elif child.middle_names == '':
-                name = child.first_name + ' ' + child.last_name
+            name = ' '.join([child.first_name, (child.middle_names or ''), child.last_name])
+
             other_child_fields = collections.OrderedDict([
                 ('full_name', name),
                 ('date_of_birth', ' '.join([str(child.birth_day), calendar.month_name[child.birth_month],
@@ -744,7 +738,9 @@ def other_people_summary(request):
             })
 
             child_table_list.append(other_child_table)
+
         back_link_addition = '&children=' + str(len(child_table_list)) + '&remove=0'
+
         for table in child_table_list:
             table['other_people_numbers'] = back_link_addition
         child_table_list = create_tables(child_table_list, other_child_name_dict, other_child_link_dict, )
@@ -793,8 +789,8 @@ def other_people_summary(request):
         variables = submit_link_setter(variables, table_list, 'people_in_home', application_id_local)
 
         # If reaching the summary page for the first time
-        if application.people_in_home_status == 'IN_PROGRESS':
-            if application.adults_in_home is True:
+        if application.people_in_home_status == 'IN_PROGRESS' or 'WAITING':
+            if application.adults_in_home is True and any([adult.email_resent_timestamp is None for adult in adults_list]):
                 variables['submit_link'] = reverse('Other-People-Email-Confirmation-View')
             elif application.adults_in_home is False:
                 status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
@@ -842,7 +838,7 @@ def other_people_email_confirmation(request):
         template_id = '1e3c066a-4bbe-4743-b6b1-1d52ac291caf'
 
         if all([adult.email_resent_timestamp is not None for adult in adults]):
-            print('Hi')
+
             return HttpResponseRedirect(build_url('Task-List-View', get={'id': application_id_local}))
 
         try:
@@ -1000,7 +996,6 @@ def other_people_resend_email(request):
                         print(personalisation['link'])
                         # Send e-mail to household member
                         r = send_email(email, personalisation, template_id)
-                        print(r)
                         # Update email resend count
                         email_resent = adult_record.email_resent
                         if email_resent is not None:

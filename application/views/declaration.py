@@ -318,17 +318,18 @@ def declaration_declaration(request):
                 application.save()
 
             if confirmation_of_declaration_form.is_valid():
+                suitable_declare = confirmation_of_declaration_form.cleaned_data.get('suitable_declare')
                 information_correct_declare = confirmation_of_declaration_form.cleaned_data.get(
                     'information_correct_declare')
                 application.information_correct_declare = information_correct_declare
                 change_declare = confirmation_of_declaration_form.cleaned_data.get(
                     'change_declare')
+                application.suitable_declare = suitable_declare
+                application.save()
                 application.change_declare = change_declare
                 application.save()
                 application.date_updated = current_date
                 application.save()
-                status.update(application_id_local,
-                              'declarations_status', 'COMPLETED')
 
                 if application.application_status == 'FURTHER_INFORMATION':
                     # In cases where a resubmission is being made,
@@ -353,6 +354,8 @@ def declaration_declaration(request):
                     }
 
                     clear_arc_flagged_statuses(application_id_local)
+
+                    status.update(application_id_local, 'declarations_status', 'COMPLETED')
 
                     return render(request, 'payment-confirmation-resubmitted.html', variables)
 

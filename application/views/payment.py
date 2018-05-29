@@ -2,7 +2,7 @@ from django.shortcuts import render
 from timeline_logger.models import TimelineLog
 
 from ..models import (Application)
-
+from .. import status
 
 def payment_confirmation(request):
     """
@@ -18,6 +18,8 @@ def payment_confirmation(request):
     }
     local_app = Application.objects.get(
         application_id=application_id_local)
+
+    status.update(application_id_local, 'declarations_status', 'COMPLETED')
     local_app.application_status = 'SUBMITTED'
     local_app.save()
 
