@@ -13,14 +13,15 @@
 </h1>
 
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    {{form.as_div}}
-    {% csrf_token %}
-    <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
-    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    <div class="form-group">
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+    {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
+        {% include 'return-to-list.html' %}
+    {% endif %}
 </form>
-
-{% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
-    {% include 'return-to-list.html' %}
-{% endif %}
 
 {% endblock %}
