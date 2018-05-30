@@ -5,7 +5,6 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 """
 
-from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.urls import reverse
 
@@ -21,7 +20,8 @@ def redirect_by_status(application):
     if application.application_status == 'DRAFTING':
         if application.childcare_type_status == 'COMPLETED':
             response = HttpResponseRedirect(
-                settings.URL_PREFIX + '/task-list/?id=' + str(application.application_id))
+                reverse('Task-List-View') + '?id=' + str(application.application_id)
+            )
         else:
             response = HttpResponseRedirect(
                 reverse('Type-Of-Childcare-Guidance-View') + '?id=' + str(application.application_id))
@@ -30,18 +30,21 @@ def redirect_by_status(application):
     # redirect the user to an information page informing them that no action is required of them
     if application.application_status == 'ARC_REVIEW' or application.application_status == 'SUBMITTED':
         response = HttpResponseRedirect(
-            settings.URL_PREFIX + '/awaiting-review/?id=' + str(application.application_id))
+            reverse('Awaiting-Review-View') + '?id=' + str(application.application_id)
+        )
 
     # If application status indicates user must supply further information or correct a submission,
     # redirect them to the task list
     if application.application_status == 'FURTHER_INFORMATION':
         response = HttpResponseRedirect(
-            settings.URL_PREFIX + '/task-list/?id=' + str(application.application_id))
+            reverse('Task-List-View') + '?id=' + str(application.application_id)
+        )
 
     # If accepted move to SUBMITTED send to confirmation view saying Ofsted are performing background
     # checks
     if application.application_status == 'ACCEPTED':
         response = HttpResponseRedirect(
-            settings.URL_PREFIX + '/accepted/?id=' + str(application.application_id))
+            reverse('Accepted-View') + '?id=' + str(application.application_id)
+        )
 
     return response
