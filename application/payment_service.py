@@ -45,7 +45,8 @@ def make_payment(amount, name, number, cvc, expiry_m, expiry_y, currency, custom
         "customerOrderCode": customer_order_code,
         "orderDescription": desc
     }
-    response = requests.post(base_url + "/api/v1/payments/card/", json.dumps(payload), headers=header)
+    response = requests.post(base_url + "/api/v1/payments/card/", json.dumps(payload),
+                             headers=header, timeout=int(settings.PAYMENT_HTTP_REQUEST_TIMEOUT))
     return response
 
 
@@ -58,7 +59,7 @@ def check_payment(payment_reference):
     base_url = settings.PAYMENT_URL
     header = {'content-type': 'application/json'}
     query_path = base_url + "/api/v1/payments/" + quote(payment_reference)
-    response = requests.get(query_path, headers=header)
+    response = requests.get(query_path, headers=header, timeout=int(settings.PAYMENT_HTTP_REQUEST_TIMEOUT))
     return response
 
 
