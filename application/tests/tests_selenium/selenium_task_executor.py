@@ -649,35 +649,14 @@ class SeleniumTaskExecutor:
         :param cardholder_name: the cardholders name to be used for payment
         :param cvc: the cvc code to be used for payment
         """
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock, \
-                mock.patch('application.payment_service.check_payment') as check_payment_mock:
-
+        with mock.patch('application.payment_service.make_payment') as post_payment_mock:
             test_payment_response = {
-                "amount": 50000,
-                "cardHolderName": "Mr Example Cardholder",
-                "cardNumber": 5454545454545454,
-                "cvc": 352,
-                "expiryMonth": 6,
-                "expiryYear": 2018,
-                "currencyCode": "GBP",
-                "customerOrderCode": "TEST_ORDER_CODE",
-                "orderDescription": "Childminder Registration Fee"
+                "customerOrderCode": "TEST",
+                "lastEvent": "AUTHORISED"
             }
 
             post_payment_mock.return_value.status_code = 201
             post_payment_mock.return_value.text = json.dumps(test_payment_response)
-
-            test_get_response = {
-                "customerOrderCode": "TEST_ORDER_CODE",
-                "paymentMethod": "ECMC-SSL",
-                "creationDate": "2018-05-16T06:45:00",
-                "lastEvent": "AUTHORISED",
-                "amount": 3500,
-                "currencyCode": "GBP"
-            }
-
-            check_payment_mock.return_value.status_code = 200
-            check_payment_mock.return_value.text = json.dumps(test_get_response)
 
             driver = self.get_driver()
 
