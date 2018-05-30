@@ -123,36 +123,6 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-URL_PREFIX = '/childminder'
-STATIC_URL = URL_PREFIX + '/static/'
-
-AUTHENTICATION_URL = URL_PREFIX + '/sign-in/'
-
-AUTHENTICATION_EXEMPT_URLS = (
-    r'^' + URL_PREFIX + '/$',
-    r'^' + URL_PREFIX + '/account/account/$',
-    r'^' + URL_PREFIX + '/account/email/$',
-    r'^' + URL_PREFIX + '/security-question/$',
-    r'^' + URL_PREFIX + '/email-sent/$',
-    r'^' + URL_PREFIX + '/validate/.*$',
-    r'^' + URL_PREFIX + '/code-resent/.*$',
-    r'^' + URL_PREFIX + '/security-code/.*$',
-    r'^' + URL_PREFIX + '/link-used/$',
-    r'^' + URL_PREFIX + '/new-code/.*$',
-    r'^' + URL_PREFIX + '/djga/+',
-    r'^' + URL_PREFIX + '/sign-in/',
-    r'^' + URL_PREFIX + '/sign-in/check-email/',
-    r'^' + URL_PREFIX + '/email-resent/',
-    r'^' + URL_PREFIX + '/sign-in/new-application/',
-    r'^' + URL_PREFIX + '/new-application/',
-    r'^' + URL_PREFIX + '/new-application/check-email/',
-    r'^' + URL_PREFIX + '/service-unavailable/',
-    r'^' + URL_PREFIX + '/help-contact/',
-    r'^' + URL_PREFIX + '/costs/',
-    r'^' + URL_PREFIX + '/application-saved/$',
-    r'^' + URL_PREFIX + '/health-check/(?P<id>[\w-]+)/$'
-)
-
 SECURE_BROWSER_XSS_FILTER = True
 CSRF_COOKIE_HTTPONLY = True
 SECURE_CONTENT_TYPE_NOSNIFF = True

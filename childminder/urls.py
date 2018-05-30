@@ -161,7 +161,7 @@ if settings.DEBUG:
                       url(r'^__debug__/', include(debug_toolbar.urls)),
                   ] + urlpatterns
 
-if settings.URL_PREFIX:
+if hasattr(settings, 'URL_PREFIX'):
     prefixed_url_pattern = []
     for pat in urlpatterns:
         pat.regex = re.compile(r"^%s/%s" % (settings.URL_PREFIX[1:], pat.regex.pattern[1:]))

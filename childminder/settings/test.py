@@ -12,35 +12,35 @@ PROD_APPS = [
 
 INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + PROD_APPS + PROJECT_APPS
 
-STATIC_URL = '/static/'
+URL_PREFIX = '/childminder'
+STATIC_URL = URL_PREFIX + '/static/'
 
-AUTHENTICATION_URL = '/sign-in/'
+AUTHENTICATION_URL = URL_PREFIX + '/sign-in/'
 
 AUTHENTICATION_EXEMPT_URLS = (
-    r'^/$',
-    r'^/account/account/$',
-    r'^/account/email/$',
-    r'^/security-question/$',
-    r'^/email-sent/$',
-    r'^/validate/.*$',
-    r'^/code-resent/.*$',
-    r'^/security-code/.*$',
-    r'^/link-used/$',
-    r'^/new-code/.*$',
-    r'^/djga/+',
-    r'^/sign-in/',
-    r'^/sign-in/check-email/',
-    r'^/email-resent/',
-    r'^/sign-in/new-application/',
-    r'^/new-application/',
-    r'^/new-application/check-email/',
-    r'^/service-unavailable/',
-    r'^/help-contact/',
-    r'^/costs/',
-    r'^/application-saved/$',
-    r'^/health-check/(?P<id>[\w-]+)/$'
+    r'^' + URL_PREFIX + '/$',
+    r'^' + URL_PREFIX + '/account/account/$',
+    r'^' + URL_PREFIX + '/account/email/$',
+    r'^' + URL_PREFIX + '/security-question/$',
+    r'^' + URL_PREFIX + '/email-sent/$',
+    r'^' + URL_PREFIX + '/validate/.*$',
+    r'^' + URL_PREFIX + '/code-resent/.*$',
+    r'^' + URL_PREFIX + '/security-code/.*$',
+    r'^' + URL_PREFIX + '/link-used/$',
+    r'^' + URL_PREFIX + '/new-code/.*$',
+    r'^' + URL_PREFIX + '/djga/+',
+    r'^' + URL_PREFIX + '/sign-in/',
+    r'^' + URL_PREFIX + '/sign-in/check-email/',
+    r'^' + URL_PREFIX + '/email-resent/',
+    r'^' + URL_PREFIX + '/sign-in/new-application/',
+    r'^' + URL_PREFIX + '/new-application/',
+    r'^' + URL_PREFIX + '/new-application/check-email/',
+    r'^' + URL_PREFIX + '/service-unavailable/',
+    r'^' + URL_PREFIX + '/help-contact/',
+    r'^' + URL_PREFIX + '/costs/',
+    r'^' + URL_PREFIX + '/application-saved/$',
+    r'^' + URL_PREFIX + '/health-check/(?P<id>[\w-]+)/$'
 )
-
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
