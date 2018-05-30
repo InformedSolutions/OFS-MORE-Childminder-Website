@@ -154,6 +154,8 @@ AUTHENTICATION_EXEMPT_URLS = (
 )
 
 SECURE_BROWSER_XSS_FILTER = True
+CSRF_COOKIE_HTTPONLY = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
