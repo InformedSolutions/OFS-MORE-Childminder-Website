@@ -104,7 +104,7 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
             reverse('Payment-Confirmation'),
             {
                 'id': self.app_id,
-                'orderCode': Application.objects.get(application_id=self.app_id).order_code,
+                'orderCode': Application.objects.get(application_id=self.app_id).application_reference,
             }
         )
         self.assertEqual(r.status_code, 200)
@@ -125,7 +125,7 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
             reverse('Payment-Confirmation'),
             {
                 'id': self.app_id,
-                'orderCode': Application.objects.get(application_id=self.app_id).order_code,
+                'orderCode': Application.objects.get(application_id=self.app_id).application_reference,
             }
         )
         self.assertEqual(r.status_code, 200)
@@ -146,7 +146,7 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
             reverse('Payment-Confirmation'),
             {
                 'id': self.app_id,
-                'orderCode': Application.objects.get(application_id=self.app_id).order_code,
+                'orderCode': Application.objects.get(application_id=self.app_id).application_reference,
             }
         )
         self.assertEqual(r.status_code, 200)
