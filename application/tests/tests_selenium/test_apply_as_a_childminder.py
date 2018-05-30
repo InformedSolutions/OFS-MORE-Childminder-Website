@@ -870,7 +870,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.navigate_to_SMS_validation_page(test_email)
 
         # Select 'Don't have your phone?' to trigger security question.
-        self.selenium_task_executor.get_driver().find_element_by_xpath(u'//p[text()="Don\'t have your phone?"]').click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text('Don\'t have your phone?').click()
         self.assertIn("Mobile", self.selenium_task_executor.get_driver().find_element_by_class_name("heading-small").text)
 
         # Test no number, too short a mobile number, too long a mobile number and incorrect mobile number.
@@ -905,7 +905,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.navigate_to_SMS_validation_page(test_email)
 
         # Select 'Don't have your phone?' to trigger security question.
-        self.selenium_task_executor.get_driver().find_element_by_xpath(u'//p[text()="Don\'t have your phone?"]').click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text('Don\'t have your phone?').click()
         self.assertEqual("Please enter your postcode and date of birth.",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
                              "//main[@id='content']/form/div/p[2]").text)
@@ -956,7 +956,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.navigate_to_SMS_validation_page(test_email)
 
         # Select 'Don't have your phone?' to trigger security question.
-        self.selenium_task_executor.get_driver().find_element_by_xpath(u'//p[text()="Don\'t have your phone?"]').click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text('Don\'t have your phone?').click()
         self.assertEqual("Please enter the date of birth of the eldest person living in your home.",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
                              "//main[@id='content']/form/div/p[2]").text)
@@ -1021,7 +1021,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.navigate_to_SMS_validation_page(test_email)
 
         # Select 'Don't have your phone?' to trigger security question.
-        self.selenium_task_executor.get_driver().find_element_by_xpath(u'//p[text()="Don\'t have your phone?"]').click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text('Don\'t have your phone?').click()
         self.assertIn("DBS", self.selenium_task_executor.get_driver().find_element_by_class_name("heading-small").text)
 
         # Test no DBS number, too short a DBS number, too long a DBS number and an incorrect DBS number.
