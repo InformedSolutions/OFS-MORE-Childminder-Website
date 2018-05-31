@@ -283,7 +283,7 @@ def childcare_type_summary(request):
             'application_id': app_id,
             'table_list': table_list,
             'health_status': application.health_status,
-            'page_title': 'Check your answers: Type of childcare'
+            'page_title': 'Check your answers: type of childcare'
         }
 
         variables = submit_link_setter(variables, table_list, 'type_of_childcare', app_id)

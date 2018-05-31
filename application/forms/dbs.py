@@ -34,7 +34,7 @@ class DBSCheckDBSDetailsForm(ChildminderForms):
     dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
                                                 help_text='12-digit number on your certificate',
                                                 required=True,
-                                                error_messages={'required': 'Please enter your DBS certificate number'},
+                                                error_messages={'required': 'Please enter the DBS certificate number'},
                                                 widget=widget_instance)
 
     cautions_convictions = forms.ChoiceField(label='Do you have any criminal cautions or convictions?',
@@ -68,9 +68,9 @@ class DBSCheckDBSDetailsForm(ChildminderForms):
         # is_valid() call strips leading 0 required by DBS number. Use raw str input from user instead of cleaned_data.
         dbs_certificate_number = self.data['dbs_certificate_number']
         if len(str(dbs_certificate_number)) > 12:
-            raise forms.ValidationError('Check your certificate: the number should be 12 digits long')
+            raise forms.ValidationError('The certificate number should be 12 digits long')
         if len(str(dbs_certificate_number)) < 12:
-            raise forms.ValidationError('Check your certificate: the number should be 12 digits long')
+            raise forms.ValidationError('The certificate number should be 12 digits long')
         return dbs_certificate_number
 
 

@@ -29,13 +29,15 @@ class OtherPeopleAdultQuestionForm(ChildminderForms):
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
+    error_summary_title = 'There was a problem with the details'
     auto_replace_widgets = True
 
     options = (
         ('True', 'Yes'),
         ('False', 'No')
     )
-    adults_in_home = forms.ChoiceField(label='Does anyone aged 16 or over live or work in your home?', choices=options,
+    adults_in_home = forms.ChoiceField(label='Does anyone aged 16 or over live or work in your home?', error_messages={
+        'required': "Tell us if anyone aged 16 or over lives or works in your home"}, choices=options,
                                        widget=InlineRadioSelect, required=True)
 
     def __init__(self, *args, **kwargs):
@@ -178,7 +180,7 @@ class OtherPeopleAdultDBSForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
-    error_summary_title = 'There was a problem with your DBS details'
+    error_summary_title = 'There was a problem with the DBS details'
 
     widget_instance = NumberInput()
     widget_instance.input_classes = 'form-control form-control-1-4'
@@ -235,13 +237,15 @@ class OtherPeopleChildrenQuestionForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    error_summary_title = 'There was a problem on this page'
 
     options = (
         ('True', 'Yes'),
         ('False', 'No')
     )
     children_in_home = forms.ChoiceField(label='Do you live with any children under 16?', choices=options,
-                                         widget=InlineRadioSelect, required=True)
+                                         widget=InlineRadioSelect, required=True, error_messages={
+        'required': "Please tell us if you live with any children under 16"})
 
     def __init__(self, *args, **kwargs):
         """
@@ -268,12 +272,16 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
     auto_replace_widgets = True
     error_summary_title = 'There was a problem with the details'
 
-    first_name = forms.CharField(label='First name', required=True)
+    first_name = forms.CharField(label='First name', required=True, error_messages={
+        'required': "Please enter their first name"})
     middle_names = forms.CharField(label='Middle names (if they have any)', required=False)
-    last_name = forms.CharField(label='Last name', required=True)
-    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980')
+    last_name = forms.CharField(label='Last name', required=True, error_messages={
+        'required': "Please enter their last name"})
+    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980',error_messages={
+        'required': "Please enter the full date, including the day, month and year"})
     relationship = forms.CharField(label='How are they related to you?', help_text='For instance, son or daughter',
-                                   required=True)
+                                   required=True,
+                                   error_messages={'required': "Please tell us how you are related to the child"})
 
     def __init__(self, *args, **kwargs):
         """
@@ -310,7 +318,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
         if re.match(settings.REGEX['FIRST_NAME'], first_name) is None:
             raise forms.ValidationError('First name can only have letters')
         if len(first_name) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less')
+            raise forms.ValidationError('The first name must be under 100 characters long')
         return first_name
 
     def clean_middle_names(self):
@@ -323,7 +331,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
             if re.match(settings.REGEX['MIDDLE_NAME'], middle_names) is None:
                 raise forms.ValidationError('Middle names can only have letters')
             if len(middle_names) > 100:
-                raise forms.ValidationError('Please enter 100 characters or less')
+                raise forms.ValidationError('The middle names must be under 100 characters long')
         return middle_names
 
     def clean_last_name(self):
@@ -335,7 +343,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
         if re.match(settings.REGEX['LAST_NAME'], last_name) is None:
             raise forms.ValidationError('Last name can only have letters')
         if len(last_name) > 100:
-            raise forms.ValidationError('Please enter 100 characters or less')
+            raise forms.ValidationError('The last name must be under 100 characters long')
         return last_name
 
     def clean_date_of_birth(self):

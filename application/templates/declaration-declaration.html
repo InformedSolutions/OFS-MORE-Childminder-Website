@@ -6,8 +6,7 @@
 {% block inner_content %}
 {% include "back-button.html" %}
 
-{{form.error_summary}}
-{{form2.error_summary}}
+{{declaration_form.error_summary}}
 
 <div class="form-group">
     <h1 class="form-title heading-large">
@@ -17,11 +16,11 @@
         <h3 class="heading-small">
             I understand that Ofsted will:
         </h3>
-        {{confirmation_of_understanding_form.as_div}}
+        {{ fields.0 }}
         <h3 class="heading-small">
             I am happy for Ofsted to:
         </h3>
-        {{consent_to_sharing_form.as_div}}
+        {{ fields.1 }}
 
         <h3 class="heading-small">
             {% if is_resubmission %}
@@ -30,7 +29,9 @@
             By continuing, I confirm that:
             {% endif %}
         </h3>
-        {{confirmation_of_declaration_form.as_div}}
+        {{ fields.2 }}
+        {{ fields.3 }}
+        {{ fields.4 }}
 
         <p>
             <img src="{% static 'icon-important-2x.png' %}" alt="Important"

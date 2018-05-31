@@ -10,9 +10,7 @@ from timeline_logger.models import TimelineLog
 
 from .. import status
 from ..forms import (DeclarationIntroForm,
-                     DeclarationConfirmationOfUnderstandingForm,
-                     DeclarationConfirmationOfDeclarationForm,
-                     DeclarationConsentToSharingForm,
+                     DeclarationForm,
                      DeclarationSummaryForm)
 from ..models import (AdultInHome,
                       ApplicantHomeAddress,
@@ -261,9 +259,7 @@ def declaration_declaration(request):
     if request.method == 'GET':
 
         application_id_local = request.GET["id"]
-        confirmation_of_understanding_form = DeclarationConfirmationOfUnderstandingForm(id=application_id_local)
-        confirmation_of_declaration_form = DeclarationConfirmationOfDeclarationForm(id=application_id_local)
-        consent_to_sharing_form = DeclarationConsentToSharingForm(id=application_id_local)
+        declaration_form = DeclarationForm(id=application_id_local)
         application = Application.objects.get(pk=application_id_local)
 
         # If application is already submitted redirect them to the awaiting review page
@@ -274,10 +270,10 @@ def declaration_declaration(request):
             }
             return render(request, 'payment-confirmation.html', variables)
 
+        fields = render_each_field(declaration_form)
         variables = {
-            'confirmation_of_understanding_form': confirmation_of_understanding_form,
-            'confirmation_of_declaration_form': confirmation_of_declaration_form,
-            'consent_to_sharing_form': consent_to_sharing_form,
+            'declaration_form': declaration_form,
+            'fields': fields,
             'application_id': application_id_local,
             'declarations_status': application.declarations_status,
             'is_resubmission': application.application_status == 'FURTHER_INFORMATION',
@@ -287,98 +283,77 @@ def declaration_declaration(request):
     if request.method == 'POST':
 
         application_id_local = request.POST["id"]
-        application = Application.objects.get(
-            application_id=application_id_local)
+        application = Application.objects.get(application_id=application_id_local)
 
-        confirmation_of_understanding_form = DeclarationConfirmationOfUnderstandingForm(
-            request.POST, id=application_id_local)
-        confirmation_of_understanding_form.error_summary_title = 'There is a problem with ' \
-                                                                 'this form (I understand that Ofsted will)'
+        declaration_form = DeclarationForm(request.POST, id=application_id_local)
+        declaration_form.error_summary_title = 'There was a problem with your declaration'
 
-        confirmation_of_declaration_form = DeclarationConfirmationOfDeclarationForm(
-            request.POST, id=application_id_local)
-        confirmation_of_declaration_form.error_summary_title = 'There is a problem with this form (I declare that)'
+        if declaration_form.is_valid():
+            # get new values out of form data
+            share_info_declare = declaration_form.cleaned_data.get('share_info_declare')
+            display_contact_details_on_web = declaration_form.cleaned_data.get('display_contact_details_on_web')
+            information_correct_declare = declaration_form.cleaned_data.get('information_correct_declare')
+            change_declare = declaration_form.cleaned_data.get('change_declare')
+            suitable_declare = declaration_form.cleaned_data.get('suitable_declare')
 
-        consent_to_sharing_form = DeclarationConsentToSharingForm(request.POST, id=application_id_local)
-
-        # Validate both forms (sets of checkboxes)
-        if confirmation_of_understanding_form.is_valid():
-            share_info_declare = confirmation_of_understanding_form.cleaned_data.get('share_info_declare')
+            # save them down to application
             application.share_info_declare = share_info_declare
-            application.save()
+            application.display_contact_details_on_web = display_contact_details_on_web
+            application.information_correct_declare = information_correct_declare
+            application.suitable_declare = suitable_declare
+            application.change_declare = change_declare
+
             application.date_updated = current_date
             application.save()
 
-            if consent_to_sharing_form.is_valid():
-                display_contact_details_on_web = consent_to_sharing_form.cleaned_data.get(
-                    'display_contact_details_on_web')
-                application.display_contact_details_on_web = display_contact_details_on_web
-                application.save()
-                application.date_updated = current_date
-                application.save()
+            if application.application_status == 'FURTHER_INFORMATION':
+                # In cases where a resubmission is being made,
+                # payment is no a valid trigger so this becomes the appropriate trigger resubmission audit
+                TimelineLog.objects.create(
+                    content_object=application,
+                    user=None,
+                    template='timeline_logger/application_action.txt',
+                    extra_data={'user_type': 'applicant', 'action': 'resubmitted by', 'entity': 'application'}
+                )
 
-            if confirmation_of_declaration_form.is_valid():
-                suitable_declare = confirmation_of_declaration_form.cleaned_data.get('suitable_declare')
-                information_correct_declare = confirmation_of_declaration_form.cleaned_data.get(
-                    'information_correct_declare')
-                application.information_correct_declare = information_correct_declare
-                change_declare = confirmation_of_declaration_form.cleaned_data.get(
-                    'change_declare')
-                application.suitable_declare = suitable_declare
-                application.save()
-                application.change_declare = change_declare
-                application.save()
-                application.date_updated = current_date
+                updated_list = generate_list_of_updated_tasks(application_id_local)
+
+                # If a resubmission return application status to submitted and forward to the confirmation page
+                application.application_status = "SUBMITTED"
                 application.save()
 
-                if application.application_status == 'FURTHER_INFORMATION':
-                    # In cases where a resubmission is being made,
-                    # payment is no a valid trigger so this becomes the appropriate trigger resubmission audit
-                    TimelineLog.objects.create(
-                        content_object=application,
-                        user=None,
-                        template='timeline_logger/application_action.txt',
-                        extra_data={'user_type': 'applicant', 'action': 'resubmitted by', 'entity': 'application'}
-                    )
-
-                    updated_list = generate_list_of_updated_tasks(application_id_local)
-
-                    # If a resubmission return application status to submitted and forward to the confirmation page
-                    application.application_status = "SUBMITTED"
-                    application.save()
-
-                    variables = {
-                        'application_id': application_id_local,
-                        'order_code': application.application_reference,
-                        'updated_list': updated_list
-                    }
-
-                    clear_arc_flagged_statuses(application_id_local)
-
-                    status.update(application_id_local, 'declarations_status', 'COMPLETED')
-
-                    return render(request, 'payment-confirmation-resubmitted.html', variables)
+                variables = {
+                    'application_id': application_id_local,
+                    'order_code': application.application_reference,
+                    'updated_list': updated_list
+                }
 
                 clear_arc_flagged_statuses(application_id_local)
 
-                return HttpResponseRedirect(reverse('Payment-Details-View') + '?id=' + application_id_local)
+                status.update(application_id_local, 'declarations_status', 'COMPLETED')
 
-            else:
-                variables = {
-                    'confirmation_of_understanding_form': confirmation_of_understanding_form,
-                    'confirmation_of_declaration_form': confirmation_of_declaration_form,
-                    'consent_to_sharing_form': consent_to_sharing_form,
-                    'application_id': application_id_local
-                }
-                return render(request, 'declaration-declaration.html', variables)
+                return render(request, 'payment-confirmation-resubmitted.html', variables)
+
+            clear_arc_flagged_statuses(application_id_local)
+
+            return HttpResponseRedirect(reverse('Payment-Details-View') + '?id=' + application_id_local)
+
         else:
+            fields = render_each_field(declaration_form)
             variables = {
-                'confirmation_of_understanding_form': confirmation_of_understanding_form,
-                'confirmation_of_declaration_form': confirmation_of_declaration_form,
-                'consent_to_sharing_form': consent_to_sharing_form,
+                'declaration_form': declaration_form,
+                'fields': fields,
                 'application_id': application_id_local
             }
             return render(request, 'declaration-declaration.html', variables)
+
+
+def render_each_field(declaration_form):
+    fields = []
+    for name, field in declaration_form.fields.items():
+        fields.append(declaration_form.render_field(name, field))
+    return fields
+
 
 
 def generate_list_of_updated_tasks(application_id):
