@@ -182,7 +182,7 @@ class SeleniumTaskExecutor:
             driver.find_element_by_id("id_type_of_childcare_1").click()
 
         if eight_or_over is True:
-            driver.find_element_by_id("id_type_of_childcare_3").click()
+            driver.find_element_by_id("id_type_of_childcare_2").click()
 
         # Confirm selection
         driver.find_element_by_xpath("//input[@value='Save and continue']").click()
@@ -214,8 +214,6 @@ class SeleniumTaskExecutor:
         :param is_location_of_care: a boolean flag for whether the applicant's address will be the location of car
         """
         driver = self.get_driver()
-
-        driver.find_element_by_xpath("//tr[@id='personal_details']/td/a/span").click()
 
         driver.find_element_by_id("id_first_name").send_keys(forename)
 
@@ -564,7 +562,6 @@ class SeleniumTaskExecutor:
         driver.find_element_by_name("action").click()
         driver.find_element_by_link_text("Continue").click()
         driver.find_element_by_link_text("Continue").click()
-
 
     def complete_references_task(self, first_reference_forename, first_reference_surname, first_reference_relationship,
                                  first_reference_time_known_months, first_reference_time_known_years,
