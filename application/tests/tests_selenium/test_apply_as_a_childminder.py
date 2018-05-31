@@ -245,6 +245,24 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Confirm selection
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
 
+        # Guidance page
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+
+        # Overnight care page
+        self.selenium_task_executor.get_driver().find_element_by_id("id_overnight_care_0").click()
+
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        # Confirmation page
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+
+        # Below DOB means they are an adult so do not fire validation triggers
+        self.selenium_task_executor.complete_personal_details(
+            faker.first_name(), faker.first_name(), faker.last_name_female(),
+            random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
+            True
+        )
+
         # Costs page
         self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='proposition-links']/li[1]/a").click()
 
@@ -900,7 +918,14 @@ class ApplyAsAChildminder(LiveServerTestCase):
             - User has completed personal details: Ask for DoB and postcode.
             * If none of above, ask for user's phone number.
         '''
-        test_email = self.create_standard_eyfs_application()
+        self.selenium_task_executor.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+
+        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+        self.selenium_task_executor.complete_type_of_childcare(True, False, False, True)
         self.selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
         self.selenium_task_executor.navigate_to_SMS_validation_page(test_email)
 
