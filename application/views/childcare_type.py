@@ -282,11 +282,14 @@ def childcare_type_summary(request):
         variables = {
             'application_id': app_id,
             'table_list': table_list,
-            'health_status': application.health_status,
+            'childcare_type_status': application.childcare_type_status,
             'page_title': 'Check your answers: type of childcare'
         }
 
-        variables = submit_link_setter(variables, table_list, 'type_of_childcare', app_id)
+        variables = submit_link_setter(variables, table_list, 'personal_details', app_id)
+
+        if application.childcare_type_status != 'COMPLETED':
+            variables['submit_link'] = reverse('Personal-Details-Name-View')
 
         return render(request, 'generic-summary-template.html', variables)
 
