@@ -288,7 +288,8 @@ def childcare_type_summary(request):
 
         variables = submit_link_setter(variables, table_list, 'personal_details', app_id)
 
-        variables['submit_link'] = reverse('Personal-Details-Name-View')
+        if application.childcare_type_status != 'COMPLETED':
+            variables['submit_link'] = reverse('Personal-Details-Name-View')
 
         return render(request, 'generic-summary-template.html', variables)
 
