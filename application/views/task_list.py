@@ -13,10 +13,7 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.views.decorators.cache import never_cache
 
-from application.models import (
-    Application,
-    ChildcareType,
-    Arc)
+from application.models import (ApplicantName, ApplicantPersonalDetails, Application, ChildcareType, Arc)
 
 
 # noinspection PyTypeChecker
@@ -41,6 +38,18 @@ def task_list(request):
             childcare_record = ChildcareType.objects.get(application_id=application_id)
         except Exception as e:
             return HttpResponseRedirect(reverse("Type-Of-Childcare-Guidance-View") + '?id=' + application_id)
+
+        personal_details_record = None
+
+        try:
+            personal_details_record = ApplicantPersonalDetails.objects.get(application_id=application_id)
+        except Exception as e:
+            return HttpResponseRedirect(reverse("Personal-Details-Name-View") + '?id=' + application_id)
+
+        try:
+            personal_details_name_record = ApplicantName.objects.get(application_id=application_id)
+        except Exception as e:
+            return HttpResponseRedirect(reverse("Personal-Details-Name-View") + '?id=' + application_id)
 
         zero_to_five_status = childcare_record.zero_to_five
         five_to_eight_status = childcare_record.five_to_eight
