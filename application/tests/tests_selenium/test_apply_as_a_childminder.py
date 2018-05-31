@@ -531,7 +531,14 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         Test to exercise the largest set of questions possible within a childminder application
         """
-        applicant_email = self.create_standard_eyfs_application()
+        self.selenium_task_executor.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+
+        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+        self.selenium_task_executor.complete_type_of_childcare(True, False, False, True)
 
         # Below DOB means they are an adult so do not fire validation triggers
         self.selenium_task_executor.complete_personal_details(
@@ -583,7 +590,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990), 'Friend', 121212121212,
             faker.email(), True, faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 14, self.current_year - 1),
-            'Child', applicant_email
+            'Child', test_email
         )
 
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
@@ -623,6 +630,13 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
         self.selenium_task_executor.complete_type_of_childcare(True, False, False, False)
 
+        # Below DOB means they are an adult so do not fire validation triggers
+        self.selenium_task_executor.complete_personal_details(
+            faker.first_name(), faker.first_name(), faker.last_name_female(),
+            random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
+            True
+        )
+
         # Check task status set to done
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='account_details']/td/a/strong").text)
@@ -632,18 +646,29 @@ class ApplyAsAChildminder(LiveServerTestCase):
     @try_except_method
     def test_first_aid_out_of_date_guidance_shown(self):
         """
-        Test to check that if a first aid training certificate is expired a user is informed they need to update their traininig
+        Test to check that if a first aid training certificate is expired a user is informed they need to update their training
         """
-        self.create_standard_eyfs_application()
+        self.selenium_task_executor.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+
+        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+        self.selenium_task_executor.complete_type_of_childcare(True, False, False, False)
 
         # Below DOB means they are an adult so do not fire validation triggers
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            False
+            True
         )
 
-        # Check task status marked as Done
+        # Check task status set to done
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='account_details']/td/a/strong").text)
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='children']/td/a/strong").text)
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='personal_details']/td/a/strong").text)
 
@@ -902,7 +927,14 @@ class ApplyAsAChildminder(LiveServerTestCase):
             - User has completed personal details: Ask for DoB and postcode.
             * If none of above, ask for user's phone number.
         '''
-        test_email = self.create_standard_eyfs_application()
+        self.selenium_task_executor.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+
+        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+        self.selenium_task_executor.complete_type_of_childcare(True, False, False, True)
         # Fill out personal details.
         self.selenium_task_executor.complete_personal_details(forename="Gael",
                                                          middle_name="Viaros",
@@ -1058,11 +1090,20 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
         self.selenium_task_executor.complete_type_of_childcare(True, False, False, True)
 
+        # Below DOB means they are an adult so do not fire validation triggers
+        self.selenium_task_executor.complete_personal_details(
+            faker.first_name(), faker.first_name(), faker.last_name_female(),
+            random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
+            True
+        )
+
         # Check task status set to done
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='account_details']/td/a/strong").text)
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='children']/td/a/strong").text)
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='personal_details']/td/a/strong").text)
 
         self.selenium_task_executor.navigate_to_base_url()
         self.selenium_task_executor.register_email_address(test_email)
