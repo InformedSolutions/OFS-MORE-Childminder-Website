@@ -273,6 +273,10 @@ def personal_details_home_address(request):
             application.save()
 
             if 'postcode-search' in request.POST:
+
+                if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
+                    status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
+
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/personal-details/select-home-address/?id=' + app_id)
 
@@ -450,10 +454,6 @@ def personal_details_location_of_care(request):
         county = applicant_home_address.county
         postcode = applicant_home_address.postcode
         application = Application.get_id(app_id=app_id)
-
-        if application.login_details_status != 'COMPLETED':
-            status.update(app_id, 'login_details_status', 'COMPLETED')
-
         form = PersonalDetailsLocationOfCareForm(id=app_id)
         form.check_flag()
 
@@ -469,7 +469,7 @@ def personal_details_location_of_care(request):
             'town': town,
             'county': county,
             'postcode': postcode,
-            'personal_details_status': application.login_details_status
+            'personal_details_status': application.personal_details_status
         }
         return render(request, 'personal-details-location-of-care.html', variables)
 
@@ -484,7 +484,8 @@ def personal_details_location_of_care(request):
 
         if form.is_valid():
             # Reset status to in progress as question can change status of overall task
-            status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
+            if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
+                status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
             # Update home address record
             home_address_record = personal_location_of_care_logic(app_id, form)
@@ -587,10 +588,18 @@ def personal_details_childcare_address(request):
             application.save()
 
             if 'postcode-search' in request.POST:
+
+                if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
+                    status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
+
                 return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/select-childcare-address/?id='
                                             + app_id)
 
             if 'submit' in request.POST:
+
+                if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
+                    status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
+
                 return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/enter-childcare-address/?id='
                                             + app_id)
 
@@ -720,8 +729,7 @@ def personal_details_childcare_address_select(request):
             application.save()
 
             if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
-                status.update(app_id,
-                              'personal_details_status', 'IN_PROGRESS')
+                status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
             return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/check-answers?id=' +
                                         app_id)
@@ -818,8 +826,7 @@ def personal_details_childcare_address_manual(request):
             application.save()
 
             if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
-                status.update(app_id,
-                              'personal_details_status', 'IN_PROGRESS')
+                status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
             reset_declaration(application)
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/personal-details/check-answers?id=' + app_id)
@@ -935,8 +942,7 @@ def personal_details_summary(request):
         form = PersonalDetailsSummaryForm()
 
         if form.is_valid():
-            status.update(app_id,
-                          'personal_details_status', 'COMPLETED')
+            status.update(app_id, 'personal_details_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + app_id)
 
         else:
