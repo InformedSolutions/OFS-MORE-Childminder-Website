@@ -521,7 +521,7 @@ def other_people_children_details(request):
                 request.POST, id=application_id_local, child=i, prefix=i)
             form.remove_flag()
             form_list.append(form)
-            form.error_summary_title = 'There is a problem with this form (Child ' + str(i) + ')'
+            form.error_summary_title = 'There was a problem with the details (Child ' + str(i) + ')'
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = "There was a problem (Person " + str(i) + ")"
