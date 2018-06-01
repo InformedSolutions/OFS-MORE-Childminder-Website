@@ -258,7 +258,8 @@ def first_aid_training_summary(request):
             'error_summary_title': 'There was a problem',
         })
 
-        table_list = create_tables([first_aid_table], first_aid_name_dict, first_aid_link_dict, first_aid_change_link_description_dict)
+        table_list = create_tables([first_aid_table], first_aid_name_dict,
+                                   first_aid_link_dict, first_aid_change_link_description_dict)
 
         variables = {
             'form': form,
@@ -271,15 +272,3 @@ def first_aid_training_summary(request):
         variables = submit_link_setter(variables, table_list, 'first_aid_training', application_id_local)
 
         return render(request, 'generic-summary-template.html', variables)
-
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = FirstAidTrainingSummaryForm(request.POST)
-        if form.is_valid():
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
-        else:
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'first-aid-summary.html', variables)

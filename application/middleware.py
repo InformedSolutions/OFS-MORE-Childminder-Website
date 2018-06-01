@@ -98,7 +98,10 @@ def globalise_url_prefix(request):
     than assuming application available on root index.
     """
     # return URL_PREFIX value defined in django settings.py for use by global view template
-    return {'URL_PREFIX': settings.URL_PREFIX}
+    if hasattr(settings, 'URL_PREFIX'):
+        return {'URL_PREFIX': settings.URL_PREFIX}
+    else:
+        return {'URL_PREFIX': ''}
 
 
 def globalise_server_name(request):

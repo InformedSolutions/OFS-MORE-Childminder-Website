@@ -29,10 +29,10 @@ def help_and_contact(request):
             url_params['orderCode'] = str(application.application_reference)
         elif status == 'ARC_REVIEW':
             return_view = 'Awaiting-Review-View'
-            url_params['orderCode'] = str(application.order_code)
+            url_params['orderCode'] = str(application.application_reference)
         elif status == 'ACCEPTED':
             return_view = 'Accepted-View'
-            url_params['orderCode'] = str(application.order_code)
+            url_params['orderCode'] = str(application.application_reference)
         else:
             return_view = 'Task-List-View'
 

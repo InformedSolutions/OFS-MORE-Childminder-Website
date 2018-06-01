@@ -182,7 +182,7 @@ class SeleniumTaskExecutor:
             driver.find_element_by_id("id_type_of_childcare_1").click()
 
         if eight_or_over is True:
-            driver.find_element_by_id("id_type_of_childcare_3").click()
+            driver.find_element_by_id("id_type_of_childcare_2").click()
 
         # Confirm selection
         driver.find_element_by_xpath("//input[@value='Save and continue']").click()
@@ -214,8 +214,6 @@ class SeleniumTaskExecutor:
         :param is_location_of_care: a boolean flag for whether the applicant's address will be the location of car
         """
         driver = self.get_driver()
-
-        driver.find_element_by_xpath("//tr[@id='personal_details']/td/a/span").click()
 
         driver.find_element_by_id("id_first_name").send_keys(forename)
 
@@ -343,7 +341,7 @@ class SeleniumTaskExecutor:
         driver.find_element_by_id("id_dbs_certificate_number").send_keys(dbs_number)
 
         if has_convictions is not True:
-            driver.find_element_by_id("id_convictions_1").click()
+            driver.find_element_by_id("id_cautions_convictions_1").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
             # Task summary
             WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Check your answers: criminal record (DBS) check"))
@@ -351,7 +349,7 @@ class SeleniumTaskExecutor:
 
         elif has_convictions is True:
 
-            driver.find_element_by_id("id_convictions_0").click()
+            driver.find_element_by_id("id_cautions_convictions_0").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
             # Confirm will send DBS certificate
@@ -565,7 +563,6 @@ class SeleniumTaskExecutor:
         driver.find_element_by_link_text("Continue").click()
         driver.find_element_by_link_text("Continue").click()
 
-
     def complete_references_task(self, first_reference_forename, first_reference_surname, first_reference_relationship,
                                  first_reference_time_known_months, first_reference_time_known_years,
                                  first_reference_phone_number, first_reference_email,
@@ -649,35 +646,14 @@ class SeleniumTaskExecutor:
         :param cardholder_name: the cardholders name to be used for payment
         :param cvc: the cvc code to be used for payment
         """
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock, \
-                mock.patch('application.payment_service.check_payment') as check_payment_mock:
-
+        with mock.patch('application.payment_service.make_payment') as post_payment_mock:
             test_payment_response = {
-                "amount": 50000,
-                "cardHolderName": "Mr Example Cardholder",
-                "cardNumber": 5454545454545454,
-                "cvc": 352,
-                "expiryMonth": 6,
-                "expiryYear": 2018,
-                "currencyCode": "GBP",
-                "customerOrderCode": "TEST_ORDER_CODE",
-                "orderDescription": "Childminder Registration Fee"
+                "customerOrderCode": "TEST",
+                "lastEvent": "AUTHORISED"
             }
 
             post_payment_mock.return_value.status_code = 201
             post_payment_mock.return_value.text = json.dumps(test_payment_response)
-
-            test_get_response = {
-                "customerOrderCode": "TEST_ORDER_CODE",
-                "paymentMethod": "ECMC-SSL",
-                "creationDate": "2018-05-16T06:45:00",
-                "lastEvent": "AUTHORISED",
-                "amount": 3500,
-                "currencyCode": "GBP"
-            }
-
-            check_payment_mock.return_value.status_code = 200
-            check_payment_mock.return_value.text = json.dumps(test_get_response)
 
             driver = self.get_driver()
 

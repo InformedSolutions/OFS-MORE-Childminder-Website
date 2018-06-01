@@ -135,29 +135,14 @@ class PaymentTests(TestCase, ApplicationTestBase):
         Tests that if a payment has been refused by Worldpay an error is shown.
         """
 
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock, \
-                mock.patch('application.payment_service.check_payment') as check_payment_mock:
+        with mock.patch('application.payment_service.make_payment') as post_payment_mock:
             test_payment_response = {
-                "amount": 50000,
-                "cardHolderName": "Mr Example Cardholder",
-                "cardNumber": 5454545454545454,
-                "cvc": 352,
-                "expiryMonth": 6,
-                "expiryYear": 2018,
-                "currencyCode": "GBP",
-                "customerOrderCode": "TEST_ORDER_CODE",
-                "orderDescription": "Childminder Registration Fee"
+                "customerOrderCode": "TEST",
+                "lastEvent": "REFUSED"
             }
 
             post_payment_mock.return_value.status_code = 201
             post_payment_mock.return_value.text = json.dumps(test_payment_response)
-
-            test_payment_check_response = {
-                'lastEvent': 'REFUSED'
-            }
-
-            check_payment_mock.return_value.status_code = 200
-            check_payment_mock.return_value.text = json.dumps(test_payment_check_response)
 
             response = self.client.post(
                 reverse('Payment-Details-View'),
@@ -193,24 +178,14 @@ class PaymentTests(TestCase, ApplicationTestBase):
         is retained
         """
 
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock, \
-                mock.patch('application.payment_service.check_payment') as check_payment_mock:
+        with mock.patch('application.payment_service.make_payment') as post_payment_mock:
             test_payment_response = {
-                "amount": 50000,
-                "cardHolderName": "Mr Example Cardholder",
-                "cardNumber": 5454545454545454,
-                "cvc": 352,
-                "expiryMonth": 6,
-                "expiryYear": 2018,
-                "currencyCode": "GBP",
-                "customerOrderCode": "TEST_ORDER_CODE",
-                "orderDescription": "Childminder Registration Fee"
+                "customerOrderCode": "TEST",
+                "lastEvent": "AUTHORISED"
             }
 
             post_payment_mock.return_value.status_code = 201
             post_payment_mock.return_value.text = json.dumps(test_payment_response)
-
-            check_payment_mock.return_value.status_code = 404
 
             # POST to submission page twice
             self.client.post(
@@ -271,24 +246,14 @@ class PaymentTests(TestCase, ApplicationTestBase):
         is retained
         """
 
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock, \
-                mock.patch('application.payment_service.check_payment') as check_payment_mock:
+        with mock.patch('application.payment_service.make_payment') as post_payment_mock:
             test_payment_response = {
-                "amount": 50000,
-                "cardHolderName": "Mr Example Cardholder",
-                "cardNumber": 5454545454545454,
-                "cvc": 352,
-                "expiryMonth": 6,
-                "expiryYear": 2018,
-                "currencyCode": "GBP",
-                "customerOrderCode": "TEST_ORDER_CODE",
-                "orderDescription": "Childminder Registration Fee"
+                "customerOrderCode": "TEST",
+                "lastEvent": "AUTHORISED"
             }
 
             post_payment_mock.return_value.status_code = 201
             post_payment_mock.return_value.text = json.dumps(test_payment_response)
-
-            check_payment_mock.return_value.status_code = 404
 
             # POST to submission page twice
             self.client.post(
@@ -350,29 +315,14 @@ class PaymentTests(TestCase, ApplicationTestBase):
            3. Payment record is lodged
         """
 
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock, \
-                mock.patch('application.payment_service.check_payment') as check_payment_mock:
+        with mock.patch('application.payment_service.make_payment') as post_payment_mock:
             test_payment_response = {
-                "amount": 50000,
-                "cardHolderName": "Mr Example Cardholder",
-                "cardNumber": 5454545454545454,
-                "cvc": 352,
-                "expiryMonth": 6,
-                "expiryYear": 2018,
-                "currencyCode": "GBP",
-                "customerOrderCode": "TEST_ORDER_CODE",
-                "orderDescription": "Childminder Registration Fee"
+                "customerOrderCode": "TEST",
+                "lastEvent": "AUTHORISED"
             }
 
             post_payment_mock.return_value.status_code = 201
             post_payment_mock.return_value.text = json.dumps(test_payment_response)
-
-            test_payment_check_response = {
-                'lastEvent': 'AUTHORISED'
-            }
-
-            check_payment_mock.return_value.status_code = 200
-            check_payment_mock.return_value.text = json.dumps(test_payment_check_response)
 
             response = self.client.post(
                 reverse('Payment-Details-View'),

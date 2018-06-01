@@ -1,30 +1,16 @@
-import socket
-import os
-
 from .base import *
 
-DEBUG = True
-
-# Override default url for local dev
-PUBLIC_APPLICATION_URL = 'http://localhost:8000/childminder'
-
-INTERNAL_IPS = ["127.0.0.1", ]
-
-# Workdaround for docker
-INTERNAL_IPS += [socket.gethostbyname(socket.gethostname())[:-1] + '1']
+# You should never enable this in production, even if it's temporarily
+# All INSTALLED_APPS in django relies on this variable, like google-analytics app.
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
-TEST_NOTIFY_CONNECTION = False
-
-DEV_APPS = [
-    'debug_toolbar',
-    'django_extensions'
+PROD_APPS = [
+    'whitenoise',
 ]
 
-MIDDLEWARE_DEV = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware'
-]
+INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + PROD_APPS + PROJECT_APPS
 
 URL_PREFIX = '/childminder'
 STATIC_URL = URL_PREFIX + '/static/'
@@ -65,12 +51,40 @@ DATABASES = {
         'NAME': os.environ.get('POSTGRES_DB', 'postgres'),
         'USER': os.environ.get('POSTGRES_USER', 'ofsted'),
         'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'OfstedB3ta'),
-        'HOST': os.environ.get('POSTGRES_HOST', '130.130.52.132'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5462')
+        'HOST': os.environ.get('POSTGRES_HOST', 'ofsted-postgres'),
+        'PORT': os.environ.get('POSTGRES_PORT', '5432')
     }
 }
 
-MIDDLEWARE = MIDDLEWARE + MIDDLEWARE_DEV
-INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + DEV_APPS + PROJECT_APPS
+# SECURITY WARNING: keep the secret key used in production secret!
+SECRET_KEY = '-r&u(maq#j68ngj=_ch#l6#mhak%8rbh$px8e&9c6b9@c7df=m'
 
-SECRET_KEY = '-asdasdsad322432maq#j23432*&(*&DASl6#mhak%8rbh$px8e&9c6b9@c7df=m'
+# Automatic Django logging at the INFO level (i.e everything the comes to the console when ran locally)
+LOGGING = {
+  'version': 1,
+  'disable_existing_loggers': False,
+  'formatters': {
+    'console': {
+            # exact format is not important, this is the minimum information
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+        },
+  'handlers': {
+    'django.server': {
+        'level': 'INFO',
+        'class': 'logging.handlers.RotatingFileHandler',
+        'maxBytes': 1 * 1024 * 1024,
+        'filename': 'logs/output.log',
+        'formatter': 'console',
+        'maxBytes': 1 * 1024 * 1024,
+        'backupCount': '30'
+    },
+   },
+   'loggers': {
+     'django.server': {
+       'handlers': ['django.server'],
+         'level': 'INFO',
+           'propagate': True,
+      },
+    },
+}

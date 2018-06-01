@@ -5,6 +5,7 @@ from ..models import (Application)
 from ..models import (CriminalRecordCheck)
 from .. import status
 
+
 def payment_confirmation(request):
     """
     Method returning the template for the Payment confirmation page (for a given application)

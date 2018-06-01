@@ -19,13 +19,13 @@
                 <th class="bold">Illness</th>
                 <th class="bold">Start date</th>
                 <th class="bold">End date</th>
-                <th></th>
+                <th class="bold">Remove</th>
             </tr>
             {% for illness in illnesses %}
             <tr>
                 <td>{{ illness.description }}</td>
-                <td>{{ illness.start_date|date:"d m Y" }}</td>
-                <td>{{ illness.end_date|date:"d m Y" }}</td>
+                <td>{{ illness.start_date|date:"d/m/Y" }}</td>
+                <td>{{ illness.end_date|date:"d/m/Y" }}</td>
                 <td><a href="{% url 'Health-Check-Serious' %}?person_id={{person_id}}&action=Delete&illness_id={{illness.pk}}">Remove</a></td>
             </tr>
             {% endfor %}

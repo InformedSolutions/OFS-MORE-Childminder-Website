@@ -121,14 +121,50 @@ def card_payment_post_handler(request):
             expiry_month, expiry_year, 'GBP', payment_reference,
             'Ofsted Fees')
 
-        # Mark payment submission flag to show an initial request has been lodged
-        # if status indicates success
         if create_payment_response.status_code == 201:
+
+            # Mark payment submission flag to show an initial request has been lodged
+            # if response status indicates success
             __mark_payment_record_as_submitted(application)
+
+            # Parse JSON response
+            parsed_payment_response = json.loads(create_payment_response.text)
+
+            if parsed_payment_response.get('lastEvent') == "AUTHORISED":
+
+                # If payment response is immediately authorised, yield success page
+                return __handle_authorised_payment(application)
+
+            if parsed_payment_response.get('lastEvent') == "REFUSED":
+
+                # If payment has been marked as a REFUSED by Worldpay then payment has
+                # been attempted but was not successful in which case a new order should be attempted.
+                __rollback_payment_submission_status(application)
+                return __yield_general_processing_error_to_user(request, form, application.application_id)
+
+            if parsed_payment_response.get('lastEvent') == "ERROR":
+                return __yield_general_processing_error_to_user(request, form, application.application_id)
+
         else:
+            # If non-201 return status, this indicates a Payment gateway or Worldpay failure
             return __yield_general_processing_error_to_user(request, form, app_id)
 
-    # Sleep thread to allow for transaction processing time by Worldpay service
+    # If above logic gates have not been triggered, this indicates a form re-submission whilst processing
+    # was taking place
+    return resubmission_handler(request, payment_reference, form, application)
+
+
+def resubmission_handler(request, payment_reference, form, application):
+    """
+    Handling logic for managing page re-submissions to avoid duplicate payments being created
+    :param request: Inbound HTTP post request
+    :param payment_reference: the payment reference number allocated to an application payment attempt
+    :param form: the Django form for the card details page
+    :param application: the user's childminder application
+    :return: HTTP response redirect based on payment status check outcome
+    """
+
+    # All logic below acts as a handler for page re-submissions
     time.sleep(int(settings.PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS))
 
     # Check at this point whether Worldpay has marked the payment as authorised
@@ -136,7 +172,7 @@ def card_payment_post_handler(request):
 
     # If no record of the payment could be found, yield error
     if payment_status_response_raw.status_code == 404:
-        return __yield_general_processing_error_to_user(request, form, app_id)
+        return __yield_general_processing_error_to_user(request, form, application.application_id)
 
     # Deserialize Payment Gateway API response
     parsed_payment_response = json.loads(payment_status_response_raw.text)
@@ -165,21 +201,19 @@ def card_payment_post_handler(request):
 
                 variables = {
                     'form': form,
-                    'application_id': app_id,
+                    'application_id': application.application_id,
                 }
 
                 return HttpResponseRedirect(
-                    reverse('Payment-Details-View') + '?id=' + app_id, variables)
+                    reverse('Payment-Details-View') + '?id=' + application.application_id, variables)
 
             # Otherwise increment processing attempt count
             request.META['processing_attempts'] = processing_attempts + 1
         else:
             request.META['processing_attempts'] = 1
 
-        print('Recursing')
-
         # Retry processing of payment
-        return card_payment_details(request)
+        return resubmission_handler(request, payment_reference, form, application)
 
 
 def __assign_application_reference(application):

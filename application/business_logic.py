@@ -355,7 +355,7 @@ def dbs_check_logic(application_id_local, form):
     """
     this_application = Application.objects.get(application_id=application_id_local)
     dbs_certificate_number = form.cleaned_data.get('dbs_certificate_number')
-    cautions_convictions = form.cleaned_data.get('convictions')
+    cautions_convictions = form.cleaned_data.get('cautions_convictions')
     # If the user entered information for this task for the first time
     if CriminalRecordCheck.objects.filter(application_id=application_id_local).count() == 0:
         dbs_record = CriminalRecordCheck(dbs_certificate_number=dbs_certificate_number,

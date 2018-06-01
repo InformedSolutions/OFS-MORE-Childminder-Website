@@ -45,10 +45,16 @@ class HospitalAdmission(ChildminderForms):
                                       error_messages={'required': 'Tell us why you were admitted'})
 
     start_date = CustomSplitDateField(label='Date you were admitted', help_text='For example, 31 03 2016', error_messages={
-        'required': 'Please enter the full date, including the day, month and year'}, bounds_error='Please check the date of your illness')
+        'required': 'Please enter the full date, including the day, month and year'}, bounds_error='Please check the date of your illness',
+                                      min_value=0)
 
     end_date = CustomSplitDateField(label='Date you were discharged', help_text='For example, 31 03 2016', error_messages={
-        'required': 'Please enter the full date, including the day, month and year'}, bounds_error='Please check the date of your illness')
+        'required': 'Please enter the full date, including the day, month and year'}, bounds_error='Please check the date of your illness',
+                                    min_value=0)
+
+    def __init__(self, *args, **kwargs):
+        self.person = kwargs.pop('adult')
+        super(HospitalAdmission, self).__init__(*args, **kwargs)
 
     def clean_illness_details(self):
 
@@ -62,10 +68,10 @@ class HospitalAdmission(ChildminderForms):
 
         start_date = self.cleaned_data['start_date']
         today = date.today()
-        date_diff = today-start_date
+        date_diff = start_date - self.person.date_of_birth.date()
         # date diff is a timedelta object with a days element, checked against 2 years ago (in days) as in CCN3-1135
-        if date_diff.days > 730:
-            raise forms.ValidationError('Please enter a date in the last two years')
+        if date_diff.days < 0:
+            raise forms.ValidationError('Please enter a date after your date of birth')
         if len(str(start_date.year)) < 4:
            raise forms.ValidationError('Please enter the whole year (4 digits)')
 
@@ -89,6 +95,8 @@ class HospitalAdmission(ChildminderForms):
                 raise forms.ValidationError('Please enter a date in the last two years')
             if date_today_diff < 0:
                 raise forms.ValidationError('Please check the year')
+            if len(str(end_date.year)) < 4:
+                raise forms.ValidationError('Please enter the whole year (4 digits)')
             if start_date > end_date:
                 raise forms.ValidationError('Please check the date of your illness')
 

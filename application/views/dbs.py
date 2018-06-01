@@ -94,7 +94,7 @@ def dbs_check_dbs_details(request):
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
-            cautions_convictions = form.cleaned_data['convictions']
+            cautions_convictions = form.cleaned_data['cautions_convictions']
             if cautions_convictions == 'True':
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/criminal-record/post-certificate?id=' + application_id_local)
@@ -104,7 +104,7 @@ def dbs_check_dbs_details(request):
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
         else:
-            form.error_summary_title = 'There was a problem with your DBS details'
+            form.error_summary_title = 'There was a problem with the DBS details'
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
@@ -197,6 +197,7 @@ def dbs_check_summary(request):
         variables = submit_link_setter(variables, table_list, 'criminal_record_check', application_id_local)
 
         return render(request, 'generic-summary-template.html', variables)
+
     if request.method == 'POST':
 
         application_id_local = request.POST["id"]
