@@ -763,7 +763,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.complete_full_question_set()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='children']/td/a/span").click()
-        self.assertEqual("Check your answers: Type of childcare",
+        self.assertEqual("Check your answers: type of childcare",
                          self.selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='personal_details']/td/a/span").click()

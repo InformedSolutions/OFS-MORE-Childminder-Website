@@ -346,7 +346,7 @@ def other_people_adult_dbs(request):
             form = OtherPeopleAdultDBSForm(
                 request.POST, id=application_id_local, adult=i, prefix=i, name=name)
             form_list.append(form)
-            form.error_summary_title = 'There is a problem with this form (Person ' + str(
+            form.error_summary_title = 'There is a problem with the details (Person ' + str(
                 i) + ')'
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
