@@ -192,7 +192,8 @@ class OtherPeopleAdultDBSForm(ChildminderForms):
     dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
                                                 help_text='12-digit number on their certificate',
                                                 required=True,
-                                                widget=widget_instance)
+                                                widget=widget_instance,
+                                                error_messages={'required': "Please enter the DBS certificate number"})
 
     def __init__(self, *args, **kwargs):
         """
@@ -219,9 +220,9 @@ class OtherPeopleAdultDBSForm(ChildminderForms):
         """
         dbs_certificate_number = self.data['1-dbs_certificate_number']
         if len(str(dbs_certificate_number)) > 12:
-            raise forms.ValidationError('Check your certificate: the number should be 12 digits long')
+            raise forms.ValidationError('The certificate number should be 12 digits long')
         if len(str(dbs_certificate_number)) < 12:
-            raise forms.ValidationError('Check your certificate: the number should be 12 digits long')
+            raise forms.ValidationError('The certificate number should be 12 digits long')
         return dbs_certificate_number
 
 
