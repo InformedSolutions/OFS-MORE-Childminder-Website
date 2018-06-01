@@ -29,7 +29,7 @@ class OtherPeopleAdultQuestionForm(ChildminderForms):
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
-    error_summary_title = 'There was a problem with the details'
+    error_summary_title = 'There was a problem on this page'
     auto_replace_widgets = True
 
     options = (
