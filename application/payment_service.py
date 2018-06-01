@@ -8,6 +8,8 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 import json
 import time
 from urllib.parse import quote
+from .models import CriminalRecordCheck
+from application.notify import send_email
 
 import requests
 
@@ -62,27 +64,29 @@ def check_payment(payment_reference):
     return response
 
 
-def payment_email(email, name, application_reference):
+def payment_email(email, name, application_reference, application_id):
     """
     A function to send an email through the notify gateway with a payment template, currently used to confirm a Worldpay
     card order has been successful
     :param email: The address to send the email to, sent as a string
     :param name: The name to be placed on the email template to be sent to the user
+    :param application_reference
+    :param application_id
     :return: Returns the response object obtained from the PayPal gateway method, as defined in swagger
     """
     base_url = settings.NOTIFY_URL
     header = {'content-type': 'application/json'}
-    payload = {
-        "email": email,
-        "personalisation": {
-            "firstName": name,
-            "appReference": application_reference
-        },
-        "reference": "string",
-        "templateId": "a741fed2-7948-4b1a-b44a-fec8485ec700"
-    }
-    response = requests.post(base_url + "/api/v1/notifications/email/", json.dumps(payload),
-                             headers=header)
+    template_id = '2cd5f1c5-4900-4922-a627-a0d1f674136b'
+    try:
+        conviction = CriminalRecordCheck.objects.get(application_id=application_id).cautions_convictions
+    except CriminalRecordCheck.DoesNotExist:
+        conviction = False
+    if conviction is True:
+        template_id = 'c7500574-df3c-4df1-b7f7-8755f6b61c7f'
+
+    response = send_email(email, {"firstName": name, "appReference": application_reference,
+                                  "reference": application_reference},
+                          template_id)
     return response
 
 
