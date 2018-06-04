@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Payment confirmed{% endblock %}
+{% block page_title %}Thank you for applying{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -39,19 +39,18 @@
         <h2 class="heading-medium">
             Your application details
         </h2>
-        <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print"
-                                           style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
+        <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print" style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
             <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print this page</a></p>
-        <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print"
-                                           style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
+        <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print" style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
             <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print your application</a></p>
         <h2 class="heading-medium">
             Send your documents
         </h2>
+        {% if health_status == 'COMPLETED' and conviction == True %}
         <p>We need:</p>
         <ul class="list-bullet" style="margin-bottom: 20px; margin-left: 20px;">
-            <li>your health declaration booklet</li>
-            <li>your DBS certificate</li>
+            <li>health declaration booklet</li>
+            <li>DBS certificate.</li>
         </ul>
         <p>Send your original documents (not photocopies) to:</p>
         <p style="margin-left: 40px;">
@@ -67,7 +66,35 @@
             <br>
             M1 2WD
         </p>
-        <p>We will not review your application without them.</p>
+        <p>There may be delays if we do not receive them right away.</p>
+        {% elif health_status == 'COMPLETED' and conviction == False %}
+        <p>We need your health declaration booklet.</p>
+        <p>Send your original document (not a photocopy) to:</p>
+        <p style="margin-left: 40px;">
+            Applications team
+            <br>
+            Ofsted
+            <br>
+            Piccadilly Gate
+            <br>
+            Store Street
+            <br>
+            Manchester
+            <br>
+            M1 2WD
+        </p>
+        <p>There may be delays if we do not receive it right away.</p>
+        {% endif %}
+
+        <h2 class="heading-medium">
+            Contact Us
+        </h2>
+        <p>Contact us if you have any questions about your application.</p>
+        <p style="margin-left: 40px;">
+            Ofsted
+            <br>
+            <a href="mailto:registrationpilot@ofsted.gov.uk">registrationpilot@ofsted.gov.uk</a>
+        </p>
     </div>
 </div>
 
