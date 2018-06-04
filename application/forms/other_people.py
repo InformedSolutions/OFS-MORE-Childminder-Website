@@ -170,7 +170,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         email_address = self.cleaned_data['email_address']
         applicant_email = UserDetails.objects.get(application_id=self.application_id_local).email
         # RegEx for valid e-mail addresses
-        if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
+        if re.match(settings.REGEX['EMAIL'], email_address) is None:
             raise forms.ValidationError('Please enter a valid email address')
         if email_address == applicant_email:
             raise forms.ValidationError('Their email address cannot be the same as your email address')
