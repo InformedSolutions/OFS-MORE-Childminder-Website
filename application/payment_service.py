@@ -75,19 +75,15 @@ def payment_email(email, name, application_reference, application_id):
     :param application_id
     :return: Returns the response object obtained from the PayPal gateway method, as defined in swagger
     """
-    base_url = settings.NOTIFY_URL
-    header = {'content-type': 'application/json'}
-    template_id = '2cd5f1c5-4900-4922-a627-a0d1f674136b'
-    try:
-        conviction = CriminalRecordCheck.objects.get(application_id=application_id).cautions_convictions
-    except CriminalRecordCheck.DoesNotExist:
-        conviction = False
-    if conviction is True:
+    conviction = CriminalRecordCheck.objects.get(application_id=application_id).cautions_convictions
+
+    if conviction is False:
+        template_id = '2cd5f1c5-4900-4922-a627-a0d1f674136b'
+    elif conviction is True:
         template_id = 'c7500574-df3c-4df1-b7f7-8755f6b61c7f'
 
-    response = send_email(email, {"firstName": name, "appReference": application_reference,
-                                  "reference": application_reference},
-                          template_id)
+    response = send_email(email, {"firstName": name, "ref": application_reference}, template_id)
+
     return response
 
 
