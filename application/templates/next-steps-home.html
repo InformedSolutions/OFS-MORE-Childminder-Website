@@ -20,11 +20,6 @@
             <li>arranged space in the home</li>
         </ul>
         <p>Read the <a href="https://www.gov.uk/government/publications/become-a-registered-early-years-or-childcare-provider-in-england" target="_blank">registration handbook</a> for more details.</p>
-        <p><img src="{% static 'download-button.png' %}"
-                style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
-            <a href="https://www.gov.uk/government/uploads/system/uploads/attachment_data/file/650103/EY_and_childcare_reg_handbook.pdf">Early
-                years registration handbook</a> (PDF, 918KB)</p>
-        <br>
         <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
             {{form.as_div}}
             {% csrf_token %}
@@ -32,7 +27,7 @@
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         </form>
         <br>
-        <p>Next: Prepare for your interview</p>
+        <p style="color: #b5babe">Next: Prepare for your interview</p>
     </div>
 </div>
 </div>

@@ -19,7 +19,6 @@
             <li>children have the knowledge and skills they need to start school</li>
         </ul>
         <p>Read the <a href="https://www.gov.uk/government/publications/early-years-foundation-stage-framework--2">Early Years Foundation Stage</a> for details</p>
-        <br>
         <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
             {{form.as_div}}
             {% csrf_token %}
@@ -27,7 +26,7 @@
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         </form>
         <br>
-        <p>Next: Documents you need for the visit</p>
+        <p style="color: #b5babe">Next: Documents you need for the visit</p>
     </div>
 </div>
 
