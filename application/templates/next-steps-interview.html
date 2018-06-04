@@ -12,30 +12,23 @@
             Prepare for your interview
         </h2>
         <p>The inspector will ask how you will meet the standards for looking after young children.</p>
-        <p>For example, they might ask about how you will:</p>
+        <p>They will ask how you will make sure that:</p>
         <ul class="list-bullet" style="margin-bottom: 20px; margin-left: 20px;">
-            <li>keep the children safe and healthy</li>
-            <li>manage their behaviour</li>
-            <li>help them learn and develop</li>
-            <li>measure their progress</li>
+            <li>children learn and develop well</li>
+            <li>children are kept healthy and safe</li>
+            <li>children have the knowledge and skills they need to start school</li>
         </ul>
-        <p>Read the Early Years Foundation Stage for details or ask your council about childminding training courses in
-            your area.</p>
-        <p><img src="{% static 'download-button.png' %}"
-                style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
-            <a href="">Early Years Foundation Stage</a> (PDF, 552KB)</p>
-        <ul class="list-bullet" style="margin-bottom: 20px;">
-            <li><a href="https://www.gov.uk/find-local-council">Find your local council</a></li>
-        </ul>
+        <p>Read the <a href="https://www.gov.uk/government/publications/early-years-foundation-stage-framework--2">Early Years Foundation Stage</a> for details</p>
         <br>
         <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
             {{form.as_div}}
             {% csrf_token %}
-            <input type="submit" class="button" value="Return to confirmation page">
+            <input type="submit" class="button" value="Continue">
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         </form>
+        <br>
+        <p>Next: Documents you need for the visit</p>
     </div>
-</div>
 </div>
 
 {% endblock %}

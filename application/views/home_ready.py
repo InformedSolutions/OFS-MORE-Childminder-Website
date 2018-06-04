@@ -28,7 +28,7 @@ def home_ready(request):
 
         if form.is_valid():
             return HttpResponseRedirect(
-                settings.URL_PREFIX + '/next-steps/interview?id=' + application_id_local)
+                settings.URL_PREFIX + '/prepare-interview?id=' + application_id_local)
         else:
             variables = {
                 'form': form,

@@ -20,6 +20,7 @@ from ..models import (AdultInHome,
                       ChildInHome,
                       ChildcareType,
                       CriminalRecordCheck,
+                      HealthDeclarationBooklet,
                       EYFS,
                       FirstAidTraining,
                       Reference,
@@ -264,9 +265,12 @@ def declaration_declaration(request):
 
         # If application is already submitted redirect them to the awaiting review page
         if application.application_status == 'SUBMITTED' and application.application_reference is not None:
+            criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
             variables = {
                 'application_id': application_id_local,
                 'order_code': application.application_reference,
+                'conviction': criminal_record_check.cautions_convictions,
+                'health_status': Application.objects.get(application_id=application_id_local).health_status
             }
             return render(request, 'payment-confirmation.html', variables)
 
@@ -322,9 +326,12 @@ def declaration_declaration(request):
                 application.application_status = "SUBMITTED"
                 application.save()
 
+                criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
                 variables = {
                     'application_id': application_id_local,
                     'order_code': application.application_reference,
+                    'conviction': criminal_record_check.cautions_convictions,
+                    'health_status': Application.objects.get(application_id=application_id_local).health_status,
                     'updated_list': updated_list
                 }
 

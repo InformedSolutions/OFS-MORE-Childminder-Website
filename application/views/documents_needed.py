@@ -30,8 +30,7 @@ def documents_needed(request):
         form = DocumentsNeededForm(request.POST)
 
         if form.is_valid():
-            return HttpResponseRedirect(
-                settings.URL_PREFIX + '/next-steps/home?id=' + app_id)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/home-ready?id=' + app_id)
         else:
             variables = {
                 'form': form,
