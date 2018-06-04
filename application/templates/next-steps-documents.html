@@ -7,75 +7,71 @@
 
 {% include "back-button.html" %}
 
-<div class="column-two-thirds">
-    <h2 class="heading-large">
-        Documents you need for the visit
-    </h2>
+<h2 class="heading-large">
+    Documents you need for the visit
+</h2>
+<div class="form-group" style="width: 66%;">
     <p>The inspector will need to check your identity and other documents when they visit your home.</p>
-    <div class="form-group">
-        <table class="check-your-answers" style="word-wrap: break-word;">
-            <thead>
-            <tr>
-                <th colspan="2"></th>
-            </tr>
-            <tr>
-                <th>Document type</th>
-                <th>Examples</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <td style="word-wrap: break-word;">Photo ID</td>
-                <td style="word-wrap: break-word;">Passport or driving licence</td>
-            </tr>
-            <tr>
-                <td rowspan="2">Proof of address (2 pieces of evidence)</td>
-                <td>Gas, electricity or water bill</td>
-            </tr>
-            <tr>
-                <td>Credit card, bank or mortgage statement</td>
-            </tr>
-            <tr>
-                <td>Proof of any name changes</td>
-                <td>Marriage certificate or decree absolute</td>
-            </tr>
-            <tr>
-                <td>Employment history</td>
-                <td>CV or details of where you have worked</td>
-            </tr>
-            <tr>
-                <td>First aid</td>
-                <td>Paediatric first aid certificate</td>
-            </tr>
-            <tr>
-                <td>Childcare qualifications</td>
-                <td>Certificates</td>
-            </tr>
-            <tr>
-                <td>Criminal record (DBS) checks</td>
-                <td>Certificates for everyone aged 16 or older who live in your home</td>
-            </tr>
-            <tr>
-                <td>Insurance</td>
-                <td>Public liability insurance</td>
-            </tr>
-            <tr>
-                <td>Driving documents</td>
-                <td>Driving licences, car insurance and MOT certificate (if driving children around)</td>
-            </tr>
-            </tbody>
-        </table>
-        <br>
-        <br>
-        <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </form>
-        <br>
-        <p>Next: Get your home ready</p>
-    </div>
+    <table class="check-your-answers" style="word-wrap: break-word;">
+        <thead>
+        <tr>
+            <th colspan="2"></th>
+        </tr>
+        <tr>
+            <th>Document type</th>
+            <th>Examples</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td style="word-wrap: break-word;">Photo ID</td>
+            <td style="word-wrap: break-word;">Passport or driving licence</td>
+        </tr>
+        <tr>
+            <td rowspan="2">Proof of address (2 pieces of evidence)</td>
+            <td>Gas, electricity or water bill</td>
+        </tr>
+        <tr>
+            <td>Credit card, bank or mortgage statement</td>
+        </tr>
+        <tr>
+            <td>Proof of any name changes</td>
+            <td>Marriage certificate or decree absolute</td>
+        </tr>
+        <tr>
+            <td>Employment history</td>
+            <td>CV or details of where you have worked</td>
+        </tr>
+        <tr>
+            <td>First aid</td>
+            <td>Paediatric first aid certificate</td>
+        </tr>
+        <tr>
+            <td>Childcare qualifications</td>
+            <td>Certificates</td>
+        </tr>
+        <tr>
+            <td>Criminal record (DBS) checks</td>
+            <td>Certificates for everyone aged 16 or older who live in your home</td>
+        </tr>
+        <tr>
+            <td>Insurance</td>
+            <td>Public liability insurance</td>
+        </tr>
+        <tr>
+            <td>Driving documents</td>
+            <td>Driving licences, car insurance and MOT certificate (if driving children around)</td>
+        </tr>
+        </tbody>
+    </table>
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Continue">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </form>
+    <br>
+    <p style="color: #b5babe">Next: Get your home ready</p>
 </div>
 
 {% endblock %}
