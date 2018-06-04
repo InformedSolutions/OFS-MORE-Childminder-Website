@@ -125,7 +125,7 @@ urlpatterns = [
     url(r'^email-sent/', TemplateView.as_view(template_name='email-sent.html'), name='Email-Sent-Template'),
     url(r'^start/', views.start_page, name='Start-Page-View'),
     url(r'^confirmation/', views.payment_confirmation, name='Payment-Confirmation'),
-    url(r'^next-steps/documents/', views.documents_needed, name='Next-Steps-Documents'),
+    url(r'^documents-needed/', views.documents_needed, name='Next-Steps-Documents'),
     url(r'^next-steps/home/', views.home_ready, name='Next-Steps-Home'),
     url(r'^next-steps/interview/', views.prepare_for_interview, name='Next-Steps-Interview'),
     url(r'^link-used/', TemplateView.as_view(template_name='bad-link.html')),
