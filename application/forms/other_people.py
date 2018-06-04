@@ -10,7 +10,8 @@ from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (AdultInHome,
                                 Application,
-                                ChildInHome)
+                                ChildInHome,
+                                UserDetails)
 from application.utils import date_formatter
 
 
@@ -167,9 +168,12 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         :return: string
         """
         email_address = self.cleaned_data['email_address']
+        applicant_email = UserDetails.objects.get(application_id=self.application_id_local).email
         # RegEx for valid e-mail addresses
         if re.match("^([a-zA-Z0-9_\-\.]+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$", email_address) is None:
             raise forms.ValidationError('Please enter a valid email address')
+        if email_address == applicant_email:
+            raise forms.ValidationError('Their email address cannot be the same as your email address')
         return email_address
 
 
