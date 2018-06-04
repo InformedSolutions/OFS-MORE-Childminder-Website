@@ -151,7 +151,7 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
         )
         self.assertEqual(r.status_code, 200)
         self.assertContains(r, '<li>health declaration booklet</li>')
-        self.assertContains(r, '<li>DBS certificate</li>')
+        self.assertContains(r, '<li>DBS certificate.</li>')
 
     def TestNewApplicationSubmit(self):
         """Submit whole application"""
