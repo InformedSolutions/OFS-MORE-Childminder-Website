@@ -68,12 +68,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
             self.launch_local_browser()
         else:
             # If not using local driver, default requests to a selenium grid server
-            self.selenium_driver = webdriver.Remote(
-                command_executor=os.environ['SELENIUM_HOST'],
-                desired_capabilities={'platform': 'ANY', 'browserName': 'firefox', 'version': ''}
-            )
+            self.launch_remote_browser()
 
-        self.selenium_driver.maximize_window()
         self.selenium_driver.implicitly_wait(30)
 
         self.verification_errors = []
@@ -100,6 +96,26 @@ class ApplyAsAChildminder(LiveServerTestCase):
             self.selenium_driver = webdriver.Chrome(path_to_chromedriver, chrome_options=chrome_options)
         else:
             self.selenium_driver = webdriver.Firefox()
+        self.selenium_driver.maximize_window()
+
+    def launch_remote_browser(self):
+        """
+        If the HEADLESS_CHROME value in Environment variables is set to true then it will launch chrome headless
+        browser, else it will launch firefox.
+        """
+
+        if os.environ.get('HEADLESS_CHROME') == 'True':
+            self.selenium_driver = webdriver.Remote(
+                command_executor=os.environ['SELENIUM_HOST'],
+                desired_capabilities={'platform': 'ANY', "headless": 'true', 'browserName': 'chrome', 'version': ''}
+            )
+
+        else:
+            self.selenium_driver = webdriver.Remote(
+                command_executor=os.environ['SELENIUM_HOST'],
+                desired_capabilities={'platform': 'ANY', 'browserName': 'firefox', 'version': ''}
+            )
+            self.selenium_driver.maximize_window()
 
     @try_except_method
     def test_directed_to_local_authority_if_not_eyfs_register(self):
