@@ -425,7 +425,7 @@ class SeleniumTaskExecutor:
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
         if children_in_home is True:
-            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Details of children in your home"))
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Children in your home"))
             driver.find_element_by_id("id_children_in_home_0").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
             driver.find_element_by_id("id_1-first_name").send_keys(child_forename)
