@@ -265,7 +265,7 @@ class TimeKnownField(forms.MultiValueField):
         :param args: Standard arguments parameter
         :param kwargs: Standard key word arguments parameter
         """
-        month_bounds_error = gettext('Month must be between 1 and 12')
+        month_bounds_error = gettext('Month must be between 1 and 11')
         year_bounds_error = gettext('You must have known the referee for at least 1 year')
 
         self.fields = [
