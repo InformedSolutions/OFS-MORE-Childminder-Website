@@ -4,7 +4,6 @@ from timeline_logger.models import TimelineLog
 from ..models import (Application)
 from ..models import (CriminalRecordCheck)
 from .. import status
-from datetime import datetime
 
 
 def payment_confirmation(request):
