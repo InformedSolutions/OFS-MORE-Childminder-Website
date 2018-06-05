@@ -69,6 +69,7 @@ class Application(models.Model):
     date_submitted = models.DateTimeField(blank=True, null=True)
     application_reference = models.CharField(blank=True, null=True, max_length=9,
                                              validators=[RegexValidator(r'(\w{2})([0-9]{7})')])
+    ofsted_visit_email_sent = models.DateTimeField(blank=True, null=True)
 
     @classmethod
     def get_id(cls, app_id):

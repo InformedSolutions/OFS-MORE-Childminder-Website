@@ -796,9 +796,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.complete_full_question_set()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='children']/td/a/span").click()
-        self.assertEqual("Check your answers: Type of childcare",
-                         self.selenium_task_executor.get_driver().find_element_by_xpath(
-                             "//main[@id='content']/h1").text)
+        self.assertEqual("Check your answers: type of childcare",
+                         self.selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='personal_details']/td/a/span").click()
         self.assertEqual("Check your answers: your personal details",
@@ -1277,6 +1276,44 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.get_driver().find_element_by_link_text("Still didn't get a code?").click()
         self.assertEqual("Sign in question", self.selenium_task_executor.get_driver().title)
+
+    @try_except_method
+    def test_applicant_cannot_enter_own_email_address_for_adult_in_home(self):
+        """
+        Test to ensure that the applicant cannot enter their own e-mail address as a household member's email address
+        """
+        applicant_email = self.create_standard_eyfs_application()
+
+        driver = self.selenium_task_executor.get_driver()
+
+        driver.find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
+
+        # Guidance page
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+
+        driver.find_element_by_id("id_adults_in_home_0").click()
+        driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        WebDriverWait(self.selenium_task_executor.get_driver(), 30).until(
+            expected_conditions.title_contains("Details of adults in your home")
+        )
+
+        driver.find_element_by_id("id_1-first_name").send_keys(faker.first_name())
+        driver.find_element_by_id("id_1-middle_names").send_keys(faker.first_name())
+        driver.find_element_by_id("id_1-last_name").send_keys(faker.last_name())
+        driver.find_element_by_id("id_1-date_of_birth_0").send_keys(random.randint(1, 28))
+        driver.find_element_by_id("id_1-date_of_birth_1").send_keys(random.randint(1, 12))
+        driver.find_element_by_id("id_1-date_of_birth_2").send_keys(random.randint(1980, 2000))
+        driver.find_element_by_id("id_1-relationship").send_keys('Co-inhabitant')
+        driver.find_element_by_id("id_1-email_address").send_keys(applicant_email)
+
+        # Javascript click execution is used here given element falls out of view location range
+        submit_button = driver.find_element_by_xpath("//input[@value='Save and continue']")
+        driver.execute_script("arguments[0].click();", submit_button)
+
+        self.assertIn("problem",
+                      self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+
 
     def complete_full_question_set(self):
         """

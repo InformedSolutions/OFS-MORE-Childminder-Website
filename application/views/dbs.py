@@ -104,7 +104,7 @@ def dbs_check_dbs_details(request):
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
         else:
-            form.error_summary_title = 'There was a problem with your DBS details'
+            form.error_summary_title = 'There was a problem with the DBS details'
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'

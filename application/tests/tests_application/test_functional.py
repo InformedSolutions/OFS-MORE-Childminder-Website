@@ -90,6 +90,69 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
 
         self.assertIs(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
 
+    def TestAppPaymentConfirmationWithNoHealthBookletNoConviction(self):
+        """Send Payment Confirmation"""
+        application = Application.objects.get(application_id=self.app_id)
+        application.health_status = 'NOT_STARTED'
+        application.save()
+
+        criminal_record_check = CriminalRecordCheck.objects.get(application_id=self.app_id)
+        criminal_record_check.cautions_convictions = False
+        criminal_record_check.save()
+
+        r = self.client.get(
+            reverse('Payment-Confirmation'),
+            {
+                'id': self.app_id,
+                'orderCode': Application.objects.get(application_id=self.app_id).application_reference,
+            }
+        )
+        self.assertEqual(r.status_code, 200)
+        self.assertNotContains(r, '<p>We need your health declaration booklet.</p>')
+        self.assertNotContains(r, '<li>DBS certificate</li>')
+
+    def TestAppPaymentConfirmationWithHealthBookletNoConviction(self):
+        """Send Payment Confirmation"""
+        application = Application.objects.get(application_id=self.app_id)
+        application.health_status = 'COMPLETED'
+        application.save()
+
+        criminal_record_check = CriminalRecordCheck.objects.get(application_id=self.app_id)
+        criminal_record_check.cautions_convictions = False
+        criminal_record_check.save()
+
+        r = self.client.get(
+            reverse('Payment-Confirmation'),
+            {
+                'id': self.app_id,
+                'orderCode': Application.objects.get(application_id=self.app_id).application_reference,
+            }
+        )
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, '<p>We need your health declaration booklet.</p>')
+        self.assertNotContains(r, '<li>DBS certificate</li>')
+
+    def TestAppPaymentConfirmationWithHealthBookletAndConviction(self):
+        """Send Payment Confirmation"""
+        application = Application.objects.get(application_id=self.app_id)
+        application.health_status = 'COMPLETED'
+        application.save()
+
+        criminal_record_check = CriminalRecordCheck.objects.get(application_id=self.app_id)
+        criminal_record_check.cautions_convictions = True
+        criminal_record_check.save()
+
+        r = self.client.get(
+            reverse('Payment-Confirmation'),
+            {
+                'id': self.app_id,
+                'orderCode': Application.objects.get(application_id=self.app_id).application_reference,
+            }
+        )
+        self.assertEqual(r.status_code, 200)
+        self.assertContains(r, '<li>health declaration booklet</li>')
+        self.assertContains(r, '<li>DBS certificate.</li>')
+
     def TestNewApplicationSubmit(self):
         """Submit whole application"""
 
@@ -147,6 +210,9 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
         self.TestAppArcFlaggedStatuses()
         self.TestAppPaymentCreditDetails()
         self.TestAppPaymentConfirmation()
+        self.TestAppPaymentConfirmationWithHealthBookletNoConviction()
+        self.TestAppPaymentConfirmationWithHealthBookletAndConviction()
+        self.TestAppPaymentConfirmationWithNoHealthBookletNoConviction()
 
     def test_application_submit(self):
         """

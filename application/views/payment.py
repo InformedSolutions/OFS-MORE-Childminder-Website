@@ -2,7 +2,9 @@ from django.shortcuts import render
 from timeline_logger.models import TimelineLog
 
 from ..models import (Application)
+from ..models import (CriminalRecordCheck)
 from .. import status
+from datetime import datetime
 
 
 def payment_confirmation(request):
@@ -12,16 +14,22 @@ def payment_confirmation(request):
     :return: an HttpResponse object with the rendered Payment confirmation template
     """
     application_id_local = request.GET['id']
+    try:
+        conviction = CriminalRecordCheck.objects.get(application_id=application_id_local).cautions_convictions
+    except CriminalRecordCheck.DoesNotExist:
+        conviction = False
 
     variables = {
         'application_id': application_id_local,
         'order_code': request.GET["orderCode"],
+        'conviction': conviction,
+        'health_status': Application.objects.get(application_id=application_id_local).health_status
     }
     local_app = Application.objects.get(
         application_id=application_id_local)
-
     status.update(application_id_local, 'declarations_status', 'COMPLETED')
     local_app.application_status = 'SUBMITTED'
+    local_app.ofsted_visit_email_sent = datetime.now()
     local_app.save()
 
     # Payment presents the first true trigger for submission so is logged as submitted at this point

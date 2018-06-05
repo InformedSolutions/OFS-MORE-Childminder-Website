@@ -4,25 +4,25 @@ from .view_parent import *
 class OtherPeopleTest(ViewsTest):
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/other-people/guidance/')
+        found = resolve(settings.URL_PREFIX + '/people/')
         self.assertEqual(found.func, other_people_guidance)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/other-people/guidance?id=')
+            c.get(settings.URL_PREFIX + '/people?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/other-people/adult-question/')
+        found = resolve(settings.URL_PREFIX + '/people/adults/')
         self.assertEqual(found.func, other_people_adult_question)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/other-people/adult-question?id=')
+            c.get(settings.URL_PREFIX + '/people/adults?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
@@ -40,13 +40,13 @@ class OtherPeopleTest(ViewsTest):
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/other-people/adult-dbs/')
+        found = resolve(settings.URL_PREFIX + '/people/adult-dbs-details/')
         self.assertEqual(found.func, other_people_adult_dbs)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/other-people/adult-dbs?id=')
+            c.get(settings.URL_PREFIX + '/people/adult-dbs-details?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
@@ -60,25 +60,25 @@ class OtherPeopleTest(ViewsTest):
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/other-people/children-question/')
+        found = resolve(settings.URL_PREFIX + '/people/children/')
         self.assertEqual(found.func, other_people_children_question)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/other-people/children-question?id=')
+            c.get(settings.URL_PREFIX + '/people/children?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/other-people/children-details/')
+        found = resolve(settings.URL_PREFIX + '/people/children-details/')
         self.assertEqual(found.func, other_people_children_details)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/other-people/children-details?id=')
+            c.get(settings.URL_PREFIX + '/people/children-details?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
@@ -96,13 +96,13 @@ class OtherPeopleTest(ViewsTest):
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/other-people/summary/')
+        found = resolve(settings.URL_PREFIX + '/people/check-answers/')
         self.assertEqual(found.func, other_people_summary)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/other-people/summary?id=')
+            c.get(settings.URL_PREFIX + '/people/check-answers?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)

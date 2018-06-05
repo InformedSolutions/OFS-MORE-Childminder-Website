@@ -72,7 +72,7 @@ def other_people_guidance(request):
             if application.people_in_home_status != 'COMPLETED':
                 if application.people_in_home_status != 'WAITING':
                     status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/adult-question?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + '/people/adults?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -138,8 +138,7 @@ def other_people_adult_question(request):
                 application.date_updated = current_date
                 application.save()
                 reset_declaration(application)
-                return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/children-question?id=' +
-                                            application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/people/children?id=' + application_id_local)
         else:
 
             if application.application_status == 'FURTHER_INFORMATION':
@@ -249,7 +248,7 @@ def other_people_adult_details(request):
                     'application_id': application_id_local,
                     'people_in_home_status': application.people_in_home_status
                 }
-                return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/adult-dbs?id=' + application_id_local +
+                return HttpResponseRedirect(settings.URL_PREFIX + '/people/adult-dbs-details?id=' + application_id_local +
                                             '&adults=' + number_of_adults, variables)
             # If there is an invalid form
             elif False in valid_list:
@@ -346,7 +345,7 @@ def other_people_adult_dbs(request):
             form = OtherPeopleAdultDBSForm(
                 request.POST, id=application_id_local, adult=i, prefix=i, name=name)
             form_list.append(form)
-            form.error_summary_title = 'There is a problem with this form (Person ' + str(
+            form.error_summary_title = 'There was a problem with the DBS details (Person ' + str(
                 i) + ')'
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
@@ -369,7 +368,7 @@ def other_people_adult_dbs(request):
                 'application_id': application_id_local,
                 'people_in_home_status': application.people_in_home_status
             }
-            return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/children-question?id=' +
+            return HttpResponseRedirect(settings.URL_PREFIX + '/people/children?id=' +
                                         application_id_local + '&adults=' + number_of_adults, variables)
         # If there is an invalid form
         elif False in valid_list:
@@ -428,7 +427,7 @@ def other_people_children_question(request):
             application.save()
             reset_declaration(application)
             if children_in_home == 'True':
-                return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/children-details?id=' +
+                return HttpResponseRedirect(settings.URL_PREFIX + '/people/children-details?id=' +
                                             application_id_local + '&children=' + str(number_of_children) + '&remove=0')
             elif children_in_home == 'False':
                 # Delete any existing children from database
@@ -521,7 +520,7 @@ def other_people_children_details(request):
                 request.POST, id=application_id_local, child=i, prefix=i)
             form.remove_flag()
             form_list.append(form)
-            form.error_summary_title = 'There is a problem with this form (Child ' + str(i) + ')'
+            form.error_summary_title = 'There was a problem with the details (Child ' + str(i) + ')'
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = "There was a problem (Person " + str(i) + ")"
@@ -601,7 +600,7 @@ def other_people_children_details(request):
                 add_child = int(number_of_children) + 1
                 add_child_string = str(add_child)
                 return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/other-people/children-details?id=' +
+                    settings.URL_PREFIX + '/people/children-details?id=' +
                     application_id_local + '&children=' + add_child_string + '&remove=0#person' + add_child_string,
                     variables)
             # If there is an invalid form
