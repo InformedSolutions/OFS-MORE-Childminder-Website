@@ -5,7 +5,7 @@ import calendar
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, reverse
 
 from ..table_util import Table, create_tables, submit_link_setter
 from .. summary_page_data import personal_details_name_dict, personal_details_link_dict
@@ -502,8 +502,8 @@ def personal_details_location_of_care(request):
                     settings.URL_PREFIX + '/personal-details/check-answers?id=' + app_id)
 
             else:
-                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/childcare-address?id=' +
-                                            app_id + '&manual=False&lookup=False')
+
+                return HttpResponseRedirect(reverse('Service-Unavailable') + '?id=' + app_id)
         else:
 
             form.error_summary_title = 'There was a problem with your address details'
@@ -519,6 +519,22 @@ def personal_details_location_of_care(request):
             }
 
             return render(request, 'personal-details-location-of-care.html', variables)
+
+
+def service_unavailable(request):
+    """
+    Method returning the service unavailable page
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Service unavailable template
+    """
+
+    if request.method == 'GET':
+        app_id = request.GET["id"]
+        variables = {
+            'application_id': app_id,
+        }
+
+        return render(request, 'service-unavailable.html', variables)
 
 
 def personal_details_childcare_address(request):

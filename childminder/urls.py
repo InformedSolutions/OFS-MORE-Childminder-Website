@@ -152,6 +152,7 @@ urlpatterns = [
     url(r'^email-resent/$', views.login.login_email_link_resent, name='Email-Resent'),
     url(r'^new-code/$', magic_link.ResendSMSCodeView.as_view(), name='Resend-Code'),
     url(r'^help-contact/$', views.help_and_contact, name='Help-And-Contact-View'),
+    url(r'^cannot-use-service/$', views.personal_details.service_unavailable, name='Service-Unavailable')
 ]
 
 if settings.DEBUG:
