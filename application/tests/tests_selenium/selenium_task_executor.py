@@ -248,13 +248,6 @@ class SeleniumTaskExecutor:
         driver.find_element_by_id("id_childcare_location_1").click()
         driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
-        # Childcare location address
-        self.select_test_address()
-        driver.find_element_by_xpath("//input[@value='Save and continue']").click()
-
-        # Confirm task summary page
-        driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
-
     def complete_first_aid_training(self, training_provider, completion_date_day, completion_date_month,
                                     completion_date_year, expect_update_page):
         """
