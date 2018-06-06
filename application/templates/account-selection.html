@@ -4,6 +4,7 @@
 {% load govuk_template_base %}
 
 {% block inner_content %}
+<div class="two-thirds">
 {{form.error_summary}}
 
 <h1 class="heading-large">
@@ -15,5 +16,6 @@
     {% csrf_token %}
     <input type="submit" class="button" value="Continue" alt='Continue'>
 </form>
+</div>
 
 {% endblock %}

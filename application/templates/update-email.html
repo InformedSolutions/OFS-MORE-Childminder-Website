@@ -7,6 +7,7 @@
 
 {% include "back-button.html" %}
 
+<div class="two-thirds">
     {{form.error_summary}}
     <!-- Form -->
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
@@ -24,5 +25,6 @@
             <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         </div>
     </form>
+</div>
 
 {% endblock %}

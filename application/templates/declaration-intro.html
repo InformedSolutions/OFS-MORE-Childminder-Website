@@ -6,6 +6,7 @@
 {% block inner_content %}
 
 {% include "back-button.html" %}
+<div class="two-thirds">
 {{form.error_summary}}
 <div class="form-group">
     <h1 class="form-title heading-large">
@@ -13,14 +14,17 @@
     </h1>
     <p>You need to confirm that the information you have given us is correct.</p>
     <p>We need to share your information with other organisations for:</p>
-    <li style="margin-left: 30px;">background checks</li>
-    <li class="text-before-button" style="margin-left: 30px;">legal reasons, for instance if there are concerns around protecting children.</li>
+    <ul class="list-bullet">
+        <li>background checks</li>
+        <li class="text-before-button">legal reasons, for instance if there are concerns around protecting children.</li>
+    </ul>
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         {{form.as_div}}
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>
         <input type="submit" class="button" value="Continue"/>
     </form>
+</div>
 </div>
 
 {% endblock %}

@@ -8,6 +8,7 @@
 {% include "back-button.html" %}
 
     <!-- Initialise error summary for page -->
+<div class="two-thirds">
 {{form.error_summary}}
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         <div class="form-group">
@@ -27,5 +28,6 @@
     {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
         {% include 'return-to-list.html' %}
     {% endif %}
+</div>
 
 {% endblock %}

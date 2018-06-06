@@ -4,6 +4,7 @@
 {% load govuk_template_base %}
 {% block inner_content %}
 {% include "back-button.html" %}
+<div class="two-thirds">
 {% if resend_limit %}
     {% include "resend_error.html" %}
 {% endif %}
@@ -27,5 +28,6 @@
         <input type="hidden" id="adult" name="adult" value="{{adult}}"/>
     </div>
 </form>
+</div>
 
 {% endblock %}

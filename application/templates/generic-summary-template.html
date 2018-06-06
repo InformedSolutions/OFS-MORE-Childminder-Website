@@ -9,12 +9,13 @@
 
 {% include "generic-error-summary.html" with table_list=table_list application_id=application_id %}
 
+<div class="two-thirds">
 <h1 class="form-title heading-large">
     {{ page_title }}
 </h1>
 
 {% for table in table_list %}
-<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+<table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
         <col class="summary-column">
@@ -96,5 +97,6 @@
     <input type="submit" class="button" value="Confirm and continue"/>
     <input type="hidden" value="{{application_id}}" name="id"/>
 </form>
+</div>
 
 {% endblock %}

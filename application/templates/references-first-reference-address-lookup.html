@@ -8,28 +8,30 @@
 {% include "back-button.html" %}
 
 <!-- Initialise error summary for page -->
+<div class="two-thirds">
 {{form.error_summary}}
-
+</div>
 <!-- Form -->
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <!-- Content -->
-    <div class="form-group">
+    <div class="two-thirds">
         <h1 class="form-title heading-large">
             Select first reference address
         </h1>
         <p>Please give the address for your first referee.</p>
         <h2 class="form-title heading-small">Postcode</h2>
-        <p>{{postcode}} <a
-                href="{% url 'References-First-Reference-Address-View' %}?id={{application_id}}">Change</a></p>
-        <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
-        {{form.as_div}}
-        {% csrf_token %}
-        <a href="{% url 'References-Enter-First-Reference-Address-View' %}?id={{application_id}}" name="manual"
-           id="manual">I can't find my address in the list</a>
-        <input type="submit" class="button button-submit" value="Save and continue">
-        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
+    <p>{{postcode}} <a
+            href="{% url 'References-First-Reference-Address-View' %}?id={{application_id}}">Change</a></p>
+    <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
+    {{form.as_div}}
+    {% csrf_token %}
+    <a href="{% url 'References-Enter-First-Reference-Address-View' %}?id={{application_id}}" name="manual"
+       id="manual">I can't find my address in the list</a>
+    <input type="submit" class="button button-submit" value="Save and continue">
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
 </form>
+<br>
 
 {% include 'return-to-list.html' %}
 

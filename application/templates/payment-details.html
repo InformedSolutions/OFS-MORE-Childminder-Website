@@ -7,6 +7,7 @@
 
 {% include "back-button.html" %}
 
+<div class="two-thirds">
 {{form.error_summary}}
 
 <h1 class="form-title heading-large">
@@ -23,10 +24,10 @@
 <p>
     You are paying <span class="bold-small">&#163;35</span> to <span class="bold-small">apply to be a childminder</span>.
 </p>
-
+</div>
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    <div class="form-group">
-        {{form.as_div}}
+    {{form.as_div}}
+    <div class="two-thirds">
         <p>Ofsted does not keep a record of your card details.</p>
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>

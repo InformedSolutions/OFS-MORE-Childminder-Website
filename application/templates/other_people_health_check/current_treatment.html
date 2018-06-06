@@ -7,15 +7,16 @@
 {% block inner_content %}
 {% include 'back-button.html' %}
 
+<div class="two-thirds">
 {{ form.error_summary }}
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     {% csrf_token %}
     <div class = "form-group">
         <h1 class="form-title heading-large">Current medical treatment</h1>
-
         {{ form }}
         <input type="submit" class="button" value="Continue">
     </div>
 </form>
+</div>
 
 {% endblock %}
