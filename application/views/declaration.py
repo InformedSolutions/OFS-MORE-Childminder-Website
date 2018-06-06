@@ -50,8 +50,11 @@ def declaration_summary(request, print=False):
             personal_detail_id=personal_detail_id)
         applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                          current_address=True)
-        applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                              childcare_address=True)
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True).exists():
+            applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                                  childcare_address=True)
+        else:
+            applicant_childcare_address_record = 'Same as home address'
         first_aid_record = FirstAidTraining.objects.get(
             application_id=application_id_local)
         dbs_record = CriminalRecordCheck.objects.get(
@@ -360,7 +363,6 @@ def render_each_field(declaration_form):
     for name, field in declaration_form.fields.items():
         fields.append(declaration_form.render_field(name, field))
     return fields
-
 
 
 def generate_list_of_updated_tasks(application_id):
