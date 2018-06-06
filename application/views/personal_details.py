@@ -897,13 +897,18 @@ def personal_details_summary(request):
         if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True).exists():
             applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                                   childcare_address=True)
+            childcare_street_line1 = applicant_childcare_address_record.street_line1
+            childcare_street_line2 = applicant_childcare_address_record.street_line2
+            childcare_town = applicant_childcare_address_record.town
+            childcare_county = applicant_childcare_address_record.county
+            childcare_postcode = applicant_childcare_address_record.postcode
         else:
             applicant_childcare_address_record = 'Same as home address'
-        childcare_street_line1 = applicant_childcare_address_record.street_line1
-        childcare_street_line2 = applicant_childcare_address_record.street_line2
-        childcare_town = applicant_childcare_address_record.town
-        childcare_county = applicant_childcare_address_record.county
-        childcare_postcode = applicant_childcare_address_record.postcode
+            childcare_street_line1 = ''
+            childcare_street_line2 = ''
+            childcare_town = ''
+            childcare_county = ''
+            childcare_postcode = ''
 
         name_dob_table_dict = collections.OrderedDict([
             ('name', ' '.join([first_name, (middle_names or ''), last_name])),
