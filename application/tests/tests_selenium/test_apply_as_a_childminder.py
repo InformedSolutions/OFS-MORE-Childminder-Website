@@ -14,6 +14,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.select import Select
 
 from .selenium_task_executor import SeleniumTaskExecutor
 
@@ -246,6 +247,50 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
 
         self.selenium_task_executor.complete_type_of_childcare(True, True, True, True)
+
+        # Try to get to task list
+        self.selenium_task_executor.get_driver().find_element_by_id("proposition-name").click()
+
+        self.assertEqual("Your name",
+                         self.selenium_task_executor.get_driver().title)
+
+        # Partially complete Personal details task
+        self.selenium_task_executor.get_driver().find_element_by_id("id_first_name").send_keys('Test')
+        self.selenium_task_executor.get_driver().find_element_by_id("id_last_name").send_keys('Test')
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        # Try to get to task list
+        self.selenium_task_executor.get_driver().find_element_by_id("proposition-name").click()
+
+        self.assertEqual("Your name",
+                         self.selenium_task_executor.get_driver().title)
+
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        # Partially complete Personal details task
+        self.selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_0").send_keys(20)
+        self.selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_1").send_keys(12)
+        self.selenium_task_executor.get_driver().find_element_by_id("id_date_of_birth_2").send_keys(1995)
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        # Try to get to task list
+        self.selenium_task_executor.get_driver().find_element_by_id("proposition-name").click()
+
+        self.assertEqual("Your name",
+                         self.selenium_task_executor.get_driver().title)
+
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        self.selenium_task_executor.get_driver().find_element_by_id("id_postcode").send_keys("WA14 4PA")
+        self.selenium_task_executor.get_driver().find_element_by_name("postcode-search").click()
+
+        # Select matched result
+        self.selenium_task_executor.get_driver().find_element_by_id("id_address").click()
+        Select(self.selenium_task_executor.get_driver().find_element_by_id("id_address")).select_by_visible_text(
+            "INFORMED SOLUTIONS LTD, THE OLD BANK, OLD MARKET PLACE, ALTRINCHAM, WA14 4PA")
+
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
 
         # Try to get to task list
         self.selenium_task_executor.get_driver().find_element_by_id("proposition-name").click()
