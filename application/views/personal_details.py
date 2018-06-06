@@ -894,8 +894,11 @@ def personal_details_summary(request):
         county = applicant_home_address_record.county
         postcode = applicant_home_address_record.postcode
         location_of_childcare = applicant_home_address_record.childcare_address
-        applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                              childcare_address=True, )
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True).exists():
+            applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                                  childcare_address=True)
+        else:
+            applicant_childcare_address_record = 'Same as home address'
         childcare_street_line1 = applicant_childcare_address_record.street_line1
         childcare_street_line2 = applicant_childcare_address_record.street_line2
         childcare_town = applicant_childcare_address_record.town
