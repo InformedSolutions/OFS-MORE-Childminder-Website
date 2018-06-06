@@ -342,6 +342,31 @@ class ApplyAsAChildminder(LiveServerTestCase):
             "//tr[@id='personal_details']/td/a/strong").text)
 
     @try_except_method
+    def test_cannot_complete_personal_details_task_when_location_of_care_is_not_same_as_home_address(self):
+        """
+        Test to make sure a user cannot complete an application if they choose No to the question Is this where you
+        will be looking after the children?
+        """
+        self.selenium_task_executor.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+
+        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+        self.selenium_task_executor.complete_type_of_childcare(True, False, False, True)
+
+        # Below DOB means they are an adult so do not fire validation triggers
+        self.selenium_task_executor.complete_personal_details(
+            faker.first_name(), faker.first_name(), faker.last_name_female(),
+            random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
+            False
+        )
+
+        # Check Can't user service page is shown
+        self.assertEqual("Can't use service", self.selenium_task_executor.get_driver().title)
+
+    @try_except_method
     def test_can_complete_dbs_task_without_cautions_or_convictions(self):
         """
         Tests the Criminal record (DBS) check task can be completed when stating that you do not have cautions
@@ -593,7 +618,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            False
+            True
         )
 
         # Check task status marked as Done
@@ -1314,7 +1339,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertIn("problem",
                       self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
 
-
     def complete_full_question_set(self):
         """
         Helper method for completing all questions in an application
@@ -1395,7 +1419,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            False
+            True
         )
 
         # Check task status set to done
