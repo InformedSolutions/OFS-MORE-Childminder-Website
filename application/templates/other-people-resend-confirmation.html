@@ -6,6 +6,7 @@
 {% include "back-button.html" %}
 
 <!-- Form -->
+<div class="two-thirds">
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <!-- Content -->
     <div class="form-group">
@@ -13,12 +14,12 @@
             Email resent
         </h1>
         <p>We have resent an email to {{name}}: {{email}}.</p>
-        <br>
         {{form.as_div}}
         {% csrf_token %}
         <input type="submit" class="button" value="Continue">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
 </form>
+</div>
 
 {% endblock %}

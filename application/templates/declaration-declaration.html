@@ -6,6 +6,7 @@
 {% block inner_content %}
 {% include "back-button.html" %}
 
+<div class="two-thirds">
 {{declaration_form.error_summary}}
 
 <div class="form-group">
@@ -54,6 +55,7 @@
             <input type="submit" class="button" value="Confirm and pay your fee"/>
         {% endif %}
     </form>
+</div>
 </div>
 
 {% endblock %}

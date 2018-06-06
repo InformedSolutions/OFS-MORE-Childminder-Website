@@ -11,7 +11,7 @@
 
 {% include "back-button.html" %}
 
-
+<div class="two-thirds">
 {% for form in forms %}
 {{ form.error_summary }}
 {% endfor %}
@@ -38,5 +38,6 @@
 {% if login_details_status == 'COMPLETED' %}
 {% include 'return-to-list.html' %}
 {% endif %}
+</div>
 
 {% endblock %}

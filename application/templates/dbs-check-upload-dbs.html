@@ -6,6 +6,7 @@
 {% block inner_content %}
 
 {% include "back-button.html" %}
+<div class="two-thirds">
 {{form.error_summary}}
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <div class="form-group">
@@ -20,6 +21,8 @@
         <input type="submit" class="button" id="dbs-upload-continue" value="Save and continue">
     </div>
 </form>
+</div>
+
 
 {% include 'return-to-list.html' %}
 

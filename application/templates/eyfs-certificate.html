@@ -7,6 +7,7 @@
 
 {% include "back-button.html" %}
 <!-- Initialise error summary for page -->
+<div class="two-thirds">
 {{form.error_summary}}
 
 <div class="form-group">
@@ -22,6 +23,7 @@
         <input type="submit" class="button" value="Continue" alt='Continue to declaration'>
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </form>
+</div>
 </div>
 
 {% include 'return-to-list.html' %}

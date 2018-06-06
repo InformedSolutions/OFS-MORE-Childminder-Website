@@ -6,6 +6,7 @@
 {% block inner_content %}
 
 {% include "back-button.html" %}
+<div class="two-thirds">
 <!-- Form -->
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <div class="form-group">
@@ -52,5 +53,6 @@
         {% include 'return-to-list.html' %}
     {% endif %}
 </form>
+</div>
 
 {% endblock %}

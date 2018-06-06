@@ -8,6 +8,7 @@
 {% include "back-button.html" %}
 
 <!-- Initialise error summary for page -->
+<div class="two-thirds">
 {% for form in form_list %}
     {{form.error_summary}}
 {% endfor %}
@@ -51,6 +52,7 @@
         <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
     </div>
 </form>
+</div>
 
 {% include 'return-to-list.html' %}
 

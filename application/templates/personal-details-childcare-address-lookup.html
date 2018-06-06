@@ -7,27 +7,28 @@
 
 {% include "back-button.html" %}
 <!-- Initialise error summary for page -->
+<div class="two-thirds">
 {{form.error_summary}}
+</div>
 
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <!-- Content -->
-    <div class="form-group">
-        <h1 class="form-title heading-large">
-            Select childcare address
-        </h1>
-        <p>Where will you be looking after the children?</p>
-        <h2 class="form-title heading-small">Postcode</h2>
-        <p>{{postcode}} <a
-                href="{% url 'Personal-Details-Childcare-Address-View' %}?id={{application_id}}">Change</a></p>
-        <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
-        {{form.as_div}}
-        {% csrf_token %}
-        <a href="{% url 'Personal-Details-Childcare-Address-Manual-View' %}?id={{application_id}}" name="manual"
-           id="manual">I can't find my address in the list</a>
-        <input type="submit" class="button button-submit" value="Save and continue">
-        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-    </div>
+    <h1 class="form-title heading-large">
+        Select childcare address
+    </h1>
+    <p>Where will you be looking after the children?</p>
+    <h2 class="form-title heading-small">Postcode</h2>
+    <p>{{postcode}} <a
+            href="{% url 'Personal-Details-Childcare-Address-View' %}?id={{application_id}}">Change</a></p>
+    <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
+    {{form.as_div}}
+    {% csrf_token %}
+    <a href="{% url 'Personal-Details-Childcare-Address-Manual-View' %}?id={{application_id}}" name="manual"
+       id="manual">I can't find my address in the list</a>
+    <input type="submit" class="button button-submit" value="Save and continue">
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
 </form>
+<br>
 
 {% if personal_details_status == 'COMPLETED' %}
 {% include 'return-to-list.html' %}

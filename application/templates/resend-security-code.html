@@ -6,6 +6,7 @@
 {% block inner_content %}
 {% include "back-button.html" %}
 
+<div class="two-thirds">
 <h1 class="form-title heading-large">
     Send new security code
 </h1>
@@ -16,6 +17,7 @@
     {% csrf_token %}
     <input type="submit" class="button" value="Send new code" alt="Send new code" id="id_send_new_code_button">
 </form>
+</div>
 
 
 {% endblock %}
