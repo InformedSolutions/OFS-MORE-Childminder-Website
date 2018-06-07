@@ -18,6 +18,7 @@
     {{form.as_div}}
     {% csrf_token %}
     <input type="submit" class="button" value="Submit" alt='Submit'>
+    <input type="hidden" value="{{ previous_url }}" id="url" name="url">
 </form>
 
 {% endblock %}

@@ -3,6 +3,7 @@ import re
 from django import forms
 
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
 from application.forms.childminder import ChildminderForms
 
@@ -18,7 +19,7 @@ class FeedbackForm(ChildminderForms):
     feedback = forms.CharField(widget=forms.Textarea(), label='Tell us what you think of our online service',
                                error_messages={'required': 'Please give us feedback before submitting'})
     email_address = forms.CharField(
-        label='Leave us your email address. We may have more questions about your feedback. (Optional)', required=False)
+        label=mark_safe('Leave us your email address. We may have more<br />  questions about your feedback. (Optional)'), required=False)
 
     def __init__(self, *args, **kwargs):
         """
@@ -45,6 +46,7 @@ class FeedbackForm(ChildminderForms):
         """
         email_address = self.cleaned_data['email_address']
         # RegEx for valid e-mail addresses
-        if re.match(settings.REGEX['EMAIL'], email_address) is None:
-            raise forms.ValidationError('Please enter a valid email address')
+        if email_address != '':
+            if re.match(settings.REGEX['EMAIL'], email_address) is None:
+                raise forms.ValidationError('Please enter a valid email address')
         return email_address
