@@ -7,20 +7,20 @@
 
 {% include "back-button.html" %}
 <div class="two-thirds">
-{{form.error_summary}}
-
-<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
+    {{form.error_summary}}
+</div>
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <div class="two-thirds">
         <h1 class="form-title heading-large">
             Sign in
         </h1>
         <p>Enter your email address.</p>
         <p>We will send you a link to go back to your application.</p>
-        {% csrf_token %}
-        {{form.as_div}}
+    </div>
+    {% csrf_token %}
+    {{form.as_div}}
 
-        <input type="submit" class="button" value="Continue" alt="Continue">
-
+    <input type="submit" class="button" value="Continue" alt="Continue">
 </form>
-</div>
 
 {% endblock %}
