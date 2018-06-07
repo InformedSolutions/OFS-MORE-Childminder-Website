@@ -33,7 +33,19 @@ def task_list(request):
 
         application_id = request.GET["id"]
         application = Application.objects.get(pk=application_id)
-        childcare_record = None
+
+        # Add handlers to prevent a user re-accessing their application details and modifying post-submission
+        if application.application_status == 'ARC_REVIEW' or application.application_status == 'SUBMITTED':
+            return HttpResponseRedirect(
+                reverse('Awaiting-Review-View') + '?id=' + str(application.application_id)
+            )
+
+        if application.application_status == 'ACCEPTED':
+            return HttpResponseRedirect(
+                reverse('Accepted-View') + '?id=' + str(application.application_id)
+            )
+
+
         try:
             childcare_record = ChildcareType.objects.get(application_id=application_id)
         except Exception as e:

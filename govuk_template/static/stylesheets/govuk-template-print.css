@@ -93,11 +93,9 @@ td {
 .heading-medium {
     margin: 22.5px, 0px, 9px, 0px
 }
-/* hide the unnecessary page elements */
-body footer,
-.visuallyhidden,
-.change-answer
-.no-print
-#global-cookie-message,
-#skiplink-container {
-  display: none !important; }
+
+@media print {
+    .no-print {
+      display: none !important;
+    }
+}
