@@ -11,7 +11,7 @@ from django.conf.urls import url, include
 from django.views.generic import TemplateView
 
 from application import views, utils
-from application.views import security_question, magic_link
+from application.views import security_question, magic_link, feedback
 from application.views.other_people_health_check import health_check_login, dob_auth, current_treatment, guidance, \
     declaration, serious_illness, hospital_admission, summary, thank_you
 
@@ -152,7 +152,8 @@ urlpatterns = [
     url(r'^email-resent/$', views.login.login_email_link_resent, name='Email-Resent'),
     url(r'^new-code/$', magic_link.ResendSMSCodeView.as_view(), name='Resend-Code'),
     url(r'^help-contact/$', views.help_and_contact, name='Help-And-Contact-View'),
-    url(r'^cannot-use-service/$', views.personal_details.service_unavailable, name='Service-Unavailable')
+    url(r'^cannot-use-service/$', views.personal_details.service_unavailable, name='Service-Unavailable'),
+    url(r'^feedback/', feedback.feedback, name='Feedback')
 ]
 
 if settings.DEBUG:
