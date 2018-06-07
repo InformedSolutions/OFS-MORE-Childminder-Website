@@ -75,7 +75,7 @@
         <div class="phase-banner-beta no-print">
           <p>
             <strong class="phase-tag">Beta</strong>
-            <span>{% block phase_banner_message %}<a href="{% url 'Feedback' %}?url={{ request.get_full_path }}">Tell us what you think</a> (takes 30 seconds){% endblock %}</span>
+            <span>{% block phase_banner_message %}<a href="{% url 'Feedback' %}?url={{ request.get_full_path }}" id="feedback">Tell us what you think</a> (takes 30 seconds){% endblock %}</span>
           </p>
         </div>
       {% endif %}
