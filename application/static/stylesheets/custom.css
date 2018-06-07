@@ -477,3 +477,14 @@ div.error-summary ul.error-summary-list {
 .no-left-margin {
     margin-left: 0px;
 }
+
+.print-icon {
+  height: 20px;
+  margin-right: 10px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.indent-left {
+   margin-left: 20px;
+}
