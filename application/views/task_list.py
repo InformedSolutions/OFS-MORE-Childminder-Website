@@ -13,8 +13,8 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.views.decorators.cache import never_cache
 
-from application.models import (ApplicantName, ApplicantPersonalDetails, Application, ChildcareType, Arc)
-
+from application.models import (ApplicantName, ApplicantPersonalDetails, Application, ChildcareType, Arc,
+                                ApplicantHomeAddress)
 
 # noinspection PyTypeChecker
 from application.utils import can_cancel
@@ -40,14 +40,17 @@ def task_list(request):
             return HttpResponseRedirect(reverse("Type-Of-Childcare-Guidance-View") + '?id=' + application_id)
 
         personal_details_record = None
+        personal_details_name_record = None
+        personal_details_home_address_record = None
+        personal_details_childcare_address_record = None
 
         try:
             personal_details_record = ApplicantPersonalDetails.objects.get(application_id=application_id)
-        except Exception as e:
-            return HttpResponseRedirect(reverse("Personal-Details-Name-View") + '?id=' + application_id)
-
-        try:
             personal_details_name_record = ApplicantName.objects.get(application_id=application_id)
+            personal_details_home_address_record = ApplicantHomeAddress.objects.get(application_id=application_id,
+                                                                                    current_address=True)
+            personal_details_childcare_address_record = ApplicantHomeAddress.objects.get(application_id=application_id,
+                                                                                         childcare_address=True)
         except Exception as e:
             return HttpResponseRedirect(reverse("Personal-Details-Name-View") + '?id=' + application_id)
 
@@ -217,7 +220,8 @@ def task_list(request):
             ]
         }
 
-    if len([task for task in context['tasks'] if task['status'] in ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]) < 1:
+    if len([task for task in context['tasks'] if
+            task['status'] in ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]) < 1:
         context['all_complete'] = True
     else:
         context['all_complete'] = False
