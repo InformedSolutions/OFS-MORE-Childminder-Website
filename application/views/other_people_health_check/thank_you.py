@@ -42,6 +42,15 @@ class ThankYou(BaseTemplateView):
                 arc_comment.delete()
             adult_record.health_check_status = 'Done'
             adult_record.save()
+
+            # Set task to Done if no ARC comments exist for task
+            if ArcComments.objects.filter(table_pk=self.request.GET.get('person_id'),
+                                          table_name='ADULT_IN_HOME').count() == 0:
+                if ArcComments.objects.filter(table_pk=self.request.GET.get('person_id'),
+                                          table_name='CHILD_IN_HOME').count() == 0:
+                    application.people_in_home_status = 'COMPLETED'
+                    application.save()
+
             all_adults = AdultInHome.objects.filter(application_id=adult_record.application_id)
 
             for adult in all_adults:
