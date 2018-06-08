@@ -335,7 +335,7 @@ class ReferenceFirstReferenceContactForm(ChildminderForms):
         phone_number = self.cleaned_data['phone_number']
         no_space_phone_number = phone_number.replace(' ', '')
         if phone_number != '':
-            if re.match(settings.REGEX['PHONE'], no_space_phone_number) is None:
+            if re.match(settings.REGEX['INTERNATIONAL_PHONE'], no_space_phone_number) is None:
                 raise forms.ValidationError('Please enter a valid phone number')
         return phone_number
 
@@ -634,7 +634,7 @@ class ReferenceSecondReferenceContactForm(ChildminderForms):
         phone_number = self.cleaned_data['phone_number']
         no_space_phone_number = phone_number.replace(' ', '')
         if phone_number != '':
-            if re.match(settings.REGEX['PHONE'], no_space_phone_number) is None:
+            if re.match(settings.REGEX['INTERNATIONAL_PHONE'], no_space_phone_number) is None:
                 raise forms.ValidationError('Please enter a valid phone number')
         return phone_number
 
