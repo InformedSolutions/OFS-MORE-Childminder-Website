@@ -1,5 +1,5 @@
 from application.middleware import CustomAuthenticationHandler
-from application.models import AdultInHome, UserDetails, ApplicantName, Application
+from application.models import AdultInHome, UserDetails, ApplicantName, Application, ArcComments
 from application.notify import send_email
 from application.status import update
 from application.views import create_account_magic_link
@@ -8,14 +8,13 @@ from childminder import settings
 
 
 class ThankYou(BaseTemplateView):
-
     template_name = 'other_people_health_check/thank_you.html'
     success_url_name = 'Health-Check-Thank-You'
 
     def get(self, request, *args, **kwargs):
         response = super().get(request=self.request)
         adult_record = AdultInHome.objects.get(pk=self.request.GET.get('person_id'))
-        adult_name = ' '.join([adult_record.first_name , (adult_record.middle_names or '') ,adult_record.last_name])
+        adult_name = ' '.join([adult_record.first_name, (adult_record.middle_names or ''), adult_record.last_name])
         application = Application.objects.get(application_id=adult_record.application_id_id)
         user_details = UserDetails.objects.get(application_id=application.application_id)
 
@@ -35,7 +34,12 @@ class ThankYou(BaseTemplateView):
                                "Household Member Name": adult_name}
             r = send_email(email, personalisation, template_id)
             print(link)
-
+            # Delete ARC comment if it exists after recompleting the household member health check
+            if ArcComments.objects.filter(table_pk=self.request.GET.get('person_id'),
+                                                  field_name='health_check_status').count() > 0:
+                arc_comment = ArcComments.objects.get(table_pk=self.request.GET.get('person_id'),
+                                                      field_name='health_check_status')
+                arc_comment.delete()
             adult_record.health_check_status = 'Done'
             adult_record.save()
             all_adults = AdultInHome.objects.filter(application_id=adult_record.application_id)
