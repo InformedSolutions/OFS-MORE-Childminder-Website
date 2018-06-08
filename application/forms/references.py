@@ -1,4 +1,5 @@
 import re
+from datetime import datetime, timedelta
 
 from django import forms
 from django.conf import settings
@@ -6,7 +7,23 @@ from django.conf import settings
 from application.customfields import TimeKnownField
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
-from application.models import (Reference)
+from application.models import (Reference, ApplicantPersonalDetails)
+
+
+def datetime_from_time_known(_years_known, _months_known):
+    """
+    Inner function to return datetime object using time known
+    :param _years_known: number of years passed by user
+    :param _months_known: number of months passed by user
+    :return: datetime object
+    """
+    current_dt = datetime.now()
+    if _months_known >= current_dt.month:
+        _years_known += 1
+        _months_known = 12 - abs(current_dt.month - _months_known)
+    else:
+        _months_known = current_dt.month - _months_known
+    return current_dt.replace(year=current_dt.year - _years_known).replace(month=_months_known)
 
 
 class ReferenceIntroForm(ChildminderForms):
@@ -54,6 +71,9 @@ class FirstReferenceForm(ChildminderForms):
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
             self.pk = reference_record.reference_id
             self.field_list = ['first_name', 'last_name', 'relationship', 'time_known']
+        if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
+            obj = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local)
+            self.birth_time = (obj.birth_year, obj.birth_month, obj.birth_day)
 
     def clean_first_name(self):
         """
@@ -96,8 +116,13 @@ class FirstReferenceForm(ChildminderForms):
         """
         years_known = self.cleaned_data['time_known'][1]
         months_known = self.cleaned_data['time_known'][0]
-        if (years_known + (months_known / 12) if months_known != 0 else years_known) < 1:
+        birth_dt = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
+        known_dt = datetime_from_time_known(years_known, months_known)
+        d_now = datetime.now()
+        if known_dt > d_now.replace(year=d_now.year-1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
+        elif known_dt <= birth_dt:
+            raise forms.ValidationError('Check the number of years and months you have entered')
         return years_known, months_known
 
 
@@ -309,7 +334,7 @@ class ReferenceFirstReferenceContactForm(ChildminderForms):
         phone_number = self.cleaned_data['phone_number']
         no_space_phone_number = phone_number.replace(' ', '')
         if phone_number != '':
-            if re.match(settings.REGEX['PHONE'], no_space_phone_number) is None:
+            if re.match(settings.REGEX['INTERNATIONAL_PHONE'], no_space_phone_number) is None:
                 raise forms.ValidationError('Please enter a valid phone number')
         return phone_number
 
@@ -362,6 +387,9 @@ class SecondReferenceForm(ChildminderForms):
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
             self.pk = reference_record.reference_id
             self.field_list = ['first_name', 'last_name', 'relationship', 'time_known']
+        if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
+            obj = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local)
+            self.birth_time = (obj.birth_year, obj.birth_month, obj.birth_day)
 
     def clean_first_name(self):
         """
@@ -394,8 +422,13 @@ class SecondReferenceForm(ChildminderForms):
         """
         years_known = self.cleaned_data['time_known'][1]
         months_known = self.cleaned_data['time_known'][0]
-        if (years_known + (months_known / 12) if months_known != 0 else years_known) < 1:
+        birth_dt = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
+        known_dt = datetime_from_time_known(years_known, months_known)
+        d_now = datetime.now()
+        if known_dt > d_now.replace(year=d_now.year-1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
+        elif known_dt <= birth_dt:
+            raise forms.ValidationError('Check the number of years and months you have entered')
         return years_known, months_known
 
 
@@ -608,7 +641,7 @@ class ReferenceSecondReferenceContactForm(ChildminderForms):
         phone_number = self.cleaned_data['phone_number']
         no_space_phone_number = phone_number.replace(' ', '')
         if phone_number != '':
-            if re.match(settings.REGEX['PHONE'], no_space_phone_number) is None:
+            if re.match(settings.REGEX['INTERNATIONAL_PHONE'], no_space_phone_number) is None:
                 raise forms.ValidationError('Please enter a valid phone number')
         return phone_number
 
