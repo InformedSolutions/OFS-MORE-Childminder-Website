@@ -26,7 +26,7 @@ class ThankYou(BaseTemplateView):
         except:
             firstname = 'Applicant'
 
-        if adult_record.health_check_status == 'To do':
+        if adult_record.health_check_status == 'To do' or adult_record.health_check_status == 'Flagged':
             template_id = '8f5713f5-4437-479e-9fcc-262d0306f58c'
             email = user_details.email
             link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + create_account_magic_link(user_details)
