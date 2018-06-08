@@ -120,8 +120,7 @@ class FirstReferenceForm(ChildminderForms):
         known_dt = self.datetime_from_time_known(years_known, months_known)
 
         if known_dt <= birth_dt:
-            raise forms.ValidationError(
-                'You cannot know someone for longer than you have been alive XXXXXXXXX TO BE DISCUSSED')
+            raise forms.ValidationError('Check the number of years and months you have entered')
         elif known_dt < birth_dt.replace(year=birth_dt.year+1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
         return years_known, months_known
