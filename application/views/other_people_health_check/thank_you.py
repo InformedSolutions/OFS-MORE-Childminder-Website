@@ -44,7 +44,7 @@ class ThankYou(BaseTemplateView):
 
             # Set task to Done if all household members have recompleted their health check
             # and no ARC comments exist for task
-            if AdultInHome.objects.filter(application_id=application_id, health_check_status='Flagged') > 0:
+            if AdultInHome.objects.filter(application_id=application_id, health_check_status='Flagged').count() == 0:
                 if ArcComments.objects.filter(table_pk=application_id, table_name='ADULT_IN_HOME').count() == 0:
                     if ArcComments.objects.filter(table_pk=application_id, table_name='CHILD_IN_HOME').count() == 0:
                         application.people_in_home_status = 'COMPLETED'
