@@ -13,7 +13,8 @@ class ThankYou(BaseTemplateView):
 
     def get(self, request, *args, **kwargs):
         response = super().get(request=self.request)
-        adult_record = AdultInHome.objects.get(pk=self.request.GET.get('person_id'))
+        application_id = self.request.GET.get('person_id')
+        adult_record = AdultInHome.objects.get(pk=application_id)
         adult_name = ' '.join([adult_record.first_name, (adult_record.middle_names or ''), adult_record.last_name])
         application = Application.objects.get(application_id=adult_record.application_id_id)
         user_details = UserDetails.objects.get(application_id=application.application_id)
@@ -35,21 +36,19 @@ class ThankYou(BaseTemplateView):
             r = send_email(email, personalisation, template_id)
             print(link)
             # Delete ARC comment if it exists after recompleting the household member health check
-            if ArcComments.objects.filter(table_pk=self.request.GET.get('person_id'),
-                                                  field_name='health_check_status').count() > 0:
-                arc_comment = ArcComments.objects.get(table_pk=self.request.GET.get('person_id'),
-                                                      field_name='health_check_status')
+            if ArcComments.objects.filter(table_pk=application_id, field_name='health_check_status').count() > 0:
+                arc_comment = ArcComments.objects.get(table_pk=application_id, field_name='health_check_status')
                 arc_comment.delete()
             adult_record.health_check_status = 'Done'
             adult_record.save()
 
-            # Set task to Done if no ARC comments exist for task
-            if ArcComments.objects.filter(table_pk=self.request.GET.get('person_id'),
-                                          table_name='ADULT_IN_HOME').count() == 0:
-                if ArcComments.objects.filter(table_pk=self.request.GET.get('person_id'),
-                                          table_name='CHILD_IN_HOME').count() == 0:
-                    application.people_in_home_status = 'COMPLETED'
-                    application.save()
+            # Set task to Done if all household members have recompleted their health check
+            # and no ARC comments exist for task
+            if AdultInHome.objects.filter(application_id=application_id, health_check_status='Flagged') > 0:
+                if ArcComments.objects.filter(table_pk=application_id, table_name='ADULT_IN_HOME').count() == 0:
+                    if ArcComments.objects.filter(table_pk=application_id, table_name='CHILD_IN_HOME').count() == 0:
+                        application.people_in_home_status = 'COMPLETED'
+                        application.save()
 
             all_adults = AdultInHome.objects.filter(application_id=adult_record.application_id)
 
