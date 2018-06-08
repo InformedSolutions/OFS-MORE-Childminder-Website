@@ -10,6 +10,22 @@ from application.forms_helper import full_stop_stripper
 from application.models import (Reference, ApplicantPersonalDetails)
 
 
+def datetime_from_time_known(_years_known, _months_known):
+    """
+    Inner function to return datetime object using time known
+    :param _years_known: number of years passed by user
+    :param _months_known: number of months passed by user
+    :return: datetime object
+    """
+    current_dt = datetime.now()
+    if _months_known >= current_dt.month:
+        _years_known += 1
+        _months_known = 12 - abs(current_dt.month - _months_known)
+    else:
+        _months_known = current_dt.month - _months_known
+    return current_dt.replace(year=current_dt.year - _years_known).replace(month=_months_known)
+
+
 class ReferenceIntroForm(ChildminderForms):
     """
     GOV.UK form for the 2 references: intro page
@@ -93,22 +109,6 @@ class FirstReferenceForm(ChildminderForms):
             raise forms.ValidationError("Please enter 100 characters or less.")
         return relationship
 
-    @staticmethod
-    def datetime_from_time_known(_years_known, _months_known):
-        """
-        Inner function to return datetime object using time known
-        :param _years_known: number of years passed by user
-        :param _months_known: number of months passed by user
-        :return: datetime object
-        """
-        current_dt = datetime.now()
-        if _months_known >= current_dt.month:
-            _years_known += 1
-            _months_known = 12 - abs(current_dt.month - _months_known)
-        else:
-            _months_known = current_dt.month - _months_known
-        return current_dt.replace(year=current_dt.year-_years_known).replace(month=_months_known)
-
     def clean_time_known(self):
         """
         Time known validation: reference must be known for 1 year or more
@@ -117,12 +117,12 @@ class FirstReferenceForm(ChildminderForms):
         years_known = self.cleaned_data['time_known'][1]
         months_known = self.cleaned_data['time_known'][0]
         birth_dt = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
-        known_dt = self.datetime_from_time_known(years_known, months_known)
-
-        if known_dt <= birth_dt:
-            raise forms.ValidationError('Check the number of years and months you have entered')
-        elif known_dt < birth_dt.replace(year=birth_dt.year+1):
+        known_dt = datetime_from_time_known(years_known, months_known)
+        d_now = datetime.now()
+        if known_dt > d_now.replace(year=d_now.year-1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
+        elif known_dt <= birth_dt:
+            raise forms.ValidationError('Check the number of years and months you have entered')
         return years_known, months_known
 
 
@@ -419,8 +419,13 @@ class SecondReferenceForm(ChildminderForms):
         """
         years_known = self.cleaned_data['time_known'][1]
         months_known = self.cleaned_data['time_known'][0]
-        if (years_known + (months_known / 12) if months_known != 0 else years_known) < 1:
+        birth_dt = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
+        known_dt = datetime_from_time_known(years_known, months_known)
+        d_now = datetime.now()
+        if known_dt > d_now.replace(year=d_now.year-1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
+        elif known_dt <= birth_dt:
+            raise forms.ValidationError('Check the number of years and months you have entered')
         return years_known, months_known
 
 
