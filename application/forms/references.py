@@ -387,6 +387,9 @@ class SecondReferenceForm(ChildminderForms):
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
             self.pk = reference_record.reference_id
             self.field_list = ['first_name', 'last_name', 'relationship', 'time_known']
+        if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
+            obj = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local)
+            self.birth_time = (obj.birth_year, obj.birth_month, obj.birth_day)
 
     def clean_first_name(self):
         """
