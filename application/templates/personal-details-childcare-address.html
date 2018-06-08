@@ -8,56 +8,57 @@
 {% include "back-button.html" %}
 
 <!-- Initialise error summary for page -->
+<div class="two-thirds">
 {{form.error_summary}}
+</div>
 
 <!-- Form -->
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <!-- Content -->
-    <div class="form-group">
-        <h1 class="form-title heading-large">
-            Childcare address
-        </h1>
-        <p>Where will you be looking after the children?</p>
-        {% if not form.errors %}
-        <div id="id_postcode-group" class="form-group-required form-group">
-            <div class="text-before-button">
-                <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
-                    {{form.postcode.label}}
-                </label>
-                {{form.postcode}}
-            </div>
-            <input type="submit" class="button button-submit" value="Find address"
-                   name="postcode-search">
-        </div>
-        {% elif form.errors %}
-        <div id="id_postcode-group" class="form-group-error form-group-required form-group">
+    <h1 class="form-title heading-large">
+        Childcare address
+    </h1>
+    <p>Where will you be looking after the children?</p>
+    {% if not form.errors %}
+    <div id="id_postcode-group" class="form-group-required form-group">
+        <div class="text-before-button">
             <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
                 {{form.postcode.label}}
             </label>
-            <span class="error-message">
-                {% for error in form.postcode.errors %}
-                    {{error}}
-                {% endfor %}
-            </span>
-            <div class="text-before-button">
-                {% if form.postcode.initial is not None %}
-                <input type="text" name="postcode" class="form-control-error form-control"
-                       value="{{form.postcode.initial}}" required="" id="id_postcode">
-                {% elif form.postcode.initial is None %}
-                <input type="text" name="postcode" class="form-control-error form-control"
-                       value="" required="" id="id_postcode">
-                {% endif %}
-            </div>
-            <input type="submit" class="button button-submit" value="Find address"
-                   name="postcode-search">
+            {{form.postcode}}
         </div>
-        {% endif %}
-        {% csrf_token %}
-        <a href="{{ URL_PREFIX }}/personal-details/enter-childcare-address?id={{application_id}}" name="manual"
-           id="manual">Enter address manually</a>
-        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+        <input type="submit" class="button button-submit" value="Find address"
+               name="postcode-search">
     </div>
+    {% elif form.errors %}
+    <div id="id_postcode-group" class="form-group-error form-group-required form-group">
+        <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
+            {{form.postcode.label}}
+        </label>
+        <span class="error-message">
+            {% for error in form.postcode.errors %}
+                {{error}}
+            {% endfor %}
+        </span>
+        <div class="text-before-button">
+            {% if form.postcode.initial is not None %}
+            <input type="text" name="postcode" class="form-control-error form-control"
+                   value="{{form.postcode.initial}}" required="" id="id_postcode">
+            {% elif form.postcode.initial is None %}
+            <input type="text" name="postcode" class="form-control-error form-control"
+                   value="" required="" id="id_postcode">
+            {% endif %}
+        </div>
+        <input type="submit" class="button button-submit" value="Find address"
+               name="postcode-search">
+    </div>
+    {% endif %}
+    {% csrf_token %}
+    <a href="{{ URL_PREFIX }}/personal-details/enter-childcare-address?id={{application_id}}" name="manual"
+       id="manual">Enter address manually</a>
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
 </form>
+<br>
 
 {% if personal_details_status == 'COMPLETED' %}
 {% include 'return-to-list.html' %}

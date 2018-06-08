@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}People in your home{% endblock %}
+{% block page_title %}DBS checks on adults in your home{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -7,6 +7,7 @@
 
 {% include "back-button.html" %}
 
+<div class="two-thirds">
 {% for form in form_list %}
     {{form.error_summary}}
 {% endfor %}
@@ -30,6 +31,7 @@
         <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
     </div>
 </form>
+</div>
 
 {% include 'return-to-list.html' %}
 

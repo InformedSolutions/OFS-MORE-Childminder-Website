@@ -5,16 +5,15 @@
 
 {% block inner_content %}
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <div class="govuk-box-highlight">
-            <h1 class="bold-large">Thank you for applying</h1>
+<div class="two-thirds">
+    <div class="govuk-box-highlight">
+        <h1 class="bold-large">Thank you for applying</h1>
+        <br>
+        <p>
+            Your application number is
             <br>
-            <p>
-                Your application number is
-                <br>
-                <br>
-                <strong class="heading-medium">{{order_code}}</strong>
+            <br>
+            <strong class="heading-medium">{{order_code}}</strong>
             </p>
         </div>
         <h2 class="heading-medium">
@@ -36,13 +35,17 @@
                 </tbody>
             </table>
         </div>
-        <h2 class="heading-medium">
+
+        <h2 class="heading-medium no-print">
             Your application details
         </h2>
-        <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print" style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
+
+        <p class="indent-left"><img src="{% static 'printer.png' %}" alt="Print" class="print-icon no-print"/>
             <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print this page</a></p>
-        <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print" style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
+        <p class="indent-left"><img src="{% static 'printer.png' %}" alt="Print" class="print-icon no-print"/>
             <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print your application</a></p>
+
+
         <h2 class="heading-medium">
             Send your documents
         </h2>
@@ -90,12 +93,11 @@
             Contact us
         </h2>
         <p>Contact us if you have any questions about your application.</p>
-        <p class="panel" style="margin-left: 40px;">
+        <p class="panel">
             Ofsted
             <br>
             <a href="mailto:registrationpilot@ofsted.gov.uk">registrationpilot@ofsted.gov.uk</a>
-        </p>
-    </div>
+    </p>
 </div>
 
 {% endblock %}

@@ -248,13 +248,6 @@ class SeleniumTaskExecutor:
         driver.find_element_by_id("id_childcare_location_1").click()
         driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
-        # Childcare location address
-        self.select_test_address()
-        driver.find_element_by_xpath("//input[@value='Save and continue']").click()
-
-        # Confirm task summary page
-        driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
-
     def complete_first_aid_training(self, training_provider, completion_date_day, completion_date_month,
                                     completion_date_year, expect_update_page):
         """
@@ -416,7 +409,7 @@ class SeleniumTaskExecutor:
             submit_button = driver.find_element_by_xpath("//input[@value='Save and continue']")
             driver.execute_script("arguments[0].click();", submit_button)
 
-            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("People in your home"))
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("DBS checks on adults in your home"))
 
             driver.find_element_by_id("id_1-dbs_certificate_number").send_keys(other_adult_dbs)
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
@@ -425,7 +418,7 @@ class SeleniumTaskExecutor:
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
         if children_in_home is True:
-            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("People in your home"))
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Children in your home"))
             driver.find_element_by_id("id_children_in_home_0").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
             driver.find_element_by_id("id_1-first_name").send_keys(child_forename)

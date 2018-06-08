@@ -11,7 +11,7 @@ from django.conf.urls import url, include
 from django.views.generic import TemplateView
 
 from application import views, utils
-from application.views import security_question, magic_link
+from application.views import security_question, magic_link, feedback
 from application.views.other_people_health_check import health_check_login, dob_auth, current_treatment, guidance, \
     declaration, serious_illness, hospital_admission, summary, thank_you
 
@@ -82,16 +82,16 @@ urlpatterns = [
     url(r'^references/second-reference-contact-details/', views.references_second_reference_contact_details,
         name='References-Second-Reference-Contact-Details-View'),
     url(r'^references/check-answers/', views.references_summary, name='References-Summary-View'),
-    url(r'^other-people/guidance/', views.other_people_guidance, name='Other-People-Guidance-View'),
-    url(r'^other-people/adult-question/', views.other_people_adult_question, name='Other-People-Adult-Question-View'),
+    url(r'^people/$', views.other_people_guidance, name='Other-People-Guidance-View'),
+    url(r'^people/adults/', views.other_people_adult_question, name='Other-People-Adult-Question-View'),
     url(r'^people/adults-details/', views.other_people_adult_details, name='Other-People-Adult-Details-View'),
-    url(r'^other-people/adult-dbs/', views.other_people_adult_dbs, name='Other-People-Adult-DBS-View'),
-    url(r'^other-people/children-question/', views.other_people_children_question,
+    url(r'^people/adult-dbs-details/', views.other_people_adult_dbs, name='Other-People-Adult-DBS-View'),
+    url(r'^people/children/', views.other_people_children_question,
         name='Other-People-Children-Question-View'),
-    url(r'^other-people/children-details/', views.other_people_children_details,
+    url(r'^people/children-details/', views.other_people_children_details,
         name='Other-People-Children-Details-View'),
     url(r'^other-people/approaching-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
-    url(r'^other-people/summary/', views.other_people_summary, name='Other-People-Summary-View'),
+    url(r'^people/check-answers/', views.other_people_summary, name='Other-People-Summary-View'),
 
     url(r'^health-check/(?P<id>[\w-]+)/$', health_check_login.validate_magic_link, name='Health-Check-Authentication'),
     url(r'^health-check/birth-date', dob_auth.DobAuthView.as_view(), name='Health-Check-Dob'),
@@ -152,6 +152,8 @@ urlpatterns = [
     url(r'^email-resent/$', views.login.login_email_link_resent, name='Email-Resent'),
     url(r'^new-code/$', magic_link.ResendSMSCodeView.as_view(), name='Resend-Code'),
     url(r'^help-contact/$', views.help_and_contact, name='Help-And-Contact-View'),
+    url(r'^cannot-use-service/$', views.personal_details.service_unavailable, name='Service-Unavailable'),
+    url(r'^feedback/', feedback.feedback, name='Feedback')
 ]
 
 if settings.DEBUG:

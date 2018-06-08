@@ -6,6 +6,7 @@
 {% block inner_content %}
 
 {% include "back-button.html" %}
+<div class="two-thirds">
 {{form.error_summary}}
 
 <h1 class="form-title heading-large">
@@ -26,6 +27,7 @@
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
 </form>
+</div>
 
 {% include 'return-to-list.html' %}
 

@@ -4,7 +4,6 @@ from timeline_logger.models import TimelineLog
 from ..models import (Application)
 from ..models import (CriminalRecordCheck)
 from .. import status
-from datetime import datetime
 
 
 def payment_confirmation(request):
@@ -29,7 +28,6 @@ def payment_confirmation(request):
         application_id=application_id_local)
     status.update(application_id_local, 'declarations_status', 'COMPLETED')
     local_app.application_status = 'SUBMITTED'
-    local_app.ofsted_visit_email_sent = datetime.now()
     local_app.save()
 
     # Payment presents the first true trigger for submission so is logged as submitted at this point

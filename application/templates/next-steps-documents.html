@@ -7,10 +7,11 @@
 
 {% include "back-button.html" %}
 
+<div class="two-thirds">
 <h2 class="heading-large">
     Documents you need for the visit
 </h2>
-<div class="form-group" style="width: 66%;">
+<div class="form-group">
     <p>The inspector will need to check your identity and other documents when they visit your home.</p>
     <table class="check-your-answers" style="word-wrap: break-word;">
         <thead>
@@ -71,7 +72,8 @@
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </form>
     <br>
-    <p style="color: #b5babe">Next: Get your home ready</p>
+    <p class="next-steps">Next: Get your home ready</p>
+</div>
 </div>
 
 {% endblock %}

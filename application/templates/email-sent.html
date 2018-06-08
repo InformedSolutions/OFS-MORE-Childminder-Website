@@ -6,6 +6,7 @@
 {% block inner_content %}
 
 {% include "back-button.html" %}
+<div class="two-thirds">
 {{form.error_summary}}
 
 <h1 class="form-title heading-large">
@@ -15,12 +16,13 @@
 <p>You must click on the link to change your email.</p>
 <p>This can take a few minutes to arrive.</p>
 <p>If you don't get an email:</p>
-<ul style="list-style-type:disc;padding-left:20px">
+<ul class="list-bullet">
     <li>check your spam or junk folders</li>
     <li>check you have entered the correct email</li>
     <li><a href={{ resend_url }}>resend the email</a></li>
 
 </ul>
+</div>
 
 
 {% endblock %}

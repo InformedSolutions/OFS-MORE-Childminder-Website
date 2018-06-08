@@ -8,6 +8,7 @@
 {% include "back-button.html" %}
 
 <!-- Initialise error summary for page -->
+<div class="two-thirds">
 {% for form in form_list %}
     {{form.error_summary}}
 {% endfor %}
@@ -17,32 +18,32 @@
 </h1>
 <p>Please give details of everyone aged 16 or over.</p>
 <p>The names must match the ones in their criminal record (DBS) checks.</p>
+</div>
 
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    <div class="form-group">
-        {% for form in form_list %}
-        <h2 class="form-title heading-medium" id="person{{form.prefix}}">
-            Person {{form.prefix}}
-        </h2>
-        {{form.as_div}}
-        {% if remove_button is True %}
-            <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{remove_adult}}&remove={{form.prefix}}"
-               style="margin-left: 0px;"><b>Remove this person</b>
-            </a>
-        {% endif %}
-        {% endfor %}
-        {% csrf_token %}
-        <input type="hidden" value="{{application_id}}" name="id"/>
+    {% for form in form_list %}
+    <h2 class="form-title heading-medium" id="person{{form.prefix}}">
+        Person {{form.prefix}}
+    </h2>
+    {{form.as_div}}
+    {% if remove_button is True %}
+        <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{remove_adult}}&remove={{form.prefix}}"
+           class="no-left-margin"><b>Remove this person</b>
+        </a>
+    {% endif %}
+    {% endfor %}
+    {% csrf_token %}
+    <input type="hidden" value="{{application_id}}" name="id"/>
 
-        <!-- button to be triggered should a user press Enter rather than click a button -->
-        <input type="submit" class="button js-hidden" name="submit" value="Save and continue">
+    <!-- button to be triggered should a user press Enter rather than click a button -->
+    <input type="submit" class="button js-hidden" name="submit" value="Save and continue">
 
-        <input type="submit" class="button-secondary button-add-another" name="add_person" value="Add another person">
-        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
-        <input type="submit" class="button" name="submit" value="Save and continue" id="adult-details-save">
-    </div>
+    <input type="submit" class="button-secondary button-add-another" name="add_person" value="Add another person">
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
+    <input type="submit" class="button" name="submit" value="Save and continue" id="adult-details-save">
 </form>
+<br>
 
 {% include 'return-to-list.html' %}
 

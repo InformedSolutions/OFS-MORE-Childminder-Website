@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}People in your home{% endblock %}
+{% block page_title %}Children in your home{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -7,6 +7,7 @@
 
 {% include "back-button.html" %}
 
+<div class="two-thirds">
 {{form.error_summary}}
 
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
@@ -34,6 +35,7 @@
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
 </form>
+</div>
 
 {% include 'return-to-list.html' %}
 

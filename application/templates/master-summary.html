@@ -12,6 +12,7 @@
     </a>
 </div>
 
+<div class="two-thirds">
 <h1 class="form-title heading-large">
     {% if print %}
     Your childminder application
@@ -1297,18 +1298,29 @@
 <br>
 <!-- Return to task list -->
 {% if print %}
-<div class="form-group ">
+<div class="form-group visually-hidden aria-hidden" id="print">
     <input class="button" type="submit" value="Print" onClick="javascript:window.print()">
 </div>
+
+<!-- Print function requires javascript so only show if available -->
+<script type="text/javascript">
+    window.onload = function () {
+        $("#print").removeClass('visually-hidden')
+        $("#print").removeClass('aria-hidden')
+    };
+</script>
 {% endif %}
+
 {% if not print %}
-{% include 'return-to-list.html' %}
+    {% include 'return-to-list.html' %}
 {% endif %}
+
 {% if print %}
-<div class="form-group">
-    <a href="{% url 'Payment-Confirmation' %}?id={{application_id}}&orderCode={{order_code}}">Return to confirmation</a>
-</div>
+    <div class="form-group">
+        <a href="{% url 'Payment-Confirmation' %}?id={{application_id}}&orderCode={{order_code}}">Return to confirmation</a>
+    </div>
 {% endif %}
 <input type="hidden" value="{{application_id}}" name="id"/>
+</div>
 
 {% endblock %}

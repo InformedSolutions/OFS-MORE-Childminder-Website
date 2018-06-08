@@ -116,7 +116,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         first_name = self.cleaned_data['first_name']
         if re.match(settings.REGEX['FIRST_NAME'], first_name) is None:
             raise forms.ValidationError('First name can only have letters')
-        if len(first_name) > 100:
+        if len(first_name) > 99:
             raise forms.ValidationError('First name must be under 100 characters long')
         return first_name
 
@@ -129,7 +129,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         if middle_names != '':
             if re.match(settings.REGEX['MIDDLE_NAME'], middle_names) is None:
                 raise forms.ValidationError('Middle names can only have letters')
-            if len(middle_names) > 100:
+            if len(middle_names) > 99:
                 raise forms.ValidationError('Middle names must be under 100 characters long')
         return middle_names
 
@@ -141,7 +141,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         last_name = self.cleaned_data['last_name']
         if re.match(settings.REGEX['LAST_NAME'], last_name) is None:
             raise forms.ValidationError('Last name can only have letters')
-        if len(last_name) > 100:
+        if len(last_name) > 99:
             raise forms.ValidationError('Last name must be under 100 characters long')
         return last_name
 
@@ -192,7 +192,8 @@ class OtherPeopleAdultDBSForm(ChildminderForms):
     dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
                                                 help_text='12-digit number on their certificate',
                                                 required=True,
-                                                widget=widget_instance)
+                                                widget=widget_instance,
+                                                error_messages={'required': "Please enter the DBS certificate number"})
 
     def __init__(self, *args, **kwargs):
         """
@@ -219,9 +220,9 @@ class OtherPeopleAdultDBSForm(ChildminderForms):
         """
         dbs_certificate_number = self.data['1-dbs_certificate_number']
         if len(str(dbs_certificate_number)) > 12:
-            raise forms.ValidationError('Check your certificate: the number should be 12 digits long')
+            raise forms.ValidationError('The certificate number should be 12 digits long')
         if len(str(dbs_certificate_number)) < 12:
-            raise forms.ValidationError('Check your certificate: the number should be 12 digits long')
+            raise forms.ValidationError('The certificate number should be 12 digits long')
         return dbs_certificate_number
 
 
@@ -321,7 +322,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
         first_name = self.cleaned_data['first_name']
         if re.match(settings.REGEX['FIRST_NAME'], first_name) is None:
             raise forms.ValidationError('First name can only have letters')
-        if len(first_name) > 100:
+        if len(first_name) > 99:
             raise forms.ValidationError('The first name must be under 100 characters long')
         return first_name
 
@@ -334,7 +335,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
         if middle_names != '':
             if re.match(settings.REGEX['MIDDLE_NAME'], middle_names) is None:
                 raise forms.ValidationError('Middle names can only have letters')
-            if len(middle_names) > 100:
+            if len(middle_names) > 99:
                 raise forms.ValidationError('The middle names must be under 100 characters long')
         return middle_names
 
@@ -346,7 +347,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
         last_name = self.cleaned_data['last_name']
         if re.match(settings.REGEX['LAST_NAME'], last_name) is None:
             raise forms.ValidationError('Last name can only have letters')
-        if len(last_name) > 100:
+        if len(last_name) > 99:
             raise forms.ValidationError('The last name must be under 100 characters long')
         return last_name
 

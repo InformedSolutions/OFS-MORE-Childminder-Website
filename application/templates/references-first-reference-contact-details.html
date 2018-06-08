@@ -8,22 +8,24 @@
 {% include "back-button.html" %}
 
 <!-- Initialise error summary for page -->
+<div class="two-thirds">
 {{form.error_summary}}
-
+</div>
 <!-- Form -->
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <!-- Content -->
-    <div class="form-group">
+    <div class="two-thirds">
         <h1 class="form-title heading-large">
             First reference contact details
         </h1>
         <p>Please give contact details for this referee.</p>
-        {{form.as_div}}
-        {% csrf_token %}
-        <input type="submit" class="button" value="Save and continue">
-        <input type="hidden" name="id" value="{{application_id}}"/>
     </div>
+    {{form.as_div}}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Save and continue">
+    <input type="hidden" name="id" value="{{application_id}}"/>
 </form>
+<br>
 
 {% include 'return-to-list.html' %}
 

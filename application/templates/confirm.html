@@ -5,6 +5,7 @@
 
 {% block inner_content %}
 
+<div class="two-thirds">
 <div class="column-full">
     {% include "back-button.html" %}
     <div class="grid-row">
@@ -358,6 +359,7 @@
     </div>
     <input type="hidden" value="{{application_id}}" name="id"/>
     {% include 'return-to-list.html' %}
+</div>
 </div>
 
 {% endblock %}

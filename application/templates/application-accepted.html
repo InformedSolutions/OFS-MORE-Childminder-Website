@@ -5,11 +5,12 @@
 
 {% block inner_content %}
 
+<div class="two-thirds">
 <div class="govuk-box-highlight">
-    <h1 class="bold-large">Running background checks</h1>
+    <h1 class="bold-large">Doing background checks</h1>
     <br/>
     <p>
-        Your reference number is
+        Your application number is
         <br>
         <br>
         <strong class="heading-medium">{{application_reference}}</strong>
@@ -22,15 +23,21 @@
 
 <p>We are currently doing background checks on you and people in your home.</p>
 
-<p>This means we are:</p>
+<p>This includes:</p>
 
 <ul class="list list-bullet">
     <li>contacting your references</li>
-    <li>carrying out checks with social services</li>
+    <li>carrying out checks with council social services</li>
     <li>checking your health declaration booklet</li>
 </ul>
 
-<p>This can take up to 6 weeks.</p>
+<p>This usually takes up to 12 weeks.</p>
+
+<h2 class="form-title heading-medium no-print">
+    Your application details
+</h2>
+
+{% include 'print-links.html' %}
 
 <h2 class="form-title heading-medium">
     Update your details
@@ -43,9 +50,10 @@
 <ul class="list list-bullet">
     <li>your name</li>
     <li>the childcare address</li>
-    <li>childcare hours</li>
+    <li>overnight care</li>
 </ul>
 
 <p>You must also let us know of any children you live with who have turned 16.</p>
+</div>
 
 {% endblock %}

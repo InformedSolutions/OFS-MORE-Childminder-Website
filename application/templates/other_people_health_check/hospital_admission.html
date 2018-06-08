@@ -7,17 +7,16 @@
 {% block inner_content %}
 {% include 'back-button.html' %}
 
+<div class="two-thirds">
 {{ form.error_summary }}
-
-
-
+</div>
 
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     {% csrf_token %}
     <div class = "form-group">
         <h1 class="form-title heading-large">{% if illness_id %}Edit hospital admission{% else %}Hospital admissions{% endif %}</h1>
         {% if illnesses %}
-            <table class="check-your-answers" style="table-layout: fixed; width: 100%">
+            <table class="check-your-answers two-thirds">
                 <tr>
                     <th class="bold">Hospital admission</th>
                     <th class="bold">Date admitted</th>
@@ -36,9 +35,10 @@
         {% endif %}
         {{ form }}
         <div class="js-hidden" id="test"></div>
-        You can tell us about any other hospital admissions on the next page.
+        <p class="two-thirds">You can tell us about any other hospital admissions on the next page.</p>
         <input type="submit" name="action" class="button" value="Continue">
     </div>
 </form>
+</div>
 
 {% endblock %}

@@ -8,24 +8,25 @@
 {% include "back-button.html" %}
 
 <!-- Initialise error summary for page -->
+<div class="two-thirds">
 {{form.error_summary}}
-
+</div>
 <!-- Form -->
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <!-- Content -->
-    <div class="form-group">
+    <div class="two-thirds">
         <h1 class="form-title heading-large">
             Your name
         </h1>
         <p>Please give us your full name, including any middle names.</p>
-        <p>The details must match what is on your criminal record (DBS) check</p>
-        {{form.as_div}}
-        {% csrf_token %}
-        <input type="submit" class="button" value="Save and continue">
-        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+        <p>The details must match what is on your criminal record (DBS) check.</p>
     </div>
+    {{form.as_div}}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Save and continue">
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
 </form>
-
+<br>
 {% if personal_details_status == 'COMPLETED' %}
 {% include 'return-to-list.html' %}
 {% endif %}

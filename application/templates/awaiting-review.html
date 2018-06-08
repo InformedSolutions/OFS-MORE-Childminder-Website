@@ -5,11 +5,12 @@
 
 {% block inner_content %}
 
+<div class="two-thirds">
 <div class="govuk-box-highlight">
     <h1 class="bold-large">Application being reviewed</h1>
     <br/>
     <p>
-        Your reference number is
+        Your application number is
         <br>
         <br>
         <strong class="heading-medium">{{application_reference}}</strong>
@@ -22,6 +23,13 @@
 
 <p>We are reviewing your application to make sure we have all the information that we need.</p>
 
+
+<h2 class="form-title heading-medium no-print">
+    Your application details
+</h2>
+
+{% include 'print-links.html' %}
+
 <h2 class="form-title heading-medium">
     Update your details
 </h2>
@@ -33,9 +41,10 @@
 <ul class="list list-bullet">
     <li>your name</li>
     <li>the childcare address</li>
-    <li>childcare hours</li>
+    <li>overnight care</li>
 </ul>
 
 <p>You must also let us know of any children you live with who have turned 16.</p>
+</div>
 
 {% endblock %}

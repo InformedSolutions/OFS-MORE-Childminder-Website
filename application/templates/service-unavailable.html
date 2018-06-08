@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Error{% endblock %}
+{% block page_title %}Can't use service{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -7,12 +7,11 @@
 
 {% include "back-button.html" %}
 
-<div class="two-thirds">
 <h1 class="form-title heading-large">
-    Not found
+    You cannot use this service
 </h1>
 
-<p>The page you requested could not be found.</p>
-</div>
+<p>Unfortunately you cannot continue with this application.</p>
+<p>You must apply through Ofsted Online.</p>
 
 {% endblock %}

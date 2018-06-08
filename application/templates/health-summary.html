@@ -5,12 +5,15 @@
 
 {% block inner_content %}
 
+{% include "back-button.html" %}
+
+<div class="two-thirds">
 <h1 class="form-title heading-large">Check your answers: health declaration booklet</h1>
-<table class="check-your-answers form-group" style="table-layout: fixed; width: 100%">
+<table class="check-your-answers form-group">
 <colgroup>
         <col style="width:40%">
-        <col style="width:40%">
         <col style="width:20%">
+        <col style="width:40%">
 </colgroup>
     <thead>
         <td></td>
@@ -38,5 +41,6 @@
     <input type="submit" class="button" value="Confirm and continue"/>
     <input type="hidden" value="{{application_id}}" name="id"/>
 </form>
+</div>
 
 {% endblock %}

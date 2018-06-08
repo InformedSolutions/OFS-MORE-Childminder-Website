@@ -456,6 +456,35 @@ div.error-summary ul.error-summary-list {
   width: 66%;
 }
 
+@media (max-width: 640px) {
+    .two-thirds {
+      width: 100%;
+    }
+}
+
 .list-bullet {
   margin-left: 20px !important;
+}
+
+.next-steps {
+    color: #b5babe;
+}
+
+.icon-align {
+    vertical-align: middle;
+}
+
+.no-left-margin {
+    margin-left: 0px;
+}
+
+.print-icon {
+  height: 20px;
+  margin-right: 10px;
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.indent-left {
+   margin-left: 20px;
 }

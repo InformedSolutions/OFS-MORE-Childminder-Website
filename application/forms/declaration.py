@@ -23,17 +23,21 @@ class DeclarationForm(ChildminderForms):
     auto_replace_widgets = True
 
     share_info_declare = forms.BooleanField(label='share information with other organisations', required=True,
-                                            error_messages={'required': 'You need to confirm this'})
+                                            error_messages={
+                                                'required': 'You need to confirm that you understand Ofsted will share information with other organisations'})
     display_contact_details_on_web = forms.BooleanField(label='display my name '
                                                               'and contact details '
                                                               'on their website so parents can find me '
                                                               '(optional)', required=False)
     suitable_declare = forms.BooleanField(label='I am suitable to look after children', required=True,
-                                          error_messages={'required': 'You need to confirm this'})
+                                          error_messages={
+                                              'required': 'You need to confirm that you are suitable to look after children'})
     information_correct_declare = forms.BooleanField(label='the information I have given is correct', required=True,
-                                                     error_messages={'required': 'You need to confirm this'})
+                                                     error_messages={
+                                                         'required': 'You need to confirm that the information you have given is correct'})
     change_declare = forms.BooleanField(label='I will tell Ofsted if this information changes', required=True,
-                                        error_messages={'required': 'You need to confirm this'})
+                                        error_messages={
+                                            'required': 'You need to confirm that you will tell Ofsted if this information changes'})
 
     def __init__(self, *args, **kwargs):
         """

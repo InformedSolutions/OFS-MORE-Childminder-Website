@@ -50,8 +50,21 @@ def declaration_summary(request, print=False):
             personal_detail_id=personal_detail_id)
         applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                          current_address=True)
-        applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                              childcare_address=True)
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True).exists():
+            applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                                  childcare_address=True)
+            childcare_street_line1 = applicant_childcare_address_record.street_line1
+            childcare_street_line2 = applicant_childcare_address_record.street_line2
+            childcare_town = applicant_childcare_address_record.town
+            childcare_county = applicant_childcare_address_record.county
+            childcare_postcode = applicant_childcare_address_record.postcode
+        else:
+            applicant_childcare_address_record = 'Same as home address'
+            childcare_street_line1 = ''
+            childcare_street_line2 = ''
+            childcare_town = ''
+            childcare_county = ''
+            childcare_postcode = ''
         first_aid_record = FirstAidTraining.objects.get(
             application_id=application_id_local)
         dbs_record = CriminalRecordCheck.objects.get(
@@ -141,11 +154,11 @@ def declaration_summary(request, print=False):
             'home_address_town': applicant_home_address_record.town,
             'home_address_county': applicant_home_address_record.county,
             'home_address_postcode': applicant_home_address_record.postcode,
-            'childcare_street_line1': applicant_childcare_address_record.street_line1,
-            'childcare_street_line2': applicant_childcare_address_record.street_line2,
-            'childcare_town': applicant_childcare_address_record.town,
-            'childcare_county': applicant_childcare_address_record.county,
-            'childcare_postcode': applicant_childcare_address_record.postcode,
+            'childcare_street_line1': childcare_street_line1,
+            'childcare_street_line2': childcare_street_line2,
+            'childcare_town': childcare_town,
+            'childcare_county': childcare_county,
+            'childcare_postcode': childcare_postcode,
             'location_of_childcare': applicant_home_address_record.childcare_address,
             'first_aid_training_organisation': first_aid_record.training_organisation,
             'first_aid_training_course': first_aid_record.course_title,
@@ -360,7 +373,6 @@ def render_each_field(declaration_form):
     for name, field in declaration_form.fields.items():
         fields.append(declaration_form.render_field(name, field))
     return fields
-
 
 
 def generate_list_of_updated_tasks(application_id):

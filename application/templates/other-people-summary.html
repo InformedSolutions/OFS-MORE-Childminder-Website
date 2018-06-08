@@ -6,8 +6,9 @@
 {% block inner_content %}
 
     {% include "back-button.html" %}
+<div class="two-thirds">
     <h1 class="form-title heading-large">Check your answers: people in your home</h1>
-    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <table class="check-your-answers">
         <colgroup>
             <col class="summary-column">
             <col class="summary-column">
@@ -44,7 +45,7 @@
         </tr>
         </tbody>
     </table>
-    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <table class="check-your-answers">
         <colgroup>
             <col class="summary-column">
             <col class="summary-column">
@@ -311,5 +312,6 @@
             <input type="hidden" value="{{application_id}}" name="id"/>
         </form>
     </div>
+</div>
 
 {% endblock %}
