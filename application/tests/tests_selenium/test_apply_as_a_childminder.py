@@ -146,7 +146,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.assertEqual("Childcare Register",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
-                             "//main[@id='content']/form/div/h1").text)
+                             "//html/body/main/div[2]/form/div/h1").text)
 
     @try_except_method
     def test_shown_eyfs_only_guidance(self):
@@ -343,7 +343,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='proposition-links']/li[1]/a").click()
 
         # Go back to task list
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='content']/a[2]").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//html/body/main/div[2]/a").click()
 
         self.assertEqual("Register as a childminder",
                          self.selenium_task_executor.get_driver().title)
@@ -821,7 +821,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
         self.assertEqual("We've sent a link to {}.".format(first_email),
-                         self.selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/p").text)
+                         self.selenium_task_executor.get_driver().find_element_by_xpath("//html/body/main/div[2]/p[1]").text)
 
         # Try to grab email validation URL.
         # Should redirect to bad link; no email validation link sent for preexsiting email.
@@ -867,41 +867,41 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.complete_full_question_set()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='children']/td/a/span").click()
         self.assertEqual("Check your answers: type of childcare",
-                         self.selenium_task_executor.get_driver().find_element_by_xpath("//main[@id='content']/h1").text)
+                         self.selenium_task_executor.get_driver().find_element_by_xpath("//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='personal_details']/td/a/span").click()
         self.assertEqual("Check your answers: your personal details",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
-                             "//main[@id='content']/h1").text)
+                             "//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='first_aid']/td/a/span").click()
         self.assertEqual("Check your answers: first aid training",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
-                             "//main[@id='content']/h1").text)
+                             "//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='health']/td/a/span").click()
 
         self.assertEqual("Check your answers: health declaration booklet",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
-                             "//main[@id='content']/h1").text)
+                             "//html/body/main/div[2]/h1").text)
 
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='dbs']/td/a/span").click()
         self.assertEqual("Check your answers: criminal record (DBS) check",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
-                             "//main[@id='content']/h1").text)
+                             "//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
         self.assertEqual("Check your answers: people in your home",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
-                             "//main[@id='content']/h1").text)
+                             "//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//input[@value='Confirm and continue']").send_keys(
             Keys.RETURN)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='references']/td/a/span").click()
         self.assertEqual("Check your answers: references",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
-                             "//main[@id='content']/h1").text)
+                             "//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
 
@@ -1086,7 +1086,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_link_text('Don\'t have your phone?').click()
         self.assertEqual("Please enter your postcode and date of birth.",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
-                             "//main[@id='content']/form/div/p[2]").text)
+                             "//html/body/main/div[2]/form/div/p[2]").text)
 
         # Populate DoB form with correct values - same validation already covered in test_invalid_eldest_dob_security_question_raises_error.
         DoB = ['1', '1', '1985']
@@ -1140,7 +1140,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_link_text('Don\'t have your phone?').click()
         self.assertEqual("Please enter the date of birth of the eldest person living in your home.",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
-                             "//main[@id='content']/form/div/p[2]").text)
+                             "//html/body/main/div[2]/form/div/p[2]").text)
 
         test_DoBs = [
             ['', '2', '1666'],  # No day value.
