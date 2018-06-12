@@ -51,6 +51,7 @@ class NannyApplication(models.Model):
     insurance_cover_status = models.CharField(choices=TASK_STATUS, max_length=50)
     insurance_cover_arc_flagged = models.BooleanField(default=False)
     declarations_status = models.CharField(choices=TASK_STATUS, max_length=50)
+    references_status = models.CharField(choices=TASK_STATUS, max_length=50)
     share_info_declare = models.NullBooleanField(blank=True, null=True, default=None)
     display_contact_details_on_web = models.NullBooleanField(blank=True, null=True, default=None)
     suitable_declare = models.NullBooleanField(blank=True, null=True, default=None)
