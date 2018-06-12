@@ -121,9 +121,9 @@ class FirstReferenceForm(ChildminderForms):
         birth_dt = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
         known_dt = datetime_from_time_known(years_known, months_known)
         d_now = datetime.now()
-        if known_dt is not None and known_dt > d_now.replace(year=d_now.year-1):
+        if known_dt > d_now.replace(year=d_now.year-1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
-        elif known_dt is None or known_dt <= birth_dt:
+        elif known_dt <= birth_dt:
             raise forms.ValidationError('Check the number of years and months you have entered')
         return years_known, months_known
 
@@ -427,9 +427,9 @@ class SecondReferenceForm(ChildminderForms):
         birth_dt = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
         known_dt = datetime_from_time_known(years_known, months_known)
         d_now = datetime.now()
-        if known_dt is not None and known_dt > d_now.replace(year=d_now.year-1):
+        if known_dt > d_now.replace(year=d_now.year-1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
-        elif known_dt is None or known_dt <= birth_dt:
+        elif known_dt <= birth_dt:
             raise forms.ValidationError('Check the number of years and months you have entered')
         return years_known, months_known
 
