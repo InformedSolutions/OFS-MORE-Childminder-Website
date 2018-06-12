@@ -20,13 +20,12 @@ def datetime_from_time_known(_years_known, _months_known):
     current_dt = datetime.now()
     if _years_known > current_dt.year-2:
         _years_known = current_dt.year-2
-        if _months_known >= current_dt.month:
-            _years_known += 1
-            _months_known = 12 - abs(current_dt.month - _months_known)
-        else:
-            _months_known = current_dt.month - _months_known
-        return current_dt.replace(year=current_dt.year - _years_known).replace(month=_months_known)
-    return None
+    if _months_known >= current_dt.month:
+        _years_known += 1
+        _months_known = 12 - abs(current_dt.month - _months_known)
+    else:
+        _months_known = current_dt.month - _months_known
+    return current_dt.replace(year=current_dt.year - _years_known).replace(month=_months_known)
 
 
 class ReferenceIntroForm(ChildminderForms):
