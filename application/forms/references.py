@@ -18,12 +18,15 @@ def datetime_from_time_known(_years_known, _months_known):
     :return: datetime object
     """
     current_dt = datetime.now()
-    if _months_known >= current_dt.month:
-        _years_known += 1
-        _months_known = 12 - abs(current_dt.month - _months_known)
-    else:
-        _months_known = current_dt.month - _months_known
-    return current_dt.replace(year=current_dt.year - _years_known).replace(month=_months_known)
+    if _years_known > current_dt.year-2:
+        _years_known = current_dt.year-2
+        if _months_known >= current_dt.month:
+            _years_known += 1
+            _months_known = 12 - abs(current_dt.month - _months_known)
+        else:
+            _months_known = current_dt.month - _months_known
+        return current_dt.replace(year=current_dt.year - _years_known).replace(month=_months_known)
+    return None
 
 
 class ReferenceIntroForm(ChildminderForms):
@@ -119,9 +122,9 @@ class FirstReferenceForm(ChildminderForms):
         birth_dt = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
         known_dt = datetime_from_time_known(years_known, months_known)
         d_now = datetime.now()
-        if known_dt > d_now.replace(year=d_now.year-1):
+        if known_dt is not None and known_dt > d_now.replace(year=d_now.year-1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
-        elif known_dt <= birth_dt:
+        elif known_dt is None or known_dt <= birth_dt:
             raise forms.ValidationError('Check the number of years and months you have entered')
         return years_known, months_known
 
@@ -425,9 +428,9 @@ class SecondReferenceForm(ChildminderForms):
         birth_dt = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
         known_dt = datetime_from_time_known(years_known, months_known)
         d_now = datetime.now()
-        if known_dt > d_now.replace(year=d_now.year-1):
+        if known_dt is not None and known_dt > d_now.replace(year=d_now.year-1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
-        elif known_dt <= birth_dt:
+        elif known_dt is None or known_dt <= birth_dt:
             raise forms.ValidationError('Check the number of years and months you have entered')
         return years_known, months_known
 
