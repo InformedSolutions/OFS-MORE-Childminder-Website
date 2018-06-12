@@ -24,3 +24,4 @@ from .other_person_health_check_models import *
 from .previous_address import *
 from .previous_name import *
 from .other_person_previous_registration_details import *
+from .nanny_application import *
