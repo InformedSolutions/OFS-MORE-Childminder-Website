@@ -38,6 +38,8 @@ PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
 EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
 
+FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'registrationfeedback@ofsted.gov.uk')
+
 TEST_NOTIFY_CONNECTION = True
 
 APPLICATION_PREFIX = 'CM'
