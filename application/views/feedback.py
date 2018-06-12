@@ -29,7 +29,7 @@ def feedback(request):
         return render(request, 'feedback.html', variables)
 
     if request.method == 'POST':
-        previous_url = request.POST["url"]
+        previous_url = request.GET["url"]
         form = FeedbackForm(request.POST)
 
         if form.is_valid():
