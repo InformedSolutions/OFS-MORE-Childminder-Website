@@ -18,7 +18,7 @@ STATIC_URL = URL_PREFIX + '/static/'
 AUTHENTICATION_URL = URL_PREFIX + '/sign-in/'
 
 GOOGLE_ANALYTICS = {
-    'google_analytics_id': ""
+    'google_analytics_id': "dummy"
 }
 
 AUTHENTICATION_EXEMPT_URLS = (

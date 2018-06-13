@@ -27,7 +27,7 @@ MIDDLEWARE_DEV = [
 ]
 
 GOOGLE_ANALYTICS = {
-    'google_analytics_id': ""
+    'google_analytics_id': "dummy"
 }
 
 URL_PREFIX = '/childminder'
