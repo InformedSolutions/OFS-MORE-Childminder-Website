@@ -60,6 +60,10 @@ DATABASES = {
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '-r&u(maq#j68ngj=_ch#l6#mhak%8rbh$px8e&9c6b9@c7df=m'
 
+GOOGLE_ANALYTICS = {
+    'google_analytics_id': "UA-114456515-1"
+}
+
 # Automatic Django logging at the INFO level (i.e everything the comes to the console when ran locally)
 LOGGING = {
   'version': 1,
