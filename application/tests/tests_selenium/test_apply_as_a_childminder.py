@@ -1383,38 +1383,38 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.assertIn("problem",
                       self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
-
-    @try_except_method
-    def test_feedback_page(self):
-        """
-        Test to ensure that the applicant can successfully send feedback
-        """
-        self.selenium_task_executor.navigate_to_base_url()
-        test_email = faker.email()
-        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
-        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
-        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
-        self.selenium_task_executor.get_driver().find_element_by_id("feedback").click()
-        self.assertEqual("Feedback", self.selenium_task_executor.get_driver().title)
-        self.selenium_task_executor.get_driver().find_element_by_id("id_feedback").send_keys('Test feedback')
-        self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(faker.email())
-        self.selenium_task_executor.get_driver().find_element_by_id("submit").click()
-        self.assertEqual("Type of childcare", self.selenium_task_executor.get_driver().title)
-        self.selenium_task_executor.get_driver().find_element_by_id("feedback").click()
-        characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'
-        random_string = ''
-        # Generates 1500-character random string
-        for i in range(0, 1500):
-            random_string += random.choice(characters)
-        self.selenium_task_executor.get_driver().find_element_by_id("id_feedback").send_keys(random_string)
-        self.selenium_task_executor.get_driver().find_element_by_id("submit").click()
-        self.assertIn("problem",
-                      self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
-        self.selenium_task_executor.get_driver().find_element_by_id("id_feedback").send_keys('Test feedback')
-        self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys('Test')
-        self.selenium_task_executor.get_driver().find_element_by_id("submit").click()
-        self.assertIn("problem",
-                      self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+    #
+    # @try_except_method
+    # def test_feedback_page(self):
+    #     """
+    #     Test to ensure that the applicant can successfully send feedback
+    #     """
+    #     self.selenium_task_executor.navigate_to_base_url()
+    #     test_email = faker.email()
+    #     test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+    #     test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+    #     self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+    #     self.selenium_task_executor.get_driver().find_element_by_id("feedback").click()
+    #     self.assertEqual("Feedback", self.selenium_task_executor.get_driver().title)
+    #     self.selenium_task_executor.get_driver().find_element_by_id("id_feedback").send_keys('Test feedback')
+    #     self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(faker.email())
+    #     self.selenium_task_executor.get_driver().find_element_by_id("submit").click()
+    #     self.assertEqual("Type of childcare", self.selenium_task_executor.get_driver().title)
+    #     self.selenium_task_executor.get_driver().find_element_by_id("feedback").click()
+    #     characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'
+    #     random_string = ''
+    #     # Generates 1500-character random string
+    #     for i in range(0, 1500):
+    #         random_string += random.choice(characters)
+    #     self.selenium_task_executor.get_driver().find_element_by_id("id_feedback").send_keys(random_string)
+    #     self.selenium_task_executor.get_driver().find_element_by_id("submit").click()
+    #     self.assertIn("problem",
+    #                   self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+    #     self.selenium_task_executor.get_driver().find_element_by_id("id_feedback").send_keys('Test feedback')
+    #     self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys('Test')
+    #     self.selenium_task_executor.get_driver().find_element_by_id("submit").click()
+    #     self.assertIn("problem",
+    #                   self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
 
     def complete_full_question_set(self):
         """
