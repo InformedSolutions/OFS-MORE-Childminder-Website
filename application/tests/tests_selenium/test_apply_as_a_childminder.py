@@ -838,9 +838,9 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
     @try_except_method
     def test_entering_invalid_sms_code_raises_error(self):
-        '''
+        """
         Tests that entering invalid sms code (none at all, too short, too long or incorrect) raises error.
-        '''
+        """
         test_email = self.create_standard_eyfs_application()
         self.selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
         self.selenium_task_executor.navigate_to_SMS_validation_page(test_email)
@@ -857,14 +857,14 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
     @try_except_method
     def test_invalid_mobile_security_question_raises_error(self):
-        '''
+        """
         Test that invalid response to mobile number security question form raises validation error.
         4 different login scenarios:
             - App contains user DBS: Ask for DBS Certificate No.
             - User given details of whom they live with: Ask for DoB for eldest person in home.
             - User has completed personal details: Ask for DoB and postcode.
             * If none of above, ask for user's phone number.
-        '''
+        """
         test_email = self.create_standard_eyfs_application()
         self.selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
         self.selenium_task_executor.navigate_to_SMS_validation_page(test_email)
@@ -884,14 +884,14 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
     @try_except_method
     def test_invalid_personal_details_security_question_raises_error(self):
-        '''
+        """
         Test that invalid response to postcode security question form raises validation error.
         4 different login scenarios:
             - App contains user DBS: Ask for DBS Certificate No.
             - User given details of whom they live with: Ask for DoB for eldest person in home.
             - User has completed personal details: Ask for DoB and postcode.
             * If none of above, ask for user's phone number.
-        '''
+        """
         test_email = self.create_standard_eyfs_application()
         # Fill out personal details.
         self.selenium_task_executor.complete_personal_details(forename="Gael",
@@ -1164,6 +1164,29 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Check task status marked as Done
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='personal_details']/td/a/strong").text)
+
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-first_name").send_keys(faker.first_name())
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-middle_names").send_keys(faker.first_name())
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-last_name").send_keys(faker.last_name())
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-date_of_birth_0").send_keys(random.randint(1, 28))
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-date_of_birth_1").send_keys(random.randint(1, 12))
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-date_of_birth_2").send_keys(random.randint(1980, 2000))
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-relationship").send_keys('Co-inhabitant')
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-email_address").send_keys(applicant_email)
+
+        # Javascript click execution is used here given element falls out of view location range
+        submit_button = self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']")
+        self.selenium_task_executor.get_driver().execute_script("arguments[0].click();", submit_button)
+
+        self.assertIn("problem",
+                      self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+
+
+    def complete_full_question_set(self):
+        """
+        Helper method for completing all questions in an application
+        """
+        applicant_email = self.create_standard_eyfs_application()
 
         # When completing first aid training task ensure that certification is within last 3 years
         self.selenium_task_executor.complete_first_aid_training(
