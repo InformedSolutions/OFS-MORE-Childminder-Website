@@ -26,10 +26,6 @@ MIDDLEWARE_DEV = [
     'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
 
-GOOGLE_ANALYTICS = {
-    'google_analytics_id': "dummy"
-}
-
 URL_PREFIX = '/childminder'
 STATIC_URL = URL_PREFIX + '/static/'
 
