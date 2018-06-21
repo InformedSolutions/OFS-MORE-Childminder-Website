@@ -13,7 +13,9 @@
     Check your email
 </h1>
 <p>We've sent a link to {{ email }}.</a></p>
-<p>You must click on the link to change your email.</p>
+    {% if change_email %}
+        <p>You must click on the link to change your email.</p>
+    {% endif %}
 <p>This can take a few minutes to arrive.</p>
 <p>If you don't get an email:</p>
 <ul class="list-bullet">

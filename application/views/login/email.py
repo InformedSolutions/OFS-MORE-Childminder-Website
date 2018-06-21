@@ -137,6 +137,7 @@ def login_email_link_sent(request):
     variables = {
         'email': email,
         'resend_url': resend_url,
+        'change_email': False
     }
 
     return render(request, 'email-sent.html', variables)
@@ -170,6 +171,7 @@ def update_email_link_sent(request):
     variables = {
         'email': email,
         'resend_url': resend_url,
+        'change_email': True
     }
     return render(request, 'email-sent.html', variables)
 
