@@ -113,8 +113,7 @@ def other_people_adult_question(request):
         status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
         application = Application.objects.get(pk=application_id_local)
 
-        form = OtherPeopleAdultQuestionForm(
-            request.POST, id=application_id_local)
+        form = OtherPeopleAdultQuestionForm(request.POST, id=application_id_local)
         form.remove_flag()
         number_of_adults = AdultInHome.objects.filter(application_id=application_id_local).count()
         if form.is_valid():
@@ -182,9 +181,10 @@ def other_people_adult_details(request):
         rearrange_adults(number_of_adults, application_id_local)
         # Generate a list of forms to iterate through in the HTML
         form_list = []
+        email_list = [value for key, value in request.POST.items() if 'email_address' in key.lower()]
         for i in range(1, number_of_adults + 1):
             form = OtherPeopleAdultDetailsForm(
-                id=application_id_local, adult=i, prefix=i)
+                id=application_id_local, adult=i, prefix=i, email_list=email_list)
             form.check_flag()
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
@@ -221,9 +221,10 @@ def other_people_adult_details(request):
         form_list = []
         # List to allow for the validation of each form
         valid_list = []
+        email_list = [value for key, value in request.POST.items() if 'email_address' in key.lower()]
         for i in range(1, int(number_of_adults) + 1):
             form = OtherPeopleAdultDetailsForm(
-                request.POST, id=application_id_local, adult=i, prefix=i)
+                request.POST, id=application_id_local, adult=i, prefix=i, email_list=email_list)
             form.remove_flag()
             form_list.append(form)
             form.error_summary_title = 'There was a problem with the details (Person ' + str(

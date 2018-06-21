@@ -88,6 +88,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         """
         self.application_id_local = kwargs.pop('id')
         self.adult = kwargs.pop('adult')
+        self._all_emails = kwargs.pop('email_list')
         super(OtherPeopleAdultDetailsForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
@@ -174,6 +175,8 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
             raise forms.ValidationError('Please enter a valid email address')
         if email_address == applicant_email:
             raise forms.ValidationError('Their email address cannot be the same as your email address')
+        if self._all_emails.count(email_address) > 1:  # This is 1 because one of them is itself
+            raise forms.ValidationError('Their email address cannot be the same as another person in your home')
         return email_address
 
 
@@ -250,7 +253,7 @@ class OtherPeopleChildrenQuestionForm(ChildminderForms):
     )
     children_in_home = forms.ChoiceField(label='Do you live with any children under 16?', choices=options,
                                          widget=InlineRadioSelect, required=True, error_messages={
-        'required': "Please tell us if you live with any children under 16"})
+            'required': "Please tell us if you live with any children under 16"})
 
     def __init__(self, *args, **kwargs):
         """
@@ -282,7 +285,7 @@ class OtherPeopleChildrenDetailsForm(ChildminderForms):
     middle_names = forms.CharField(label='Middle names (if they have any)', required=False)
     last_name = forms.CharField(label='Last name', required=True, error_messages={
         'required': "Please enter their last name"})
-    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980',error_messages={
+    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980', error_messages={
         'required': "Please enter the full date, including the day, month and year"})
     relationship = forms.CharField(label='How are they related to you?', help_text='For instance, son or daughter',
                                    required=True,
