@@ -18,12 +18,12 @@
 </div>
 
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    <p class="two-thirds">We will send a code to your mobile when you sign in next time.</p>
+    <p class="two-thirds">We'll send a code to your mobile when you sign in next time.</p>
     {{mobile_form.as_div}}
     <p class="two-thirds">Let us know if you have another number, like a landline phone.</p>
     {{add_phone_form.as_div}}
     {% csrf_token %}
-    <p class="two-thirds">We will use the numbers to contact you.</p>
+    <p class="two-thirds">We’ll use the numbers to contact you about your registration.</p>
     <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
     <input type="hidden" name="id" value="{{application_id}}"/>
     <!-- If applicant has previously completed this task, allow user to return to task list -->
