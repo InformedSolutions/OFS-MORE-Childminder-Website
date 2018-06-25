@@ -701,7 +701,7 @@ def other_people_summary(request):
                     ('dbs_certificate_number', adult.dbs_certificate_number),
                 ])
 
-                if adult.health_check_status == 'To do':
+                if adult.health_check_status == 'To do' or adult.health_check_status == 'Flagged':
                     status.update(application_id_local, 'people_in_home_status', 'WAITING')
 
             other_adult_table = collections.OrderedDict({
@@ -886,7 +886,7 @@ def other_people_email_confirmation(request):
         form.remove_flag()
         if form.is_valid():
             # Set the People in your home task to WAITING (to be set to Done once all household members
-            # have completed their health checks
+            # have completed their health checks)
             status.update(application_id_local, 'people_in_home_status', 'WAITING')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
