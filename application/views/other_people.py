@@ -701,7 +701,7 @@ def other_people_summary(request):
                     ('dbs_certificate_number', adult.dbs_certificate_number),
                 ])
 
-                if adult.health_check_status == 'To do' or adult.health_check_status == 'Flagged':
+                if adult.health_check_status == 'To do':
                     status.update(application_id_local, 'people_in_home_status', 'WAITING')
 
             other_adult_table = collections.OrderedDict({
@@ -1099,6 +1099,9 @@ def other_people_resend_confirmation(request):
         elif adult_record.middle_names == '':
             name = adult_record.first_name + ' ' + adult_record.last_name
 
+        if adult_record.health_check_status == 'Flagged':
+            status.update(application_id_local, 'people_in_home_status', 'WAITING')
+
         variables = {
             'form': form,
             'application_id': application_id_local,
@@ -1112,6 +1115,7 @@ def other_people_resend_confirmation(request):
         application_id_local = request.POST["id"]
         form = OtherPeopleResendEmailForm(request.POST)
         form.remove_flag()
+
         # Navigate back to task summary
         if form.is_valid():
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
