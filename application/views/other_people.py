@@ -675,6 +675,7 @@ def other_people_summary(request):
         form = OtherPeopleSummaryForm()
         application = Application.objects.get(pk=application_id_local)
         adult_table_list = []
+        adult_health_check_status_list = []
 
         for adult in adults_list:
 
@@ -704,6 +705,10 @@ def other_people_summary(request):
                 if adult.health_check_status == 'To do':
                     status.update(application_id_local, 'people_in_home_status', 'WAITING')
 
+                # If adult health check status is not complete, add to health check status list
+                if adult.health_check_status != 'Done':
+                    adult_health_check_status_list.append('To do')
+
             other_adult_table = collections.OrderedDict({
                 'table_object': Table([adult.pk]),
                 'fields': other_adult_fields,
@@ -712,6 +717,10 @@ def other_people_summary(request):
             })
 
             adult_table_list.append(other_adult_table)
+
+        # Set People in home status to Done if all adult health check statuses have been completed
+        if len(adult_health_check_status_list) == 0:
+            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
 
         back_link_addition = '&adults=' + str((len(adult_table_list))) + '&remove=0'
 
@@ -886,8 +895,16 @@ def other_people_email_confirmation(request):
         form.remove_flag()
         if form.is_valid():
             # Set the People in your home task to WAITING (to be set to Done once all household members
-            # have completed their health checks)
-            status.update(application_id_local, 'people_in_home_status', 'WAITING')
+            # have completed their health checks) only if all health checks have been completed
+            adults_list = AdultInHome.objects.filter(application_id=application_id_local)
+            adult_health_check_status_list = []
+            for adult in adults_list:
+                if adult.health_check_status != 'Done':
+                    adult_health_check_status_list.append('To do')
+            if len(adult_health_check_status_list) > 0:
+                status.update(application_id_local, 'people_in_home_status', 'WAITING')
+            elif len(adult_health_check_status_list) == 0:
+                status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
             variables = {
