@@ -479,6 +479,81 @@ class ApplyAsAChildminder(LiveServerTestCase):
             "//tr[@id='other_people']/td/a/strong").text)
 
     @try_except_method
+    def test_cannot_resend_health_check_email_more_than_three_times(self):
+        """
+        Tests that the adult health check email cannot be sent more than three times within 24 hours
+        """
+        applicant_email = self.create_standard_eyfs_application()
+
+        # Complete People in your home task (until status is Waiting)
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
+
+        # Guidance page
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+
+        self.selenium_task_executor.get_driver().find_element_by_id("id_adults_in_home_0").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        WebDriverWait(self.selenium_task_executor.get_driver(), 30).until(
+            expected_conditions.title_contains("Details of adults in your home")
+        )
+
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-first_name").send_keys(faker.first_name())
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-middle_names").send_keys(faker.first_name())
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-last_name").send_keys(faker.last_name_female())
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-date_of_birth_0").send_keys(20)
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-date_of_birth_1").send_keys(4)
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-date_of_birth_2").send_keys(1995)
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-relationship").send_keys('Friend')
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-email_address").send_keys(faker.email())
+
+        # Javascript click execution is used here given element falls out of view location range
+        submit_button = self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']")
+        self.selenium_task_executor.get_driver().execute_script("arguments[0].click();", submit_button)
+
+        WebDriverWait(self.selenium_task_executor.get_driver(), 30).until(
+            expected_conditions.title_contains("DBS checks on adults in your home"))
+
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-dbs_certificate_number").send_keys(123456654321)
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        WebDriverWait(self.selenium_task_executor.get_driver(), 30).until(expected_conditions.title_contains("Children in your home"))
+        self.selenium_task_executor.get_driver().find_element_by_id("id_children_in_home_1").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        # Javascript click execution is used here given element falls out of view location range
+        submit_button = self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']")
+        self.selenium_task_executor.get_driver().execute_script("arguments[0].click();", submit_button)
+
+        # Task summary confirmation
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").send_keys(Keys.RETURN)
+
+        # Email confirmation page
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").send_keys(Keys.RETURN)
+
+        # Resend health check e-mail 3 times
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text("Resend email").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend email']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text("Resend email").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend email']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text("Resend email").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend email']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text("Resend email").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend email']").click()
+
+        self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
+
+    @try_except_method
     def test_can_apply_as_a_childminder_full_question_set(self):
         """
         Test to exercise the largest set of questions possible within a childminder application
