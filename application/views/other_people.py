@@ -72,7 +72,8 @@ def other_people_guidance(request):
             if application.people_in_home_status != 'COMPLETED':
                 if application.people_in_home_status != 'WAITING':
                     status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/people/adults?id=' + application_id_local)
+            return HttpResponseRedirect(
+                settings.URL_PREFIX + reverse('Other-People-Adult-Question-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -125,7 +126,7 @@ def other_people_adult_question(request):
             reset_declaration(application)
             # If adults live in your home, navigate to adult details page
             if adults_in_home == 'True':
-                return HttpResponseRedirect(settings.URL_PREFIX + '/people/adults-details?id=' +
+                return HttpResponseRedirect(settings.URL_PREFIX + reverse('Other-People-Adult-Details-View') + '?id=' +
                                             application_id_local + '&adults=' + str(number_of_adults) + '&remove=0')
             # If adults do not live in your home, navigate to children question page
             elif adults_in_home == 'False':
@@ -137,7 +138,8 @@ def other_people_adult_question(request):
                 application.date_updated = current_date
                 application.save()
                 reset_declaration(application)
-                return HttpResponseRedirect(settings.URL_PREFIX + '/people/children?id=' + application_id_local)
+                return HttpResponseRedirect(settings.URL_PREFIX + reverse(
+                    'Other-People-Children-Question-View') + '?id=' + application_id_local)
         else:
 
             if application.application_status == 'FURTHER_INFORMATION':
@@ -250,7 +252,7 @@ def other_people_adult_details(request):
                     'people_in_home_status': application.people_in_home_status
                 }
                 return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/people/adult-dbs-details?id=' + application_id_local +
+                    settings.URL_PREFIX + reverse('Other-People-Adult-DBS-View') + '?id=' + application_id_local +
                     '&adults=' + number_of_adults, variables)
             # If there is an invalid form
             elif False in valid_list:
@@ -276,7 +278,7 @@ def other_people_adult_details(request):
                 # Reset task status to IN_PROGRESS if adults are updated
                 status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
                 return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/people/adults-details?id=' +
+                    settings.URL_PREFIX + reverse('Other-People-Adult-Details-View') + '?id=' +
                     application_id_local + '&adults=' + add_adult_string + '&remove=0#person' + add_adult_string,
                     variables)
             # If there is an invalid form
@@ -370,7 +372,7 @@ def other_people_adult_dbs(request):
                 'application_id': application_id_local,
                 'people_in_home_status': application.people_in_home_status
             }
-            return HttpResponseRedirect(settings.URL_PREFIX + '/people/children?id=' +
+            return HttpResponseRedirect(settings.URL_PREFIX + reverse('Other-People-Children-Question-View') + '?id=' +
                                         application_id_local + '&adults=' + number_of_adults, variables)
         # If there is an invalid form
         elif False in valid_list:
@@ -429,8 +431,9 @@ def other_people_children_question(request):
             application.save()
             reset_declaration(application)
             if children_in_home == 'True':
-                return HttpResponseRedirect(settings.URL_PREFIX + '/people/children-details?id=' +
-                                            application_id_local + '&children=' + str(number_of_children) + '&remove=0')
+                return HttpResponseRedirect(settings.URL_PREFIX + reverse(
+                    'Other-People-Children-Details-View') + '?id=' + application_id_local + '&children=' + str(
+                    number_of_children) + '&remove=0')
             elif children_in_home == 'False':
                 # Delete any existing children from database
                 children = ChildInHome.objects.filter(
@@ -438,7 +441,8 @@ def other_people_children_question(request):
                 for child in children:
                     child.delete()
                 reset_declaration(application)
-                return HttpResponseRedirect(settings.URL_PREFIX + '/people/check-answers?id=' + application_id_local)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + reverse('Other-People-Summary-View') + '?id=' + application_id_local)
         else:
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
@@ -559,8 +563,8 @@ def other_people_children_details(request):
                     application.date_updated = current_date
                     application.save()
                     reset_declaration(application)
-                    return HttpResponseRedirect(settings.URL_PREFIX + '/other-people/approaching-16?id=' +
-                                                application_id_local, variables)
+                    return HttpResponseRedirect(settings.URL_PREFIX + reverse(
+                        'Other-People-Approaching-16-View') + '?id=' + application_id_local, variables)
                 # If no child is approaching 16, navigate to summary page
                 elif True not in age_list:
                     application.children_turning_16 = False
@@ -568,7 +572,7 @@ def other_people_children_details(request):
                     application.save()
                     reset_declaration(application)
                     return HttpResponseRedirect(
-                        settings.URL_PREFIX + '/people/check-answers?id=' + application_id_local,
+                        settings.URL_PREFIX + reverse('Other-People-Summary-View') + '?id=' + application_id_local,
                         variables)
             # If there is an invalid form
             elif False in valid_list:
@@ -602,7 +606,7 @@ def other_people_children_details(request):
                 add_child = int(number_of_children) + 1
                 add_child_string = str(add_child)
                 return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/people/children-details?id=' +
+                    settings.URL_PREFIX + reverse('Other-People-Children-Details-View') + '?id=' +
                     application_id_local + '&children=' + add_child_string + '&remove=0#person' + add_child_string,
                     variables)
             # If there is an invalid form
@@ -653,7 +657,7 @@ def other_people_approaching_16(request):
                 'people_in_home_status': application.people_in_home_status
             }
             return HttpResponseRedirect(
-                settings.URL_PREFIX + '/people/check-answers?id=' + application_id_local, variables)
+                settings.URL_PREFIX + reverse('Other-People-Summary-View') + '?id=' + application_id_local, variables)
         else:
             variables = {
                 'form': form,
@@ -909,7 +913,7 @@ def other_people_email_confirmation(request):
                 status.update(application_id_local, 'people_in_home_status', 'WAITING')
             elif len(adult_health_check_status_list) == 0:
                 status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + reverse('Task-List-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -1028,7 +1032,8 @@ def other_people_resend_email(request):
                     adult_record.save()
 
                     return HttpResponseRedirect(
-                        settings.URL_PREFIX + '/people/email-resent?id=' + application_id_local + '&adult=' + adult)
+                        settings.URL_PREFIX + reverse(
+                            'Other-People-Resend-Confirmation-View') + '?id=' + application_id_local + '&adult=' + adult)
 
                 # If the email has been resent more than 3 times
                 elif adult_record.email_resent >= 3:
@@ -1130,7 +1135,7 @@ def other_people_resend_confirmation(request):
 
         # Navigate back to task summary
         if form.is_valid():
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
+            return HttpResponseRedirect(settings.URL_PREFIX + reverse('Task-List-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
