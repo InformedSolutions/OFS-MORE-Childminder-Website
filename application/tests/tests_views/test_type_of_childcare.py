@@ -4,13 +4,13 @@ from .view_parent import *
 class TypeOfChildcareTest(ViewsTest):
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/childcare/guidance/')
+        found = resolve(settings.URL_PREFIX + '/childcare/type/')
         self.assertEqual(found.func, type_of_childcare_guidance)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/childcare/guidance?id=')
+            c.get(settings.URL_PREFIX + '/childcare/type?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)

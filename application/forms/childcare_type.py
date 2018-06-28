@@ -68,7 +68,7 @@ class TypeOfChildcareAgeGroupsForm(ChildminderForms):
             elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is False):
                 self.fields['type_of_childcare'].initial = []
         self.fields['type_of_childcare'].error_messages = {
-            'required': 'You must select at least one age group to continue with your application'}
+            'required': 'Please select at least one age group'}
 
 
 class TypeOfChildcareRegisterForm(ChildminderForms):
@@ -87,7 +87,7 @@ class TypeOfChildcareOvernightCareForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
-    error_summary_title ='There was a problem on this page'
+    error_summary_title = 'There was a problem on this page'
 
     options = (
         ('True', 'Yes'),
@@ -96,7 +96,8 @@ class TypeOfChildcareOvernightCareForm(ChildminderForms):
 
     overnight_care = forms.ChoiceField(label='Will you be looking after children overnight?', choices=options,
                                        widget=InlineRadioSelect, required=True,
-                                       error_messages={'required': 'Please select one'})
+                                       error_messages={'required':
+                                                       "Please say if you'll be looking after children overnight"})
 
     def __init__(self, *args, **kwargs):
         """

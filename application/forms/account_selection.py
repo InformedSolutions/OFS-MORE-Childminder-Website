@@ -21,7 +21,8 @@ class AccountSelection(ChildminderForms):
 
     acc_selection = forms.ChoiceField(label='', choices=options,
                                        widget=RadioSelect, required=True,
-                                       error_messages={'required': 'Please select one'})
+                                       error_messages={'required': 'Select if you want to start a new application or '
+                                                                   'go back to an existing one'})
 
     def __init__(self, *args, **kwargs):
         """

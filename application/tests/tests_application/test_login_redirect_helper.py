@@ -18,7 +18,7 @@ class TestLoginRedirectHelper(TestCase):
         application = Application.objects.create()
         application.application_status = 'DRAFTING'
         redirect = login_redirect_helper.redirect_by_status(application)
-        target_path = settings.URL_PREFIX + "/childcare/guidance/"
+        target_path = settings.URL_PREFIX + "/childcare/type/"
         assert (isinstance(redirect, HttpResponseRedirect))
         print(target_path)
         print(redirect.url)

@@ -10,6 +10,11 @@ childcare_type_name_dict = collections.OrderedDict([('childcare_age_groups', 'Wh
 childcare_type_link_dict = collections.OrderedDict([('childcare_age_groups', 'Type-Of-Childcare-Age-Groups-View'),
                                                     ('overnight_care', 'Type-Of-Childcare-Overnight-Care-View')])
 
+childcare_type_change_link_description_dict = collections.OrderedDict([('childcare_age_groups',
+                                                                        'the age groups you could be caring for'),
+                                                                       ('overnight_care',
+                                                                        "if you'll be looking after children overnight")])
+
 ###
 
 dbs_summary_dict = collections.OrderedDict({'data_names': ['dbs_certificate_number', 'cautions_convictions'],

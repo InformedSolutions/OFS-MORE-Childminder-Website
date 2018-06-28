@@ -11,7 +11,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 
-from application.summary_page_data import childcare_type_name_dict, childcare_type_link_dict
+from application.summary_page_data import childcare_type_name_dict, childcare_type_link_dict, childcare_type_change_link_description_dict
 from application.table_util import Table, create_tables, submit_link_setter
 from application.utils import can_cancel
 from .. import status
@@ -277,7 +277,8 @@ def childcare_type_summary(request):
             'error_summary_title': 'There was a problem'
         })
 
-        table_list = create_tables([childcare_type_table], childcare_type_name_dict, childcare_type_link_dict)
+        table_list = create_tables([childcare_type_table], childcare_type_name_dict, childcare_type_link_dict,
+                                   childcare_type_change_link_description_dict)
 
         variables = {
             'application_id': app_id,
