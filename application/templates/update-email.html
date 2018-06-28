@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Your email address{% endblock %}
+{% block page_title %}Your new email address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -14,11 +14,10 @@
         <!-- Content -->
         <div class="form-group">
             <h1 class="form-title heading-large">
-                Your email address
+                Your new email address
             </h1>
-            <p>Enter a new email address.</p>
-            <p>We will send you a link to confirm the email.</p>
-            <p>Make sure only you can access it.</p>
+            <p>We'll send you a link to confirm that you have access.</p>
+            <p>We'll also use it to contact you about your registration.</p>
             {{form.as_div}}
             {% csrf_token %}
             <input type="submit" class="button" value="Continue" alt='Continue'>
