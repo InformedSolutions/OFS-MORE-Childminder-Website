@@ -249,8 +249,9 @@ def other_people_adult_details(request):
                     'application_id': application_id_local,
                     'people_in_home_status': application.people_in_home_status
                 }
-                return HttpResponseRedirect(settings.URL_PREFIX + '/people/adult-dbs-details?id=' + application_id_local +
-                                            '&adults=' + number_of_adults, variables)
+                return HttpResponseRedirect(
+                    settings.URL_PREFIX + '/people/adult-dbs-details?id=' + application_id_local +
+                    '&adults=' + number_of_adults, variables)
             # If there is an invalid form
             elif False in valid_list:
                 variables = {
@@ -682,7 +683,8 @@ def other_people_summary(request):
             name = ' '.join([adult.first_name, (adult.middle_names or ''), adult.last_name])
             birth_date = ' '.join([str(adult.birth_day), calendar.month_name[adult.birth_month], str(adult.birth_year)])
 
-            if application.people_in_home_status == 'IN_PROGRESS' and any([adult.email_resent_timestamp is None for adult in adults_list]):
+            if application.people_in_home_status == 'IN_PROGRESS' and any(
+                    [adult.email_resent_timestamp is None for adult in adults_list]):
 
                 other_adult_fields = collections.OrderedDict([
                     ('full_name', name),
@@ -799,7 +801,8 @@ def other_people_summary(request):
 
         # If reaching the summary page for the first time
         if application.people_in_home_status == 'IN_PROGRESS' or 'WAITING':
-            if application.adults_in_home is True and any([adult.email_resent_timestamp is None for adult in adults_list]):
+            if application.adults_in_home is True and any(
+                    [adult.email_resent_timestamp is None for adult in adults_list]):
                 variables['submit_link'] = reverse('Other-People-Email-Confirmation-View')
             elif application.adults_in_home is False:
                 status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
@@ -847,7 +850,6 @@ def other_people_email_confirmation(request):
         template_id = '1e3c066a-4bbe-4743-b6b1-1d52ac291caf'
 
         if all([adult.email_resent_timestamp is not None for adult in adults]):
-
             return HttpResponseRedirect(build_url('Task-List-View', get={'id': application_id_local}))
 
         try:
@@ -870,13 +872,15 @@ def other_people_email_confirmation(request):
                 email = adult.email
                 base_url = settings.PUBLIC_APPLICATION_URL
                 personalisation = {"link": base_url +
-                                           reverse('Health-Check-Authentication', kwargs={'id': adult.token}).replace('/childminder', ''),
+                                           reverse('Health-Check-Authentication', kwargs={'id': adult.token}).replace(
+                                               '/childminder', ''),
                                    "firstName": adult.first_name,
                                    "ApplicantName": applicant_name_formatted}
                 print(personalisation['link'])
                 r = send_email(email, personalisation, template_id)
                 if settings.EXECUTING_AS_TEST == 'True':
-                    os.environ['EMAIL_VALIDATION_URL'] = os.environ['EMAIL_VALIDATION_URL'] + " " + str(personalisation['link'])
+                    os.environ['EMAIL_VALIDATION_URL'] = os.environ['EMAIL_VALIDATION_URL'] + " " + str(
+                        personalisation['link'])
 
                 # Set a timestamp when the e-mail was last send (for later use in resend e-mail logic)
                 adult.email_resent_timestamp = datetime.now(pytz.utc)
@@ -1062,13 +1066,10 @@ def other_people_resend_email(request):
                 # Send e-mail
                 r = send_email(email, personalisation, template_id)
                 print(r)
-                # Update email resend count
+                # Increase the email resend count by 1
                 email_resent = adult_record.email_resent
                 if email_resent is not None:
-                    if email_resent >= 1:
-                        adult_record.email_resent = email_resent + 1
-                    elif email_resent < 1:
-                        adult_record.email_resent = 1
+                    adult_record.email_resent = email_resent + 1
                 else:
                     adult_record.email_resent = 1
                 # Reset email last sent timestamp
@@ -1076,7 +1077,8 @@ def other_people_resend_email(request):
                 adult_record.save()
 
                 return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/people/email-resent?id=' + application_id_local + '&adult=' + adult)
+                    settings.URL_PREFIX + reverse(
+                        'Other-People-Resend-Confirmation-View') + '?id=' + application_id_local + '&adult=' + adult)
 
         else:
             variables = {
