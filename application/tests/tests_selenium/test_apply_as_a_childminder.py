@@ -4,6 +4,7 @@ Selenium test cases for the Childminder service
 
 import os
 import random
+import time
 from datetime import datetime
 
 from django.core.management import call_command
@@ -1348,11 +1349,15 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertEqual("Sign in question", self.selenium_task_executor.get_driver().title)
 
     @try_except_method
-    def test_applicant_cannot_enter_own_email_address_for_adult_in_home(self):
+    def test_applicant_cannot_enter_own_email_or_same_email_for_adults_in_home(self):
         """
-        Test to ensure that the applicant cannot enter their own e-mail address as a household member's email address
+        Test to ensure that the applicant cannot enter their own or same email for adults living in house
+
         """
+        # Here it tests that the applicant cannot enter their own email address as a household member's email address
         applicant_email = self.create_standard_eyfs_application()
+
+        household_member_email_id = faker.email()
 
         driver = self.selenium_task_executor.get_driver()
 
@@ -1383,6 +1388,28 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.assertIn("problem",
                       self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
+
+        # From here it tests that two adults email ids are not same
+        driver.find_element_by_id("id_1-email_address").clear()
+        driver.find_element_by_id("id_1-email_address").send_keys(household_member_email_id)
+        time.sleep(1)
+        driver.find_element_by_name("add_person").click()
+        driver.find_element_by_id("id_2-first_name").send_keys(faker.first_name())
+        driver.find_element_by_id("id_2-middle_names").send_keys(faker.first_name())
+        driver.find_element_by_id("id_2-last_name").send_keys(faker.last_name())
+        driver.find_element_by_id("id_2-date_of_birth_0").send_keys(random.randint(1, 28))
+        driver.find_element_by_id("id_2-date_of_birth_1").send_keys(random.randint(1, 12))
+        driver.find_element_by_id("id_2-date_of_birth_2").send_keys(random.randint(1980, 2000))
+        driver.find_element_by_id("id_2-relationship").send_keys('Friend')
+        driver.find_element_by_id("id_2-email_address").send_keys(household_member_email_id)
+        driver.find_element_by_id("adult-details-save").click()
+        print(driver.find_element_by_xpath("//div[@id='id_2-email_address-group']/span").text)
+        driver.find_element_by_xpath("//div[@id='id_2-email_address-group']/span").click()
+        self.assertEqual("Their email address cannot be the same as another person in your home",
+                         driver.find_element_by_xpath("//div[@id='id_2-email_address-group']/span").text)
+
+
+
     #
     # @try_except_method
     # def test_feedback_page(self):
