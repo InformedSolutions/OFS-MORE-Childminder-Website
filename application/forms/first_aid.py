@@ -27,7 +27,7 @@ class FirstAidTrainingDetailsForm(ChildminderForms):
     auto_replace_widgets = True
 
     first_aid_training_organisation = forms.CharField(label='Training organisation', error_messages={
-        'required': 'Please enter the title of your course'})
+        'required': 'Please enter the name of the training organisation'})
     title_of_training_course = forms.CharField(label='Title of training course', error_messages={
         'required': 'Please enter the title of the course'})
     course_date = CustomSplitDateFieldDOB(label='Date you completed course', help_text='For example, 31 03 2016',

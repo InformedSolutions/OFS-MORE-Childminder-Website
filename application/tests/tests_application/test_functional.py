@@ -5,9 +5,10 @@ NOTE! If it throws you status 200, that means form submission is failing!
 
 """
 from datetime import datetime
+from unittest import mock
 
 from django.core.urlresolvers import reverse
-from django.test import TestCase
+from django.test import TestCase, modify_settings
 from django.urls import resolve
 
 from timeline_logger.models import TimelineLog
