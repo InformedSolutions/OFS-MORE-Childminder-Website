@@ -1,9 +1,12 @@
 import datetime
+import pytz
 
 from django.test import TestCase
 from uuid import UUID
+from unittest import mock
 
 from ...models import AdultInHome, Application, ChildInHome, UserDetails
+from ...business_logic import health_check_email_resend_logic
 
 
 class TestPeopleInYourHomeLogic(TestCase):
@@ -299,6 +302,17 @@ class TestPeopleInYourHomeLogic(TestCase):
         assert (ChildInHome.objects.filter(application_id=test_application_id, child=3).count() == 0)
         assert (ChildInHome.objects.filter(application_id=test_application_id, child=1).count() == 1)
         assert (ChildInHome.objects.filter(application_id=test_application_id, child=2).count() == 1)
+
+    def test_health_check_email_resend_logic_less_than_three(self):
+        """
+        Test to check that if the health check email is sent less than three times, the resend limit is not reached
+        :return:
+        """
+        mock_adult_in_home_record = mock.Mock(spec=AdultInHome)
+        mock_adult_in_home_record.email_resent_timestamp = datetime.datetime.now(pytz.utc)
+        mock_adult_in_home_record.email_resent = 1
+        under_resend_limit = health_check_email_resend_logic(mock_adult_in_home_record)
+        assert (under_resend_limit is True)
 
     def delete(self):
         AdultInHome.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c', adult=1).delete()
