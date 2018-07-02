@@ -676,11 +676,7 @@ def reset_declaration(application):
         application.change_declare = None
         application.save()
 
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> 631971c9ec1b3bbc41492d525e8c04ba63fff258
 def health_check_email_resend_logic(adult_record):
     """
     Method to verify if the last household member health check email can be sent, given a limit of 3 resends per 24
