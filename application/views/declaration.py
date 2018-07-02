@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.views.decorators.cache import never_cache
 from timeline_logger.models import TimelineLog
 
+from application.views.magic_link import magic_link_resubmission_confirmation_email
 from .. import status
 from ..forms import (DeclarationIntroForm,
                      DeclarationForm,
@@ -348,8 +349,16 @@ def declaration_declaration(request):
                     'updated_list': updated_list
                 }
 
-                clear_arc_flagged_statuses(application_id_local)
+                user_details = UserDetails.objects.get(application_id=application_id_local)
+                applicant_name = ApplicantName.objects.get(application_id=application_id_local)
+                magic_link_resubmission_confirmation_email(
+                    email=user_details.email,
+                    first_name=applicant_name.first_name,
+                    application_reference=application.application_reference,
+                    updated_tasks=updated_list
+                )
 
+                clear_arc_flagged_statuses(application_id_local)
                 status.update(application_id_local, 'declarations_status', 'COMPLETED')
 
                 return render(request, 'payment-confirmation-resubmitted.html', variables)
