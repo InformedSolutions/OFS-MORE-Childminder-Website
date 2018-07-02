@@ -676,7 +676,7 @@ def reset_declaration(application):
         application.change_declare = None
         application.save()
 
-
+        
 def health_check_email_resend_logic(adult_record):
     """
     Method to verify if the last household member health check email can be sent, given a limit of 3 resends per 24
@@ -706,3 +706,29 @@ def health_check_email_resend_logic(adult_record):
         adult_record.save()
 
         return False
+
+      
+def eligible_to_apply_based_on_childcare_ages(childcare_record):
+    """
+    Helper function to check whether an applicant can apply based on the ages of children they
+    will be looking after
+    :param childcare_record: A ChildcareType instance detailing the ages of children being looked after
+    :return: a boolean indicator for whether or not
+    an applicant can apply using the service based on the ages of children they
+    will be looking after
+    """
+
+    if (childcare_record.zero_to_five is False) \
+            & (childcare_record.five_to_eight is True) \
+            & (childcare_record.eight_plus is False):
+        return False
+    elif (childcare_record.zero_to_five is False) \
+            & (childcare_record.five_to_eight is True) \
+            & (childcare_record.eight_plus is True):
+        return False
+    elif (childcare_record.zero_to_five is False) \
+            & (childcare_record.five_to_eight is False) \
+            & (childcare_record.eight_plus is True):
+        return False
+    else:
+        return True
