@@ -6,14 +6,13 @@ import collections
 
 from django.utils import timezone
 
-from django.conf import settings
+from ..business_logic import eligible_to_apply_based_on_childcare_ages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 
-from application.summary_page_data import childcare_type_name_dict, childcare_type_link_dict, childcare_type_change_link_description_dict
-from application.table_util import Table, create_tables, submit_link_setter
-from application.utils import can_cancel
+from ..summary_page_data import childcare_type_name_dict, childcare_type_link_dict, childcare_type_change_link_description_dict
+from ..table_util import Table, create_tables, submit_link_setter
 from .. import status
 from ..business_logic import reset_declaration, childcare_type_logic
 from ..forms import TypeOfChildcareGuidanceForm, TypeOfChildcareAgeGroupsForm, TypeOfChildcareRegisterForm, \
@@ -144,26 +143,29 @@ def type_of_childcare_register(request):
             'login_details_status': application.login_details_status,
         }
 
-        # Move into separate method - check business logic too
         childcare_record = ChildcareType.objects.get(application_id=app_id)
-        zero_to_five_status = childcare_record.zero_to_five
-        five_to_eight_status = childcare_record.five_to_eight
-        eight_plus_status = childcare_record.eight_plus
 
-        if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
+        if (childcare_record.zero_to_five is True) \
+                & (childcare_record.five_to_eight is True) \
+                & (childcare_record.eight_plus is True):
             return render(request, 'childcare-register-EYR-CR-both.html', variables)
-        elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
+
+        elif (childcare_record.zero_to_five is True) \
+                & (childcare_record.five_to_eight is True) \
+                & (childcare_record.eight_plus is False):
             return render(request, 'childcare-register-EYR-CR-compulsory.html', variables)
-        elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
+
+        elif (childcare_record.zero_to_five is True) \
+                & (childcare_record.five_to_eight is False) \
+                & (childcare_record.eight_plus is True):
             return render(request, 'childcare-register-EYR-CR-voluntary.html', variables)
-        elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
+
+        elif (childcare_record.zero_to_five is True) \
+                & (childcare_record.five_to_eight is False) \
+                & (childcare_record.eight_plus is False):
             return render(request, 'childcare-register-EYR.html', variables)
 
-        elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is False):
-            return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + app_id)
-        elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
-            return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + app_id)
-        elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
+        elif not eligible_to_apply_based_on_childcare_ages(childcare_record):
             return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + app_id)
 
     if request.method == 'POST':
@@ -305,11 +307,6 @@ def local_authority_links(request):
     if request.method == 'GET':
 
         app_id = request.GET["id"]
-        application = Application.objects.get(pk=app_id)
-        variables = {
-            'application_id': app_id,
-            'can_cancel': can_cancel(application)
-        }
         return HttpResponseRedirect(reverse('CR-Cancel-Application') + '?id=' + app_id)
 
     if request.method == 'POST':
@@ -319,7 +316,7 @@ def local_authority_links(request):
         if application.childcare_type_status != 'COMPLETED':
             status.update(app_id, 'childcare_type_status', 'COMPLETED')
         if 'Cancel application' in request.POST.keys():
-            return HttpResponseRedirect(reverse('CR-Cancel-Application')+ '?id=' + app_id)
+            return HttpResponseRedirect(reverse('CR-Cancel-Application') + '?id=' + app_id)
         else:
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + app_id)
+            return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + app_id)
 
