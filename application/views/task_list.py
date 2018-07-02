@@ -13,11 +13,12 @@ from django.urls import reverse
 from django.http import HttpResponseRedirect
 from django.views.decorators.cache import never_cache
 
-from application.models import (ApplicantName, ApplicantPersonalDetails, Application, ChildcareType, Arc,
+from ..models import (ApplicantName, ApplicantPersonalDetails, Application, ChildcareType, Arc,
                                 ApplicantHomeAddress)
 
 # noinspection PyTypeChecker
-from application.utils import can_cancel
+from ..utils import can_cancel
+from ..business_logic import eligible_to_apply_based_on_childcare_ages
 
 
 @never_cache
@@ -45,25 +46,17 @@ def task_list(request):
                 reverse('Accepted-View') + '?id=' + str(application.application_id)
             )
 
-
         try:
             childcare_record = ChildcareType.objects.get(application_id=application_id)
+
+            # If user is attempting to force navigate to the Task list despite being ineligible
+            # to apply, redirect them back to the cancellation page
+            if not eligible_to_apply_based_on_childcare_ages(childcare_record):
+                return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + application_id)
         except Exception as e:
             return HttpResponseRedirect(reverse("Type-Of-Childcare-Guidance-View") + '?id=' + application_id)
 
-        personal_details_record = None
-        personal_details_name_record = None
-        personal_details_home_address_record = None
-        personal_details_childcare_address_record = None
-
-        try:
-            personal_details_record = ApplicantPersonalDetails.objects.get(application_id=application_id)
-            personal_details_name_record = ApplicantName.objects.get(application_id=application_id)
-            personal_details_home_address_record = ApplicantHomeAddress.objects.get(application_id=application_id,
-                                                                                    current_address=True)
-            personal_details_childcare_address_record = ApplicantHomeAddress.objects.get(application_id=application_id,
-                                                                                         childcare_address=True)
-        except Exception as e:
+        if application.personal_details_status == 'NOT_STARTED':
             return HttpResponseRedirect(reverse("Personal-Details-Name-View") + '?id=' + application_id)
 
         zero_to_five_status = childcare_record.zero_to_five

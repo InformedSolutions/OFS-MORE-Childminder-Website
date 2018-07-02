@@ -666,3 +666,29 @@ def reset_declaration(application):
         application.information_correct_declare = None
         application.change_declare = None
         application.save()
+
+
+def eligible_to_apply_based_on_childcare_ages(childcare_record):
+    """
+    Helper function to check whether an applicant can apply based on the ages of children they
+    will be looking after
+    :param childcare_record: A ChildcareType instance detailing the ages of children being looked after
+    :return: a boolean indicator for whether or not
+    an applicant can apply using the service based on the ages of children they
+    will be looking after
+    """
+
+    if (childcare_record.zero_to_five is False) \
+            & (childcare_record.five_to_eight is True) \
+            & (childcare_record.eight_plus is False):
+        return False
+    elif (childcare_record.zero_to_five is False) \
+            & (childcare_record.five_to_eight is True) \
+            & (childcare_record.eight_plus is True):
+        return False
+    elif (childcare_record.zero_to_five is False) \
+            & (childcare_record.five_to_eight is False) \
+            & (childcare_record.eight_plus is True):
+        return False
+    else:
+        return True
