@@ -5,7 +5,14 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 """
 
-import datetime
+import pytz
+import random
+import string
+
+from datetime import date, datetime, timedelta
+from django.conf import settings
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, reverse
 
 from .models import (AdultInHome,
                      ApplicantHomeAddress,
@@ -20,6 +27,8 @@ from .models import (AdultInHome,
                      HealthDeclarationBooklet,
                      Reference,
                      UserDetails)
+
+from application.notify import send_email
 
 
 def childcare_type_logic(application_id_local, form):
@@ -666,6 +675,37 @@ def reset_declaration(application):
         application.information_correct_declare = None
         application.change_declare = None
         application.save()
+
+
+def health_check_email_resend_logic(adult_record):
+    """
+    Method to verify if the last household member health check email can be sent, given a limit of 3 resends per 24
+    hours
+    :param: adult_record: An AdultInHome object
+    :return: Boolean
+    """
+
+    # If the last e-mail was sent within the last 24 hours
+    if (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) < timedelta(1):
+
+        # If the e-mail has been resent less than 3 times
+        if adult_record.email_resent < 3:
+
+            return False
+
+        # If the email has been resent more than 3 times
+        elif adult_record.email_resent >= 3:
+
+            return True
+
+    # If the last e-mail to the household member has been sent more than 24 hours ago
+    elif (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) > timedelta(1):
+        # Reset the email resent count
+        adult_record.email_resent = 0
+        adult_record.validated = False
+        adult_record.save()
+
+        return False
 
 
 def eligible_to_apply_based_on_childcare_ages(childcare_record):

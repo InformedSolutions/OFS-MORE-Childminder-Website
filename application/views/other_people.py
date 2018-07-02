@@ -20,7 +20,8 @@ from ..table_util import create_tables, Table, submit_link_setter
 from ..summary_page_data import other_adult_link_dict, other_adult_name_dict, other_child_link_dict, \
     other_child_name_dict, other_adult_summary_link_dict, other_adult_summary_name_dict, \
     other_child_summary_name_dict, other_child_summary_link_dict
-from ..business_logic import (other_people_adult_details_logic,
+from ..business_logic import (health_check_email_resend_logic,
+                              other_people_adult_details_logic,
                               other_people_children_details_logic,
                               rearrange_adults,
                               rearrange_children,
@@ -969,15 +970,12 @@ def other_people_resend_email(request):
         form.remove_flag()
         # Generate parameters for e-mail template
         application = Application.objects.get(pk=application_id_local)
-        try:
-            applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
-            applicant_name = ApplicantName.objects.get(personal_detail_id=applicant)
-            if applicant_name.middle_names == '':
-                applicant_name_formatted = applicant_name.first_name + ' ' + applicant_name.last_name
-            else:
-                applicant_name_formatted = applicant_name.first_name + ' ' + applicant_name.middle_names + ' ' + applicant_name.last_name
-        except:
-            applicant_name_formatted = 'An applicant'
+        applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+        applicant_name = ApplicantName.objects.get(personal_detail_id=applicant)
+        if applicant_name.middle_names == '':
+            applicant_name_formatted = applicant_name.first_name + ' ' + applicant_name.last_name
+        else:
+            applicant_name_formatted = applicant_name.first_name + ' ' + applicant_name.middle_names + ' ' + applicant_name.last_name
 
         adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=adult)
 
@@ -988,87 +986,50 @@ def other_people_resend_email(request):
 
         if form.is_valid():
 
-            # If the last e-mail was sent within the last 24 hours
-            if (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) < timedelta(1):
+            resend_limit_reached = health_check_email_resend_logic(adult_record)
 
-                # If the e-mail has been resent less than 3 times
-                if adult_record.email_resent < 3:
-                    # Generate variables for e-mail template
-                    template_id = '5bbf3677-49e9-47d0-acf2-55a9a03d8242'
-                    email = adult_record.email
-                    # Generate unique link for the household member to access their health check page
-                    adult_record.token = ''.join([random.choice(string.digits[1:]) for n in range(7)])
-                    adult_record.validated = False
-                    base_url = settings.PUBLIC_APPLICATION_URL.replace('/childminder', '')
-                    personalisation = {"link": base_url + reverse('Health-Check-Authentication',
-                                                                  kwargs={'id': adult_record.token}),
-                                       "firstName": adult_record.first_name,
-                                       "ApplicantName": applicant_name_formatted}
-                    print(personalisation['link'])
-                    # Send e-mail to household member
-                    r = send_email(email, personalisation, template_id)
-                    # Update email resend count
-                    email_resent = adult_record.email_resent
-                    if email_resent is not None:
-                        if email_resent >= 1:
-                            adult_record.email_resent = email_resent + 1
-                        elif email_resent < 1:
-                            adult_record.email_resent = 1
-                    else:
-                        adult_record.email_resent = 1
-                    # Reset timestamp of when an email was last sent to the household member
-                    adult_record.email_resent_timestamp = datetime.now(pytz.utc)
-                    adult_record.save()
+            if resend_limit_reached is False:
 
-                    return HttpResponseRedirect(reverse('Other-People-Resend-Confirmation-View') + '?id=' + application_id_local + '&adult=' + adult)
-
-                # If the email has been resent more than 3 times
-                elif adult_record.email_resent >= 3:
-
-                    # Display error message
-                    resend_limit = True
-                    variables = {
-                        'form': form,
-                        'application_id': application_id_local,
-                        'people_in_home_status': application.people_in_home_status,
-                        'name': name,
-                        'email': adult_record.email,
-                        'adult': adult_record.adult,
-                        'resend_limit': resend_limit
-                    }
-                    return render(request, 'other-people-resend-email.html', variables)
-
-            # If the last e-mail to the household member has been sent more than 24 hours ago
-            elif (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) > timedelta(1):
-                # Reset the email resent count
-                adult_record.email_resent = 0
-                adult_record.validated = False
-                adult_record.save()
-                # Generate parameters for e-mail template
+                # Generate variables for e-mail template
                 template_id = '5bbf3677-49e9-47d0-acf2-55a9a03d8242'
                 email = adult_record.email
-                # Generate unique link for household member to access their health check page
+                # Generate unique link for the household member to access their health check page
                 adult_record.token = ''.join([random.choice(string.digits[1:]) for n in range(7)])
+                adult_record.validated = False
                 base_url = settings.PUBLIC_APPLICATION_URL.replace('/childminder', '')
                 personalisation = {"link": base_url + reverse('Health-Check-Authentication',
                                                               kwargs={'id': adult_record.token}),
                                    "firstName": adult_record.first_name,
-                                   "ApplicantName": applicant_name}
+                                   "ApplicantName": applicant_name_formatted}
                 print(personalisation['link'])
-                # Send e-mail
+                # Send e-mail to household member
                 r = send_email(email, personalisation, template_id)
-                print(r)
                 # Increase the email resend count by 1
                 email_resent = adult_record.email_resent
                 if email_resent is not None:
                     adult_record.email_resent = email_resent + 1
                 else:
                     adult_record.email_resent = 1
-                # Reset email last sent timestamp
+                # Reset timestamp of when an email was last sent to the household member
                 adult_record.email_resent_timestamp = datetime.now(pytz.utc)
                 adult_record.save()
 
-                return HttpResponseRedirect(reverse('Other-People-Resend-Confirmation-View') + '?id=' + application_id_local + '&adult=' + adult)
+                return HttpResponseRedirect(reverse(
+                    'Other-People-Resend-Confirmation-View') + '?id=' + application_id_local + '&adult=' + adult)
+
+            elif resend_limit_reached:
+
+                # Display error message
+                variables = {
+                    'form': form,
+                    'application_id': application_id_local,
+                    'people_in_home_status': application.people_in_home_status,
+                    'name': name,
+                    'email': adult_record.email,
+                    'adult': adult_record.adult,
+                    'resend_limit': resend_limit_reached
+                }
+                return render(request, 'other-people-resend-email.html', variables)
 
         else:
             variables = {
