@@ -1017,7 +1017,7 @@ def other_people_resend_email(request):
                 return HttpResponseRedirect(reverse(
                     'Other-People-Resend-Confirmation-View') + '?id=' + application_id_local + '&adult=' + adult)
 
-            elif resend_limit_reached is True:
+            elif resend_limit_reached:
 
                 # Display error message
                 variables = {
