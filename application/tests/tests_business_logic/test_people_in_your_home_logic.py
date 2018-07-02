@@ -1,6 +1,6 @@
-import datetime
 import pytz
 
+from datetime import datetime, timedelta
 from django.test import TestCase
 from uuid import UUID
 from unittest import mock
@@ -303,16 +303,37 @@ class TestPeopleInYourHomeLogic(TestCase):
         assert (ChildInHome.objects.filter(application_id=test_application_id, child=1).count() == 1)
         assert (ChildInHome.objects.filter(application_id=test_application_id, child=2).count() == 1)
 
-    def test_health_check_email_resend_logic_less_than_three(self):
+    def test_health_check_email_resend_logic_less_than_three_last_24_hours(self):
         """
-        Test to check that if the health check email is sent less than three times, the resend limit is not reached
-        :return:
+        Test to check that if the health check email is sent less than three times in the last 24 hours,
+        the resend limit is not reached
         """
         mock_adult_in_home_record = mock.Mock(spec=AdultInHome)
-        mock_adult_in_home_record.email_resent_timestamp = datetime.datetime.now(pytz.utc)
+        mock_adult_in_home_record.email_resent_timestamp = datetime.now(pytz.utc)
         mock_adult_in_home_record.email_resent = 1
-        under_resend_limit = health_check_email_resend_logic(mock_adult_in_home_record)
-        assert (under_resend_limit is True)
+        resend_limit_reached = health_check_email_resend_logic(mock_adult_in_home_record)
+        assert (resend_limit_reached is False)
+
+    def test_health_check_email_resend_logic_more_than_three_last_24_hours(self):
+        """
+        Test to check that if the health check email is sent more than three times in the last 24 hours,
+        the resend limit is reached
+        """
+        mock_adult_in_home_record = mock.Mock(spec=AdultInHome)
+        mock_adult_in_home_record.email_resent_timestamp = datetime.now(pytz.utc)
+        mock_adult_in_home_record.email_resent = 4
+        resend_limit_reached = health_check_email_resend_logic(mock_adult_in_home_record)
+        assert (resend_limit_reached is True)
+
+    def test_health_check_email_resend_logic_over_24_hours(self):
+        """
+        Test to check that if the last health check email is sent over 24 hours ago, the resend limit is not reached
+        """
+        mock_adult_in_home_record = mock.Mock(spec=AdultInHome)
+        mock_adult_in_home_record.email_resent_timestamp = datetime.now(pytz.utc) - timedelta(1)
+        mock_adult_in_home_record.email_resent = 4
+        resend_limit_reached = health_check_email_resend_logic(mock_adult_in_home_record)
+        assert (resend_limit_reached is False)
 
     def delete(self):
         AdultInHome.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c', adult=1).delete()
