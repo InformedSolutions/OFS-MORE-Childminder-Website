@@ -36,8 +36,8 @@ class TestPeopleInYourHomeLogic(TestCase):
             references_status='COMPLETED',
             people_in_home_status='COMPLETED',
             declarations_status='NOT_STARTED',
-            date_created=datetime.datetime.today(),
-            date_updated=datetime.datetime.today(),
+            date_created=datetime.today(),
+            date_updated=datetime.today(),
             date_accepted=None,
         )
         user = UserDetails.objects.create(
@@ -89,8 +89,8 @@ class TestPeopleInYourHomeLogic(TestCase):
             references_status='COMPLETED',
             people_in_home_status='COMPLETED',
             declarations_status='NOT_STARTED',
-            date_created=datetime.datetime.today(),
-            date_updated=datetime.datetime.today(),
+            date_created=datetime.today(),
+            date_updated=datetime.today(),
             date_accepted=None,
         )
         user = UserDetails.objects.create(
@@ -184,8 +184,8 @@ class TestPeopleInYourHomeLogic(TestCase):
             references_status='COMPLETED',
             people_in_home_status='COMPLETED',
             declarations_status='NOT_STARTED',
-            date_created=datetime.datetime.today(),
-            date_updated=datetime.datetime.today(),
+            date_created=datetime.today(),
+            date_updated=datetime.today(),
             date_accepted=None,
         )
         user = UserDetails.objects.create(
@@ -236,8 +236,8 @@ class TestPeopleInYourHomeLogic(TestCase):
             references_status='COMPLETED',
             people_in_home_status='COMPLETED',
             declarations_status='NOT_STARTED',
-            date_created=datetime.datetime.today(),
-            date_updated=datetime.datetime.today(),
+            date_created=datetime.today(),
+            date_updated=datetime.today(),
             date_accepted=None,
         )
         user = UserDetails.objects.create(
