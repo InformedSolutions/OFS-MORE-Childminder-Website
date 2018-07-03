@@ -6,13 +6,8 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 """
 
 import pytz
-import random
-import string
 
 from datetime import date, datetime, timedelta
-from django.conf import settings
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, reverse
 
 from .models import (AdultInHome,
                      ApplicantHomeAddress,
@@ -28,7 +23,7 @@ from .models import (AdultInHome,
                      Reference,
                      UserDetails)
 
-from application.notify import send_email
+from .utils import unique_values, get_first_duplicate_index
 
 
 def childcare_type_logic(application_id_local, form):
@@ -676,7 +671,6 @@ def reset_declaration(application):
         application.change_declare = None
         application.save()
 
-
 def health_check_email_resend_logic(adult_record):
     """
     Method to verify if the last household member health check email can be sent, given a limit of 3 resends per 24
@@ -732,3 +726,73 @@ def eligible_to_apply_based_on_childcare_ages(childcare_record):
         return False
     else:
         return True
+
+
+def new_dbs_numbers_is_valid(application, candidate_dbs_certificate_number):
+    """
+    Helper function to determine whether any DBS numbers listed in the application are not unique
+    :param application: the application to be checked against
+    :param candidate_dbs_certificate_number: the candidate dbs number to be tested against
+    :return: object detailing whether the dbs numbers contained in an application are unique.
+    """
+    # Initialise response object (which defaults to indicating no duplicates)
+    response = UniqueDbsCheckResult()
+
+    dbs_numbers = list()
+
+    # Retrieve childminders dbs record if it exists
+    try:
+        childminder_dbs_record = CriminalRecordCheck.objects.get(application_id=application.application_id)
+    except CriminalRecordCheck.DoesNotExist:
+        return response
+
+    # Append childminder DBS to list for later reference
+    dbs_numbers.append(childminder_dbs_record.dbs_certificate_number)
+
+    # Check how many additional adults feature in application form
+    additional_adults = AdultInHome.objects.filter(application_id=application.application_id)
+    count_of_additional_adults_in_home = AdultInHome.objects.filter(application_id=application.application_id).count()
+
+    # Iterate and push DBS numbers to comparison array
+    if count_of_additional_adults_in_home > 0:
+        for i in range(1, int(additional_adults.count()) + 1):
+            adult = AdultInHome.objects.get(
+                application_id=application.application_id, adult=i)
+            dbs_numbers.append(adult.dbs_certificate_number)
+
+    # Add candidate DBS number to the last entry in the list
+    dbs_numbers.append(candidate_dbs_certificate_number)
+
+    # If all DBS numbers contained in application are unique, yield early return
+    # with indicator that all DBS numbers are unique
+    if unique_values(dbs_numbers):
+        return response
+
+    # If not adjust response object to signify check failure
+    response.dbs_numbers_unique = False
+
+    first_duplicate_index = get_first_duplicate_index(dbs_numbers)
+
+    # If the first duplicate index is at position zero this
+    # means a DBS matches the childminder (as in the above this is the first entry added to the
+    # list being tested against)
+    if first_duplicate_index == 0:
+        response.duplicates_childminder_dbs = True
+    else:
+        response.duplicates_household_member_dbs = True
+
+    # Present caller with the index identified for the duplicate DBS entry
+    response.duplicate_entry_index = first_duplicate_index
+
+    return response
+
+
+class UniqueDbsCheckResult:
+    """
+    Class definition for the response object returned by a DBS uniqueness check
+    """
+
+    dbs_numbers_unique = True
+    duplicates_childminder_dbs = False
+    duplicates_household_member_dbs = False
+    duplicate_entry_index = 0

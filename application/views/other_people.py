@@ -340,6 +340,10 @@ def other_people_adult_dbs(request):
         for i in range(1, int(number_of_adults) + 1):
             adult = AdultInHome.objects.get(
                 application_id=application_id_local, adult=i)
+
+            # Reset DBS number per post request such that it is cleansed per submission
+            adult.dbs_certificate_number = ''
+
             # Generate name to pass to form, for display in HTML
             if adult.middle_names == '':
                 name = adult.first_name + ' ' + adult.last_name
