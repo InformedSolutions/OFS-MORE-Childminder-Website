@@ -758,7 +758,9 @@ def new_dbs_numbers_is_valid(application, candidate_dbs_certificate_number):
         for i in range(1, int(additional_adults.count()) + 1):
             adult = AdultInHome.objects.get(
                 application_id=application.application_id, adult=i)
-            dbs_numbers.append(adult.dbs_certificate_number)
+            # filter out any empty values so as not to get a false match on duplicate index
+            if adult.dbs_certificate_number:
+                dbs_numbers.append(adult.dbs_certificate_number)
 
     # Add candidate DBS number to the last entry in the list
     dbs_numbers.append(candidate_dbs_certificate_number)
