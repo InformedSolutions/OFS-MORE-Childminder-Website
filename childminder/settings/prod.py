@@ -47,7 +47,6 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/feedback/'
 )
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
