@@ -47,8 +47,6 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/feedback/'
 )
 
-FEEDBACK_EMAIL = 'registrationfeedback@ofsted.gov.uk'
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
