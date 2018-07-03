@@ -42,6 +42,7 @@ from ..models import (AdultInHome,
                       ApplicantName,
                       ApplicantPersonalDetails,
                       Application,
+                      ArcComments,
                       ChildInHome)
 from application.notify import send_email
 
@@ -722,8 +723,7 @@ def other_people_summary(request):
         if len(adult_health_check_status_list) == 0:
             status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
 
-        # Subtract two for error summary link to match that in other_people_resend_email 'change' link.
-        back_link_addition = '&adult=' + str((len(adult_table_list) + 2)) + '&remove=0'
+        back_link_addition = '&adults=' + str((len(adult_table_list))) + '&remove=0'
 
         for table in adult_table_list:
             table['other_people_numbers'] = back_link_addition
@@ -966,6 +966,11 @@ def other_people_resend_email(request):
                 'adult': adult_record.adult,
                 'resend_limit': resend_limit
             }
+
+            if adult_record.health_check_status == 'Flagged':
+                variables['error_summary_title'] = 'There was a problem (' + name + ')'
+                variables['arc_comment'] = ArcComments.objects.get(table_pk=adult_record.pk).comment
+
             return render(request, 'other-people-resend-email.html', variables)
 
     if request.method == 'POST':
