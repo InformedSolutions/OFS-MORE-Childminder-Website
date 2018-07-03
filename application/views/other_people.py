@@ -722,7 +722,8 @@ def other_people_summary(request):
         if len(adult_health_check_status_list) == 0:
             status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
 
-        back_link_addition = '&adults=' + str((len(adult_table_list))) + '&remove=0'
+        # Subtract two for error summary link to match that in other_people_resend_email 'change' link.
+        back_link_addition = '&adult=' + str((len(adult_table_list) + 2)) + '&remove=0'
 
         for table in adult_table_list:
             table['other_people_numbers'] = back_link_addition
