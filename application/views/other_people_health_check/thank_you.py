@@ -13,14 +13,15 @@ class ThankYou(BaseTemplateView):
 
     def get(self, request, *args, **kwargs):
         response = super().get(request=self.request)
-        application_id = self.request.GET.get('person_id')
-        adult_record = AdultInHome.objects.get(pk=application_id)
+        adult_id = self.request.GET.get('person_id')
+        adult_record = AdultInHome.objects.get(pk=adult_id)
+        application_id = adult_record.application_id_id
         adult_name = ' '.join([adult_record.first_name, (adult_record.middle_names or ''), adult_record.last_name])
-        application = Application.objects.get(application_id=adult_record.application_id_id)
-        user_details = UserDetails.objects.get(application_id=application.application_id)
+        application = Application.objects.get(application_id=application_id)
+        user_details = UserDetails.objects.get(application_id=application_id)
 
         try:
-            applicant = ApplicantName.objects.get(application_id=adult_record.application_id)
+            applicant = ApplicantName.objects.get(application_id=application_id)
 
             firstname = applicant.first_name
         except:
@@ -44,13 +45,14 @@ class ThankYou(BaseTemplateView):
 
             # Set task to Done if all household members have recompleted their health check
             # and no ARC comments exist for task
-            if AdultInHome.objects.filter(application_id=application_id, health_check_status='Flagged').count() == 0:
+            all_adults = AdultInHome.objects.filter(application_id=application_id)
+            adults_todo = all_adults.filter(health_check_status='To do')
+            adults_flagged = all_adults.filter(health_check_status='Flagged')
+            if adults_flagged.count() == 0 and adults_todo.count() == 0:
                 if ArcComments.objects.filter(table_pk=application_id, table_name='ADULT_IN_HOME').count() == 0:
                     if ArcComments.objects.filter(table_pk=application_id, table_name='CHILD_IN_HOME').count() == 0:
                         application.people_in_home_status = 'COMPLETED'
                         application.save()
-
-            all_adults = AdultInHome.objects.filter(application_id=adult_record.application_id)
 
             for adult in all_adults:
                 if adult.health_check_status == 'To do':
@@ -69,7 +71,7 @@ class ThankYou(BaseTemplateView):
             r = send_email(email, personalisation, template_id)
             print(link)
 
-            update(adult_record.application_id_id, 'people_in_home_status', 'COMPLETED')
+            update(application_id, 'people_in_home_status', 'COMPLETED')
 
         cookie_key = CustomAuthenticationHandler.get_cookie_identifier()
         request.COOKIES[cookie_key] = None
