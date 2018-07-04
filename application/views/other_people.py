@@ -319,6 +319,7 @@ def other_people_adult_dbs(request):
                 name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
             form = OtherPeopleAdultDBSForm(
                 id=application_id_local, adult=i, prefix=i, name=name)
+            form.check_flag()
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = "There was a problem (Person " + str(i) + ")"
@@ -364,6 +365,7 @@ def other_people_adult_dbs(request):
                     application_id=application_id_local, adult=i)
                 adult_record.dbs_certificate_number = form.cleaned_data.get(
                     'dbs_certificate_number')
+                form.remove_flag()
                 adult_record.save()
                 application.date_updated = current_date
                 application.save()
