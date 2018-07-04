@@ -1484,8 +1484,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
                          driver.find_element_by_xpath("//div[@id='id_2-email_address-group']/span").text)
 
 
-
-    #
     # @try_except_method
     # def test_feedback_page(self):
     #     """
