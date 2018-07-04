@@ -11,6 +11,7 @@ import calendar
 from datetime import date, datetime, timedelta
 
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
@@ -1027,6 +1028,16 @@ def other_people_resend_email(request):
                 # Reset timestamp of when an email was last sent to the household member
                 adult_record.email_resent_timestamp = datetime.now(pytz.utc)
                 adult_record.save()
+
+                # If health check has been flagged, remove flag once email resent; else, pass.
+                # form.remove_flag won't work because form is simply a 'Continue' button - it has no fields.
+                try:
+                    adult_arc_comment = ArcComments.objects.get(table_pk=adult_record.pk)
+                    if adult_arc_comment.flagged:
+                        adult_arc_comment.flagged = False
+                        adult_arc_comment.save()
+                except ObjectDoesNotExist:
+                    pass
 
                 return HttpResponseRedirect(reverse(
                     'Other-People-Resend-Confirmation-View') + '?id=' + application_id_local + '&adult=' + adult)
