@@ -19,8 +19,8 @@ SERVER_LABEL = os.environ.get('SERVER_LABEL')
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Expiry period of Magic Link Emails and Texts in hours
-SMS_EXPIRY = 1
-EMAIL_EXPIRY = 1
+SMS_EXPIRY = 24
+EMAIL_EXPIRY = 24
 
 # Visa Validation
 VISA_VALIDATION = os.environ.get('VISA_VALIDATION') == 'True'
