@@ -677,7 +677,7 @@ def other_people_summary(request):
         adult_table_list = []
         adult_health_check_status_list = []
 
-        for adult in adults_list:
+        for index, adult in enumerate(adults_list):
 
             name = ' '.join([adult.first_name, (adult.middle_names or ''), adult.last_name])
             birth_date = ' '.join([str(adult.birth_day), calendar.month_name[adult.birth_month], str(adult.birth_year)])
@@ -710,8 +710,12 @@ def other_people_summary(request):
                 if adult.health_check_status != 'Done':
                     adult_health_check_status_list.append('To do')
 
+            # Counter for table object to correctly set link in generic-error-summary template for flagged health check.
+            table = Table([adult.pk])
+            table.loop_counter = index + 1
+
             other_adult_table = collections.OrderedDict({
-                'table_object': Table([adult.pk]),
+                'table_object': table,
                 'fields': other_adult_fields,
                 'title': name,
                 'error_summary_title': ('There was a problem (' + name + ')')
