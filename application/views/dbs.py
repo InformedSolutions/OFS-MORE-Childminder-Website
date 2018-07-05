@@ -99,8 +99,6 @@ def dbs_check_dbs_details(request):
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/criminal-record/post-certificate?id=' + application_id_local)
             elif cautions_convictions == 'False':
-                application.criminal_record_check_status = 'COMPLETED'
-                application.save()
                 return HttpResponseRedirect(
                     settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
         else:
@@ -124,7 +122,7 @@ def dbs_check_upload_dbs(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your criminal record (DBS) check: upload DBS template
     """
-    current_date = timezone.now()
+
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = DBSCheckUploadDBSForm()
@@ -145,8 +143,6 @@ def dbs_check_upload_dbs(request):
         form = DBSCheckUploadDBSForm(request.POST)
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
-            application.criminal_record_check_status = 'COMPLETED'
-            application.save()
             return HttpResponseRedirect(
                 settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
         else:
@@ -204,6 +200,7 @@ def dbs_check_summary(request):
         application = Application.objects.get(pk=application_id_local)
         form = DBSCheckSummaryForm(request.POST)
         if form.is_valid():
+            status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
             return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
         else:
 

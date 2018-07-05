@@ -78,7 +78,6 @@ def contact_phone(request):
                 user_details_record = login_contact_logic_add_phone(app_id, add_phone_form)
                 user_details_record.save()
                 application.date_updated = current_date
-                application.login_details_status = 'COMPLETED'
                 application.save()
                 reset_declaration(application)
 
@@ -119,9 +118,6 @@ def contact_summary(request):
         email = user_details.email
         mobile_number = user_details.mobile_number
         add_phone_number = user_details.add_phone_number
-
-        if application.login_details_status != 'COMPLETED':
-            status.update(app_id, 'login_details_status', 'COMPLETED')
 
         contact_info_fields = collections.OrderedDict([
             ('email_address', email),
