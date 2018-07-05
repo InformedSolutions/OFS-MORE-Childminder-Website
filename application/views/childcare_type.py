@@ -293,9 +293,14 @@ def childcare_type_summary(request):
         if application.childcare_type_status != 'COMPLETED' or application.childcare_type_status != 'FLAGGED':
             variables['submit_link'] = reverse('Personal-Details-Name-View')
 
-        status.update(app_id, 'childcare_type_status', 'COMPLETED')
-
         return render(request, 'generic-summary-template.html', variables)
+
+    if request.method == 'POST':
+
+        application_id_local = request.POST["id"]
+        status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
+
+        return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
 
 
 def local_authority_links(request):
