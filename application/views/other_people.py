@@ -797,36 +797,25 @@ def other_people_summary(request):
         }
         variables = submit_link_setter(variables, table_list, 'people_in_home', application_id_local)
 
-        # If reaching the summary page for the first time
-        if application.people_in_home_status == 'IN_PROGRESS' or 'WAITING':
-            if application.adults_in_home is True and any(
-                    [adult.email_resent_timestamp is None for adult in adults_list]):
-                variables['submit_link'] = reverse('Other-People-Email-Confirmation-View')
-            elif application.adults_in_home is False:
-                variables['submit_link'] = reverse('Task-List-View')
-
-            return render(request, 'generic-summary-template.html', variables)
-
-        else:
-
-            return render(request, 'generic-summary-template.html', variables)
+        return render(request, 'generic-summary-template.html', variables)
 
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        application = Application.objects.get(pk=application_id_local)
-        form = OtherPeopleSummaryForm()
-        if form.is_valid():
-            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
-        else:
-            if application.application_status == 'FURTHER_INFORMATION':
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem"
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'other-people-summary.html', variables)
+        application = Application.objects.get(application_id=application_id_local)
 
+        # If reaching the summary page for the first time
+        if application.people_in_home_status == 'IN_PROGRESS' or 'WAITING':
+            adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
+            if application.adults_in_home is True and any(
+                    [adult.email_resent_timestamp is None for adult in adults_list]):
+                return HttpResponseRedirect(
+                    reverse('Other-People-Email-Confirmation-View') + '?id=' + application_id_local)
+            elif application.adults_in_home is False:
+                status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
+                return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
+
+        else:
+            return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
 
 def other_people_email_confirmation(request):
     """
@@ -849,15 +838,12 @@ def other_people_email_confirmation(request):
         if all([adult.email_resent_timestamp is not None for adult in adults]):
             return HttpResponseRedirect(build_url('Task-List-View', get={'id': application_id_local}))
 
-        try:
-            applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
-            applicant_name = ApplicantName.objects.get(personal_detail_id=applicant)
-            if applicant_name.middle_names == '':
-                applicant_name_formatted = applicant_name.first_name + ' ' + applicant_name.last_name
-            else:
-                applicant_name_formatted = applicant_name.first_name + ' ' + applicant_name.middle_names + ' ' + applicant_name.last_name
-        except:
-            applicant_name_formatted = 'An applicant'
+        applicant = ApplicantPersonalDetails.objects.get(application_id=application_id_local)
+        applicant_name = ApplicantName.objects.get(personal_detail_id=applicant)
+        if applicant_name.middle_names == '':
+            applicant_name_formatted = applicant_name.first_name + ' ' + applicant_name.last_name
+        else:
+            applicant_name_formatted = applicant_name.first_name + ' ' + applicant_name.middle_names + ' ' + applicant_name.last_name
 
         if settings.EXECUTING_AS_TEST == 'True':
             os.environ['EMAIL_VALIDATION_URL'] = ''
