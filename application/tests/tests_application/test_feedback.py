@@ -6,13 +6,14 @@ NOTE! If it throws you status 200, that means form submission is failing!
 """
 from unittest import mock
 
+from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 from .base import ApplicationTestBase
 
 
-class PaymentTests(TestCase, ApplicationTestBase):
+class FeedbackTests(TestCase, ApplicationTestBase):
 
     def test_feedback_successfully_submitted(self):
         """
@@ -21,20 +22,22 @@ class PaymentTests(TestCase, ApplicationTestBase):
 
         with mock.patch('application.notify.send_email') as post_email_mock:
             post_email_mock.return_value.status_code = 201
-            url = reverse('Feedback') + '?url=' + reverse('Start-Page-View')
 
             # POST to feedback page
             response = self.client.post(
-                url,
+                reverse('Feedback'),
                 {
                     'feedback': 'Test feedback',
-                    'email_address': 'tester@informed.com'
+                    'email_address': 'tester@informed.com',
+                    'url': reverse('Start-Page-View')
                 }
             )
 
+            print(reverse('Start-Page-View'))
+
             self.assertEqual(response.status_code, 201)
 
-            # Assert taken back to the feedback confirmation page
+            # Assert taken to the feedback confirmation page
             self.assertEqual(response.resolver_match.view_name, 'Feedback-Confirmation')
 
             # # Assert error message returned to user
