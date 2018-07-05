@@ -23,7 +23,7 @@ class FeedbackTests(TestCase, ApplicationTestBase):
         with mock.patch('application.notify.send_email') as post_email_mock:
             post_email_mock.return_value.status_code = 201
 
-            # POST to feedback page
+            # POST valid input to feedback page
             response = self.client.post(
                 reverse('Feedback'),
                 {
@@ -33,16 +33,53 @@ class FeedbackTests(TestCase, ApplicationTestBase):
                 }
             )
 
-            print(reverse('Start-Page-View'))
+            self.assertEqual(response.status_code, 302)
 
-            self.assertEqual(response.status_code, 201)
+    def test_feedback_successfully_submitted_no_email(self):
+        """
+        Test to assert that feedback is successfully submitted when valid feedback is entered (without email address)
+        """
+
+        with mock.patch('application.notify.send_email') as post_email_mock:
+            post_email_mock.return_value.status_code = 201
+
+            # POST valid input to feedback page
+            response = self.client.post(
+                reverse('Feedback'),
+                {
+                    'feedback': 'Test feedback',
+                    'email_address': '',
+                    'url': reverse('Start-Page-View')
+                }
+            )
+
+            self.assertEqual(response.status_code, 302)
+
+    def test_invalid_feedback_submitted(self):
+        """
+        Test to assert that feedback is not submitted when invalid feedback is entered
+        """
+
+        with mock.patch('application.notify.send_email') as post_email_mock:
+            post_email_mock.return_value.status_code = 201
+
+            # POST valid input to feedback page
+            response = self.client.post(
+                reverse('Feedback'),
+                {
+                    'feedback': '',
+                    'email_address': 'tester@informed.com',
+                    'url': reverse('Start-Page-View')
+                }
+            )
+
+            self.assertEqual(response.status_code, 200)
 
             # Assert taken to the feedback confirmation page
-            self.assertEqual(response.resolver_match.view_name, 'Feedback-Confirmation')
+            self.assertEqual(response.resolver_match.view_name, 'Feedback')
 
-            # # Assert error message returned to user
-            # self.assertEqual(response.context['non_field_errors'].data[0].message,
-            #                  'There has been a problem when trying to process your payment. '
-            #                  'Your card has not been charged. '
-            #                  'Please check your card details and try again.')
-            #
+            error = response.context['field_errors'].values()
+            error_message = len(list(error))
+
+            # Assert error message returned to user
+            self.assertEqual(error_message, 1)
