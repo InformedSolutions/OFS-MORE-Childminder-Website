@@ -192,19 +192,6 @@ def dbs_check_summary(request):
     if request.method == 'POST':
 
         application_id_local = request.POST["id"]
-        application = Application.objects.get(pk=application_id_local)
-        form = DBSCheckSummaryForm(request.POST)
-        if form.is_valid():
-            status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
-            return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
-        else:
+        status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
 
-            if application.application_status == 'FURTHER_INFORMATION':
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem'
-
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'dbs-check-summary.html', variables)
+        return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)

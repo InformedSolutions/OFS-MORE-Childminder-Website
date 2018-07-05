@@ -290,7 +290,7 @@ def childcare_type_summary(request):
 
         variables = submit_link_setter(variables, table_list, 'personal_details', app_id)
 
-        if application.childcare_type_status != 'COMPLETED':
+        if application.childcare_type_status != 'COMPLETED' or application.childcare_type_status != 'FLAGGED':
             variables['submit_link'] = reverse('Personal-Details-Name-View')
 
         status.update(app_id, 'childcare_type_status', 'COMPLETED')

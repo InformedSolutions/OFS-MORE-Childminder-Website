@@ -147,7 +147,13 @@ def contact_summary(request):
 
         variables = submit_link_setter(variables, table_list, 'login_details', app_id)
 
-        variables['submit_link'] = reverse('Type-Of-Childcare-Guidance-View')
+        if application.childcare_type_status == 'COMPLETED' or application.childcare_type_status == 'FLAGGED':
+            variables['submit_link'] = reverse('Task-List-View')
+
+        elif application.childcare_type_status != 'COMPLETED':
+
+            variables['submit_link'] = reverse('Type-Of-Childcare-Guidance-View')
+
         if 'f' in request.GET:
             return render(request, 'no-link-summary-template.html', variables)
         else:
@@ -161,7 +167,14 @@ def contact_summary(request):
 
         if form.is_valid():
             status.update(app_id, 'login_details_status', 'COMPLETED')
-            return HttpResponseRedirect(reverse('Type-Of-Childcare-Guidance-View') + '?id=' + app_id)
+
+            if application.childcare_type_status == 'COMPLETED' or application.childcare_type_status == 'FLAGGED':
+
+                return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + app_id)
+
+            elif application.childcare_type_status != 'COMPLETED':
+
+                return HttpResponseRedirect(reverse('Type-Of-Childcare-Guidance-View') + '?id=' + app_id)
 
         variables = {
             'form': form,
