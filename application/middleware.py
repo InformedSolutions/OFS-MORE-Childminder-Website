@@ -63,7 +63,7 @@ class CustomAuthenticationHandler(object):
 
         if application.application_status in ("ARC_REVIEW", "ACCEPTED", "SUBMITTED"):
             # Redirect to 'Thank you for applying page' if completed applicant tries to access any other page.
-            if reverse('Declaration-Declaration-View') != request.path:
+            if reverse('Payment-Confirmation') != request.path:
                 return HttpResponseRedirect(reverse('Declaration-Declaration-View') + '?id=' + application_id)
             # Check if they've already been redirected to avoid infinite middleware loop.
             else:
