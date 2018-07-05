@@ -803,7 +803,6 @@ def other_people_summary(request):
                     [adult.email_resent_timestamp is None for adult in adults_list]):
                 variables['submit_link'] = reverse('Other-People-Email-Confirmation-View')
             elif application.adults_in_home is False:
-                status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
                 variables['submit_link'] = reverse('Task-List-View')
 
             return render(request, 'generic-summary-template.html', variables)
