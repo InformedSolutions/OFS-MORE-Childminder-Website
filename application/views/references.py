@@ -4,10 +4,10 @@ from django.utils import timezone
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, reverse
 
-from ..summary_page_data import first_reference_name_dict, first_reference_link_dict,\
-                                second_reference_name_dict, second_reference_link_dict
+from ..summary_page_data import first_reference_name_dict, first_reference_link_dict, \
+    second_reference_name_dict, second_reference_link_dict
 from ..table_util import Table, create_tables, submit_link_setter
 from .. import address_helper, status
 from ..business_logic import (references_first_reference_logic,
@@ -56,9 +56,8 @@ def references_intro(request):
 
         if form.is_valid():
             if application.references_status != 'COMPLETED':
-                status.update(application_id_local,
-                              'references_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference?id=' + application_id_local)
+                status.update(application_id_local, 'references_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(reverse('References-First-Reference-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -108,13 +107,12 @@ def references_first_reference(request):
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
-            return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-address?id=' +
-                                        application_id_local)
+            return HttpResponseRedirect(
+                reverse('References-First-Reference-Address-View') + '?id=' + application_id_local)
         else:
             form.error_summary_title = "There was a problem with the referee's details"
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -163,16 +161,15 @@ def references_first_reference_address(request):
             application.date_updated = current_date
             application.save()
             if 'postcode-search' in request.POST:
-                return HttpResponseRedirect(settings.URL_PREFIX + '/references/select-first-reference-address/?id='
+                return HttpResponseRedirect(reverse('References-Select-First-Reference-Address-View') + '?id='
                                             + application_id_local)
             if 'submit' in request.POST:
-                return HttpResponseRedirect(settings.URL_PREFIX + '/references/enter-first-reference-address/?id='
+                return HttpResponseRedirect(reverse('References-Enter-First-Reference-Address-View') + '?id='
                                             + application_id_local)
         else:
             form.error_summary_title = "There was a problem with the referee's postcode"
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -205,7 +202,6 @@ def references_first_reference_address_select(request):
                 id=application_id_local, choices=addresses)
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -222,7 +218,6 @@ def references_first_reference_address_select(request):
             form.errors['postcode'] = {'Please enter a valid postcode.': 'invalid'}
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -260,13 +255,12 @@ def references_first_reference_address_select(request):
             application.save()
             if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
                 status.update(application_id_local, 'references_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-contact-details?id=' +
+            return HttpResponseRedirect(reverse('References-First-Reference-Contact-Details-View') + '?id=' +
                                         application_id_local)
         else:
             form.error_summary_title = "There was a problem finding the referee's address"
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -334,13 +328,12 @@ def references_first_reference_address_manual(request):
             if application.references_status != 'COMPLETED':
                 status.update(application_id_local,
                               'references_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/references/first-reference-contact-details?id=' +
+            return HttpResponseRedirect(reverse('References-First-Reference-Contact-Details-View') + '?id=' +
                                         application_id_local)
         else:
             form.error_summary_title = "There was a problem with the referee's address"
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -396,12 +389,11 @@ def references_first_reference_contact_details(request):
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
-            return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference?id=' + application_id_local)
+            return HttpResponseRedirect(reverse('References-Second-Reference-View') + '?id=' + application_id_local)
         else:
             form.error_summary_title = "There was a problem with the referee's contact details"
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -453,13 +445,12 @@ def references_second_reference(request):
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
-            return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-address?id=' +
+            return HttpResponseRedirect(reverse('References-Second-Reference-Address-View') + '?id=' +
                                         application_id_local + '&manual=False&lookup=False')
         else:
             form.error_summary_title = "There was a problem with the referee's details"
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -508,16 +499,15 @@ def references_second_reference_address(request):
             application.date_updated = current_date
             application.save()
             if 'postcode-search' in request.POST:
-                return HttpResponseRedirect(settings.URL_PREFIX + '/references/select-second-reference-address/?id='
+                return HttpResponseRedirect(reverse('References-Select-Second-Reference-Address-View') + '?id='
                                             + application_id_local)
             if 'submit' in request.POST:
-                return HttpResponseRedirect(settings.URL_PREFIX + '/references/enter-second-reference-address/?id='
+                return HttpResponseRedirect(reverse('References-Enter-Second-Reference-Address-View') + '?id='
                                             + application_id_local)
         else:
             form.error_summary_title = "There was a problem with the referee's postcode"
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -550,7 +540,6 @@ def references_second_reference_address_select(request):
                 id=application_id_local, choices=addresses)
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -567,7 +556,6 @@ def references_second_reference_address_select(request):
             form.errors['postcode'] = {'Please enter a valid postcode.': 'invalid'}
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -607,13 +595,12 @@ def references_second_reference_address_select(request):
             if Application.objects.get(pk=application_id_local).references_status != 'COMPLETED':
                 status.update(application_id_local,
                               'references_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-contact-details?id=' +
+            return HttpResponseRedirect(reverse('References-Second-Reference-Contact-Details-View') + '?id=' +
                                         application_id_local)
         else:
             form.error_summary_title = "There was a problem finding the referee's address"
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -680,13 +667,12 @@ def references_second_reference_address_manual(request):
             if application.references_status != 'COMPLETED':
                 status.update(application_id_local,
                               'references_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/references/second-reference-contact-details?id=' +
+            return HttpResponseRedirect(reverse('References-Second-Reference-Contact-Details-View') + '?id=' +
                                         application_id_local)
         else:
             form.error_summary_title = "There was a problem with the referee's address"
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -740,12 +726,11 @@ def references_second_reference_contact_details(request):
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
-            return HttpResponseRedirect(settings.URL_PREFIX + '/references/check-answers?id=' + application_id_local)
+            return HttpResponseRedirect(reverse('References-Summary-View') + '?id=' + application_id_local)
         else:
             form.error_summary_title = "There was a problem with the referee's contact details"
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -807,10 +792,10 @@ def references_summary(request):
             ('full_name', ' '.join([first_reference_first_name, first_reference_last_name])),
             ('relationship', first_reference_relationship),
             ('known_for', ' '.join([str(first_reference_years_known), first_years_known_str,
-                                   str(first_reference_months_known), first_months_known_str])),
+                                    str(first_reference_months_known), first_months_known_str])),
             ('address', ' '.join([first_reference_street_line1, (first_reference_street_line2 or ''),
-                                 first_reference_town, (first_reference_county or ''),
-                                 first_reference_postcode, first_reference_country])),
+                                  first_reference_town, (first_reference_county or ''),
+                                  first_reference_postcode, first_reference_country])),
             ('phone_number', first_reference_phone_number),
             ('email_address', first_reference_email)
         ])
@@ -852,14 +837,5 @@ def references_summary(request):
         return render(request, 'generic-summary-template.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
-        form = ReferenceSummaryForm()
-        if form.is_valid():
-            status.update(application_id_local,
-                          'references_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
-        else:
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'references-summary.html', variables)
+        status.update(application_id_local, 'references_status', 'COMPLETED')
+        return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
