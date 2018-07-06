@@ -101,13 +101,12 @@
     </tbody>
 </table>
 
-{% if childcare_type_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
+{% if childcare_type_status == 'COMPLETED' %}
     <form action="{% url 'Task-List-View' %}?id={{application_id}}" method="get">
         <input type="submit" class="button" value="Confirm and continue"/>
         <input type="hidden" value="{{application_id}}" name="id"/>
     </form>
-    {% endif %}
-    {% if childcare_type_status != 'COMPLETED' %}
+{% elif childcare_type_status != 'COMPLETED' %}
     <form action="{% url 'Type-Of-Childcare-Guidance-View' %}?id={{application_id}}" method="get">
         <input type="submit" class="button" value="Confirm and continue"/>
         <input type="hidden" value="{{application_id}}" name="id"/>

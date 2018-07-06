@@ -217,7 +217,6 @@ def overnight_care(request):
             application.save()
 
             reset_declaration(application)
-            status.update(app_id, 'childcare_type_status', 'COMPLETED')
 
         else:
 
@@ -291,10 +290,17 @@ def childcare_type_summary(request):
 
         variables = submit_link_setter(variables, table_list, 'personal_details', app_id)
 
-        if application.childcare_type_status != 'COMPLETED':
+        if application.childcare_type_status != 'COMPLETED' or application.childcare_type_status != 'FLAGGED':
             variables['submit_link'] = reverse('Personal-Details-Name-View')
 
         return render(request, 'generic-summary-template.html', variables)
+
+    if request.method == 'POST':
+
+        application_id_local = request.POST["id"]
+        status.update(application_id_local, 'childcare_type_status', 'COMPLETED')
+
+        return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
 
 
 def local_authority_links(request):
@@ -312,9 +318,8 @@ def local_authority_links(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
-        application = Application.get_id(app_id=app_id)
-        if application.childcare_type_status != 'COMPLETED':
-            status.update(app_id, 'childcare_type_status', 'COMPLETED')
+        status.update(app_id, 'childcare_type_status', 'COMPLETED')
+
         if 'Cancel application' in request.POST.keys():
             return HttpResponseRedirect(reverse('CR-Cancel-Application') + '?id=' + app_id)
         else:
