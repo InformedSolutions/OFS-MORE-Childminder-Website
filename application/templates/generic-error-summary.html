@@ -11,7 +11,12 @@
         <li class="field-error">
           <ul>
               {% if row.error %}
-                <a href="{% url row.back_link %}?id={{application_id}}{{other_people_numbers}}">{{ row.row_name }}</a>
+                <!--Add conditional for health check status row to match that in generic-error-summary.-->
+                {% if row.row_name == 'Health check status' %}
+                  <a href="{% url row.back_link %}?id={{application_id}}&adult={{ table.loop_counter|add:"2" }}" alt='Resend email'>{{ row.row_name }}</a>
+                {% else %}
+                  <a href="{% url row.back_link %}?id={{application_id}}{{other_people_numbers}}">{{ row.row_name }}</a>
+                {% endif %}
               {% endif %}
           </ul>
         </li>

@@ -2,9 +2,25 @@
 {% block page_title %}Resend email{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
+
 {% block inner_content %}
+
 {% include "back-button.html" %}
+
 <div class="two-thirds">
+
+{% if error_summary_title %}
+    <div class="error-summary">
+        <label class="heading-medium error-summary-heading">
+            {{ error_summary_title }}
+        </label>
+        <p>You need to do the following:</p>
+        <span class="error-message">
+            {{ arc_comment }}
+        </span>
+    </div>
+{% endif %}
+
 {% if resend_limit %}
     {% include "resend_error.html" %}
 {% endif %}
