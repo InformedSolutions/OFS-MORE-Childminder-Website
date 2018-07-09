@@ -441,7 +441,6 @@ class SeleniumTaskExecutor:
 
         # Email confirmation page
         if other_adults_in_home:
-            driver.find_element_by_xpath("//input[@value='Continue']").send_keys(Keys.RETURN)
             email_link_list = os.environ['EMAIL_VALIDATION_URL'].split(" ")
             email_link_list = [x for x in email_link_list if x]
 
