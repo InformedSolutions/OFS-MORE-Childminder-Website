@@ -57,7 +57,7 @@ def task_list(request):
     except Exception as e:
         return HttpResponseRedirect(reverse("Type-Of-Childcare-Guidance-View") + '?id=' + application_id)
 
-    if application.personal_details_status == 'NOT_STARTED':
+    if application.personal_details_status == 'NOT_STARTED' or application.personal_details_status == 'IN_PROGRESS':
         return HttpResponseRedirect(reverse("Personal-Details-Name-View") + '?id=' + application_id)
 
     zero_to_five_status = childcare_record.zero_to_five
