@@ -490,5 +490,5 @@ class TestDBSCheckLogic(TestCase):
         # Assert user is redirected on to check answers page
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['errors']['dbs_certificate_number'][0],
-                         'Enter a different DBS number for each person')
+                         'Please enter a different DBS number for each person')
 
