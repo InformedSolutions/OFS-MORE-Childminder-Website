@@ -5,7 +5,7 @@ from datetime import date
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, reverse
 
 from .. import status
 from ..table_util import Table, create_tables, submit_link_setter
@@ -21,8 +21,6 @@ from ..forms import (FirstAidTrainingDeclarationForm,
 from ..models import (Application,
                       FirstAidTraining)
 
-
-# This view has yet to be refactored
 
 def first_aid_training_guidance(request):
     """
@@ -49,9 +47,8 @@ def first_aid_training_guidance(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.first_aid_training_status != 'COMPLETED':
-                status.update(application_id_local,
-                              'first_aid_training_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/details?id=' + application_id_local)
+                status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(reverse('First-Aid-Training-Details-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -104,7 +101,7 @@ def first_aid_training_details(request):
             certificate_age = certificate_date_difference.days / 365  # Integer division can return float in Python 3.
 
             if certificate_age >= 3:
-                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/update?id=' + application_id_local)
+                return HttpResponseRedirect(reverse('First-Aid-Training-Training-View') + '?id=' + application_id_local)
 
             # If certificate not out-of-date, update  First_Aid_Training record.
             first_aid_training_record = first_aid_logic(application_id_local, form)
@@ -114,9 +111,10 @@ def first_aid_training_details(request):
             reset_declaration(application)
 
             if 2.5 <= certificate_age < 3:
-                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/renew?id=' + application_id_local)
+                return HttpResponseRedirect(reverse('First-Aid-Training-Renew-View') + '?id=' + application_id_local)
             else:
-                return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/certificate?id=' + application_id_local)
+                return HttpResponseRedirect(
+                    reverse('First-Aid-Training-Declaration-View') + '?id=' + application_id_local)
 
         else:
             form.error_summary_title = 'There was a problem with your course details'
@@ -153,9 +151,8 @@ def first_aid_training_declaration(request):
         application_id_local = request.POST["id"]
         form = FirstAidTrainingDeclarationForm(request.POST)
         if form.is_valid():
-            status.update(application_id_local,
-                          'first_aid_training_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
+            status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(reverse('First-Aid-Training-Summary-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -187,8 +184,8 @@ def first_aid_training_renew(request):
         form = FirstAidTrainingRenewForm(request.POST)
         form.remove_flag()
         if form.is_valid():
-            status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/first-aid/check-answers?id=' + application_id_local)
+            status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(reverse('First-Aid-Training-Summary-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -218,9 +215,8 @@ def first_aid_training_training(request):
         application_id_local = request.POST["id"]
         form = FirstAidTrainingTrainingForm(request.POST)
         if form.is_valid():
-            status.update(application_id_local,
-                          'first_aid_training_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list/?id=' + application_id_local)
+            status.update(application_id_local, 'first_aid_training_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -272,3 +268,10 @@ def first_aid_training_summary(request):
         variables = submit_link_setter(variables, table_list, 'first_aid_training', application_id_local)
 
         return render(request, 'generic-summary-template.html', variables)
+
+    if request.method == 'POST':
+
+        application_id_local = request.POST["id"]
+        status.update(application_id_local, 'first_aid_training_status', 'COMPLETED')
+
+        return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)

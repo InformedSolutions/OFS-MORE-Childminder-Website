@@ -3,9 +3,9 @@ from django.utils import timezone
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.core.urlresolvers import reverse
 
 from ..summary_page_data import dbs_summary_dict
-import collections
 from ..table_util import table_creator, submit_link_setter
 from .. import status
 from ..business_logic import (dbs_check_logic,
@@ -41,10 +41,8 @@ def dbs_check_guidance(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.criminal_record_check_status != 'COMPLETED':
-                status.update(application_id_local,
-                              'criminal_record_check_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(
-                settings.URL_PREFIX + '/criminal-record/your-details?id=' + application_id_local)
+                status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(reverse('DBS-Check-DBS-Details-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -96,13 +94,9 @@ def dbs_check_dbs_details(request):
             reset_declaration(application)
             cautions_convictions = form.cleaned_data['cautions_convictions']
             if cautions_convictions == 'True':
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/criminal-record/post-certificate?id=' + application_id_local)
+                return HttpResponseRedirect(reverse('DBS-Check-Upload-DBS-View') + '?id=' + application_id_local)
             elif cautions_convictions == 'False':
-                application.criminal_record_check_status = 'COMPLETED'
-                application.save()
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
+                return HttpResponseRedirect(reverse('DBS-Check-Summary-View') + '?id=' + application_id_local)
         else:
             form.error_summary_title = 'There was a problem with the DBS details'
 
@@ -124,7 +118,7 @@ def dbs_check_upload_dbs(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Your criminal record (DBS) check: upload DBS template
     """
-    current_date = timezone.now()
+
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = DBSCheckUploadDBSForm()
@@ -145,10 +139,7 @@ def dbs_check_upload_dbs(request):
         form = DBSCheckUploadDBSForm(request.POST)
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
-            application.criminal_record_check_status = 'COMPLETED'
-            application.save()
-            return HttpResponseRedirect(
-                settings.URL_PREFIX + '/criminal-record/check-answers?id=' + application_id_local)
+            return HttpResponseRedirect(reverse('DBS-Check-Summary-View') + '?id=' + application_id_local)
         else:
 
             form.error_summary_title = 'There was a problem'
@@ -201,18 +192,6 @@ def dbs_check_summary(request):
     if request.method == 'POST':
 
         application_id_local = request.POST["id"]
-        application = Application.objects.get(pk=application_id_local)
-        form = DBSCheckSummaryForm(request.POST)
-        if form.is_valid():
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
-        else:
+        status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
 
-            if application.application_status == 'FURTHER_INFORMATION':
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem'
-
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'dbs-check-summary.html', variables)
+        return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)

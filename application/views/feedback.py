@@ -4,11 +4,11 @@ Method for returning the template for the Feedback page
 
 from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, reverse
 from django.conf import settings
 
 from ..notify import send_email
-from ..forms import FeedbackForm
+from ..forms import FeedbackForm, FeedbackConfirmationForm
 
 
 def feedback(request):
@@ -29,7 +29,7 @@ def feedback(request):
         return render(request, 'feedback.html', variables)
 
     if request.method == 'POST':
-        previous_url = request.GET["url"]
+        previous_url = request.POST["url"]
         form = FeedbackForm(request.POST)
 
         if form.is_valid():
@@ -45,7 +45,7 @@ def feedback(request):
             template_id = '650b7c59-dd31-4876-869d-ea8bfd76063a'
             r = send_email(email, personalisation, template_id)
             print(r)
-            return HttpResponseRedirect(previous_url)
+            return HttpResponseRedirect(reverse('Feedback-Confirmation') + '?url=' + previous_url)
 
         else:
             form.error_summary_title = 'There was a problem'
@@ -54,3 +54,38 @@ def feedback(request):
             }
 
             return render(request, 'feedback.html', variables)
+
+
+def feedback_confirmation(request):
+    """
+    Method returning the template for the Feedback confirmation page
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Feedback confirmation template
+    """
+
+    if request.method == 'GET':
+        previous_url = request.GET["url"]
+        form = FeedbackConfirmationForm()
+        variables = {
+            'form': form,
+            'previous_url': previous_url
+        }
+
+        return render(request, 'feedback-confirmation.html', variables)
+
+    if request.method == 'POST':
+        previous_url = request.POST["url"]
+        form = FeedbackConfirmationForm(request.POST)
+
+        if form.is_valid():
+
+            return HttpResponseRedirect(previous_url)
+
+        else:
+
+            variables = {
+                'form': form,
+                'previous_url': previous_url
+            }
+
+            return render(request, 'feedback-confirmation.html', variables)

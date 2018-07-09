@@ -1,0 +1,20 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Link expired{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+<div class="two-thirds">
+<h1 class="form-title heading-large">
+    Link expired
+</h1>
+
+<p>The link we sent you only lasts for 24 hours.</p>
+
+<p>
+    <a href="{% url 'Existing-Email' %}">Enter your e-mail again</a>
+</p>
+</div>
+
+{% endblock %}

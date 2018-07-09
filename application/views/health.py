@@ -1,20 +1,15 @@
-import collections
-
 from django.utils import timezone
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, reverse
 
 from .. import status
-from ..table_util import Table, create_tables, submit_link_setter
-from ..summary_page_data import health_link_dict, health_name_dict
 from ..business_logic import (health_check_logic,
                               reset_declaration)
 from ..forms import (HealthBookletForm,
                      HealthIntroForm)
-from ..models import (Application,
-                      HealthDeclarationBooklet)
+from ..models import (Application)
 
 
 def health_intro(request):
@@ -40,9 +35,8 @@ def health_intro(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.health_status != 'COMPLETED':
-                status.update(application_id_local,
-                              'health_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/health/booklet?id=' + application_id_local)
+                status.update(application_id_local, 'health_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(reverse('Health-Booklet-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -86,8 +80,8 @@ def health_booklet(request):
             application.save()
             reset_declaration(application)
             if application.health_status != 'COMPLETED':
-                status.update(application_id_local, 'health_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/health/check-answers?id=' + application_id_local)
+                status.update(application_id_local, 'health_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(reverse('Health-Check-Answers-View') + '?id=' + application_id_local)
         else:
 
             variables = {
@@ -120,21 +114,10 @@ def health_check_answers(request):
         }
 
         return render(request, 'health-summary.html', variables)
+
     if request.method == 'POST':
+
         application_id_local = request.POST["id"]
-        form = HealthBookletForm(request.POST)
-        application = Application.objects.get(pk=application_id_local)
-        if form.is_valid():
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + application_id_local)
-        else:
+        status.update(application_id_local, 'health_status', 'COMPLETED')
 
-            if application.application_status == 'FURTHER_INFORMATION':
-
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem'
-
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'health-check-answers.html', variables)
+        return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)

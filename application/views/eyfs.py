@@ -1,10 +1,9 @@
 from django.utils import timezone
-import calendar
 import collections
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, reverse
 from ..table_util import Table, create_tables, submit_link_setter
 from ..summary_page_data import eyfs_name_dict, eyfs_link_dict, eyfs_change_link_description_dict
 
@@ -36,18 +35,13 @@ def eyfs_guidance(request):
             'eyfs_training_status': application.eyfs_training_status
         }
         if application.eyfs_training_status != 'COMPLETED':
-            status.update(application_id_local,
-                          'eyfs_training_status', 'IN_PROGRESS')
+            status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
         return render(request, 'eyfs-guidance.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = EYFSGuidanceForm(request.POST)
-        application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
-            if application.eyfs_training_status != 'COMPLETED':
-                status.update(application_id_local,
-                              'eyfs_training_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/early-years/details?id=' + application_id_local)
+            return HttpResponseRedirect(reverse('EYFS-Details-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -88,15 +82,14 @@ def eyfs_details(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.eyfs_training_status != 'COMPLETED':
-                status.update(application_id_local,
-                              'eyfs_training_status', 'IN_PROGRESS')
+                status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
             # Create or update EYFS record
             eyfs_record = eyfs_details_logic(application_id_local, form)
             eyfs_record.save()
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
-            return HttpResponseRedirect(settings.URL_PREFIX + '/early-years/certificate?id=' + application_id_local)
+            return HttpResponseRedirect(reverse('EYFS-Certificate-View') + '?id=' + application_id_local)
         else:
 
             form.error_summary_title = 'There was a problem with your course details'
@@ -121,7 +114,7 @@ def eyfs_certificate(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Early Years knowledge: certificate template
     """
-    current_date = timezone.now()
+
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = EYFSCertificateForm()
@@ -138,9 +131,8 @@ def eyfs_certificate(request):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.eyfs_training_status != 'COMPLETED':
-                status.update(application_id_local,
-                              'eyfs_training_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/early-years/check-answers?id=' + application_id_local)
+                status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(reverse('EYFS-Summary-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -190,3 +182,10 @@ def eyfs_summary(request):
         variables = submit_link_setter(variables, table_list, 'eyfs_training', application_id_local)
 
         return render(request, 'generic-summary-template.html', variables)
+
+    if request.method == 'POST':
+
+        application_id_local = request.POST["id"]
+        status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
+
+        return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)

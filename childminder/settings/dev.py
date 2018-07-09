@@ -41,6 +41,7 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/code-resent/.*$',
     r'^' + URL_PREFIX + '/security-code/.*$',
     r'^' + URL_PREFIX + '/link-used/$',
+    r'^' + URL_PREFIX + '/link-expired/$',
     r'^' + URL_PREFIX + '/new-code/.*$',
     r'^' + URL_PREFIX + '/djga/+',
     r'^' + URL_PREFIX + '/sign-in/',
@@ -54,7 +55,8 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/costs/',
     r'^' + URL_PREFIX + '/application-saved/$',
     r'^' + URL_PREFIX + '/health-check/(?P<id>[\w-]+)/$',
-    r'^' + URL_PREFIX + '/feedback/'
+    r'^' + URL_PREFIX + '/feedback/',
+    r'^' + URL_PREFIX + '/feedback-submitted/'
 )
 
 # Database

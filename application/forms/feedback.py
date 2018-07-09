@@ -50,3 +50,20 @@ class FeedbackForm(ChildminderForms):
             if re.match(settings.REGEX['EMAIL'], email_address) is None:
                 raise forms.ValidationError('Please enter a valid email address')
         return email_address
+
+
+class FeedbackConfirmationForm(ChildminderForms):
+    """
+    GOV.UK form for the Feedback Confirmation page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    auto_replace_widgets = True
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Feedback Confirmation form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        super(FeedbackConfirmationForm, self).__init__(*args, **kwargs)

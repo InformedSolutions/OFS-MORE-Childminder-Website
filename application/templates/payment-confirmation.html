@@ -40,10 +40,7 @@
             Your application details
         </h2>
 
-        <p class="indent-left"><img src="{% static 'printer.png' %}" alt="Print" class="print-icon no-print"/>
-            <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print this page</a></p>
-        <p class="indent-left"><img src="{% static 'printer.png' %}" alt="Print" class="print-icon no-print"/>
-            <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print your application</a></p>
+        {% include 'print-links.html' %}
 
 
         <h2 class="heading-medium">

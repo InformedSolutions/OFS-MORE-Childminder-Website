@@ -37,9 +37,10 @@
     </tbody>
 </table>
 
-<form action="{% url 'Task-List-View' %}?id={{application_id}}" method="get">
+<form method="post">
     <input type="submit" class="button" value="Confirm and continue"/>
     <input type="hidden" value="{{application_id}}" name="id"/>
+    {% csrf_token %}
 </form>
 </div>
 
