@@ -19,8 +19,8 @@ SERVER_LABEL = os.environ.get('SERVER_LABEL')
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Expiry period of Magic Link Emails and Texts in hours
-SMS_EXPIRY = 1
-EMAIL_EXPIRY = 1
+SMS_EXPIRY = 24
+EMAIL_EXPIRY = 24
 
 # Visa Validation
 VISA_VALIDATION = os.environ.get('VISA_VALIDATION') == 'True'
@@ -38,7 +38,7 @@ PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
 EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
 
-FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'registrationfeedback@ofsted.gov.uk')
+FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'tester@informed.com')
 
 TEST_NOTIFY_CONNECTION = True
 

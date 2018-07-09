@@ -148,3 +148,28 @@ def build_url(*args, **kwargs):
     return url
 
 
+def unique_values(g):
+    """
+    Helper to check whether all values in a list are unique
+    :param g: list to be checked against
+    :return: Boolean indicator of uniqueness
+    """
+    s = set()
+    for x in g:
+        if x in s: return False
+        s.add(x)
+    return True
+
+
+def get_first_duplicate_index(li):
+    """
+    Helper method to find the first index of a duplicate item in a list
+    :param li: the list to be tested against
+    """
+    seen = set()
+    for i in li:
+        if i in seen:
+            return li.index(i)
+        else:
+            seen.add(i)
+

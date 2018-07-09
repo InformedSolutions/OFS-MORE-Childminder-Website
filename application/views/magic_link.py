@@ -48,6 +48,38 @@ def magic_link_confirmation_email(email, link_id):
     return send_email(email, personalisation, template_id)
 
 
+def magic_link_resubmission_confirmation_email(email, application_reference, first_name, updated_tasks):
+    """
+    Method to send a magic link email, using notify.py, to allow applicant to log in
+    """
+    personalisation = {
+        'ref': application_reference,
+        'firstName': first_name,
+    }
+
+    all_tasks = [
+        'Your sign in details',
+        'Type of childcare',
+        'Your personal details',
+        'First aid training',
+        'Criminal record (DBS) check',
+        'Early years training',
+        'Health declaration booklet',
+        'People in your home',
+        'References'
+    ]
+
+    for task in all_tasks:
+        personalisation[task] = task in updated_tasks
+
+    # Remove parentheses from 'Criminal record (DBS) check' - Notify cannot format such variables.
+    personalisation['Criminal record DBS check'] = personalisation.pop('Criminal record (DBS) check')
+
+    template_id = '6431f727-c49e-4f17-964e-b5595a83e958'
+
+    send_email(email, personalisation, template_id)
+
+
 def magic_link_update_email(email, first_name, link_id):
     """
     Method to send a magic link email, using notify.py, to update an applicant's email

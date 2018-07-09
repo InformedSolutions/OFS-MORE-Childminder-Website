@@ -4,10 +4,11 @@ import calendar
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, reverse
 from django.views.decorators.cache import never_cache
 from timeline_logger.models import TimelineLog
 
+from application.views.magic_link import magic_link_resubmission_confirmation_email
 from .. import status
 from ..forms import (DeclarationIntroForm,
                      DeclarationForm,
@@ -20,7 +21,6 @@ from ..models import (AdultInHome,
                       ChildInHome,
                       ChildcareType,
                       CriminalRecordCheck,
-                      HealthDeclarationBooklet,
                       EYFS,
                       FirstAidTraining,
                       Reference,
@@ -206,8 +206,7 @@ def declaration_summary(request, print=False):
             'print': print
         }
         if application.declarations_status != 'COMPLETED':
-            status.update(application_id_local,
-                          'declarations_status', 'NOT_STARTED')
+            status.update(application_id_local, 'declarations_status', 'NOT_STARTED')
         if print:
             return variables
         return render(request, 'master-summary.html', variables)
@@ -217,9 +216,8 @@ def declaration_summary(request, print=False):
         application = Application.objects.get(pk=application_id_local)
         if form.is_valid():
             if application.declarations_status != 'COMPLETED':
-                status.update(application_id_local,
-                              'declarations_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/declaration/declaration?id=' + application_id_local)
+                status.update(application_id_local, 'declarations_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(reverse('Declaration-Intro-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -250,7 +248,7 @@ def declaration_intro(request):
         application = Application.objects.get(application_id=application_id_local)
         form = DeclarationIntroForm(request.POST)
         if form.is_valid():
-            return HttpResponseRedirect(settings.URL_PREFIX + '/your-declaration?id=' + application_id_local)
+            return HttpResponseRedirect(reverse('Declaration-Declaration-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -348,8 +346,16 @@ def declaration_declaration(request):
                     'updated_list': updated_list
                 }
 
-                clear_arc_flagged_statuses(application_id_local)
+                user_details = UserDetails.objects.get(application_id=application_id_local)
+                applicant_name = ApplicantName.objects.get(application_id=application_id_local)
+                magic_link_resubmission_confirmation_email(
+                    email=user_details.email,
+                    first_name=applicant_name.first_name,
+                    application_reference=application.application_reference,
+                    updated_tasks=updated_list
+                )
 
+                clear_arc_flagged_statuses(application_id_local)
                 status.update(application_id_local, 'declarations_status', 'COMPLETED')
 
                 return render(request, 'payment-confirmation-resubmitted.html', variables)

@@ -387,6 +387,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='personal_details']/td/a/strong").text)
 
+    @tag('smoke_test')
     @try_except_method
     def test_cannot_complete_personal_details_task_when_location_of_care_is_not_same_as_home_address(self):
         """
@@ -478,6 +479,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='other_people']/td/a/strong").text)
 
+    @tag('smoke_test')
     @try_except_method
     def test_cannot_resend_health_check_email_more_than_three_times(self):
         """
@@ -553,6 +555,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
 
+    @tag('smoke_test')
     @try_except_method
     def test_can_apply_as_a_childminder_full_question_set(self):
         """
@@ -602,6 +605,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_link_text('Register as a childminder').click()
         self.assertEqual("Register as a childminder", self.selenium_task_executor.get_driver().title)
 
+    @tag('smoke_test')
     @try_except_method
     def test_can_access_costs_without_authenticating(self):
         """
@@ -1484,8 +1488,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
                          driver.find_element_by_xpath("//div[@id='id_2-email_address-group']/span").text)
 
 
-
-    #
     # @try_except_method
     # def test_feedback_page(self):
     #     """
@@ -1532,6 +1534,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         )
 
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        time.sleep(1)
 
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
 

@@ -1,9 +1,10 @@
 from django import forms
 from govuk_forms.widgets import InlineRadioSelect, NumberInput
 
-from application.forms.childminder import ChildminderForms
-from application.forms_helper import full_stop_stripper
-from application.models import (CriminalRecordCheck)
+from ..forms.childminder import ChildminderForms
+from ..forms_helper import full_stop_stripper
+from ..models import CriminalRecordCheck, Application
+from ..business_logic import new_dbs_numbers_is_valid
 
 
 class DBSCheckGuidanceForm(ChildminderForms):
@@ -71,6 +72,23 @@ class DBSCheckDBSDetailsForm(ChildminderForms):
             raise forms.ValidationError('The certificate number should be 12 digits long')
         if len(str(dbs_certificate_number)) < 12:
             raise forms.ValidationError('The certificate number should be 12 digits long')
+
+        application_id = self.data['id']
+        application = Application.objects.get(pk=application_id)
+
+        unique_dbs_check_result = new_dbs_numbers_is_valid(application, dbs_certificate_number)
+
+        if unique_dbs_check_result.dbs_numbers_unique:
+            return dbs_certificate_number
+
+        # If this is simply an update by the childminder to their own DBS (i.e. resubmission of page)
+        # let pass
+        if unique_dbs_check_result.duplicates_childminder_dbs:
+            return dbs_certificate_number
+
+        if unique_dbs_check_result.duplicates_household_member_dbs:
+            raise forms.ValidationError('This DBS number has already been provided for another household member')
+
         return dbs_certificate_number
 
 

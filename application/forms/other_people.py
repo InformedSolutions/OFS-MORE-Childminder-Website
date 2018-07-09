@@ -5,14 +5,15 @@ from django import forms
 from django.conf import settings
 from govuk_forms.widgets import InlineRadioSelect, NumberInput
 
-from application.customfields import CustomSplitDateFieldDOB
-from application.forms.childminder import ChildminderForms
-from application.forms_helper import full_stop_stripper
-from application.models import (AdultInHome,
+from ..customfields import CustomSplitDateFieldDOB
+from ..forms.childminder import ChildminderForms
+from ..forms_helper import full_stop_stripper
+from ..models import (AdultInHome,
                                 Application,
                                 ChildInHome,
                                 UserDetails)
-from application.utils import date_formatter
+from ..utils import date_formatter
+from ..business_logic import new_dbs_numbers_is_valid
 
 
 class OtherPeopleGuidanceForm(ChildminderForms):
@@ -221,11 +222,33 @@ class OtherPeopleAdultDBSForm(ChildminderForms):
         DBS certificate number validation
         :return: integer
         """
-        dbs_certificate_number = self.data['1-dbs_certificate_number']
+        dbs_certification_key = str(self.prefix) + '-dbs_certificate_number'
+        dbs_certificate_number = self.data[dbs_certification_key]
         if len(str(dbs_certificate_number)) > 12:
             raise forms.ValidationError('The certificate number should be 12 digits long')
         if len(str(dbs_certificate_number)) < 12:
             raise forms.ValidationError('The certificate number should be 12 digits long')
+
+        application_id = self.data['id']
+        application = Application.objects.get(pk=application_id)
+
+        unique_dbs_check_result = new_dbs_numbers_is_valid(application, dbs_certificate_number)
+
+        if unique_dbs_check_result.dbs_numbers_unique:
+            return dbs_certificate_number
+
+        # Do not let household member DBS duplicate childminder's DBS numbers
+        if unique_dbs_check_result.duplicates_childminder_dbs:
+            self.add_error('dbs_certificate_number', 'DBS number cannot be the same as your own')
+
+        # If the dbs number is not unique, check whether the position of the adult in home
+        # matches the used dbs. If so, allow through as this may just be an update
+        # or resubmission
+        if unique_dbs_check_result.duplicates_household_member_dbs and \
+                (unique_dbs_check_result.duplicate_entry_index != self.prefix):
+            self.add_error('dbs_certificate_number',
+                           'Enter a different DBS number for each person')
+
         return dbs_certificate_number
 
 

@@ -44,9 +44,10 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/help-contact/',
     r'^' + URL_PREFIX + '/costs/',
     r'^' + URL_PREFIX + '/application-saved/$',
-    r'^' + URL_PREFIX + '/health-check/(?P<id>[\w-]+)/$'
+    r'^' + URL_PREFIX + '/health-check/(?P<id>[\w-]+)/$',
+    r'^' + URL_PREFIX + '/feedback/',
+    r'^' + URL_PREFIX + '/feedback-submitted/'
 )
-
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
