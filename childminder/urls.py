@@ -128,6 +128,7 @@ urlpatterns = [
     url(r'^home-ready/', views.home_ready, name='Next-Steps-Home'),
     url(r'^prepare-interview/', views.prepare_for_interview, name='Next-Steps-Interview'),
     url(r'^link-used/', TemplateView.as_view(template_name='bad-link.html')),
+    url(r'^link-expired/', TemplateView.as_view(template_name='link-expired.html')),
     url(r'^sign-in/question/(?P<id>[\w-]+)/$', security_question.question, name='Security-Question'),
     url(r'^sign-in/question/$', security_question.question, name='Security-Question'),
     url(r'^djga/', include('google_analytics.urls')),
@@ -152,7 +153,8 @@ urlpatterns = [
     url(r'^new-code/$', magic_link.ResendSMSCodeView.as_view(), name='Resend-Code'),
     url(r'^help-contact/$', views.help_and_contact, name='Help-And-Contact-View'),
     url(r'^cannot-use-service/$', views.personal_details.service_unavailable, name='Service-Unavailable'),
-    url(r'^feedback/', feedback.feedback, name='Feedback')
+    url(r'^feedback/', feedback.feedback, name='Feedback'),
+    url(r'^feedback-submitted/', feedback.feedback_confirmation, name='Feedback-Confirmation')
 ]
 
 if settings.DEBUG:

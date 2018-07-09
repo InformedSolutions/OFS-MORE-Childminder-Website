@@ -165,7 +165,7 @@ def has_expired(expiry):
     # Expiry period is set in hours in settings.py
     exp_period = settings.EMAIL_EXPIRY * 60 * 60
     diff = int(time.time() - expiry)
-    if diff < exp_period or diff == exp_period:
+    if diff <= exp_period:
         return False
     else:
         return True
@@ -206,6 +206,8 @@ def validate_magic_link(request, id):
             acc.save()
             magic_link_text(phone, rand_num)
             return HttpResponseRedirect(settings.URL_PREFIX + '/security-code/?id=' + str(app_id))
+        elif has_expired(exp) and acc.email_expiry_date != 0:
+            return HttpResponseRedirect(settings.URL_PREFIX + '/link-expired/')
         else:
             return HttpResponseRedirect(settings.URL_PREFIX + '/link-used/')
     except Exception as ex:

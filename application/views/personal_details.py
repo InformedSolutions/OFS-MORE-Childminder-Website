@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
 from ..table_util import Table, create_tables, submit_link_setter
-from .. summary_page_data import personal_details_name_dict, personal_details_link_dict
+from ..summary_page_data import personal_details_name_dict, personal_details_link_dict
 from .. import address_helper, status
 from ..business_logic import (multiple_childcare_address_logic,
                               personal_dob_logic,
@@ -60,7 +60,7 @@ def personal_details_guidance(request):
             if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                 status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
-            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/your-name?id=' + app_id)
+            return HttpResponseRedirect(reverse('Personal-Details-Name-View') + '?id=' + app_id)
 
         variables = {
             'form': form,
@@ -117,15 +117,13 @@ def personal_details_name(request):
                 status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
             reset_declaration(application)
 
-            return HttpResponseRedirect(
-                settings.URL_PREFIX + '/personal-details/your-date-of-birth/?id=' + app_id)
+            return HttpResponseRedirect(reverse('Personal-Details-DOB-View') + '?id=' + app_id)
 
         else:
 
             form.error_summary_title = 'There was a problem with your name details'
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -185,14 +183,13 @@ def personal_details_dob(request):
             reset_declaration(application)
 
             return HttpResponseRedirect(
-                settings.URL_PREFIX + '/personal-details/your-home-address?id=' + app_id +
-                '&manual=False&lookup=False')
+                reverse('Personal-Details-Home-Address-View') + '?id=' + app_id + '&manual=False&lookup=False')
+
         else:
 
             form.error_summary_title = 'There was a problem with your date of birth'
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -277,19 +274,16 @@ def personal_details_home_address(request):
                 if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                     status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/personal-details/select-home-address/?id=' + app_id)
+                return HttpResponseRedirect(reverse('Personal-Details-Home-Address-Select-View') + '?id=' + app_id)
 
             if 'submit' in request.POST:
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/personal-details/enter-home-address/?id=' + app_id)
+                return HttpResponseRedirect(reverse('Personal-Details-Home-Address-Manual-View') + '?id=' + app_id)
 
         else:
 
             form.error_summary_title = 'There was a problem with your postcode'
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -408,14 +402,12 @@ def personal_details_home_address_select(request):
 
             if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                 status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/home-address-details?id=' +
-                                        app_id)
+            return HttpResponseRedirect(reverse('Personal-Details-Location-Of-Care-View') + '?id=' + app_id)
         else:
 
             form.error_summary_title = 'There was a problem finding your address'
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -498,8 +490,7 @@ def personal_details_location_of_care(request):
 
             if home_address_record.childcare_address:
 
-                return HttpResponseRedirect(
-                    settings.URL_PREFIX + '/personal-details/check-answers?id=' + app_id)
+                return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
 
             else:
 
@@ -509,7 +500,6 @@ def personal_details_location_of_care(request):
             form.error_summary_title = 'There was a problem with your address details'
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -608,23 +598,20 @@ def personal_details_childcare_address(request):
                 if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                     status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
-                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/select-childcare-address/?id='
-                                            + app_id)
+                return HttpResponseRedirect(reverse('Personal-Details-Childcare-Address-Select-View') + '?id=' + app_id)
 
             if 'submit' in request.POST:
 
                 if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                     status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
-                return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/enter-childcare-address/?id='
-                                            + app_id)
+                return HttpResponseRedirect(reverse('Personal-Details-Childcare-Address-Manual-View') + '?id=' + app_id)
 
         else:
 
             form.error_summary_title = 'There was a problem with your postcode'
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -747,14 +734,12 @@ def personal_details_childcare_address_select(request):
             if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                 status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
-            return HttpResponseRedirect(settings.URL_PREFIX + '/personal-details/check-answers?id=' +
-                                        app_id)
+            return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
         else:
 
             form.error_summary_title = 'There was a problem finding your address'
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -844,15 +829,13 @@ def personal_details_childcare_address_manual(request):
             if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                 status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
             reset_declaration(application)
-            return HttpResponseRedirect(
-                settings.URL_PREFIX + '/personal-details/check-answers?id=' + app_id)
+            return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
 
         else:
 
             form.error_summary_title = 'There was a problem with your address'
 
             if application.application_status == 'FURTHER_INFORMATION':
-
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
@@ -963,15 +946,5 @@ def personal_details_summary(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
-        form = PersonalDetailsSummaryForm()
-
-        if form.is_valid():
-            status.update(app_id, 'personal_details_status', 'COMPLETED')
-            return HttpResponseRedirect(settings.URL_PREFIX + '/task-list?id=' + app_id)
-
-        else:
-            variables = {
-                'form': form,
-                'application_id': app_id
-            }
-            return render(request, 'personal-details-summary.html', variables)
+        status.update(app_id, 'personal_details_status', 'COMPLETED')
+        return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + app_id)
