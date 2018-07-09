@@ -61,14 +61,6 @@ class CustomAuthenticationHandler(object):
             if account.email != self.get_session_user(request):
                 raise Exception
 
-        if application.application_status in ("ARC_REVIEW", "ACCEPTED", "SUBMITTED"):
-            # Redirect to 'Thank you for applying page' if completed applicant tries to access any other page.
-            if reverse('Payment-Confirmation') != request.path:
-                return HttpResponseRedirect(reverse('Declaration-Declaration-View') + '?id=' + application_id)
-            # Check if they've already been redirected to avoid infinite middleware loop.
-            else:
-                pass
-
         # If request has not been blocked at this point in the execution flow, allow
         # request to continue processing as normal
         response = self.get_response(request)

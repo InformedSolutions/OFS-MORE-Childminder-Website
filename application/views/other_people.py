@@ -706,12 +706,12 @@ def other_people_summary(request):
                     ('dbs_certificate_number', adult.dbs_certificate_number),
                 ])
 
-                if adult.health_check_status == 'To do':
-                    status.update(application_id_local, 'people_in_home_status', 'WAITING')
+            if adult.health_check_status == 'To do':
+                status.update(application_id_local, 'people_in_home_status', 'WAITING')
 
-                # If adult health check status is not complete, add to health check status list
-                if adult.health_check_status != 'Done':
-                    adult_health_check_status_list.append('To do')
+            # If adult health check status is not complete, add to health check status list
+            if adult.health_check_status != 'Done':
+                adult_health_check_status_list.append('To do')
 
             # Counter for table object to correctly set link in generic-error-summary template for flagged health check.
             table = Table([adult.pk])
