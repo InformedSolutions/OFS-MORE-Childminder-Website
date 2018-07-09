@@ -162,22 +162,19 @@ def contact_summary(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
-        form = ContactSummaryForm(request.POST)
         application = Application.objects.get(pk=app_id)
 
-        if form.is_valid():
-            status.update(app_id, 'login_details_status', 'COMPLETED')
+        status.update(app_id, 'login_details_status', 'COMPLETED')
 
-            if application.childcare_type_status == 'COMPLETED' or application.childcare_type_status == 'FLAGGED':
+        if application.childcare_type_status == 'COMPLETED' or application.childcare_type_status == 'FLAGGED':
 
-                return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + app_id)
+            return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + app_id)
 
-            elif application.childcare_type_status != 'COMPLETED':
+        elif application.childcare_type_status != 'COMPLETED':
 
-                return HttpResponseRedirect(reverse('Type-Of-Childcare-Guidance-View') + '?id=' + app_id)
+            return HttpResponseRedirect(reverse('Type-Of-Childcare-Guidance-View') + '?id=' + app_id)
 
         variables = {
-            'form': form,
             'application_id': app_id,
             'login_details_status': application.login_details_status,
             'childcare_type_status': application.childcare_type_status
