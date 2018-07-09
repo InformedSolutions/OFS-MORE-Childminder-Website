@@ -384,7 +384,7 @@ class TestDBSCheckLogic(TestCase):
         # Assert user is redirected on to check answers page
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['errors']['dbs_certificate_number'][0],
-                         'Enter a DBS number that is different from your own')
+                         'Please enter a DBS number that is different from your own')
 
     @modify_settings(MIDDLEWARE={
         'remove': [
