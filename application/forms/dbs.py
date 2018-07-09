@@ -87,7 +87,8 @@ class DBSCheckDBSDetailsForm(ChildminderForms):
             return dbs_certificate_number
 
         if unique_dbs_check_result.duplicates_household_member_dbs:
-            raise forms.ValidationError('This DBS number has already been provided for another household member')
+            raise forms.ValidationError('Please enter a different DBS number. '
+                                        'You entered this number for someone in your childcare location')
 
         return dbs_certificate_number
 

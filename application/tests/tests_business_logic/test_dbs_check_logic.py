@@ -341,7 +341,7 @@ class TestDBSCheckLogic(TestCase):
         # Assert user is redirected on to check answers page
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['errors']['dbs_certificate_number'][0],
-                         'This DBS number has already been provided for another household member')
+                         'Please enter a different DBS number. You entered this number for someone in your childcare location')
 
     # HTTP web tier tests for Household members task vompletion
 
@@ -384,7 +384,7 @@ class TestDBSCheckLogic(TestCase):
         # Assert user is redirected on to check answers page
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['errors']['dbs_certificate_number'][0],
-                         'DBS number cannot be the same as your own')
+                         'Enter a DBS number that is different from your own')
 
     @modify_settings(MIDDLEWARE={
         'remove': [

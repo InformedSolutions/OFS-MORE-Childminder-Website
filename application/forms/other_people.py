@@ -239,7 +239,7 @@ class OtherPeopleAdultDBSForm(ChildminderForms):
 
         # Do not let household member DBS duplicate childminder's DBS numbers
         if unique_dbs_check_result.duplicates_childminder_dbs:
-            self.add_error('dbs_certificate_number', 'DBS number cannot be the same as your own')
+            self.add_error('dbs_certificate_number', 'Enter a DBS number that is different from your own')
 
         # If the dbs number is not unique, check whether the position of the adult in home
         # matches the used dbs. If so, allow through as this may just be an update
