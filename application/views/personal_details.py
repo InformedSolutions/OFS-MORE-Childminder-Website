@@ -917,12 +917,28 @@ def personal_details_summary(request):
             'error_summary_title': 'There was a problem'
         })
 
-        address_dict = collections.OrderedDict({
-            'table_object': Table([applicant_home_address_record.pk, applicant_childcare_address_record.pk]),
-            'fields': address_table_dict,
-            'title': 'Your home address',
-            'error_summary_title': 'There was a problem'
-        })
+        if applicant_childcare_address_record != 'Same as home address':
+
+            address_dict = collections.OrderedDict({
+                'table_object': Table([applicant_home_address_record.pk, applicant_childcare_address_record.pk]),
+                'fields': address_table_dict,
+                'title': 'Your home address',
+                'error_summary_title': 'There was a problem'
+            })
+
+        else:
+
+            address_table_dict = collections.OrderedDict([
+                ('home_address', home_address),
+                ('childcare_location', 'Same as home address')
+            ])
+
+            address_dict = collections.OrderedDict({
+                'table_object': Table([applicant_home_address_record.pk, applicant_home_address_record.pk]),
+                'fields': address_table_dict,
+                'title': 'Your home address',
+                'error_summary_title': 'There was a problem'
+            })
 
         tables = [name_dob_dict, address_dict]
         table_list = create_tables(tables, personal_details_name_dict, personal_details_link_dict)
