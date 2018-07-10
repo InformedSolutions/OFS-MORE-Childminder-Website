@@ -50,7 +50,8 @@ def feedback(request):
         else:
             form.error_summary_title = 'There was a problem'
             variables = {
-                'form': form
+                'form': form,
+                'previous_url': previous_url
             }
 
             return render(request, 'feedback.html', variables)
