@@ -1,3 +1,4 @@
+import logging
 import re
 from datetime import date
 
@@ -14,6 +15,8 @@ from ..models import (AdultInHome,
                                 UserDetails)
 from ..utils import date_formatter
 from ..business_logic import childminder_dbs_number_duplication_check, household_member_dbs_form_duplicates_check
+
+logger = logging.getLogger()
 
 
 class OtherPeopleGuidanceForm(ChildminderForms):
@@ -233,6 +236,8 @@ class OtherPeopleAdultDBSForm(ChildminderForms):
 
         if not form_check.dbs_numbers_unique:
             if self.adult in form_check.duplicate_entry_indexes:
+                logger.debug('Received following form data for other adults DBS entries:' + str(self.data))
+                logger.debug('Marking adult ' + str(self.adult) + ' DBS number as duplicate')
                 self.add_error('dbs_certificate_number',
                                'Please enter a different DBS number for each person')
 

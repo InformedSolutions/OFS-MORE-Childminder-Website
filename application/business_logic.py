@@ -753,7 +753,7 @@ def household_member_dbs_form_duplicates_check(other_people_dbs_form_data):
 
     dbs_numbers = list()
 
-    for key in other_people_dbs_form_data:
+    for key in sorted(other_people_dbs_form_data):
         if "dbs_certificate_number" in key:
             dbs_numbers.append(other_people_dbs_form_data[key])
 

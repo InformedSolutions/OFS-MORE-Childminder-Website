@@ -1,4 +1,5 @@
 import collections
+import logging
 import os
 import random
 import string
@@ -47,6 +48,8 @@ from ..models import (AdultInHome,
                       ChildInHome)
 from application.notify import send_email
 
+
+logger = logging.getLogger()
 
 def other_people_guidance(request):
     """
@@ -354,6 +357,7 @@ def other_people_adult_dbs(request):
                 name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
             form = OtherPeopleAdultDBSForm(
                 request.POST, id=application_id_local, adult=i, prefix=i, name=name)
+
             form_list.append(form)
             form.error_summary_title = 'There was a problem with the DBS details (Person ' + str(
                 i) + ')'
