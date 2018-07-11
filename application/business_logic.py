@@ -728,26 +728,50 @@ def eligible_to_apply_based_on_childcare_ages(childcare_record):
         return True
 
 
-def new_dbs_numbers_is_valid(application, candidate_dbs_certificate_number):
+def dbs_matches_childminder_dbs(application, candidate_dbs_certificate_number):
     """
-    Helper function to determine whether any DBS numbers listed in the application are not unique
+    Helper function to determine whether a DBS number matches the DBS recorded for the childminder
     :param application: the application to be checked against
     :param candidate_dbs_certificate_number: the candidate dbs number to be tested against
     :return: object detailing whether the dbs numbers contained in an application are unique.
     """
-    # Initialise response object (which defaults to indicating no duplicates)
+    try:
+        childminder_dbs_record = CriminalRecordCheck.objects.get(application_id=application.application_id)
+        return candidate_dbs_certificate_number == childminder_dbs_record.dbs_certificate_number
+    except CriminalRecordCheck.DoesNotExist:
+        return False
+
+
+def household_member_dbs_form_duplicates_check(other_people_dbs_form_data):
+    """
+    Helper method to check for any duplicate DBS entries in the other people DBS form
+    :param other_people_dbs_form_data: POSTed form data including the candidate DBS numbers to be recorded
+    :return: an object articulating any duplicate matches identified
+    """
     response = UniqueDbsCheckResult()
 
     dbs_numbers = list()
 
-    # Retrieve childminders dbs record if it exists
-    try:
-        childminder_dbs_record = CriminalRecordCheck.objects.get(application_id=application.application_id)
-    except CriminalRecordCheck.DoesNotExist:
+    for key in other_people_dbs_form_data:
+        if "dbs_certificate_number" in key:
+            dbs_numbers.append(other_people_dbs_form_data[key])
+
+    if unique_values(dbs_numbers):
+        return response
+    else:
+        response.dbs_numbers_unique = False
+        response.duplicates_household_member_dbs = True
+        response.duplicate_entry_index = get_first_duplicate_index(dbs_numbers)
         return response
 
-    # Append childminder DBS to list for later reference
-    dbs_numbers.append(childminder_dbs_record.dbs_certificate_number)
+
+def childminder_dbs_duplicates_household_member_check(application, candidate_dbs_certificate_number):
+    """
+    Helper method to check whether a childminder DBS number duplicates an existing household member's
+    :param candidate_dbs_certificate_number: the candidate DBS number to be assigned
+    :return: True/False result
+    """
+    dbs_numbers = list()
 
     # Check how many additional adults feature in application form
     additional_adults = AdultInHome.objects.filter(application_id=application.application_id)
@@ -762,29 +786,58 @@ def new_dbs_numbers_is_valid(application, candidate_dbs_certificate_number):
             if adult.dbs_certificate_number:
                 dbs_numbers.append(adult.dbs_certificate_number)
 
-    # Add candidate DBS number to the last entry in the list
+    # Yield result of whether DBS number to the last entry in the list
+    return candidate_dbs_certificate_number in dbs_numbers
+
+
+def get_duplicate_dbs_index(application, candidate_dbs_certificate_number):
+    """
+    Helper method for gathering the duplicate index
+    :param application: the application to be tested against
+    :param candidate_dbs_certificate_number: the candidate DBS number to be assigned
+    :return: an integer which states the position of the erroneous DBS number
+    """
+    dbs_numbers = list()
+
+    try:
+        childminder_dbs_record = CriminalRecordCheck.objects.get(application_id=application.application_id)
+        dbs_numbers.append(childminder_dbs_record.dbs_certificate_number)
+    except CriminalRecordCheck.DoesNotExist:
+        dbs_numbers.append('')
+
+    # Check how many additional adults feature in application form
+    additional_adults = AdultInHome.objects.filter(application_id=application.application_id)
+    count_of_additional_adults_in_home = AdultInHome.objects.filter(application_id=application.application_id).count()
+
+    # Iterate and push DBS numbers to comparison array
+    if count_of_additional_adults_in_home > 0:
+        for i in range(1, int(additional_adults.count()) + 1):
+            adult = AdultInHome.objects.get(
+                application_id=application.application_id, adult=i)
+            # filter out any empty values so as not to get a false match on duplicate index
+            if adult.dbs_certificate_number:
+                dbs_numbers.append(adult.dbs_certificate_number)
+
     dbs_numbers.append(candidate_dbs_certificate_number)
 
-    # If all DBS numbers contained in application are unique, yield early return
-    # with indicator that all DBS numbers are unique
-    if unique_values(dbs_numbers):
-        return response
+    return get_first_duplicate_index(dbs_numbers)
 
-    # If not adjust response object to signify check failure
-    response.dbs_numbers_unique = False
 
-    first_duplicate_index = get_first_duplicate_index(dbs_numbers)
+def childminder_dbs_number_duplication_check(application, candidate_dbs_certificate_number):
+    """
+    Helper function to determine whether any DBS numbers listed in the application are not unique
+    :param application: the application to be checked against
+    :param candidate_dbs_certificate_number: the candidate dbs number to be tested against
+    :return: object detailing whether the dbs numbers contained in an application are unique.
+    """
+    # Initialise response object (which defaults to indicating no duplicates)
+    response = UniqueDbsCheckResult()
 
-    # If the first duplicate index is at position zero this
-    # means a DBS matches the childminder (as in the above this is the first entry added to the
-    # list being tested against)
-    if first_duplicate_index == 0:
+    if dbs_matches_childminder_dbs(application, candidate_dbs_certificate_number):
+        response.dbs_numbers_unique = False
         response.duplicates_childminder_dbs = True
-    else:
-        response.duplicates_household_member_dbs = True
-
-    # Present caller with the index identified for the duplicate DBS entry
-    response.duplicate_entry_index = first_duplicate_index
+        response.duplicate_entry_index = get_duplicate_dbs_index(application, candidate_dbs_certificate_number)
+        return response
 
     return response
 

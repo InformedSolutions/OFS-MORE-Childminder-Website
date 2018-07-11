@@ -6,6 +6,12 @@ from ...forms import AccountSelection
 
 
 def account_selection(request):
+    """
+    Function for redirecting user to either the login page or new account page based on their
+    response to whether or not they are returning to an application
+    :param request: inbound HTTP request
+    :return: redirect to account sign up or return page
+    """
     if request.method == 'GET':
         form = AccountSelection()
         return render(request,'account-selection.html', {'form':form})

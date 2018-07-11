@@ -13,7 +13,7 @@ from ..models import (AdultInHome,
                                 ChildInHome,
                                 UserDetails)
 from ..utils import date_formatter
-from ..business_logic import new_dbs_numbers_is_valid
+from ..business_logic import childminder_dbs_number_duplication_check, household_member_dbs_form_duplicates_check
 
 
 class OtherPeopleGuidanceForm(ChildminderForms):
@@ -229,25 +229,21 @@ class OtherPeopleAdultDBSForm(ChildminderForms):
         if len(str(dbs_certificate_number)) < 12:
             raise forms.ValidationError('The certificate number should be 12 digits long')
 
+        form_check = household_member_dbs_form_duplicates_check(self.data)
+
+        if not form_check.dbs_numbers_unique:
+            if form_check.duplicate_entry_index != self.prefix:
+                self.add_error('dbs_certificate_number',
+                               'Please enter a different DBS number for each person')
+
         application_id = self.data['id']
         application = Application.objects.get(pk=application_id)
 
-        unique_dbs_check_result = new_dbs_numbers_is_valid(application, dbs_certificate_number)
+        household_member_dbs_to_test = self['dbs_certificate_number'].data
+        childminder_dbs_check = childminder_dbs_number_duplication_check(application, household_member_dbs_to_test)
 
-        if unique_dbs_check_result.dbs_numbers_unique:
-            return dbs_certificate_number
-
-        # Do not let household member DBS duplicate childminder's DBS numbers
-        if unique_dbs_check_result.duplicates_childminder_dbs:
+        if childminder_dbs_check.duplicates_childminder_dbs:
             self.add_error('dbs_certificate_number', 'Please enter a DBS number that is different from your own')
-
-        # If the dbs number is not unique, check whether the position of the adult in home
-        # matches the used dbs. If so, allow through as this may just be an update
-        # or resubmission
-        if unique_dbs_check_result.duplicates_household_member_dbs and \
-                (unique_dbs_check_result.duplicate_entry_index != self.prefix):
-            self.add_error('dbs_certificate_number',
-                           'Please enter a different DBS number for each person')
 
         return dbs_certificate_number
 

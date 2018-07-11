@@ -4,7 +4,7 @@ from govuk_forms.widgets import InlineRadioSelect, NumberInput
 from ..forms.childminder import ChildminderForms
 from ..forms_helper import full_stop_stripper
 from ..models import CriminalRecordCheck, Application
-from ..business_logic import new_dbs_numbers_is_valid
+from ..business_logic import childminder_dbs_number_duplication_check, childminder_dbs_duplicates_household_member_check
 
 
 class DBSCheckGuidanceForm(ChildminderForms):
@@ -76,17 +76,7 @@ class DBSCheckDBSDetailsForm(ChildminderForms):
         application_id = self.data['id']
         application = Application.objects.get(pk=application_id)
 
-        unique_dbs_check_result = new_dbs_numbers_is_valid(application, dbs_certificate_number)
-
-        if unique_dbs_check_result.dbs_numbers_unique:
-            return dbs_certificate_number
-
-        # If this is simply an update by the childminder to their own DBS (i.e. resubmission of page)
-        # let pass
-        if unique_dbs_check_result.duplicates_childminder_dbs:
-            return dbs_certificate_number
-
-        if unique_dbs_check_result.duplicates_household_member_dbs:
+        if childminder_dbs_duplicates_household_member_check(application, dbs_certificate_number):
             raise forms.ValidationError('Please enter a different DBS number. '
                                         'You entered this number for someone in your childcare location')
 

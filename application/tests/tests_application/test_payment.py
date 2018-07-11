@@ -15,20 +15,26 @@ from ...models import Payment, Application
 class PaymentTests(TestCase, ApplicationTestBase):
 
     def setUp(self):
-        # Initial steps required here as client object needs to be authenticated to
-        # access payment pages
-        self.TestAppInit()
+        with mock.patch('application.notify.send_email') as notify_mock, \
+            mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
 
-        self.TestAppEmail()
-        self.TestValidateEmail()
-        self.TestAppPhone()
-        self.TestContactSummaryView()
-        self.TestTypeOfChildcareAgeGroups()
-        self.TestTypeOfChildcareOvernightCare()
-        self.TestSecurityQuestion()
-        self.AppTestTypeOfChildcareRegister()
+            notify_connection_test_mock.return_value.status_code = 201
+            notify_mock.return_value.status_code = 201
 
-        self.TestAppPersonalDetailsNames()
+            # Initial steps required here as client object needs to be authenticated to
+            # access payment pages
+            self.TestAppInit()
+
+            self.TestAppEmail()
+            self.TestValidateEmail()
+            self.TestAppPhone()
+            self.TestContactSummaryView()
+            self.TestTypeOfChildcareAgeGroups()
+            self.TestTypeOfChildcareOvernightCare()
+            self.TestSecurityQuestion()
+            self.AppTestTypeOfChildcareRegister()
+
+            self.TestAppPersonalDetailsNames()
 
     def test_payment_reference_formatted(self):
         test_cm_reference = 'CM1000000'

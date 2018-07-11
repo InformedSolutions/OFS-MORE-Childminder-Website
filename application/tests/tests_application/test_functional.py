@@ -157,63 +157,69 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
     def TestNewApplicationSubmit(self):
         """Submit whole application"""
 
-        self.TestAppInit()
+        with mock.patch('application.notify.send_email') as notify_mock, \
+            mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
 
-        self.TestAppEmail()
-        self.TestValidateEmail()
-        self.TestAppPhone()
-        self.TestReturnToApp()
+            notify_connection_test_mock.return_value.status_code = 201
+            notify_mock.return_value.status_code = 201
 
-        self.TestEmailValidationDoesNotCountAsResend()
-        self.TestResendCodeIncrementsCount()
-        self.TestResendCodeRedirectsToSMSPage()
-        self.TestFourthSMSResendRedirectsToSecurityQuestion()
-        self.TestSMSLoginResetsSMSResendNumber()
-        self.TestSecurityQuestionLoginResetsSMSResendNumber()
+            self.TestAppInit()
 
-        self.TestContactSummaryView()
-        self.TestTypeOfChildcareAgeGroups()
-        self.TestTypeOfChildcareOvernightCare()
-        self.TestSecurityQuestion()
-        self.AppTestTypeOfChildcareRegister()
+            self.TestAppEmail()
+            self.TestValidateEmail()
+            self.TestAppPhone()
+            self.TestReturnToApp()
 
-        self.TestAppPersonalDetailsNames()
-        self.TestAppPersonalDetailsDOB()
-        self.TestAppPersonalDetailsHomeAddress()
-        self.TestAppPersonalDetailsHomeAddressDetails()
-        self.TestAppPersonalDetailsSummaryView()
+            self.TestEmailValidationDoesNotCountAsResend()
+            self.TestResendCodeIncrementsCount()
+            self.TestResendCodeRedirectsToSMSPage()
+            self.TestFourthSMSResendRedirectsToSecurityQuestion()
+            self.TestSMSLoginResetsSMSResendNumber()
+            self.TestSecurityQuestionLoginResetsSMSResendNumber()
 
-        self.TestVerifyPhone()
-        self.TestVerifyPhoneEmailApostrophe()
+            self.TestContactSummaryView()
+            self.TestTypeOfChildcareAgeGroups()
+            self.TestTypeOfChildcareOvernightCare()
+            self.TestSecurityQuestion()
+            self.AppTestTypeOfChildcareRegister()
 
-        self.TestAppFirstAid()
-        self.TestAppFirstAidCert()
-        self.TestAppHealthBooklet()
+            self.TestAppPersonalDetailsNames()
+            self.TestAppPersonalDetailsDOB()
+            self.TestAppPersonalDetailsHomeAddress()
+            self.TestAppPersonalDetailsHomeAddressDetails()
+            self.TestAppPersonalDetailsSummaryView()
 
-        self.TestAppCriminalRecordCheckDetails()
+            self.TestVerifyPhone()
+            self.TestVerifyPhoneEmailApostrophe()
 
-        self.TestAppOtherPeopleAdults()
-        self.TestAppOtherPeopleChildren()
-        self.TestAppOtherPeopleSummary()
+            self.TestAppFirstAid()
+            self.TestAppFirstAidCert()
+            self.TestAppHealthBooklet()
 
-        self.TestAppOtherPeopleAdultsDetails()
-        self.TestAppOtherPeopleChildrenDetails()
+            self.TestAppCriminalRecordCheckDetails()
 
-        self.TestAppFirstReferenceName()
-        self.TestAppFirstReferenceAddress()
-        self.TestAppFirstReferenceContactDetails()
-        self.TestAppSecondReferenceName()
-        self.TestAppSecondReferenceAddress()
-        self.TestAppSecondReferenceContactDetails()
-        self.TestReferencesSummary()
+            self.TestAppOtherPeopleAdults()
+            self.TestAppOtherPeopleChildren()
+            self.TestAppOtherPeopleSummary()
 
-        self.TestAppDeclaration()
-        self.TestAppArcFlaggedStatuses()
-        self.TestAppPaymentCreditDetails()
-        self.TestAppPaymentConfirmation()
-        self.TestAppPaymentConfirmationWithHealthBookletNoConviction()
-        self.TestAppPaymentConfirmationWithHealthBookletAndConviction()
-        self.TestAppPaymentConfirmationWithNoHealthBookletNoConviction()
+            self.TestAppOtherPeopleAdultsDetails()
+            self.TestAppOtherPeopleChildrenDetails()
+
+            self.TestAppFirstReferenceName()
+            self.TestAppFirstReferenceAddress()
+            self.TestAppFirstReferenceContactDetails()
+            self.TestAppSecondReferenceName()
+            self.TestAppSecondReferenceAddress()
+            self.TestAppSecondReferenceContactDetails()
+            self.TestReferencesSummary()
+
+            self.TestAppDeclaration()
+            self.TestAppArcFlaggedStatuses()
+            self.TestAppPaymentCreditDetails()
+            self.TestAppPaymentConfirmation()
+            self.TestAppPaymentConfirmationWithHealthBookletNoConviction()
+            self.TestAppPaymentConfirmationWithHealthBookletAndConviction()
+            self.TestAppPaymentConfirmationWithNoHealthBookletNoConviction()
 
     def test_application_submit(self):
         """

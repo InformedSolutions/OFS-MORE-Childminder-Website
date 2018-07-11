@@ -6,7 +6,7 @@ from uuid import UUID
 from django.urls import reverse
 
 from ...models import Application, CriminalRecordCheck, UserDetails, AdultInHome
-from ...business_logic import new_dbs_numbers_is_valid
+from ...business_logic import childminder_dbs_number_duplication_check
 
 
 class TestDBSCheckLogic(TestCase):
@@ -84,7 +84,7 @@ class TestDBSCheckLogic(TestCase):
         UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()
 
     def test_dbs_numbers_deemed_unique_when_only_childminder_present(self):
-        dbs_uniqueness_check_result = new_dbs_numbers_is_valid(self.test_application, self.test_childminder_dbs_number)
+        dbs_uniqueness_check_result = childminder_dbs_number_duplication_check(self.test_application, self.test_childminder_dbs_number)
         self.assertTrue(dbs_uniqueness_check_result.dbs_numbers_unique)
         self.assertFalse(dbs_uniqueness_check_result.duplicates_childminder_dbs)
         self.assertFalse(dbs_uniqueness_check_result.duplicates_household_member_dbs)
@@ -102,7 +102,7 @@ class TestDBSCheckLogic(TestCase):
             dbs_certificate_number=self.test_household_member_1_dbs_number
         )
 
-        dbs_uniqueness_check_result = new_dbs_numbers_is_valid(self.test_application, self.test_childminder_dbs_number)
+        dbs_uniqueness_check_result = childminder_dbs_number_duplication_check(self.test_application, self.test_childminder_dbs_number)
         self.assertTrue(dbs_uniqueness_check_result.dbs_numbers_unique)
         self.assertFalse(dbs_uniqueness_check_result.duplicates_childminder_dbs)
         self.assertFalse(dbs_uniqueness_check_result.duplicates_household_member_dbs)
@@ -130,7 +130,7 @@ class TestDBSCheckLogic(TestCase):
             dbs_certificate_number=self.test_household_member_2_dbs_number
         )
 
-        dbs_uniqueness_check_result = new_dbs_numbers_is_valid(self.test_application, self.test_childminder_dbs_number)
+        dbs_uniqueness_check_result = childminder_dbs_number_duplication_check(self.test_application, self.test_childminder_dbs_number)
         self.assertTrue(dbs_uniqueness_check_result.dbs_numbers_unique)
         self.assertFalse(dbs_uniqueness_check_result.duplicates_childminder_dbs)
         self.assertFalse(dbs_uniqueness_check_result.duplicates_household_member_dbs)
@@ -139,33 +139,11 @@ class TestDBSCheckLogic(TestCase):
         self.test_criminal_record.dbs_certificate_number = self.test_childminder_dbs_number
         self.test_criminal_record.save()
 
-        dbs_uniqueness_check_result = new_dbs_numbers_is_valid(self.test_application,
-                                                               self.test_childminder_dbs_number)
+        dbs_uniqueness_check_result = childminder_dbs_number_duplication_check(self.test_application,
+                                                                               self.test_childminder_dbs_number)
         self.assertFalse(dbs_uniqueness_check_result.dbs_numbers_unique)
         self.assertTrue(dbs_uniqueness_check_result.duplicates_childminder_dbs)
         self.assertFalse(dbs_uniqueness_check_result.duplicates_household_member_dbs)
-
-    def test_dbs_numbers_not_deemed_unique_when_household_member_dbs_duplicated(self):
-
-        # Attach multiple test adults to the application with differing matching numbers
-        AdultInHome.objects.create(
-            adult_id=(UUID(self.test_adult_id)),
-            application_id=self.test_application,
-            adult=1,
-            birth_day=22,
-            birth_month=1,
-            birth_year=1991,
-            dbs_certificate_number=self.test_household_member_1_dbs_number
-        )
-
-        dbs_uniqueness_check_result = new_dbs_numbers_is_valid(self.test_application,
-                                                               self.test_household_member_1_dbs_number)
-        self.assertFalse(dbs_uniqueness_check_result.dbs_numbers_unique)
-        self.assertFalse(dbs_uniqueness_check_result.duplicates_childminder_dbs)
-        self.assertTrue(dbs_uniqueness_check_result.duplicates_household_member_dbs)
-
-        # Test is to assert first adult in home is identified as the duplicate record
-        self.assertEqual(dbs_uniqueness_check_result.duplicate_entry_index, 1)
 
     # HTTP web tier tests for DBS task completion
 
