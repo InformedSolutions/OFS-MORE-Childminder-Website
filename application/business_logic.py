@@ -23,7 +23,8 @@ from .models import (AdultInHome,
                      Reference,
                      UserDetails)
 
-from .utils import unique_values, get_first_duplicate_index
+from .utils import unique_values, get_first_duplicate_index, return_last_duplicate_index, \
+    get_duplicate_list_entry_indexes
 
 
 def childcare_type_logic(application_id_local, form):
@@ -761,8 +762,29 @@ def household_member_dbs_form_duplicates_check(other_people_dbs_form_data):
     else:
         response.dbs_numbers_unique = False
         response.duplicates_household_member_dbs = True
-        response.duplicate_entry_index = get_first_duplicate_index(dbs_numbers)
+
+        # Note that values in the list are incremented by 1 here given the positional
+        # arguments of household members in a form start at 1 rather
+        # than 0 (i.e. as they would in a natural python list)
+        incremented_list = [x + 1 for x in get_duplicate_list_entry_indexes(dbs_numbers)]
+        response.duplicate_entry_indexes = incremented_list
         return response
+
+
+def get_duplicate_household_member_dbs_indexes(other_people_dbs_form_data):
+    dbs_numbers = list()
+
+    for key in other_people_dbs_form_data:
+        if "dbs_certificate_number" in key:
+            dbs_numbers.append(other_people_dbs_form_data[key])
+
+    duplicate_entry = get_first_duplicate_index(dbs_numbers)
+    duplicate_indexes = get_duplicate_list_entry_indexes(dbs_numbers, duplicate_entry)
+
+    response = UniqueDbsCheckResult()
+    response.duplicates_household_member_dbs = True
+    response.duplicate_entry_indexes = duplicate_indexes
+    return response
 
 
 def childminder_dbs_duplicates_household_member_check(application, candidate_dbs_certificate_number):
@@ -836,7 +858,7 @@ def childminder_dbs_number_duplication_check(application, candidate_dbs_certific
     if dbs_matches_childminder_dbs(application, candidate_dbs_certificate_number):
         response.dbs_numbers_unique = False
         response.duplicates_childminder_dbs = True
-        response.duplicate_entry_index = get_duplicate_dbs_index(application, candidate_dbs_certificate_number)
+        response.duplicate_entry_indexes = get_duplicate_dbs_index(application, candidate_dbs_certificate_number)
         return response
 
     return response
@@ -850,4 +872,4 @@ class UniqueDbsCheckResult:
     dbs_numbers_unique = True
     duplicates_childminder_dbs = False
     duplicates_household_member_dbs = False
-    duplicate_entry_index = 0
+    duplicate_entry_indexes = 0

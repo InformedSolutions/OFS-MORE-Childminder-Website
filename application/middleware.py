@@ -40,7 +40,9 @@ class CustomAuthenticationHandler(object):
 
         # If path is not exempt, and user cookie does not exist (e.g. a bypass is being attempted) return
         # user to login page
-        if self.get_session_user(request) is None:
+        session_user = self.get_session_user(request)
+
+        if session_user is None:
             return HttpResponseRedirect(settings.AUTHENTICATION_URL)
 
         # If an application id has been supplied in the query string or post request
@@ -65,7 +67,6 @@ class CustomAuthenticationHandler(object):
         # request to continue processing as normal
         response = self.get_response(request)
 
-        session_user = self.get_session_user(request)
         if session_user is not None:
             CustomAuthenticationHandler.create_session(response, session_user)
 

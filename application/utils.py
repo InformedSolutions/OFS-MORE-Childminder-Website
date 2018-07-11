@@ -173,3 +173,26 @@ def get_first_duplicate_index(li):
         else:
             seen.add(i)
 
+
+def return_last_duplicate_index(list):
+    """
+    Helper method for returning the index of the last duplicate in a list
+    :param entry: the duplicate entry to be searched for
+    :param list: the list of values to be inspected
+    :return: index of the last duplicate occurrence
+    """
+    duplicate_value_index = get_first_duplicate_index(list)
+    duplicate_value = list[duplicate_value_index]
+    return len(list)-list[::-1].index(duplicate_value) - 1
+
+
+def get_duplicate_list_entry_indexes(list):
+    """
+    Helper method for retrieving indexes of duplicate items in a list
+    :param list: the list of values to be inspected
+    :param item: the value to be inspected for duplication
+    :return: an array of duplicate entry indexes
+    """
+    duplicate_index = get_first_duplicate_index(list)
+    item = list[duplicate_index]
+    return [i for i, x in enumerate(list) if x == item]

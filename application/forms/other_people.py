@@ -232,7 +232,7 @@ class OtherPeopleAdultDBSForm(ChildminderForms):
         form_check = household_member_dbs_form_duplicates_check(self.data)
 
         if not form_check.dbs_numbers_unique:
-            if form_check.duplicate_entry_index != self.prefix:
+            if self.prefix in form_check.duplicate_entry_indexes:
                 self.add_error('dbs_certificate_number',
                                'Please enter a different DBS number for each person')
 
