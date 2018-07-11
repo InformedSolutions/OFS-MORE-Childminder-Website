@@ -753,6 +753,8 @@ def household_member_dbs_form_duplicates_check(other_people_dbs_form_data):
 
     dbs_numbers = list()
 
+    # Note the POSTed form must be sorted as when sat behind a load-balancer
+    # requests forwarded to an upstream may contain a body that has an altered ordering
     for key in sorted(other_people_dbs_form_data):
         if "dbs_certificate_number" in key:
             dbs_numbers.append(other_people_dbs_form_data[key])
