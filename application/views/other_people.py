@@ -696,6 +696,7 @@ def other_people_summary(request):
                     ('full_name', name),
                     ('date_of_birth', birth_date),
                     ('relationship', adult.relationship),
+                    ('email', adult.email),
                     ('dbs_certificate_number', adult.dbs_certificate_number),
                 ])
 
