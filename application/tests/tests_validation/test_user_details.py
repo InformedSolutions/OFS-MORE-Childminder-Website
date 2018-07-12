@@ -61,7 +61,9 @@ class TestUserDetailsValidation(TestCase):
                                  'dsfdsf13',
                                  'dsfdsf13',
                                  '0778abcdrewr',
-                                 "07783'4352"]
+                                 "07783'4352",
+                                 '077830056967',
+                                 '0777777777777']
 
         self.incorrect_number_length = ['0778344652645677754', '0778344652644']
         self.correct_number_length = ['07397389736', '37317329736']
