@@ -49,6 +49,8 @@ PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS = os.environ.get('PAYMENT_STATUS_QUERY_
 
 PAYMENT_HTTP_REQUEST_TIMEOUT = 60
 
+SESSION_EXPIRY = 1800
+
 GOOGLE_ANALYTICS = {
 }
 
@@ -189,7 +191,7 @@ LOGGING = {
         'level': 'DEBUG',
         'class': 'logging.handlers.RotatingFileHandler',
         'maxBytes': 1 * 1024 * 1024,
-        'filename': 'logs/output.log',
+        'filename': 'logs/logs.log',
         'formatter': 'console',
         'maxBytes': 1 * 1024 * 1024,
         'backupCount': '30'
