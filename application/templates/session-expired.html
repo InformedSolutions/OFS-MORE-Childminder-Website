@@ -1,0 +1,15 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Session timed out{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+<h1 class="form-title heading-large">
+    Session timed out
+</h1>
+
+<p>We have saved your answers.</p>
+<a href="{% url 'Existing-Email' %}">Sign in.</a>
+
+{% endblock %}
