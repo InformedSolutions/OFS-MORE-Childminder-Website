@@ -154,7 +154,8 @@ urlpatterns = [
     url(r'^help-contact/$', views.help_and_contact, name='Help-And-Contact-View'),
     url(r'^cannot-use-service/$', views.personal_details.service_unavailable, name='Service-Unavailable'),
     url(r'^feedback/', feedback.feedback, name='Feedback'),
-    url(r'^feedback-submitted/', feedback.feedback_confirmation, name='Feedback-Confirmation')
+    url(r'^feedback-submitted/', feedback.feedback_confirmation, name='Feedback-Confirmation'),
+    url(r'^session-expired', views.SessionExpiredView.as_view(), name='Session-Expired'),
 ]
 
 if settings.DEBUG:
