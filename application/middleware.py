@@ -3,7 +3,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- middleware.py --
 @author: Informed Solutions
 """
-
+import datetime
 from re import compile
 
 from django.conf import settings  # import the settings file
@@ -45,6 +45,9 @@ class CustomAuthenticationHandler(object):
         if session_user is None:
             return HttpResponseRedirect(settings.AUTHENTICATION_URL)
 
+        if isinstance(session_user, HttpResponseRedirect):
+            return session_user
+
         # If an application id has been supplied in the query string or post request
         application_id = None
 
@@ -60,7 +63,7 @@ class CustomAuthenticationHandler(object):
             account = UserDetails.objects.get(application_id=application)
             # Check the email address stored in the session matches that found on the application
             # and if not raise generic exception
-            if account.email != self.get_session_user(request):
+            if account.email != session_user:
                 raise Exception
 
         # If request has not been blocked at this point in the execution flow, allow
@@ -79,18 +82,25 @@ class CustomAuthenticationHandler(object):
 
     @staticmethod
     def get_session_user(request):
-        if COOKIE_IDENTIFIER not in request.COOKIES:
+        if 'last_connection' not in request.COOKIES:
             return None
         else:
-            return request.COOKIES.get(COOKIE_IDENTIFIER)
+            last_connection = request.COOKIES['last_connection']
+            last_connection_time = datetime.datetime.strptime(last_connection[:-7], "%Y-%m-%d %H:%M:%S")
+            if (datetime.datetime.now() - last_connection_time).seconds < settings.SESSION_EXPIRY:
+                return request.COOKIES.get(COOKIE_IDENTIFIER)
+            else:
+                return HttpResponseRedirect(reverse('Session-Expired'))
 
     @staticmethod
     def create_session(response, email):
-        response.set_cookie(COOKIE_IDENTIFIER, email, max_age=1800)
+        response.set_cookie(COOKIE_IDENTIFIER, email, max_age=settings.SESSION_EXPIRY)
+        response.set_cookie('last_connection', datetime.datetime.now())
 
     @staticmethod
     def destroy_session(response):
         response.delete_cookie(COOKIE_IDENTIFIER)
+        response.set_cookie('last_connection')
 
 
 def globalise_url_prefix(request):
