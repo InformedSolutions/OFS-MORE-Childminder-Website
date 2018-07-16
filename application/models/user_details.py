@@ -1,14 +1,19 @@
 from uuid import uuid4
 from django.db import models
-from .application import Application
+# from .application import Application
+
+from application.models.base import RetrofitAPIModel
 
 
-class UserDetails(models.Model):
+class UserDetails:
     """
     Model for USER_DETAILS table
     """
+    objects = RetrofitAPIModel()
+
     login_id = models.UUIDField(primary_key=True, default=uuid4)
-    application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id', default=uuid4)
+    # application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id', default=uuid4)
+    application_id = models.UUIDField()
     email = models.CharField(max_length=100, blank=True)
     mobile_number = models.CharField(max_length=20, blank=True)
     add_phone_number = models.CharField(max_length=20, blank=True)

@@ -33,7 +33,6 @@ class ApplicationConfig(AppConfig):
             'FirstAidTraining',
             'HealthDeclarationBooklet',
             'Reference',
-            'UserDetails',
         ]]
 
         for model in timelog_models_instances:
