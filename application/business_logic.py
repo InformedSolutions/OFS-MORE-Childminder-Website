@@ -866,6 +866,23 @@ def childminder_dbs_number_duplication_check(application, candidate_dbs_certific
     return response
 
 
+def childminder_references_email_duplication_check(application_email, first_reference_email, second_reference_email):
+    """
+        Helper function to determine whether the applications reference emails, and application email, are different.
+        :param application_email: the email of the  application
+        :param first_reference_email: the email of the first reference
+        :param second_reference_email: the email of the second reference
+        :return: A boolean True if all emails are different, False if any of the three emails are the same.
+        """
+
+    if application_email != first_reference_email and \
+           application_email != second_reference_email and \
+           first_reference_email != second_reference_email:
+        return True
+    else:
+        return False
+
+
 class UniqueDbsCheckResult:
     """
     Class definition for the response object returned by a DBS uniqueness check
