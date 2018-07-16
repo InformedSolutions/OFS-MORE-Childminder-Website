@@ -8,7 +8,7 @@ import re
 
 from django.conf import settings
 from django.test import TestCase
-
+from ...business_logic import childminder_references_email_duplication_check
 
 def testing_email(test_email):
     return re.match(settings.REGEX['EMAIL'], test_email)
@@ -24,6 +24,9 @@ def testing_phone_number(test_phone_number):
 
 def testing_number_length(test_phone_number):
     return len(test_phone_number) == 11
+
+def testing_duplicate_email(test_email_1,test_email_2, test_email_3):
+    return childminder_references_email_duplication_check(test_email_1, test_email_2, test_email_3)
 
 
 class TestUserDetailsValidation(TestCase):
@@ -67,6 +70,77 @@ class TestUserDetailsValidation(TestCase):
 
         self.incorrect_number_length = ['0778344652645677754', '0778344652644']
         self.correct_number_length = ['07397389736', '37317329736']
+        
+        self.correct_duplicate_emails = [
+            {
+                "1": "test@gmail.com",
+                "2": "different@lineone.biz",
+                "3": "alsodifferent@hotmail.co.uk"
+            }, 
+            {
+                "1": "",
+                "2": "hardtothinkofemails@jurassicpark.gov.uk",
+                "3": "imnotevenvalidatingwhetherthisisanemail@puregym.ru"
+            }, 
+            {
+                "1": "alrightshows@over.com",
+                "2": "",
+                "3": "ireallyappreciate@creativepeople.now"
+            },
+            {
+                "1": "itwasfunwhileit@lasted.com",
+                "2": "ohwaitihavetowrite@incorrecttoo.com",
+                "3": ""
+            },
+            {
+                "1": None,
+                "2": "ihadtoduplicateemails@sigh.gov.uk",
+                "3": "imnotevenvalidatingwhetherthisisanemail@puregym.ru"
+            },
+            {
+                "1": "alrightshows@over.com",
+                "2": None,
+                "3": "ireallyappreciate@creativepeople.now"
+            },
+            {
+                "1": "itwasfunwhileit@lasted.com",
+                "2": "ohwaitihavetowrite@incorrecttoo.com",
+                "3": None
+            }
+        ]
+        
+        self.incorrect_duplicate_emails = [
+            {
+                "1": "hiagain@gmail.com",
+                "2": "hiagain@gmail.com",
+                "3": "hiagain@gmail.com"
+            },
+            {
+                "1": "hiagain@gmail.com",
+                "2": "hiagain@gmail.com",
+                "3": "different@bing.co.uk"
+            },
+            {
+                "1": "hiagain@gmail.com",
+                "2": "different@bing.co.uk",
+                "3": "hiagain@gmail.com"
+            },
+            {
+                "1": "different@bing.co.uk",
+                "2": "hiagain@gmail.com",
+                "3": "hiagain@gmail.com"
+            },
+            {
+                "1": "",
+                "2": "",
+                "3": ""
+            },
+            {
+                "1": None,
+                "2": None,
+                "3": None
+            },
+        ]
 
     def test_correct_emails(self):
         for email in self.correct_emails:
@@ -99,3 +173,11 @@ class TestUserDetailsValidation(TestCase):
     def test_incorrect_number_length(self):
         for number in self.incorrect_number_length:
             assert (testing_number_length(number) is False)
+
+    def test_correct_duplicate_emails(self):
+        for emails in self.correct_duplicate_emails:
+            assert (testing_duplicate_email(emails['1'], emails['2'], emails['3']) is True)
+    
+    def test_incorrect_duplicate_emails(self):
+        for emails in self.incorrect_duplicate_emails:
+            assert (testing_duplicate_email(emails['1'], emails['2'], emails['3']) is False)

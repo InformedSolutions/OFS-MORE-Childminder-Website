@@ -9,6 +9,9 @@ from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (Reference, ApplicantPersonalDetails)
 
+from ..models import Application, UserDetails
+from ..business_logic import childminder_references_email_duplication_check
+
 
 def datetime_from_time_known(_years_known, _months_known):
     """
@@ -350,6 +353,18 @@ class ReferenceFirstReferenceContactForm(ChildminderForms):
             raise forms.ValidationError('Please enter a valid email address')
         if len(email_address) > 100:
             raise forms.ValidationError('Please enter 100 characters or less')
+
+        user_details_entry = UserDetails.objects.get(application_id=self.application_id_local)
+        user_details_email = user_details_entry.email
+        if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
+            ref2 = Reference.objects.get(application_id=self.application_id_local, reference=1)
+            ref2_email = ref2.email
+        else:
+            ref2_email = None
+        ref1_email = email_address
+        if not childminder_references_email_duplication_check(user_details_email, ref1_email, ref2_email):
+            print(user_details_email, ref1_email, ref2_email)
+            raise forms.ValidationError('Please enter a different reference email -TBC')
         return email_address
 
 
@@ -657,6 +672,17 @@ class ReferenceSecondReferenceContactForm(ChildminderForms):
             raise forms.ValidationError('Please enter a valid email address')
         if len(email_address) > 100:
             raise forms.ValidationError('Please enter 100 characters or less')
+
+        user_details_entry = UserDetails.objects.get(application_id=self.application_id_local)
+        user_details_email = user_details_entry.email
+        if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
+            ref1 = Reference.objects.get(application_id=self.application_id_local, reference=1)
+            ref1_email = ref1.email
+        else:
+            ref1_email = None
+        ref2_email = email_address
+        if not childminder_references_email_duplication_check(user_details_email, ref1_email, ref2_email):
+            raise forms.ValidationError('Please enter a different reference email -TBC')
         return email_address
 
 
