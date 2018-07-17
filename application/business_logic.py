@@ -866,18 +866,15 @@ def childminder_dbs_number_duplication_check(application, candidate_dbs_certific
     return response
 
 
-def childminder_references_email_duplication_check(application_email, first_reference_email, second_reference_email):
+def childminder_references_and_user_email_duplication_check(email1, email2):
     """
-        Helper function to determine whether the applications reference emails, and application email, are different.
-        :param application_email: the email of the  application
-        :param first_reference_email: the email of the first reference
-        :param second_reference_email: the email of the second reference
-        :return: A boolean True if all emails are different, False if any of the three emails are the same.
-        """
+    Helper function to determine whether the applications reference emails, and application email, are different.
+    :param email1: an email to be compared.
+    :param email2: another email to be compared.
+    :return: A boolean True if emails are different or False if emails are the same.
+    """
 
-    if application_email != first_reference_email and \
-           application_email != second_reference_email and \
-           first_reference_email != second_reference_email:
+    if email1 != email2:
         return True
     else:
         return False
