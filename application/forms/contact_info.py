@@ -27,28 +27,35 @@ class ContactEmailForm(ChildminderForms):
         """
         email_address = self.cleaned_data['email_address']
 
-        if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
-            ref1 = Reference.objects.get(application_id=self.application_id_local, reference=1)
-            ref1_email = ref1.email
-        else:
-            ref1_email = None
-        if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
-            ref2 = Reference.objects.get(application_id=self.application_id_local, reference=2)
-            ref2_email = ref2.email
-        else:
-            ref2_email = None
-
         # RegEx for valid e-mail addresses
         if re.match(settings.REGEX['EMAIL'], email_address) is None:
             raise forms.ValidationError('Please enter a valid email address')
-        if not childminder_references_and_user_email_duplication_check(email_address, ref1_email) or \
-                not childminder_references_and_user_email_duplication_check(email_address, ref2_email):
-            raise forms.ValidationError('Please enter a different email. You entered this email for one of your references.')
+
+        # Unique references and application emails validation
+        if self.application_id_local != None:
+            # If changing email:
+            if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
+                ref1 = Reference.objects.get(application_id=self.application_id_local, reference=1)
+                ref1_email = ref1.email
+            else:
+                ref1_email = None
+            if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
+                ref2 = Reference.objects.get(application_id=self.application_id_local, reference=2)
+                ref2_email = ref2.email
+            else:
+                ref2_email = None
+            #Check if the email is the same as reference 1 or 2.
+            if not childminder_references_and_user_email_duplication_check(email_address, ref1_email) or \
+                    not childminder_references_and_user_email_duplication_check(email_address, ref2_email):
+                raise forms.ValidationError('Please enter a different email. You entered this email for one of your references.')
         return email_address
 
     def __init__(self, *args, **kwargs):
-
-        self.application_id_local = kwargs.pop('id')
+        #Gets id if the applicant is changing their e-mail, otherwise sets to None.
+        try:
+            self.application_id_local = kwargs.pop('id')
+        except:
+            self.application_id_local = None
         super(ContactEmailForm, self).__init__(*args, **kwargs)
 
         # Remove full stop from error message, if required. N.B. full-stop-stripper won't work here.
