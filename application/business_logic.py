@@ -873,7 +873,7 @@ def childminder_references_and_user_email_duplication_check(email1, email2):
     :param email2: another email to be compared.
     :return: A boolean True if emails are different or False if emails are the same.
     """
-    print(email1,email2)
+    
     if email1 != email2:
         return True
     else:
