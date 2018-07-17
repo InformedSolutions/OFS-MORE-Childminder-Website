@@ -364,8 +364,7 @@ class ReferenceFirstReferenceContactForm(ChildminderForms):
             raise forms.ValidationError('Please enter 100 characters or less')
         if not childminder_references_and_user_email_duplication_check(ref1_email, ref2_email):
             raise forms.ValidationError('Please enter a different email for each reference')
-        if not childminder_references_and_user_email_duplication_check(user_details_email, ref1_email) or \
-                not childminder_references_and_user_email_duplication_check(user_details_email, ref2_email):
+        if not childminder_references_and_user_email_duplication_check(user_details_email, ref1_email):
             raise forms.ValidationError('Please enter an email that is different to your own')
         return email_address
 
@@ -685,8 +684,7 @@ class ReferenceSecondReferenceContactForm(ChildminderForms):
             raise forms.ValidationError('Please enter 100 characters or less')
         if not childminder_references_and_user_email_duplication_check(ref1_email, ref2_email):
             raise forms.ValidationError('Please enter a different email for each reference')
-        if not childminder_references_and_user_email_duplication_check(user_details_email, ref1_email) or \
-                not childminder_references_and_user_email_duplication_check(user_details_email, ref2_email):
+        if not childminder_references_and_user_email_duplication_check(user_details_email, ref2_email):
                 raise forms.ValidationError('Please enter an email that is different to your own')
         return email_address
 
