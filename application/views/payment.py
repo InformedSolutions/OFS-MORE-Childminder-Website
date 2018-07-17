@@ -26,9 +26,9 @@ def payment_confirmation(request):
     }
     local_app = Application.objects.get(
         application_id=application_id_local)
-    status.update(application_id_local, 'declarations_status', 'COMPLETED')
     local_app.application_status = 'SUBMITTED'
     local_app.save()
+    status.update(application_id_local, 'declarations_status', 'COMPLETED')
 
     # Payment presents the first true trigger for submission so is logged as submitted at this point
     TimelineLog.objects.create(
