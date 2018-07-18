@@ -46,7 +46,10 @@ AUTHENTICATION_EXEMPT_URLS = (
     r'^' + URL_PREFIX + '/application-saved/$',
     r'^' + URL_PREFIX + '/health-check/(?P<id>[\w-]+)/$',
     r'^' + URL_PREFIX + '/feedback/',
-    r'^' + URL_PREFIX + '/feedback-submitted/'
+    r'^' + URL_PREFIX + '/feedback-submitted/',
+    r'^' + URL_PREFIX + '/documents-needed/',
+    r'^' + URL_PREFIX + '/home-ready/',
+    r'^' + URL_PREFIX + '/prepare-interview/'
 )
 
 # Database
