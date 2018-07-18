@@ -9,6 +9,8 @@ import re
 from django.conf import settings
 from django.test import TestCase
 
+from ...business_logic import convert_mobile_to_notify_standard
+
 
 def testing_email(test_email):
     return re.match(settings.REGEX['EMAIL'], test_email)
@@ -24,6 +26,9 @@ def testing_phone_number(test_phone_number):
 
 def testing_number_length(test_phone_number):
     return len(test_phone_number) == 11
+
+def testing_convert_mobile(test_mobile_numbers):
+    return convert_mobile_to_notify_standard(test_mobile_numbers["original"]) == test_mobile_numbers["result"]
 
 
 class TestUserDetailsValidation(TestCase):
@@ -69,6 +74,25 @@ class TestUserDetailsValidation(TestCase):
         self.incorrect_number_length = ['0778344652645677754', '0778344652644']
         self.correct_number_length = ['07397389736', '37317329736']
 
+        self.convert_mobiles = [
+            {
+                "original": "+447398378738",
+                "result": "07398378738"
+            },
+            {
+                "original": "00447398378233",
+                "result": "07398378233"
+            },
+            {
+                "original": "07398378233",
+                "result": "07398378233"
+            },
+            {
+                "original": "",
+                "result": ""
+            }
+        ]
+
     def test_correct_emails(self):
         for email in self.correct_emails:
             assert (testing_email(email) is not None)
@@ -100,3 +124,7 @@ class TestUserDetailsValidation(TestCase):
     def test_incorrect_number_length(self):
         for number in self.incorrect_number_length:
             assert (testing_number_length(number) is False)
+
+    def test_convert_mobile(self):
+        for mobile in self.convert_mobiles:
+            assert(testing_convert_mobile(mobile) is True)

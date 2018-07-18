@@ -6,6 +6,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 """
 
 import pytz
+import re
 
 from datetime import date, datetime, timedelta
 
@@ -864,6 +865,16 @@ def childminder_dbs_number_duplication_check(application, candidate_dbs_certific
         return response
 
     return response
+
+def convert_mobile_to_notify_standard(mobile):
+
+    mobile_prefix_REGEX = "^(\+44|0044)[7][0-9]{9}$"
+
+    if mobile != "" and mobile is not None and re.match(mobile_prefix_REGEX, mobile):
+        new_mobile = "07" + mobile[len(mobile)-9:]
+        return new_mobile
+    else:
+        return mobile
 
 
 class UniqueDbsCheckResult:
