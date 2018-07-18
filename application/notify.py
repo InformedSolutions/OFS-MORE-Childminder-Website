@@ -12,6 +12,8 @@ import json
 import requests
 from django.conf import settings
 
+from .business_logic import convert_mobile_to_notify_standard
+
 
 def send_email(email, personalisation, template_id):
     """
@@ -58,8 +60,12 @@ def send_text(phone, personalisation, template_id):
     if settings.EXECUTING_AS_TEST == 'True':
         phone = '07700900111'
 
+    # If the mobile number is in +447 or 00447 format then the number is converted to 07 format.
+    # Otherwise the mobile number stays the same.
+    converted_phone = convert_mobile_to_notify_standard(phone)
+
     notification_request = {
-        'phoneNumber': phone,
+        'phoneNumber': converted_phone,
         'personalisation': personalisation,
         'templateId': template_id
     }
