@@ -81,8 +81,8 @@
           <div class="footer-meta-inner">
             {% block footer_support_links %}{% endblock %}
             <div class="open-government-licence">
-              <p class="logo"><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence</a></p>
-                {% block licence_message %}<p>All content is available under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license">Open Government Licence v3.0</a>, except where otherwise stated</p>{% endblock %}
+              <p class="logo"><a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license" target="_blank">Open Government Licence</a></p>
+                {% block licence_message %}<p>All content is available under the <a href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/" rel="license" target="_blank">Open Government Licence v3.0</a>, except where otherwise stated</p>{% endblock %}
               {% if SERVER_LABEL is not None %}
               <br>
               <p><span style="font-weight: bold;">Server:</span> {{SERVER_LABEL}}</p>
@@ -90,7 +90,7 @@
             </div>
           </div>
           <div class="copyright">
-            <a href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/">{{ crown_copyright_message|default:'&copy; Crown copyright' }}</a>
+            <a href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/copyright-and-re-use/crown-copyright/" target="_blank">{{ crown_copyright_message|default:'&copy; Crown copyright' }}</a>
           </div>
         </div>
       </div>
