@@ -696,6 +696,7 @@ def other_people_summary(request):
                     ('full_name', name),
                     ('date_of_birth', birth_date),
                     ('relationship', adult.relationship),
+                    ('email', adult.email),
                     ('dbs_certificate_number', adult.dbs_certificate_number),
                 ])
 
@@ -824,6 +825,8 @@ def other_people_summary(request):
                     reverse('Other-People-Email-Confirmation-View') + '?id=' + application_id_local)
             elif application.adults_in_home is False:
                 status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
+                return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
+            else:
                 return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
 
         else:

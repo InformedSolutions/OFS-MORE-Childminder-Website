@@ -9,6 +9,9 @@ from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (Reference, ApplicantPersonalDetails)
 
+from ..models import Application, UserDetails
+from ..business_logic import childminder_references_and_user_email_duplication_check
+
 
 def datetime_from_time_known(_years_known, _months_known):
     """
@@ -346,10 +349,23 @@ class ReferenceFirstReferenceContactForm(ChildminderForms):
         :return: string
         """
         email_address = self.cleaned_data['email_address']
+        user_details_entry = UserDetails.objects.get(application_id=self.application_id_local)
+        user_details_email = user_details_entry.email
+        ref1_email = email_address
+        if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
+            ref2 = Reference.objects.get(application_id=self.application_id_local, reference=2)
+            ref2_email = ref2.email
+        else:
+            ref2_email = None
+
         if re.match(settings.REGEX['EMAIL'], email_address) is None:
             raise forms.ValidationError('Please enter a valid email address')
         if len(email_address) > 100:
             raise forms.ValidationError('Please enter 100 characters or less')
+        if not childminder_references_and_user_email_duplication_check(ref1_email, ref2_email):
+            raise forms.ValidationError('Please enter a different email for each reference')
+        if not childminder_references_and_user_email_duplication_check(user_details_email, ref1_email):
+            raise forms.ValidationError('Please enter an email that is different to your own')
         return email_address
 
 
@@ -653,10 +669,23 @@ class ReferenceSecondReferenceContactForm(ChildminderForms):
         :return: string
         """
         email_address = self.cleaned_data['email_address']
+        user_details_entry = UserDetails.objects.get(application_id=self.application_id_local)
+        user_details_email = user_details_entry.email
+        ref2_email = email_address
+        if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
+            ref1 = Reference.objects.get(application_id=self.application_id_local, reference=1)
+            ref1_email = ref1.email
+        else:
+            ref1_email = None
+
         if re.match(settings.REGEX['EMAIL'], email_address) is None:
             raise forms.ValidationError('Please enter a valid email address')
         if len(email_address) > 100:
             raise forms.ValidationError('Please enter 100 characters or less')
+        if not childminder_references_and_user_email_duplication_check(ref1_email, ref2_email):
+            raise forms.ValidationError('Please enter a different email for each reference')
+        if not childminder_references_and_user_email_duplication_check(user_details_email, ref2_email):
+                raise forms.ValidationError('Please enter an email that is different to your own')
         return email_address
 
 

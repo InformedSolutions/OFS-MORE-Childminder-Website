@@ -877,6 +877,20 @@ def convert_mobile_to_notify_standard(mobile):
         return mobile
 
 
+def childminder_references_and_user_email_duplication_check(email1, email2):
+    """
+    Helper function to determine whether the applications reference emails, and application email, are different.
+    :param email1: an email to be compared.
+    :param email2: another email to be compared.
+    :return: A boolean True if emails are different or False if emails are the same.
+    """
+    
+    if email1 != email2:
+        return True
+    else:
+        return False
+
+
 class UniqueDbsCheckResult:
     """
     Class definition for the response object returned by a DBS uniqueness check

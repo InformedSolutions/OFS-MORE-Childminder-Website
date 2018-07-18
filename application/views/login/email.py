@@ -70,7 +70,7 @@ class UpdateEmailView(View):
     def get(self, request):
         app_id = request.GET["id"]
         application = Application.objects.get(pk=app_id)
-        form = ContactEmailForm()
+        form = ContactEmailForm(id=app_id)
         form.field_list = ['email_address']
         form.pk = UserDetails.objects.get(application_id=application).login_id
         form.check_flag()
@@ -87,7 +87,7 @@ class UpdateEmailView(View):
         app_id = request.POST["id"]
         application = Application.objects.get(pk=app_id)
         acc = UserDetails.objects.get(application_id=app_id)
-        form = ContactEmailForm(request.POST)
+        form = ContactEmailForm(request.POST, id=app_id)
         form.remove_flag()
 
         if form.is_valid():

@@ -9,8 +9,8 @@ import re
 from django.conf import settings
 from django.test import TestCase
 
-from ...business_logic import convert_mobile_to_notify_standard
-
+from ...business_logic import convert_mobile_to_notify_standard, \
+    childminder_references_and_user_email_duplication_check
 
 def testing_email(test_email):
     return re.match(settings.REGEX['EMAIL'], test_email)
@@ -29,6 +29,10 @@ def testing_number_length(test_phone_number):
 
 def testing_convert_mobile(test_mobile_numbers):
     return convert_mobile_to_notify_standard(test_mobile_numbers["original"]) == test_mobile_numbers["result"]
+
+
+def testing_duplicate_email(test_email_1,test_email_2):
+    return childminder_references_and_user_email_duplication_check(test_email_1, test_email_2)
 
 
 class TestUserDetailsValidation(TestCase):
@@ -73,6 +77,52 @@ class TestUserDetailsValidation(TestCase):
 
         self.incorrect_number_length = ['0778344652645677754', '0778344652644']
         self.correct_number_length = ['07397389736', '37317329736']
+
+        self.correct_duplicate_emails = [
+            {
+                "1": "test@gmail.com",
+                "2": "different@lineone.biz",
+            },
+            {
+                "1": "",
+                "2": "hardtothinkofemails@jurassicpark.gov.uk",
+            },
+            {
+                "1": "alrightshows@over.com",
+                "2": "",
+            },
+            {
+                "1": "itwasfunwhileit@lasted.com",
+                "2": "ohwaitihavetowrite@incorrecttoo.com",
+            },
+            {
+                "1": None,
+                "2": "ihadtoduplicateemails@sigh.gov.uk",
+            },
+            {
+                "1": "alrightshows@over.com",
+                "2": None,
+            },
+        ]
+
+        self.incorrect_duplicate_emails = [
+            {
+                "1": "hiagain@gmail.com",
+                "2": "hiagain@gmail.com",
+            },
+            {
+                "1": "different@bing.co.uk",
+                "2": "different@bing.co.uk",
+            },
+            {
+                "1": "",
+                "2": "",
+            },
+            {
+                "1": None,
+                "2": None,
+            },
+        ]
 
         self.convert_mobiles = [
             {
@@ -124,6 +174,14 @@ class TestUserDetailsValidation(TestCase):
     def test_incorrect_number_length(self):
         for number in self.incorrect_number_length:
             assert (testing_number_length(number) is False)
+
+    def test_correct_duplicate_emails(self):
+        for emails in self.correct_duplicate_emails:
+            assert (testing_duplicate_email(emails['1'], emails['2']) is True)
+
+    def test_incorrect_duplicate_emails(self):
+        for emails in self.incorrect_duplicate_emails:
+            assert (testing_duplicate_email(emails['1'], emails['2']) is False)
 
     def test_convert_mobile(self):
         for mobile in self.convert_mobiles:
