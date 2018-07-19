@@ -29,14 +29,11 @@ def prepare_for_interview(request):
     if request.method == 'POST':
 
         application_id_local = request.POST["id"]
-        order_code = Application.objects.get(
-            pk=application_id_local).application_reference
         form = PrepareForInterviewForm(request.POST)
 
         if form.is_valid():
             return HttpResponseRedirect(
-                reverse('Payment-Confirmation') + '?id=' + application_id_local
-                + '&orderCode=' + str(order_code))
+                reverse('Next-Steps-Documents') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,

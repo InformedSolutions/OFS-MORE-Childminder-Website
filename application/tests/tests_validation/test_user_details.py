@@ -8,7 +8,9 @@ import re
 
 from django.conf import settings
 from django.test import TestCase
-from ...business_logic import childminder_references_email_duplication_check
+
+from ...business_logic import convert_mobile_to_notify_standard, \
+    childminder_references_and_user_email_duplication_check
 
 def testing_email(test_email):
     return re.match(settings.REGEX['EMAIL'], test_email)
@@ -25,8 +27,12 @@ def testing_phone_number(test_phone_number):
 def testing_number_length(test_phone_number):
     return len(test_phone_number) == 11
 
-def testing_duplicate_email(test_email_1,test_email_2, test_email_3):
-    return childminder_references_email_duplication_check(test_email_1, test_email_2, test_email_3)
+def testing_convert_mobile(test_mobile_numbers):
+    return convert_mobile_to_notify_standard(test_mobile_numbers["original"]) == test_mobile_numbers["result"]
+
+
+def testing_duplicate_email(test_email_1,test_email_2):
+    return childminder_references_and_user_email_duplication_check(test_email_1, test_email_2)
 
 
 class TestUserDetailsValidation(TestCase):
@@ -66,80 +72,75 @@ class TestUserDetailsValidation(TestCase):
                                  '0778abcdrewr',
                                  "07783'4352",
                                  '077830056967',
-                                 '0777777777777']
+                                 '0777777777777'
+                                 '0783243294']
 
         self.incorrect_number_length = ['0778344652645677754', '0778344652644']
         self.correct_number_length = ['07397389736', '37317329736']
-        
+
         self.correct_duplicate_emails = [
             {
                 "1": "test@gmail.com",
                 "2": "different@lineone.biz",
-                "3": "alsodifferent@hotmail.co.uk"
-            }, 
+            },
             {
                 "1": "",
                 "2": "hardtothinkofemails@jurassicpark.gov.uk",
-                "3": "imnotevenvalidatingwhetherthisisanemail@puregym.ru"
-            }, 
+            },
             {
                 "1": "alrightshows@over.com",
                 "2": "",
-                "3": "ireallyappreciate@creativepeople.now"
             },
             {
                 "1": "itwasfunwhileit@lasted.com",
                 "2": "ohwaitihavetowrite@incorrecttoo.com",
-                "3": ""
             },
             {
                 "1": None,
                 "2": "ihadtoduplicateemails@sigh.gov.uk",
-                "3": "imnotevenvalidatingwhetherthisisanemail@puregym.ru"
             },
             {
                 "1": "alrightshows@over.com",
                 "2": None,
-                "3": "ireallyappreciate@creativepeople.now"
             },
-            {
-                "1": "itwasfunwhileit@lasted.com",
-                "2": "ohwaitihavetowrite@incorrecttoo.com",
-                "3": None
-            }
         ]
-        
+
         self.incorrect_duplicate_emails = [
             {
                 "1": "hiagain@gmail.com",
                 "2": "hiagain@gmail.com",
-                "3": "hiagain@gmail.com"
-            },
-            {
-                "1": "hiagain@gmail.com",
-                "2": "hiagain@gmail.com",
-                "3": "different@bing.co.uk"
-            },
-            {
-                "1": "hiagain@gmail.com",
-                "2": "different@bing.co.uk",
-                "3": "hiagain@gmail.com"
             },
             {
                 "1": "different@bing.co.uk",
-                "2": "hiagain@gmail.com",
-                "3": "hiagain@gmail.com"
+                "2": "different@bing.co.uk",
             },
             {
                 "1": "",
                 "2": "",
-                "3": ""
             },
             {
                 "1": None,
                 "2": None,
-                "3": None
             },
+        ]
+
+        self.convert_mobiles = [
+            {
+                "original": "+447398378738",
+                "result": "07398378738"
+            },
+            {
+                "original": "00447398378233",
+                "result": "07398378233"
+            },
+            {
+                "original": "07398378233",
+                "result": "07398378233"
+            },
+            {
+                "original": "",
+                "result": ""
+            }
         ]
 
     def test_correct_emails(self):
@@ -176,8 +177,12 @@ class TestUserDetailsValidation(TestCase):
 
     def test_correct_duplicate_emails(self):
         for emails in self.correct_duplicate_emails:
-            assert (testing_duplicate_email(emails['1'], emails['2'], emails['3']) is True)
-    
+            assert (testing_duplicate_email(emails['1'], emails['2']) is True)
+
     def test_incorrect_duplicate_emails(self):
         for emails in self.incorrect_duplicate_emails:
-            assert (testing_duplicate_email(emails['1'], emails['2'], emails['3']) is False)
+            assert (testing_duplicate_email(emails['1'], emails['2']) is False)
+
+    def test_convert_mobile(self):
+        for mobile in self.convert_mobiles:
+            assert(testing_convert_mobile(mobile) is True)

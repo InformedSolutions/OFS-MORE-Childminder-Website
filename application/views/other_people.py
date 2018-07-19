@@ -826,6 +826,8 @@ def other_people_summary(request):
             elif application.adults_in_home is False:
                 status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
                 return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
+            else:
+                return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
 
         else:
             return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
