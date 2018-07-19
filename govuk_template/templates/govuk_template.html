@@ -14,7 +14,7 @@
 {% block cookie_message %}
   <p>
     {% trans 'GOV.UK uses cookies to make the site simpler.' %}
-    <a href="https://www.gov.uk/help/cookies" target="_blank">
+    <a href="https://www.gov.uk/help/cookies">
       {% trans 'Find out more about cookies' %}
     </a>
   </p>
@@ -88,14 +88,14 @@
 {% block licence_message %}
   <p>
     {% blocktrans trimmed with url='https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/' %}
-      All content is available under the <a href="{{ url }}" rel="license" target="_blank" >Open Government Licence v3.0</a>, except where otherwise stated
+      All content is available under the <a href="{{ url }}" rel="license">Open Government Licence v3.0</a>, except where otherwise stated
     {% endblocktrans %}
   </p>
 {% endblock %}
 
 {% block footer_support_links %}
     <ul>
-        <li><a href="https://www.gov.uk/government/publications/ofsted-privacy-notices/childcare-ofsted-privacy-notice" target="_blank">Privacy notice</a></li>
+        <li><a href="https://www.gov.uk/government/publications/ofsted-privacy-notices/childcare-ofsted-privacy-notice">Privacy notice</a></li>
     </ul>
 {% endblock %}
 
