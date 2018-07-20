@@ -6,6 +6,7 @@ from django.core.mail import send_mail
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 from django.conf import settings
+from urllib.parse import quote
 
 from ..notify import send_email
 from ..forms import FeedbackForm, FeedbackConfirmationForm
@@ -48,10 +49,11 @@ def feedback(request):
             template_id = '650b7c59-dd31-4876-869d-ea8bfd76063a'
             r = send_email(email, personalisation, template_id)
             print(r)
+
             if app_id:
-                return HttpResponseRedirect(reverse('Feedback-Confirmation') + '?url=' + previous_url + '&id=' + app_id)
+                return HttpResponseRedirect(reverse('Feedback-Confirmation') + '?url=' + quote(previous_url) + '&id=' + app_id)
             else:
-                return HttpResponseRedirect(reverse('Feedback-Confirmation') + '?url=' + previous_url)
+                return HttpResponseRedirect(reverse('Feedback-Confirmation') + '?url=' + quote(previous_url))
 
         else:
             form.error_summary_title = 'There was a problem'
