@@ -30,6 +30,9 @@ def feedback(request):
 
     if request.method == 'POST':
         previous_url = request.POST["url"]
+        app_id = None
+        if 'id' in request.GET:
+            app_id = request.GET["id"]
         form = FeedbackForm(request.POST)
 
         if form.is_valid():
@@ -45,7 +48,10 @@ def feedback(request):
             template_id = '650b7c59-dd31-4876-869d-ea8bfd76063a'
             r = send_email(email, personalisation, template_id)
             print(r)
-            return HttpResponseRedirect(reverse('Feedback-Confirmation') + '?url=' + previous_url)
+            if app_id:
+                return HttpResponseRedirect(reverse('Feedback-Confirmation') + '?url=' + previous_url + '&id=' + app_id)
+            else:
+                return HttpResponseRedirect(reverse('Feedback-Confirmation') + '?url=' + previous_url)
 
         else:
             form.error_summary_title = 'There was a problem'
