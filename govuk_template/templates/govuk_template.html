@@ -53,9 +53,11 @@
                       <a href="{% url 'Application-Saved-View' %}">Sign out</a>
                    </li>
                {% else %}
-                    <li>
-                      <a href="{% url 'Costs-View' %}">Costs</a>
-                    </li>
+                   {% if not HIDE_COSTS %}
+                        <li>
+                          <a href="{% url 'Costs-View' %}">Costs</a>
+                        </li>
+                   {% endif %}
                    <li>
                       <a href="{% url 'Help-And-Contact-View' %}">Help and contacts</a>
                    </li>
@@ -75,7 +77,13 @@
         <div class="phase-banner-beta no-print">
           <p>
             <strong class="phase-tag">Beta</strong>
-            <span>{% block phase_banner_message %}<a href="{% url 'Feedback' %}?url={{ request.get_full_path|urlencode }}" id="feedback">Tell us what you think</a> (takes 30 seconds){% endblock %}</span>
+              {% block phase_banner_message %}
+                  {% if id %}
+                    <span><a href="{% url 'Feedback' %}?id={{id}}&url={{ request.get_full_path|urlencode }}" id="feedback">Tell us what you think</a> (takes 30 seconds)</span>
+                  {% else %}
+                    <span><a href="{% url 'Feedback' %}?url={{ request.get_full_path|urlencode }}" id="feedback">Tell us what you think</a> (takes 30 seconds)</span>
+                  {% endif %}
+              {% endblock %}
           </p>
         </div>
       {% endif %}
