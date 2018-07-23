@@ -1,49 +1,35 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Personal details{% endblock %}
+{% block page_title %}Enter childcare address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
+{% include "back-button.html" %}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/personal-details/childcare-address?id={{application_id}}&manual=False&lookup=False" class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
-            Back
-        </a>
-    </div>
-    <!-- Form -->
-    <form method="post" {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Enter childcare address
-            </h1>
-            <p>Where will you be looking after the children?</p>
-            {{form.as_div}}
-            {% csrf_token %}
-            </br>
-            </br>
-            <a href="{{ URL_PREFIX }}/personal-details/childcare-address?id={{application_id}}&manual=False&lookup=False" name="manual"
-               id="manual">Use postcode search</a>
-            </br>
-            </br>
-            <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-            <input type="hidden" id="manual" name="manual" value="True"/>
-            <input type="hidden" id="lookup" name="lookup" value="False"/>
-            <input type="hidden" id="finish" name="finish" value="True" />
-        </div>
-        </br>
-        <!-- Return to task list -->
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    </form>
+<!-- Initialise error summary for page -->
+<div class="two-thirds">
+{{form.error_summary}}
 </div>
+
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <h1 class="form-title heading-large">
+        Enter childcare address
+    </h1>
+    <p>Where will you be looking after the children?</p>
+    {{form.as_div}}
+    {% csrf_token %}
+    <a href="{% url 'Personal-Details-Childcare-Address-View' %}?id={{application_id}}" name="manual"
+       id="manual">Use postcode search</a>
+    <input type="submit" class="button" value="Save and continue">
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+</form>
+<br>
+
+{% if personal_details_status == 'COMPLETED' %}
+{% include 'return-to-list.html' %}
+{% endif %}
 
 {% endblock %}

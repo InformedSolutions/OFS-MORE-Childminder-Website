@@ -1,0 +1,21 @@
+<div class="indent-left no-print">
+    <img src="/childminder/static/printer.png" alt="Print" class="print-icon">
+    <a href="#" class="visually-hidden aria-hidden" onclick="javascript:window.print()" id="print">Print this page</a>
+</div>
+
+<!-- Print function requires javascript so only show if available -->
+<script type="text/javascript">
+    window.onload = function () {
+        $("#print").removeClass('visually-hidden')
+        $("#print").removeClass('aria-hidden')
+    };
+</script>
+
+<br/>
+
+<div class="indent-left no-print">
+    <img src="/childminder/static/printer.png" alt="Print" class="print-icon">
+    <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{application_reference}}">
+        Print your application
+    </a>
+</div>

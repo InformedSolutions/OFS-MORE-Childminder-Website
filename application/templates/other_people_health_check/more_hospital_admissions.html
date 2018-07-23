@@ -1,0 +1,21 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Hospital admissions{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+{% block proposition_menu %}
+{% endblock %}
+{% block inner_content %}
+{% include 'back-button.html' %}
+
+<div class="two-thirds">
+{{ form.error_summary }}
+
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    {% csrf_token %}
+    <h1 class="form-title heading-large">More hospital admissions</h1>
+    {{ form }}
+    <input type="submit" name="action" class="button" value="Continue">
+</form>
+</div>
+
+{% endblock %}

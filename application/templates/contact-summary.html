@@ -1,121 +1,116 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Your account{% endblock %}
+{% block page_title %}Check your answers: your sign in details{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
+{% include "back-button.html" %}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/account/question?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
-            Back
-        </a>
-    </div>
-    <div class="grid-row">
-        <h1 class="form-title heading-large">Check your answers: your login details</h1>
-    </div>
-    <!-- Login details -->
-    <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
-        <thead>
-        <tr>
-            <th colspan="3">
-                <div class="heading-medium">
-                    Your login details
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>
-                Your email
-            </td>
-            <td style="word-wrap: break-word">
-                {{email}}
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/account/email?id={{application_id}}#id_email_address"
-                   alt='Change email address'>
-                    Change <span class="visuallyhidden">email address</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Mobile phone number
-            </td>
-            <td style="word-wrap: break-word">
-                {{mobile_number}}
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/account/phone?id={{application_id}}#id_mobile_number"
-                   alt='Change mobile number'>
-                    Change <span class="visuallyhidden">mobile number</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Alternative phone number
-            </td>
-            <td style="word-wrap: break-word">
-                {{add_phone_number}}
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/account/phone?id={{application_id}}#id_add_phone_number"
-                   alt='Change landline number'>
-                    Change <span class="visuallyhidden">landline number</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Knowledge based question
-            </td>
-            <td style="word-wrap: break-word">
-                {{security_question}}
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/account/question?id={{application_id}}#id_security_question"
-                   alt='Change knowledge based question'>
-                    Change <span class="visuallyhidden">knowledge based question</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Knowledge based answer
-            </td>
-            <td style="word-wrap: break-word">
-                {{security_answer}}
-            </td>
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/account/question?id={{application_id}}#id_security_answer"
-                   alt='Change answer to knowledge based question'>
-                    Change <span class="visuallyhidden">answer to knowledge based question</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <br>
-    <div class="form-group grid-row">
-        {% if childcare_type_status == 'COMPLETED' %}
-        <form action="{{ URL_PREFIX }}/task-list?id={{application_id}}" method="get">
-            <input type="submit" class="button" value="Confirm and continue"/>
-            <input type="hidden" value="{{application_id}}" name="id"/>
-        </form>
-        {% endif %}
-        {% if childcare_type_status != 'COMPLETED' %}
-        <form action="{{ URL_PREFIX }}/childcare/guidance?id={{application_id}}" method="get">
-            <input type="submit" class="button" value="Confirm and continue"/>
-            <input type="hidden" value="{{application_id}}" name="id"/>
-        </form>
-        {% endif %}
-    </div>
-    <br>
-</div>
+<h1 class="form-title heading-large">
+    Check your answers: your sign in details
+</h1>
+
+<!-- Login details -->
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="3">
+            <div class="heading-medium">
+                Your login details
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Your email
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{email}}
+        </td>
+        <td class="change-answer">
+            <!--<a href="{{ URL_prefix }}/sign-in/change-email/email?id={{application_id}}#id_email_address"-->
+            <a href="{% url 'Update-Email-Resent' %}email?id={{application_id}}#id_email_address"
+               alt='Change email address'>
+                Change <span class="visuallyhidden">email address</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Mobile phone number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{mobile_number}}
+        </td>
+        <td class="change-answer">
+            <a href="{% url 'Contact-Phone-View' %}?id={{application_id}}#id_mobile_number"
+               alt='Change mobile number'>
+                Change <span class="visuallyhidden">mobile number</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Alternative phone number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{add_phone_number}}
+        </td>
+        <td class="change-answer">
+            <a href="{% url 'Contact-Phone-View' %}?id={{application_id}}#id_add_phone_number"
+               alt='Change landline number'>
+                Change <span class="visuallyhidden">landline number</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Knowledge based question
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{security_question}}
+        </td>
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/account/question?id={{application_id}}#id_security_question"
+               alt='Change knowledge based question'>
+                Change <span class="visuallyhidden">knowledge based question</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Knowledge based answer
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{security_answer}}
+        </td>
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/account/question?id={{application_id}}#id_security_answer"
+               alt='Change answer to knowledge based question'>
+                Change <span class="visuallyhidden">answer to knowledge based question</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+{% if childcare_type_status == 'COMPLETED' %}
+    <form action="{% url 'Task-List-View' %}?id={{application_id}}" method="get">
+        <input type="submit" class="button" value="Confirm and continue"/>
+        <input type="hidden" value="{{application_id}}" name="id"/>
+    </form>
+{% elif childcare_type_status != 'COMPLETED' %}
+    <form action="{% url 'Type-Of-Childcare-Guidance-View' %}?id={{application_id}}" method="get">
+        <input type="submit" class="button" value="Confirm and continue"/>
+        <input type="hidden" value="{{application_id}}" name="id"/>
+    </form>
+{% endif %}
 
 {% endblock %}

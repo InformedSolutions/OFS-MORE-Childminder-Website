@@ -1,0 +1,43 @@
+<!-- Implement GOV.UK template -->
+{% extends 'govuk_template.html' %}
+
+<!-- Tab title -->
+{% block page_title %}Sign in question{% endblock %}
+
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+{% for form in forms %}
+{{ form.error_summary }}
+{% endfor %}
+
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <h1 class="form-title heading-large">
+        Your sign in question
+    </h1>
+    <div class="form-group">
+        {% include 'security-question-content.html' %}
+        <p class="form-title heading-small">
+            {{label}}
+        </p>
+        {% for form in forms %}
+        {{form.as_div}}
+        {% csrf_token %}
+        {% endfor %}
+
+        <input type="hidden" id="id" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
+    </div>
+</form>
+<!-- If applicant has previously completed this task, allow user to return to task list -->
+{% if login_details_status == 'COMPLETED' %}
+{% include 'return-to-list.html' %}
+{% endif %}
+</div>
+
+{% endblock %}

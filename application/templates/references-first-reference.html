@@ -1,41 +1,33 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}References{% endblock %}
+{% block page_title %}First reference{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
+{% include "back-button.html" %}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/references/intro?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
-            Back
-        </a>
-    </div>
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                First reference
-            </h1>
-            <p>This should be someone who has known you for at least 1 year.</p>
-            <p>They cannot be family.</p>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-        </br>
-        <!-- Return to task list -->
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    </form>
+<!-- Initialise error summary for page -->
+<div class="two-thirds">
+{{form.error_summary}}
 </div>
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="two-thirds">
+        <h1 class="form-title heading-large">
+            First reference
+        </h1>
+        <p>This should be someone who has known you for at least 1 year.</p>
+        <p>They cannot be family.</p>
+    </div>
+    {{form.as_div}}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Save and continue">
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+</form>
+<br>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

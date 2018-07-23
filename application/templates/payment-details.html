@@ -1,52 +1,39 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Confirmation & Payment{% endblock %}
+{% block page_title %}Pay by debit or credit card{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
+{% include "back-button.html" %}
+
+<div class="two-thirds">
 {{form.error_summary}}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/payment?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Pay by debit or credit card
-            </h1>
-        </div>
-        <p class="form-group grid-row">
-            <img src="{% static 'card-types.png' %}" alt="accepted-cards-visa-maestro-mastercard-amex"
-                 style="height: 40px;"/>
-        </p>
-        <div class="grid-row">
-            <div class="form-group">
-                <p>We accept Visa, Maestro, MasterCard and American Express cards.</p>
-                <p>
-                    You are paying <span class="bold-small">&#163;35</span> to <span class="bold-small">apply to be a childminder</span>.
-                </p>
-            </div>
-            <div class="form-group">
-                {{form.as_div}}
-                {% csrf_token %}
-            </div>
-        </div>
-        <input type="hidden" value="{{application_id}}" name="id"/>
-        <div class="form-group grid-row">
-            <input type="submit" class="button" value="Make payment and apply">
-        </div>
-        <div class="form-group grid-row">
-            <div class="form-group">
-                <a href="{{ URL_PREFIX }}/task-list?=true">Return to list</a>
-            </div>
-        </div>
-    </form>
+<h1 class="form-title heading-large">
+    Pay by debit or credit card
+</h1>
+
+<p class="form-group">
+    <img src="{% static 'card-types.png' %}" alt="accepted card logos"
+         style="height: 40px;"/>
+</p>
+
+<p>We accept Visa, Maestro and MasterCard cards.</p>
+
+<p>
+    You are paying <span class="bold-small">&#163;35</span> to <span class="bold-small">apply to be a childminder</span>.
+</p>
 </div>
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    {{form.as_div}}
+    <div class="two-thirds">
+        <p>Ofsted does not keep a record of your card details.</p>
+        {% csrf_token %}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" value="Pay and apply">
+        <a href="{% url 'Task-List-View' %}?id={{ id }}" class="button-secondary button-save-and-exit">Save and return</a>
+    </div>
+</form>
 
 {% endblock %}

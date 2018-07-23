@@ -40,7 +40,7 @@ class Widget(widgets.Widget):
 # Creating a base multi-widget class
 class MultiWidget(widgets.MultiWidget, Widget):
     """
-    A class used to definte a base widget that has the ability to contain multiple widgets
+    A class used to define a base widget that has the ability to contain multiple widgets
     """
     subwidget_group_classes = ()
     subwidget_label_classes = ()
@@ -126,14 +126,12 @@ class YearField(forms.IntegerField):
             # 2-digit dates are a minimum of 10 years ago by default
             era_boundary = self.current_year - self.century - 10
         self.era_boundary = era_boundary
-        bounds_error = gettext('TBC') % {
-            'current_year': self.current_year
-        }
+        bounds_error = gettext('Check the expiry date or use a new card')
         options = {
             'min_value': self.current_year,
             'error_messages': {
                 'min_value': bounds_error,
-                'invalid': gettext('TBC'),
+                'invalid': gettext('Check the expiry date or use a new card'),
             }
         }
         options.update(kwargs)
@@ -141,17 +139,17 @@ class YearField(forms.IntegerField):
 
     def clean(self, value):
         """
-        This will clean the two year value enetered into the field in order to ensure the value entered is in the write
+        This will clean the two year value entered into the field in order to ensure the value entered is in the write
         century, for example, 68 will be changed to 1968 rather the 2068 as the latter has not occured yet
         :param value:The value object obtained from the form
         :return:This returns the cleaned value object (after cleaning specified above
         """
         value = self.to_python(value)
+        if len(str(value)) > 2:
+            raise forms.ValidationError('Check the expiry date or use a new card')
         if isinstance(value, int) and value < 100:
-            if value > self.era_boundary:
-                value += self.century - 100
-            else:
                 value += self.century
+
         return super().clean(value)
 
 
@@ -163,7 +161,7 @@ class ExpirySplitDateField(forms.MultiValueField):
     widget = ExpirySplitDateWidget
     hidden_widget = SplitHiddenDateWidget
     default_error_messages = {
-        'invalid': _('TBC.')
+        'invalid': _('Check the expiry date or use a new card')
     }
 
     def __init__(self, *args, **kwargs):
@@ -173,14 +171,14 @@ class ExpirySplitDateField(forms.MultiValueField):
         :param args: Standard arguments parameter
         :param kwargs: Standard key word arguments parameter
         """
-        month_bounds_error = gettext('Month should be between 1 and 12.')
+        month_bounds_error = gettext('Check the expiry date or use a new card')
 
         # Field definition
         self.fields = [
             forms.IntegerField(min_value=1, max_value=12, error_messages={
                 'min_value': month_bounds_error,
                 'max_value': month_bounds_error,
-                'invalid': gettext('TBC.')
+                'invalid': gettext('Check the expiry date or use a new card')
             }),
             # Uses a clean year field defined above
             YearField(),
@@ -257,7 +255,7 @@ class TimeKnownField(forms.MultiValueField):
     widget = TimeKnownSplitDateWidget
     hidden_widget = SplitHiddenDateWidget
     default_error_messages = {
-        'invalid': _('Enter a valid date.')
+        'invalid': _('Enter a valid date')
     }
 
     def __init__(self, *args, **kwargs):
@@ -267,19 +265,19 @@ class TimeKnownField(forms.MultiValueField):
         :param args: Standard arguments parameter
         :param kwargs: Standard key word arguments parameter
         """
-        month_bounds_error = gettext('The number of months should be maximum 11.')
-        year_bounds_error = gettext('The number of years should be maximum 100')
+        month_bounds_error = gettext('Month must be between 1 and 11')
+        year_bounds_error = gettext('You must have known the referee for at least 1 year')
 
         self.fields = [
-            forms.IntegerField(max_value=100, error_messages={
+            forms.IntegerField(min_value=0, error_messages={
                 'min_value': year_bounds_error,
                 'max_value': year_bounds_error,
-                'invalid': gettext('Enter number of years as a number.')
+                'invalid': gettext('You must have known the referee for at least 1 year')
             }),
             forms.IntegerField(max_value=11, error_messages={
                 'min_value': month_bounds_error,
                 'max_value': month_bounds_error,
-                'invalid': gettext('Enter number of months as a number.')
+                'invalid': gettext('Month must be between 1 and 11')
             })
         ]
 
@@ -328,8 +326,16 @@ class SelectDateWidget(MultiWidget):
 
     def __init__(self, attrs=None, years=None, months=None, empty_label=None):
         this_year = datetime.date.today().year
-        self.years = [(i, i) for i in years or range(this_year, this_year + 10)]
-        self.months = [(i, i) for i in months or range(1, 13)]
+        self.years = []
+        year_gen = ((i, i) for i in years or range(this_year, this_year + 10))
+        self.years.append((None, 'YYYY'))
+        for year in year_gen:
+            self.years.append(year)
+        self.months = []
+        month_gen = ((i, i) for i in months or range(1, 13))
+        self.months.append((None, 'MM'))
+        for month in month_gen:
+            self.months.append(month)
 
         if isinstance(empty_label, (list, tuple)):
             self.year_none_value = (0, empty_label[0])
@@ -364,23 +370,23 @@ class CustomSplitDateFieldDOB(forms.MultiValueField):
     widget = SplitDateWidget
     hidden_widget = SplitHiddenDateWidget
     default_error_messages = {
-        'invalid': _('Please enter a valid date.')
+        'invalid': _('Please enter a valid date')
     }
 
     def __init__(self, *args, **kwargs):
-        day_bounds_error = gettext('Day must be between 1 and 31.')
-        month_bounds_error = gettext('Month must be between 1 and 12.')
+        day_bounds_error = gettext('Day must be between 1 and 31')
+        month_bounds_error = gettext('Month must be between 1 and 12')
 
         self.fields = [
             forms.IntegerField(min_value=1, max_value=31, error_messages={
                 'min_value': day_bounds_error,
                 'max_value': day_bounds_error,
-                'invalid': gettext('Enter day as a number.')
+                'invalid': gettext('Enter day as a number')
             }),
             forms.IntegerField(min_value=1, max_value=12, error_messages={
                 'min_value': month_bounds_error,
                 'max_value': month_bounds_error,
-                'invalid': gettext('Enter month as a number.')
+                'invalid': gettext('Enter month as a number')
             }),
             CustomYearFieldDOB(),
         ]
@@ -422,16 +428,9 @@ class CustomYearFieldDOB(forms.IntegerField):
             # 2-digit dates are a minimum of 10 years ago by default
             era_boundary = self.current_year - self.century - 10
         self.era_boundary = era_boundary
-        bounds_error = gettext('Please check the year.') % {
-            'current_year': self.current_year
-        }
         options = {
-            'min_value': 1900,
-            'max_value': self.current_year,
             'error_messages': {
-                'min_value': bounds_error,
-                'max_value': bounds_error,
-                'invalid': gettext('Enter year as a number.'),
+                'invalid': gettext('Enter year as a number'),
             }
         }
         options.update(kwargs)
@@ -439,11 +438,12 @@ class CustomYearFieldDOB(forms.IntegerField):
 
     def clean(self, value):
         value = self.to_python(value)
-        if isinstance(value, int) and value < 100:
-            if value > self.era_boundary:
-                value += self.century - 100
-            else:
-                value += self.century
+        if len(str(value)) < 4:
+            raise forms.ValidationError('Please enter the whole year (4 digits)')
+        if value < 1900:
+            raise forms.ValidationError('Please check the year')
+        if value > now().year:
+            raise forms.ValidationError('Please check the year')
         return super().clean(value)
 
 
@@ -451,25 +451,25 @@ class CustomSplitDateField(forms.MultiValueField):
     widget = SplitDateWidget
     hidden_widget = SplitHiddenDateWidget
     default_error_messages = {
-        'invalid': _('Enter a valid date.')
+        'invalid': _('Please check the date of the course')
     }
 
-    def __init__(self, *args, **kwargs):
-        day_bounds_error = gettext('Day must be between 1 and 31.')
-        month_bounds_error = gettext('Month must be between 1 and 12.')
+    def __init__(self, bounds_error=None, min_value=2000, *args, **kwargs):
+        day_bounds_error = gettext('Day must be between 1 and 31')
+        month_bounds_error = gettext('Month must be between 1 and 12')
 
         self.fields = [
             forms.IntegerField(min_value=1, max_value=31, error_messages={
                 'min_value': day_bounds_error,
                 'max_value': day_bounds_error,
-                'invalid': gettext('Enter day as a number.')
+                'invalid': gettext('Enter day as a number')
             }),
             forms.IntegerField(min_value=1, max_value=12, error_messages={
                 'min_value': month_bounds_error,
                 'max_value': month_bounds_error,
-                'invalid': gettext('Enter month as a number.')
+                'invalid': gettext('Enter month as a number')
             }),
-            CustomYearField(),
+            CustomYearField(bounds_error=bounds_error, min_value=min_value),
         ]
 
         super().__init__(self.fields, *args, **kwargs)
@@ -479,7 +479,11 @@ class CustomSplitDateField(forms.MultiValueField):
             try:
                 if any(item in self.empty_values for item in data_list):
                     raise ValueError
-                return datetime.date(data_list[2], data_list[1], data_list[0])
+                date_compressed = datetime.date(data_list[2], data_list[1], data_list[0])
+                if date_compressed > now().date():
+                    raise ValueError
+                else:
+                    return date_compressed
             except ValueError:
                 raise forms.ValidationError(self.error_messages['invalid'], code='invalid')
         return None
@@ -502,23 +506,27 @@ class CustomYearField(forms.IntegerField):
     Allows 2-digit year entry which is converted depending on the `era_boundary`
     """
 
-    def __init__(self, era_boundary=None, **kwargs):
+    def __init__(self, era_boundary=None, bounds_error=None, min_value=2000, **kwargs):
         self.current_year = now().year
         self.century = 100 * (self.current_year // 100)
         if era_boundary is None:
-            # 2-digit dates are a minimum of 10 years ago by default
-            era_boundary = self.current_year - self.century - 10
+            # Interpret two-digit dates as this century if they are before the current year
+            # otherwise interpret them as a year from the previous century
+            era_boundary = self.current_year - self.century
         self.era_boundary = era_boundary
-        bounds_error = gettext('Please check the date of the course.') % {
-            'current_year': self.current_year
-        }
+        if bounds_error is None:
+            bounds_error = gettext('Please check the date of the course') % {
+                'current_year': self.current_year
+            }
+        else:
+            bounds_error = gettext(bounds_error)
         options = {
-            'min_value': 2000,
+            'min_value': min_value,
             'max_value': self.current_year,
             'error_messages': {
                 'min_value': bounds_error,
                 'max_value': bounds_error,
-                'invalid': gettext('Enter year as a number.'),
+                'invalid': gettext('Enter year as a number'),
             }
         }
         options.update(kwargs)

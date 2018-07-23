@@ -1,33 +1,29 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Type of Childcare{% endblock %}
+{% block page_title %}Childcare Register (both parts){% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/childcare/age-groups?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Childcare Register (both parts)
-            </h1>
-            <p>You will be joining the compulsory and voluntary parts of the Childcare Register.</p>
-            <p>It costs &#163;103 to apply.</p>
-            <p>This will let you look after children aged 5 or older.</p>
-            <br>
-            {% csrf_token %}
-            {{form.as_div}}
-            <input type="hidden" value="{{application_id}}" name="id"/>
-            <input type="submit" class="button" value="Confirm and continue">
-        </div>
-    </form>
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+<h1 class="form-title heading-large">
+    Childcare Register (both parts)
+</h1>
+
+<p>You will be joining the compulsory and voluntary parts of the Childcare Register.</p>
+
+<p>It costs &#163;103 to apply.</p>
+
+<p class="text-before-button">This will let you look after children aged 5 or older.</p>
+
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    {% csrf_token %}
+    {{form.as_div}}
+    <input type="hidden" value="{{application_id}}" name="id"/>
+    <input type="submit" class="button" value="Confirm and continue">
+</form>
 </div>
 
 {% endblock %}

@@ -1,52 +1,26 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Your account{% endblock %}
+{% block page_title %}Your email address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
+{% include "back-button.html" %}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <!-- If applicant has previously completed this task, return to task list with Back button -->
-        {% if login_details_status == 'COMPLETED' %}
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
-            Back
-        </a>
-        {% endif %}
-        <!-- If applicant has not yet completed this task, return to start page with Back button -->
-        {% if login_details_status != 'COMPLETED' %}
-        <a href="{{ URL_PREFIX }}/account/account?id={{application_id}}" class="link-back" style="margin-right: 10px;
-        line-height: 28px">
-            Back
-        </a>
-        {% endif %}
-    </div>
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Your email address
-            </h1>
-            <p>Enter your email address so you can save your application.</p>
-            <p>We will send you a link so you can come back at any time.</p>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
-            <input type="hidden" name="id" value="{{application_id}}"/>
-        </div>
-        </br>
-        <!-- If applicant has previously completed this task, allow user to return to task list -->
-        {% if login_details_status == 'COMPLETED' %}
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-        {% endif %}
-    </form>
+<div class="two-thirds">
+{{form.error_summary}}
 </div>
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <div class="two-thirds">
+        <h1 class="form-title heading-large">
+            Your email address
+        </h1>
+        <p>We’ll send you a link to confirm that you have access.</p>
+        <p>We’ll also use it to contact you about your registration.</p>
+    </div>
+    {{form.as_div}}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Continue" alt='Continue'>
+</form>
 
 {% endblock %}

@@ -1,38 +1,31 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Confirmation & Payment{% endblock %}
+{% block page_title %}Pay your fee{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
+{% include "back-button.html" %}
+
 <!-- Initialise error summary for page -->
+<div class="two-thirds">
 {{form.error_summary}}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 16px;">
-        <a href="{{ URL_PREFIX }}/declaration/declaration?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Pay your fee
+        </h1>
+        <p>You need to pay &#163;35 to apply.</p>
+        <p>This fee is not refundable.</p>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Save and continue">
+        <input type="hidden" name="id" value="{{application_id}}"/>
     </div>
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Pay your fee
-            </h1>
-            <p>You need to pay &#163;35 to apply.</p>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue">
-            <input type="hidden" name="id" value="{{application_id}}"/>
-        </div>
-        </br>
-        <div class="form-group grid-row">
-            <div class="form-group">
-                <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-            </div>
-        </div>
-    </form>
+</form>
 </div>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

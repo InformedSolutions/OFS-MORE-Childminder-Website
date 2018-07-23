@@ -1,0 +1,319 @@
+[
+{
+  "model": "auth.group",
+  "fields": {
+    "name": "arc",
+    "permissions": []
+  }
+},
+{
+  "model": "auth.group",
+  "fields": {
+    "name": "contact-centre",
+    "permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$36000$0LmFEZxDRGCu$lAZrw1t7xlrEw+bwkv43Npyx7eGYGDVMFg6qHeptuMo=",
+    "last_login": "2018-03-05T09:01:10.474Z",
+    "is_superuser": false,
+    "username": "arc1",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2018-03-01T10:16:32Z",
+    "groups": [
+      [
+        "arc"
+      ]
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$36000$0LmFEZxDRGCu$lAZrw1t7xlrEw+bwkv43Npyx7eGYGDVMFg6qHeptuMo=",
+    "last_login": "2018-04-06T14:10:12.188Z",
+    "is_superuser": false,
+    "username": "cc1",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2018-03-01T10:16:32Z",
+    "groups": [
+      [
+        "contact-centre"
+      ]
+    ],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "default-password",
+    "last_login": null,
+    "is_superuser": true,
+    "username": "root",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2018-04-06T14:09:56.331Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "govuk_template_base.servicesettings",
+  "pk": 1,
+  "fields": {
+    "modified": "2018-04-06T14:04:40.401Z",
+    "name": "Untitled",
+    "localise_name": false,
+    "phase": "discovery",
+    "header_link_view_name": "",
+    "header_links": [],
+    "footer_links": []
+  }
+},
+{
+  "model": "timeline_logger.timelinelog",
+  "pk": 1,
+  "fields": {
+    "content_type": [
+      "application",
+      "application"
+    ],
+    "object_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
+    "timestamp": "2018-04-06T14:04:48.276Z",
+    "extra_data": {
+      "entity": "application",
+      "action": "created",
+      "user_type": "applicant"
+    },
+    "user": null,
+    "template": "timeline_logger/application_action.txt"
+  }
+},
+{
+  "model": "timeline_logger.timelinelog",
+  "pk": 2,
+  "fields": {
+    "content_type": [
+      "application",
+      "application"
+    ],
+    "object_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
+    "timestamp": "2018-04-06T14:09:22.819Z",
+    "extra_data": {
+      "entity": "application",
+      "action": "submitted",
+      "user_type": "applicant"
+    },
+    "user": null,
+    "template": "timeline_logger/application_action.txt"
+  }
+},
+{
+  "model": "timeline_logger.timelinelog",
+  "pk": 34,
+  "fields": {
+    "content_type": [
+      "arc_application",
+      "application"
+    ],
+    "object_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
+    "timestamp": "2018-04-06T14:10:32.174Z",
+    "extra_data": {
+      "entity": "application",
+      "action": "is viewed",
+      "user_type": "contact center"
+    },
+    "user": [
+      "cc1"
+    ],
+    "template": "timeline_logger/application_action_contact_center.txt"
+  }
+},
+{
+  "model": "application.application",
+  "pk": "657c09e9-2fd3-446e-b4ab-244190ae88be",
+  "fields": {
+    "application_type": "CHILDMINDER",
+    "application_status": "SUBMITTED",
+    "cygnum_urn": "",
+    "login_details_status": "COMPLETED",
+    "personal_details_status": "COMPLETED",
+    "childcare_type_status": "COMPLETED",
+    "first_aid_training_status": "COMPLETED",
+    "eyfs_training_status": "COMPLETED",
+    "criminal_record_check_status": "COMPLETED",
+    "health_status": "COMPLETED",
+    "references_status": "COMPLETED",
+    "people_in_home_status": "COMPLETED",
+    "adults_in_home": false,
+    "children_in_home": false,
+    "children_turning_16": false,
+    "declarations_status": "COMPLETED",
+    "background_check_declare": true,
+    "inspect_home_declare": true,
+    "interview_declare": true,
+    "share_info_declare": true,
+    "information_correct_declare": true,
+    "change_declare": null,
+    "date_created": "2018-04-06T14:04:48.166Z",
+    "date_updated": "2018-04-06T14:09:11.043Z",
+    "date_accepted": null,
+    "date_submitted": "2018-04-06T14:09:22.229Z"
+  }
+},
+{
+  "model": "application.applicantpersonaldetails",
+  "pk": "ed6e85a3-f10b-499c-8d09-273699023884",
+  "fields": {
+    "application_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
+    "birth_day": 22,
+    "birth_month": 1,
+    "birth_year": 1991
+  }
+},
+{
+  "model": "application.applicanthomeaddress",
+  "pk": "fc94a48d-6c76-459c-b2cd-6e9af63e9aab",
+  "fields": {
+    "personal_detail_id": "ed6e85a3-f10b-499c-8d09-273699023884",
+    "application_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
+    "street_line1": "INFORMED SOLUTIONS LTD, THE OLD BANK",
+    "street_line2": " OLD MARKET PLACE",
+    "town": "ALTRINCHAM",
+    "county": "",
+    "country": "",
+    "postcode": "WA14 4PA",
+    "childcare_address": true,
+    "current_address": true,
+    "move_in_month": 0,
+    "move_in_year": 0
+  }
+},
+{
+  "model": "application.applicantname",
+  "pk": "53ebb827-d76c-40ab-bc26-19102659f682",
+  "fields": {
+    "personal_detail_id": "ed6e85a3-f10b-499c-8d09-273699023884",
+    "application_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
+    "current_name": true,
+    "first_name": "James",
+    "middle_names": "",
+    "last_name": "Cruddas"
+  }
+},
+{
+  "model": "application.childcaretype",
+  "pk": "1a8bb9fb-767e-4505-9ce1-3b6542e0c693",
+  "fields": {
+    "application_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
+    "zero_to_five": true,
+    "five_to_eight": true,
+    "eight_plus": false,
+    "overnight_care": true
+  }
+},
+{
+  "model": "application.criminalrecordcheck",
+  "pk": "a3798e71-930f-4d8c-a845-f60b88aa3281",
+  "fields": {
+    "application_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
+    "dbs_certificate_number": "121212121212",
+    "cautions_convictions": false
+  }
+},
+{
+  "model": "application.firstaidtraining",
+  "pk": "57b2be6b-2f3d-46de-b145-6219ce02f3f7",
+  "fields": {
+    "application_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
+    "training_organisation": "JMC Training",
+    "course_title": "Test",
+    "course_day": 22,
+    "course_month": 1,
+    "course_year": 2018,
+    "show_certificate": true,
+    "renew_certificate": false
+  }
+},
+{
+  "model": "application.healthdeclarationbooklet",
+  "pk": "46709135-0211-41aa-9570-bd2b5f3b8f86",
+  "fields": {
+    "application_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
+    "send_hdb_declare": true
+  }
+},
+{
+  "model": "application.reference",
+  "pk": "050a1291-a9a0-432e-99c6-7f2f7bfa5db3",
+  "fields": {
+    "application_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
+    "reference": 1,
+    "first_name": "Test",
+    "last_name": "Person",
+    "relationship": "Friend",
+    "years_known": 2,
+    "months_known": 2,
+    "street_line1": "INFORMED SOLUTIONS LTD, THE OLD BANK",
+    "street_line2": " OLD MARKET PLACE",
+    "town": "ALTRINCHAM",
+    "county": "",
+    "country": "United Kingdom",
+    "postcode": "WA14 4PA",
+    "phone_number": "07791618129",
+    "email": "james.cruddas@informed.com"
+  }
+},
+{
+  "model": "application.reference",
+  "pk": "5b5a8f7a-1b4e-4e69-925c-16e1be65b21a",
+  "fields": {
+    "application_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
+    "reference": 2,
+    "first_name": "Test",
+    "last_name": "User",
+    "relationship": "Neighbour",
+    "years_known": 2,
+    "months_known": 2,
+    "street_line1": "INFORMED SOLUTIONS LTD, THE OLD BANK",
+    "street_line2": " OLD MARKET PLACE",
+    "town": "ALTRINCHAM",
+    "county": "",
+    "country": "United Kingdom",
+    "postcode": "WA14 4PA",
+    "phone_number": "07791618129",
+    "email": "james.cruddas@informed.com"
+  }
+},
+{
+  "model": "application.userdetails",
+  "pk": "2bb2bb49-5eaa-401c-9020-5b77637c8b44",
+  "fields": {
+    "application_id": "657c09e9-2fd3-446e-b4ab-244190ae88be",
+    "email": "cruddasj@informed.com",
+    "mobile_number": "07824893361",
+    "add_phone_number": "",
+    "email_expiry_date": null,
+    "sms_expiry_date": null,
+    "magic_link_email": null,
+    "magic_link_sms": null,
+    "security_question": "test",
+    "security_answer": "test"
+  }
+}
+]

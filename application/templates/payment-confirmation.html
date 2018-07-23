@@ -1,20 +1,19 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Payment confirmed{% endblock %}
+{% block page_title %}Thank you for applying{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
-<div class="grid-row">
-    <div class="column-two-thirds">
-        <div class="govuk-box-highlight">
-            <h1 class="bold-large">Thank you for applying</h1>
+<div class="two-thirds">
+    <div class="govuk-box-highlight">
+        <h1 class="bold-large">Thank you for applying</h1>
+        <br>
+        <p>
+            Your application number is
             <br>
-            <p>
-                Your reference number is
-                <br>
-                <br>
-                <strong class="heading-medium">{{order_code}}</strong>
+            <br>
+            <strong class="heading-medium">{{order_code}}</strong>
             </p>
         </div>
         <h2 class="heading-medium">
@@ -24,85 +23,78 @@
             <table class="check-your-answers">
                 <thead>
                 <tr>
-                    <th>Item</th>
-                    <th>Price</th>
+                    <th></th>
+                    <th></th>
                 </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td>Register to be a childminder application fee</td>
+                    <td>Application fee</td>
                     <td>&#163;35.00</td>
                 </tr>
                 </tbody>
-                <tfoot>
-                <tr>
-                    <td><span class="bold-small">Total</span></td>
-                    <td><span class="bold-small">&#163;35.00</span></td>
-                </tr>
-                </tfoot>
             </table>
         </div>
-        <h2 class="heading-medium">
+
+        <h2 class="heading-medium no-print">
             Your application details
         </h2>
-        <p>We have sent you a copy of your application by email.</p>
-        <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print"
-                                           style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
-            <a href="">Print page</a></p>
-        <p style="margin-left: 20px;"><img src="{% static 'download-button.png' %}" alt="Download"
-                                           style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
-            <a href="">Download application</a></p>
-        <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print"
-                                           style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
-            <a href="">Print application</a></p>
+
+        {% include 'print-links.html' %}
+
+
         <h2 class="heading-medium">
-            What happens next
+            Send your documents
         </h2>
-        <p>Ofsted staff will:</p>
+        {% if health_status == 'COMPLETED' and conviction == True %}
+        <p>We need your:</p>
         <ul class="list-bullet" style="margin-bottom: 20px; margin-left: 20px;">
-            <li>review your application</li>
-            <li>ask for references</li>
-            <li>carry out checks with social services</li>
-            <li>check the health booklet</li>
-            <li>arrange for an inspector to visit</li>
+            <li>health declaration booklet</li>
+            <li>DBS certificate.</li>
         </ul>
-        <p>All this normally takes 3 months in total.</p>
-        <p>We will email you after the initial review.</p>
-        <p>There can be delays if information is missing or we have to wait for references or social services
-            checks.</p>
-        <p>We will organise a visit once all the checks have been done.</p>
-        <p>You should get a decision within a week of the visit.</p>
-        <h2 class="heading-medium">
-            More about next steps
-        </h2>
-        <ul class="list-bullet" style="margin-left: 20px;">
-            <li><a href="">Documents you need for the visit</a></li>
-            <li><a href="">Get the home ready</a></li>
-            <li><a href="">Equipment and resources</a></li>
-            <li><a href="">Prepare for your interview</a></li>
-        </ul>
+        <p>Send your original documents (not photocopies) to:</p>
+        <p style="margin-left: 40px;">
+            Applications team
+            <br>
+            Ofsted
+            <br>
+            Piccadilly Gate
+            <br>
+            Store Street
+            <br>
+            Manchester
+            <br>
+            M1 2WD
+        </p>
+        <p>There may be delays if we do not receive them right away.</p>
+        {% elif health_status == 'COMPLETED' and conviction == False %}
+        <p>We need your health declaration booklet.</p>
+        <p>Send your original document (not a photocopy) to:</p>
+        <p style="margin-left: 40px;">
+            Applications team
+            <br>
+            Ofsted
+            <br>
+            Piccadilly Gate
+            <br>
+            Store Street
+            <br>
+            Manchester
+            <br>
+            M1 2WD
+        </p>
+        <p>There may be delays if we do not receive it right away.</p>
+        {% endif %}
+
         <h2 class="heading-medium">
             Contact us
         </h2>
         <p>Contact us if you have any questions about your application.</p>
-        <div class="panel panel-border-narrow">
-            <div>
-                Ofsted
-            </div>
-            <div>
-                <a href="mailto:enquiries@ofsted.gov.uk">enquiries@ofsted.gov.uk</a>
-            </div>
-            <div>
-                Phone: 0300 123 1231
-            </div>
-            <div>
-                Monday to Friday, 8am to 6pm
-            </div>
-            <div>
-                <a href="https://www.gov.uk/call-charges">Find out about call charges</a>
-            </div>
-        </div>
-    </div>
+        <p class="panel">
+            Ofsted
+            <br>
+            <a href="mailto:registrationpilot@ofsted.gov.uk">registrationpilot@ofsted.gov.uk</a>
+    </p>
 </div>
 
 {% endblock %}

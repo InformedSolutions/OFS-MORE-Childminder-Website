@@ -1,0 +1,59 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Help and contacts{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+<h1 class="form-title heading-large">
+    Help and contacts
+</h1>
+
+<p>Where you can get help to become a childminder.</p>
+
+<h2 class="heading-medium">
+    Your local council
+</h2>
+
+<p>You can get <a href="http://findyourfis.familyandchildcaretrust.org/kb5/findyourfis/home.page" target="_blank">free help and advice from your local council.</a></p>
+
+<h2 class="heading-medium">
+    Childcare groups and forums
+</h2>
+
+<p>You can get advice and training from professional childcare groups like:</p>
+
+<ul class="list list-bullet">
+    <li>
+        <a href="https://www.pacey.org.uk" target="_blank">Pacey (Professional Association for Childcare and Early Years)</a>
+    </li>
+    <li>
+        <a href="https://childmindinguk.com" target="_blank">Childminding UK</a>
+    </li>
+</ul>
+<p>
+    You could also get advice from other childminders on forums such as <a href="http://www.childmindinghelp.co.uk/forum/" target="_blank">Childminding Forum</a>.
+</p>
+
+<h2 class="heading-medium">
+    Ofsted
+</h2>
+
+<p>Contact Ofsted if you have questions about your application.</p>
+
+<div class="panel">
+    Ofsted
+    <br/>
+    <a href="mailto:registrationpilot@ofsted.gov.uk">registrationpilot@ofsted.gov.uk</a>
+</div>
+
+</div>
+
+{% if id and AUTHENTICATED %}
+    <a href="{{ return_url }}" class="button">Return to application</a>
+{% endif %}
+
+{% endblock %}

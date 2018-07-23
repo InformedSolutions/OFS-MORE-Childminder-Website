@@ -1,104 +1,64 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Early years knowledge{% endblock %}
+{% block page_title %}Check your answers: Early years training{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/eyfs/questions?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt='Back to application list'>
-            Back
-        </a>
-    </div>
-    <div class="grid-row">
-        <h1 class="form-title heading-large">Check your answers: early years knowledge</h1>
-    </div>
-    <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
-        <thead>
-        <tr>
-            <th colspan="3">
-                <div class="heading-medium">
-                    Early years knowledge
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>
-                Do you understand the EYFS?
-            </td>
-            {% if eyfs_understand is True %}
-            <td style="word-wrap: break-word">
-                Yes
-            </td>
-            {% elif eyfs_understand is False %}
-            <td style="word-wrap: break-word">
-                No
-            </td>
-            {% endif %}
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/eyfs/knowledge?id={{application_id}}#id_eyfs_understand-group"
-                   alt='Change EYFS knowledge answer'>
-                    Change <span class="visuallyhidden">EYFS knowledge answer</span>
-                </a>
-            </td>
-        </tr>
-        {% if eyfs_training_declare is True %}
-        <tr>
-            <td>
-                Will you go on an early years training course?
-            </td>
-            {% if eyfs_training_declare is True %}
-            <td style="word-wrap: break-word">
-                Yes
-            </td>
-            {% elif eyfs_training_declare is False %}
-            <td style="word-wrap: break-word">
-                No
-            </td>
-            {% endif %}
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/eyfs/training?id={{application_id}}#id_eyfs_training_declare"
-                   alt='Change answer on EYFS training course'>
-                    Change <span class="visuallyhidden">answer on EYFS training course</span>
-                </a>
-            </td>
-        </tr>
-        {% endif %}
-        <tr>
-            <td>
-                Will you answer questions about your early years knowledge?
-            </td>
-            {% if eyfs_questions_declare is True %}
-            <td style="word-wrap: break-word">
-                Yes
-            </td>
-            {% elif eyfs_questions_declare is False %}
-            <td style="word-wrap: break-word">
-                No
-            </td>
-            {% endif %}
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/eyfs/questions?id={{application_id}}#id_eyfs_questions_declare"
-                   alt='Change answer on EYFS questions'>
-                    Change <span class="visuallyhidden">answer on EYFS questions</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <br>
-    <div class="form-group grid-row">
-        <form action="{{ URL_PREFIX}}/task-list?id={{application_id}}" method="get">
-            <input type="submit" class="button" value="Confirm and continue"/>
-            <input type="hidden" value="{{application_id}}" name="id"/>
-        </form>
-    </div>
-    <br>
+{% include "back-button.html" %}
+<h1 class="form-title heading-large">Check your answers: early years training</h1>
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="3">
+            <div class="heading-medium">
+                Early years training
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="summary-column">
+            Title of training course
+        </td>
+        <td class="summary-column" style="word-wrap: break-word">
+            {{eyfs_course_name}}
+        </td>
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/early-years/details?id={{application_id}}#id_eyfs_course_name"
+               alt='Change course title'>
+                Change <span class="visuallyhidden">course title</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Date you completed course
+        </td>
+        <td>
+            {{eyfs_course_date}}
+        </td>
+        <td class="change-answer">
+            <a href="{{ URL_PREFIX }}/early-years/details?id={{application_id}}#id_eyfs_course_date_0"
+               alt='Change course completion date'>
+                Change <span class="visuallyhidden">course completion date</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="form-group">
+    <form action="{{ URL_PREFIX}}/task-list?id={{application_id}}" method="get">
+        <input type="submit" class="button" value="Confirm and continue"/>
+        <input type="hidden" value="{{application_id}}" name="id"/>
+    </form>
 </div>
 
 {% endblock %}

@@ -8,7 +8,8 @@ html {
   color: black;
   text-shadow: none;
   filter: none;
-  -ms-filter: none; }
+  -ms-filter: none;
+  }
 
 body {
   font-family: sans-serif;
@@ -21,7 +22,12 @@ body {
   width: 100%; }
 
 a, a:visited {
-  word-wrap: break-word; }
+  word-wrap: break-word;
+   display: none !important;}
+
+input {
+    display: none !important;
+}
 
 a[href^="/"]:after,
 a[href^="http://"]:after,
@@ -38,6 +44,14 @@ img {
 
 select {
   background: white; }
+
+table {
+    page-break-inside: avoid;
+    }
+
+td {
+    padding-top: 10px;
+}
 
 #global-header {
   margin: 3px 0 1em; }
@@ -67,9 +81,21 @@ select {
     border: 0;
     vertical-align: middle; }
 
-/* hide the unnecessary page elements */
-body footer,
-.visuallyhidden,
-#global-cookie-message,
-#skiplink-container {
-  display: none !important; }
+.summary-column {
+    width: 50%;
+}
+
+.heading-medium {
+    text-align: left !important;
+    margin-top: 20px !important;
+}
+
+.heading-medium {
+    margin: 22.5px, 0px, 9px, 0px
+}
+
+@media print {
+    .no-print {
+      display: none !important;
+    }
+}

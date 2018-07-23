@@ -1,56 +1,29 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}DBS check{% endblock %}
+{% block page_title %}Post your DBS certificate{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
+{% include "back-button.html" %}
+<div class="two-thirds">
 {{form.error_summary}}
-
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/dbs-check/dbs-details?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt="Back to application list">
-            Back
-        </a>
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Post your DBS certificate
+        </h1>
+        <p>We need your certificate to check details of any cautions or convictions.</p>
+        <p>You must send your original certificate (not a photocopy) to Ofsted.</p>
+        <p class="text-before-button">We will check your certificate and send it back to you.</p>
+        {% csrf_token %}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" id="dbs-upload-continue" value="Save and continue">
     </div>
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Post your DBS certificate
-            </h1>
-        </div>
-        <div class="form-group grid-row">
-            <p>You will have to send your original DBS certificate to Ofsted.</p>
-            <p>We need this to check details of any cautions or convictions.</p>
-            <p>Please send your original certificate (not a photocopy) to:</p>
-            <p>
-                Ofsted
-                </br>
-                Piccadilly Gate
-                </br>
-                Store Street
-                </br>
-                Manchester
-                </br>
-                M1 2WD
-            </p>
-            <p>We will check your certificate and send it back to you.</p>
-            <h2 class="form-title heading-medium">
-                I declare that:
-            </h2>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="hidden" value="{{application_id}}" name="id"/>
-            <input type="submit" class="button" value="Save and continue">
-        </div>
-        <div class="form-group grid-row">
-            <div class="form-group">
-                <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-            </div>
-        </div>
-    </form>
+</form>
 </div>
+
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

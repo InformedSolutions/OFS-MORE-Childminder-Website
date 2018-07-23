@@ -1,45 +1,61 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Declaration{% endblock %}
+{% block page_title %}Your declaration{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
+{% include "back-button.html" %}
 
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
-{{form2.error_summary}}
+<div class="two-thirds">
+{{declaration_form.error_summary}}
 
-<div class="column-two-thirds">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/declaration/summary?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
-    <div class="form-group grid-row">
-        <h1 class="form-title heading-large">
-            Declaration and consent
-        </h1>
-        <p>Ofsted will have to check your details, inspect your home and interview you after you apply.</p>
-        <p>The interview will include questions on the Early Years Foundation Stage (EYFS).</p>
-        <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-            <h2 class="heading-medium">
-                Ready to apply?
-            </h2>
-            <p>Please confirm you are happy to apply and go ahead with the next steps.</p>
-            <h3 class="heading-small">
-                I am happy for Ofsted to:
-            </h3>
-            {{form.as_div}}
-            <h3 class="heading-small">
-                I declare that:
-            </h3>
-            {{form2.as_div}}
-            {% csrf_token %}
-            <input type="hidden" value="{{application_id}}" name="id"/>
+<div class="form-group">
+    <h1 class="form-title heading-large">
+        Your declaration
+    </h1>
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        <h3 class="heading-small">
+            I understand that Ofsted will:
+        </h3>
+        {{ fields.0 }}
+        <h3 class="heading-small">
+            I am happy for Ofsted to:
+        </h3>
+        {{ fields.1 }}
+
+        <h3 class="heading-small">
+            {% if is_resubmission %}
+            By continuing, I reconfirm that:
+            {% else %}
+            By continuing, I confirm that:
+            {% endif %}
+        </h3>
+        {{ fields.2 }}
+        {{ fields.3 }}
+        {{ fields.4 }}
+
+        <p>
+            <img src="{% static 'icon-important-2x.png' %}" alt="Important"
+                        style="height: 40px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
+            <b class="bold">You can be disqualified if you:</b>
+            <div class="bold">
+                <ul class="list-bullet">
+                    <li>give us false information</li>
+                    <li>hide information</li>
+                </ul>
+            </div>
+        </p>
+
+        {% csrf_token %}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+
+        {% if is_resubmission %}
+            <input type="submit" class="button" value="Confirm"/>
+        {% else %}
             <input type="submit" class="button" value="Confirm and pay your fee"/>
-        </form>
-    </div>
+        {% endif %}
+    </form>
+</div>
 </div>
 
 {% endblock %}

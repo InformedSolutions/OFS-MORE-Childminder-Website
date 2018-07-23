@@ -5,67 +5,54 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        {% if childcare_type_status == 'NOT_STARTED' %}
-        <a href="{{ URL_PREFIX }}/account/summary?id={{application_id}}" class="link-back" style="margin-right: 10px;
-        line-height: 28px">
-            Back
-        </a>
-        {% elif childcare_type_status == 'IN_PROGRESS' %}
-        <a href="{{ URL_PREFIX }}/account/summary?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-        {% elif childcare_type_status == 'COMPLETED' %}
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-        {% endif %}
-    </div>
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Type of childcare
-            </h1>
-            <p>You need to say what age groups you will be looking after.</p>
-            <p>This is so you can join the right register.</p>
+{% include "back-button.html" %}
+<div class="two-thirds">
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Type of childcare
+        </h1>
+        <p>You need to say what age groups you could be looking after.</p>
+        <p>This is so you can join the right registers.</p>
+        <div class="form-group">
             <table>
                 <thead>
                     <tr>
-                        <th colspan="2"></th>
+                        <th>Age of children</th>
+                        <th>Register</th>
+                        <th>Cost</th>
                     </tr>
                 </thead>
                 <tbody>
                 <tr>
-                    <td style="font-weight: bold;">Age of children</td>
-                    <td style="font-weight: bold;">Register</td>
-                </tr>
-                <tr>
                     <td>0 to 5</td>
                     <td>Early Years</td>
+                    <td>&#163;35</td>
                 </tr>
                 <tr>
                     <td>5 to 7</td>
                     <td>Childcare (compulsory part)</td>
+                    <td>&#163;103</td>
                 </tr>
                 <tr>
                     <td>8 or older</td>
                     <td>Childcare (voluntary part)</td>
+                    <td>&#163;103</td>
                 </tr>
                 </tbody>
             </table>
-            <br>
-            <p>You can join more than one register if you don't know what ages you will be caring for.</p>
-            <br>
-            {% csrf_token %}
-            {{form.as_div}}
-            <input type="hidden" value="{{application_id}}" name="id"/>
-            <input type="submit" class="button" value="Continue">
         </div>
-    </form>
+        <p class="text-before-button">It costs &#163;35 to join both registers.</p>
+        {% csrf_token %}
+        {{form.as_div}}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" value="Continue">
+    </div>
+    {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
+        {% include 'return-to-list.html' %}
+    {% endif %}
+</form>
 </div>
 
 {% endblock %}

@@ -5,65 +5,55 @@
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{% for form in form_list %}
-{{form.error_summary}}
-{% endfor %}
+{% include "back-button.html" %}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/other-people/adult-dbs?id={{application_id}}&adults={{number_of_adults}}"
-           class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
-            Back
-        </a>
-    </div>
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Permission for background checks
-            </h1>
-            <p>We will carry out background checks on adults in your home.</p>
-            <p>We will check with social services as well as other agencies.</p>
-            <details style="margin-bottom: 15px;" role="group">
-                <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">How do I tell people about the checks?</span>
-                </summary>
-                <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
-                    <p>You can use the leaflet below to tell people about the checks.</p>
-                    <p>
-                        <img src="{% static 'download-button.png' %}" alt="Download">
-                        <a href="https://drive.google.com/open?id=1An4B3laX6u4uIX7XcoJXrUOU1gWuRfNp" target="_blank">Leaflet
-                            on background checks</a> (PDF, 174KB, 1 page)
-                    </p>
-                </div>
+<!-- Initialise error summary for page -->
+<div class="two-thirds">
+{% for form in form_list %}
+    {{form.error_summary}}
+{% endfor %}
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Permission for background checks
+        </h1>
+        <p>We will carry out background checks on adults in your home.</p>
+        <p>We will check with social services as well as other agencies.</p>
+        <details style="margin-bottom: 15px;" role="group">
+            <summary role="button" aria-controls="details-content-0" aria-expanded="false"><span class="summary">How do I tell people about the checks?</span>
+            </summary>
+            <div class="panel panel-border-narrow" id="details-content-0" aria-hidden="true">
+                <p>You can use the leaflet below to tell people about the checks.</p>
+                <p>
+                    <img src="{% static 'download-button.png' %}" alt="Download" class="icon-ofsted-download">
+                    <a href="https://drive.google.com/open?id=1An4B3laX6u4uIX7XcoJXrUOU1gWuRfNp" target="_blank">Leaflet
+                        on background checks</a> (PDF, 174KB, 1 page)
+                </p>
+            </div>
             <br>
-            </details>
-            <h2 class="form-title heading-medium">
-                Permission for checks
-            </h2>
-            <p>You must tell each person about the checks and get their permission.</p>
-            <h2 class="form-title heading-medium">
-                I declare that:
-            </h2>
-            <p>I have told each person about the checks and they have given their permission.</p>
-            <p style="color: #6F777B;">Tick each box to confirm</p>
-            {% for form in form_list %}
-            {{form.as_div}}
-            {% endfor %}
-            {% csrf_token %}
-            <input type="hidden" value="{{application_id}}" name="id"/>
-            <input type="submit" class="button" value="Save and continue">
-            <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
-        </div>
-    </form>
-    </br>
-    <!-- Return to task list -->
-    <div class="form-group grid-row">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
+        </details>
+        <h2 class="form-title heading-medium">
+            Permission for checks
+        </h2>
+        <p>You must tell each person about the checks and get their permission.</p>
+        <h2 class="form-title heading-medium">
+            I declare that:
+        </h2>
+        <p>I have told each person about the checks and they have given their permission.</p>
+        <p style="color: #6F777B;">Tick each box to confirm</p>
+        {% for form in form_list %}
+        {{form.as_div}}
+        {% endfor %}
+        {% csrf_token %}
+        <input type="hidden" value="{{application_id}}" name="id"/>
+        <input type="submit" class="button" value="Save and continue">
+        <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
     </div>
+</form>
 </div>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

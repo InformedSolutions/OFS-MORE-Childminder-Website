@@ -1,0 +1,60 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Payment confirmed{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+<div class="two-thirds">
+    <div class="govuk-box-highlight">
+        <h1 class="bold-large">You have resubmitted your application</h1>
+        <br>
+        <p>
+            Your application number is
+            <br>
+            <br>
+            <strong class="heading-medium">{{order_code}}</strong>
+        </p>
+    </div>
+    {% if updated_list %}
+    <h2 class="heading-medium">
+        Update summary
+    </h2>
+    <div class="form-group" id="update-summary">
+        You have updated the following:
+        <ul class="list-bullet top-padded">
+            {% for task in updated_list %}
+            <li>{{ task }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <h2 class="heading-medium">
+        Your application details
+    </h2>
+    <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print"
+                                       style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
+        <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print
+            this page</a></p>
+    <p style="margin-left: 20px;"><img src="{% static 'printer.png' %}" alt="Print"
+                                       style="height: 20px; margin-right: 10px; display: inline-block; vertical-align: middle;"/>
+        <a href="{% url 'Print-Handler-View' page='master-summary' %}?id={{ application_id }}&orderCode={{order_code}}">Print
+            application</a></p>
+    <h2 class="heading-medium">
+        What's next
+    </h2>
+    <p>Ofsted will:</p>
+    <ul class="list-bullet">
+        <li>review your application again</li>
+        <li>ask for references</li>
+        <li>carry out background checks with other organisations</li>
+        <li>check the health declaration booklet</li>
+        <li>arrange for an inspector to visit</li>
+    </ul>
+    <p class="top-padded">All this usually takes up to 12 weeks.</p>
+    <p>There can be delays if information is missing or we have to wait for references or background checks.</p>
+    <p>Once all the checks have been done, an inspector will call you to arrange a date when they can visit.</p>
+    <p>The inspector will tell you their recommendation on the day of the visit.</p>
+</div>
+
+{% endblock %}

@@ -5,37 +5,30 @@
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
+{% include "back-button.html" %}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/personal-details?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large" style="margin-top: 0px;">
-                Your name
-            </h1>
-            <p>Please give us your full name, including any middle names.</p>
-            {{form.as_div}}
-            {% csrf_token %}
-        </div>
-        <div class="form-group grid-row">
-            <input type="submit" class="button" value="Save and continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-        <!-- Return to task list -->
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    </form>
+<!-- Initialise error summary for page -->
+<div class="two-thirds">
+{{form.error_summary}}
 </div>
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="two-thirds">
+        <h1 class="form-title heading-large">
+            Your name
+        </h1>
+        <p>Please give us your full name, including any middle names.</p>
+        <p>The details must match what is on your criminal record (DBS) check.</p>
+    </div>
+    {{form.as_div}}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Save and continue">
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+</form>
+<br>
+{% if personal_details_status == 'COMPLETED' %}
+{% include 'return-to-list.html' %}
+{% endif %}
 
 {% endblock %}

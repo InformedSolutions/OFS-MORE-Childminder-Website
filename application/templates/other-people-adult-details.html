@@ -1,59 +1,50 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}People in your home{% endblock %}
+{% block page_title %}Details of adults in your home{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
+{% include "back-button.html" %}
+
 <!-- Initialise error summary for page -->
+<div class="two-thirds">
 {% for form in form_list %}
-{{form.error_summary}}
+    {{form.error_summary}}
 {% endfor %}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/other-people/adult-question?id={{application_id}}&adults={{number_of_adults}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
-            Back
-        </a>
-    </div>
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Details of adults in your home
-            </h1>
-            <p>Please give details of everyone aged 16 or over.</p>
-            <p>The names must match the ones in their criminal record (DBS) checks.</p>
-            {% for form in form_list %}
-            <h2 class="form-title heading-medium">
-                Person {{form.prefix}}
-            </h2>
-            {{form.as_div}}
-            {% if remove_button is True %}
-            <a href="{{ URL_PREFIX }}/other-people/adult-details?id={{application_id}}&adults={{remove_adult}}&remove={{form.prefix}}"
-               style="margin-left: 0px;"><b>Remove person</b></a>
-            {% endif %}
-            {% endfor %}
-            {% csrf_token %}
-            <input type="hidden" value="{{application_id}}" name="id"/>
-            <br>
-            <br>
-            <input type="submit" class="button-save-and-exit" style="margin-left: 0px;" name="add_person" value="Add another person">
-            <br>
-            <br>
-            <input type="submit" class="button" name="submit" value="Save and continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-            <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
-        </div>
-    </form>
-    <br>
-    <!-- Return to task list -->
-    <div class="form-group grid-row">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
+<h1 class="form-title heading-large">
+    Details of adults in your home
+</h1>
+<p>Please give details of everyone aged 16 or over.</p>
+<p>The names must match the ones in their criminal record (DBS) checks.</p>
 </div>
+
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    {% for form in form_list %}
+    <h2 class="form-title heading-medium" id="person{{form.prefix}}">
+        Person {{form.prefix}}
+    </h2>
+    {{form.as_div}}
+    {% if remove_button is True %}
+        <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{remove_adult}}&remove={{form.prefix}}"
+           class="no-left-margin"><b>Remove this person</b>
+        </a>
+    {% endif %}
+    {% endfor %}
+    {% csrf_token %}
+    <input type="hidden" value="{{application_id}}" name="id"/>
+
+    <!-- button to be triggered should a user press Enter rather than click a button -->
+    <input type="submit" class="button js-hidden" name="submit" value="Save and continue">
+
+    <input type="submit" class="button-secondary button-add-another" name="add_person" value="Add another person">
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    <input type="hidden" id="adults" name="adults" value="{{number_of_adults}}"/>
+    <input type="submit" class="button" name="submit" value="Save and continue" id="adult-details-save">
+</form>
+<br>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

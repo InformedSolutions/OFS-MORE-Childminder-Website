@@ -13,17 +13,44 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 
 # Server name for showing server that responded to request under load balancing conditions
-SERVER_LABEL = 'Test_1'
+SERVER_LABEL = os.environ.get('SERVER_LABEL')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 # Expiry period of Magic Link Emails and Texts in hours
-SMS_EXPIRY = 1
-EMAIL_EXPIRY = 1
+SMS_EXPIRY = 24
+EMAIL_EXPIRY = 24
 
 # Visa Validation
-VISA_VALIDATION = False
+VISA_VALIDATION = os.environ.get('VISA_VALIDATION') == 'True'
+
+# Base URL of notify gateway
+NOTIFY_URL = os.environ.get('APP_NOTIFY_URL')
+
+# Base URL of payment gateway
+PAYMENT_URL = os.environ.get('APP_PAYMENT_URL')
+
+# Base URL of addressing-service gateway
+ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL')
+
+PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
+
+EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
+
+FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'tester@informed.com')
+
+TEST_NOTIFY_CONNECTION = True
+
+APPLICATION_PREFIX = 'CM'
+
+PAYMENT_PROCESSING_ATTEMPTS = os.environ.get('PAYMENT_PROCESSING_ATTEMPTS', 10)
+PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS = os.environ.get('PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS', 10)
+
+PAYMENT_HTTP_REQUEST_TIMEOUT = 60
+
+GOOGLE_ANALYTICS = {
+}
 
 # INSTALLED DJANGO APPLICATIONS
 
@@ -40,7 +67,8 @@ THIRD_PARTY_APPS = [
     'govuk_forms',
     'govuk_template',
     'govuk_template_base',
-    'google_analytics'
+    'google_analytics',
+    'timeline_logger'
 ]
 
 PROJECT_APPS = [
@@ -72,12 +100,15 @@ TEMPLATES = [
             'context_processors': [
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
+                "application.middleware.globalise_authentication_flag",
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'django_settings_export.settings_export',
-                'govuk_template_base.context_processors.govuk_template_base',
                 "application.middleware.globalise_url_prefix",
-                "application.middleware.globalise_server_name"
+                "application.middleware.globalise_server_name",
+                "application.middleware.register_as_childminder_link_location",
+                'govuk_template_base.context_processors.govuk_template_base',
+                "application.middleware.hide_costs_link",
             ],
         },
     },
@@ -94,25 +125,12 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
+SECURE_BROWSER_XSS_FILTER = True
+CSRF_COOKIE_HTTPONLY = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
-
-URL_PREFIX = '/childminder'
-STATIC_URL = URL_PREFIX + '/static/'
-
-AUTHENTICATION_URL = URL_PREFIX + '/existing-application/'
-
-AUTHENTICATION_EXEMPT_URLS = (
-    r'^' + URL_PREFIX + '/$',
-    r'^' + URL_PREFIX + '/account/account/$',
-    r'^' + URL_PREFIX + '/account/email/$',
-    r'^' + URL_PREFIX + '/email-sent/$',
-    r'^' + URL_PREFIX + '/validate/.*$',
-    r'^' + URL_PREFIX + '/verify-phone/.*$',
-    r'^' + URL_PREFIX + '/bad-link/$',
-    r'^' + URL_PREFIX + '/code-expired/$',
-    r'^' + URL_PREFIX + '/djga/+',
-)
 
 STATICFILES_FINDERS = [
     'django.contrib.staticfiles.finders.FileSystemFinder',
@@ -131,12 +149,67 @@ TEST_OUTPUT_VERBOSE = True
 TEST_OUTPUT_DESCRIPTIONS = True
 TEST_OUTPUT_DIR = 'xmlrunner'
 
-GOOGLE_ANALYTICS = {
-    'google_analytics_id': "UA-114456515-1"
-}
-
 # Export Settings variables DEBUG to templates context
 SETTINGS_EXPORT = [
     'DEBUG'
 ]
 
+# Regex Validation Strings
+REGEX = {
+    "EMAIL": "^([a-zA-Z0-9_\-\.']+)@([a-zA-Z0-9_\-\.]+)\.([a-zA-Z]{2,5})$",
+    "MOBILE": "^(\+44|0044|0)[7][0-9]{9}$",
+    "PHONE": "^(?:(?:\(?(?:0(?:0|11)\)?[\s-]?\(?|\+)44\)?[\s-]?(?:\(?0\)?[\s-]?)?)|(?:\(?0))(?:(?:\d{5}\)?[\s-]?\d{4,"
+             "5})|(?:\d{4}\)?[\s-]?(?:\d{5}|\d{3}[\s-]?\d{3}))|(?:\d{3}\)?[\s-]?\d{3}[\s-]?\d{3,4})|(?:\d{2}\)?["
+             "\s-]?\d{4}[\s-]?\d{4}))(?:[\s-]?(?:x|ext\.?|\#)\d{3,4})?$",
+    "INTERNATIONAL_PHONE": "^(\+|[0-9])[0-9]{5,20}$",
+    "POSTCODE_UPPERCASE": "^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$",
+    "LAST_NAME": "^[A-zÀ-ÿ- ']+$",
+    "MIDDLE_NAME": "^[A-zÀ-ÿ- ']+$",
+    "FIRST_NAME": "^[A-zÀ-ÿ- ']+$",
+    "TOWN": "^[A-Za-z- ]+$",
+    "COUNTY": "^[A-Za-z- ]+$",
+    "COUNTRY": "^[A-Za-z- ]+$",
+    "VISA": "^4[0-9]{12}(?:[0-9]{3})?$",
+    "MASTERCARD": "^(?:5[1-5][0-9]{2}|222[1-9]|22[3-9][0-9]|2[3-6][0-9]{2}|27[01][0-9]|2720)[0-9]{12}$",
+    "MAESTRO": "^(?:5[0678]\d\d|6304|6390|67\d\d)\d{8,15}$",
+    "CARD_SECURITY_NUMBER": "^[0-9]{3,4}$"
+}
+
+LOGGING = {
+  'version': 1,
+  'disable_existing_loggers': False,
+  'formatters': {
+    'console': {
+            # exact format is not important, this is the minimum information
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+        },
+  'handlers': {
+    'file': {
+        'level': 'DEBUG',
+        'class': 'logging.handlers.RotatingFileHandler',
+        'maxBytes': 1 * 1024 * 1024,
+        'filename': 'logs/output.log',
+        'formatter': 'console',
+        'maxBytes': 1 * 1024 * 1024,
+        'backupCount': 30
+    },
+    'console': {
+        'level': 'DEBUG',
+        'class': 'logging.StreamHandler'
+    },
+   },
+   'loggers': {
+     '': {
+       'handlers': ['file', 'console'],
+         'level': 'DEBUG',
+           'propagate': True,
+      },
+      'django.server': {
+       'handlers': ['file', 'console'],
+         'level': 'INFO',
+           'propagate': True,
+      },
+    },
+
+}

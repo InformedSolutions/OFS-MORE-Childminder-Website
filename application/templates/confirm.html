@@ -5,13 +5,9 @@
 
 {% block inner_content %}
 
+<div class="two-thirds">
 <div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
+    {% include "back-button.html" %}
     <div class="grid-row">
         <h1 class="form-title heading-large">
             Check and confirm all your details
@@ -356,15 +352,14 @@
     </table>
     <br>
     <div class="form-group grid-row">
-        <form action="{{ URL_PREFIX }}/payment" method="get">
+        <form action="{% url 'Payment-View' %}" method="get">
             <input type="submit" class="button" value="Save and continue"/>
             <input type="hidden" value="{{application_id}}" name="id"/>
         </form>
     </div>
     <input type="hidden" value="{{application_id}}" name="id"/>
-    <div class="form-group grid-row">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
+    {% include 'return-to-list.html' %}
+</div>
 </div>
 
 {% endblock %}

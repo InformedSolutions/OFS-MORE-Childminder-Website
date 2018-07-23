@@ -1,0 +1,19 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Email resent{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+<h1 class="form-title heading-large">
+    Email resent
+</h1>
+<p>We've resent you a link.</p>
+<p>This can take a few minutes to arrive.</p>
+<p>If you still don't get an email, please <a href="{% url 'Help-And-Contact-View' %}">contact Ofsted</a>.</p>
+</div>
+
+{% endblock %}

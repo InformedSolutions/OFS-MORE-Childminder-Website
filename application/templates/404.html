@@ -5,13 +5,14 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    <div class="grid-row">
-        <h1 class="form-title heading-large">
-            Not found
-        </h1>
-        <p>The page you requested could not be found.</p>
-    </div>
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+<h1 class="form-title heading-large">
+    Not found
+</h1>
+
+<p>The page you requested could not be found.</p>
 </div>
 
 {% endblock %}

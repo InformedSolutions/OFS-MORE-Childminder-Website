@@ -1,0 +1,4 @@
+{% load i18n %}
+{% blocktrans trimmed with action=log.extra_data.action %}
+   Field {{ formatted_field }} has been {{ action }}
+{% endblocktrans %}

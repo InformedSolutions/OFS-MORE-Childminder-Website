@@ -5,34 +5,30 @@
 
 {% block inner_content %}
 
+{% include "back-button.html" %}
+
 <!-- Initialise error summary for page -->
+<div class="two-thirds">
 {{form.error_summary}}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/personal-details/your-name?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="two-thirds">
+        <h1 class="form-title heading-large">
+            Your date of birth
+        </h1>
     </div>
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large" style="margin-top: 0px;">
-                Your date of birth
-            </h1>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-        </br>
-        <!-- Return to task list -->
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    </form>
+    {{form.as_div}}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Save and continue">
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+</form>
+<br>
+
+{% if personal_details_status == 'COMPLETED' %}
+{% include 'return-to-list.html' %}
+{% endif %}
 </div>
 
 {% endblock %}

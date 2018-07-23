@@ -1,0 +1,33 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Prepare for your interview{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+<div class="two-thirds">
+<div class="grid-row">
+   {% include "back-button.html" %}
+    <h2 class="heading-large">
+        Prepare for your interview
+    </h2>
+    <p>The inspector will ask how you will meet the standards for looking after young children.</p>
+    <p>They will ask how you will make sure that:</p>
+    <ul class="list-bullet" style="margin-bottom: 20px; margin-left: 20px;">
+        <li>children learn and develop well</li>
+        <li>children are kept healthy and safe</li>
+        <li>children have the knowledge and skills they need to start school</li>
+    </ul>
+    <p>Read the <a href="https://www.gov.uk/government/publications/early-years-foundation-stage-framework--2" target="_blank">Early Years Foundation Stage</a> for details</p>
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Continue">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </form>
+    <br>
+    <p class="next-steps">Next: Documents you need for the visit</p>
+</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,59 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Running background checks{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+<div class="two-thirds">
+<div class="govuk-box-highlight">
+    <h1 class="bold-large">Doing background checks</h1>
+    <br/>
+    <p>
+        Your application number is
+        <br>
+        <br>
+        <strong class="heading-medium">{{application_reference}}</strong>
+    </p>
+</div>
+
+<h2 class="form-title heading-medium">
+    No action needed
+</h2>
+
+<p>We are currently doing background checks on you and people in your home.</p>
+
+<p>This includes:</p>
+
+<ul class="list list-bullet">
+    <li>contacting your references</li>
+    <li>carrying out checks with council social services</li>
+    <li>checking your health declaration booklet</li>
+</ul>
+
+<p>This usually takes up to 12 weeks.</p>
+
+<h2 class="form-title heading-medium no-print">
+    Your application details
+</h2>
+
+{% include 'print-links.html' %}
+
+<h2 class="form-title heading-medium">
+    Update your details
+</h2>
+
+<p>You must tell Ofsted about any changes to your details within 14 days.</p>
+
+<p>This includes changes to:</p>
+
+<ul class="list list-bullet">
+    <li>your name</li>
+    <li>the childcare address</li>
+    <li>overnight care</li>
+</ul>
+
+<p>You must also let us know of any children you live with who have turned 16.</p>
+</div>
+
+{% endblock %}

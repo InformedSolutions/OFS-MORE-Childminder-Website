@@ -1,18 +1,20 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Bad link{% endblock %}
+{% block page_title %}Link used already{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
-<div class="column-full">
-    <div class="grid-row">
-        <h1 class="form-title heading-large">
-            Bad link
-        </h1>
-        <p>You have navigated to a bad link.</p>
-        <p>Please try logging back in to your account <a href="{{ URL_PREFIX }}/existing-application/">here</a>.</p>
-    </div>
+<div class="two-thirds">
+<h1 class="form-title heading-large">
+    Link used already
+</h1>
+
+<p>The link we sent you can only be used once.</p>
+
+<p>
+    <a href="{% url 'Existing-Email' %}">Enter your email again</a>
+</p>
 </div>
 
 {% endblock %}

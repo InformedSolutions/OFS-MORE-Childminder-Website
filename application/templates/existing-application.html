@@ -1,34 +1,26 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Log back in{% endblock %}
+{% block page_title %}Sign in{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
-{{form.error_summary}}
-
-<div class="column-full">
-    <div class="grid-row" style="padding-top: 30px;">
-        <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/" class="link-back" style="margin-right: 10px; line-height: 28px" alt="Back to application list">
-            Back
-        </a>
-    </div>
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data"{% endif %}>
-        <div class="grid-row">
-            <h1 class="form-title heading-large">
-                Log into your childminder application
-            </h1>
-            <p>Please enter your email address so we can find your application.</p>
-            {% csrf_token %}
-            {{form.as_div}}
-        </div>
-        <div class="form-group grid-row">
-            <input type="submit" class="button" value="Continue">
-            <input type="hidden" name="id" value="Save and continue" />
-        </div>
-    </form>
+{% include "back-button.html" %}
+<div class="two-thirds">
+    {{form.error_summary}}
 </div>
-	
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <div class="two-thirds">
+        <h1 class="form-title heading-large">
+            Sign in
+        </h1>
+        <p>Enter your email address.</p>
+        <p>We will send you a link to go back to your application.</p>
+    </div>
+    {% csrf_token %}
+    {{form.as_div}}
+
+    <input type="submit" class="button" value="Continue" alt="Continue">
+</form>
+
 {% endblock %}

@@ -1,0 +1,28 @@
+{% for table in table_list %}
+{% if table.get_error_amount != 0 %}
+  <div class="error-summary" aria-labelledby="error-summary-heading-{{ random_string }}" role="alert" tabindex="-1">
+    <h2 class="heading-medium error-summary-heading" id="error-summary-heading-{{ random_string }}">
+      {{ table.error_summary_title }}
+    </h2>
+    <ul class="error-summary-list">
+    {% with other_people_numbers=table.other_people_numbers %}
+      <p>You need to update the following: </p>
+      {% for row in table.row_list %}
+        <li class="field-error">
+          <ul>
+              {% if row.error %}
+                <!--Add conditional for health check status row to match that in generic-error-summary.-->
+                {% if row.row_name == 'Health check status' %}
+                  <a href="{% url row.back_link %}?id={{application_id}}&adult={{ table.loop_counter|add:"2" }}" alt='Resend email'>{{ row.row_name }}</a>
+                {% else %}
+                  <a href="{% url row.back_link %}?id={{application_id}}{{other_people_numbers}}">{{ row.row_name }}</a>
+                {% endif %}
+              {% endif %}
+          </ul>
+        </li>
+      {% endfor %}
+    {% endwith %}
+    </ul>
+  </div>
+{% endif %}
+{% endfor %}

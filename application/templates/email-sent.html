@@ -1,25 +1,29 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Email sent{% endblock %}
+{% block page_title %}Check your email{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
-<div class="column-full">
-    <div class="grid-row" style="padding-top: 30px;">
-        <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/existing-application/" class="link-back" style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
-            Back
-        </a>
-    </div>
-    <div class="grid-row">
-        <h1 class="form-title heading-large">
-            Check your e-mail
-        </h1>
-        <p>An e-mail has been sent to you with a link to retrieve your application.</p>
-        <a href="{{ URL_PREFIX }}/">Return to account selection</a>
-    </div>
+{% include "back-button.html" %}
+<div class="two-thirds">
+{{form.error_summary}}
+
+<h1 class="form-title heading-large">
+    Check your email
+</h1>
+<p>We've sent a link to {{ email }}.</a></p>
+    {% if change_email %}
+        <p>You must click on the link to change your email.</p>
+    {% endif %}
+<p>This can take a few minutes to arrive.</p>
+<p>If you don't get an email:</p>
+<ul class="list-bullet">
+    <li>check your spam or junk folders</li>
+    <li>check you have entered the correct email</li>
+    <li><a href="{{ resend_url }}">resend the email</a></li>
+</ul>
 </div>
+
 
 {% endblock %}

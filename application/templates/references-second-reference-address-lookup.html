@@ -1,50 +1,35 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}References{% endblock %}
+{% block page_title %}Select second reference address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
+{% include "back-button.html" %}
+<div class="two-thirds">
 {{form.error_summary}}
-
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/references/second-reference-address?id={{application_id}}&manual=False&lookup=False" class="link-back"
-           style="margin-right: 10px; line-height: 28px" alt="Back to application list">
-            Back
-        </a>
-    </div>
-    <!-- Form -->
-    <form method="post" {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                Second reference address
-            </h1>
-            <p>Please give details of the address for this referee.</p>
-            <h2 class="form-title heading-small">Postcode</h2>
-            <p>{{postcode}} <a href="{{ URL_PREFIX }}/references/second-reference-address?id={{application_id}}&manual=False&lookup=False">Change</a></p>
-            <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
-            {{form.as_div}}
-            {% csrf_token %}
-            </br>
-            <a href="{{ URL_PREFIX }}/references/second-reference-address?id={{application_id}}&manual=True&lookup=False" name="manual"
-               id="manual">I can't find my address in the list</a>
-            </br>
-            </br>
-            <input type="submit" class="button button-submit" value="Save and continue" alt='Continue to declaration'>
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-            <input type="hidden" id="manual" name="manual" value="True"/>
-            <input type="hidden" id="lookup" name="lookup" value="False"/>
-            <input type="hidden" id="finish" name="finish" value="False" />
-        </div>
-        </br>
-        <!-- Return to task list -->
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    </form>
 </div>
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="two-thirds">
+        <h1 class="form-title heading-large">
+            Second reference address
+        </h1>
+        <p>Please give the address for your second referee.</p>
+        <h2 class="form-title heading-small">Postcode</h2>
+    </div>
+    <p>{{postcode}} <a href="{% url 'References-Second-Reference-Address-View' %}?id={{application_id}}">Change</a></p>
+    <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
+    {{form.as_div}}
+    {% csrf_token %}
+    <a href="{% url 'References-Enter-Second-Reference-Address-View' %}?id={{application_id}}" name="manual"
+       id="manual">I can't find my address in the list</a>
+    <input type="submit" class="button button-submit" value="Save and continue">
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+</form>
+<br>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

@@ -5,31 +5,26 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px"
-           alt="Back to application list">
-            Back
-        </a>
+{% include "back-button.html" %}
+<!-- Form -->
+<div class="two-thirds">
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            People in your home
+        </h1>
+        <p>Tell us about everyone in your home, such as your partner, children or other family members.</p>
+        <p>This is to check that the home is a safe place for children.</p>
+        <p>Include anyone who stays with you regularly, like a child who stays during university holidays.</p>
+        <p>Also tell us about anyone who will work there when you're looking after children, like an assistant, carer or cleaner.</p>
+        <p class="text-before-button">Anyone aged 16 or over must get a criminal record (DBS) check.</p>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Continue">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large">
-                People in your home
-            </h1>
-            <p>Tell us about everyone in your home, such as your partner, children or other family members.</p>
-            <p>Include anyone who stays with you regularly, like a child at university.</p>
-            <p>Also tell us about anyone who will be there when you're looking after children, like an assistant, carer or cleaner.</p>
-            <p>Anyone aged 16 or over must get a criminal record (DBS) check.</p>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-    </form>
+</form>
 </div>
 
 {% endblock %}

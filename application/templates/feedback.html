@@ -1,0 +1,24 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Feedback{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+{{form.error_summary}}
+
+<h1 class="form-title heading-large">
+    Feedback
+</h1>
+</div>
+
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    {{form.as_div}}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Submit" alt='Submit' id="submit">
+    <input type="hidden" value="{{ previous_url }}" id="url" name="url">
+</form>
+
+{% endblock %}

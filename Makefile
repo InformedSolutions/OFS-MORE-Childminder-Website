@@ -1,3 +1,4 @@
+
 # Include Makefile settings
 -include .makerc
 
@@ -6,41 +7,71 @@ ifeq ($(OS),Windows_NT)
 	WIN := 1
 endif
 
-# Define python binary depedant on OS
-ifdef WIN
-	PYTHON_BIN = python
-	PIP_BIN = python
-else
-	PYTHON_BIN = .venv/bin/python3
-	PIP_BIN = .venv/bin/pip3
-endif
+compose:
+	docker-compose up $(APP)
 
-# run server
-run:
-	$(PYTHON_BIN) manage.py runserver $(PROJECT_IP):$(PROJECT_PORT)  --settings=$(PROJECT_SETTINGS)
+compose-shell:
+	docker-compose run $(APP) /bin/bash
+
+compose-%:
+	docker-compose run --rm --name $(APP) $(APP) make $*
+	-docker kill $(shell docker ps -q)
 
 # run tests
 test:
-	$(PYTHON_BIN) manage.py test --settings=$(PROJECT_SETTINGS)
+	-rm -r selenium/*.png
+	python manage.py test --settings=$(PROJECT_SETTINGS)
+
+test-selenium:
+	-rm -r selenium/*.png
+	python manage.py test application.tests.test_selenium --settings=$(PROJECT_SETTINGS)
 
 # install depedencies (and virtualenv for linux)
 install:
 ifndef WIN
 	-virtualenv -p python3 .venv
 endif
-	$(PIP_BIN) install -r requirements.txt
+	.venv/bin/pip install -r requirements.txt
+	.venv/bin/pip install -r requirements.dev.txt
+
+# run server
+run:
+	python manage.py runserver $(PROJECT_IP):$(PROJECT_PORT)  --settings=$(PROJECT_SETTINGS)
+
 
 # handle django migrations
 migrate:
-	$(PYTHON_BIN) manage.py makemigrations --settings=$(PROJECT_SETTINGS)
-	$(PYTHON_BIN) manage.py migrate --settings=$(PROJECT_SETTINGS)
+	python manage.py makemigrations --settings=$(PROJECT_SETTINGS)
+	python manage.py migrate --settings=$(PROJECT_SETTINGS)
 
 # handle statics
 static:
-	$(PYTHON_BIN) manage.py collectstatic --settings=$(PROJECT_SETTINGS)
+	python manage.py collectstatic --settings=$(PROJECT_SETTINGS)
 
-shell:
-	$(PYTHON_BIN) manage.py shell_plus --settings=$(PROJECT_SETTINGS)
+shellplus:
+	python manage.py shell_plus --settings=$(PROJECT_SETTINGS)
 
 graph:
-	$(PYTHON_BIN)  manage.py graph_models -a -o childminder_models.png --settings=$(PROJECT_SETTINGS)
+	python manage.py graph_models -a -o childminder_models.png --settings=$(PROJECT_SETTINGS)
+
+load:
+	python manage.py loaddata db.json --settings=${PROJECT_SETTINGS}
+
+export:
+	python manage.py dumpdata --indent 2 --natural-foreign --natural-primary -e sessions -e admin -e contenttypes -e auth.Permission  > db.json --settings=${PROJECT_SETTINGS}
+
+flush:
+	python manage.py sqlflush --settings=${PROJECT_SETTINGS}
+
+rebase:
+	git stash --include-untracked
+	git checkout develop
+	git pull --rebase origin develop
+	if [ $$(git status --porcelain | wc -l) -lt 1 ]; then \
+		git checkout -;\
+		git rebase develop;\
+		git stash apply;\
+	fi;
+
+
+

@@ -5,232 +5,237 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    <div class="grid-row">
-        <h1 class="form-title heading-large">Check your answers: your personal details</h1>
-    </div>
-    <table class="check-your-answers form-group grid-row" style="table-layout: fixed; width: 100%">
-        <thead>
-        <tr>
-            <th colspan="3">
-                <div class="heading-medium">
-                    Your name and date of birth
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>
-                Your name
-            </td>
-            {% if middle_names %}
-            <td style="word-wrap: break-word">
-                {{first_name}} {{middle_names}} {{last_name}}
-            </td>
-            {% elif not middle_names %}
-            <td style="word-wrap: break-word">
-                {{first_name}} {{last_name}}
-            </td>
-            {% endif %}
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/personal-details/your-name?id={{application_id}}" alt='Change your name'>
-                    Change <span class="visuallyhidden">your name</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Your date of birth
-            </td>
-            {% if birth_month == 1 %}
-            <td style="word-wrap: break-word">
-                {{birth_day}} January {{birth_year}}
-            </td>
-            {% elif birth_month == 2 %}
-            <td style="word-wrap: break-word">
-                {{birth_day}} February {{birth_year}}
-            </td>
-            {% elif birth_month == 3 %}
-            <td style="word-wrap: break-word">
-                {{birth_day}} March {{birth_year}}
-            </td>
-            {% elif birth_month == 4 %}
-            <td style="word-wrap: break-word">
-                {{birth_day}} April {{birth_year}}
-            </td>
-            {% elif birth_month == 5 %}
-            <td style="word-wrap: break-word">
-                {{birth_day}} May {{birth_year}}
-            </td>
-            {% elif birth_month == 6 %}
-            <td style="word-wrap: break-word">
-                {{birth_day}} June {{birth_year}}
-            </td>
-            {% elif birth_month == 7 %}
-            <td style="word-wrap: break-word">
-                {{birth_day}} July {{birth_year}}
-            </td>
-            {% elif birth_month == 8 %}
-            <td style="word-wrap: break-word">
-                {{birth_day}} August {{birth_year}}
-            </td>
-            {% elif birth_month == 9 %}
-            <td>
-                {{birth_day}} September {{birth_year}}
-            </td>
-            {% elif birth_month == 10 %}
-            <td>
-                {{birth_day}} October {{birth_year}}
-            </td style="word-wrap: break-word">
-            {% elif birth_month == 11 %}
-            <td style="word-wrap: break-word">
-                {{birth_day}} November {{birth_year}}
-            </td>
-            {% elif birth_month == 12 %}
-            <td style="word-wrap: break-word">
-                {{birth_day}} December {{birth_year}}
-            </td>
-            {% endif %}
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/personal-details/your-date-of-birth?id={{application_id}}" alt='Change your date of birth'>
-                    Change <span class="visuallyhidden">your date of birth</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <table class="check-your-answers form-group grid-row">
-        <thead>
-        <tr>
-            <th colspan="3">
-                <div class="heading-medium">
-                    Your home address
-                </div>
-            </th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>
-                Home address
-            </td>
-            {% if street_line2 and county %}
-            <td style="word-wrap: break-word">
-                {{street_line1}}
-                </br>
-                {{street_line2}}
-                </br>
-                {{town}}
-                </br>
-                {{county}}
-                </br>
-                {{postcode}}
-            </td>
-            {% elif street_line2 and not county %}
-            <td style="word-wrap: break-word">
-                {{street_line1}}
-                </br>
-                {{street_line2}}
-                </br>
-                {{town}}
-                </br>
-                {{postcode}}
-            </td>
-            {% elif not street_line2 and county %}
-            <td style="word-wrap: break-word">
-                {{street_line1}}
-                </br>
-                {{town}}
-                </br>
-                {{county}}
-                </br>
-                {{postcode}}
-            </td>
-            {% elif not street_line2 and not county %}
-            <td style="word-wrap: break-word">
-                {{street_line1}}
-                </br>
-                {{town}}
-                </br>
-                {{postcode}}
-            </td>
-            {% endif %}
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/personal-details/enter-home-address?id={{application_id}}&manual=False&lookup=False"
-                   alt='Change your home address'>
-                    Change <span class="visuallyhidden">your home address</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                Childcare location
-            </td>
-            {% if location_of_childcare == True %}
-            <td style="word-wrap: break-word">
-                Same as home address
-            </td>
-            {% elif location_of_childcare == False %}
-            {% if childcare_street_line2 and childcare_county %}
-            <td style="word-wrap: break-word">
-                {{childcare_street_line1}}
-                </br>
-                {{childcare_street_line2}}
-                </br>
-                {{childcare_town}}
-                </br>
-                {{childcare_county}}
-                </br>
-                {{childcare_postcode}}
-            </td>
-            {% elif childcare_street_line2 and not childcare_county %}
-            <td style="word-wrap: break-word">
-                {{childcare_street_line1}}
-                </br>
-                {{childcare_street_line2}}
-                </br>
-                {{childcare_town}}
-                </br>
-                {{childcare_postcode}}
-            </td>
-            {% elif not childcare_street_line2 and childcare_county %}
-            <td style="word-wrap: break-word">
-                {{childcare_street_line1}}
-                </br>
-                {{childcare_town}}
-                </br>
-                {{childcare_county}}
-                </br>
-                {{childcare_postcode}}
-            </td>
-            {% elif not childcare_street_line2 and not childcare_county %}
-            <td style="word-wrap: break-word">
-                {{childcare_street_line1}}
-                </br>
-                {{childcare_town}}
-                </br>
-                {{childcare_postcode}}
-            </td>
-            {% endif %}
-            {% endif %}
-            <td class="change-answer">
-                <a href="{{ URL_PREFIX }}/personal-details/home-address-details?id={{application_id}}&manual=True"
-                   alt='Change childcare address'>
-                    Change <span class="visuallyhidden">childcare address</span>
-                </a>
-            </td>
-        </tr>
-        </tbody>
-    </table>
-    <br>
-    <div class="form-group grid-row">
-        <form action="{{ URL_PREFIX }}/task-list?id={{application_id}}" method="get">
-            <input type="submit" class="button" value="Confirm and continue"/>
-            <input type="hidden" value="{{application_id}}" name="id"/>
-        </form>
-    </div>
-    <br>
+    <h1 class="form-title heading-large">Check your answers: your personal details</h1>
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="3">
+            <div class="heading-medium">
+                Your name and date of birth
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word">
+            Your name
+        </td>
+        {% if middle_names %}
+        <td style="word-wrap: break-word">
+            {{first_name}} {{middle_names}} {{last_name}}
+        </td>
+        {% elif not middle_names %}
+        <td style="word-wrap: break-word">
+            {{first_name}} {{last_name}}
+        </td>
+        {% endif %}
+        <td class="change-answer">
+            <a href="{% url 'Personal-Details-Name-View' %}?id={{application_id}}" alt='Change your name'>
+                Change <span class="visuallyhidden">your name</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word">
+            Your date of birth
+        </td>
+        {% if birth_month == 1 %}
+        <td style="word-wrap: break-word">
+            {{birth_day}} January {{birth_year}}
+        </td>
+        {% elif birth_month == 2 %}
+        <td style="word-wrap: break-word">
+            {{birth_day}} February {{birth_year}}
+        </td>
+        {% elif birth_month == 3 %}
+        <td style="word-wrap: break-word">
+            {{birth_day}} March {{birth_year}}
+        </td>
+        {% elif birth_month == 4 %}
+        <td style="word-wrap: break-word">
+            {{birth_day}} April {{birth_year}}
+        </td>
+        {% elif birth_month == 5 %}
+        <td style="word-wrap: break-word">
+            {{birth_day}} May {{birth_year}}
+        </td>
+        {% elif birth_month == 6 %}
+        <td style="word-wrap: break-word">
+            {{birth_day}} June {{birth_year}}
+        </td>
+        {% elif birth_month == 7 %}
+        <td style="word-wrap: break-word">
+            {{birth_day}} July {{birth_year}}
+        </td>
+        {% elif birth_month == 8 %}
+        <td style="word-wrap: break-word">
+            {{birth_day}} August {{birth_year}}
+        </td>
+        {% elif birth_month == 9 %}
+        <td style="word-wrap: break-word">
+            {{birth_day}} September {{birth_year}}
+        </td>
+        {% elif birth_month == 10 %}
+        <td style="word-wrap: break-word">
+            {{birth_day}} October {{birth_year}}
+        </td style="word-wrap: break-word">
+        {% elif birth_month == 11 %}
+        <td style="word-wrap: break-word">
+            {{birth_day}} November {{birth_year}}
+        </td>
+        {% elif birth_month == 12 %}
+        <td style="word-wrap: break-word">
+            {{birth_day}} December {{birth_year}}
+        </td>
+        {% endif %}
+        <td class="change-answer">
+            <a href="{% url 'Personal-Details-DOB-View' %}?id={{application_id}}" alt='Change your date of birth'>
+                Change <span class="visuallyhidden">your date of birth</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="3">
+            <div class="heading-medium">
+                Your home address
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word">
+            Home address
+        </td>
+        {% if street_line2 and county %}
+        <td style="word-wrap: break-word">
+            {{street_line1}}
+            </br>
+            {{street_line2}}
+            </br>
+            {{town}}
+            </br>
+            {{county}}
+            </br>
+            {{postcode}}
+        </td>
+        {% elif street_line2 and not county %}
+        <td style="word-wrap: break-word">
+            {{street_line1}}
+            </br>
+            {{street_line2}}
+            </br>
+            {{town}}
+            </br>
+            {{postcode}}
+        </td>
+        {% elif not street_line2 and county %}
+        <td style="word-wrap: break-word">
+            {{street_line1}}
+            </br>
+            {{town}}
+            </br>
+            {{county}}
+            </br>
+            {{postcode}}
+        </td>
+        {% elif not street_line2 and not county %}
+        <td style="word-wrap: break-word">
+            {{street_line1}}
+            </br>
+            {{town}}
+            </br>
+            {{postcode}}
+        </td>
+        {% endif %}
+        <td class="change-answer">
+            <a href="{% url 'Personal-Details-Home-Address-Manual-View %}?id={{application_id}}"
+               alt='Change your home address'>
+                Change <span class="visuallyhidden">your home address</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word">
+            Childcare location
+        </td>
+        {% if location_of_childcare == True %}
+        <td style="word-wrap: break-word">
+            Same as home address
+        </td>
+        {% elif location_of_childcare == False %}
+        {% if childcare_street_line2 and childcare_county %}
+        <td style="word-wrap: break-word">
+            {{childcare_street_line1}}
+            </br>
+            {{childcare_street_line2}}
+            </br>
+            {{childcare_town}}
+            </br>
+            {{childcare_county}}
+            </br>
+            {{childcare_postcode}}
+        </td>
+        {% elif childcare_street_line2 and not childcare_county %}
+        <td style="word-wrap: break-word">
+            {{childcare_street_line1}}
+            </br>
+            {{childcare_street_line2}}
+            </br>
+            {{childcare_town}}
+            </br>
+            {{childcare_postcode}}
+        </td>
+        {% elif not childcare_street_line2 and childcare_county %}
+        <td style="word-wrap: break-word">
+            {{childcare_street_line1}}
+            </br>
+            {{childcare_town}}
+            </br>
+            {{childcare_county}}
+            </br>
+            {{childcare_postcode}}
+        </td>
+        {% elif not childcare_street_line2 and not childcare_county %}
+        <td style="word-wrap: break-word">
+            {{childcare_street_line1}}
+            </br>
+            {{childcare_town}}
+            </br>
+            {{childcare_postcode}}
+        </td>
+        {% endif %}
+        {% endif %}
+        <td class="change-answer">
+            <a href="{% url 'Personal-Details-Location-Of-Care-View' %}?id={{application_id}}"
+               alt='Change childcare address'>
+                Change <span class="visuallyhidden">childcare address</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<div class="form-group">
+    <form action="{% url 'Task-List-View' %}?id={{application_id}}" method="get">
+        <input type="submit" class="button" value="Confirm and continue"/>
+        <input type="hidden" value="{{application_id}}" name="id"/>
+    </form>
 </div>
 
 {% endblock %}

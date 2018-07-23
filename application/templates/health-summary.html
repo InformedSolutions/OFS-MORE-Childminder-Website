@@ -1,0 +1,47 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Check your answers: health declaration booklet{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+<h1 class="form-title heading-large">Check your answers: health declaration booklet</h1>
+<table class="check-your-answers form-group">
+<colgroup>
+        <col style="width:40%">
+        <col style="width:20%">
+        <col style="width:40%">
+</colgroup>
+    <thead>
+        <td></td>
+        <td></td>
+        <td></td>
+    </thead>
+    <tbody>
+    <tr>
+        <td>
+            I will post the completed booklet to Ofsted
+        </td>
+        <td style="word-wrap: break-word">
+            Yes
+        </td>
+        <td class="change-answer">
+            <a href="{% url 'Health-Booklet-View' %}?id={{application_id}}" alt='Download booklet'>
+                Download booklet
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+<form method="post">
+    <input type="submit" class="button" value="Confirm and continue"/>
+    <input type="hidden" value="{{application_id}}" name="id"/>
+    {% csrf_token %}
+</form>
+</div>
+
+{% endblock %}

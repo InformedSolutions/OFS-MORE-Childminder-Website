@@ -5,13 +5,14 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    <div class="grid-row">
-        <h1 class="form-title heading-large">
-            Error
-        </h1>
-        <p>An error occurred.</p>
-    </div>
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+<h1 class="form-title heading-large">
+    Error
+</h1>
+
+<p>An error occurred.</p>
 </div>
 
 {% endblock %}

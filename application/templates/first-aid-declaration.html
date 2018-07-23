@@ -5,38 +5,27 @@
 
 {% block inner_content %}
 
-<!-- Initialise error summary for page -->
+{% include "back-button.html" %}
+<div class="two-thirds">
 {{form.error_summary}}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/first-aid/details?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large" style="margin-top: 0px;">
-                First aid training certificate
-            </h1>
-            <p>An inspector will ask to see your certificate when they visit your home.</p>
-            <h2 class="form-title heading-medium">
-                I declare that:
-            </h2>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Continue" alt='Continue to declaration'>
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-        <!-- Return to task list -->
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    </form>
+<h1 class="form-title heading-large">
+    First aid training certificate
+</h1>
+
+<p>An inspector will ask to see your certificate when they visit your home.</p>
+
+<p class="text-before-button">You must show the inspector your certificate.</p>
+
+<form method="post" class="form-group" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    {% csrf_token %}
+    <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+</form>
+
+<div class="top-padded">
+    {% include 'return-to-list.html' %}
+</div>
 </div>
 
 {% endblock %}

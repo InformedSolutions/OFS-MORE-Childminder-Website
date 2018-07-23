@@ -1,0 +1,30 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Early years training details{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<div class="two-thirds">
+{{form.error_summary}}
+</div>
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="two-thirds">
+        <h1 class="form-title heading-large">
+            Early years training details
+        </h1>
+        <p>Please give details of your training.</p>
+        <p>We need the details to check that you have the skills and knowledge to look after children.</p>
+    </div>
+    {{form.as_div}}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Save and continue">
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+</form>
+<br>
+{% include 'return-to-list.html' %}
+
+{% endblock %}

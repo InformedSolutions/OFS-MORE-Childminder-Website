@@ -1,0 +1,103 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}{{page_title}}{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+{% include "generic-error-summary.html" with table_list=table_list application_id=application_id %}
+
+<div class="two-thirds">
+<h1 class="form-title heading-large">
+    {{ page_title }}
+</h1>
+
+{% for table in table_list %}
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer">
+    </colgroup>
+    <thead>
+    <th colspan="3">
+        {% if table.title != '' %}
+            <h2 class="heading-medium">
+                {{ table.title }}
+            </h2>
+        {% else %}
+            <h2 class="js-hidden">
+                Task Summary Table
+            </h2>
+        {% endif %}
+    </th>
+    </thead>
+    <tbody>
+    {% for row in table.row_list %}
+    {% if row.error != '' %}
+    <tr>
+        <td class="error-row" colspan="3">
+            <p class="error-container">
+            <i class="icon icon-important icon-ofsted-download">
+                <span class="visually-hidden">Warning</span>
+            </i>
+            <strong class="bold-small error-text">
+                {{ row.error }}
+            </strong>
+            </p>
+        </td>
+    </tr>
+    {% endif %}
+    {% if row.value != None %}
+    <tr id="{{row.data_name}}">
+        {% if row.error != '' %}
+            <td class="summary-column error-row">
+        {% else %}
+            <td class=summary-column>
+        {% endif %}
+            {{row.row_name}}
+        </td>
+        <td class=summary-column>
+            {% if row.value == True %}
+                Yes
+            {% elif row.value == False %}
+                No
+            {% else %}
+                {{row.value}}
+            {% endif %}
+        </td>
+        {% if row.row_name != 'Health check status' %}
+        <td class="change-answer">
+            <a href="{% url row.back_link %}?id={{application_id}}{{table.other_people_numbers}}#id_{{row.data_name}}-group"
+               alt='Change {{ row.change_link_description|default:row.row_name }}'>
+                Change <span class="visuallyhidden">{{ row.change_link_description|default:row.row_name }}</span>
+            </a>
+        </td>
+        {% elif row.row_name == 'Health check status' %}
+        <td class="change-answer">
+            {% if row.value != 'Done' %}
+            <a href="{% url row.back_link %}?id={{application_id}}&adult={{forloop.parentloop.counter}}"
+               alt='Resend email'>
+                Resend email
+            </a>
+            {% endif %}
+        </td>
+        {% endif %}
+    </tr>
+    {% endif %}
+    {% endfor %}
+    </tbody>
+</table>
+
+{% endfor %}
+
+<form method="post">
+    <input type="submit" class="button" value="Confirm and continue"/>
+    <input type="hidden" value="{{application_id}}" name="id"/>
+    {% csrf_token %}
+</form>
+</div>
+
+{% endblock %}

@@ -5,36 +5,29 @@
 
 {% block inner_content %}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <!-- Back button -->
-        <a href="{{ URL_PREFIX }}/first-aid/details?id={{application_id}}" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large" style="margin-top: 0px;">
-                Update your first aid training
-            </h1>
-            <p>Your first aid certificate is over 3 years old and no longer valid.</p>
-            <p>You will have to go on a 12-hour paediatric first aid course to update your training.</p>
-            <p>You can finish this section when you have completed your course.</p>
-            {{form.as_div}}
-            {% csrf_token %}
-            </br>
-            <input type="submit" class="button" value="Save and continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-    </form>
-    </br>
-    <!-- Return to task list -->
-    <div class="form-group grid-row">
-        <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-    </div>
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+<h1 class="form-title heading-large">
+    Update your first aid training
+</h1>
+
+<p>Your first aid certificate is over 3 years old and no longer valid.</p>
+
+<p>You will have to go on a 12-hour paediatric first aid course to update your training.</p>
+
+<p class="text-before-button">You can finish this section when you have completed your course.</p>
+
+<form method="post" class="form-group" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    {{form.as_div}}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Continue">
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+</form>
+
+<div class="top-padded">
+    {% include 'return-to-list.html' %}
+</div>
 </div>
 
 {% endblock %}

@@ -1,5 +1,6 @@
-xmlrunner/
-logs/
+selenium/*
+xmlrunner/*
+logs/*
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -7,17 +8,20 @@ __pycache__/
 *.py[cod]
 
 db.sqlite3
+geckodriver.log
 
-
-staticfiles/
+staticfiles/*
 
 ### Vim file ###
 *~
 *.swp
 *.swo
+*.swn
 
 ### Dev files ###
 .settings/
 .idea/
+.vscode/
 .makerc
 .venv
+.cache/

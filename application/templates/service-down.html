@@ -1,0 +1,19 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Error{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+<h1 class="form-title heading-large">
+    Service not available
+</h1>
+
+<p>Sorry, you can't continue your application at the moment.</p>
+<p>Please try again later.</p>
+</div>
+
+{% endblock %}

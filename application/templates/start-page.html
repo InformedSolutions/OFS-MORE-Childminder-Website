@@ -8,58 +8,44 @@
 <div class="grid-row">
     <div class="column-two-thirds">
         <h1 class="heading-xlarge">
-            Apply to be a childminder (England)
+            Register as a childminder (England)
         </h1>
-        <p>Apply to be a childminder to look after children in your home.</p>
-        <h2 class="heading-large">
+        <p>Register as a childminder to look after children in your home.</p>
+
+        <h2 class="heading-medium">
             Before you start
         </h2>
-        <p>You will have to get criminal record checks for everyone aged 16 or over in your home.</p>
-        <div class="panel panel-border-narrow">
-            <p>Criminal record checks are also known as 'DBS checks'.</p>
-        </div>
-        <p>We will need details of:</p>
-        <ul class="list list-bullet">
-            <li>your criminal record check</li>
-            <li>household members&#39; checks</li>
-            <li>your first aid training</li>
+        <p>You will need the following:</p>
+        <ul class="list list-bullet" style="margin-left: 30px;">
+            <li>criminal record (DBS) certificate</li>
+            <li>DBS certificates for anyone aged 16 or over in your home</li>
+            <li>training to understand the Early Years Foundation Stage (EYFS) standards</li>
+            <li>paediatric first aid certificate</li>
+            <li>health declaration booklet</li>
             <li>2 references</li>
-            <li>your address history</li>
-            <li>any health problems</li>
         </ul>
-        <p>You will need to have a good understanding of the Early Years Foundation Stage if you are caring for children
-            under 5.</p>
-        <h2 class="heading-large">
-            How long it takes
-        </h2>
-        <p>It can take about 6 months to register with Ofsted.</p>
-        <p>It should take you 30 minutes to fill in this form.</p>
-        <h2 class="heading-large">
+        <h2 class="heading-medium">
             How much it costs
         </h2>
-        <p>It can cost a few hundred pounds to become a childminder.</p>
-        <p>It usually costs &#163;35 per year to register with Ofsted.</p>
-        <p>You will also have to pay for things like criminal record checks and training courses.</p>
-        <form action="{{ URL_PREFIX }}/account/account" method="get">
-            <input type=submit class="button button-start" value="Submit">
+        <p>It usually costs &#163;35 to register with Ofsted.</p>
+        <p>It costs the same to renew every year.</p>
+        <p>Find out about <a href="{% url 'Costs-View' %}" alt="Costs page">other costs</a>.</p>
+
+        <h2 class="heading-medium">
+            How long it takes
+        </h2>
+        <p>It should take you 30 minutes to fill in this form.</p>
+        <p class="text-before-button">It usually takes up to 12 weeks to register with Ofsted.</p>
+        <form action="{% url 'Account-Selection' %}" method="get">
+            <input type=submit class="button button-start" value="Sign in">
         </form>
-        <h2 class="heading-large">
-            Already started to apply?
-        </h2>
-        <p><a href="{{ URL_PREFIX }}/existing-application">Log back in</a></p>
     </div>
-    <div class="column-two-thirds">
-        <h2 class="heading-medium" id="subsection-title">
-            Help and advice
+    <div class="column-one-third">
+        <h2 class="heading-medium">
+            Related content
         </h2>
-        <nav role="navigation" aria-labelledby="subsection-title">
-            <ul class="list list-bullet" style="padding-left: 20px;">
-                <li><a href="https://www.gov.uk/guidance/how-to-register-as-a-childminder-or-nanny-quick-guide"
-                       target="_blank">How to register as a childminder</a></li>
-                <li><a href="https://www.facebook.com/ChildcareRegistration/" target="_blank">Join
-                    our Facebook childcare registration group</a></li>
-            </ul>
-        </nav>
+        <p><a href="https://www.gov.uk/guidance/register-as-a-childminder-quick-guide" target="_blank">Register as a childminder: quick guide</a></p>
+        <p><a href="https://www.gov.uk/government/publications/early-years-foundation-stage-framework--2" target="_blank">Early years foundation stage</a></p>
     </div>
 </div>
 

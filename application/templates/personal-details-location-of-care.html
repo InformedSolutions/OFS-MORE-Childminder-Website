@@ -5,44 +5,36 @@
 
 {% block inner_content %}
 
+{% include "back-button.html" %}
+
 <!-- Initialise error summary for page -->
+<div class="two-thirds">
 {{form.error_summary}}
 
-<div class="column-full">
-    <div class="form-group grid-row" style="padding-top: 30px;">
-        <a href="{{ URL_PREFIX }}/personal-details/your-home-address?id={{application_id}}&manual=True&lookup=False" class="link-back"
-           style="margin-right: 10px; line-height: 28px">
-            Back
-        </a>
-    </div>
-    <!-- Form -->
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
-        <div class="form-group grid-row">
-            <h1 class="form-title heading-large" style="margin-top: 0px;">
-                Your home address details
-            </h1>
-            {% if street_line2 and county %}
-            <p>{{street_line1}}, {{street_line2}}, {{town}}, {{county}} {{postcode}}</p>
-            {% elif street_line2 and not county %}
-            <p>{{street_line1}}, {{street_line2}}, {{town}} {{postcode}}</p>
-            {% elif not street_line2 and county %}
-            <p>{{street_line1}}, {{town}}, {{county}} {{postcode}}</p>
-            {% elif not street_line2 and not county %}
-            <p>{{street_line1}}, {{town}} {{postcode}}</p>
-            {% endif %}
-            </br>
-            {{form.as_div}}
-            {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue">
-            <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        </div>
-        </br>
-        <!-- Return to task list -->
-        <div class="form-group grid-row">
-            <a href="{{ URL_PREFIX }}/task-list?id={{application_id}}">Return to list</a>
-        </div>
-    </form>
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <h1 class="form-title heading-large">
+        Your home address details
+    </h1>
+    {% if street_line2 and county %}
+    <p>{{street_line1}}, {{street_line2}}, {{town}}, {{county}} {{postcode}}</p>
+    {% elif street_line2 and not county %}
+    <p>{{street_line1}}, {{street_line2}}, {{town}} {{postcode}}</p>
+    {% elif not street_line2 and county %}
+    <p>{{street_line1}}, {{town}}, {{county}} {{postcode}}</p>
+    {% elif not street_line2 and not county %}
+    <p>{{street_line1}}, {{town}} {{postcode}}</p>
+    {% endif %}
+    {{form.as_div}}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Save and continue">
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+</form>
+<br>
+{% if personal_details_status == 'COMPLETED' %}
+{% include 'return-to-list.html' %}
+{% endif %}
 </div>
 
 {% endblock %}

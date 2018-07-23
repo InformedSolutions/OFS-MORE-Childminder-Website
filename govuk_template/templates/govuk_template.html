@@ -8,6 +8,7 @@
 {% block head %}
   {{ block.super }}
   <link href="{% static 'stylesheets/base.css' %}" media="screen" rel="stylesheet" />
+  <link href="{% static 'stylesheets/custom.css' %}" media="screen" rel="stylesheet" />
 {% endblock %}
 
 {% block cookie_message %}
@@ -22,23 +23,44 @@
 {% block header_class %}with-proposition{% endblock %}
 {% block proposition_header %}
   {% get_service_settings as service_settings %}
-  <div class="header-proposition">
+  <div class="header-proposition no-print">
     <div class="content">
-      {% if service_settings.has_header_links %}
-        <a href="#proposition-links" class="js-header-toggle menu">{% trans 'Menu' %}</a>
-      {% endif %}
+      <a href="#proposition-links" class="js-header-toggle menu" aria-controls="navigation" aria-label="Show or hide Top Level Navigation">{% trans 'Menu' %}</a>
       <nav id="proposition-menu">
-        <a href="{{ URL_PREFIX }}" id="proposition-name">
-          {% block proposition %}Register as a childminder{% endblock %}
-        </a>
+          {% block proposition %}
+              {% if id and AUTHENTICATED and task_list_link %}
+                <a href="{% url 'Task-List-View' %}?id={{ id }}" id="proposition-name">
+                     Register as a childminder
+                </a>
+              {% else %}
+                <a href="{{ URL_PREFIX }}" id="proposition-name">
+                   Register as a childminder
+                </a>
+              {% endif %}
+          {% endblock %}
         {% block proposition_menu %}
-          {% if service_settings.has_header_links %}
-            <ul id="proposition-links">
-              {% for link in service_settings.header_links.all %}
-                <li><a href="{{ link.url }}" class="{% if link.link_is_view_name and link.link == request.resolver_match.view_name %}active{% endif %}">{{ link.localised_name }}</a></li>
-              {% endfor %}
+           <ul id="proposition-links">
+               {% if id and AUTHENTICATED %}
+                   {% if not HIDE_COSTS %}
+                       <li>
+                           <a href="{% url 'Costs-View' %}?id={{ id }}">Costs</a>
+                       </li>
+                   {% endif %}
+                   <li>
+                      <a href="{% url 'Help-And-Contact-View' %}?id={{ id }}">Help and contacts</a>
+                   </li>
+                   <li>
+                      <a href="{% url 'Application-Saved-View' %}">Sign out</a>
+                   </li>
+               {% else %}
+                    <li>
+                      <a href="{% url 'Costs-View' %}">Costs</a>
+                    </li>
+                   <li>
+                      <a href="{% url 'Help-And-Contact-View' %}">Help and contacts</a>
+                   </li>
+               {% endif %}
             </ul>
-          {% endif %}
         {% endblock %}
       </nav>
     </div>
@@ -50,10 +72,10 @@
     {% block phase_banner %}
       {% get_service_settings as service_settings %}
       {% if service_settings.phase != 'live' %}
-        <div class="phase-banner-beta">
+        <div class="phase-banner-beta no-print">
           <p>
             <strong class="phase-tag">Beta</strong>
-            <span>{% block phase_banner_message %}{% trans '<a href="">Tell us what you think</a> (takes 30 seconds)' %}{% endblock %}</span>
+            <span>{% block phase_banner_message %}<a href="{% url 'Feedback' %}?url={{ request.get_full_path }}" id="feedback">Tell us what you think</a> (takes 30 seconds){% endblock %}</span>
           </p>
         </div>
       {% endif %}
@@ -72,14 +94,9 @@
 {% endblock %}
 
 {% block footer_support_links %}
-  {% get_service_settings as service_settings %}
-  {% if service_settings.has_footer_links %}
     <ul>
-      {% for link in service_settings.footer_links.all %}
-        <li><a href="{{ link.url }}">{{ link.localised_name }}</a></li>
-      {% endfor %}
+        <li><a href="https://www.gov.uk/government/publications/ofsted-privacy-notices/childcare-ofsted-privacy-notice">Privacy notice</a></li>
     </ul>
-  {% endif %}
 {% endblock %}
 
 {% block body_end %}
