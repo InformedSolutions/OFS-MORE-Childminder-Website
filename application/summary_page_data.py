@@ -3,7 +3,7 @@ import collections
 ###
 
 
-childcare_type_name_dict = collections.OrderedDict([('childcare_age_groups', 'What age groups will you be caring for?'),
+childcare_type_name_dict = collections.OrderedDict([('childcare_age_groups', 'What age groups will you be able to care for?'),
                                                     (
                                                     'overnight_care', 'Will you be looking after children overnight?')])
 
