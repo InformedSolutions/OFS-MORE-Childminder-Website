@@ -241,8 +241,8 @@ class ApplicationTestBase(object):
 
         data = {
             'id': self.app_id,
-            'street_name_and_number': '43 Lynford Gardens',
-            'street_name_and_number2': '',
+            'street_line1': '43 Lynford Gardens',
+            'street_line2': '',
             'town': 'London',
             'county': 'Essex',
             'postcode': 'IG39LY'
@@ -254,9 +254,9 @@ class ApplicationTestBase(object):
         p_id = ApplicantPersonalDetails.objects.get(
             application_id=Application.objects.get(pk=self.app_id)).personal_detail_id
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).street_line1,
-                         data['street_name_and_number'])
+                         data['street_line1'])
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).street_line2,
-                         data['street_name_and_number2'])
+                         data['street_line2'])
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).town, data['town'])
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).county, data['county'])
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).postcode, data['postcode'])
@@ -494,8 +494,8 @@ class ApplicationTestBase(object):
             reverse('References-First-Reference-Address-View'),
             {
                 'id': self.app_id,
-                'street_name_and_number': '29 Baker street',
-                'street_name_and_number2': '',
+                'street_line1': '29 Baker street',
+                'street_line2': '',
                 'town': 'London',
                 'county': 'Essex',
                 'postcode': 'WA157XH',
@@ -542,8 +542,8 @@ class ApplicationTestBase(object):
             reverse('References-Second-Reference-Address-View'),
             {
                 'id': self.app_id,
-                'street_name_and_number': '59 Chet street',
-                'street_name_and_number2': '',
+                'street_line1': '59 Chet street',
+                'street_line2': '',
                 'town': 'London',
                 'county': 'Essex',
                 'postcode': 'WA167GH',

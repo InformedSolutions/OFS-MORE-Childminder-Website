@@ -304,18 +304,18 @@ def references_first_reference_address_manual(request):
         form.remove_flag()
 
         if form.is_valid():
-            street_name_and_number = form.cleaned_data.get(
-                'street_name_and_number')
-            street_name_and_number2 = form.cleaned_data.get(
-                'street_name_and_number2')
+            street_line1 = form.cleaned_data.get(
+                'street_line1')
+            street_line2 = form.cleaned_data.get(
+                'street_line2')
             town = form.cleaned_data.get('town')
             county = form.cleaned_data.get('county')
             postcode = form.cleaned_data.get('postcode')
             country = form.cleaned_data.get('country')
             first_reference_record = Reference.objects.get(
                 application_id=application_id_local, reference=1)
-            first_reference_record.street_line1 = street_name_and_number
-            first_reference_record.street_line2 = street_name_and_number2
+            first_reference_record.street_line1 = street_line1
+            first_reference_record.street_line2 = street_line2
             first_reference_record.town = town
             first_reference_record.county = county
             first_reference_record.postcode = postcode
@@ -643,18 +643,18 @@ def references_second_reference_address_manual(request):
         form = ReferenceSecondReferenceAddressManualForm(request.POST, id=application_id_local)
         form.remove_flag()
         if form.is_valid():
-            street_name_and_number = form.cleaned_data.get(
-                'street_name_and_number')
-            street_name_and_number2 = form.cleaned_data.get(
-                'street_name_and_number2')
+            street_line1 = form.cleaned_data.get(
+                'street_line1')
+            street_line2 = form.cleaned_data.get(
+                'street_line2')
             town = form.cleaned_data.get('town')
             county = form.cleaned_data.get('county')
             postcode = form.cleaned_data.get('postcode')
             country = form.cleaned_data.get('country')
             second_reference_record = Reference.objects.get(
                 application_id=application_id_local, reference=2)
-            second_reference_record.street_line1 = street_name_and_number
-            second_reference_record.street_line2 = street_name_and_number2
+            second_reference_record.street_line1 = street_line1
+            second_reference_record.street_line2 = street_line2
             second_reference_record.town = town
             second_reference_record.county = county
             second_reference_record.postcode = postcode
