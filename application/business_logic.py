@@ -178,8 +178,8 @@ def personal_home_address_logic(app_id, form):
     """
 
     app_obj = Application.objects.get(application_id=app_id)
-    street_line1 = form.cleaned_data.get('street_name_and_number')
-    street_line2 = form.cleaned_data.get('street_name_and_number2')
+    street_line1 = form.cleaned_data.get('street_line1')
+    street_line2 = form.cleaned_data.get('street_line2')
     town = form.cleaned_data.get('town')
     county = form.cleaned_data.get('county')
     postcode = form.cleaned_data.get('postcode')
@@ -266,8 +266,8 @@ def personal_childcare_address_logic(application_id_local, form):
     :return: an ApplicantHomeAddress object to be saved
     """
     this_application = Application.objects.get(application_id=application_id_local)
-    street_line1 = form.cleaned_data.get('street_name_and_number')
-    street_line2 = form.cleaned_data.get('street_name_and_number2')
+    street_line1 = form.cleaned_data.get('street_line1')
+    street_line2 = form.cleaned_data.get('street_line2')
     town = form.cleaned_data.get('town')
     county = form.cleaned_data.get('county')
     postcode = form.cleaned_data.get('postcode')

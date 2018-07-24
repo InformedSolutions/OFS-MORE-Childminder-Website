@@ -57,9 +57,9 @@ class PersonalDetailsHomeAddressManualForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    street_name_and_number = forms.CharField(label='Address line 1', error_messages={
+    street_line1 = forms.CharField(label='Address line 1', error_messages={
         'required': 'Please enter the first line of your address'})
-    street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
+    street_line2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city',
                            error_messages={'required': 'Please enter the name of the town or city'})
     county = forms.CharField(label='County (optional)', required=False)
@@ -81,33 +81,33 @@ class PersonalDetailsHomeAddressManualForm(ChildminderForms):
                                                current_address=True).count() > 0:
             applicant_home_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                       current_address=True)
-            self.fields['street_name_and_number'].initial = applicant_home_address.street_line1
-            self.fields['street_name_and_number2'].initial = applicant_home_address.street_line2
+            self.fields['street_line1'].initial = applicant_home_address.street_line1
+            self.fields['street_line2'].initial = applicant_home_address.street_line2
             self.fields['town'].initial = applicant_home_address.town
             self.fields['county'].initial = applicant_home_address.county
             self.fields['postcode'].initial = applicant_home_address.postcode
             self.pk = applicant_home_address.home_address_id
-            self.field_list = ['street_name_and_number', 'street_name_and_number2', 'town', 'county', 'postcode']
+            self.field_list = ['street_line1', 'street_line2', 'town', 'county', 'postcode']
 
-    def clean_street_name_and_number(self):
+    def clean_street_line1(self):
         """
         Street name and number validation
         :return: string
         """
-        street_name_and_number = self.cleaned_data['street_name_and_number']
-        if len(street_name_and_number) > 50:
+        street_line1 = self.cleaned_data['street_line1']
+        if len(street_line1) > 50:
             raise forms.ValidationError('The first line of your address must be under 50 characters long')
-        return street_name_and_number
+        return street_line1
 
-    def clean_street_name_and_number2(self):
+    def clean_street_line2(self):
         """
         Street name and number line 2 validation
         :return: string
         """
-        street_name_and_number2 = self.cleaned_data['street_name_and_number2']
-        if len(street_name_and_number2) > 50:
+        street_line2 = self.cleaned_data['street_line2']
+        if len(street_line2) > 50:
             raise forms.ValidationError('The second line of your address must be under 50 characters long')
-        return street_name_and_number2
+        return street_line2
 
     def clean_town(self):
         """

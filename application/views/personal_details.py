@@ -788,8 +788,8 @@ def personal_details_childcare_address_manual(request):
 
         if form.is_valid():
 
-            street_line1 = form.cleaned_data.get('street_name_and_number')
-            street_line2 = form.cleaned_data.get('street_name_and_number2')
+            street_line1 = form.cleaned_data.get('street_line1')
+            street_line2 = form.cleaned_data.get('street_line2')
             town = form.cleaned_data.get('town')
             county = form.cleaned_data.get('county')
             postcode = form.cleaned_data.get('postcode')

@@ -176,9 +176,9 @@ class ReferenceFirstReferenceAddressManualForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    street_name_and_number = forms.CharField(label='Address line 1', error_messages={
+    street_line1 = forms.CharField(label='Address line 1', error_messages={
         'required': "Please enter the first line of the referee's address"})
-    street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
+    street_line2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city',
                            error_messages={'required': "Please enter the name of the town or city"})
     county = forms.CharField(label='County (optional)', required=False)
@@ -197,35 +197,35 @@ class ReferenceFirstReferenceAddressManualForm(ChildminderForms):
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
             reference_record = Reference.objects.get(application_id=self.application_id_local, reference=1)
-            self.fields['street_name_and_number'].initial = reference_record.street_line1
-            self.fields['street_name_and_number2'].initial = reference_record.street_line2
+            self.fields['street_line1'].initial = reference_record.street_line1
+            self.fields['street_line2'].initial = reference_record.street_line2
             self.fields['town'].initial = reference_record.town
             self.fields['county'].initial = reference_record.county
             self.fields['postcode'].initial = reference_record.postcode
             self.fields['country'].initial = reference_record.country
             self.pk = reference_record.reference_id
-            self.field_list = ['street_name_and_number', 'street_name_and_number2', 'town', 'county', 'postcode',
+            self.field_list = ['street_line1', 'street_line2', 'town', 'county', 'postcode',
                                'country']
 
-    def clean_street_name_and_number(self):
+    def clean_street_line1(self):
         """
         Street name and number validation
         :return: string
         """
-        street_name_and_number = self.cleaned_data['street_name_and_number']
-        if len(street_name_and_number) > 50:
+        street_line1 = self.cleaned_data['street_line1']
+        if len(street_line1) > 50:
             raise forms.ValidationError('The first line of the address must be under 50 characters long')
-        return street_name_and_number
+        return street_line1
 
-    def clean_street_name_and_number2(self):
+    def clean_street_line2(self):
         """
         Street name and number line 2 validation
         :return: string
         """
-        street_name_and_number2 = self.cleaned_data['street_name_and_number2']
-        if len(street_name_and_number2) > 50:
+        street_line2 = self.cleaned_data['street_line2']
+        if len(street_line2) > 50:
             raise forms.ValidationError('The second line of the address must be under 50 characters long')
-        return street_name_and_number2
+        return street_line2
 
     def clean_town(self):
         """
@@ -495,9 +495,9 @@ class ReferenceSecondReferenceAddressManualForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    street_name_and_number = forms.CharField(label='Address line 1', error_messages={
+    street_line1 = forms.CharField(label='Address line 1', error_messages={
         'required': "Please enter the first line of the referee's address"})
-    street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
+    street_line2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city',
                            error_messages={'required': "Please enter the name of the town or city"})
     county = forms.CharField(label='County (optional)', required=False)
@@ -516,35 +516,35 @@ class ReferenceSecondReferenceAddressManualForm(ChildminderForms):
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
             reference_record = Reference.objects.get(application_id=self.application_id_local, reference=2)
-            self.fields['street_name_and_number'].initial = reference_record.street_line1
-            self.fields['street_name_and_number2'].initial = reference_record.street_line2
+            self.fields['street_line1'].initial = reference_record.street_line1
+            self.fields['street_line2'].initial = reference_record.street_line2
             self.fields['town'].initial = reference_record.town
             self.fields['county'].initial = reference_record.county
             self.fields['postcode'].initial = reference_record.postcode
             self.fields['country'].initial = reference_record.country
             self.pk = reference_record.reference_id
-            self.field_list = ['street_name_and_number', 'street_name_and_number2', 'town', 'county', 'postcode',
+            self.field_list = ['street_line1', 'street_line2', 'town', 'county', 'postcode',
                                'country']
 
-    def clean_street_name_and_number(self):
+    def clean_street_line1(self):
         """
         Street name and number validation
         :return: string
         """
-        street_name_and_number = self.cleaned_data['street_name_and_number']
-        if len(street_name_and_number) > 50:
+        street_line1 = self.cleaned_data['street_line1']
+        if len(street_line1) > 50:
             raise forms.ValidationError('The first line of the address must be under 50 characters long')
-        return street_name_and_number
+        return street_line1
 
-    def clean_street_name_and_number2(self):
+    def clean_street_line2(self):
         """
         Street name and number line 2 validation
         :return: string
         """
-        street_name_and_number2 = self.cleaned_data['street_name_and_number2']
-        if len(street_name_and_number2) > 50:
+        street_line2 = self.cleaned_data['street_line2']
+        if len(street_line2) > 50:
             raise forms.ValidationError('The second line of the address must be under 50 characters long')
-        return street_name_and_number2
+        return street_line2
 
     def clean_town(self):
         """
