@@ -1087,6 +1087,8 @@ def other_people_resend_confirmation(request):
 
         if adult_record.health_check_status == 'Flagged':
             status.update(application_id_local, 'people_in_home_status', 'WAITING')
+            adult_record.health_check_status = 'Started'
+            adult_record.save()
 
         variables = {
             'form': form,
