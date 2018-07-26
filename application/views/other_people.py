@@ -1001,7 +1001,10 @@ def other_people_resend_email(request):
             if resend_limit_reached is False:
 
                 # Generate variables for e-mail template
-                template_id = '5bbf3677-49e9-47d0-acf2-55a9a03d8242'
+                if application.people_in_home_status == 'FLAGGED':
+                    template_id = '63628c30-da8a-4533-b1e3-712942c75abb'
+                else:
+                    template_id = '5bbf3677-49e9-47d0-acf2-55a9a03d8242'
                 email = adult_record.email
                 # Generate unique link for the household member to access their health check page
                 adult_record.token = ''.join([random.choice(string.digits[1:]) for n in range(7)])
