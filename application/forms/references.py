@@ -109,7 +109,7 @@ class FirstReferenceForm(ChildminderForms):
         current_datetime = datetime.now()
         time_known_datetime = current_datetime - relativedelta(years=years_known, months=months_known)
 
-        # If the time known is longer than one year
+        # If the time known is shorter than one year
         if time_known_datetime > current_datetime.replace(year=current_datetime.year-1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
         # If the time known is longer than the time since birth
@@ -432,7 +432,7 @@ class SecondReferenceForm(ChildminderForms):
         current_datetime = datetime.now()
         time_known_datetime = current_datetime - relativedelta(years=years_known, months=months_known)
 
-        # If the time known is longer than one year
+        # If the time known is shorter than one year
         if time_known_datetime > current_datetime.replace(year=current_datetime.year - 1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
         # If the time known is longer than the time since birth
