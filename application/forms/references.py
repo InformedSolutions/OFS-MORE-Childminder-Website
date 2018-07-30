@@ -1,5 +1,6 @@
 import re
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 from django import forms
 from django.conf import settings
@@ -9,26 +10,8 @@ from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (Reference, ApplicantPersonalDetails)
 
-from ..models import Application, UserDetails
+from ..models import UserDetails
 from ..business_logic import childminder_references_and_user_email_duplication_check
-
-
-def datetime_from_time_known(_years_known, _months_known):
-    """
-    Inner function to return datetime object using time known
-    :param _years_known: number of years passed by user
-    :param _months_known: number of months passed by user
-    :return: datetime object
-    """
-    current_dt = datetime.now()
-    if _years_known > current_dt.year-2:
-        _years_known = current_dt.year-2
-    if _months_known >= current_dt.month:
-        _years_known += 1
-        _months_known = 12 - abs(current_dt.month - _months_known)
-    else:
-        _months_known = current_dt.month - _months_known
-    return current_dt.replace(year=current_dt.year - _years_known).replace(month=_months_known)
 
 
 class ReferenceIntroForm(ChildminderForms):
@@ -121,12 +104,16 @@ class FirstReferenceForm(ChildminderForms):
         """
         years_known = self.cleaned_data['time_known'][1]
         months_known = self.cleaned_data['time_known'][0]
-        birth_dt = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
-        known_dt = datetime_from_time_known(years_known, months_known)
-        d_now = datetime.now()
-        if known_dt > d_now.replace(year=d_now.year-1):
+        birth_datetime = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
+        # Convert years and months known to datetime
+        current_datetime = datetime.now()
+        time_known_datetime = current_datetime - relativedelta(years=years_known, months=months_known)
+
+        # If the time known is longer than one year
+        if time_known_datetime > current_datetime.replace(year=current_datetime.year-1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
-        elif known_dt <= birth_dt:
+        # If the time known is longer than the time since birth
+        elif time_known_datetime <= birth_datetime:
             raise forms.ValidationError('Check the number of years and months you have entered')
         return years_known, months_known
 
@@ -440,12 +427,16 @@ class SecondReferenceForm(ChildminderForms):
         """
         years_known = self.cleaned_data['time_known'][1]
         months_known = self.cleaned_data['time_known'][0]
-        birth_dt = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
-        known_dt = datetime_from_time_known(years_known, months_known)
-        d_now = datetime.now()
-        if known_dt > d_now.replace(year=d_now.year-1):
+        birth_datetime = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
+        # Convert years and months known to datetime
+        current_datetime = datetime.now()
+        time_known_datetime = current_datetime - relativedelta(years=years_known, months=months_known)
+
+        # If the time known is longer than one year
+        if time_known_datetime > current_datetime.replace(year=current_datetime.year - 1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
-        elif known_dt <= birth_dt:
+        # If the time known is longer than the time since birth
+        elif time_known_datetime <= birth_datetime:
             raise forms.ValidationError('Check the number of years and months you have entered')
         return years_known, months_known
 

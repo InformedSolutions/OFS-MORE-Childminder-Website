@@ -482,8 +482,8 @@ class ApplicationTestBase(object):
                 'first_name': 'Roman',
                 'last_name': 'Gorodeckij',
                 'relationship': 'My client',
-                'time_known_0': 2,
-                'time_known_1': 2,
+                'time_known_0': 5,
+                'time_known_1': 5,
             }
         )
         self.assertEqual(r.status_code, 302)
