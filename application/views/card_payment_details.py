@@ -23,7 +23,8 @@ from ..messaging.sqs_handler import SQSHandler
 
 logger = logging.getLogger(__name__)
 
-sqs_handler = SQSHandler(settings.PAYMENT_QUEUE_NAME)
+sqs_handler = SQSHandler(settings.PAYMENT_NOTIFICATIONS_QUEUE_NAME)
+
 
 @never_cache
 def card_payment_details(request):
