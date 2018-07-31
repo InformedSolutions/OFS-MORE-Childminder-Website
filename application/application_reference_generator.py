@@ -10,6 +10,8 @@ logger = logging.getLogger(__name__)
 
 
 def create_application_reference():
+
+
     """
     Function for getting the next available reference number that can be allocated to a Childminder application
     :return: a unique reference number for an application
