@@ -5,20 +5,20 @@ page when successfully completed
 """
 
 import datetime
+import logging
 import re
 import json
 import time
 
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.views.decorators.cache import never_cache
 
-from ..application_reference_generator import *
-from .. import payment_service
+from ..services import payment_service, noo_integration_service
 from ..forms import PaymentDetailsForm
 from ..models import Application, UserDetails, ApplicantPersonalDetails, ApplicantName, Payment
-from ..payment_service import created_formatted_payment_reference
 
 logger = logging.getLogger(__name__)
 
@@ -96,7 +96,15 @@ def card_payment_post_handler(request):
 
     application = Application.objects.get(pk=app_id)
 
-    __assign_application_reference(application)
+    try:
+        __assign_application_reference(application)
+    except Exception as e:
+        logger.error('An error was incurred whilst attempting to fetch a new URN')
+        logger.error(str(e))
+
+        # In the event a URN could not be fetched yield error page to user as the payment reference
+        # cannot be generated without said URN
+        return __yield_general_processing_error_to_user(request, form, application.application_id)
 
     # Boolean flag for managing logic gates
     prior_payment_record_exists = Payment.objects.filter(application_id=application).exists()
@@ -227,7 +235,7 @@ def __assign_application_reference(application):
     if application.application_reference is None:
         logger.info('Generating application reference number '
                     'for application with id: ' + str(application.application_id))
-        application_reference = create_application_reference()
+        application_reference = noo_integration_service.create_application_reference()
         application.application_reference = application_reference
         application.save()
         return application_reference
@@ -251,7 +259,7 @@ def __create_payment_record(application):
                     'for application with id: ' + str(application.application_id))
 
         # Create formatted payment reference for finance reconciliation purposes
-        payment_reference = created_formatted_payment_reference(application.application_reference)
+        payment_reference = payment_service.created_formatted_payment_reference(application.application_reference)
 
         Payment.objects.create(
             application_id=application,

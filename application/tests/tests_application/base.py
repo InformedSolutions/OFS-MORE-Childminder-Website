@@ -4,6 +4,7 @@ A base class for reusable test steps across applicaiton unit tests
 import json
 from datetime import datetime
 from unittest import mock
+from unittest.mock import Mock
 
 from django.core.urlresolvers import reverse
 from django.test import Client
@@ -598,7 +599,8 @@ class ApplicationTestBase(object):
     def TestAppPaymentCreditDetails(self):
         """Submit Credit Card details"""
 
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock:
+        with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
             test_payment_response = {
                 "customerOrderCode": "TEST",
                 "lastEvent": "AUTHORISED"
@@ -606,6 +608,8 @@ class ApplicationTestBase(object):
 
             post_payment_mock.return_value.status_code = 201
             post_payment_mock.return_value.text = json.dumps(test_payment_response)
+
+            application_reference_mock.return_value = 'TESTURN'
 
             r = self.client.post(
                 reverse('Payment-Details-View'),

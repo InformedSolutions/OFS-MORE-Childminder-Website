@@ -1,14 +1,15 @@
 """
 Tests targetting the payment process
 """
-
+import json
+import time
 from unittest import mock
 
 from django.test import TestCase
 from django.urls import reverse, resolve
 
 from .base import ApplicationTestBase
-from ...payment_service import *
+from ...services import payment_service
 from ...models import Payment, Application
 
 
@@ -38,7 +39,7 @@ class PaymentTests(TestCase, ApplicationTestBase):
 
     def test_payment_reference_formatted(self):
         test_cm_reference = 'CM1000000'
-        formatted_reference = created_formatted_payment_reference(test_cm_reference)
+        formatted_reference = payment_service.created_formatted_payment_reference(test_cm_reference)
         more_prefix_in_payment_reference = formatted_reference[:4]
         reference_in_payment_reference = formatted_reference[5:14]
         timestamp_date = formatted_reference[15:23]
@@ -55,7 +56,11 @@ class PaymentTests(TestCase, ApplicationTestBase):
         an error gets returned to the user
         """
 
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock:
+        with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
+
+            application_reference_mock.return_value = 'TESTURN'
+
             test_payment_response = {
               'message': 'Internal Server error',
               'error': 'Test error',
@@ -93,8 +98,12 @@ class PaymentTests(TestCase, ApplicationTestBase):
         Tests that if a payment cannot be reconciled once lodged, an error is raised to the user.
         """
 
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock, \
-                mock.patch('application.payment_service.check_payment') as check_payment_mock:
+        with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
+                mock.patch('application.services.payment_service.check_payment') as check_payment_mock, \
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
+
+            application_reference_mock.return_value = 'TESTURN'
+
             test_payment_response = {
                 "amount": 50000,
                 "cardHolderName": "Mr Example Cardholder",
@@ -141,7 +150,11 @@ class PaymentTests(TestCase, ApplicationTestBase):
         Tests that if a payment has been refused by Worldpay an error is shown.
         """
 
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock:
+        with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
+
+            application_reference_mock.return_value = 'TESTURN'
+
             test_payment_response = {
                 "customerOrderCode": "TEST",
                 "lastEvent": "REFUSED"
@@ -184,7 +197,11 @@ class PaymentTests(TestCase, ApplicationTestBase):
         is retained
         """
 
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock:
+        with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
+
+            application_reference_mock.return_value = 'TESTURN'
+
             test_payment_response = {
                 "customerOrderCode": "TEST",
                 "lastEvent": "AUTHORISED"
@@ -252,7 +269,11 @@ class PaymentTests(TestCase, ApplicationTestBase):
         is retained
         """
 
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock:
+        with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
+
+            application_reference_mock.return_value = 'TESTURN'
+
             test_payment_response = {
                 "customerOrderCode": "TEST",
                 "lastEvent": "AUTHORISED"
@@ -321,7 +342,11 @@ class PaymentTests(TestCase, ApplicationTestBase):
            3. Payment record is lodged
         """
 
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock:
+        with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
+
+            application_reference_mock.return_value = 'TESTURN'
+
             test_payment_response = {
                 "customerOrderCode": "TEST",
                 "lastEvent": "AUTHORISED"
