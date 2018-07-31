@@ -600,7 +600,8 @@ class ApplicationTestBase(object):
         """Submit Credit Card details"""
 
         with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
-                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock, \
+                mock.patch('application.messaging.SQSHandler.send_message'):
 
             test_payment_response = {
                 "customerOrderCode": "TEST",

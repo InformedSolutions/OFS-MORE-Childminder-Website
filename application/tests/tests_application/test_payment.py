@@ -57,7 +57,8 @@ class PaymentTests(TestCase, ApplicationTestBase):
         """
 
         with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
-                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock, \
+                mock.patch('application.messaging.SQSHandler.send_message'):
 
             application_reference_mock.return_value = 'TESTURN'
 
@@ -100,7 +101,8 @@ class PaymentTests(TestCase, ApplicationTestBase):
 
         with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
                 mock.patch('application.services.payment_service.check_payment') as check_payment_mock, \
-                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock, \
+                mock.patch('application.messaging.SQSHandler.send_message'):
 
             application_reference_mock.return_value = 'TESTURN'
 
@@ -151,7 +153,8 @@ class PaymentTests(TestCase, ApplicationTestBase):
         """
 
         with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
-                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock, \
+                mock.patch('application.messaging.SQSHandler.send_message'):
 
             application_reference_mock.return_value = 'TESTURN'
 
@@ -198,7 +201,8 @@ class PaymentTests(TestCase, ApplicationTestBase):
         """
 
         with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
-                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock, \
+                mock.patch('application.messaging.SQSHandler.send_message'):
 
             application_reference_mock.return_value = 'TESTURN'
 
@@ -270,7 +274,8 @@ class PaymentTests(TestCase, ApplicationTestBase):
         """
 
         with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
-                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock, \
+                mock.patch('application.messaging.SQSHandler.send_message'):
 
             application_reference_mock.return_value = 'TESTURN'
 
@@ -343,10 +348,11 @@ class PaymentTests(TestCase, ApplicationTestBase):
         """
 
         with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
-                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock, \
+                mock.patch('application.messaging.SQSHandler.send_message'):
 
             application_reference_mock.return_value = 'TESTURN'
-
+            
             test_payment_response = {
                 "customerOrderCode": "TEST",
                 "lastEvent": "AUTHORISED"

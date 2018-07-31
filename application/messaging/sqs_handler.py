@@ -44,7 +44,8 @@ class SQSHandler:
         Genericised method for publishing a message to an SQS queue
         """
         try:
-            return self.queue.send_message(MessageBody=json.dumps(body))
+            response = self.queue.send_message(MessageBody=json.dumps(body))
+            return response
         except Exception as e:
             self.logger.debug(e)
             raise e
