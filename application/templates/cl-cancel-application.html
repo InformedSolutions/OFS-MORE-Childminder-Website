@@ -1,0 +1,29 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Childcare location{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<!-- Form -->
+<div class="two-thirds">
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Childcare location
+        </h1>
+        <p>You want to work in another person's home.</p>
+        <p>This test service can't help you to apply yet.</p>
+        <p> We will delete all the information you have given us. </p>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Cancel application" alt="Cancel application">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+
+</form>
+</div>
+
+{% endblock %}
