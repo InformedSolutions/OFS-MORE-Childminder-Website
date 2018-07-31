@@ -22,6 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 SMS_EXPIRY = 24
 EMAIL_EXPIRY = 24
 
+# Cost of making application
+APP_COST = 3500
+
 # Visa Validation
 VISA_VALIDATION = os.environ.get('VISA_VALIDATION') == 'True'
 
@@ -55,6 +58,8 @@ PAYMENT_PROCESSING_ATTEMPTS = os.environ.get('PAYMENT_PROCESSING_ATTEMPTS', 10)
 PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS = os.environ.get('PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS', 10)
 
 PAYMENT_HTTP_REQUEST_TIMEOUT = 60
+
+PAYMENT_QUEUE_NAME = "payment_queue"
 
 GOOGLE_ANALYTICS = {
 }

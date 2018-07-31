@@ -126,7 +126,7 @@ def card_payment_post_handler(request):
 
         # Invoke Payment Gateway API
         create_payment_response = payment_service.make_payment(
-            3500, cardholders_name, card_number, card_security_code,
+            settings.APP_COST, cardholders_name, card_number, card_security_code,
             expiry_month, expiry_year, 'GBP', payment_reference,
             'Ofsted Fees')
 
@@ -300,8 +300,9 @@ def __handle_authorised_payment(application):
                                   application.application_id)
 
     # Send ad-hoc payment to NOO
-    msg_body = __build_message_body(application)
-    sqs_handler = SQSHandler("payment_queue")
+    app_cost_float = float(settings.APP_COST/100)
+    msg_body = __build_message_body(application, format(app_cost_float, '.4f'))
+    sqs_handler = SQSHandler(settings.PAYMENT_QUEUE_NAME)
     sqs_handler.send_message(msg_body)
 
     return __redirect_to_payment_confirmation(application)
@@ -375,16 +376,17 @@ def __redirect_to_payment_confirmation(application):
     )
 
 
-def __build_message_body(application):
+def __build_message_body(application, amount):
     application_reference = application.application_reference
     applicant_name_obj = ApplicantName.objects.get(application_id=application)
     applicant_name = applicant_name_obj.first_name + " " + applicant_name_obj.last_name
     payment_reference = Payment.objects.get(application_id=application).payment_reference
     submitted_datetime = application.date_submitted
+
     return {
         "payment_action": "SC1",
         "payment_reference": payment_reference,
-        "payment_amount": "35.0000",
+        "payment_amount": amount,
         "event_date_time": submitted_datetime,
         "urn": application_reference,
         "setting_name": applicant_name
