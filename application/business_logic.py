@@ -684,7 +684,7 @@ def health_check_email_resend_logic(adult_record):
     # If the last e-mail was sent within the last 24 hours
     if (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) < timedelta(1):
 
-        # If the e-mail has been resent less than or eqal to 3 times
+        # If the e-mail has been resent less than or equal to 3 times
         if adult_record.email_resent <= 3:
 
             return False
