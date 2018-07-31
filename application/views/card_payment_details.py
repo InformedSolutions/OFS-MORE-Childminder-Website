@@ -19,6 +19,7 @@ from django.views.decorators.cache import never_cache
 from ..services import payment_service, noo_integration_service
 from ..forms import PaymentDetailsForm
 from ..models import Application, UserDetails, ApplicantPersonalDetails, ApplicantName, Payment
+from ..messaging.sqs_handler import SQSHandler
 
 logger = logging.getLogger(__name__)
 
@@ -298,6 +299,11 @@ def __handle_authorised_payment(application):
                                   application.application_reference,
                                   application.application_id)
 
+    # Send ad-hoc payment to NOO
+    msg_body = __build_message_body(application)
+    sqs_handler = SQSHandler("payment_queue")
+    sqs_handler.send_message(msg_body)
+
     return __redirect_to_payment_confirmation(application)
 
 
@@ -368,3 +374,18 @@ def __redirect_to_payment_confirmation(application):
         + '&orderCode=' + application.application_reference
     )
 
+
+def __build_message_body(application):
+    application_reference = application.application_reference
+    applicant_name_obj = ApplicantName.objects.get(application_id=application)
+    applicant_name = applicant_name_obj.first_name + " " + applicant_name_obj.last_name
+    payment_reference = Payment.objects.get(application_id=application).payment_reference
+    submitted_datetime = application.date_submitted
+    return {
+        "payment_action": "SC1",
+        "payment_reference": payment_reference,
+        "payment_amount": "35.0000",
+        "event_date_time": submitted_datetime,
+        "urn": application_reference,
+        "setting_name": applicant_name
+    }
