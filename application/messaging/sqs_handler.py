@@ -1,5 +1,6 @@
 import boto3
 import logging
+import json
 
 
 class SQSHandler:
@@ -19,7 +20,7 @@ class SQSHandler:
 
     def send_message(self, body):
         try:
-            return self.queue.send_message(MessageBody=str(body))
+            return self.queue.send_message(MessageBody=json.dumps(body))
         except Exception as e:
             self.logger.debug(e)
             raise e
