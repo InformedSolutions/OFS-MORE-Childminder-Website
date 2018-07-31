@@ -385,7 +385,7 @@ def __build_message_body(application, amount):
 
     return {
         "payment_action": "SC1",
-        "payment_reference": payment_reference,
+        "payment_ref": payment_reference,
         "payment_amount": amount,
         "event_date_time": submitted_datetime,
         "urn": application_reference,
