@@ -3,7 +3,6 @@ import collections
 from django.utils import timezone
 import calendar
 
-from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
@@ -513,18 +512,26 @@ def personal_details_location_of_care(request):
 
 def service_unavailable(request):
     """
-    Method returning the service unavailable page
+    Method returning the Childcare location cancellation page
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Service unavailable template
+    :return: an HttpResponse object with the rendered Childcare location cancellation template
     """
 
     if request.method == 'GET':
         app_id = request.GET["id"]
         variables = {
-            'application_id': app_id,
+            'application_id': app_id
         }
-
         return render(request, 'service-unavailable.html', variables)
+
+    if request.method == 'POST':
+
+        app_id = request.POST["id"]
+
+        if Application.objects.filter(application_id=app_id).exists():
+            Application.objects.get(application_id=app_id).delete()
+
+        return HttpResponseRedirect(reverse('CR-Cancel-Application-Confirmation'))
 
 
 def personal_details_childcare_address(request):
