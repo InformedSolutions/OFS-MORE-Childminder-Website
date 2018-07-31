@@ -383,7 +383,7 @@ def __build_message_body(application, amount):
     payment_reference = Payment.objects.get(application_id=application).payment_reference
 
     # Format submitted datetime in a way that can be consumed by .net
-    submitted_datetime = application.date_submitted.strftime("%Y-%m-%dT%H:%M:%S")
+    submitted_datetime = application.date_submitted.strftime("%Y-%m-%dT%H:%M:%S.%f")
 
     return {
         "payment_action": "SC1",
