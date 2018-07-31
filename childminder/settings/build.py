@@ -71,3 +71,42 @@ MIDDLEWARE = MIDDLEWARE + MIDDLEWARE_DEV
 INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + DEV_APPS + PROJECT_APPS
 
 SECRET_KEY = '-as82jskhad322432maq#j23432*&(*&DASl6#mhak%8rbh$px8e&9c6b9@c7df=m'
+
+LOGGING = {
+  'version': 1,
+  'disable_existing_loggers': False,
+  'formatters': {
+    'console': {
+            # exact format is not important, this is the minimum information
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+        },
+  'handlers': {
+    'file': {
+        'level': 'INFO',
+        'class': 'logging.handlers.RotatingFileHandler',
+        'maxBytes': 1 * 1024 * 1024,
+        'filename': 'logs/output.log',
+        'formatter': 'console',
+        'maxBytes': 1 * 1024 * 1024,
+        'backupCount': 30
+    },
+    'console': {
+        'level': 'INFO',
+        'class': 'logging.StreamHandler'
+    },
+   },
+   'loggers': {
+     '': {
+       'handlers': ['file', 'console'],
+         'level': 'INFO',
+           'propagate': True,
+      },
+      'django.server': {
+       'handlers': ['file', 'console'],
+         'level': 'INFO',
+           'propagate': True,
+      },
+    },
+
+}
