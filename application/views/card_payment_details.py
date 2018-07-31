@@ -23,6 +23,7 @@ from ..messaging.sqs_handler import SQSHandler
 
 logger = logging.getLogger(__name__)
 
+sqs_handler = SQSHandler(settings.PAYMENT_QUEUE_NAME)
 
 @never_cache
 def card_payment_details(request):
@@ -302,7 +303,6 @@ def __handle_authorised_payment(application):
     # Send ad-hoc payment to NOO
     app_cost_float = float(settings.APP_COST/100)
     msg_body = __build_message_body(application, format(app_cost_float, '.4f'))
-    sqs_handler = SQSHandler(settings.PAYMENT_QUEUE_NAME)
     sqs_handler.send_message(msg_body)
 
     return __redirect_to_payment_confirmation(application)
