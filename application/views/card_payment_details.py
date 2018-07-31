@@ -381,7 +381,9 @@ def __build_message_body(application, amount):
     applicant_name_obj = ApplicantName.objects.get(application_id=application)
     applicant_name = applicant_name_obj.first_name + " " + applicant_name_obj.last_name
     payment_reference = Payment.objects.get(application_id=application).payment_reference
-    submitted_datetime = application.date_submitted.isoformat()
+
+    # Format submitted datetime in a way that can be consumed by .net
+    submitted_datetime = application.date_submitted.strftime("%Y-%m-%dT%H:%M:%S")
 
     return {
         "payment_action": "SC1",
