@@ -381,7 +381,7 @@ def __build_message_body(application, amount):
     applicant_name_obj = ApplicantName.objects.get(application_id=application)
     applicant_name = applicant_name_obj.first_name + " " + applicant_name_obj.last_name
     payment_reference = Payment.objects.get(application_id=application).payment_reference
-    submitted_datetime = str(application.date_submitted)
+    submitted_datetime = application.date_submitted.isoformat()
 
     return {
         "payment_action": "SC1",
