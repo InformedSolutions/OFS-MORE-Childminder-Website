@@ -46,6 +46,12 @@ EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
 
 FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'tester@informed.com')
 
+
+# AWS SQS keys
+AWS_SQS_ACCESS_KEY_ID = os.environ.get('AWS_SQS_ACCESS_KEY_ID')
+AWS_SQS_SECRET_ACCESS_KEY = os.environ.get('AWS_SQS_SECRET_ACCESS_KEY')
+
+
 TEST_NOTIFY_CONNECTION = True
 
 # The prefix shown before a URN to an applicant
