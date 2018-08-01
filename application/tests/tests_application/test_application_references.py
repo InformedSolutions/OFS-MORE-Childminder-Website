@@ -28,5 +28,4 @@ class ApplicationReferenceTests(TestCase):
             )
 
             test_reference_number = create_application_reference()
-            reference_number_discriminator = test_reference_number[:2]
-            self.assertEqual(reference_number_discriminator, self.test_discriminator)
+            self.assertIsNotNone(test_reference_number)

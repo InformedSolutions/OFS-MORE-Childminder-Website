@@ -19,9 +19,7 @@ def create_application_reference():
     try:
         integration_adapter_endpoint = settings.INTEGRATION_ADAPTER_URL
         header = {'content-type': 'application/json'}
-        get_new_urn_post_body = {
-            'prefix': settings.APPLICATION_PREFIX,
-        }
+        get_new_urn_post_body = {}
 
         response = requests.post(integration_adapter_endpoint + '/api/v1/urns/',
                           json.dumps(get_new_urn_post_body),
