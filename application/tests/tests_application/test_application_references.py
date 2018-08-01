@@ -13,8 +13,6 @@ from ...services.noo_integration_service import create_application_reference
 
 class ApplicationReferenceTests(TestCase):
 
-    test_discriminator = settings.APPLICATION_PREFIX
-
     def test_can_produce_application_reference(self):
         with mock.patch('requests.get') as request_get_mock:
             test_urn_response = {

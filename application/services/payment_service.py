@@ -95,6 +95,7 @@ def created_formatted_payment_reference(application_reference):
     :return: a formatted payment reference
     """
     prefix = settings.PAYMENT_REFERENCE_PREFIX
+    payment_urn_prefix = settings.PAYMENT_URN_PREFIX
     timestamp = time.strftime("%Y%m%d%H%M%S")
-    formatted_payment_reference = str(prefix + ':' + application_reference + ':' + timestamp)
+    formatted_payment_reference = str(prefix + ':' + payment_urn_prefix + application_reference + ':' + timestamp)
     return formatted_payment_reference

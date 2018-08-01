@@ -24,7 +24,7 @@ def create_application_reference():
         urn = response_body_as_json['URN']
 
         # Note that the EY prefix is appended here as this is not returned by NOO
-        return settings.APPLICATION_PREFIX + str(urn)
+        return str(urn)
     except Exception as e:
         logger.error('Failed to allocate application reference number: ' + str(e))
 
