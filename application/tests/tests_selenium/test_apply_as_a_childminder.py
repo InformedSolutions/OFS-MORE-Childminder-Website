@@ -927,8 +927,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.create_standard_eyfs_application()
 
         self.selenium_task_executor.get_driver().find_element_by_link_text("Cancel application").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Cancel Application']").click()
-        self.assertEqual("Application Cancelled", self.selenium_task_executor.get_driver().title)
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Cancel application']").click()
+        self.assertEqual("Application cancelled", self.selenium_task_executor.get_driver().title)
 
     @try_except_method
     def test_can_save_and_exit(self):
