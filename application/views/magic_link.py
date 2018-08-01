@@ -259,9 +259,20 @@ class SMSValidationView(View):
                 CustomAuthenticationHandler.create_session(response, acc.email)
 
                 acc.sms_resend_attempts = 0
+                # Set SMS code to expired after a one time successful login
+                acc.sms_expiry_date = int(time.time()) - ((settings.EMAIL_EXPIRY + 1) * 60 * 60)
                 acc.save()
 
                 # Forward back onto application
+                return response
+
+            else:
+
+                # Ensure sign out and ask security question if SMS code has expired/already been used once
+                response = HttpResponseRedirect(reverse('Security-Question') + '?id=' + id)
+
+                CustomAuthenticationHandler.destroy_session(response)
+
                 return response
 
         variables = {
