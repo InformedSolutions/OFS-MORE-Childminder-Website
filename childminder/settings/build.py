@@ -92,7 +92,7 @@ LOGGING = {
         'backupCount': 30
     },
     'console': {
-        'level': 'INFO',
+        'level': 'ERROR',
         'class': 'logging.StreamHandler'
     },
    },
@@ -104,7 +104,7 @@ LOGGING = {
       },
       'django.server': {
        'handlers': ['file', 'console'],
-         'level': 'INFO',
+         'level': 'ERROR',
            'propagate': True,
       },
     },
