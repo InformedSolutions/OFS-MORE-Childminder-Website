@@ -18,12 +18,7 @@ def create_application_reference():
     """
     try:
         integration_adapter_endpoint = settings.INTEGRATION_ADAPTER_URL
-        header = {'content-type': 'application/json'}
-        get_new_urn_post_body = {}
-
-        response = requests.post(integration_adapter_endpoint + '/api/v1/urns/',
-                          json.dumps(get_new_urn_post_body),
-                          headers=header)
+        response = requests.get(integration_adapter_endpoint + '/api/v1/urns/')
 
         response_body_as_json = response.json()
         urn = response_body_as_json['URN']
