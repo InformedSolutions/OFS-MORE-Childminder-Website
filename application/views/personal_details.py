@@ -511,22 +511,6 @@ def personal_details_location_of_care(request):
             return render(request, 'personal-details-location-of-care.html', variables)
 
 
-def service_unavailable(request):
-    """
-    Method returning the service unavailable page
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Service unavailable template
-    """
-
-    if request.method == 'GET':
-        app_id = request.GET["id"]
-        variables = {
-            'application_id': app_id,
-        }
-
-        return render(request, 'service-unavailable.html', variables)
-
-
 def personal_details_childcare_address(request):
     """
     Method returning the template for the Your personal details: childcare address page (for a given application)

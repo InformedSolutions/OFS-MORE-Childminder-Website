@@ -23,7 +23,6 @@ def cancel_app(request):
         delete_app(app_id)
         return HttpResponseRedirect(reverse('Cancel-Application-Confirmation'))
 
-
 def cancel_app_confirmation(request):
     """
     This is one of the cancel application confirmation pages
@@ -51,6 +50,28 @@ def cr_cancel_app(request):
         app_id = request.POST["id"]
         delete_app(app_id)
 
+        return HttpResponseRedirect(reverse('CR-Cancel-Application-Confirmation'))
+
+def cl_cancel_app(request):
+    """
+    Method returning the service unavailable page
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Service unavailable template
+    """
+
+    if request.method == 'GET':
+        app_id = request.GET["id"]
+        variables = {
+            'application_id': app_id
+        }
+        return render(request, 'cl-cancel-application.html', variables)
+
+    if request.method == 'POST':
+
+        app_id = request.POST["id"]
+        delete_app(app_id)
+
+        # The cr-cancel-application-confirmation is an appropriate template for both the cl and cr journey.
         return HttpResponseRedirect(reverse('CR-Cancel-Application-Confirmation'))
 
 
