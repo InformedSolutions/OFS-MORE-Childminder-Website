@@ -16,14 +16,14 @@ class ApplicationReferenceTests(TestCase):
     test_discriminator = settings.APPLICATION_PREFIX
 
     def test_can_produce_application_reference(self):
-        with mock.patch('requests.post') as request_post_mock:
+        with mock.patch('requests.get') as request_get_mock:
             test_urn_response = {
               "URN": 123456789
             }
 
-            request_post_mock.return_value.status_code = 201
-            request_post_mock.return_value.text = json.dumps(test_urn_response)
-            request_post_mock.return_value.json = Mock(
+            request_get_mock.return_value.status_code = 201
+            request_get_mock.return_value.text = json.dumps(test_urn_response)
+            request_get_mock.return_value.json = Mock(
                 return_value=test_urn_response
             )
 
