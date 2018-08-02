@@ -718,6 +718,11 @@ def other_people_summary(request):
             if adult.health_check_status != 'Done':
                 adult_health_check_status_list.append('To do')
 
+            # If the adult health check status is marked as flagged, set the email resend limit to 0
+            if adult.health_check_status == 'Flagged':
+                adult.email_resent = 0
+                adult.save()
+
             # Counter for table object to correctly set link in generic-error-summary template for flagged health check.
             table = Table([adult.pk])
             table.loop_counter = index + 1
