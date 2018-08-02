@@ -76,7 +76,7 @@
             </a>
         </td>
         {% elif row.row_name == 'Health check status' %}
-        <td class="change-answer">
+        <td class="change-answer nowrap">
             {% if row.value != 'Done' %}
             <a href="{% url row.back_link %}?id={{application_id}}&adult={{forloop.parentloop.counter}}"
                alt='Resend email'>
