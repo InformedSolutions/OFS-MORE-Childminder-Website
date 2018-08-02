@@ -488,3 +488,7 @@ div.error-summary ul.error-summary-list {
 .indent-left {
    margin-left: 20px;
 }
+
+.nowrap {
+  white-space: nowrap ;
+}
