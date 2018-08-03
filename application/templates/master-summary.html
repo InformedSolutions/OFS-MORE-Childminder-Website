@@ -397,10 +397,12 @@
             Same as home address
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if personal_details_change %}
             <a href="{% url 'Personal-Details-Location-Of-Care-View' %}?id={{application_id}}"
                alt='Change answer to childcare location'>
                 Change <span class="visuallyhidden">answer to childcare location</span>
             </a>
+            {% endif %}
         </td>
         {% elif location_of_childcare == False %}
         {% if childcare_street_line2 and childcare_county %}
