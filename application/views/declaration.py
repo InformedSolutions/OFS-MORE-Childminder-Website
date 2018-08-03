@@ -156,6 +156,11 @@ def declaration_summary(request, print=False):
                 first_aid_training_change = True
             else:
                 first_aid_training_change = False
+            
+            if application.health_arc_flagged is True:
+                health_change = True
+            else:
+                health_change = False
 
             if application.eyfs_training_arc_flagged is True:
                 early_years_training_change = True
@@ -182,6 +187,7 @@ def declaration_summary(request, print=False):
             type_of_childcare_change = True
             personal_details_change = True
             first_aid_training_change = True
+            health_change = True
             early_years_training_change = True
             criminal_record_check_change = True
             people_in_your_home_change = True
@@ -227,6 +233,7 @@ def declaration_summary(request, print=False):
             'cautions_convictions': dbs_record.cautions_convictions,
             'criminal_record_check_change': criminal_record_check_change,
             'send_hdb_declare': True,
+            'health_change': health_change,
             'eyfs_course_name': eyfs_record.eyfs_course_name,
             'eyfs_course_date': eyfs_course_date,
             'early_years_training_change': early_years_training_change,
