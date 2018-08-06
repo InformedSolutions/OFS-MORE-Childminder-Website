@@ -387,6 +387,6 @@ def __build_message_body(application, amount):
         "payment_action": "SC1",
         "payment_ref": payment_reference,
         "payment_amount": amount,
-        "urn": application_reference,
+        "urn": str(settings.PAYMENT_URN_PREFIX) + application_reference,
         "setting_name": applicant_name
     }
