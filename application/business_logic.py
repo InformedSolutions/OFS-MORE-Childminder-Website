@@ -673,6 +673,7 @@ def reset_declaration(application):
         application.change_declare = None
         application.save()
 
+
 def health_check_email_resend_logic(adult_record):
     """
     Method to verify if the last household member health check email can be sent, given a limit of 3 resends per 24
@@ -689,7 +690,7 @@ def health_check_email_resend_logic(adult_record):
 
             return False
 
-        # If the email has been resent more than 3 times
+        # If the email has been resent more than or equal to 3 times
         elif adult_record.email_resent >= 3:
 
             return True

@@ -133,16 +133,78 @@ def declaration_summary(request, print=False):
         # Zip the appended lists together for the HTML to simultaneously parse
         child_lists = zip(child_name_list, child_birth_day_list, child_birth_month_list, child_birth_year_list,
                           child_relationship_list)
+
+        # For returned applications, display change links only if task has been returned
+        if application.application_status == 'FURTHER_INFORMATION':
+
+            if application.login_details_arc_flagged is True:
+                sign_in_details_change = True
+            else:
+                sign_in_details_change = False
+
+            if application.childcare_type_arc_flagged is True:
+                type_of_childcare_change = True
+            else:
+                type_of_childcare_change = False
+
+            if application.personal_details_arc_flagged is True:
+                personal_details_change = True
+            else:
+                personal_details_change = False
+
+            if application.first_aid_training_arc_flagged is True:
+                first_aid_training_change = True
+            else:
+                first_aid_training_change = False
+            
+            if application.health_arc_flagged is True:
+                health_change = True
+            else:
+                health_change = False
+
+            if application.eyfs_training_arc_flagged is True:
+                early_years_training_change = True
+            else:
+                early_years_training_change = False
+
+            if application.criminal_record_check_arc_flagged is True:
+                criminal_record_check_change = True
+            else:
+                criminal_record_check_change = False
+
+            if application.people_in_home_arc_flagged is True:
+                people_in_your_home_change = True
+            else:
+                people_in_your_home_change = False
+
+            if application.references_arc_flagged is True:
+                references_change = True
+            else:
+                references_change = False
+
+        else:
+            sign_in_details_change = True
+            type_of_childcare_change = True
+            personal_details_change = True
+            first_aid_training_change = True
+            health_change = True
+            early_years_training_change = True
+            criminal_record_check_change = True
+            people_in_your_home_change = True
+            references_change = True
+
         variables = {
             'form': form,
             'application_id': application_id_local,
             'login_details_email': login_record.email,
             'login_details_mobile_number': login_record.mobile_number,
             'login_details_alternative_phone_number': login_record.add_phone_number,
+            'sign_in_details_change': sign_in_details_change,
             'childcare_type_zero_to_five': childcare_record.zero_to_five,
             'childcare_type_five_to_eight': childcare_record.five_to_eight,
             'childcare_type_eight_plus': childcare_record.eight_plus,
             'childcare_overnight': childcare_record.overnight_care,
+            'type_of_childcare_change': type_of_childcare_change,
             'personal_details_first_name': applicant_name_record.first_name,
             'personal_details_middle_names': applicant_name_record.middle_names,
             'personal_details_last_name': applicant_name_record.last_name,
@@ -160,16 +222,21 @@ def declaration_summary(request, print=False):
             'childcare_county': childcare_county,
             'childcare_postcode': childcare_postcode,
             'location_of_childcare': applicant_home_address_record.childcare_address,
+            'personal_details_change': personal_details_change,
             'first_aid_training_organisation': first_aid_record.training_organisation,
             'first_aid_training_course': first_aid_record.course_title,
             'first_aid_certificate_day': first_aid_record.course_day,
             'first_aid_certificate_month': first_aid_record.course_month,
             'first_aid_certificate_year': first_aid_record.course_year,
+            'first_aid_training_change': first_aid_training_change,
             'dbs_certificate_number': dbs_record.dbs_certificate_number,
             'cautions_convictions': dbs_record.cautions_convictions,
+            'criminal_record_check_change': criminal_record_check_change,
             'send_hdb_declare': True,
+            'health_change': health_change,
             'eyfs_course_name': eyfs_record.eyfs_course_name,
             'eyfs_course_date': eyfs_course_date,
+            'early_years_training_change': early_years_training_change,
             'first_reference_first_name': first_reference_record.first_name,
             'first_reference_last_name': first_reference_record.last_name,
             'first_reference_relationship': first_reference_record.relationship,
@@ -196,6 +263,7 @@ def declaration_summary(request, print=False):
             'second_reference_country': second_reference_record.country,
             'second_reference_phone_number': second_reference_record.phone_number,
             'second_reference_email': second_reference_record.email,
+            'references_change': references_change,
             'adults_in_home': application.adults_in_home,
             'children_in_home': application.children_in_home,
             'number_of_adults': adults_list.count(),
@@ -203,6 +271,7 @@ def declaration_summary(request, print=False):
             'adult_lists': adult_lists,
             'child_lists': child_lists,
             'turning_16': application.children_turning_16,
+            'people_in_your_home_change': people_in_your_home_change,
             'print': print
         }
         if application.declarations_status != 'COMPLETED':
