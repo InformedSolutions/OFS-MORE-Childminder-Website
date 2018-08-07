@@ -378,9 +378,22 @@ def __redirect_to_payment_confirmation(application):
 
 
 def __build_message_body(application, amount):
+    """
+    Helper method to build an SQS request to be picked up by the Integration Adapter component
+    for relay to NOO
+    :param application: the application for which a payment request is to be generated
+    :param amount: the amount that the payment was for
+    :return: an SQS request that can be consumed up by the Integration Adapter component
+    """
+
     application_reference = application.application_reference
     applicant_name_obj = ApplicantName.objects.get(application_id=application)
-    applicant_name = applicant_name_obj.first_name + " " + applicant_name_obj.last_name
+
+    if len(applicant_name_obj.middle_names):
+        applicant_name = applicant_name_obj.last_name + ',' + applicant_name_obj.first_name + " " + applicant_name_obj.middle_names
+    else:
+        applicant_name = applicant_name_obj.last_name + ',' + applicant_name_obj.first_name
+
     payment_reference = Payment.objects.get(application_id=application).payment_reference
 
     return {
