@@ -682,26 +682,31 @@ def health_check_email_resend_logic(adult_record):
     :return: Boolean
     """
 
-    # If the last e-mail was sent within the last 24 hours
-    if (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) < timedelta(1):
+    #If email_resent_timestamp is None then the email has never been resent.
+    if adult_record.email_resent_timestamp is not None:
 
-        # If the e-mail has been resent less than 3 times
-        if adult_record.email_resent < 3:
+        # If the last e-mail was sent within the last 24 hours
+        if (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) < timedelta(1):
+
+            # If the e-mail has been resent less than 3 times
+            if adult_record.email_resent < 3:
+
+                return False
+
+            # If the email has been resent more than or equal to 3 times
+            elif adult_record.email_resent >= 3:
+
+                return True
+
+        # If the last e-mail to the household member has been sent more than 24 hours ago
+        elif (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) > timedelta(1):
+            # Reset the email resent count
+            adult_record.email_resent = 0
+            adult_record.validated = False
+            adult_record.save()
 
             return False
-
-        # If the email has been resent more than or equal to 3 times
-        elif adult_record.email_resent >= 3:
-
-            return True
-
-    # If the last e-mail to the household member has been sent more than 24 hours ago
-    elif (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) > timedelta(1):
-        # Reset the email resent count
-        adult_record.email_resent = 0
-        adult_record.validated = False
-        adult_record.save()
-
+    else:
         return False
 
 
