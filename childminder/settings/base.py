@@ -188,12 +188,11 @@ LOGGING = {
   'handlers': {
     'file': {
         'level': 'DEBUG',
-        'class': 'logging.handlers.RotatingFileHandler',
-        'maxBytes': 1 * 1024 * 1024,
-        'filename': 'logs/' + (datetime.now().strftime('%Y-%m-%d')) + '-output.log',
+        'class': 'logging.handlers.TimedRotatingFileHandler',
+        'filename': 'logs/output.log',
         'formatter': 'console',
-        'maxBytes': 1 * 1024 * 1024,
-        'backupCount': 30
+        'when': 'midnight',
+        'backupCount': 10
     },
     'console': {
         'level': 'DEBUG',
