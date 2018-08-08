@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-from datetime import datetime
 
 # Server name for showing server that responded to request under load balancing conditions
 SERVER_LABEL = os.environ.get('SERVER_LABEL')
