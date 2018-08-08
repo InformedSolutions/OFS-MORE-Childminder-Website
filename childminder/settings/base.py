@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+from datetime import datetime
 
 # Server name for showing server that responded to request under load balancing conditions
 SERVER_LABEL = os.environ.get('SERVER_LABEL')
@@ -189,7 +190,7 @@ LOGGING = {
         'level': 'DEBUG',
         'class': 'logging.handlers.RotatingFileHandler',
         'maxBytes': 1 * 1024 * 1024,
-        'filename': 'logs/output.log',
+        'filename': 'logs/' + (datetime.now().strftime('%Y-%m-%d')) + '-output.log',
         'formatter': 'console',
         'maxBytes': 1 * 1024 * 1024,
         'backupCount': 30
