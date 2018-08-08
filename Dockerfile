@@ -13,10 +13,10 @@ RUN apt-get update && \
                 netcat \
         && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir /source
+ADD requirements.txt /source/
 WORKDIR /source
-ADD . /source/
 RUN pip install -r requirements.txt
+ADD . /source/
 
 # If dev env install python depedencies specifically for dev
 RUN  if [ "`echo $PROJECT_SETTINGS | rev | cut -c -3 | rev`" = "dev" ]; then \
