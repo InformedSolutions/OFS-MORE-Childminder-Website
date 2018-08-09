@@ -676,10 +676,10 @@ def reset_declaration(application):
 
 def health_check_email_resend_logic(adult_record):
     """
-    Method to verify if the last household member health check email can be sent, given a limit of 3 resends per 24
-    hours
+    Method to verify if the last household member health check email should not be sent, given a limit of 3 resends per 24
+    hours.
     :param: adult_record: An AdultInHome object
-    :return: Boolean
+    :return: Boolean: True if email cannot be sent, False if email can be sent.
     """
 
     #If email_resent_timestamp is None then the email has never been resent.
