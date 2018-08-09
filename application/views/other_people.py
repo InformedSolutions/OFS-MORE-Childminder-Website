@@ -1092,7 +1092,7 @@ def other_people_resend_confirmation(request):
 
         if adult_record.health_check_status == 'Started':
             status.update(application_id_local, 'people_in_home_status', 'WAITING')
-            adult_record.health_check_status = 'Started'
+            adult_record.health_check_status = 'To do'
             adult_record.save()
 
         variables = {
