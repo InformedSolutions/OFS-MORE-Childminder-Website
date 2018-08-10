@@ -719,7 +719,7 @@ def other_people_summary(request):
                 adult_health_check_status_list.append('To do')
 
             # If the adult health check status is marked as flagged, set the email resend limit to 0
-            if adult.health_check_status == 'Flagged':
+            if adult.health_check_status == 'Started':
                 adult.email_resent = 0
                 adult.save()
 
@@ -972,7 +972,7 @@ def other_people_resend_email(request):
                 'resend_limit': resend_limit
             }
 
-            if adult_record.health_check_status == 'Flagged':
+            if adult_record.health_check_status == 'Started':
                 variables['error_summary_title'] = 'There was a problem (' + name + ')'
                 variables['arc_comment'] = ArcComments.objects.get(table_pk=adult_record.pk).comment
 
@@ -1090,7 +1090,7 @@ def other_people_resend_confirmation(request):
         elif adult_record.middle_names == '':
             name = adult_record.first_name + ' ' + adult_record.last_name
 
-        if adult_record.health_check_status == 'Flagged':
+        if adult_record.health_check_status == 'Started':
             status.update(application_id_local, 'people_in_home_status', 'WAITING')
             adult_record.health_check_status = 'Started'
             adult_record.save()
