@@ -804,6 +804,9 @@ def other_people_summary(request):
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
             form.error_summary_title = "There was a problem"
+            is_review = True
+        else:
+            is_review = False
 
         variables = {
             'page_title': 'Check your answers: people in your home',
@@ -812,6 +815,7 @@ def other_people_summary(request):
             'table_list': table_list,
             'turning_16': application.children_turning_16,
             'people_in_home_status': application.people_in_home_status,
+            'is_review': is_review
         }
         variables = submit_link_setter(variables, table_list, 'people_in_home', application_id_local)
 
