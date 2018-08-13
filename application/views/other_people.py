@@ -29,7 +29,8 @@ from ..business_logic import (health_check_email_resend_logic,
                               rearrange_children,
                               remove_adult,
                               remove_child,
-                              reset_declaration)
+                              reset_declaration,
+                              show_resend_and_change_email)
 from ..forms import (OtherPeopleAdultDBSForm,
                      OtherPeopleAdultDetailsForm,
                      OtherPeopleAdultQuestionForm,
@@ -744,6 +745,17 @@ def other_people_summary(request):
 
         for table in adult_table_list:
             table['other_people_numbers'] = back_link_addition
+
+        # Add display_buttons for each adult
+        is_review = application.application_status == 'FURTHER_INFORMATION'
+
+        display_buttons_list = []
+
+        for table in adult_table_list:
+            display_buttons = show_resend_and_change_email(adult.health_check_status, is_review)
+
+            display_buttons_list.append(display_buttons)
+
         adult_table_list = create_tables(adult_table_list, other_adult_name_dict, other_adult_link_dict)
 
         child_table_list = []
@@ -804,9 +816,6 @@ def other_people_summary(request):
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
             form.error_summary_title = "There was a problem"
-            is_review = True
-        else:
-            is_review = False
 
         variables = {
             'page_title': 'Check your answers: people in your home',
@@ -815,7 +824,7 @@ def other_people_summary(request):
             'table_list': table_list,
             'turning_16': application.children_turning_16,
             'people_in_home_status': application.people_in_home_status,
-            'is_review': is_review
+            'display_buttons_list': display_buttons_list
         }
         variables = submit_link_setter(variables, table_list, 'people_in_home', application_id_local)
 
