@@ -8,7 +8,8 @@ from re import compile
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.core.signing import Signer
+from django.core.signing import Signer, BadSignature
+from django.shortcuts import render
 
 from .models import Application, UserDetails
 
@@ -83,7 +84,11 @@ class CustomAuthenticationHandler(object):
             return None
         else:
             signer = Signer()
-            return signer.unsign(request.COOKIES.get(COOKIE_IDENTIFIER))
+            try:
+                return signer.unsign(request.COOKIES.get(COOKIE_IDENTIFIER))
+            except BadSignature:
+                # the cookie identifier has not been signed
+                return None
 
     @staticmethod
     def create_session(response, email):
