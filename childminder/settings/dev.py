@@ -1,5 +1,4 @@
 import socket
-import os
 
 from .base import *
 
@@ -82,3 +81,40 @@ MIDDLEWARE = MIDDLEWARE + MIDDLEWARE_DEV
 INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + DEV_APPS + PROJECT_APPS
 
 SECRET_KEY = '-asdasdsad322432maq#j23432*&(*&DASl6#mhak%8rbh$px8e&9c6b9@c7df=m'
+
+LOGGING = {
+  'version': 1,
+  'disable_existing_loggers': False,
+  'formatters': {
+    'console': {
+            # exact format is not important, this is the minimum information
+            'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
+        },
+        },
+  'handlers': {
+    'file': {
+        'level': 'DEBUG',
+        'class': 'logging.handlers.TimedRotatingFileHandler',
+        'filename': 'logs/output.log',
+        'formatter': 'console',
+        'when': 'midnight',
+        'backupCount': 10
+    },
+    'console': {
+        'level': 'DEBUG',
+        'class': 'logging.StreamHandler'
+    },
+   },
+   'loggers': {
+     '': {
+       'handlers': ['console'],
+         'level': 'DEBUG',
+           'propagate': True,
+      },
+      'django.server': {
+       'handlers': ['console'],
+         'level': 'INFO',
+           'propagate': True,
+      },
+    },
+}
