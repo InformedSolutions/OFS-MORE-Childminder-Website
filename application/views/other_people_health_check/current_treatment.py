@@ -53,7 +53,7 @@ class CurrentTreatment(BaseFormView):
         person_record = AdultInHome.objects.get(pk=person_id)
 
         # If they've said no to being currently treated, if any records exist with their id, delete them
-        logger.debug('Clearing current illness details for person id: ' + str(person_id) + 'as answer renewed')
+        logger.debug('Clearing current illness details for person id: ' + str(person_id) + 'as response has been renewed')
         HealthCheckCurrent.objects.filter(person_id=person_record).delete()
 
         if clean['currently_ill'] == 'True':
