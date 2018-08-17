@@ -1,4 +1,3 @@
-from application.utils import build_url
 from application.views.other_people_health_check.BaseViews import BaseTemplateView
 
 

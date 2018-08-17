@@ -1,10 +1,12 @@
-from django.conf import settings
+import logging
+
 from django.core.exceptions import ObjectDoesNotExist
-from django.views.generic import FormView
 
 from application.forms.other_person_health_check.current_illness import CurrentIllness
 from application.models import AdultInHome, HealthCheckCurrent
 from application.views.other_people_health_check.BaseViews import BaseFormView
+
+logger = logging.getLogger(__name__)
 
 
 class CurrentTreatment(BaseFormView):
@@ -49,6 +51,11 @@ class CurrentTreatment(BaseFormView):
         }
 
         person_record = AdultInHome.objects.get(pk=person_id)
+
+        # If they've said no to being currently treated, if any records exist with their id, delete them
+        logger.debug('Clearing current illness details for person id: ' + str(person_id) + 'as answer renewed')
+        HealthCheckCurrent.objects.filter(person_id=person_record).delete()
+
         if clean['currently_ill'] == 'True':
             person_record.current_treatment = True
         else:
@@ -57,15 +64,15 @@ class CurrentTreatment(BaseFormView):
         if person_record.current_treatment:
             # If they say they are currently being treated, create a record saying so, or update an existing record
             # with the new data they've entered
+
+            logger.debug('Updating current illness details for person id: ' + str(person_id))
+
+            # Created is a boolean for verification purposes, not used here but required to call the method
             new_current_illness, created = HealthCheckCurrent.objects.update_or_create(
                 person_id=person_record,
                 description=clean['illness_details'],
                 defaults=new_fields,
             )
-            # Created is a boolean for verification purposes, not used here but required to call the method
-        else:
-            # If they've said no to being currently treated, if any records exist with their id, delete them
-            deleted_illness = HealthCheckCurrent.objects.filter(person_id=person_record).delete()
 
         # As the current treatment boolean in the adult in home table has been updated, save the record
         person_record.save()

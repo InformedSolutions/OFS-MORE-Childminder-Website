@@ -7,7 +7,7 @@ DEBUG = True
 # Override default url for local dev
 PUBLIC_APPLICATION_URL = 'http://localhost:8000/childminder'
 
-INTERNAL_IPS = ["127.0.0.1", ]
+INTERNAL_IPS = ["127.0.0.1", "localhost"]
 
 # Workdaround for docker
 INTERNAL_IPS += [socket.gethostbyname(socket.gethostname())[:-1] + '1']
