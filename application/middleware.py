@@ -9,7 +9,6 @@ from re import compile
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.core.signing import Signer, BadSignature
-from django.shortcuts import render
 
 from .models import Application, UserDetails
 

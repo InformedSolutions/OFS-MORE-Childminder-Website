@@ -882,7 +882,6 @@ def convert_mobile_to_notify_standard(mobile):
     else:
         return mobile
 
-
 def childminder_references_and_user_email_duplication_check(email1, email2):
     """
     Helper function to determine whether the applications reference emails, and application email, are different.

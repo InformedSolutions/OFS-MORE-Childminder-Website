@@ -73,8 +73,5 @@ class ThankYou(BaseTemplateView):
 
             update(application_id, 'people_in_home_status', 'COMPLETED')
 
-        cookie_key = CustomAuthenticationHandler.get_cookie_identifier()
-        request.COOKIES[cookie_key] = None
-
         CustomAuthenticationHandler.destroy_session(response)
         return response
