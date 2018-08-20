@@ -6,9 +6,9 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 from re import compile
 
-from django.conf import settings  # import the settings file
-from django.http import HttpResponseRedirect, HttpResponseServerError
-from django.shortcuts import reverse
+from django.conf import settings
+from django.http import HttpResponseRedirect
+from django.core.signing import Signer, BadSignature
 
 from .models import Application, UserDetails
 
@@ -82,11 +82,19 @@ class CustomAuthenticationHandler(object):
         if COOKIE_IDENTIFIER not in request.COOKIES:
             return None
         else:
-            return request.COOKIES.get(COOKIE_IDENTIFIER)
+            signer = Signer()
+            try:
+                return signer.unsign(request.COOKIES.get(COOKIE_IDENTIFIER))
+            except BadSignature:
+                # the cookie identifier has not been signed
+                return None
 
     @staticmethod
     def create_session(response, email):
-        response.set_cookie(COOKIE_IDENTIFIER, email, max_age=1800)
+        # Set value persisted in cookie with coupled signature to prevent cookie tampering
+        signer = Signer()
+        signed_email = signer.sign(email)
+        response.set_cookie(COOKIE_IDENTIFIER, signed_email, max_age=1800)
 
     @staticmethod
     def destroy_session(response):
