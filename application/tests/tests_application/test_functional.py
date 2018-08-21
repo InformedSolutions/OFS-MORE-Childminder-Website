@@ -234,7 +234,7 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
 
         self.TestAppInit()
         self.assertEqual(
-            TimelineLog.objects.filter(object_id=self.app_id)[0].extra_data['action'], "created"
+            TimelineLog.objects.filter(object_id=self.app_id)[0].extra_data['action'], "created by"
         )
 
     def test_submitted_application_log(self):

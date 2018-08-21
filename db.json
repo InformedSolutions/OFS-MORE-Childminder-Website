@@ -97,7 +97,7 @@
     "timestamp": "2018-04-06T14:04:48.276Z",
     "extra_data": {
       "entity": "application",
-      "action": "created",
+      "action": "created by",
       "user_type": "applicant"
     },
     "user": null,

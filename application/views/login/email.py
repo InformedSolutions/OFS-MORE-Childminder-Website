@@ -263,7 +263,7 @@ def create_new_app():
         content_object=application,
         user=None,
         template='timeline_logger/application_action.txt',
-        extra_data={'user_type': 'applicant', 'action': 'created', 'entity': 'application'}
+        extra_data={'user_type': 'applicant', 'action': 'created by', 'entity': 'application'}
     )
 
     return user
