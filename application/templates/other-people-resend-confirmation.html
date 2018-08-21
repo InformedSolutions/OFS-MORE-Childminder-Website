@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Email resent{% endblock %}
+{% block page_title %}Health questions resent{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 {% block inner_content %}
@@ -11,9 +11,9 @@
     <!-- Content -->
     <div class="form-group">
         <h1 class="form-title heading-large">
-            Email resent
+            Health questions resent
         </h1>
-        <p>We have resent an email to {{name}}: {{email}}.</p>
+        <p>We have resent health questions to {{name}}: {{email}}.</p>
         {{form.as_div}}
         {% csrf_token %}
         <input type="submit" class="button" value="Continue">

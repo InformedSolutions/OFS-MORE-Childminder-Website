@@ -1005,7 +1005,8 @@ def other_people_resend_email(request):
             }
 
             if adult_record.health_check_status == 'Started':
-                variables['error_summary_title'] = 'There was a problem (' + name + ')'
+                variables['error_summary_title'] = "There was a problem with " \
+                                                   + name + "'s answers to the health questions"
                 variables['arc_comment'] = ArcComments.objects.get(table_pk=adult_record.pk).comment
 
             return render(request, 'other-people-resend-email.html', variables)
