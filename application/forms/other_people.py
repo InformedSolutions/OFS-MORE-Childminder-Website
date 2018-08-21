@@ -81,8 +81,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
                                    required=True,
                                    error_messages={'required': "Please say how the person is related to you"})
     email_address = forms.CharField(label='Email address',
-                                    help_text='They need to answer simple questions about their health', required=True,
-                                    error_messages={'required': "Please enter an email address"})
+                                    help_text='They need to answer simple questions about their health', required=False)
 
     def __init__(self, *args, **kwargs):
         """
@@ -172,16 +171,19 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
         Email address validation
         :return: string
         """
-        email_address = self.cleaned_data['email_address']
-        applicant_email = UserDetails.objects.get(application_id=self.application_id_local).email
-        # RegEx for valid e-mail addresses
-        if re.match(settings.REGEX['EMAIL'], email_address) is None:
-            raise forms.ValidationError('Please enter a valid email address')
-        if email_address == applicant_email:
-            raise forms.ValidationError('Their email address cannot be the same as your email address')
-        if self._all_emails.count(email_address) > 1:  # This is 1 because one of them is itself
-            raise forms.ValidationError('Their email address cannot be the same as another person in your home')
-        return email_address
+        if self.cleaned_data['email_address']:
+            email_address = self.cleaned_data['email_address']
+            applicant_email = UserDetails.objects.get(application_id=self.application_id_local).email
+            # RegEx for valid e-mail addresses
+            if re.match(settings.REGEX['EMAIL'], email_address) is None:
+                raise forms.ValidationError('Please enter a valid email address')
+            if email_address == applicant_email:
+                raise forms.ValidationError('Their email address cannot be the same as your email address')
+            if self._all_emails.count(email_address) > 1:  # This is 1 because one of them is itself
+                raise forms.ValidationError('Their email address cannot be the same as another person in your home')
+            return email_address
+        else:
+            return self.fields['email_address'].initial
 
 
 class OtherPeopleAdultDBSForm(ChildminderForms):

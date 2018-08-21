@@ -211,7 +211,8 @@ def other_people_adult_details(request):
                 adult_health_check_status = adult_record.health_check_status
                 if not show_resend_and_change_email(adult_health_check_status, is_review):
                     form.fields['email_address'].disabled = True
-
+                else:
+                    form.fields['email_address'].disabled = False
 
             form_list.append(form)
 
@@ -226,6 +227,7 @@ def other_people_adult_details(request):
         }
         status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
         return render(request, 'other-people-adult-details.html', variables)
+
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         number_of_adults = request.POST["adults"]
@@ -245,8 +247,29 @@ def other_people_adult_details(request):
         form_list = []
         # List to allow for the validation of each form
         valid_list = []
+
+        # if application.application_status == 'FURTHER_INFORMATION':
+        #     is_review = True
+        # else:
+        #     is_review = False
+
         email_list = [value for key, value in request.POST.items() if 'email_address' in key.lower()]
         for i in range(1, int(number_of_adults) + 1):
+
+            # updated_POST = request.POST
+            #
+            # if AdultInHome.objects.filter(application_id=application_id_local, adult=i).exists():
+            #     adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=i)
+            #     adult_health_check_status = adult_record.health_check_status
+            #     if not show_resend_and_change_email(adult_health_check_status, is_review):
+            #         email_disabled = True
+            #     else:
+            #         email_disabled = False
+            #
+            # if email_disabled:
+            #     adult_email_address_key = str(i)+'email_address'
+            #     updated_POST.set(adult_email_address_key) = adult_record.email
+
             form = OtherPeopleAdultDetailsForm(
                 request.POST, id=application_id_local, adult=i, prefix=i, email_list=email_list)
             form.remove_flag()
