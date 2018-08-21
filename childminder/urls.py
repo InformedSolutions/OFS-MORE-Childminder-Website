@@ -110,7 +110,6 @@ urlpatterns = [
     url(r'^health-check/check-answers', summary.Summary.as_view(), name='Health-Check-Summary'),
     url(r'^health-check/declaration', declaration.Declaration.as_view(), name='Health-Check-Declaration'),
     url(r'^health-check/thank-you', thank_you.ThankYou.as_view(), name='Health-Check-Thank-You'),
-    url(r'^people/check-answers/', views.other_people_summary, name='Other-People-Summary-View'),
     url(r'^people/contacted/', views.other_people_email_confirmation, name='Other-People-Email-Confirmation-View'),
     url(r'^people/resend-email/', views.other_people_resend_email, name='Other-People-Resend-Email-View'),
     url(r'^people/email-resent/', views.other_people_resend_confirmation, name='Other-People-Resend-Confirmation-View'),

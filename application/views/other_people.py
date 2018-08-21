@@ -29,7 +29,8 @@ from ..business_logic import (health_check_email_resend_logic,
                               rearrange_children,
                               remove_adult,
                               remove_child,
-                              reset_declaration)
+                              reset_declaration,
+                              show_resend_and_change_email)
 from ..forms import (OtherPeopleAdultDBSForm,
                      OtherPeopleAdultDetailsForm,
                      OtherPeopleAdultQuestionForm,
@@ -193,10 +194,26 @@ def other_people_adult_details(request):
         for i in range(1, number_of_adults + 1):
             form = OtherPeopleAdultDetailsForm(
                 id=application_id_local, adult=i, prefix=i, email_list=email_list)
+
             form.check_flag()
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = "There was a problem (Person " + str(i) + ")"
+                is_review = True
+            else:
+                is_review = False
+
+
+
+            # Disable email_address field if it cannot be changed.
+            if AdultInHome.objects.filter(application_id=application_id_local, adult=i).exists():
+                adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=i)
+                adult_health_check_status = adult_record.health_check_status
+                if not show_resend_and_change_email(adult_health_check_status, is_review):
+                    form.fields['email_address'].disabled = True
+                else:
+                    form.fields['email_address'].disabled = False
+
             form_list.append(form)
 
         variables = {
@@ -210,6 +227,7 @@ def other_people_adult_details(request):
         }
         status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
         return render(request, 'other-people-adult-details.html', variables)
+
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         number_of_adults = request.POST["adults"]
@@ -229,8 +247,10 @@ def other_people_adult_details(request):
         form_list = []
         # List to allow for the validation of each form
         valid_list = []
+
         email_list = [value for key, value in request.POST.items() if 'email_address' in key.lower()]
         for i in range(1, int(number_of_adults) + 1):
+
             form = OtherPeopleAdultDetailsForm(
                 request.POST, id=application_id_local, adult=i, prefix=i, email_list=email_list)
             form.remove_flag()
@@ -744,6 +764,17 @@ def other_people_summary(request):
 
         for table in adult_table_list:
             table['other_people_numbers'] = back_link_addition
+
+        # Add display_buttons for each adult
+        is_review = application.application_status == 'FURTHER_INFORMATION'
+
+        display_buttons_list = []
+
+        for table in adult_table_list:
+            display_buttons = show_resend_and_change_email(adult.health_check_status, is_review)
+
+            display_buttons_list.append(display_buttons)
+
         adult_table_list = create_tables(adult_table_list, other_adult_name_dict, other_adult_link_dict)
 
         child_table_list = []
@@ -812,6 +843,7 @@ def other_people_summary(request):
             'table_list': table_list,
             'turning_16': application.children_turning_16,
             'people_in_home_status': application.people_in_home_status,
+            'display_buttons_list': display_buttons_list
         }
         variables = submit_link_setter(variables, table_list, 'people_in_home', application_id_local)
 
