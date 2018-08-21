@@ -14,7 +14,9 @@ from ..models import (AdultInHome,
                                 ChildInHome,
                                 UserDetails)
 from ..utils import date_formatter
-from ..business_logic import childminder_dbs_number_duplication_check, household_member_dbs_form_duplicates_check
+from ..business_logic import childminder_dbs_number_duplication_check,\
+    household_member_dbs_form_duplicates_check,\
+    show_resend_and_change_email
 
 logger = logging.getLogger()
 
@@ -175,6 +177,8 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
             email_address = self.cleaned_data['email_address']
             applicant_email = UserDetails.objects.get(application_id=self.application_id_local).email
             # RegEx for valid e-mail addresses
+            if email_address is None or email_address == '':
+                raise forms.ValidationError('Please enter an email address')
             if re.match(settings.REGEX['EMAIL'], email_address) is None:
                 raise forms.ValidationError('Please enter a valid email address')
             if email_address == applicant_email:
@@ -183,7 +187,25 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
                 raise forms.ValidationError('Their email address cannot be the same as another person in your home')
             return email_address
         else:
-            return self.fields['email_address'].initial
+            application = Application.objects.get(application_id=self.application_id_local)
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                is_review = True
+            else:
+                is_review = False
+
+            if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).exists():
+                adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
+                adult_health_check_status = adult_record.health_check_status
+                if not show_resend_and_change_email(adult_health_check_status, is_review):
+                    email_disabled = True
+                else:
+                    email_disabled = False
+
+            if not email_disabled:
+                raise forms.ValidationError('Please enter an email address')
+            else:
+                return self.fields['email_address'].initial
 
 
 class OtherPeopleAdultDBSForm(ChildminderForms):
