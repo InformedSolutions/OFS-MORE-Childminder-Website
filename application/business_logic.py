@@ -899,7 +899,7 @@ def show_resend_and_change_email(health_check_status, is_review):
     """
     Helper function to determine if the 'resend email' and 'change' email buttons should be visible inside the
         People in the Home task.
-    :param health_check_status: Status of the current health check, a string equal to 'To do', 'Started' or 'Done'.
+    :param health_check_status: Status of one adult's health check, a string equal to 'To do', 'Started' or 'Done'.
     :param is_review: A boolean True if the application is in review mode, e.g 'FURTHER INFORMATION'
     :return: A boolean True if the buttons should be displayed, False if the buttons should not be displayed.
     """

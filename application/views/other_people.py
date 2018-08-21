@@ -194,10 +194,25 @@ def other_people_adult_details(request):
         for i in range(1, number_of_adults + 1):
             form = OtherPeopleAdultDetailsForm(
                 id=application_id_local, adult=i, prefix=i, email_list=email_list)
+
             form.check_flag()
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = "There was a problem (Person " + str(i) + ")"
+                is_review = True
+            else:
+                is_review = False
+
+
+
+            # Disable email_address field if it cannot be changed.
+            if AdultInHome.objects.filter(application_id=application_id_local, adult=i).exists():
+                adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=i)
+                adult_health_check_status = adult_record.health_check_status
+                if not show_resend_and_change_email(adult_health_check_status, is_review):
+                    form.fields['email_address'].disabled = True
+
+
             form_list.append(form)
 
         variables = {
