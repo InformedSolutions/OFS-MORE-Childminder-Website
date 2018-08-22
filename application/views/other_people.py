@@ -1044,9 +1044,7 @@ def other_people_resend_email(request):
                 else:
                     template_id = '5bbf3677-49e9-47d0-acf2-55a9a03d8242'
                 email = adult_record.email
-                # Generate unique link for the household member to access their health check page
-                adult_record.token = ''.join([random.choice(string.digits[1:]) for n in range(7)])
-                adult_record.validated = False
+
                 base_url = settings.PUBLIC_APPLICATION_URL.replace('/childminder', '')
                 personalisation = {"link": base_url + reverse('Health-Check-Authentication',
                                                               kwargs={'id': adult_record.token}),
