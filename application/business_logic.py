@@ -702,7 +702,6 @@ def health_check_email_resend_logic(adult_record):
         elif (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) > timedelta(1):
             # Reset the email resent count
             adult_record.email_resent = 0
-            adult_record.validated = False
             adult_record.save()
 
             return False
