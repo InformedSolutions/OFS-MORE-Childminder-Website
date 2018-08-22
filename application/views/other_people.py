@@ -771,8 +771,7 @@ def other_people_summary(request):
         display_buttons_list = []
 
         for table in adult_table_list:
-            display_buttons = show_resend_and_change_email(adult.health_check_status, is_review)
-
+            display_buttons = show_resend_and_change_email(table['fields']['health_check_status'], is_review)
             display_buttons_list.append(display_buttons)
 
         adult_table_list = create_tables(adult_table_list, other_adult_name_dict, other_adult_link_dict)
