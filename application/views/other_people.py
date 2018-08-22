@@ -683,11 +683,23 @@ def other_people_summary(request):
         application = Application.objects.get(pk=application_id_local)
         adult_table_list = []
         adult_health_check_status_list = []
+        display_buttons_list = []
 
         for index, adult in enumerate(adults_list):
 
             name = ' '.join([adult.first_name, (adult.middle_names or ''), adult.last_name])
             birth_date = ' '.join([str(adult.birth_day), calendar.month_name[adult.birth_month], str(adult.birth_year)])
+
+            # Add display_buttons for each adult
+            is_review = application.application_status == 'FURTHER_INFORMATION'
+
+            try:
+                adult_health_check_status = adult.health_check_status
+            except KeyError:
+                adult_health_check_status = ''
+
+            display_buttons = show_resend_and_change_email(adult_health_check_status, is_review)
+            display_buttons_list.append(display_buttons)
 
             if application.people_in_home_status == 'IN_PROGRESS' and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):
@@ -744,6 +756,7 @@ def other_people_summary(request):
 
         for table in adult_table_list:
             table['other_people_numbers'] = back_link_addition
+
         adult_table_list = create_tables(adult_table_list, other_adult_name_dict, other_adult_link_dict)
 
         child_table_list = []
