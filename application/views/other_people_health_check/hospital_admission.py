@@ -127,7 +127,7 @@ class HospitalAdmissionView(BaseFormView):
         :return:
         """
         clean = form.cleaned_data
-        description = clean['illness_details']
+        description = clean['description']
         start_date = clean['start_date']
         end_date = clean['end_date']
         person_id = AdultInHome.objects.get(pk=self.request.GET.get('person_id'))
@@ -185,7 +185,7 @@ class HospitalAdmissionEditView(BaseFormView):
 
         illness_record = HealthCheckHospital.objects.get(pk=illness_id)
 
-        initial['illness_details'] = illness_record.description
+        initial['description'] = illness_record.description
         initial['start_date'] = illness_record.start_date
         initial['end_date'] = illness_record.end_date
 
@@ -200,9 +200,20 @@ class HospitalAdmissionEditView(BaseFormView):
         context = super().get_context_data()
         context['person_id'] = self.request.GET.get('person_id')
         context['illness_id'] = self.request.GET.get('illness_id')
-        person_record = AdultInHome.objects.get(pk=context['person_id'])
+        context['adult'] = AdultInHome.objects.get(pk=context['person_id'])
 
         return context
+
+    def get_form_kwargs(self):
+        """
+        Returns the adult record associated with the person id to be used in start_date validations.
+        :return:
+        """
+        person_id = self.request.GET.get('person_id')
+        person_record = AdultInHome.objects.get(pk=person_id)
+        kwargs = super(HospitalAdmissionEditView, self).get_form_kwargs()
+        kwargs['adult'] = person_record
+        return kwargs
 
     def form_valid(self, form):
         """
@@ -211,7 +222,7 @@ class HospitalAdmissionEditView(BaseFormView):
         :return:
         """
         clean = form.cleaned_data
-        description = clean['illness_details']
+        description = clean['description']
         start_date = clean['start_date']
         end_date = clean['end_date']
         illness_record = HealthCheckHospital.objects.get(pk=self.request.GET.get('illness_id'))

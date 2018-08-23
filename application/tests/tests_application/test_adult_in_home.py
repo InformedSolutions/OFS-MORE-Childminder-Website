@@ -182,7 +182,7 @@ class AdultInHomeTests(TestCase, ApplicationTestBase):
         self.assertEqual(response.resolver_match.view_name, 'Health-Check-Serious')
 
         # Check errors are raised against mandatory fields
-        self.assertIsNotNone(response.context['errors']['illness_details'])
+        self.assertIsNotNone(response.context['errors']['description'])
         self.assertIsNotNone(response.context['errors']['start_date'])
         self.assertIsNotNone(response.context['errors']['end_date'])
 
@@ -194,7 +194,7 @@ class AdultInHomeTests(TestCase, ApplicationTestBase):
         response = self.client.post(
             endpoint,
             {
-                'illness_details': 'Test serious illness',
+                'description': 'Test serious illness',
                 'start_date_0': '26',
                 'start_date_1': '1',
                 'start_date_2': '2017',
@@ -303,7 +303,7 @@ class AdultInHomeTests(TestCase, ApplicationTestBase):
 
         # Check errors are raised against mandatory fields
         # Check errors are raised against mandatory fields
-        self.assertIsNotNone(response.context['errors']['illness_details'])
+        self.assertIsNotNone(response.context['errors']['description'])
         self.assertIsNotNone(response.context['errors']['start_date'])
         self.assertIsNotNone(response.context['errors']['end_date'])
 
@@ -315,7 +315,7 @@ class AdultInHomeTests(TestCase, ApplicationTestBase):
         response = self.client.post(
             endpoint,
             {
-                'illness_details': 'Test serious illness',
+                'description': 'Test serious illness',
                 'start_date_0': '26',
                 'start_date_1': '1',
                 'start_date_2': '2017',
