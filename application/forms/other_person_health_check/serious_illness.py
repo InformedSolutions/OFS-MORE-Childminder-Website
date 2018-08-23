@@ -23,9 +23,9 @@ class SeriousIllness(ChildminderForms):
         (True, 'Yes')
     )
 
-    illness_details = forms.CharField(label='Illness',
-                                      widget=forms.Textarea(), required=True,
-                                      error_messages={'required': 'Please enter the name of the illness'})
+    description = forms.CharField(label='Illness',
+                                  widget=forms.Textarea(), required=True,
+                                  error_messages={'required': 'Please enter the name of the illness'})
 
     start_date = CustomSplitDateField(label='Start date', help_text='For example, 31 03 2016', error_messages={
         'required': 'Please enter the full date, including the day, month and year'}, bounds_error='Please check the date of your illness',
@@ -38,14 +38,6 @@ class SeriousIllness(ChildminderForms):
     def __init__(self, *args, **kwargs):
         self.person = kwargs.pop('adult')
         super(SeriousIllness, self).__init__(*args, **kwargs)
-
-
-    def clean_illness_details(self):
-
-        illness_details = self.cleaned_data['illness_details']
-        if len(illness_details) > 150:
-            raise forms.ValidationError('The reason for your admission must be less than 150 characters long')
-        return illness_details
 
     def clean_start_date(self):
 
