@@ -18,7 +18,6 @@ from ..models import (ApplicantName, ApplicantPersonalDetails, Application, Chil
 
 # noinspection PyTypeChecker
 from ..utils import can_cancel
-from ..business_logic import eligible_to_apply_based_on_childcare_ages
 
 
 @never_cache
@@ -49,11 +48,6 @@ def task_list(request):
 
     try:
         childcare_record = ChildcareType.objects.get(application_id=application_id)
-
-        # If user is attempting to force navigate to the Task list despite being ineligible
-        # to apply, redirect them back to the cancellation page
-        if not eligible_to_apply_based_on_childcare_ages(childcare_record):
-            return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + application_id)
     except Exception as e:
         return HttpResponseRedirect(reverse("Type-Of-Childcare-Guidance-View") + '?id=' + application_id)
 
@@ -105,6 +99,7 @@ def task_list(request):
                 'status': application.login_details_status,
                 'arc_flagged': application.login_details_arc_flagged,
                 'description': "Your sign in details",
+                'hidden': False,
                 'status_url': None,  # Will be filled later
                 'status_urls': [  # Available urls for each status
                     {'status': 'COMPLETED', 'url': 'Contact-Summary-View'},
@@ -117,6 +112,7 @@ def task_list(request):
                 'status': application.childcare_type_status,
                 'arc_flagged': application.childcare_type_arc_flagged,
                 'description': "Type of childcare",
+                'hidden': False,
                 'status_url': None,
                 'status_urls': [
                     {'status': 'COMPLETED', 'url': 'Type-Of-Childcare-Summary-View'},
@@ -129,6 +125,7 @@ def task_list(request):
                 'status': application.personal_details_status,
                 'arc_flagged': application.personal_details_arc_flagged,
                 'description': "Your personal details",
+                'hidden': False,
                 'status_url': None,
                 'status_urls': [
                     {'status': 'COMPLETED', 'url': 'Personal-Details-Summary-View'},
@@ -141,6 +138,7 @@ def task_list(request):
                 'status': application.first_aid_training_status,
                 'arc_flagged': application.first_aid_training_arc_flagged,
                 'description': "First aid training",
+                'hidden': False,
                 'status_url': None,
                 'status_urls': [
                     {'status': 'COMPLETED', 'url': 'First-Aid-Training-Summary-View'},
@@ -153,6 +151,7 @@ def task_list(request):
                 'status': application.eyfs_training_status,
                 'arc_flagged': application.eyfs_training_arc_flagged,
                 'description': "Early years training",
+                'hidden': False,
                 'status_url': None,
                 'status_urls': [
                     {'status': 'COMPLETED', 'url': 'EYFS-Summary-View'},
@@ -165,6 +164,7 @@ def task_list(request):
                 'status': application.health_status,
                 'arc_flagged': application.health_arc_flagged,
                 'description': "Health declaration booklet",
+                'hidden': True if not zero_to_five_status else False,
                 'status_url': None,
                 'status_urls': [
                     {'status': 'COMPLETED', 'url': 'Health-Check-Answers-View'},
@@ -177,6 +177,7 @@ def task_list(request):
                 'status': application.criminal_record_check_status,
                 'arc_flagged': application.criminal_record_check_arc_flagged,
                 'description': "Criminal record (DBS) check",
+                'hidden': False,
                 'status_url': None,
                 'status_urls': [
                     {'status': 'COMPLETED', 'url': 'DBS-Check-Summary-View'},
@@ -189,6 +190,7 @@ def task_list(request):
                 'status': application.people_in_home_status,
                 'arc_flagged': application.people_in_home_arc_flagged,
                 'description': "People in your home",
+                'hidden': False,
                 'status_url': None,
                 'status_urls': [
                     {'status': 'COMPLETED', 'url': 'Other-People-Summary-View'},
@@ -202,6 +204,7 @@ def task_list(request):
                 'status': application.references_status,
                 'arc_flagged': application.references_arc_flagged,
                 'description': "References",
+                'hidden': True if not zero_to_five_status else False,
                 'status_url': None,
                 'status_urls': [
                     {'status': 'COMPLETED', 'url': 'References-Summary-View'},
@@ -217,6 +220,7 @@ def task_list(request):
                 # set declaration task name to read "Declaration" only)
                 'description':
                     "Declaration and payment" if application.application_status == 'DRAFTING' else "Declaration",
+                'hidden': False,
                 'status_url': None,
                 'status_urls': [
                     {'status': 'COMPLETED', 'url': 'Declaration-Declaration-View'},
