@@ -4,6 +4,8 @@ import collections
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
+from django.views.generic import View
+
 from ..table_util import Table, create_tables, submit_link_setter
 from ..summary_page_data import eyfs_name_dict, eyfs_link_dict, eyfs_change_link_description_dict
 
@@ -14,40 +16,50 @@ from ..forms import (EYFSGuidanceForm,
                      EYFSDetailsForm,
                      EYFSCertificateForm,
                      EYFSSummaryForm)
-from ..models import (Application,
-                      EYFS)
+from ..models import Application, ChildcareType, EYFS
 
 
-def eyfs_guidance(request):
+def childcare_register_type(application_id):
     """
-    Method returning the template for the Early Years details guidance page (for a given application) and navigating
-    to the EYFS details page when successfully completed
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Early Years details: guidance template
+    Function to determine the childcare register to which the applicant is applying.
+    :param application_id: app_id of the applicant for which the check is being made.
+    :return: a string containing the register to which the applicant is applying.
     """
-    if request.method == 'GET':
-        application_id_local = request.GET["id"]
-        form = EYFSGuidanceForm()
-        application = Application.objects.get(pk=application_id_local)
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'eyfs_training_status': application.eyfs_training_status
-        }
+    childcare_type_record = ChildcareType.objects.get(application_id=application_id)
+    if not childcare_type_record.zero_to_five and childcare_type_record.five_to_eight:
+        return 'childcare_register_only'
+    else:
+        return 'early_years_register'
+
+
+class ChildcareTrainingGuidanceView(View):
+    template_name = 'childcare-training-guidance.html'
+
+    def get(self, request):
+        return render(request, template_name=self.template_name, context=self.get_context_data())
+
+    def post(self, request):
+        application_id = request.GET['id']
+        application = Application.objects.get(pk=application_id)
+
         if application.eyfs_training_status != 'COMPLETED':
-            status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
-        return render(request, 'eyfs-guidance.html', variables)
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = EYFSGuidanceForm(request.POST)
-        if form.is_valid():
-            return HttpResponseRedirect(reverse('EYFS-Details-View') + '?id=' + application_id_local)
-        else:
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'eyfs-guidance.html', variables)
+            status.update(application_id, 'eyfs_training_status', 'IN_PROGRESS')
+
+        register = childcare_register_type(application_id)
+
+        if register == 'childcare_register_only':
+            success_url = 'Type-Of-Childcare-Training'
+        elif register == 'early_years_register':
+            success_url = 'Childcare-Training-Details'
+
+        return HttpResponseRedirect(reverse(success_url) + '?id=' + application_id)
+
+    def get_context_data(self):
+        context = dict()
+        application_id = self.request.GET['id']
+        context['application_id'] = application_id
+        context['register'] = childcare_register_type(application_id)
+        return context
 
 
 def eyfs_details(request):
