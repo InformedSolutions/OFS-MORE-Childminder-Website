@@ -128,6 +128,7 @@ USE_TZ = True
 SECURE_BROWSER_XSS_FILTER = True
 CSRF_COOKIE_HTTPONLY = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
+SESSION_COOKIE_SECURE = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
@@ -187,12 +188,11 @@ LOGGING = {
   'handlers': {
     'file': {
         'level': 'DEBUG',
-        'class': 'logging.handlers.RotatingFileHandler',
-        'maxBytes': 1 * 1024 * 1024,
+        'class': 'logging.handlers.TimedRotatingFileHandler',
         'filename': 'logs/output.log',
         'formatter': 'console',
-        'maxBytes': 1 * 1024 * 1024,
-        'backupCount': 30
+        'when': 'midnight',
+        'backupCount': 10
     },
     'console': {
         'level': 'DEBUG',
@@ -211,5 +211,4 @@ LOGGING = {
            'propagate': True,
       },
     },
-
 }

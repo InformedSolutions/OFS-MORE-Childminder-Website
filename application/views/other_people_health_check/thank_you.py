@@ -27,7 +27,7 @@ class ThankYou(BaseTemplateView):
         except:
             firstname = 'Applicant'
 
-        if adult_record.health_check_status == 'To do' or adult_record.health_check_status == 'Flagged':
+        if adult_record.health_check_status == 'To do' or adult_record.health_check_status == 'Started':
             template_id = '8f5713f5-4437-479e-9fcc-262d0306f58c'
             email = user_details.email
             link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + create_account_magic_link(user_details)
@@ -47,7 +47,7 @@ class ThankYou(BaseTemplateView):
             # and no ARC comments exist for task
             all_adults = AdultInHome.objects.filter(application_id=application_id)
             adults_todo = all_adults.filter(health_check_status='To do')
-            adults_flagged = all_adults.filter(health_check_status='Flagged')
+            adults_flagged = all_adults.filter(health_check_status='Started')
             if adults_flagged.count() == 0 and adults_todo.count() == 0:
                 if ArcComments.objects.filter(table_pk=application_id, table_name='ADULT_IN_HOME').count() == 0:
                     if ArcComments.objects.filter(table_pk=application_id, table_name='CHILD_IN_HOME').count() == 0:
@@ -72,9 +72,6 @@ class ThankYou(BaseTemplateView):
             print(link)
 
             update(application_id, 'people_in_home_status', 'COMPLETED')
-
-        cookie_key = CustomAuthenticationHandler.get_cookie_identifier()
-        request.COOKIES[cookie_key] = None
 
         CustomAuthenticationHandler.destroy_session(response)
         return response

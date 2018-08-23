@@ -718,6 +718,11 @@ def other_people_summary(request):
             if adult.health_check_status != 'Done':
                 adult_health_check_status_list.append('To do')
 
+            # If the adult health check status is marked as flagged, set the email resend limit to 0
+            if adult.health_check_status == 'Started':
+                adult.email_resent = 0
+                adult.save()
+
             # Counter for table object to correctly set link in generic-error-summary template for flagged health check.
             table = Table([adult.pk])
             table.loop_counter = index + 1
@@ -967,8 +972,9 @@ def other_people_resend_email(request):
                 'resend_limit': resend_limit
             }
 
-            if adult_record.health_check_status == 'Flagged':
-                variables['error_summary_title'] = 'There was a problem (' + name + ')'
+            if adult_record.health_check_status == 'Started':
+                variables['error_summary_title'] = "There was a problem with " \
+                                                   + name + "'s answers to the health questions"
                 variables['arc_comment'] = ArcComments.objects.get(table_pk=adult_record.pk).comment
 
             return render(request, 'other-people-resend-email.html', variables)
@@ -1001,7 +1007,10 @@ def other_people_resend_email(request):
             if resend_limit_reached is False:
 
                 # Generate variables for e-mail template
-                template_id = '5bbf3677-49e9-47d0-acf2-55a9a03d8242'
+                if application.people_in_home_arc_flagged is True:
+                    template_id = '63628c30-da8a-4533-b1e3-712942c75abb'
+                else:
+                    template_id = '5bbf3677-49e9-47d0-acf2-55a9a03d8242'
                 email = adult_record.email
                 # Generate unique link for the household member to access their health check page
                 adult_record.token = ''.join([random.choice(string.digits[1:]) for n in range(7)])
@@ -1082,8 +1091,10 @@ def other_people_resend_confirmation(request):
         elif adult_record.middle_names == '':
             name = adult_record.first_name + ' ' + adult_record.last_name
 
-        if adult_record.health_check_status == 'Flagged':
+        if adult_record.health_check_status == 'Started':
             status.update(application_id_local, 'people_in_home_status', 'WAITING')
+            adult_record.health_check_status = 'To do'
+            adult_record.save()
 
         variables = {
             'form': form,

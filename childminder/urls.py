@@ -139,7 +139,7 @@ urlpatterns = [
     url(r'^cancel-application/guidance/$', views.cancel_app, name='Cancel-Application'),
     url(r'^cancel-application/confirmation/$', views.cancel_app_confirmation, name='Cancel-Application-Confirmation'),
     url(r'^childcare-register/cancel-application/$', views.cr_cancel_app, name='CR-Cancel-Application'),
-    url(r'^childcare-register/application-cancelled/$', views.cr_cancel_app_confirmation,
+    url(r'^application-cancelled/$', views.cr_cancel_app_confirmation,
         name='CR-Cancel-Application-Confirmation'),
     url(r'^new-application/$', views.login.NewUserSignInView.as_view(), name='New-Email'),
     url(r'^new-application/email-sent/$', views.login.login_email_link_sent, name='New-Email-Sent'),
@@ -152,7 +152,7 @@ urlpatterns = [
     url(r'^email-resent/$', views.login.login_email_link_resent, name='Email-Resent'),
     url(r'^new-code/$', magic_link.ResendSMSCodeView.as_view(), name='Resend-Code'),
     url(r'^help-contact/$', views.help_and_contact, name='Help-And-Contact-View'),
-    url(r'^cannot-use-service/$', views.personal_details.service_unavailable, name='Service-Unavailable'),
+    url(r'^childcare-location/cancel-application', views.cancel_application.cl_cancel_app, name='Service-Unavailable'),
     url(r'^feedback/', feedback.feedback, name='Feedback'),
     url(r'^feedback-submitted/', feedback.feedback_confirmation, name='Feedback-Confirmation')
 ]

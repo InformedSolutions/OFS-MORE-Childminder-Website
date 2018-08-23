@@ -22,6 +22,8 @@
     </div>
     {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
         {% include 'return-to-list.html' %}
+    {% elif login_details_status == 'FLAGGED' or childcare_type_status == 'FLAGGED' %}
+        {% include 'return-to-list.html' %}
     {% endif %}
 </form>
 </div>

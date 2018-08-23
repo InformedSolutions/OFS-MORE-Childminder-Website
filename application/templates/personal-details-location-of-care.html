@@ -32,7 +32,7 @@
     <input type="hidden" id="id" name="id" value="{{application_id}}"/>
 </form>
 <br>
-{% if personal_details_status == 'COMPLETED' %}
+{% if personal_details_status == 'COMPLETED' or personal_details_status == 'FLAGGED' %}
 {% include 'return-to-list.html' %}
 {% endif %}
 </div>

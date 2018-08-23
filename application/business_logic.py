@@ -178,8 +178,8 @@ def personal_home_address_logic(app_id, form):
     """
 
     app_obj = Application.objects.get(application_id=app_id)
-    street_line1 = form.cleaned_data.get('street_name_and_number')
-    street_line2 = form.cleaned_data.get('street_name_and_number2')
+    street_line1 = form.cleaned_data.get('street_line1')
+    street_line2 = form.cleaned_data.get('street_line2')
     town = form.cleaned_data.get('town')
     county = form.cleaned_data.get('county')
     postcode = form.cleaned_data.get('postcode')
@@ -266,8 +266,8 @@ def personal_childcare_address_logic(application_id_local, form):
     :return: an ApplicantHomeAddress object to be saved
     """
     this_application = Application.objects.get(application_id=application_id_local)
-    street_line1 = form.cleaned_data.get('street_name_and_number')
-    street_line2 = form.cleaned_data.get('street_name_and_number2')
+    street_line1 = form.cleaned_data.get('street_line1')
+    street_line2 = form.cleaned_data.get('street_line2')
     town = form.cleaned_data.get('town')
     county = form.cleaned_data.get('county')
     postcode = form.cleaned_data.get('postcode')
@@ -673,34 +673,40 @@ def reset_declaration(application):
         application.change_declare = None
         application.save()
 
+
 def health_check_email_resend_logic(adult_record):
     """
-    Method to verify if the last household member health check email can be sent, given a limit of 3 resends per 24
-    hours
+    Method to verify if the last household member health check email should not be sent, given a limit of 3 resends per 24
+    hours.
     :param: adult_record: An AdultInHome object
-    :return: Boolean
+    :return: Boolean: True if email cannot be sent, False if email can be sent.
     """
 
-    # If the last e-mail was sent within the last 24 hours
-    if (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) < timedelta(1):
+    #If email_resent_timestamp is None then the email has never been resent.
+    if adult_record.email_resent_timestamp is not None:
 
-        # If the e-mail has been resent less than 3 times
-        if adult_record.email_resent < 3:
+        # If the last e-mail was sent within the last 24 hours
+        if (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) < timedelta(1):
+
+            # If the e-mail has been resent less than 3 times
+            if adult_record.email_resent < 3:
+
+                return False
+
+            # If the email has been resent more than or equal to 3 times
+            elif adult_record.email_resent >= 3:
+
+                return True
+
+        # If the last e-mail to the household member has been sent more than 24 hours ago
+        elif (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) > timedelta(1):
+            # Reset the email resent count
+            adult_record.email_resent = 0
+            adult_record.validated = False
+            adult_record.save()
 
             return False
-
-        # If the email has been resent more than 3 times
-        elif adult_record.email_resent >= 3:
-
-            return True
-
-    # If the last e-mail to the household member has been sent more than 24 hours ago
-    elif (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) > timedelta(1):
-        # Reset the email resent count
-        adult_record.email_resent = 0
-        adult_record.validated = False
-        adult_record.save()
-
+    else:
         return False
 
 
@@ -875,7 +881,6 @@ def convert_mobile_to_notify_standard(mobile):
         return new_mobile
     else:
         return mobile
-
 
 def childminder_references_and_user_email_duplication_check(email1, email2):
     """

@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Resend email{% endblock %}
+{% block page_title %}Resend health questions{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -30,13 +30,13 @@
     <!-- Content -->
     <div class="form-group">
         <h1 class="form-title heading-large">
-            Resend email
+            Resend health questions
         </h1>
         <p>{{name}}: {{email}}</p>
         <p><a href="{% url 'Other-People-Summary-View' %}?id={{application_id}}">I want to change the email address</a></p>
         {{form.as_div}}
         {% csrf_token %}
-        <input type="submit" class="button" name="resend_email" value="Resend email">
+        <input type="submit" class="button" name="resend_email" value="Resend health questions">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
         <input type="hidden" id="adult" name="adult" value="{{adult}}"/>
     </div>

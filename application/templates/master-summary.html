@@ -45,9 +45,11 @@
             {{login_details_email}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if sign_in_details_change %}
             <a href="{% url 'Contact-Email-View' %}?id={{application_id}}#id_email_address" alt="Change your email">
                 Change <span class="visuallyhidden">your email</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -58,9 +60,11 @@
             {{login_details_mobile_number}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if sign_in_details_change %}
             <a href="{% url 'Contact-Phone-View' %}?id={{application_id}}#id_mobile_number" alt="Change your mobile number">
                 Change <span class="visuallyhidden">your mobile number</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -71,9 +75,11 @@
             {{login_details_alternative_phone_number}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if sign_in_details_change %}
             <a href="{% url 'Contact-Phone-View' %}?id={{application_id}}#id_add_phone_number" alt="Change your other phone number">
                 Change <span class="visuallyhidden">your other phone number</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     </tbody>
@@ -108,9 +114,11 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if type_of_childcare_change %}
             <a href="{% url 'Type-Of-Childcare-Age-Groups-View' %}?id={{application_id}}#id_type_of_childcare_0" alt="Change answer to looking after 0 to 5 year olds">
                 Change <span class="visuallyhidden">answer to looking after 0 to 5 year olds</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -127,9 +135,11 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if type_of_childcare_change %}
             <a href="{% url 'Type-Of-Childcare-Age-Groups-View' %}?id={{application_id}}#id_type_of_childcare_1" alt="Change answer to looking after 5 to 7 year olds">
                 Change <span class="visuallyhidden">answer to looking after 5 to 7 year olds</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -146,9 +156,11 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if type_of_childcare_change %}
             <a href="{% url 'Type-Of-Childcare-Age-Groups-View' %}?id={{application_id}}#id_type_of_childcare_2" alt="Change answer to looking after 8 year olds and older">
                 Change <span class="visuallyhidden">answer to looking after 8 year olds and older</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -194,9 +206,11 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if type_of_childcare_change %}
             <a href="{% url 'Type-Of-Childcare-Age-Groups-View' %}?id={{application_id}}" alt="Change the registers you want to join">
                 Change <span class="visuallyhidden">the registers you want to join</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -213,9 +227,11 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if type_of_childcare_change %}
             <a href="{% url 'Type-Of-Childcare-Overnight-Care-View' %}?id={{application_id}}#id_overnight_care_1" alt="Change answer to looking after children overnight">
                 Change <span class="visuallyhidden">answer to looking after children overnight</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     </tbody>
@@ -250,9 +266,11 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if personal_details_change %}
             <a href="{% url 'Personal-Details-Name-View' %}?id={{application_id}}" alt="Change your name">
                 Change <span class="visuallyhidden">your name</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -309,9 +327,11 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if personal_details_change %}
             <a href="{% url 'Personal-Details-DOB-View' %}?id={{application_id}}" alt="Change your date of birth">
                 Change <span class="visuallyhidden">your date of birth</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -360,10 +380,12 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if personal_details_change %}
             <a href="{% url 'Personal-Details-Home-Address-View' %}?id={{application_id}}&manual=True&lookup=False"
                alt='Change your home address'>
                 Change <span class="visuallyhidden">your home address</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -375,10 +397,12 @@
             Same as home address
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if personal_details_change %}
             <a href="{% url 'Personal-Details-Location-Of-Care-View' %}?id={{application_id}}"
                alt='Change answer to childcare location'>
                 Change <span class="visuallyhidden">answer to childcare location</span>
             </a>
+            {% endif %}
         </td>
         {% elif location_of_childcare == False %}
         {% if childcare_street_line2 and childcare_county %}
@@ -423,10 +447,12 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if personal_details_change %}
             <a href="{% url 'Personal-Details-Location-Of-Care-View' %}?id={{application_id}}&manual=True&lookup=False"
                alt='Change answer to childcare location'>
                 Change <span class="visuallyhidden">answer to childcare location</span>
             </a>
+            {% endif %}
         </td>
         {% endif %}
     </tr>
@@ -456,10 +482,12 @@
             {{first_aid_training_organisation}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if first_aid_training_change %}
             <a href="{% url 'First-Aid-Training-Details-View' %}?id={{application_id}}#id_first_aid_training_organisation"
                alt='Change training organisation'>
                 Change <span class="visuallyhidden">training organisation</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -470,10 +498,12 @@
             {{first_aid_training_course}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if first_aid_training_change %}
             <a href="{% url 'First-Aid-Training-Details-View' %}?id={{application_id}}#id_title_of_training_course"
                alt='Change course title'>
                 Change <span class="visuallyhidden">course title</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -530,10 +560,12 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if first_aid_training_change %}
             <a href="{% url 'First-Aid-Training-Details-View' %}?id={{application_id}}"
                alt='Change course completion date'>
                 Change <span class="visuallyhidden">course completion date</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     </tbody>
@@ -562,9 +594,11 @@
             {{eyfs_course_name}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if early_years_training_change %}
             <a href="{{ URL_PREFIX }}/early-years/details?id={{application_id}}#id_eyfs_course_name" alt="Change course title">
                 Change <span class="visuallyhidden">course title</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -575,9 +609,11 @@
             {{eyfs_course_date}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if early_years_training_change %}
             <a href="{{ URL_PREFIX }}/early-years/details?id={{application_id}}#id_eyfs_course_date_0" alt="Change course completion date">
                 Change <span class="visuallyhidden">course completion date</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     </tbody>
@@ -611,10 +647,12 @@
             No
         </td>
         {% endif %}
-        <td class="change-answer {{ print_class }}">
+        <td class="change-answer {{ print_class }} nowrap">
+            {% if health_change %}
             <a href="{% url 'Health-Booklet-View' %}?id={{application_id}}" alt="Download health declaration booklet">
                 Download <span class="visuallyhidden">health declaration</span> booklet
             </a>
+            {% endif %}
         </td>
     </tr>
     </tbody>
@@ -643,10 +681,12 @@
             {{dbs_certificate_number}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if criminal_record_check_change %}
             <a href="{% url 'DBS-Check-DBS-Details-View' %}?id={{application_id}}#id_dbs_certificate_number"
                alt='Change DBS certificate number'>
                 Change <span class="visuallyhidden">DBS certificate number</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -663,10 +703,12 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if criminal_record_check_change %}
             <a href="{% url 'DBS-Check-DBS-Details-View' %}?id={{application_id}}"
                alt='Change answer on criminal cautions or convictions'>
                 Change <span class="visuallyhidden">answer on criminal cautions or convictions</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     </tbody>
@@ -701,10 +743,12 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
             <a href="{% url 'Other-People-Adult-Question-View' %}?id={{application_id}}"
                alt='Change answer on adults living or working in your home'>
                 Change <span class="visuallyhidden">answer on adults living or working in your home</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     </tbody>
@@ -739,10 +783,12 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
             <a href="{% url 'Other-People-Children-Question-View' %}?id={{application_id}}"
                alt='Change answer on living with children'>
                 Change <span class="visuallyhidden">answer on living with children</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     </tbody>
@@ -782,10 +828,12 @@
             {{name}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
             <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Change the adult's name">
                 Change <span class="visuallyhidden">the adult's name</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -842,10 +890,12 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
             <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Change the adult's date of birth">
                 Change <span class="visuallyhidden">the adult's date of birth</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -856,10 +906,12 @@
             {{relationship}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
             <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Change your relationship with the adult">
                 Change <span class="visuallyhidden">your relationship with the adult</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -870,10 +922,12 @@
             {{email}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
             <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Change the adult's email">
                 Change <span class="visuallyhidden">the adult's email</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -884,10 +938,12 @@
             {{dbs_certificate_number}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
             <a href="{% url 'Other-People-Adult-DBS-View' %}?id={{application_id}}&adults={{number_of_adults}}"
                alt="Change the adult's DBS certificate number">
                 Change <span class="visuallyhidden">the adult's DBS certificate number</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     </tbody>
@@ -918,10 +974,12 @@
             {{name}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
             <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
                alt="Change the child's name">
                 Change <span class="visuallyhidden">the child's name</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -978,10 +1036,12 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
             <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
                alt="Change the child's date of birth">
                 Change <span class="visuallyhidden">the child's date of birth</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -992,10 +1052,12 @@
             {{relationship}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
             <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
                alt="Change your relationship with the child">
                 Change <span class="visuallyhidden">your relationship with the child</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     </tbody>
@@ -1025,9 +1087,11 @@
             {{first_reference_first_name}} {{first_reference_last_name}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if references_change %}
             <a href="{% url 'References-First-Reference-View' %}?id={{application_id}}" alt="Change full name for referee 1">
                 Change <span class="visuallyhidden">full name for referee 1</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -1038,9 +1102,11 @@
             {{first_reference_relationship}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if references_change %}
             <a href="{% url 'References-First-Reference-View' %}?id={{application_id}}#id_relationship" alt="Change how referee 1 knows you">
                 Change <span class="visuallyhidden">how referee 1 knows you</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -1051,9 +1117,11 @@
             {{first_reference_years_known}} year{% if first_reference_years_known != 1 %}s{% endif %} {{first_reference_months_known}} month{% if first_reference_months_known != 1 %}s{% endif %}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if references_change %}
             <a href="{% url 'References-First-Reference-View' %}?id={{application_id}}" alt="Change how long referee 1 has known you for">
                 Change <span class="visuallyhidden">how long referee 1 has known you for</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -1110,9 +1178,11 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if references_change %}
             <a href="{% url 'References-First-Reference-Address-View' %}?id={{application_id}}&manual=True&lookup=False" alt="Change address for referee 1">
                 Change <span class="visuallyhidden">address for referee 1</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -1123,9 +1193,11 @@
             {{first_reference_phone_number}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if references_change %}
             <a href="{% url 'References-First-Reference-Contact-Details-View' %}?id={{application_id}}#id_phone_number" alt="Change phone number for referee 1">
                 Change <span class="visuallyhidden">phone number for referee 1</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -1136,9 +1208,11 @@
             {{first_reference_email}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if references_change %}
             <a href="{% url 'References-First-Reference-Contact-Details-View' %}?id={{application_id}}#id_email_address" alt="Change email address for referee 1">
                 Change <span class="visuallyhidden">email address for referee 1</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     </tbody>
@@ -1167,9 +1241,11 @@
             {{second_reference_first_name}} {{second_reference_last_name}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if references_change %}
             <a href="{% url 'References-Second-Reference-View' %}?id={{application_id}}" alt="Change full name for referee 2">
                 Change <span class="visuallyhidden">full name for referee 2</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -1180,9 +1256,11 @@
             {{second_reference_relationship}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if references_change %}
             <a href="{% url 'References-Second-Reference-View' %}?id={{application_id}}#id_relationship" alt="Change how referee 2 knows you">
                 Change <span class="visuallyhidden">how referee 2 knows you</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -1193,9 +1271,11 @@
             {{second_reference_years_known}} year{% if second_reference_years_known != 1 %}s{% endif %} {{second_reference_months_known}} month{% if second_reference_months_known != 1 %}s{% endif %}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if references_change %}
             <a href="{% url 'References-Second-Reference-View' %}?id={{application_id}}" alt="Change how long referee 2 has known you for">
                 Change <span class="visuallyhidden">how long referee 2 has known you for</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -1252,9 +1332,11 @@
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
+            {% if references_change %}
             <a href="{% url 'References-Second-Reference-Address-View' %}?id={{application_id}}&manual=True&lookup=False" alt="Change address for referee 2">
                 Change <span class="visuallyhidden">address for referee 2</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -1265,9 +1347,11 @@
             {{second_reference_phone_number}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if references_change %}
             <a href="{% url 'References-Second-Reference-Contact-Details-View' %}?id={{application_id}}#id_phone_number" alt="Change phone number for referee 2">
                 Change <span class="visuallyhidden">phone number for referee 2</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -1278,9 +1362,11 @@
             {{second_reference_email}}
         </td>
         <td class="change-answer {{ print_class }}">
+            {% if references_change %}
             <a href="{% url 'References-Second-Reference-Contact-Details-View' %}?id={{application_id}}#id_email_address" alt="Change email address for referee 2">
                 Change <span class="visuallyhidden">email address for referee 2</span>
             </a>
+            {% endif %}
         </td>
     </tr>
     </tbody>

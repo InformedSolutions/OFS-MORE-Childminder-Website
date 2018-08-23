@@ -117,7 +117,7 @@ class ChildminderForms(GOVUKForm):
                         forms.ValidationError('')
                 except Exception as ex:
                     self.cleaned_data = ''
-                    if field == 'street_name_and_number':
+                    if field == 'street_line1':
                         self.add_error(field, ex)
                     else:
                         self.add_error(field, '')

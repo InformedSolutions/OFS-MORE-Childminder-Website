@@ -17,7 +17,7 @@
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     {{form.as_div}}
     {% csrf_token %}
-    <input type="submit" class="button" value="Continue" alt='Contine' id="continue">
+    <input type="submit" class="button" value="Continue" alt='Continue' id="continue">
     <input type="hidden" value="{{ previous_url }}" id="url" name="url">
 </form>
 

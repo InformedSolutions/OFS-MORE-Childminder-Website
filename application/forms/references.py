@@ -1,5 +1,6 @@
 import re
 from datetime import datetime, timedelta
+from dateutil.relativedelta import relativedelta
 
 from django import forms
 from django.conf import settings
@@ -9,26 +10,8 @@ from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (Reference, ApplicantPersonalDetails)
 
-from ..models import Application, UserDetails
+from ..models import UserDetails
 from ..business_logic import childminder_references_and_user_email_duplication_check
-
-
-def datetime_from_time_known(_years_known, _months_known):
-    """
-    Inner function to return datetime object using time known
-    :param _years_known: number of years passed by user
-    :param _months_known: number of months passed by user
-    :return: datetime object
-    """
-    current_dt = datetime.now()
-    if _years_known > current_dt.year-2:
-        _years_known = current_dt.year-2
-    if _months_known >= current_dt.month:
-        _years_known += 1
-        _months_known = 12 - abs(current_dt.month - _months_known)
-    else:
-        _months_known = current_dt.month - _months_known
-    return current_dt.replace(year=current_dt.year - _years_known).replace(month=_months_known)
 
 
 class ReferenceIntroForm(ChildminderForms):
@@ -121,12 +104,16 @@ class FirstReferenceForm(ChildminderForms):
         """
         years_known = self.cleaned_data['time_known'][1]
         months_known = self.cleaned_data['time_known'][0]
-        birth_dt = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
-        known_dt = datetime_from_time_known(years_known, months_known)
-        d_now = datetime.now()
-        if known_dt > d_now.replace(year=d_now.year-1):
+        birth_datetime = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
+        # Convert years and months known to datetime
+        current_datetime = datetime.now()
+        time_known_datetime = current_datetime - relativedelta(years=years_known, months=months_known)
+
+        # If the time known is shorter than one year
+        if time_known_datetime > current_datetime.replace(year=current_datetime.year-1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
-        elif known_dt <= birth_dt:
+        # If the time known is longer than the time since birth
+        elif time_known_datetime <= birth_datetime:
             raise forms.ValidationError('Check the number of years and months you have entered')
         return years_known, months_known
 
@@ -176,9 +163,9 @@ class ReferenceFirstReferenceAddressManualForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    street_name_and_number = forms.CharField(label='Address line 1', error_messages={
+    street_line1 = forms.CharField(label='Address line 1', error_messages={
         'required': "Please enter the first line of the referee's address"})
-    street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
+    street_line2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city',
                            error_messages={'required': "Please enter the name of the town or city"})
     county = forms.CharField(label='County (optional)', required=False)
@@ -197,35 +184,35 @@ class ReferenceFirstReferenceAddressManualForm(ChildminderForms):
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
             reference_record = Reference.objects.get(application_id=self.application_id_local, reference=1)
-            self.fields['street_name_and_number'].initial = reference_record.street_line1
-            self.fields['street_name_and_number2'].initial = reference_record.street_line2
+            self.fields['street_line1'].initial = reference_record.street_line1
+            self.fields['street_line2'].initial = reference_record.street_line2
             self.fields['town'].initial = reference_record.town
             self.fields['county'].initial = reference_record.county
             self.fields['postcode'].initial = reference_record.postcode
             self.fields['country'].initial = reference_record.country
             self.pk = reference_record.reference_id
-            self.field_list = ['street_name_and_number', 'street_name_and_number2', 'town', 'county', 'postcode',
+            self.field_list = ['street_line1', 'street_line2', 'town', 'county', 'postcode',
                                'country']
 
-    def clean_street_name_and_number(self):
+    def clean_street_line1(self):
         """
         Street name and number validation
         :return: string
         """
-        street_name_and_number = self.cleaned_data['street_name_and_number']
-        if len(street_name_and_number) > 50:
+        street_line1 = self.cleaned_data['street_line1']
+        if len(street_line1) > 50:
             raise forms.ValidationError('The first line of the address must be under 50 characters long')
-        return street_name_and_number
+        return street_line1
 
-    def clean_street_name_and_number2(self):
+    def clean_street_line2(self):
         """
         Street name and number line 2 validation
         :return: string
         """
-        street_name_and_number2 = self.cleaned_data['street_name_and_number2']
-        if len(street_name_and_number2) > 50:
+        street_line2 = self.cleaned_data['street_line2']
+        if len(street_line2) > 50:
             raise forms.ValidationError('The second line of the address must be under 50 characters long')
-        return street_name_and_number2
+        return street_line2
 
     def clean_town(self):
         """
@@ -440,12 +427,16 @@ class SecondReferenceForm(ChildminderForms):
         """
         years_known = self.cleaned_data['time_known'][1]
         months_known = self.cleaned_data['time_known'][0]
-        birth_dt = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
-        known_dt = datetime_from_time_known(years_known, months_known)
-        d_now = datetime.now()
-        if known_dt > d_now.replace(year=d_now.year-1):
+        birth_datetime = datetime(year=self.birth_time[0], month=self.birth_time[1], day=self.birth_time[2])
+        # Convert years and months known to datetime
+        current_datetime = datetime.now()
+        time_known_datetime = current_datetime - relativedelta(years=years_known, months=months_known)
+
+        # If the time known is shorter than one year
+        if time_known_datetime > current_datetime.replace(year=current_datetime.year - 1):
             raise forms.ValidationError('You must have known the referee for at least 1 year')
-        elif known_dt <= birth_dt:
+        # If the time known is longer than the time since birth
+        elif time_known_datetime <= birth_datetime:
             raise forms.ValidationError('Check the number of years and months you have entered')
         return years_known, months_known
 
@@ -495,9 +486,9 @@ class ReferenceSecondReferenceAddressManualForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    street_name_and_number = forms.CharField(label='Address line 1', error_messages={
+    street_line1 = forms.CharField(label='Address line 1', error_messages={
         'required': "Please enter the first line of the referee's address"})
-    street_name_and_number2 = forms.CharField(label='Address line 2', required=False)
+    street_line2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city',
                            error_messages={'required': "Please enter the name of the town or city"})
     county = forms.CharField(label='County (optional)', required=False)
@@ -516,35 +507,35 @@ class ReferenceSecondReferenceAddressManualForm(ChildminderForms):
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=2).count() > 0:
             reference_record = Reference.objects.get(application_id=self.application_id_local, reference=2)
-            self.fields['street_name_and_number'].initial = reference_record.street_line1
-            self.fields['street_name_and_number2'].initial = reference_record.street_line2
+            self.fields['street_line1'].initial = reference_record.street_line1
+            self.fields['street_line2'].initial = reference_record.street_line2
             self.fields['town'].initial = reference_record.town
             self.fields['county'].initial = reference_record.county
             self.fields['postcode'].initial = reference_record.postcode
             self.fields['country'].initial = reference_record.country
             self.pk = reference_record.reference_id
-            self.field_list = ['street_name_and_number', 'street_name_and_number2', 'town', 'county', 'postcode',
+            self.field_list = ['street_line1', 'street_line2', 'town', 'county', 'postcode',
                                'country']
 
-    def clean_street_name_and_number(self):
+    def clean_street_line1(self):
         """
         Street name and number validation
         :return: string
         """
-        street_name_and_number = self.cleaned_data['street_name_and_number']
-        if len(street_name_and_number) > 50:
+        street_line1 = self.cleaned_data['street_line1']
+        if len(street_line1) > 50:
             raise forms.ValidationError('The first line of the address must be under 50 characters long')
-        return street_name_and_number
+        return street_line1
 
-    def clean_street_name_and_number2(self):
+    def clean_street_line2(self):
         """
         Street name and number line 2 validation
         :return: string
         """
-        street_name_and_number2 = self.cleaned_data['street_name_and_number2']
-        if len(street_name_and_number2) > 50:
+        street_line2 = self.cleaned_data['street_line2']
+        if len(street_line2) > 50:
             raise forms.ValidationError('The second line of the address must be under 50 characters long')
-        return street_name_and_number2
+        return street_line2
 
     def clean_town(self):
         """
