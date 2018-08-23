@@ -152,12 +152,12 @@ def task_list(request):
                 'name': 'eyfs',
                 'status': application.eyfs_training_status,
                 'arc_flagged': application.eyfs_training_arc_flagged,
-                'description': "Early years training",
+                'description': 'Childcare training',
                 'status_url': None,
                 'status_urls': [
                     {'status': 'COMPLETED', 'url': 'EYFS-Summary-View'},
                     {'status': 'FLAGGED', 'url': 'EYFS-Summary-View'},
-                    {'status': 'OTHER', 'url': 'EYFS-Guidance-View'}
+                    {'status': 'OTHER', 'url': 'Childcare-Training-Guidance-View'}
                 ],
             },
             {
