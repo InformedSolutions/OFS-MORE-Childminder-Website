@@ -4,7 +4,7 @@ import collections
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
-from django.views.generic import View
+from django.views.generic import FormView, View
 
 from ..table_util import Table, create_tables, submit_link_setter
 from ..summary_page_data import eyfs_name_dict, eyfs_link_dict, eyfs_change_link_description_dict
@@ -12,10 +12,7 @@ from ..summary_page_data import eyfs_name_dict, eyfs_link_dict, eyfs_change_link
 from .. import status
 from ..business_logic import (eyfs_details_logic,
                               reset_declaration)
-from ..forms import (EYFSGuidanceForm,
-                     EYFSDetailsForm,
-                     EYFSCertificateForm,
-                     EYFSSummaryForm)
+from ..forms import EYFSDetailsForm
 from ..models import Application, ChildcareType, EYFS
 
 
@@ -48,9 +45,9 @@ class ChildcareTrainingGuidanceView(View):
         register = childcare_register_type(application_id)
 
         if register == 'childcare_register_only':
-            success_url = 'Type-Of-Childcare-Training'
+            success_url = 'Type-Of-Childcare-Training-View'
         elif register == 'early_years_register':
-            success_url = 'Childcare-Training-Details'
+            success_url = 'Childcare-Training-Details-View'
 
         return HttpResponseRedirect(reverse(success_url) + '?id=' + application_id)
 
@@ -62,95 +59,61 @@ class ChildcareTrainingGuidanceView(View):
         return context
 
 
-def eyfs_details(request):
-    """
-    Method returning the template for the Early Years details: details page (for a given application)
-    and navigating to the Early Years details: certificate page when successfully completed;
-    business logic is applied to either create or update the associated EYFS record
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Early Years details: details template
-    """
-    current_date = timezone.now()
-    if request.method == 'GET':
-        application_id_local = request.GET["id"]
-        form = EYFSDetailsForm(id=application_id_local)
-        form.check_flag()
-        application = Application.objects.get(pk=application_id_local)
+class ChildcareTrainingDetailsView(FormView):
+    template_name = 'childcare-training-details.html'
+    form_class = EYFSDetailsForm
+    success_url = 'Childcare-Training-Certificate-View'
 
-        if application.application_status == 'FURTHER_INFORMATION':
-            form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem'
+    def get_form_kwargs(self):
+        kwargs = super(ChildcareTrainingDetailsView, self).get_form_kwargs()
+        kwargs['id'] = self.request.GET['id']
+        return kwargs
 
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'eyfs_training_status': application.eyfs_training_status
-        }
-        return render(request, 'eyfs-details.html', variables)
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = EYFSDetailsForm(request.POST, id=application_id_local)
-        form.remove_flag()
-        application = Application.objects.get(pk=application_id_local)
-        if form.is_valid():
-            if application.eyfs_training_status != 'COMPLETED':
-                status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
-            # Create or update EYFS record
-            eyfs_record = eyfs_details_logic(application_id_local, form)
-            eyfs_record.save()
-            application.date_updated = current_date
-            application.save()
-            reset_declaration(application)
-            return HttpResponseRedirect(reverse('EYFS-Certificate-View') + '?id=' + application_id_local)
-        else:
+    def get_form(self, form_class=None):
+        form = super(ChildcareTrainingDetailsView, self).get_form(form_class=None)
+        if self.request.method == 'GET':
+            form.check_flag()
+        elif self.request.method == 'POST':
+            form.remove_flag()
+        return form
 
-            form.error_summary_title = 'There was a problem with your course details'
+    def form_valid(self, form):
+        application_id = self.request.GET['id']
+        application = Application.objects.get(pk=application_id)
 
-            if application.application_status == 'FURTHER_INFORMATION':
+        if application.eyfs_training_status != 'COMPLETED':
+            status.update(application_id, 'eyfs_training_status', 'IN_PROGRESS')
 
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem'
+        eyfs_record = eyfs_details_logic(application_id, form)
+        eyfs_record.save()
 
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'eyfs-details.html', variables)
+        return HttpResponseRedirect(reverse(self.success_url) + '?id=' + application_id)
 
 
-def eyfs_certificate(request):
-    """
-    Method returning the template for the Early Years knowledge: certificate page (for a given application)
-    and navigating to the Early Years knowledge: question page when successfully completed;
-    business logic is applied to either create or update the associated EYFS record
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Early Years knowledge: certificate template
-    """
+class ChildcareTrainingCertificateView(View):
+    template_name = 'childcare-training-certificate.html'
+    success_url = 'Childcare-Training-Summary-View'
 
-    if request.method == 'GET':
-        application_id_local = request.GET["id"]
-        form = EYFSCertificateForm()
-        application = Application.objects.get(pk=application_id_local)
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'eyfs_training_status': application.eyfs_training_status
-        }
-        return render(request, 'eyfs-certificate.html', variables)
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = EYFSCertificateForm(request.POST)
-        application = Application.objects.get(pk=application_id_local)
-        if form.is_valid():
-            if application.eyfs_training_status != 'COMPLETED':
-                status.update(application_id_local, 'eyfs_training_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(reverse('EYFS-Summary-View') + '?id=' + application_id_local)
-        else:
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'eyfs-certificate.html', variables)
+    def get(self, request):
+        return render(request, template_name=self.template_name, context=self.get_context_data())
+
+    def post(self, request):
+        application_id = request.GET['id']
+        return HttpResponseRedirect(reverse(self.success_url) + '?id=' + application_id)
+
+    def get_context_data(self):
+        context = dict()
+        application_id = self.request.GET['id']
+        context['application_id'] = application_id
+        context['register'] = childcare_register_type(application_id)
+        return context
+
+
+class ChildcareTrainingSummaryView(View):
+    template_name = 'childcare-training-summary.html'
+
+    def get(self, request):
+        return render(request, template_name=self.template_name)
 
 
 def eyfs_summary(request):
