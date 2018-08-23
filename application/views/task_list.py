@@ -155,8 +155,8 @@ def task_list(request):
                 'description': 'Childcare training',
                 'status_url': None,
                 'status_urls': [
-                    {'status': 'COMPLETED', 'url': 'EYFS-Summary-View'},
-                    {'status': 'FLAGGED', 'url': 'EYFS-Summary-View'},
+                    {'status': 'COMPLETED', 'url': 'Childcare-Training-Summary-View'},
+                    {'status': 'FLAGGED', 'url': 'Childcare-Training-Summary-View'},
                     {'status': 'OTHER', 'url': 'Childcare-Training-Guidance-View'}
                 ],
             },
