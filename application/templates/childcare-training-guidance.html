@@ -35,7 +35,6 @@
 
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     {% csrf_token %}
-    <input type="hidden" value="{{application_id}}" name="id"/>
     <input type="submit" class="button" value="Continue">
 </form>
 
