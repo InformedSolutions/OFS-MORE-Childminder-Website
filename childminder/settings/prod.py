@@ -82,7 +82,7 @@ LOGGING = {
   'handlers': {
     'django.server': {
         'level': 'INFO',
-        'class': 'logging.handlers.RotatingFileHandler',
+        'class': 'logging.handlers.TimedRotatingFileHandler',
         'maxBytes': 1 * 1024 * 1024,
         'filename': 'logs/output.log',
         'formatter': 'console',
