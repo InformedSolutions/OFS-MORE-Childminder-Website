@@ -10,45 +10,74 @@ from ..table_util import table_creator, submit_link_setter
 from .. import status
 from ..business_logic import (dbs_check_logic,
                               reset_declaration)
-from ..forms import (DBSCheckDBSDetailsForm,
-                     DBSCheckGuidanceForm,
+from ..forms import (DBSGuidanceForm,
+    DBSCheckDBSDetailsForm,
                      DBSCheckSummaryForm,
                      DBSCheckUploadDBSForm)
 from ..models import (Application,
                       CriminalRecordCheck)
 
+from ..utils import build_url
 
-def dbs_check_guidance(request):
-    """
-    Method returning the template for the Your criminal record (DBS) check: guidance page (for a given application)
-    and navigating to the Your criminal record (DBS) check: details page when successfully completed
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Your criminal record (DBS) check: guidance template
-    """
-    if request.method == 'GET':
-        application_id_local = request.GET["id"]
-        form = DBSCheckGuidanceForm()
-        application = Application.objects.get(pk=application_id_local)
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'criminal_record_check_status': application.criminal_record_check_status
+# New Imports TODO: -mop
+from django.views.generic.edit import FormView
+
+class DBSGuidanceView(FormView):
+    template_name = 'dbs-check-guidance.html'
+    form_class = DBSGuidanceForm
+    success_url = 'DBS-Type-Page'
+
+    def get_context_data(self, **kwargs):
+        super_context = super().get_context_data(**kwargs)
+
+        application_id = self.request.GET.get('id')
+
+        view_context = {
+            'id': application_id
         }
-        return render(request, 'dbs-check-guidance.html', variables)
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = DBSCheckGuidanceForm(request.POST)
-        application = Application.objects.get(pk=application_id_local)
-        if form.is_valid():
-            if application.criminal_record_check_status != 'COMPLETED':
-                status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(reverse('DBS-Check-DBS-Details-View') + '?id=' + application_id_local)
-        else:
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'dbs-check-guidance.html', variables)
+
+        context = super_context
+        context.update(view_context)
+        return context
+
+    def get_success_url(self):
+        application_id = self.request.POST.get('id')
+
+        return build_url(self.success_url, get={ 'id': application_id})
+
+
+
+# def dbs_check_guidance(request):
+#     """
+#     Method returning the template for the Your criminal record (DBS) check: guidance page (for a given application)
+#     and navigating to the Your criminal record (DBS) check: details page when successfully completed
+#     :param request: a request object used to generate the HttpResponse
+#     :return: an HttpResponse object with the rendered Your criminal record (DBS) check: guidance template
+#     """
+#     if request.method == 'GET':
+#         application_id_local = request.GET["id"]
+#         form = DBSCheckGuidanceForm()
+#         application = Application.objects.get(pk=application_id_local)
+#         variables = {
+#             'form': form,
+#             'application_id': application_id_local,
+#             'criminal_record_check_status': application.criminal_record_check_status
+#         }
+#         return render(request, 'dbs-check-guidance.html', variables)
+#     if request.method == 'POST':
+#         application_id_local = request.POST["id"]
+#         form = DBSCheckGuidanceForm(request.POST)
+#         application = Application.objects.get(pk=application_id_local)
+#         if form.is_valid():
+#             if application.criminal_record_check_status != 'COMPLETED':
+#                 status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
+#             return HttpResponseRedirect(reverse('DBS-Check-DBS-Details-View') + '?id=' + application_id_local)
+#         else:
+#             variables = {
+#                 'form': form,
+#                 'application_id': application_id_local
+#             }
+#             return render(request, 'dbs-check-guidance.html', variables)
 
 
 def dbs_check_dbs_details(request):

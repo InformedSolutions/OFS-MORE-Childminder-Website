@@ -12,18 +12,20 @@
     <!-- Content -->
     <div class="form-group">
         <h1 class="form-title heading-large">
-            Criminal record (DBS) check
+            Criminal record checks
         </h1>
-        <p>You will need to <a href="http://ofsteddbsapplication.co.uk/welcome" target="_blank">apply for a criminal record (DBS) check</a>.</p>
-        <p>This must be an enhanced check for a home-based childcare role.</p>
-        <p>It can take about 6 weeks to get your certificate.</p>
-        <p>We will accept an existing enhanced check if one of the following apply:</p>
-        <li style="margin-left: 30px;">the certificate is dated within the last 3 months</li>
-        <li class="text-before-button" style="margin-left: 30px;">you are signed up to the DBS update service.</li>
-        {{form.as_div}}
-        {% csrf_token %}
+        <p>You need to have a UK criminal record (DBS) check.</p>
+        You also need other checks if you have:
+            <!-- TODO: Fix formatting of bullet points -->
+            <ul style="list-style-type: disc; padding-left: 50px;">
+                <li>lived abroad in the last 5 years</li>
+                <li>lived or worked on a military base in the last 5 years</li>
+            </ul>
+
+        <p>This is to make sure that you're suitable to care for children</p>
+
         <input type="submit" class="button" value="Continue">
-        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+        {% csrf_token %}
     </div>
 </form>
 </div>

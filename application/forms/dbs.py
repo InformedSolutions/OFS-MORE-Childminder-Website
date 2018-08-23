@@ -7,7 +7,7 @@ from ..models import CriminalRecordCheck, Application
 from ..business_logic import childminder_dbs_number_duplication_check, childminder_dbs_duplicates_household_member_check
 
 
-class DBSCheckGuidanceForm(ChildminderForms):
+class DBSGuidanceForm(ChildminderForms):
     """
     GOV.UK form for the Your criminal record (DBS) check: guidance page
     """
