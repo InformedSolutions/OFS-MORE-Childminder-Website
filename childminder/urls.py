@@ -61,6 +61,9 @@ urlpatterns = [
     # ======================= #
 
     url(r'^childcare-training/$', views.ChildcareTrainingGuidanceView.as_view(), name='Childcare-Training-Guidance-View'),
+    url(r'^childcare-training/details/', views.ChildcareTrainingDetailsView.as_view(), name='Childcare-Training-Details-View'),
+    url(r'^childcare-training-certificate/', views.ChildcareTrainingCertificateView.as_view(), name='Childcare-Training-Certificate-View'),
+    url(r'^childcare-training/check-answers/', views.ChildcareTrainingSummaryView.as_view(), name='Childcare-Training-Summary-View'),
 
     # url(r'^early-years/$', views.eyfs_guidance, name='EYFS-Guidance-View'),
     # url(r'^early-years/details', views.eyfs_details, name='EYFS-Details-View'),
