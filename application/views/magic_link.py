@@ -39,7 +39,6 @@ def magic_link_confirmation_email(email, link_id):
     # If executing login function in test mode set env variable for later retrieval by test code
     if settings.EXECUTING_AS_TEST == 'True':
         os.environ['EMAIL_VALIDATION_URL'] = link_id
-    else:
         print(link_id)
 
     personalisation = {"link": link_id}
@@ -91,7 +90,6 @@ def magic_link_update_email(email, first_name, link_id):
     # If executing login function in test mode set env variable for later retrieval by test code
     if settings.EXECUTING_AS_TEST == 'True':
         os.environ['EMAIL_VALIDATION_URL'] = link_id
-    else:
         print(link_id)
 
     personalisation = {"link": link_id,
@@ -112,7 +110,6 @@ def magic_link_non_existent_email(email, link_id):
     # If executing login function in test mode set env variable for later retrieval by test code
     if settings.EXECUTING_AS_TEST == 'True':
         os.environ['EMAIL_VALIDATION_URL'] = link_id
-    else:
         print(link_id)
 
     personalisation = {"link": link_id}
@@ -147,7 +144,6 @@ def generate_random(digits, type):
         r = ''.join([random.choice(string.digits[1:]) for n in range(digits)])
         if settings.EXECUTING_AS_TEST == 'True':
             os.environ['SMS_VALIDATION_CODE'] = r
-        else:
             print(r)
     elif type == 'link':
         r = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(digits)])
