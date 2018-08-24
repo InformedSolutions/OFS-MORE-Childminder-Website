@@ -10,23 +10,12 @@ from ..table_util import Table, create_tables, submit_link_setter
 from ..summary_page_data import eyfs_name_dict, eyfs_link_dict, eyfs_change_link_description_dict
 
 from .. import status
-from ..business_logic import (eyfs_details_logic,
+from ..business_logic import (childcare_register_type,
+                              childcare_training_course_logic,
+                              eyfs_details_logic,
                               reset_declaration)
-from ..forms import EYFSDetailsForm
+from ..forms import EYFSDetailsForm, TypeOfChildcareTrainingForm
 from ..models import Application, ChildcareType, EYFS
-
-
-def childcare_register_type(application_id):
-    """
-    Function to determine the childcare register to which the applicant is applying.
-    :param application_id: app_id of the applicant for which the check is being made.
-    :return: a string containing the register to which the applicant is applying.
-    """
-    childcare_type_record = ChildcareType.objects.get(application_id=application_id)
-    if not childcare_type_record.zero_to_five and childcare_type_record.five_to_eight:
-        return 'childcare_register_only'
-    else:
-        return 'early_years_register'
 
 
 class ChildcareTrainingGuidanceView(View):
@@ -84,10 +73,63 @@ class ChildcareTrainingDetailsView(FormView):
         if application.eyfs_training_status != 'COMPLETED':
             status.update(application_id, 'eyfs_training_status', 'IN_PROGRESS')
 
-        eyfs_record = eyfs_details_logic(application_id, form)
-        eyfs_record.save()
+        training_record = childcare_training_course_logic(application_id, form)
+        training_record.save()
 
         return HttpResponseRedirect(reverse(self.success_url) + '?id=' + application_id)
+
+
+class TypeOfChildcareTrainingView(FormView):
+    template_name = 'childcare-training-type.html'
+    form_class = TypeOfChildcareTrainingForm
+    success_url = None
+
+    def get_form_kwargs(self):
+        kwargs = super(TypeOfChildcareTrainingView, self).get_form_kwargs()
+        # kwargs['id'] = self.request.GET['id']
+        return kwargs
+
+    def get_form(self, form_class=None):
+        form = super(TypeOfChildcareTrainingView, self).get_form(form_class=None)
+        if self.request.method == 'GET':
+            form.check_flag()
+        elif self.request.method == 'POST':
+            form.remove_flag()
+        return form
+
+    def form_valid(self, form):
+        application_id = self.request.GET['id']
+        application = Application.objects.get(pk=application_id)
+
+        if application.eyfs_training_status != 'COMPLETED':
+            status.update(application_id, 'eyfs_training_status', 'IN_PROGRESS')
+
+        training_record = childcare_training_course_logic(application_id, form)
+        # training_record.save()
+
+        if 'no_training' in form.cleaned_data['childcare_training']:
+            self.success_url = 'Childcare-Training-Course-Required-View'
+        else:
+            self.success_url = 'Childcare-Training-Certificate-View'
+
+        return HttpResponseRedirect(reverse(self.success_url) + '?id=' + application_id)
+
+
+class ChildcareTrainingCourseRequiredView(View):
+    template_name = 'childcare-training-course-required.html'
+    success_url = 'task_list'
+
+    def get(self, request):
+        return render(request, template_name=self.template_name)
+
+    def post(self, request):
+        application_id = self.request.GET['id']
+        application = Application.objects.get(pk=application_id)
+
+        if application.eyfs_training_status != 'COMPLETED':
+            status.update(application_id, 'eyfs_training_status', 'IN_PROGRESS')
+
+        return HttpResponseRedirect(reverse(self.success_url) + '?id=' + request.GET['id'])
 
 
 class ChildcareTrainingCertificateView(View):
@@ -111,9 +153,15 @@ class ChildcareTrainingCertificateView(View):
 
 class ChildcareTrainingSummaryView(View):
     template_name = 'childcare-training-summary.html'
+    success_url = 'task_list'
 
     def get(self, request):
         return render(request, template_name=self.template_name)
+
+    def post(self, request):
+        application_id = self.request.GET['id']
+        status.update(application_id, 'eyfs_training_status', 'COMPLETED')
+        return HttpResponseRedirect(reverse(self.success_url) + '?id=' + application_id)
 
 
 def eyfs_summary(request):
