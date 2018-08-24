@@ -78,8 +78,8 @@ first_aid_change_link_description_dict = collections.OrderedDict([('course_date'
 eyfs_name_dict = collections.OrderedDict([('eyfs_course_name', 'Title of training course'),
                                                ('eyfs_course_date', 'Date you completed course')])
 
-eyfs_link_dict = collections.OrderedDict([('eyfs_course_name', 'EYFS-Details-View'),
-                                               ('eyfs_course_date', 'EYFS-Details-View')])
+eyfs_link_dict = collections.OrderedDict([('eyfs_course_name', 'Childcare-Training-Details-View'),
+                                               ('eyfs_course_date', 'Childcare-Training-Details-View')])
 
 eyfs_change_link_description_dict = collections.OrderedDict([('eyfs_course_name', 'course title'),
                                                              ('eyfs_course_date', 'course completion date')])
@@ -169,7 +169,7 @@ submit_link_dict = collections.OrderedDict([('login_details', 'Contact-Email-Vie
                                             ('type_of_childcare', 'Type-Of-Childcare-Guidance-View'),
                                             ('personal_details', 'Personal-Details-Guidance-View'),
                                             ('first_aid_training', 'First-Aid-Training-Guidance-View'),
-                                            ('eyfs_training', 'EYFS-Guidance-View'),
+                                            ('eyfs_training', 'Childcare-Training-Guidance-View'),
                                             ('criminal_record_check', 'DBS-Check-Guidance-View'),
                                             ('health', 'Health-Intro-View'),
                                             ('references', 'References-Intro-View'),
@@ -179,7 +179,7 @@ back_link_dict = collections.OrderedDict([('login_details', 'Question-View'),
                                           ('type_of_childcare', 'Type-Of-Childcare-Guidance-View'),
                                           ('personal_details', 'Personal-Details-Location-Of-Care-View'),
                                           ('first_aid_training', 'First-Aid-Training-Details-View'),
-                                            ('eyfs_training', 'EYFS-Details-View'),
+                                          ('eyfs_training', 'Childcare-Training-Details-View'),
                                           ('criminal_record_check', 'DBS-Check-DBS-Details-View'),
                                           ('health', 'Health-Booklet-View'),
                                           ('references', 'References-Second-Reference-Contact-Details-View'),
