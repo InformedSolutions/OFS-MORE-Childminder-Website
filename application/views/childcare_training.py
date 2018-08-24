@@ -86,7 +86,7 @@ class TypeOfChildcareTrainingView(FormView):
 
     def get_form_kwargs(self):
         kwargs = super(TypeOfChildcareTrainingView, self).get_form_kwargs()
-        # kwargs['id'] = self.request.GET['id']
+        kwargs['id'] = self.request.GET['id']
         return kwargs
 
     def get_form(self, form_class=None):
@@ -105,7 +105,7 @@ class TypeOfChildcareTrainingView(FormView):
             status.update(application_id, 'childcare_training_status', 'IN_PROGRESS')
 
         training_record = childcare_training_course_logic(application_id, form)
-        # training_record.save()
+        training_record.save()
 
         if 'no_training' in form.cleaned_data['childcare_training']:
             self.success_url = 'Childcare-Training-Course-Required-View'
