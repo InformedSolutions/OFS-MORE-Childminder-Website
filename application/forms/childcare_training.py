@@ -34,8 +34,8 @@ class EYFSDetailsForm(ChildminderForms):
         super(EYFSDetailsForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
-        if EYFS.objects.filter(application_id=self.application_id_local).count() > 0:
-            eyfs_record = EYFS.objects.get(application_id=self.application_id_local)
+        if ChildcareTraining.objects.filter(application_id=self.application_id_local).count() > 0:
+            eyfs_record = ChildcareTraining.objects.get(application_id=self.application_id_local)
             self.fields['eyfs_course_name'].initial = eyfs_record.eyfs_course_name
             course_day, course_month, course_year = date_formatter(eyfs_record.eyfs_course_date_day,
                                                                 eyfs_record.eyfs_course_date_month,
@@ -82,9 +82,9 @@ class TypeOfChildcareTrainingForm(ChildminderForms):
     )
 
     childcare_training = forms.MultipleChoiceField(label='', choices=options,
-                                                  widget=CheckboxSelectMultiple, required=True,
-                                                  error_messages={'required': 'Please select the types of childcare courses you have completed'},
-                                                  help_text="Tick all that apply")
+                                                   widget=CheckboxSelectMultiple, required=True,
+                                                   error_messages={'required': 'Please select the types of childcare courses you have completed'},
+                                                   help_text="Tick all that apply")
 
     def clean_childcare_training(self):
         data = self.cleaned_data['childcare_training']
@@ -94,13 +94,11 @@ class TypeOfChildcareTrainingForm(ChildminderForms):
         return data
 
     def __init__(self, *args, **kwargs):
+        self.application_id_local = kwargs.pop('id')
         super(TypeOfChildcareTrainingForm, self).__init__(*args, **kwargs)
-        initial_vals = []
+        # If information was previously entered, display it on the form
+        if ChildcareTraining.objects.filter(application_id=self.application_id_local).count() > 0:
+            training_record = ChildcareTraining.objects.get(application_id=self.application_id_local)
 
-        try:
-            for option in self.options:
-                if kwargs['initial'][option[0]]:
-                    initial_vals.append(option[0])
+            initial_vals = [option[0] for option in self.options if getattr(training_record, option[0])]
             self.fields['childcare_training'].initial = initial_vals
-        except KeyError:  # If they're loading the form for the first time, supply no initial values.
-            pass
