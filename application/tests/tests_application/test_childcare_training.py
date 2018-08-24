@@ -6,8 +6,8 @@ from django.test import Client
 from django.test import TestCase
 from django.urls import resolve, reverse
 
-from ... import models
-from ...views import ChildcareTrainingGuidanceView, \
+from application import models
+from application.views import ChildcareTrainingGuidanceView, \
     ChildcareTrainingCourseRequiredView, \
     TypeOfChildcareTrainingView, \
     ChildcareTrainingCertificateView, \
