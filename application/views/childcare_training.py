@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 from django.views.generic import FormView, View
 
-from ..table_util import Table, create_tables, submit_link_setter
+from ..table_util import Table, create_tables, submit_link_setter, Row
 from ..summary_page_data import eyfs_name_dict, eyfs_link_dict, eyfs_change_link_description_dict
 
 from .. import status
@@ -152,13 +152,11 @@ class ChildcareTrainingCertificateView(View):
 
 
 class ChildcareTrainingSummaryView(View):
-    template_name = 'childcare-training-summary.html'
+    template_name = 'generic-summary-template.html'
     success_url = 'Task-List-View'
 
     def get(self, request):
-        context = self.get_context_data()
-        context['application_id'] = request.GET['id']
-        return render(request, template_name=self.template_name, context=context)
+        return render(request, template_name=self.template_name, context=self.get_context_data())
 
     def post(self, request):
         application_id = self.request.GET['id']
@@ -167,11 +165,67 @@ class ChildcareTrainingSummaryView(View):
 
     def get_context_data(self):
         context = dict()
-
-        context['table_list'] = []
+        application_id = self.request.GET['id']
+        context['application_id'] = application_id
         context['page_title'] = 'Check your answers: childcare training'
 
+        register = childcare_register_type(application_id)
+        childcare_training_record = ChildcareTraining.objects.get(application_id=application_id)
+
+        if register == 'childcare_register_only':
+            context['table_list'] = self.childcare_register_table_list(childcare_training_record)
+
+        elif register == 'early_years_register':
+            context['table_list'] = self.eyfs_table_list(childcare_training_record)
+            context = submit_link_setter(context, context['table_list'], 'eyfs_training', application_id)
+
         return context
+
+    @staticmethod
+    def childcare_register_table_list(childcare_training_record):
+        """
+        Method to create a table list containing summary data for the childcare register applicants.
+        :param childcare_training_record: Childcare Training record from which to grab data.
+        :return: list of tables to be rendered on summary page.
+        """
+        if childcare_training_record.eyfs_training and childcare_training_record.common_core_training:
+            row_value = 'Childcare qualification (level 2 or higher) and training in common core skills'
+        elif childcare_training_record.eyfs_training:
+            row_value = 'Childcare qualification (level 2 or higher)'
+        else:
+            row_value = 'Training in common core skills'
+
+        childcare_training_row = Row('childcare_training', 'What type of childcare course have you completed?',
+                                     row_value, 'Type-Of-Childcare-Training-View', '')
+
+        childcare_training_summary_table = Table([childcare_training_record.pk])
+        childcare_training_summary_table.row_list = [childcare_training_row]
+        childcare_training_summary_table.get_errors()
+        return [childcare_training_summary_table]
+
+    @staticmethod
+    def eyfs_table_list(childcare_training_record):
+        """
+        Method to create a table list containing summary data for the EYFS applicants.
+        :param childcare_training_record: Childcare Training record from which to grab data.
+        :return: list of tables to be rendered on summary page.
+        """
+        eyfs_fields = collections.OrderedDict([
+            ('eyfs_course_name', childcare_training_record.eyfs_course_name),
+            ('eyfs_course_date', '/'.join([str(childcare_training_record.eyfs_course_date_day).zfill(2),
+                                           str(childcare_training_record.eyfs_course_date_month).zfill(2),
+                                           str(childcare_training_record.eyfs_course_date_year)]))
+        ])
+
+        eyfs_table = collections.OrderedDict({
+            'table_object': Table([childcare_training_record.pk]),
+            'fields': eyfs_fields,
+            'title': '',
+            'error_summary_title': 'There was a problem',
+        })
+
+        table_list = create_tables([eyfs_table], eyfs_name_dict, eyfs_link_dict, eyfs_change_link_description_dict)
+        return table_list
 
 
 def eyfs_summary(request):
