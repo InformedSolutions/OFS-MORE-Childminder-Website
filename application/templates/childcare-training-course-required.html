@@ -1,0 +1,26 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Go on a training course{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <div class="two-thirds">
+        <h1 class="form-title heading-large">
+            Go on a training course
+        </h1>
+        <p>You need to go on a common core skills training course.</p>
+        <p>Courses cost around £50 to £140.</p>
+        <p><a href="">Ask your council</a> for details of courses in your area.</p>
+        <p>An inspector will ask to see your certificate when they inspect you.</p>
+        <p>You can finish this section when you complete your course.</p>
+    </div>
+    <input type="submit" class="button" value="Continue">
+</form>
+<br>
+{% include 'return-to-list.html' %}
+
+{% endblock %}
