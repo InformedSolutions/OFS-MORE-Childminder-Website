@@ -1,8 +1,3 @@
-import datetime
-from uuid import uuid4
-
-from django.conf import settings
-from django.test import Client
 from django.test import TestCase
 from django.urls import resolve, reverse
 
@@ -15,10 +10,43 @@ from application.views import ChildcareTrainingGuidanceView, \
     ChildcareTrainingSummaryView, \
     task_list
 
+from .base import ApplicationTestBase
 
-class ChildcareTrainingTestSuite(TestCase):
-    test_app_id = uuid4()
-    url_suffix  = '?id=' + str(test_app_id)
+
+def parameterise_by_applicant_type(test_func):
+    """
+    Decorator to run test functions for two cases: one in which the applicant is applying for eyfs, and one for which
+    they are applying only for the childcare register.
+    :param test_func: Test function to be decorated.
+    :return: decorated test function.
+    """
+    pass
+
+
+class ChildcareTrainingTestSuite(TestCase, ApplicationTestBase):
+
+    def setUp(self):
+        self.TestAppEmail()
+        self.TestValidateEmail()
+        self.TestAppPhone()
+        self.url_suffix = '?id=' + str(self.app_id)
+
+        models.ChildcareTraining.objects.create(
+            application_id=self.app_id,
+            zero_to_five=True,
+            five_to_eight=True,
+            eight_plus=True,
+        )
+
+    def create_eyfs_applicant(self):
+        record = models.ChildcareTraining.objects.get(application_id=self.app_id)
+        record.zero_to_five = True
+        record.save()
+
+    def create_childcare_register_applicant(self):
+        record = models.ChildcareTraining.objects.get(application_id=self.app_id)
+        record.zero_to_five = False
+        record.save()
 
     # ---------- #
     # HTTP Tests #
