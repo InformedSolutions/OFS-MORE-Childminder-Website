@@ -6,59 +6,10 @@
 {% block inner_content %}
 
 {% include "back-button.html" %}
-<h1 class="form-title heading-large">Check your answers: early years training</h1>
-<table class="check-your-answers" style="table-layout: fixed; width: 100%">
-    <colgroup>
-        <col class="summary-column">
-        <col class="summary-column">
-        <col class="change-answer">
-    </colgroup>
-    <thead>
-    <tr>
-        <th colspan="3">
-            <div class="heading-medium">
-                Early years training
-            </div>
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td class="summary-column">
-            Title of training course
-        </td>
-        <td class="summary-column" style="word-wrap: break-word">
-            {{eyfs_course_name}}
-        </td>
-        <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/early-years/details?id={{application_id}}#id_eyfs_course_name"
-               alt='Change course title'>
-                Change <span class="visuallyhidden">course title</span>
-            </a>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            Date you completed course
-        </td>
-        <td>
-            {{eyfs_course_date}}
-        </td>
-        <td class="change-answer">
-            <a href="{{ URL_PREFIX }}/early-years/details?id={{application_id}}#id_eyfs_course_date_0"
-               alt='Change course completion date'>
-                Change <span class="visuallyhidden">course completion date</span>
-            </a>
-        </td>
-    </tr>
-    </tbody>
-</table>
 
-<div class="form-group">
-    <form action="{{ URL_PREFIX}}/task-list?id={{application_id}}" method="get">
-        <input type="submit" class="button" value="Confirm and continue"/>
-        <input type="hidden" value="{{application_id}}" name="id"/>
-    </form>
-</div>
+<form method="post">
+    {% csrf_token %}
+    <input type="submit" class="button" value="Continue">
+</form>
 
 {% endblock %}

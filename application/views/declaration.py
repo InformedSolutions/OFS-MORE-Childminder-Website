@@ -21,7 +21,7 @@ from ..models import (AdultInHome,
                       ChildInHome,
                       ChildcareType,
                       CriminalRecordCheck,
-                      EYFS,
+                      ChildcareTraining,
                       FirstAidTraining,
                       Reference,
                       UserDetails)
@@ -162,7 +162,7 @@ def declaration_summary(request, print=False):
             else:
                 health_change = False
 
-            if application.eyfs_training_arc_flagged is True:
+            if application.childcare_training_arc_flagged is True:
                 early_years_training_change = True
             else:
                 early_years_training_change = False
@@ -472,7 +472,7 @@ def generate_list_of_updated_tasks(application_id):
         updated_list.append('First aid training')
     if application.criminal_record_check_arc_flagged is True:
         updated_list.append('Criminal record (DBS) check')
-    if application.eyfs_training_arc_flagged is True:
+    if application.childcare_training_arc_flagged is True:
         updated_list.append('Early years training')
     if application.health_arc_flagged is True:
         updated_list.append('Health declaration booklet')
@@ -493,7 +493,7 @@ def clear_arc_flagged_statuses(application_id):
     flagged_fields_to_check = (
         "childcare_type_arc_flagged",
         "criminal_record_check_arc_flagged",
-        "eyfs_training_arc_flagged",
+        "childcare_training_arc_flagged",
         "first_aid_training_arc_flagged",
         "health_arc_flagged",
         "login_details_arc_flagged",

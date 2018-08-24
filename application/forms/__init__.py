@@ -5,7 +5,7 @@ from .childcare_type import *
 from .contact_info import *
 from .dbs import *
 from .declaration import *
-from .eyfs import *
+from .childcare_training import *
 from .first_aid import *
 from .hbd import *
 from .magic_link import *

@@ -7,7 +7,7 @@ from govuk_forms.widgets import CheckboxSelectMultiple
 from application.customfields import CustomSplitDateField
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
-from application.models import EYFS
+from application.models import ChildcareTraining
 from application.utils import date_formatter
 
 

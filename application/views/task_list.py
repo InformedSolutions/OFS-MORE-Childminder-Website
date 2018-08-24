@@ -150,8 +150,8 @@ def task_list(request):
             },
             {
                 'name': 'eyfs',
-                'status': application.eyfs_training_status,
-                'arc_flagged': application.eyfs_training_arc_flagged,
+                'status': application.childcare_training_status,
+                'arc_flagged': application.childcare_training_arc_flagged,
                 'description': 'Childcare training',
                 'status_url': None,
                 'status_urls': [

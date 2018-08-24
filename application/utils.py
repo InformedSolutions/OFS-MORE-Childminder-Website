@@ -14,7 +14,7 @@ from django.shortcuts import render
 from django.utils.http import urlencode
 from django.core.urlresolvers import reverse
 
-from .models import Application, Reference, CriminalRecordCheck, EYFS, HealthDeclarationBooklet, ChildInHome, \
+from .models import Application, Reference, CriminalRecordCheck, ChildcareTraining, HealthDeclarationBooklet, ChildInHome, \
     ChildcareType, FirstAidTraining, ApplicantPersonalDetails, ApplicantName, ApplicantHomeAddress, AdultInHome
 
 

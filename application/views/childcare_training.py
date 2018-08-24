@@ -15,7 +15,7 @@ from ..business_logic import (childcare_register_type,
                               eyfs_details_logic,
                               reset_declaration)
 from ..forms import EYFSDetailsForm, TypeOfChildcareTrainingForm
-from ..models import Application, ChildcareType, EYFS
+from ..models import Application, ChildcareType, ChildcareTraining
 
 
 class ChildcareTrainingGuidanceView(View):
@@ -28,8 +28,8 @@ class ChildcareTrainingGuidanceView(View):
         application_id = request.GET['id']
         application = Application.objects.get(pk=application_id)
 
-        if application.eyfs_training_status != 'COMPLETED':
-            status.update(application_id, 'eyfs_training_status', 'IN_PROGRESS')
+        if application.childcare_training_status != 'COMPLETED':
+            status.update(application_id, 'childcare_training_status', 'IN_PROGRESS')
 
         register = childcare_register_type(application_id)
 
@@ -70,8 +70,8 @@ class ChildcareTrainingDetailsView(FormView):
         application_id = self.request.GET['id']
         application = Application.objects.get(pk=application_id)
 
-        if application.eyfs_training_status != 'COMPLETED':
-            status.update(application_id, 'eyfs_training_status', 'IN_PROGRESS')
+        if application.childcare_training_status != 'COMPLETED':
+            status.update(application_id, 'childcare_training_status', 'IN_PROGRESS')
 
         training_record = childcare_training_course_logic(application_id, form)
         training_record.save()
@@ -101,8 +101,8 @@ class TypeOfChildcareTrainingView(FormView):
         application_id = self.request.GET['id']
         application = Application.objects.get(pk=application_id)
 
-        if application.eyfs_training_status != 'COMPLETED':
-            status.update(application_id, 'eyfs_training_status', 'IN_PROGRESS')
+        if application.childcare_training_status != 'COMPLETED':
+            status.update(application_id, 'childcare_training_status', 'IN_PROGRESS')
 
         training_record = childcare_training_course_logic(application_id, form)
         # training_record.save()
@@ -117,7 +117,7 @@ class TypeOfChildcareTrainingView(FormView):
 
 class ChildcareTrainingCourseRequiredView(View):
     template_name = 'childcare-training-course-required.html'
-    success_url = 'task_list'
+    success_url = 'Task-List-View'
 
     def get(self, request):
         return render(request, template_name=self.template_name)
@@ -126,8 +126,8 @@ class ChildcareTrainingCourseRequiredView(View):
         application_id = self.request.GET['id']
         application = Application.objects.get(pk=application_id)
 
-        if application.eyfs_training_status != 'COMPLETED':
-            status.update(application_id, 'eyfs_training_status', 'IN_PROGRESS')
+        if application.childcare_training_status != 'COMPLETED':
+            status.update(application_id, 'childcare_training_status', 'IN_PROGRESS')
 
         return HttpResponseRedirect(reverse(self.success_url) + '?id=' + request.GET['id'])
 
@@ -153,15 +153,25 @@ class ChildcareTrainingCertificateView(View):
 
 class ChildcareTrainingSummaryView(View):
     template_name = 'childcare-training-summary.html'
-    success_url = 'task_list'
+    success_url = 'Task-List-View'
 
     def get(self, request):
-        return render(request, template_name=self.template_name)
+        context = self.get_context_data()
+        context['application_id'] = request.GET['id']
+        return render(request, template_name=self.template_name, context=context)
 
     def post(self, request):
         application_id = self.request.GET['id']
-        status.update(application_id, 'eyfs_training_status', 'COMPLETED')
+        status.update(application_id, 'childcare_training_status', 'COMPLETED')
         return HttpResponseRedirect(reverse(self.success_url) + '?id=' + application_id)
+
+    def get_context_data(self):
+        context = dict()
+
+        context['table_list'] = []
+        context['page_title'] = 'Check your answers: childcare training'
+
+        return context
 
 
 def eyfs_summary(request):
@@ -199,7 +209,7 @@ def eyfs_summary(request):
             'application_id': application_id_local,
             'table_list': table_list,
             'page_title': 'Check your answers: early years training',
-            'eyfs_training_status': application.eyfs_training_status,
+            'childcare_training_status': application.childcare_training_status,
         }
 
         variables = submit_link_setter(variables, table_list, 'eyfs_training', application_id_local)
@@ -209,6 +219,6 @@ def eyfs_summary(request):
     if request.method == 'POST':
 
         application_id_local = request.POST["id"]
-        status.update(application_id_local, 'eyfs_training_status', 'COMPLETED')
+        status.update(application_id_local, 'childcare_training_status', 'COMPLETED')
 
         return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
