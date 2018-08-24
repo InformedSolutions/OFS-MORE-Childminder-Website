@@ -11,10 +11,10 @@ class CriminalRecordCheck(models.Model):
         Application, on_delete=models.CASCADE, db_column='application_id')
     dbs_certificate_number = models.CharField(max_length=50, blank=True)
     cautions_convictions = models.BooleanField(blank=True)
-    lived_abroad = models.BooleanField(blank=True, null=True)
-    military_base = models.BooleanField(blank=True, null=True)
-    capita = models.BooleanField(blank=True, null=True)
-    on_update = models.BooleanField(blank=True, null=True)
+    lived_abroad = models.NullBooleanField(blank=True)
+    military_base = models.NullBooleanField(blank=True)
+    capita = models.NullBooleanField(blank=True)
+    on_update = models.NullBooleanField(blank=True)
 
     @property
     def timelog_fields(self):
