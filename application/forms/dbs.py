@@ -9,11 +9,47 @@ from ..business_logic import childminder_dbs_number_duplication_check, childmind
 
 class DBSGuidanceForm(ChildminderForms):
     """
-    GOV.UK form for the Your criminal record (DBS) check: guidance page
+    GOV.UK form for the Criminal record checks: guidance page
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+
+class DBSLivedAbroadForm(ChildminderForms):
+    """
+    GOV.UK form for the Criminal record check: lived abroad page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    auto_replace_widgets = True
+
+    options = (
+        ('True', 'Yes'),
+        ('False', 'No')
+    )
+
+    lived_abroad = forms.ChoiceField(label='Have you lived outside of the UK in the last 5 years?',
+                                             choices=options,
+                                             widget=InlineRadioSelect,
+                                             required=True,
+                                             error_messages={'required': 'Please say if you have lived outside of the UK in the last 5 years'})
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your criminal record (DBS) check: details form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id = kwargs['initial'].pop('id')
+        super().__init__(*args, **kwargs)
+
+        # If information was previously entered, display it on the form
+        if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
+            dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
+            self.fields['dbs_certificate_number'].initial = dbs_record.dbs_certificate_number
+            self.fields['lived_abroad'].initial = dbs_record.lived_abroad
+            self.pk = dbs_record.criminal_record_id
+            self.field_list = ['lived_abroad']
 
 
 class DBSCheckDBSDetailsForm(ChildminderForms):
@@ -24,7 +60,7 @@ class DBSCheckDBSDetailsForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    # Overrides standard NumberInput widget too give wider field
+    # Overrides standard NumberInput widget to give wider field
     widget_instance = NumberInput()
     widget_instance.input_classes = 'form-control form-control-1-4'
 

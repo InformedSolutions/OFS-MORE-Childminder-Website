@@ -35,7 +35,7 @@ class DBSGuidanceViewTests(NoMiddlewareTestCase):
         self.assertTrue(response.status_code == 302)
 
     def test_redirect_to_correct_url(self):
-        correct_url = reverse('DBS-Type-Page')+'?id='+self.application_id
+        correct_url = reverse('DBS-Type-View')+'?id='+self.application_id
         response = self.client.post(reverse(self.view_name)+'?id='+self.application_id)
         print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
         self.assertTrue(response.url == correct_url)

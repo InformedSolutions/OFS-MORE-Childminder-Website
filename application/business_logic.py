@@ -907,6 +907,40 @@ def show_resend_and_change_email(health_check_status, is_review):
     else:
         return False
 
+def update_criminal_record_check(id, field, status):
+    """
+    Updates the CriminalRecordCheck field with the given status.
+    :param id: applicant's application_id
+    :param field: CriminalRecordCheck field
+    :param status: Value to update entry with
+    :return: Boolean True if successful, False if failed.
+    """
+    try:
+        criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=id)
+        setattr(criminal_record_check_record, field, status)
+        criminal_record_check_record.save()
+        return True
+    except Exception:
+        # TODO -test Add Exception cases to this helper function
+        return False
+
+def get_criminal_record_check(id, field):
+    """
+    TODO -mop
+    :param id:
+    :param field:
+    :return:
+    """
+    try:
+        criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=id)
+        return getattr(criminal_record_check_record, field)
+    except Exception:
+        # TODO Add Exception cases to this helper function
+        return False
+
+
+
+
 class UniqueDbsCheckResult:
     """
     Class definition for the response object returned by a DBS uniqueness check
