@@ -50,4 +50,4 @@ class ChildcareTraining(models.Model):
         return cls.objects.get(application_id=app_id)
 
     class Meta:
-        db_table = 'EYFS'
+        db_table = 'CHILDCARE_TRAINING'
