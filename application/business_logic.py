@@ -353,11 +353,11 @@ def eyfs_details_logic(application_id_local, form):
     eyfs_course_date_month = form.cleaned_data.get('eyfs_course_date').month
     eyfs_course_date_year = form.cleaned_data.get('eyfs_course_date').year
     # If the user entered information for this task for the first time
-    if EYFS.objects.filter(application_id=application_id_local).count() == 0:
-        eyfs_record = EYFS(eyfs_course_name=eyfs_course_name, eyfs_course_date_day=eyfs_course_date_day, eyfs_course_date_month=eyfs_course_date_month, eyfs_course_date_year=eyfs_course_date_year, application_id=this_application)
+    if ChildcareTraining.objects.filter(application_id=application_id_local).count() == 0:
+        eyfs_record = ChildcareTraining(eyfs_course_name=eyfs_course_name, eyfs_course_date_day=eyfs_course_date_day, eyfs_course_date_month=eyfs_course_date_month, eyfs_course_date_year=eyfs_course_date_year, application_id=this_application)
     # If the user previously entered information for this task
-    elif EYFS.objects.filter(application_id=application_id_local).count() > 0:
-        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+    elif ChildcareTraining.objects.filter(application_id=application_id_local).count() > 0:
+        eyfs_record = ChildcareTraining.objects.get(application_id=application_id_local)
         eyfs_record.eyfs_course_name = eyfs_course_name
         eyfs_record.eyfs_course_date_day = eyfs_course_date_day
         eyfs_record.eyfs_course_date_month = eyfs_course_date_month
@@ -374,14 +374,24 @@ def training_for_childcare_register_logic(application_id_local, form):
     """
     childcare_training = form.cleaned_data['childcare_training']
 
-    # for option, option_text in form.options:
-    #     if option in childcare_training:
-    #         record[option] = True
-    #     else:
-    #         record[option] = False
+    options = (
+        'eyfs_training',
+        'common_core_training',
+        'no_training',
+    )
 
+    if ChildcareTraining.objects.filter(application_id=application_id_local).count() == 0:
+        childcare_training_record = ChildcareTraining(application_id=application_id_local)
+    else:
+        childcare_training_record = ChildcareTraining.objects.get(application_id=application_id_local)
 
-    pass
+    for option in options:
+        if option in childcare_training:
+            setattr(childcare_training_record, option, True)
+        else:
+            setattr(childcare_training_record, option, False)
+
+    return childcare_training_record
 
 
 def childcare_training_course_logic(application_id_local, form):
