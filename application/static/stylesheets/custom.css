@@ -454,6 +454,7 @@ div.error-summary ul.error-summary-list {
 
 .two-thirds {
   width: 66%;
+  word-break: break-word;
 }
 
 @media (max-width: 640px) {
