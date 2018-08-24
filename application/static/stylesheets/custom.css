@@ -439,6 +439,7 @@ div.error-summary ul.error-summary-list {
 
 .check-your-answers {
   margin-bottom: 30px;
+  word-break: break-word;
 }
 
 .check-your-answers .change-answer {
@@ -454,7 +455,6 @@ div.error-summary ul.error-summary-list {
 
 .two-thirds {
   width: 66%;
-  word-break: break-word;
 }
 
 @media (max-width: 640px) {
