@@ -1,5 +1,5 @@
 import datetime
-from uuid import UUID
+from uuid import uuid4
 
 from django.conf import settings
 from django.test import Client
@@ -7,10 +7,9 @@ from django.test import TestCase
 from django.urls import resolve, reverse
 
 from ... import models
-from ...views import eyfs_guidance, eyfs_details, eyfs_certificate, eyfs_summary
 from ...views import ChildcareTrainingGuidanceView, \
     ChildcareTrainingCourseRequiredView, \
-    ChildcareTrainingCourseTypeView, \
+    TypeOfChildcareTrainingView, \
     ChildcareTrainingCertificateView, \
     ChildcareTrainingDetailsView, \
     ChildcareTrainingSummaryView, \
@@ -18,15 +17,15 @@ from ...views import ChildcareTrainingGuidanceView, \
 
 
 class ChildcareTrainingTestSuite(TestCase):
-    test_app_id = UUID
-    url_suffix  = '?id=' + str(UUID)
+    test_app_id = uuid4()
+    url_suffix  = '?id=' + str(test_app_id)
 
     # ---------- #
     # HTTP Tests #
     # ---------- #
 
     def test_can_render_guidance_page(self):
-        response = self.client.get(reverse('Childcare-Training-Guidance') + self.url_suffix)
+        response = self.client.get(reverse('Childcare-Training-Guidance-View') + self.url_suffix)
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(response.resolver_match.func.__name__, ChildcareTrainingGuidanceView.as_view().__name__)
@@ -35,13 +34,13 @@ class ChildcareTrainingTestSuite(TestCase):
         pass
 
     def test_can_render_type_of_course_page(self):
-        response = self.client.get(reverse('Type-Of-Childcare-Training') + self.url_suffix)
+        response = self.client.get(reverse('Type-Of-Childcare-Training-View') + self.url_suffix)
 
         self.assertEqual(200, response.status_code)
-        self.assertEqual(response.resolver_match.func.__name__, ChildcareTrainingCourseTypeView.as_view().__name__)
+        self.assertEqual(response.resolver_match.func.__name__, TypeOfChildcareTrainingView.as_view().__name__)
 
     def test_if_no_training_then_redirect_to_go_on_a_course(self):
-        response = self.client.post(reverse('Type-Of-Childcare-Training') + self.url_suffix,
+        response = self.client.post(reverse('Type-Of-Childcare-Training-View') + self.url_suffix,
                                     data={
                                         'efys_training': False,
                                         'common_core_training': False,
@@ -52,20 +51,20 @@ class ChildcareTrainingTestSuite(TestCase):
         self.assertEqual(resolve(response.url).func.__name__, ChildcareTrainingCourseRequiredView.as_view().__name__)
 
     def test_can_render_go_on_a_course_page(self):
-        response = self.client.get(reverse('Go-On-A-Childcare-Training-Course') + self.url_suffix)
+        response = self.client.get(reverse('Childcare-Training-Course-Required-View') + self.url_suffix)
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(response.resolver_match.func.__name__, ChildcareTrainingCourseRequiredView.as_view().__name__)
 
     def test_post_to_go_an_a_course_redirects_to_task_list_with_started_task_status(self):
-        response = self.client.post(reverse('Go-On-A-Childcare-Training-Course') + self.url_suffix)
+        response = self.client.post(reverse('Childcare-Training-Course-Required-View') + self.url_suffix)
 
         self.assertEqual(302, response.status_code)
         self.assertEqual(resolve(response.url).func.__name__, task_list.__name__)
         self.assertEqual(models.Application.objects.get(pk=self.UUID).eyfs_status, 'STARTED')
 
     def test_if_eyfs_training_then_redirect_to_training_certificate_page(self):
-        response = self.client.post(reverse('Type-Of-Childcare-Training') + self.url_suffix,
+        response = self.client.post(reverse('Type-Of-Childcare-Training-View') + self.url_suffix,
                                     data={
                                         'efys_training': True,
                                         'common_core_training': False,
@@ -76,7 +75,7 @@ class ChildcareTrainingTestSuite(TestCase):
         self.assertEqual(resolve(response.url).func.__name__, ChildcareTrainingCertificateView.as_view().__name__)
 
     def test_if_common_core_training_then_redirect_to_training_certificate_page(self):
-        response = self.client.post(reverse('Type-Of-Childcare-Training') + self.url_suffix,
+        response = self.client.post(reverse('Type-Of-Childcare-Training-View') + self.url_suffix,
                                     data={
                                         'efys_training': False,
                                         'common_core_training': True,
@@ -87,7 +86,7 @@ class ChildcareTrainingTestSuite(TestCase):
         self.assertEqual(resolve(response.url).func.__name__, ChildcareTrainingCertificateView.as_view().__name__)
 
     def test_if_both_training_options_then_redirect_to_training_certificate_page(self):
-        response = self.client.post(reverse('Type-Of-Childcare-Training') + self.url_suffix,
+        response = self.client.post(reverse('Type-Of-Childcare-Training-View') + self.url_suffix,
                                     data={
                                         'efys_training': True,
                                         'common_core_training': True,
@@ -97,8 +96,29 @@ class ChildcareTrainingTestSuite(TestCase):
         self.assertEqual(302, response.status_code)
         self.assertEqual(resolve(response.url).func.__name__, ChildcareTrainingCertificateView.as_view().__name__)
 
+    def test_selecting_none_and_another_training_course_raises_validation_error(self):
+        option_combinations = [
+            ['level_2_training', 'no_training'],
+            ['common_core_training', 'no_training'],
+            ['level_2_training', 'common_core_training', 'no_training']
+        ]
+
+        for combo in option_combinations:
+            response = self.client.post(reverse('Type-Of-Childcare-Training') + '?id=' + self.application_id,
+                                        {'childcare_training': combo})
+
+            view_class_name = response.resolver_match._func_path
+            class_ = getattr(globals()['views'], view_class_name.split('.')[-1])
+
+            self.assertEqual(response.status_code, 200)
+            self.assertEqual(class_, TypeOfChildcareTrainingView)
+            self.assertFormError(response, 'form', 'childcare_training', 'Please select types of courses or none')
+
+    def test_selecting_no_training_options_raises_validation_error(self):
+        pass
+
     def test_can_render_training_certificate_page(self):
-        response = self.client.get(reverse('Childcare-Training-Certificate') + self.url_suffix)
+        response = self.client.get(reverse('Childcare-Training-Certificate-View') + self.url_suffix)
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(response.resolver_match.func.__name__, ChildcareTrainingCertificateView.as_view().__name__)
@@ -107,13 +127,13 @@ class ChildcareTrainingTestSuite(TestCase):
         pass
 
     def test_can_render_childcare_training_details_page(self):
-        response = self.client.get(reverse('Childcare-Training-Details') + self.url_suffix)
+        response = self.client.get(reverse('Childcare-Training-Details-View') + self.url_suffix)
 
         self.assertEqual(200, response.status_code)
         self.assertEqual(response.resolver_match.func.__name__, ChildcareTrainingDetailsView.as_view().__name__)
 
     def test_valid_post_request_to_childcare_training_redirects_to_training_certificate_page(self):
-        response = self.client.post(reverse('Childcare-Training-Details') + self.url_suffix,
+        response = self.client.post(reverse('Childcare-Training-Details-View') + self.url_suffix,
                                     data={
                                         'eyfs_course_name': 'Horses for Courses',
                                         'eyfs_course_date': '01-01-2018',
@@ -122,40 +142,30 @@ class ChildcareTrainingTestSuite(TestCase):
         self.assertEqual(302, response.status_code)
         self.assertEqual(resolve(response.url).func.__name__, ChildcareTrainingCertificateView.as_view().__name__)
 
-    def test_post_request_to_training_certificate_redirects_to_summary_page(self):
-        response = self.client.post(reverse('Childcare-Training-Certificate') + self.url_suffix)
-
-        self.assertEqual(302, response.status_code)
-        self.assertEqual(resolve(response.url).func.__name__, ChildcareTrainingSummaryView.as_view().__name__)
-
-    def test_can_render_summary_page(self):
-        response = self.client.get(reverse('Childcare-Training-Summary') + self.url_suffix)
-
-        self.assertEqual(200, response.status_code)
-        self.assertEqual(response.resolver_match.func.__name__, ChildcareTrainingSummaryView.as_view().__name__)
-
-    def test_post_to_summary_redirects_to_task_list_with_done_task_status(self):
-        response = self.client.post(reverse('Childcare-Training-Summary') + self.url_suffix)
-
-        self.assertEqual(302, response.status_code)
-        self.assertEqual(resolve(response.url).func.__name__, task_list.__name__)
-        self.assertEqual(models.Application.objects.get(pk=self.UUID).eyfs_status, 'COMPLETED')
-
-    # ---------- #
-    # UNIT tests #
-    # ---------- #
-
-    def test_selecting_none_and_another_training_course_raises_validation_error(self):
-        pass
-
-    def test_selecting_no_training_options_raises_validation_error(self):
-        pass
-
     def test_entering_no_course_title_raises_validation_error(self):
         pass
 
     def test_entering_no_course_date_raises_validation_error(self):
         pass
+
+    def test_post_request_to_training_certificate_redirects_to_summary_page(self):
+        response = self.client.post(reverse('Childcare-Training-Certificate-View') + self.url_suffix)
+
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(resolve(response.url).func.__name__, ChildcareTrainingSummaryView.as_view().__name__)
+
+    def test_can_render_summary_page(self):
+        response = self.client.get(reverse('Childcare-Training-Summary-View') + self.url_suffix)
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(response.resolver_match.func.__name__, ChildcareTrainingSummaryView.as_view().__name__)
+
+    def test_post_to_summary_redirects_to_task_list_with_done_task_status(self):
+        response = self.client.post(reverse('Childcare-Training-Summary-View') + self.url_suffix)
+
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(resolve(response.url).func.__name__, task_list.__name__)
+        self.assertEqual(models.Application.objects.get(pk=self.UUID).eyfs_status, 'COMPLETED')
 
 
 # class EYFSTest(TestCase):
