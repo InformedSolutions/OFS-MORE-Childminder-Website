@@ -156,16 +156,17 @@ class ChildcareTrainingSummaryView(View):
     success_url = 'Task-List-View'
 
     def get(self, request):
-        return render(request, template_name=self.template_name, context=self.get_context_data())
+        context = self.get_context_data(application_id=request.GET['id'])
+        return render(request, template_name=self.template_name, context=context)
 
     def post(self, request):
         application_id = self.request.GET['id']
         status.update(application_id, 'childcare_training_status', 'COMPLETED')
         return HttpResponseRedirect(reverse(self.success_url) + '?id=' + application_id)
 
-    def get_context_data(self):
+    @staticmethod
+    def get_context_data(application_id):  # Static method for use in Master-Summary-View.
         context = dict()
-        application_id = self.request.GET['id']
         context['application_id'] = application_id
         context['page_title'] = 'Check your answers: childcare training'
 
@@ -173,10 +174,10 @@ class ChildcareTrainingSummaryView(View):
         childcare_training_record = ChildcareTraining.objects.get(application_id=application_id)
 
         if register == 'childcare_register_only':
-            context['table_list'] = self.childcare_register_table_list(childcare_training_record)
+            context['table_list'] = ChildcareTrainingSummaryView.childcare_register_table_list(childcare_training_record)
 
         elif register == 'early_years_register':
-            context['table_list'] = self.eyfs_table_list(childcare_training_record)
+            context['table_list'] = ChildcareTrainingSummaryView.eyfs_table_list(childcare_training_record)
             context = submit_link_setter(context, context['table_list'], 'eyfs_training', application_id)
 
         return context
@@ -210,6 +211,8 @@ class ChildcareTrainingSummaryView(View):
         :param childcare_training_record: Childcare Training record from which to grab data.
         :return: list of tables to be rendered on summary page.
         """
+        # datetime.datetime.strptime(first_aid_record['course_date'], '%Y-%m-%d').date()
+
         eyfs_fields = collections.OrderedDict([
             ('eyfs_course_name', childcare_training_record.eyfs_course_name),
             ('eyfs_course_date', '/'.join([str(childcare_training_record.eyfs_course_date_day).zfill(2),
