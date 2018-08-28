@@ -907,38 +907,30 @@ def show_resend_and_change_email(health_check_status, is_review):
     else:
         return False
 
-def update_criminal_record_check(id, field, status):
+
+def update_criminal_record_check(app_id, field, status):
     """
     Updates the CriminalRecordCheck field with the given status.
-    :param id: applicant's application_id
+    :param app_id: applicant's application_id
     :param field: CriminalRecordCheck field
     :param status: Value to update entry with
-    :return: Boolean True if successful, False if failed.
+    :return: Boolean True if successfully updated.
     """
-    try:
-        criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=id)
-        setattr(criminal_record_check_record, field, status)
-        criminal_record_check_record.save()
-        return True
-    except Exception:
-        # TODO -test Add Exception cases to this helper function
-        return False
+    criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=app_id)
+    setattr(criminal_record_check_record, field, status)
+    criminal_record_check_record.save()
+    return True
 
-def get_criminal_record_check(id, field):
+
+def get_criminal_record_check(app_id, field):
     """
     TODO -mop
-    :param id:
+    :param app_id:
     :param field:
     :return:
     """
-    try:
-        criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=id)
-        return getattr(criminal_record_check_record, field)
-    except Exception:
-        # TODO Add Exception cases to this helper function
-        return False
-
-
+    criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=app_id)
+    return getattr(criminal_record_check_record, field)
 
 
 class UniqueDbsCheckResult:

@@ -14,8 +14,7 @@ from ..business_logic import (get_criminal_record_check,
                               update_criminal_record_check,
                               dbs_check_logic,
                               reset_declaration)
-from ..forms import (DBSGuidanceForm,
-                     DBSLivedAbroadForm,
+from ..forms import (DBSLivedAbroadForm,
                      DBSCheckSummaryForm,
                      DBSCheckUploadDBSForm)
 from ..models import (Application,
@@ -25,6 +24,7 @@ from ..utils import build_url
 
 # New Imports TODO: -mop
 from django.views.generic.edit import FormView
+from django.views.generic import TemplateView
 
 class DBSLivedAbroadView(FormView):
     template_name = 'dbs-lived-abroad.html'
@@ -41,24 +41,13 @@ class DBSLivedAbroadView(FormView):
                                                application_id=application,
                                                dbs_certificate_number='')
 
-        # if not CriminalRecordCheck.objects.filter(application_id=application_id).exists():
-        #     application = Application.objects.get(application_id=application_id)
-        #     CriminalRecordCheck.objects.create(criminal_record_id=uuid.uuid4(),
-        #                                        application_id=application,
-        #                                        dbs_certificate_number='',
-        #                                        cautions_convictions='',
-        #                                        lived_abroad='',
-        #                                        military_base='',
-        #                                        capita='',
-        #                                        on_update='')
-
         return super().get_context_data(id=application_id, **kwargs)
 
     def form_valid(self, form):
         application_id = self.request.GET.get('id')
         lived_abroad_bool = self.request.POST.get('lived_abroad') == 'True'
 
-        update_criminal_record_check(application_id, 'lived_abroad', lived_abroad_bool)
+        successfully_updated = update_criminal_record_check(application_id, 'lived_abroad', lived_abroad_bool)
 
         return super().form_valid(form)
 
@@ -77,29 +66,42 @@ class DBSLivedAbroadView(FormView):
 
         return build_url(redirect_url, get={'id': application_id})
 
-    def get_initial(self):
+    def get_form_kwargs(self):
         application_id = self.request.GET.get('id')
-        self.initial = {'id': application_id}
+        kwargs = super().get_form_kwargs()
 
-        return super().get_initial()
+        kwargs['id'] = application_id
 
-class DBSGuidanceView(FormView):
-    template_name = 'dbs-check-guidance.html'
-    form_class = DBSGuidanceForm
-    success_url = 'DBS-Type-View'
+        return kwargs
+
+class DBSTemplateView(TemplateView):
+    template_name = None
+    success_url = None
 
     def get_context_data(self, **kwargs):
         application_id = self.request.GET.get('id')
 
         return super().get_context_data(id=application_id, **kwargs)
 
-    def get_success_url(self):
+    def post(self):
         application_id = self.request.GET.get('id')
 
         return build_url(self.success_url, get={'id': application_id})
 
 
+class DBSGuidanceView(DBSTemplateView):
+    template_name = 'dbs-check-guidance.html'
+    success_url = 'DBS-Type-View'
 
+
+class DBSGoodConductView(DBSTemplateView):
+    template_name = 'dbs-good-conduct.html'
+    success_url = 'DBS-Email-Certificates-View'
+
+
+class DBSEmailCertificatesView(DBSTemplateView):
+    template_name = 'dbs-email-certificates.html'
+    success_url = 'DBS-Email-Certificates-View'
 
 
 # def dbs_check_dbs_details(request):

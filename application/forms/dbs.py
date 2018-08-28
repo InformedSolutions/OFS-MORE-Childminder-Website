@@ -6,15 +6,6 @@ from ..forms_helper import full_stop_stripper
 from ..models import CriminalRecordCheck, Application
 from ..business_logic import childminder_dbs_number_duplication_check, childminder_dbs_duplicates_household_member_check
 
-
-class DBSGuidanceForm(ChildminderForms):
-    """
-    GOV.UK form for the Criminal record checks: guidance page
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
-    auto_replace_widgets = True
-
 class DBSLivedAbroadForm(ChildminderForms):
     """
     GOV.UK form for the Criminal record check: lived abroad page
@@ -29,10 +20,10 @@ class DBSLivedAbroadForm(ChildminderForms):
     )
 
     lived_abroad = forms.ChoiceField(label='Have you lived outside of the UK in the last 5 years?',
-                                             choices=options,
-                                             widget=InlineRadioSelect,
-                                             required=True,
-                                             error_messages={'required': 'Please say if you have lived outside of the UK in the last 5 years'})
+                                     choices=options,
+                                     widget=InlineRadioSelect,
+                                     required=True,
+                                     error_messages={'required': 'Please say if you have lived outside of the UK in the last 5 years'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -40,16 +31,23 @@ class DBSLivedAbroadForm(ChildminderForms):
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
-        self.application_id = kwargs['initial'].pop('id')
+        self.application_id = kwargs.pop('id')
         super().__init__(*args, **kwargs)
 
         # If information was previously entered, display it on the form
         if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
             dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
-            self.fields['dbs_certificate_number'].initial = dbs_record.dbs_certificate_number
             self.fields['lived_abroad'].initial = dbs_record.lived_abroad
             self.pk = dbs_record.criminal_record_id
-            self.field_list = ['lived_abroad']
+
+
+class DBSCheckUploadDBSForm(ChildminderForms):
+    """
+    GOV.UK form for the Your criminal record (DBS) check: upload DBS page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    auto_replace_widgets = True
 
 
 class DBSCheckDBSDetailsForm(ChildminderForms):
@@ -75,10 +73,10 @@ class DBSCheckDBSDetailsForm(ChildminderForms):
                                                 widget=widget_instance)
 
     cautions_convictions = forms.ChoiceField(label='Do you have any criminal cautions or convictions?',
-                                    help_text='Include any information recorded on your certificate',
-                                    choices=options, widget=InlineRadioSelect,
-                                    required=True,
-                                    error_messages={'required': 'Please say if you have any cautions or convictions'})
+                                             help_text='Include any information recorded on your certificate',
+                                             choices=options, widget=InlineRadioSelect,
+                                             required=True,
+                                             error_messages={'required': 'Please say if you have any cautions or convictions'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -117,15 +115,6 @@ class DBSCheckDBSDetailsForm(ChildminderForms):
                                         'You entered this number for someone in your childcare location')
 
         return dbs_certificate_number
-
-
-class DBSCheckUploadDBSForm(ChildminderForms):
-    """
-    GOV.UK form for the Your criminal record (DBS) check: upload DBS page
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
-    auto_replace_widgets = True
 
 
 class DBSCheckSummaryForm(ChildminderForms):
