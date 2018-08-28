@@ -570,53 +570,38 @@
     </tr>
     </tbody>
 </table>
+
 <table class="check-your-answers">
-    <colgroup>
-        <col class="summary-column">
-        <col class="summary-column">
-        <col class="change-answer {{ print_class }}">
-    </colgroup>
-    <thead>
-    <tr>
-        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-            <div class="heading-medium">
-                Early years training
-            </div>
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Title of training course
-        </td>
-        <td style="word-wrap: break-word" class=summary-column>
-            {{eyfs_course_name}}
-        </td>
-        <td class="change-answer {{ print_class }}">
-            {% if early_years_training_change %}
-            <a href="{{ URL_PREFIX }}/early-years/details?id={{application_id}}#id_eyfs_course_name" alt="Change course title">
-                Change <span class="visuallyhidden">course title</span>
-            </a>
-            {% endif %}
-        </td>
-    </tr>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Date you completed course
-        </td>
-        <td style="word-wrap: break-word" class=summary-column>
-            {{eyfs_course_date}}
-        </td>
-        <td class="change-answer {{ print_class }}">
-            {% if early_years_training_change %}
-            <a href="{{ URL_PREFIX }}/early-years/details?id={{application_id}}#id_eyfs_course_date_0" alt="Change course completion date">
-                Change <span class="visuallyhidden">course completion date</span>
-            </a>
-            {% endif %}
-        </td>
-    </tr>
-    </tbody>
+
+    <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+        <div class="heading-medium">
+            Childcare training
+        </div>
+    </th>
+
+    {% for row in childcare_training_table.row_list %}
+        <tr id="{{row.data_name}}">
+            <td class=summary-column>
+                {{row.row_name}}
+            </td>
+
+            <td>
+                {{row.value}}
+            </td>
+
+        {% if early_years_training_change %}
+            <td class="change-answer {{ print_class }}">
+                <a href="{% url row.back_link %}?id={{application_id}}{{table.other_people_numbers}}#id_{{row.data_name}}-group"
+                   alt='Change {{ row.change_link_description|default:row.row_name }}'>
+                    Change <span class="visuallyhidden">{{ row.change_link_description|default:row.row_name }}</span>
+                </a>
+            </td>
+        {% endif %}
+
+        </tr>
+
+    {% endfor %}
+
 </table>
 <table class="check-your-answers">
     <colgroup>
