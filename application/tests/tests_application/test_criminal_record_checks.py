@@ -13,34 +13,47 @@ from ...models import Application
 class NoMiddlewareTestCase(TestCase):
     pass
 
-class DBSGuidanceViewTests(NoMiddlewareTestCase):
-
-    # TODO -test
+class DBSTemplateViewTestCase(NoMiddlewareTestCase):
 
     def setUp(self):
         self.client = Client()
-        self.view_name = 'DBS-Guidance-View'
         self.application_id = '4437429e-c9f5-492f-9ee7-ea8bfddc0567'
+
+        # Set the following variables when inheriting
+        self.view_name = None
+        self.correct_url = None
 
         Application.objects.create(application_id=self.application_id)
 
     def test_view_rendered_on_get(self):
-        response = self.client.get(reverse(self.view_name)+'?id='+self.application_id)
-        print('Returned a {0} response'.format(response.status_code))
-        self.assertTrue(response.status_code == 200)
+        if self.view_name is not None:
+            response = self.client.get(reverse(self.view_name)+'?id='+self.application_id)
+            print('Returned a {0} response'.format(response.status_code))
+            self.assertTrue(response.status_code == 200)
 
     def test_redirect(self):
-        response = self.client.post(reverse(self.view_name)+'?id='+self.application_id)
-        print('Returned a {0} response'.format(response.status_code))
-        self.assertTrue(response.status_code == 302)
+        if self.view_name is not None:
+            response = self.client.post(reverse(self.view_name)+'?id='+self.application_id)
+            print('Returned a {0} response'.format(response.status_code))
+            self.assertTrue(response.status_code == 302)
 
     def test_redirect_to_correct_url(self):
-        correct_url = reverse('DBS-Type-View')+'?id='+self.application_id
-        response = self.client.post(reverse(self.view_name)+'?id='+self.application_id)
-        print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
-        self.assertTrue(response.url == correct_url)
+        if self.view_name is not None and self.correct_url is not None:
+            correct_url = reverse(self.correct_url)+'?id='+self.application_id
+            response = self.client.post(reverse(self.view_name)+'?id='+self.application_id)
+            print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
+            self.assertTrue(response.url == correct_url)
 
-class DBSLivedAbroadViewTests(TestCase):
+
+class DBSGuidanceViewTests(DBSTemplateViewTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.view_name = 'DBS-Guidance-View'
+        self.correct_url = 'DBS-Type-View'
+
+
+class DBSLivedAbroadViewTests(NoMiddlewareTestCase):
 
     #TODO -test
 
@@ -54,7 +67,6 @@ class DBSLivedAbroadViewTests(TestCase):
         pass
 
     def test_redirect_on_post_to_correct_url(self):
-        correct_url = reverse('DBS-Type-Page')
         pass
 
     def test_form_valid_callable(self):
@@ -74,3 +86,17 @@ class DBSLivedAbroadViewTests(TestCase):
 
     def test_radio_no_redirect_to_correct_url(self):
         pass
+
+class DBSGoodConductViewTests(DBSTemplateViewTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.view_name = 'DBS-Good-Conduct-View'
+        self.correct_url = 'DBS-Email-Certificates-View'
+
+class DBSSendCertificateViewTests(DBSTemplateViewTestCase):
+
+    def setUp(self):
+        super().setUp()
+        self.view_name = 'DBS-Email-Certificates-View'
+        self.correct_url = ''

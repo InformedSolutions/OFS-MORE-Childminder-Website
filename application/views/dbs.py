@@ -15,6 +15,7 @@ from ..business_logic import (get_criminal_record_check,
                               dbs_check_logic,
                               reset_declaration)
 from ..forms import (DBSLivedAbroadForm,
+                     DBSMilitaryForm,
                      DBSCheckSummaryForm,
                      DBSCheckUploadDBSForm)
 from ..models import (Application,
@@ -26,43 +27,23 @@ from ..utils import build_url
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
 
-class DBSLivedAbroadView(FormView):
-    template_name = 'dbs-lived-abroad.html'
-    form_class = DBSLivedAbroadForm
-    success_url = ('DBS-Good-Conduct-View', 'DBS-Military-View')
 
-    def get_context_data(self, **kwargs):
-        application_id = self.request.GET.get('id')
-
-        # If no criminal_record_check exists for this user, create one
-        if not CriminalRecordCheck.objects.filter(application_id=application_id).exists():
-            application = Application.objects.get(application_id=application_id)
-            CriminalRecordCheck.objects.create(criminal_record_id=uuid.uuid4(),
-                                               application_id=application,
-                                               dbs_certificate_number='')
-
-        return super().get_context_data(id=application_id, **kwargs)
-
-    def form_valid(self, form):
-        application_id = self.request.GET.get('id')
-        lived_abroad_bool = self.request.POST.get('lived_abroad') == 'True'
-
-        successfully_updated = update_criminal_record_check(application_id, 'lived_abroad', lived_abroad_bool)
-
-        return super().form_valid(form)
+class DBSRadioView(FormView):
+    success_url = (None, None)
+    dbs_field_name = None
 
     def get_success_url(self):
         application_id = self.request.GET.get('id')
-        good_conduct_url, military_url = self.success_url
+        yes_choice, no_choice = self.success_url
 
-        lived_abroad_bool = get_criminal_record_check(application_id, 'lived_abroad')
+        choice_bool = get_criminal_record_check(application_id, self.dbs_field_name)
 
-        if lived_abroad_bool:
-            redirect_url = good_conduct_url
-        elif not lived_abroad_bool:
-            redirect_url = military_url
+        if choice_bool:
+            redirect_url = yes_choice
+        elif not choice_bool:
+            redirect_url = no_choice
         else:
-            raise ValueError("Wasn't able to select a url in DBSLivedAbroadView")
+            raise ValueError("Wasn't able to select a url in {0}".format(self.__name__))
 
         return build_url(redirect_url, get={'id': application_id})
 
@@ -74,6 +55,38 @@ class DBSLivedAbroadView(FormView):
 
         return kwargs
 
+    def get_context_data(self, **kwargs):
+        application_id = self.request.GET.get('id')
+
+        return super().get_context_data(id=application_id, **kwargs)
+
+    def form_valid(self, form):
+        application_id = self.request.GET.get('id')
+        lived_abroad_bool = self.request.POST.get(self.dbs_field_name) == 'True'
+
+        successfully_updated = update_criminal_record_check(application_id, self.dbs_field_name, lived_abroad_bool)
+
+        return super().form_valid(form)
+
+
+class DBSLivedAbroadView(DBSRadioView):
+    template_name = 'dbs-lived-abroad.html'
+    form_class = DBSLivedAbroadForm
+    success_url = ('DBS-Good-Conduct-View', 'DBS-Military-View')
+    dbs_field_name = 'lived_abroad'
+
+    def get_context_data(self, **kwargs):
+        application_id = self.request.GET.get('id')
+        # If no criminal_record_check exists for this user, create one
+        if not CriminalRecordCheck.objects.filter(application_id=application_id).exists():
+            application = Application.objects.get(application_id=application_id)
+            CriminalRecordCheck.objects.create(criminal_record_id=uuid.uuid4(),
+                                               application_id=application,
+                                               dbs_certificate_number='')
+
+        return super().get_context_data(**kwargs)
+
+
 class DBSTemplateView(TemplateView):
     template_name = None
     success_url = None
@@ -83,10 +96,11 @@ class DBSTemplateView(TemplateView):
 
         return super().get_context_data(id=application_id, **kwargs)
 
-    def post(self):
-        application_id = self.request.GET.get('id')
+    def post(self, request):
+        application_id = request.GET.get('id')
+        redirect_url = build_url(self.success_url, get={'id': application_id})
 
-        return build_url(self.success_url, get={'id': application_id})
+        return HttpResponseRedirect(redirect_url)
 
 
 class DBSGuidanceView(DBSTemplateView):
@@ -101,7 +115,19 @@ class DBSGoodConductView(DBSTemplateView):
 
 class DBSEmailCertificatesView(DBSTemplateView):
     template_name = 'dbs-email-certificates.html'
-    success_url = 'DBS-Email-Certificates-View'
+    success_url = 'DBS-Military-View'
+
+
+class DBSMilitaryView(DBSRadioView):
+    template_name = 'dbs-military.html'
+    form_class = DBSMilitaryForm
+    success_url = ('DBS-Ministry-Of-Defence-View', 'DBS-Guidance-View')
+    dbs_field_name = 'military_base'
+
+class DBSMinistryOfDefence(DBSTemplateView):
+    template_name = 'dbs-ministry-of-defence.html'
+    success_url = 'DBS-Guidance-View'
+
 
 
 # def dbs_check_dbs_details(request):

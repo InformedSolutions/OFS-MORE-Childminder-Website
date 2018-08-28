@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Lived abroad{% endblock %}
+{% block page_title %}Email your certificates{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -10,9 +10,10 @@
 <form method="post" novalidate>
     <div class="form-group">
         <h1 class="form-title heading-large">
-            Lived abroad
+            Email your certificates
         </h1>
-        {{ form.as_div }}
+        <p>Email a copy of your certificates to Ofsted after you submit your application.</p>
+        <p>We need this to check that you're suitable to care for children.</p>
         <input type="submit" class="button" value="Continue">
         {% csrf_token %}
     </div>

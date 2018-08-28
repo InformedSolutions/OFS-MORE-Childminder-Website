@@ -6,24 +6,18 @@ from ..forms_helper import full_stop_stripper
 from ..models import CriminalRecordCheck, Application
 from ..business_logic import childminder_dbs_number_duplication_check, childminder_dbs_duplicates_household_member_check
 
-class DBSLivedAbroadForm(ChildminderForms):
+
+class DBSRadioForm(ChildminderForms):
     """
-    GOV.UK form for the Criminal record check: lived abroad page
+    TODO -mop
+    GOV.UK form for the Criminal record check: generic radio button form
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    options = (
-        ('True', 'Yes'),
-        ('False', 'No')
-    )
-
-    lived_abroad = forms.ChoiceField(label='Have you lived outside of the UK in the last 5 years?',
-                                     choices=options,
-                                     widget=InlineRadioSelect,
-                                     required=True,
-                                     error_messages={'required': 'Please say if you have lived outside of the UK in the last 5 years'})
+    choice_field_name = 'generic_choice_field_name'
+    dbs_field_name = None
 
     def __init__(self, *args, **kwargs):
         """
@@ -34,12 +28,63 @@ class DBSLivedAbroadForm(ChildminderForms):
         self.application_id = kwargs.pop('id')
         super().__init__(*args, **kwargs)
 
-        # If information was previously entered, display it on the form
-        if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
-            dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
-            self.fields['lived_abroad'].initial = dbs_record.lived_abroad
-            self.pk = dbs_record.criminal_record_id
+        self.fields[self.choice_field_name] = self.get_choice_field_data()
 
+        # If information was previously entered, display it on the form
+        self.fields = self.populate_initial_values()
+
+    def get_options(self):
+        options = (
+            ('True', 'Yes'),
+            ('False', 'No')
+        )
+        return options
+
+    def populate_initial_values(self):
+        if self.dbs_field_name is not None:
+            fields = self.fields
+
+            if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
+                dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
+                fields[self.choice_field_name].initial = getattr(dbs_record, self.dbs_field_name)
+                #self.pk = dbs_record.criminal_record_id
+
+            return fields
+        else:
+            raise NotImplementedError("dbs_field_name must not be None.")
+
+    def get_choice_field_data(self):
+        raise NotImplementedError("No choice field was inherited.")
+
+
+class DBSLivedAbroadForm(DBSRadioForm):
+    """
+    GOV.UK form for the Criminal record check: lived abroad page
+    """
+    choice_field_name = 'lived_abroad'
+    dbs_field_name = 'lived_abroad'
+
+    def get_choice_field_data(self):
+        return forms.ChoiceField(label='Have you lived outside of the UK in the last 5 years?',
+                                 choices=self.get_options(),
+                                 widget=InlineRadioSelect,
+                                 required=True,
+                                 error_messages={'required': 'Please say if you have lived outside of the UK in the last 5 years'})
+
+
+class DBSMilitaryForm(DBSRadioForm):
+    """
+    GOV.UK form for the Criminal record check: lived abroad page
+    """
+    choice_field_name = 'military'
+    dbs_field_name = 'military_base'
+
+    def get_choice_field_data(self):
+        return forms.ChoiceField(label='Have you lived or worked on a military base overseas in the last five years?',
+                                 choices=self.get_options(),
+                                 widget=InlineRadioSelect,
+                                 required=True,
+                                 error_messages={'required': 'Please say if you have lived in a military base outside of the UK in the last 5 years'})
 
 class DBSCheckUploadDBSForm(ChildminderForms):
     """
