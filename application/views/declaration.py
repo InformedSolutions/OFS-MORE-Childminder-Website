@@ -9,6 +9,7 @@ from django.views.decorators.cache import never_cache
 from timeline_logger.models import TimelineLog
 
 from application.views.magic_link import magic_link_resubmission_confirmation_email
+from application import views
 from .. import status
 from ..forms import (DeclarationIntroForm,
                      DeclarationForm,
@@ -69,10 +70,9 @@ def declaration_summary(request, print=False):
             application_id=application_id_local)
         dbs_record = CriminalRecordCheck.objects.get(
             application_id=application_id_local)
-        eyfs_record = EYFS.objects.get(application_id=application_id_local)
-        eyfs_course_date = ' '.join(
-            [str(eyfs_record.eyfs_course_date_day), calendar.month_name[eyfs_record.eyfs_course_date_month],
-             str(eyfs_record.eyfs_course_date_year)])
+
+        childcare_training_table = views.ChildcareTrainingSummaryView.get_context_data(application_id_local)['table_list'][0]
+
         first_reference_record = Reference.objects.get(
             application_id=application_id_local, reference=1)
         second_reference_record = Reference.objects.get(
@@ -234,8 +234,7 @@ def declaration_summary(request, print=False):
             'criminal_record_check_change': criminal_record_check_change,
             'send_hdb_declare': True,
             'health_change': health_change,
-            'eyfs_course_name': eyfs_record.eyfs_course_name,
-            'eyfs_course_date': eyfs_course_date,
+            'childcare_training_table': childcare_training_table,
             'early_years_training_change': early_years_training_change,
             'first_reference_first_name': first_reference_record.first_name,
             'first_reference_last_name': first_reference_record.last_name,
