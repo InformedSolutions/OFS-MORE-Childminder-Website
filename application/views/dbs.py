@@ -16,8 +16,7 @@ from ..business_logic import (get_criminal_record_check,
                               reset_declaration)
 from ..forms import (DBSLivedAbroadForm,
                      DBSMilitaryForm,
-                     DBSCheckSummaryForm,
-                     DBSCheckUploadDBSForm)
+                     DBSTypeForm)
 from ..models import (Application,
                       CriminalRecordCheck)
 
@@ -62,9 +61,9 @@ class DBSRadioView(FormView):
 
     def form_valid(self, form):
         application_id = self.request.GET.get('id')
-        lived_abroad_bool = self.request.POST.get(self.dbs_field_name) == 'True'
+        update_bool = self.request.POST.get(self.dbs_field_name) == 'True'
 
-        successfully_updated = update_criminal_record_check(application_id, self.dbs_field_name, lived_abroad_bool)
+        successfully_updated = update_criminal_record_check(application_id, self.dbs_field_name, update_bool)
 
         return super().form_valid(form)
 
@@ -127,6 +126,12 @@ class DBSMilitaryView(DBSRadioView):
 class DBSMinistryOfDefence(DBSTemplateView):
     template_name = 'dbs-ministry-of-defence.html'
     success_url = 'DBS-Guidance-View'
+
+class DBSTypeView(DBSRadioView):
+    template_name = 'dbs-type.html'
+    form_class = DBSTypeForm
+    success_url = ('DBS-Details-Page', 'DBS-Update-Page')
+    dbs_field_name = 'capita'
 
 
 

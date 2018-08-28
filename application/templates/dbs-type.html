@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Email your certificates{% endblock %}
+{% block page_title %}Type of DBS check{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -10,10 +10,10 @@
 <form method="post" novalidate>
     <div class="form-group">
         <h1 class="form-title heading-large">
-            Email your certificates
+            Type of DBS check
         </h1>
-        <p>Email a copy of your certificates to Ofsted after you submit your application.</p>
-        <input type="submit" class="button" value="Continue">
+        {{ form.as_div }}
+        <input type="submit" class="button" value="Save and continue">
         {% csrf_token %}
     </div>
 </form>

@@ -47,9 +47,9 @@ class DBSRadioForm(ChildminderForms):
             if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
                 dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
                 fields[self.choice_field_name].initial = getattr(dbs_record, self.dbs_field_name)
-                #self.pk = dbs_record.criminal_record_id
 
             return fields
+
         else:
             raise NotImplementedError("dbs_field_name must not be None.")
 
@@ -74,9 +74,9 @@ class DBSLivedAbroadForm(DBSRadioForm):
 
 class DBSMilitaryForm(DBSRadioForm):
     """
-    GOV.UK form for the Criminal record check: lived abroad page
+    GOV.UK form for the Criminal record check: military page
     """
-    choice_field_name = 'military'
+    choice_field_name = 'military_base'
     dbs_field_name = 'military_base'
 
     def get_choice_field_data(self):
@@ -86,59 +86,69 @@ class DBSMilitaryForm(DBSRadioForm):
                                  required=True,
                                  error_messages={'required': 'Please say if you have lived in a military base outside of the UK in the last 5 years'})
 
-class DBSCheckUploadDBSForm(ChildminderForms):
+class DBSTypeForm(DBSRadioForm):
     """
-    GOV.UK form for the Your criminal record (DBS) check: upload DBS page
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
-    auto_replace_widgets = True
+        GOV.UK form for the Criminal record check: type page
+        """
+    choice_field_name = 'capita'
+    dbs_field_name = 'capita'
 
+    def get_choice_field_data(self):
+        return forms.ChoiceField(label='Do you have an Ofsted DBS Check?',
+                                 choices=self.get_options(),
+                                 widget=InlineRadioSelect,
+                                 required=True,
+                                 error_messages={
+                                     'required': 'Please say if you have an Ofsted DBS check'})
 
-class DBSCheckDBSDetailsForm(ChildminderForms):
+class DBSCheckDetailsForm(DBSRadioForm):
     """
     GOV.UK form for the Your criminal record (DBS) check: details page
     """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
-    auto_replace_widgets = True
-
     # Overrides standard NumberInput widget to give wider field
     widget_instance = NumberInput()
     widget_instance.input_classes = 'form-control form-control-1-4'
 
-    options = (
-        ('True', 'Yes'),
-        ('False', 'No')
-    )
     dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
                                                 help_text='12-digit number on your certificate',
                                                 required=True,
                                                 error_messages={'required': 'Please enter the DBS certificate number'},
                                                 widget=widget_instance)
 
-    cautions_convictions = forms.ChoiceField(label='Do you have any criminal cautions or convictions?',
-                                             help_text='Include any information recorded on your certificate',
-                                             choices=options, widget=InlineRadioSelect,
-                                             required=True,
-                                             error_messages={'required': 'Please say if you have any cautions or convictions'})
+    show_cautions_convictions = None
 
-    def __init__(self, *args, **kwargs):
-        """
-        Method to configure the initialisation of the Your criminal record (DBS) check: details form
-        :param args: arguments passed to the form
-        :param kwargs: keyword arguments passed to the form, e.g. application ID
-        """
-        self.application_id_local = kwargs.pop('id')
-        super(DBSCheckDBSDetailsForm, self).__init__(*args, **kwargs)
-        full_stop_stripper(self)
-        # If information was previously entered, display it on the form
-        if CriminalRecordCheck.objects.filter(application_id=self.application_id_local).count() > 0:
-            dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id_local)
-            self.fields['dbs_certificate_number'].initial = dbs_record.dbs_certificate_number
-            self.fields['cautions_convictions'].initial = dbs_record.cautions_convictions
-            self.pk = dbs_record.criminal_record_id
-            self.field_list = ['dbs_certificate_number', 'cautions_convictions']
+    # def __init__(self, *args, **kwargs):
+    #     """
+    #     Method to configure the initialisation of the Your criminal record (DBS) check: details form
+    #     :param args: arguments passed to the form
+    #     :param kwargs: keyword arguments passed to the form, e.g. application ID
+    #     """
+    #     self.application_id = kwargs.pop('id')
+    #
+    #     super().__init__(*args, **kwargs)
+
+    def populate_initial_values(self):
+        if self.show_cautions_convictions is not None:
+            fields = self.fields
+
+            if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
+                dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
+                fields['dbs_certificate_number'].initial = getattr(dbs_record, 'dbs_certificate_number')
+                if self.show_cautions_convictions:
+                    fields[self.choice_field_name].initial = getattr(dbs_record, self.dbs_field_name)
+
+            return fields
+
+        else:
+            raise NotImplementedError("show_cautions_convictions must not be None.")
+
+    def get_cautions_convictions_choice_field(self):
+        return forms.ChoiceField(label='Do you have any criminal cautions or convictions?',
+                                 help_text='Include any information recorded on your certificate',
+                                 choices=self.get_options(),
+                                 widget=InlineRadioSelect,
+                                 required=True,
+                                 error_messages={'required': 'Please say if you have any cautions or convictions'})
 
     def clean_dbs_certificate_number(self):
         """
@@ -161,13 +171,8 @@ class DBSCheckDBSDetailsForm(ChildminderForms):
 
         return dbs_certificate_number
 
+class DBSCheckDetailsFormCapita(DBSCheckDetailsForm):
+    show_cautions_convictions = True
 
-class DBSCheckSummaryForm(ChildminderForms):
-    """
-    GOV.UK form for the Your criminal record (DBS) check: summary page
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'generic-error-summary.html'
-    auto_replace_widgets = True
-
-    arc_errors = forms.CharField()
+class DBSCheckDetailsFormNoCapita(DBSCheckDetailsForm):
+    show_cautions_convictions = False

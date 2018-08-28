@@ -1,5 +1,5 @@
 from django.core.management import call_command
-from django.test import TestCase, Client, modify_settings
+from django.test import TestCase, Client, modify_settings, tag
 from .base import ApplicationTestBase
 from django.urls import reverse
 
@@ -25,18 +25,21 @@ class DBSTemplateViewTestCase(NoMiddlewareTestCase):
 
         Application.objects.create(application_id=self.application_id)
 
+    @tag('http')
     def test_view_rendered_on_get(self):
         if self.view_name is not None:
             response = self.client.get(reverse(self.view_name)+'?id='+self.application_id)
             print('Returned a {0} response'.format(response.status_code))
             self.assertTrue(response.status_code == 200)
 
+    @tag('http')
     def test_redirect(self):
         if self.view_name is not None:
             response = self.client.post(reverse(self.view_name)+'?id='+self.application_id)
             print('Returned a {0} response'.format(response.status_code))
             self.assertTrue(response.status_code == 302)
 
+    @tag('http')
     def test_redirect_to_correct_url(self):
         if self.view_name is not None and self.correct_url is not None:
             correct_url = reverse(self.correct_url)+'?id='+self.application_id

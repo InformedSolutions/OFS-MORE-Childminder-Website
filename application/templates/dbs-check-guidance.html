@@ -1,22 +1,19 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Criminal record (DBS) check{% endblock %}
+{% block page_title %}UK criminal record check{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
 {% include "back-button.html" %}
-<!-- Form -->
 <div class="two-thirds">
 <form method="post" novalidate>
-    <!-- Content -->
     <div class="form-group">
         <h1 class="form-title heading-large">
             Criminal record checks
         </h1>
         <p>You need to have a UK criminal record (DBS) check.</p>
         You also need other checks if you have:
-            <!-- TODO: Fix formatting of bullet points -->
             <ul style="list-style-type: disc; padding-left: 50px;">
                 <li>lived abroad in the last 5 years</li>
                 <li>lived or worked on a military base in the last 5 years</li>
