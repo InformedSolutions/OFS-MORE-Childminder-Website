@@ -1,7 +1,5 @@
-from django.utils import timezone
 import collections
 
-from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 from django.views.generic import FormView, View
@@ -11,11 +9,9 @@ from ..summary_page_data import eyfs_name_dict, eyfs_link_dict, eyfs_change_link
 
 from .. import status
 from ..business_logic import (childcare_register_type,
-                              childcare_training_course_logic,
-                              eyfs_details_logic,
-                              reset_declaration)
+                              childcare_training_course_logic,)
 from ..forms import EYFSDetailsForm, TypeOfChildcareTrainingForm
-from ..models import Application, ChildcareType, ChildcareTraining
+from ..models import Application, ChildcareTraining
 
 
 class ChildcareTrainingGuidanceView(View):
@@ -211,7 +207,7 @@ class ChildcareTrainingSummaryView(View):
         :param childcare_training_record: Childcare Training record from which to grab data.
         :return: list of tables to be rendered on summary page.
         """
-        # datetime.datetime.strptime(first_aid_record['course_date'], '%Y-%m-%d').date()
+        # datetime.datetime.strptime(childcare_training_record.course_date, '%Y-%m-%d').date()
 
         eyfs_fields = collections.OrderedDict([
             ('eyfs_course_name', childcare_training_record.eyfs_course_name),
