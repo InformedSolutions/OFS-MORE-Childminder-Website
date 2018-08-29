@@ -764,33 +764,6 @@ def health_check_email_resend_logic(adult_record):
     else:
         return False
 
-
-def eligible_to_apply_based_on_childcare_ages(childcare_record):
-    """
-    Helper function to check whether an applicant can apply based on the ages of children they
-    will be looking after
-    :param childcare_record: A ChildcareType instance detailing the ages of children being looked after
-    :return: a boolean indicator for whether or not
-    an applicant can apply using the service based on the ages of children they
-    will be looking after
-    """
-
-    if (childcare_record.zero_to_five is False) \
-            & (childcare_record.five_to_eight is True) \
-            & (childcare_record.eight_plus is False):
-        return False
-    elif (childcare_record.zero_to_five is False) \
-            & (childcare_record.five_to_eight is True) \
-            & (childcare_record.eight_plus is True):
-        return False
-    elif (childcare_record.zero_to_five is False) \
-            & (childcare_record.five_to_eight is False) \
-            & (childcare_record.eight_plus is True):
-        return False
-    else:
-        return True
-
-
 def dbs_matches_childminder_dbs(application, candidate_dbs_certificate_number):
     """
     Helper function to determine whether a DBS number matches the DBS recorded for the childminder
