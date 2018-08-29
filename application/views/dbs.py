@@ -16,7 +16,10 @@ from ..business_logic import (get_criminal_record_check,
                               reset_declaration)
 from ..forms import (DBSLivedAbroadForm,
                      DBSMilitaryForm,
-                     DBSTypeForm)
+                     DBSTypeForm,
+                     DBSCheckCapitaForm,
+                     DBSCheckNoCapitaForm,
+                     DBSUpdateForm)
 from ..models import (Application,
                       CriminalRecordCheck)
 
@@ -51,6 +54,7 @@ class DBSRadioView(FormView):
         kwargs = super().get_form_kwargs()
 
         kwargs['id'] = application_id
+        kwargs['dbs_field_name'] = self.dbs_field_name
 
         return kwargs
 
@@ -67,6 +71,17 @@ class DBSRadioView(FormView):
 
         return super().form_valid(form)
 
+class DBSCheckDetailsView(DBSRadioView):
+    dbs_field_name = 'cautions_convictions'
+
+    def form_valid(self, form):
+        application_id = self.request.GET.get('id')
+        update_string = self.request.POST.get('dbs_certificate_number')
+
+        successfully_updated = update_criminal_record_check(application_id, 'dbs_certificate_number', update_string)
+
+        return super().form_valid(form)
+
 
 class DBSLivedAbroadView(DBSRadioView):
     template_name = 'dbs-lived-abroad.html'
@@ -74,17 +89,31 @@ class DBSLivedAbroadView(DBSRadioView):
     success_url = ('DBS-Good-Conduct-View', 'DBS-Military-View')
     dbs_field_name = 'lived_abroad'
 
-    def get_context_data(self, **kwargs):
+    def get(self, request, *args, **kwargs):
         application_id = self.request.GET.get('id')
-        # If no criminal_record_check exists for this user, create one
-        if not CriminalRecordCheck.objects.filter(application_id=application_id).exists():
-            application = Application.objects.get(application_id=application_id)
-            CriminalRecordCheck.objects.create(criminal_record_id=uuid.uuid4(),
-                                               application_id=application,
-                                               dbs_certificate_number='')
+        application = Application.objects.get(application_id=application_id)
 
-        return super().get_context_data(**kwargs)
+        # Re-route depending on task status (criminal_record_check_status)
+        dbs_task_status = application.criminal_record_check_status
+        if dbs_task_status == 'NOT_STARTED' or 'IN_PROGRESS':
+            # Update the task status to 'IN_PROGRESS' from 'NOT_STARTED'
+            status.update(application_id, 'criminal_record_check_status', 'IN_PROGRESS')
 
+            # If no criminal_record_check exists for this user, create one
+            if not CriminalRecordCheck.objects.filter(application_id=application_id).exists():
+                CriminalRecordCheck.objects.create(criminal_record_id=uuid.uuid4(),
+                                                   application_id=application,
+                                                   dbs_certificate_number='')
+
+        elif dbs_task_status == 'FLAGGED' or 'COMPLETED':
+            # Re-route user to summary page
+            redirect_url = build_url(reverse('DBS-Summary-View'), get={'id': application_id})
+            return HttpResponseRedirect(redirect_url)
+
+        else:
+            raise ValueError('Unexpected task_status passed: {0}'.format(dbs_task_status))
+
+        return super().get(request, *args, **kwargs)
 
 class DBSTemplateView(TemplateView):
     template_name = None
@@ -95,7 +124,7 @@ class DBSTemplateView(TemplateView):
 
         return super().get_context_data(id=application_id, **kwargs)
 
-    def post(self, request):
+    def post(self, request, *args, **kwargs):
         application_id = request.GET.get('id')
         redirect_url = build_url(self.success_url, get={'id': application_id})
 
@@ -123,17 +152,58 @@ class DBSMilitaryView(DBSRadioView):
     success_url = ('DBS-Ministry-Of-Defence-View', 'DBS-Guidance-View')
     dbs_field_name = 'military_base'
 
-class DBSMinistryOfDefence(DBSTemplateView):
+
+class DBSMinistryOfDefenceView(DBSTemplateView):
     template_name = 'dbs-ministry-of-defence.html'
     success_url = 'DBS-Guidance-View'
+
 
 class DBSTypeView(DBSRadioView):
     template_name = 'dbs-type.html'
     form_class = DBSTypeForm
-    success_url = ('DBS-Details-Page', 'DBS-Update-Page')
+    success_url = ('DBS-Check-Capita-View', 'DBS-Update-View')
     dbs_field_name = 'capita'
 
 
+class DBSUpdateView(DBSRadioView):
+    template_name = 'dbs-update.html'
+    form_class = DBSUpdateForm
+    success_url = ('DBS-Check-No-Capita-View', 'DBS-Get-View')
+    dbs_field_name = 'on_update'
+
+
+class DBSCheckCapitaView(DBSCheckDetailsView):
+    template_name = 'dbs-check-capita.html'
+    form_class = DBSCheckCapitaForm
+    success_url = ('DBS-Upload-View', 'DBS-Summary-View')
+
+
+class DBSCheckNoCapitaView(DBSCheckDetailsView):
+    template_name = 'dbs-check-no-capita.html'
+    form_class = DBSCheckNoCapitaForm
+    # 'DBS-Post-View' is redirected to in both cases.
+    success_url = ('DBS-Post-View', 'DBS-Post-View')
+
+class DBSGetView(DBSTemplateView):
+    template_name = 'dbs-get.html'
+    success_url = 'Task-List-View'
+
+    def post(self, request, *args, **kwargs):
+        application_id = self.request.GET.get('id')
+        application = Application.objects.get(application_id=application_id)
+
+        dbs_task_status = application.criminal_record_check_status
+        # Update the task status to 'IN_PROGRESS' in all cases
+        status.update(application_id, 'criminal_record_check_status', 'IN_PROGRESS')
+
+        return super().post(request, *args, **kwargs)
+
+class DBSPostView(DBSTemplateView):
+    template_name = 'dbs-post.html'
+    success_url = 'DBS-Summary-View'
+
+class DBSSummaryView(DBSTemplateView):
+    pass
 
 # def dbs_check_dbs_details(request):
 #     """
@@ -159,7 +229,7 @@ class DBSTypeView(DBSRadioView):
 #             'application_id': application_id_local,
 #             'criminal_record_check_status': application.criminal_record_check_status
 #         }
-#         return render(request, 'dbs-check-dbs-details.html', variables)
+#         return render(request, 'dbs-check-capita.html', variables)
 #     if request.method == 'POST':
 #         application_id_local = request.POST["id"]
 #
@@ -192,7 +262,7 @@ class DBSTypeView(DBSRadioView):
 #                 'form': form,
 #                 'application_id': application_id_local
 #             }
-#             return render(request, 'dbs-check-dbs-details.html', variables)
+#             return render(request, 'dbs-check-capita.html', variables)
 #
 #
 # def dbs_check_upload_dbs(request):

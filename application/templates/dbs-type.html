@@ -13,10 +13,12 @@
             Type of DBS check
         </h1>
         {{ form.as_div }}
-        <input type="submit" class="button" value="Save and continue">
         {% csrf_token %}
+        <input type="submit" class="button" value="Save and continue">
     </div>
 </form>
 </div>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}
