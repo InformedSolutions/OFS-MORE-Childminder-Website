@@ -104,7 +104,7 @@
   }
 },
 {
-  "model": "application.eyfs",
+  "model": "application.childcaretraining",
   "pk": "9e9aee10-f7d1-4a54-99b4-69bd35c949a9",
   "fields": {
     "application_id": "db0efe18-eec5-4ec9-887a-e93949f6b412",
