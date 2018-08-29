@@ -73,10 +73,44 @@ def declaration_summary(request, print=False):
         eyfs_course_date = ' '.join(
             [str(eyfs_record.eyfs_course_date_day), calendar.month_name[eyfs_record.eyfs_course_date_month],
              str(eyfs_record.eyfs_course_date_year)])
-        first_reference_record = Reference.objects.get(
-            application_id=application_id_local, reference=1)
-        second_reference_record = Reference.objects.get(
-            application_id=application_id_local, reference=2)
+        if childcare_record.zero_to_five:
+            first_reference_record = Reference.objects.get(
+                application_id=application_id_local, reference=1)
+            second_reference_record = Reference.objects.get(
+                application_id=application_id_local, reference=2)
+
+            references_vars = {
+                'first_reference_first_name': first_reference_record.first_name,
+                'first_reference_last_name': first_reference_record.last_name,
+                'first_reference_relationship': first_reference_record.relationship,
+                'first_reference_years_known': first_reference_record.years_known,
+                'first_reference_months_known': first_reference_record.months_known,
+                'first_reference_street_line1': first_reference_record.street_line1,
+                'first_reference_street_line2': first_reference_record.street_line2,
+                'first_reference_town': first_reference_record.town,
+                'first_reference_county': first_reference_record.county,
+                'first_reference_postcode': first_reference_record.postcode,
+                'first_reference_country': first_reference_record.country,
+                'first_reference_phone_number': first_reference_record.phone_number,
+                'first_reference_email': first_reference_record.email,
+                'second_reference_first_name': second_reference_record.first_name,
+                'second_reference_last_name': second_reference_record.last_name,
+                'second_reference_relationship': second_reference_record.relationship,
+                'second_reference_years_known': second_reference_record.years_known,
+                'second_reference_months_known': second_reference_record.months_known,
+                'second_reference_street_line1': second_reference_record.street_line1,
+                'second_reference_street_line2': second_reference_record.street_line2,
+                'second_reference_town': second_reference_record.town,
+                'second_reference_county': second_reference_record.county,
+                'second_reference_postcode': second_reference_record.postcode,
+                'second_reference_country': second_reference_record.country,
+                'second_reference_phone_number': second_reference_record.phone_number,
+                'second_reference_email': second_reference_record.email
+            }
+
+        else:
+            references_vars = {}
+
         # Retrieve lists of adults and children, ordered by adult/child number for iteration by the HTML
         adults_list = AdultInHome.objects.filter(
             application_id=application_id_local).order_by('adult')
@@ -237,32 +271,6 @@ def declaration_summary(request, print=False):
             'eyfs_course_name': eyfs_record.eyfs_course_name,
             'eyfs_course_date': eyfs_course_date,
             'early_years_training_change': early_years_training_change,
-            'first_reference_first_name': first_reference_record.first_name,
-            'first_reference_last_name': first_reference_record.last_name,
-            'first_reference_relationship': first_reference_record.relationship,
-            'first_reference_years_known': first_reference_record.years_known,
-            'first_reference_months_known': first_reference_record.months_known,
-            'first_reference_street_line1': first_reference_record.street_line1,
-            'first_reference_street_line2': first_reference_record.street_line2,
-            'first_reference_town': first_reference_record.town,
-            'first_reference_county': first_reference_record.county,
-            'first_reference_postcode': first_reference_record.postcode,
-            'first_reference_country': first_reference_record.country,
-            'first_reference_phone_number': first_reference_record.phone_number,
-            'first_reference_email': first_reference_record.email,
-            'second_reference_first_name': second_reference_record.first_name,
-            'second_reference_last_name': second_reference_record.last_name,
-            'second_reference_relationship': second_reference_record.relationship,
-            'second_reference_years_known': second_reference_record.years_known,
-            'second_reference_months_known': second_reference_record.months_known,
-            'second_reference_street_line1': second_reference_record.street_line1,
-            'second_reference_street_line2': second_reference_record.street_line2,
-            'second_reference_town': second_reference_record.town,
-            'second_reference_county': second_reference_record.county,
-            'second_reference_postcode': second_reference_record.postcode,
-            'second_reference_country': second_reference_record.country,
-            'second_reference_phone_number': second_reference_record.phone_number,
-            'second_reference_email': second_reference_record.email,
             'references_change': references_change,
             'adults_in_home': application.adults_in_home,
             'children_in_home': application.children_in_home,
@@ -274,6 +282,9 @@ def declaration_summary(request, print=False):
             'people_in_your_home_change': people_in_your_home_change,
             'print': print
         }
+
+        variables = {**variables, **references_vars}
+
         if application.declarations_status != 'COMPLETED':
             status.update(application_id_local, 'declarations_status', 'NOT_STARTED')
         if print:

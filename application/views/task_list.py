@@ -230,11 +230,16 @@ def task_list(request):
         ]
     }
 
-    if len([task for task in context['tasks'] if
-            task['status'] in ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]) < 1:
+    unfinished_tasks = [task for task in context['tasks'] if task['status'] in
+                        ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]
+    if len(unfinished_tasks) < 1:
         context['all_complete'] = True
     else:
-        context['all_complete'] = False
+        task_names = [task['name'] for task in unfinished_tasks]
+        if (not zero_to_five_status) and len(task_names) == 2 and 'health' in task_names and 'references' in task_names:
+            context['all_complete'] = True
+        else:
+            context['all_complete'] = False
 
     if context['all_complete']:
         # Set declaration status to NOT_STARTED
