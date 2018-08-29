@@ -13,7 +13,7 @@ from application import views
 from .. import status
 from ..forms import (DeclarationIntroForm,
                      DeclarationForm,
-                     DeclarationSummaryForm)
+                     DeclarationSummaryForm, PublishingYourDetailsForm)
 from ..models import (AdultInHome,
                       ApplicantHomeAddress,
                       ApplicantName,
@@ -293,10 +293,14 @@ def declaration_summary(request, print=False):
         application_id_local = request.POST["id"]
         form = DeclarationSummaryForm(request.POST)
         application = Application.objects.get(pk=application_id_local)
+        childcare_type = ChildcareType.objects.get(application_id=application_id_local)
         if form.is_valid():
             if application.declarations_status != 'COMPLETED':
                 status.update(application_id_local, 'declarations_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(reverse('Declaration-Intro-View') + '?id=' + application_id_local)
+            if childcare_type.zero_to_five:
+                return HttpResponseRedirect(reverse('Declaration-Intro-View') + '?id=' + application_id_local)
+            else:
+                return HttpResponseRedirect(reverse('Declaration-Declaration-View') + '?id=' + application_id_local)
         else:
             variables = {
                 'form': form,
@@ -441,7 +445,7 @@ def declaration_declaration(request):
 
             clear_arc_flagged_statuses(application_id_local)
 
-            return HttpResponseRedirect(reverse('Payment-Details-View') + '?id=' + application_id_local)
+            return HttpResponseRedirect(reverse('Publishing-Your-Details-View') + '?id=' + application_id_local)
 
         else:
             fields = render_each_field(declaration_form)
@@ -458,6 +462,30 @@ def render_each_field(declaration_form):
     for name, field in declaration_form.fields.items():
         fields.append(declaration_form.render_field(name, field))
     return fields
+
+
+def publishing_your_details(request):
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = PublishingYourDetailsForm(id=application_id_local)
+        variables = {
+            'application_id': application_id_local,
+            'form': form
+        }
+        return render(request, 'publishing-your-details.html', variables)
+
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        # extract form data
+        form = PublishingYourDetailsForm(request.POST, id=application_id_local)
+        if form.is_valid():
+            publish_details = not form.cleaned_data.get('publish_details')
+
+            # save down form data
+            application = Application.objects.get(application_id=application_id_local)
+            application.publish_details = publish_details
+            application.save()
+            return HttpResponseRedirect(reverse('Payment-Details-View') + '?id=' + application_id_local)
 
 
 def generate_list_of_updated_tasks(application_id):
