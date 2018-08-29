@@ -102,3 +102,5 @@ class TypeOfChildcareTrainingForm(ChildminderForms):
 
             initial_vals = [option[0] for option in self.options if getattr(training_record, option[0])]
             self.fields['childcare_training'].initial = initial_vals
+            self.pk = training_record.eyfs_id
+            self.field_list = ['childcare_training']
