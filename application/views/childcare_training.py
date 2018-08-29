@@ -198,6 +198,7 @@ class ChildcareTrainingSummaryView(View):
         childcare_training_summary_table = Table([childcare_training_record.pk])
         childcare_training_summary_table.row_list = [childcare_training_row]
         childcare_training_summary_table.get_errors()
+        childcare_training_summary_table.error_summary_title = 'There was a problem'
         return [childcare_training_summary_table]
 
     @staticmethod
@@ -222,6 +223,8 @@ class ChildcareTrainingSummaryView(View):
             'title': '',
             'error_summary_title': 'There was a problem',
         })
+
+        eyfs_table.error_summary_title = 'There was a problem'
 
         table_list = create_tables([eyfs_table], eyfs_name_dict, eyfs_link_dict, eyfs_change_link_description_dict)
         return table_list
