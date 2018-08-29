@@ -21,29 +21,26 @@
                     <tr>
                         <th>Age of children</th>
                         <th>Register</th>
-                        <th>Cost</th>
                     </tr>
                 </thead>
                 <tbody>
                 <tr>
                     <td>0 to 5</td>
                     <td>Early Years</td>
-                    <td>&#163;35</td>
                 </tr>
                 <tr>
                     <td>5 to 7</td>
                     <td>Childcare (compulsory part)</td>
-                    <td>&#163;103</td>
                 </tr>
                 <tr>
                     <td>8 or older</td>
                     <td>Childcare (voluntary part)</td>
-                    <td>&#163;103</td>
                 </tr>
                 </tbody>
             </table>
         </div>
-        <p class="text-before-button">It costs &#163;35 to join both registers.</p>
+        <p class="text-before-button">You can join more than one register if you do not know what
+ages you’ll be caring for.</p>
         {% csrf_token %}
         {{form.as_div}}
         <input type="hidden" value="{{application_id}}" name="id"/>

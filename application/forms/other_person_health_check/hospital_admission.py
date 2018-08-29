@@ -1,7 +1,6 @@
 from datetime import date
 
 from django import forms
-from govuk_forms.fields import SplitDateField
 from govuk_forms.widgets import InlineRadioSelect
 
 from application.customfields import CustomSplitDateField
@@ -40,9 +39,9 @@ class HospitalAdmission(ChildminderForms):
         (False, 'No'),
     )
 
-    illness_details = forms.CharField(label='Tell us why you were admitted to hospital',
-                                      widget=forms.Textarea(), required=True,
-                                      error_messages={'required': 'Tell us why you were admitted'})
+    description = forms.CharField(label='Tell us why you were admitted to hospital',
+                                  widget=forms.Textarea(), required=True,
+                                  error_messages={'required': 'Tell us why you were admitted'})
 
     start_date = CustomSplitDateField(label='Date you were admitted', help_text='For example, 31 03 2016', error_messages={
         'required': 'Please enter the full date, including the day, month and year'}, bounds_error='Please check the date of your illness',
@@ -55,14 +54,6 @@ class HospitalAdmission(ChildminderForms):
     def __init__(self, *args, **kwargs):
         self.person = kwargs.pop('adult')
         super(HospitalAdmission, self).__init__(*args, **kwargs)
-
-    def clean_illness_details(self):
-
-        illness_details = self.cleaned_data['illness_details']
-        if len(illness_details) > 150:
-            raise forms.ValidationError('The reason for your admission must be less than 150 characters long')
-
-        return illness_details
 
     def clean_start_date(self):
 

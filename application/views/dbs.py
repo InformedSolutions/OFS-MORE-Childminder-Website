@@ -33,6 +33,7 @@ from django.views.generic import TemplateView
 class DBSRadioView(FormView):
     success_url = (None, None)
     dbs_field_name = None
+    nullify_field_list = []
 
     def get_success_url(self):
         application_id = self.request.GET.get('id')
@@ -69,7 +70,18 @@ class DBSRadioView(FormView):
 
         successfully_updated = update_criminal_record_check(application_id, self.dbs_field_name, update_bool)
 
+        successfully_nullified = self.nullify_fields(application_id)
+
+        if not successfully_updated:
+            raise BrokenPipeError("Something went wrong when updating criminal_record_check")
+        if not successfully_nullified:
+            raise BrokenPipeError("Something went wrong when nullifying fields in criminal_record_check")
+
         return super().form_valid(form)
+
+    def nullify_fields(self, app_id):
+        update_criminal_record_check(app_id, self.nullify_field_list, None)
+        return True
 
 class DBSCheckDetailsView(DBSRadioView):
     dbs_field_name = 'cautions_convictions'
@@ -170,19 +182,24 @@ class DBSUpdateView(DBSRadioView):
     form_class = DBSUpdateForm
     success_url = ('DBS-Check-No-Capita-View', 'DBS-Get-View')
     dbs_field_name = 'on_update'
+    nullify_field_list = ['cautions_convictions']
 
 
 class DBSCheckCapitaView(DBSCheckDetailsView):
     template_name = 'dbs-check-capita.html'
     form_class = DBSCheckCapitaForm
     success_url = ('DBS-Post-View', 'DBS-Summary-View')
+    nullify_field_list = ['on_update']
 
 
 class DBSCheckNoCapitaView(DBSCheckDetailsView):
     template_name = 'dbs-check-capita.html'
     form_class = DBSCheckNoCapitaForm
-    # 'DBS-Post-View' is redirected to in both cases.
-    success_url = ('DBS-Post-View', 'DBS-Post-View')
+    success_url = 'DBS-Post-View'
+
+    def get_success_url(self):
+        application_id = self.request.GET.get('id')
+        return build_url(self.success_url, get={'id': application_id})
 
 
 class DBSGetView(DBSTemplateView):
@@ -191,9 +208,7 @@ class DBSGetView(DBSTemplateView):
 
     def post(self, request, *args, **kwargs):
         application_id = self.request.GET.get('id')
-        application = Application.objects.get(application_id=application_id)
 
-        dbs_task_status = application.criminal_record_check_status
         # Update the task status to 'IN_PROGRESS' in all cases
         status.update(application_id, 'criminal_record_check_status', 'IN_PROGRESS')
 
@@ -215,18 +230,6 @@ class DBSSummaryView(DBSTemplateView):
         # Modify rows_to_generate to change displayed information
         rows_to_generate = [
             {
-                'field': 'dbs_certificate_number',
-                'title': 'DBS certificate number',
-                'url': self.get_certificate_number_url(application_id),
-                'alt_text': 'Change DBS certificate number'
-            },
-            {
-                'field': 'cautions_convictions',
-                'title': 'Do you have any criminal cautions or convictions?',
-                'url': 'DBS-Check-Capita-View',
-                'alt_text': 'Change answer on cautions or convictions?'
-            },
-            {
                 'field': 'lived_abroad',
                 'title': 'Have you lived outside of the UK in the last 5 years?',
                 'url': 'DBS-Lived-Abroad-View',
@@ -234,7 +237,7 @@ class DBSSummaryView(DBSTemplateView):
             },
             {
                 'field': 'military_base',
-                'title': 'Have you lived or worked on a military base overseas in the last five years?',
+                'title': 'Have you lived or worked on a British military base in the last 5 years?',
                 'url': 'DBS-Military-View',
                 'alt_text': 'Change answer to living or working on a military base outside of the UK in the last 5 years'
             },
@@ -250,6 +253,18 @@ class DBSSummaryView(DBSTemplateView):
                 'url': 'DBS-Update-View',
                 'alt_text': 'Change answer to being on the DBS update service'
             },
+            {
+                'field': 'dbs_certificate_number',
+                'title': 'DBS certificate number',
+                'url': self.get_certificate_number_url(application_id),
+                'alt_text': 'Change DBS certificate number'
+            },
+            {
+                'field': 'cautions_convictions',
+                'title': 'Do you have any criminal cautions or convictions?',
+                'url': 'DBS-Check-Capita-View',
+                'alt_text': 'Change answer on cautions or convictions?'
+            }
         ]
 
         # Create a dictionary with the field as the key from rows_to_generate
@@ -282,148 +297,3 @@ class DBSSummaryView(DBSTemplateView):
             return 'DBS-Check-No-Capita-View'
         else:
             raise ValueError('capita_status should be either True or False by this point, but it is {0}'.format(capita_status))
-
-# def dbs_check_dbs_details(request):
-#     """
-#     Method returning the template for the Your criminal record (DBS) check: details page (for a given application)
-#     and navigating to the Your criminal record (DBS) check: upload DBS or summary page when successfully completed;
-#     business logic is applied to either create or update the associated Criminal_Record_Check record
-#     :param request: a request object used to generate the HttpResponse
-#     :return: an HttpResponse object with the rendered Your criminal record (DBS) check: details template
-#     """
-#     current_date = timezone.now()
-#     if request.method == 'GET':
-#         application_id_local = request.GET["id"]
-#         form = DBSCheckDBSDetailsForm(id=application_id_local)
-#         form.check_flag()
-#         application = Application.objects.get(pk=application_id_local)
-#
-#         if application.application_status == 'FURTHER_INFORMATION':
-#             form.error_summary_template_name = 'returned-error-summary.html'
-#             form.error_summary_title = 'There was a problem'
-#
-#         variables = {
-#             'form': form,
-#             'application_id': application_id_local,
-#             'criminal_record_check_status': application.criminal_record_check_status
-#         }
-#         return render(request, 'dbs-check-capita.html', variables)
-#     if request.method == 'POST':
-#         application_id_local = request.POST["id"]
-#
-#         # Reset status to in progress as question can change status of overall task
-#         status.update(application_id_local, 'criminal_record_check_status', 'IN_PROGRESS')
-#
-#         form = DBSCheckDBSDetailsForm(request.POST, id=application_id_local)
-#         form.remove_flag()
-#         application = Application.objects.get(pk=application_id_local)
-#         if form.is_valid():
-#             # Create or update Criminal_Record_Check record
-#             dbs_check_record = dbs_check_logic(application_id_local, form)
-#             dbs_check_record.save()
-#             application.date_updated = current_date
-#             application.save()
-#             reset_declaration(application)
-#             cautions_convictions = form.cleaned_data['cautions_convictions']
-#             if cautions_convictions == 'True':
-#                 return HttpResponseRedirect(reverse('DBS-Check-Upload-DBS-View') + '?id=' + application_id_local)
-#             elif cautions_convictions == 'False':
-#                 return HttpResponseRedirect(reverse('DBS-Check-Summary-View') + '?id=' + application_id_local)
-#         else:
-#             form.error_summary_title = 'There was a problem with the DBS details'
-#
-#             if application.application_status == 'FURTHER_INFORMATION':
-#                 form.error_summary_template_name = 'returned-error-summary.html'
-#                 form.error_summary_title = 'There was a problem'
-#
-#             variables = {
-#                 'form': form,
-#                 'application_id': application_id_local
-#             }
-#             return render(request, 'dbs-check-capita.html', variables)
-#
-#
-# def dbs_check_upload_dbs(request):
-#     """
-#     Method returning the template for the Your criminal record (DBS) check: upload DBS page (for a given application)
-#     and navigating to the Your criminal record (DBS) check: summary page when successfully completed;
-#     :param request: a request object used to generate the HttpResponse
-#     :return: an HttpResponse object with the rendered Your criminal record (DBS) check: upload DBS template
-#     """
-#
-#     if request.method == 'GET':
-#         application_id_local = request.GET["id"]
-#         form = DBSCheckUploadDBSForm()
-#         application = Application.objects.get(pk=application_id_local)
-#
-#         if application.application_status == 'FURTHER_INFORMATION':
-#             form.error_summary_template_name = 'returned-error-summary.html'
-#             form.error_summary_title = 'There was a problem'
-#
-#         variables = {
-#             'form': form,
-#             'application_id': application_id_local,
-#             'criminal_record_check_status': application.criminal_record_check_status
-#         }
-#         return render(request, 'dbs-check-upload-dbs.html', variables)
-#     if request.method == 'POST':
-#         application_id_local = request.POST["id"]
-#         form = DBSCheckUploadDBSForm(request.POST)
-#         application = Application.objects.get(pk=application_id_local)
-#         if form.is_valid():
-#             return HttpResponseRedirect(reverse('DBS-Check-Summary-View') + '?id=' + application_id_local)
-#         else:
-#
-#             form.error_summary_title = 'There was a problem'
-#
-#             if application.application_status == 'FURTHER_INFORMATION':
-#                 form.error_summary_template_name = 'returned-error-summary.html'
-#                 form.error_summary_title = 'There was a problem'
-#
-#             variables = {
-#                 'form': form,
-#                 'application_id': application_id_local
-#             }
-#             return render(request, 'dbs-check-upload-dbs.html', variables)
-#
-#
-# def dbs_check_summary(request):
-#     """
-#     Method returning the template for the Your criminal record (DBS) check: summary page (for a given application)
-#     displaying entered data for this task and navigating to the task list when successfully completed
-#     :param request: a request object used to generate the HttpResponse
-#     :return: an HttpResponse object with the rendered Your criminal record (DBS) check: summary template
-#     """
-#
-#     if request.method == 'GET':
-#         application_id_local = request.GET["id"]
-#         criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
-#         application = Application.objects.get(pk=application_id_local)
-#         object_list = [[criminal_record_check]]
-#
-#         table_list = table_creator(object_list, dbs_summary_dict['display_names'], dbs_summary_dict['data_names'],
-#                                    dbs_summary_dict['table_names'], dbs_summary_dict['table_error_names'],
-#                                    dbs_summary_dict['back_url_names'])
-#
-#         form = DBSCheckSummaryForm()
-#
-#         if application.application_status == 'FURTHER_INFORMATION':
-#             form.error_summary_template_name = 'returned-error-summary.html'
-#
-#         variables = {
-#             'form': form,
-#             'application_id': application_id_local,
-#             'criminal_record_check_status': application.criminal_record_check_status,
-#             'table_list': table_list,
-#             'page_title': dbs_summary_dict['page_title']
-#         }
-#         variables = submit_link_setter(variables, table_list, 'criminal_record_check', application_id_local)
-#
-#         return render(request, 'generic-summary-template.html', variables)
-#
-#     if request.method == 'POST':
-#
-#         application_id_local = request.POST["id"]
-#         status.update(application_id_local, 'criminal_record_check_status', 'COMPLETED')
-#
-#         return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)

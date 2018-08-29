@@ -13,6 +13,7 @@ from ...models import Application
 class NoMiddlewareTestCase(TestCase):
     pass
 
+
 class DBSTemplateViewTestCase(NoMiddlewareTestCase):
 
     def setUp(self):
@@ -25,12 +26,15 @@ class DBSTemplateViewTestCase(NoMiddlewareTestCase):
 
         Application.objects.create(application_id=self.application_id)
 
+
     @tag('http')
     def test_view_rendered_on_get(self):
         if self.view_name is not None:
             response = self.client.get(reverse(self.view_name)+'?id='+self.application_id)
             print('Returned a {0} response'.format(response.status_code))
             self.assertTrue(response.status_code == 200)
+        else:
+            raise self.skipTest('view_name or correct_url not set')
 
     @tag('http')
     def test_redirect(self):
@@ -38,22 +42,60 @@ class DBSTemplateViewTestCase(NoMiddlewareTestCase):
             response = self.client.post(reverse(self.view_name)+'?id='+self.application_id)
             print('Returned a {0} response'.format(response.status_code))
             self.assertTrue(response.status_code == 302)
+        else:
+            raise self.skipTest('view_name or correct_url not set')
 
     @tag('http')
     def test_redirect_to_correct_url(self):
-        if self.view_name is not None and self.correct_url is not None:
+        if self.view_name is not None or self.correct_url is not None:
             correct_url = reverse(self.correct_url)+'?id='+self.application_id
             response = self.client.post(reverse(self.view_name)+'?id='+self.application_id)
             print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
             self.assertTrue(response.url == correct_url)
+        else:
+            raise self.skipTest('view_name or correct_url not set')
 
-
-class DBSGuidanceViewTests(DBSTemplateViewTestCase):
-
+class DBSRadioViewTests(NoMiddlewareTestCase):
     def setUp(self):
         super().setUp()
-        self.view_name = 'DBS-Guidance-View'
-        self.correct_url = 'DBS-Type-View'
+        self.view_name = None
+        self.correct_url = None
+
+    @tag('http')
+    def test_view_rendered_on_get(self):
+        DBSTemplateViewTestCase.test_view_rendered_on_get(self)
+
+    @tag('http')
+    def test_redirect_on_post(self):
+        pass
+
+    @tag('http')
+    def test_redirect_on_post_to_correct_url(self):
+        pass
+
+    @tag('http')
+    def test_form_valid_callable(self):
+        pass
+
+    @tag('http')
+    def test_radio_error_message(self):
+        pass
+
+    @tag('http')
+    def test_radio_yes_redirect(self):
+        pass
+
+    @tag('http')
+    def test_radio_yes_redirect_to_correct_url(self):
+        pass
+
+    @tag('http')
+    def test_radio_no_redirect(self):
+        pass
+
+    @tag('http')
+    def test_radio_no_redirect_to_correct_url(self):
+        pass
 
 
 class DBSLivedAbroadViewTests(NoMiddlewareTestCase):
@@ -91,15 +133,37 @@ class DBSLivedAbroadViewTests(NoMiddlewareTestCase):
         pass
 
 class DBSGoodConductViewTests(DBSTemplateViewTestCase):
-
     def setUp(self):
         super().setUp()
         self.view_name = 'DBS-Good-Conduct-View'
         self.correct_url = 'DBS-Email-Certificates-View'
 
 class DBSSendCertificateViewTests(DBSTemplateViewTestCase):
-
     def setUp(self):
         super().setUp()
         self.view_name = 'DBS-Email-Certificates-View'
-        self.correct_url = ''
+        self.correct_url = 'DBS-Military-View'
+
+class DBSMinistryOfDefenceViewTests(DBSTemplateViewTestCase):
+    def setUp(self):
+        super().setUp()
+        self.view_name = 'DBS-Ministry-Of-Defence-View'
+        self.correct_url = 'DBS-Guidance-View'
+
+class DBSGuidanceViewTests(DBSTemplateViewTestCase):
+    def setUp(self):
+        super().setUp()
+        self.view_name = 'DBS-Guidance-View'
+        self.correct_url = 'DBS-Type-View'
+
+class DBSGetViewTests(DBSTemplateViewTestCase):
+    def setUp(self):
+        super().setUp()
+        self.view_name = 'DBS-Get-View'
+        self.correct_url = 'Task-List-View'
+
+class DBSPostViewTests(DBSTemplateViewTestCase):
+    def setUp(self):
+        super().setUp()
+        self.view_name = 'DBS-Post-View'
+        self.correct_url = 'DBS-Summary-View'

@@ -13,9 +13,13 @@
     First aid training certificate
 </h1>
 
-<p>An inspector will ask to see your certificate when they visit your home.</p>
+{% if register == 'childcare_register_only' %}
+    <p>An inspector will ask to see your certificate when they inspect you.</p>
+{% elif register == 'early_years_register' %}
+    <p>An inspector will ask to see your certificate when they visit your home.</p>
+{% endif %}
 
-<p class="text-before-button">You must show the inspector your certificate.</p>
+<p class="text-before-button">You must show them your certificate.</p>
 
 <form method="post" class="form-group" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     {% csrf_token %}

@@ -51,6 +51,22 @@ urlpatterns = [
     url(r'^first-aid/renew/', views.first_aid_training_renew, name='First-Aid-Training-Renew-View'),
     url(r'^first-aid/update/', views.first_aid_training_training, name='First-Aid-Training-Training-View'),
     url(r'^first-aid/check-answers/', views.first_aid_training_summary, name='First-Aid-Training-Summary-View'),
+
+    # ======================= #
+    # Childcare Training urls #
+    # ======================= #
+
+    url(r'^childcare-training/$', views.ChildcareTrainingGuidanceView.as_view(), name='Childcare-Training-Guidance-View'),
+    url(r'^childcare-training/details/', views.ChildcareTrainingDetailsView.as_view(), name='Childcare-Training-Details-View'),
+    url(r'^childcare-training/type/', views.TypeOfChildcareTrainingView.as_view(), name='Type-Of-Childcare-Training-View'),
+    url(r'^childcare-training-course/', views.ChildcareTrainingCourseRequiredView.as_view(), name='Childcare-Training-Course-Required-View'),
+    url(r'^childcare-training-certificate/', views.ChildcareTrainingCertificateView.as_view(), name='Childcare-Training-Certificate-View'),
+    url(r'^childcare-training/check-answers/', views.ChildcareTrainingSummaryView.as_view(), name='Childcare-Training-Summary-View'),
+
+    # =========================== #
+    # Criminal Record Checks urls #
+    # =========================== #
+
     url(r'^criminal-record/UK/$', views.DBSGuidanceView.as_view(), name='DBS-Guidance-View'),
     url(r'^criminal-record/type/$', views.DBSTypeView.as_view(), name='DBS-Type-View'),
     url(r'^criminal-record/lived-abroad/$', views.DBSLivedAbroadView.as_view(), name='DBS-Lived-Abroad-View'),
@@ -64,10 +80,7 @@ urlpatterns = [
     url(r'^criminal-record/Ofsted-check/$', views.DBSGetView.as_view(), name='DBS-Get-View'),
     url(r'^criminal-record/post-certificate/', views.DBSPostView.as_view(), name='DBS-Post-View'),
     url(r'^criminal-record/check-answers/', views.DBSSummaryView.as_view(), name='DBS-Summary-View'),
-    url(r'^early-years/$', views.eyfs_guidance, name='EYFS-Guidance-View'),
-    url(r'^early-years/details', views.eyfs_details, name='EYFS-Details-View'),
-    url(r'^early-years/certificate', views.eyfs_certificate, name='EYFS-Certificate-View'),
-    url(r'^early-years/check-answers/', views.eyfs_summary, name='EYFS-Summary-View'),
+
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),
     url(r'^health/booklet/', views.health_booklet, name='Health-Booklet-View'),
     url(r'^health/check-answers/', views.health_check_answers, name='Health-Check-Answers-View'),

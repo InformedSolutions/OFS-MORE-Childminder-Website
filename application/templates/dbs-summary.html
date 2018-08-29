@@ -8,7 +8,7 @@
 
 {% include "back-button.html" %}
 
-<h1 class="form-title heading-large">Check your answers: your criminal record check</h1>
+<h1 class="form-title heading-large">Check your answers: your criminal record checks</h1>
 
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
     <colgroup>
@@ -16,15 +16,6 @@
         <col class="summary-column">
         <col class="change-answer">
     </colgroup>
-    <thead>
-    <tr>
-        <th colspan="3">
-            <div class="heading-medium">
-                Your DBS certificate
-            </div>
-        </th>
-    </tr>
-    </thead>
     <tbody>
     {% for row in table %}
         {% if row.value is not None %}

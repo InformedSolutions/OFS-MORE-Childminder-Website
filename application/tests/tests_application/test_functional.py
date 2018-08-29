@@ -21,7 +21,7 @@ from ...models import (AdultInHome,
                        ChildcareType,
                        ChildInHome,
                        CriminalRecordCheck,
-                       EYFS,
+                       ChildcareTraining,
                        Reference,
                        UserDetails)
 
@@ -312,4 +312,4 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
         self.assertFalse(AdultInHome.objects.filter(application_id=self.app_id).exists())
         self.assertFalse(ChildInHome.objects.filter(application_id=self.app_id).exists())
         self.assertFalse(CriminalRecordCheck.objects.filter(application_id=self.app_id).exists())
-        self.assertFalse(EYFS.objects.filter(application_id=self.app_id).exists())
+        self.assertFalse(ChildcareTraining.objects.filter(application_id=self.app_id).exists())

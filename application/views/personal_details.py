@@ -861,21 +861,13 @@ def personal_details_summary(request):
         county = applicant_home_address_record.county
         postcode = applicant_home_address_record.postcode
         location_of_childcare = applicant_home_address_record.childcare_address
-        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True).exists():
-            applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                                  childcare_address=True)
-            childcare_street_line1 = applicant_childcare_address_record.street_line1
-            childcare_street_line2 = applicant_childcare_address_record.street_line2
-            childcare_town = applicant_childcare_address_record.town
-            childcare_county = applicant_childcare_address_record.county
-            childcare_postcode = applicant_childcare_address_record.postcode
+
+        if location_of_childcare:
+            childcare_location = 'Same as home address'
+            applicant_childcare_address_record = applicant_home_address_record
         else:
-            applicant_childcare_address_record = 'Same as home address'
-            childcare_street_line1 = ''
-            childcare_street_line2 = ''
-            childcare_town = ''
-            childcare_county = ''
-            childcare_postcode = ''
+            childcare_location = 'Other'
+            applicant_childcare_address_record = None
 
         name_dob_table_dict = collections.OrderedDict([
             ('name', ' '.join([first_name, (middle_names or ''), last_name])),
@@ -883,11 +875,6 @@ def personal_details_summary(request):
         ])
 
         home_address = ' '.join([street_line1, (street_line2 or ''), town, (county or ''), postcode])
-        if location_of_childcare:
-            childcare_location = 'Same as home address'
-        else:
-            childcare_location = ' '.join([childcare_street_line1, (childcare_street_line2 or ''),
-                                           childcare_town, (childcare_county or ''), childcare_postcode])
 
         address_table_dict = collections.OrderedDict([
             ('home_address', home_address),
@@ -902,7 +889,7 @@ def personal_details_summary(request):
         })
 
         address_dict = collections.OrderedDict({
-            'table_object': Table([applicant_home_address_record.pk, applicant_childcare_address_record.pk]),
+            'table_object': Table([applicant_home_address_record.pk, getattr(applicant_childcare_address_record, 'pk', None)]),
             'fields': address_table_dict,
             'title': 'Your home address',
             'error_summary_title': 'There was a problem'

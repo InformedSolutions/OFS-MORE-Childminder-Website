@@ -6,7 +6,6 @@ import collections
 
 from django.utils import timezone
 
-from ..business_logic import eligible_to_apply_based_on_childcare_ages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
@@ -165,8 +164,25 @@ def type_of_childcare_register(request):
                 & (childcare_record.eight_plus is False):
             return render(request, 'childcare-register-EYR.html', variables)
 
-        elif not eligible_to_apply_based_on_childcare_ages(childcare_record):
-            return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + app_id)
+        elif (childcare_record.zero_to_five is True) \
+                & (childcare_record.five_to_eight is False) \
+                & (childcare_record.eight_plus is False):
+            return render(request, 'childcare-register-EYR.html', variables)
+
+        elif (childcare_record.zero_to_five is False) \
+                & (childcare_record.five_to_eight is True) \
+                & (childcare_record.eight_plus is False):
+            return render(request, 'childcare-register-CR-compulsory.html', variables)
+
+        elif (childcare_record.zero_to_five is False) \
+                & (childcare_record.five_to_eight is True) \
+                & (childcare_record.eight_plus is True):
+            return render(request, 'childcare-register-CR-both.html', variables)
+
+        elif (childcare_record.zero_to_five is False) \
+                & (childcare_record.five_to_eight is False) \
+                & (childcare_record.eight_plus is True):
+            return render(request, 'childcare-register-CR-voluntary.html', variables)
 
     if request.method == 'POST':
 

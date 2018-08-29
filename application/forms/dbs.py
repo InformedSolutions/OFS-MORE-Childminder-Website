@@ -81,11 +81,11 @@ class DBSMilitaryForm(DBSRadioForm):
     choice_field_name = 'military_base'
 
     def get_choice_field_data(self):
-        return forms.ChoiceField(label='Have you lived or worked on a military base overseas in the last five years?',
+        return forms.ChoiceField(label='Have you lived or worked on a British military base outside of the UK in the last 5 years?',
                                  choices=self.get_options(),
                                  widget=InlineRadioSelect,
                                  required=True,
-                                 error_messages={'required': 'Please say if you have lived in a military base outside of the UK in the last 5 years'})
+                                 error_messages={'required': 'Please say if you have lived in a British military base outside of the UK in the last 5 years'})
 
 class DBSTypeForm(DBSRadioForm):
     """

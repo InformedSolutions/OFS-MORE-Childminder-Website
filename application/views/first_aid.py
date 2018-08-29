@@ -10,7 +10,8 @@ from django.shortcuts import render, reverse
 from .. import status
 from ..table_util import Table, create_tables, submit_link_setter
 from ..summary_page_data import first_aid_name_dict, first_aid_link_dict, first_aid_change_link_description_dict
-from ..business_logic import (first_aid_logic,
+from ..business_logic import (childcare_register_type,
+                              first_aid_logic,
                               reset_declaration)
 from ..forms import (FirstAidTrainingDeclarationForm,
                      FirstAidTrainingDetailsForm,
@@ -37,7 +38,8 @@ def first_aid_training_guidance(request):
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'first_aid_training_status': application.first_aid_training_status
+            'first_aid_training_status': application.first_aid_training_status,
+            'register': childcare_register_type(application_id_local)
         }
         return render(request, 'first-aid-guidance.html', variables)
     if request.method == 'POST':
@@ -52,7 +54,8 @@ def first_aid_training_guidance(request):
         else:
             variables = {
                 'form': form,
-                'application_id': application_id_local
+                'application_id': application_id_local,
+                'register': childcare_register_type(application_id_local)
             }
             return render(request, 'first-aid-training-guidance.html', variables)
 
@@ -79,7 +82,8 @@ def first_aid_training_details(request):
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'first_aid_training_status': application.first_aid_training_status
+            'first_aid_training_status': application.first_aid_training_status,
+            'register': childcare_register_type(application_id_local)
         }
         return render(request, 'first-aid-details.html', variables)
 
@@ -125,7 +129,8 @@ def first_aid_training_details(request):
 
             variables = {
                 'form': form,
-                'application_id': application_id_local
+                'application_id': application_id_local,
+                'register': childcare_register_type(application_id_local)
             }
             return render(request, 'first-aid-details.html', variables)
 
@@ -144,7 +149,8 @@ def first_aid_training_declaration(request):
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'first_aid_training_status': application.first_aid_training_status
+            'first_aid_training_status': application.first_aid_training_status,
+            'register': childcare_register_type(application_id_local)
         }
         return render(request, 'first-aid-declaration.html', variables)
     if request.method == 'POST':
@@ -156,7 +162,8 @@ def first_aid_training_declaration(request):
         else:
             variables = {
                 'form': form,
-                'application_id': application_id_local
+                'application_id': application_id_local,
+                'register': childcare_register_type(application_id_local)
             }
             return render(request, 'first-aid-declaration.html', variables)
 

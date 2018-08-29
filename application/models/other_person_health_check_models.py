@@ -18,7 +18,7 @@ class HealthCheckBase(models.Model):
         blank=True
     )
 
-    description = models.CharField(max_length=150)
+    description = models.TextField()
 
     class Meta:
         abstract = True

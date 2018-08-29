@@ -42,14 +42,17 @@
 
         {% include 'print-links.html' %}
 
-
-        <h2 class="heading-medium">
-            Send your documents
-        </h2>
-        {% if health_status == 'COMPLETED' and conviction == True %}
+        {% if conviction == True or health_status == 'COMPLETED' %}
+            <h2 class="heading-medium">
+                Send your documents
+            </h2>
+        {% endif %}
+        {% if conviction == True %}
         <p>We need your:</p>
         <ul class="list-bullet" style="margin-bottom: 20px; margin-left: 20px;">
-            <li>health declaration booklet</li>
+            {% if health_status == 'COMPLETED' %}
+                <li>health declaration booklet</li>
+            {% endif %}
             <li>DBS certificate.</li>
         </ul>
         <p>Send your original documents (not photocopies) to:</p>
@@ -67,23 +70,25 @@
             M1 2WD
         </p>
         <p>There may be delays if we do not receive them right away.</p>
-        {% elif health_status == 'COMPLETED' and conviction == False %}
-        <p>We need your health declaration booklet.</p>
-        <p>Send your original document (not a photocopy) to:</p>
-        <p style="margin-left: 40px;">
-            Applications team
-            <br>
-            Ofsted
-            <br>
-            Piccadilly Gate
-            <br>
-            Store Street
-            <br>
-            Manchester
-            <br>
-            M1 2WD
-        </p>
-        <p>There may be delays if we do not receive it right away.</p>
+        {% else %}
+            {% if health_status == 'COMPLETED' %}
+                <p>We need your health declaration booklet.</p>
+                <p>Send your original document (not a photocopy) to:</p>
+                <p style="margin-left: 40px;">
+                    Applications team
+                    <br>
+                    Ofsted
+                    <br>
+                    Piccadilly Gate
+                    <br>
+                    Store Street
+                    <br>
+                    Manchester
+                    <br>
+                    M1 2WD
+                </p>
+                <p>There may be delays if we do not receive it right away.</p>
+            {% endif %}
         {% endif %}
 
         <h2 class="heading-medium">

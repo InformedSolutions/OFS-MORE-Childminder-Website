@@ -52,7 +52,7 @@ class HealthTest(ViewsTest):
             personal_details_status='COMPLETED',
             childcare_type_status='COMPLETED',
             first_aid_training_status='COMPLETED',
-            eyfs_training_status='COMPLETED',
+            childcare_training_status='COMPLETED',
             criminal_record_check_status='COMPLETED',
             health_status='NOT_STARTED',
             references_status='COMPLETED',

@@ -88,7 +88,7 @@ class FirstAidTrainingTest(TestCase):
             personal_details_status='COMPLETED',
             childcare_type_status='COMPLETED',
             first_aid_training_status='NOT_STARTED',
-            eyfs_training_status='COMPLETED',
+            childcare_training_status='COMPLETED',
             criminal_record_check_status='COMPLETED',
             health_status='COMPLETED',
             references_status='COMPLETED',
