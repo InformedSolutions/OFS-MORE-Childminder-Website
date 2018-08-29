@@ -641,7 +641,7 @@ class ApplicationTestBase(object):
         flagged_fields_to_check = (
             "childcare_type_arc_flagged",
             "criminal_record_check_arc_flagged",
-            "eyfs_training_arc_flagged",
+            "childcare_training_arc_flagged",
             "first_aid_training_arc_flagged",
             "health_arc_flagged",
             "login_details_arc_flagged",

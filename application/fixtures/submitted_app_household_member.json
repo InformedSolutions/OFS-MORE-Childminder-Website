@@ -14,8 +14,8 @@
          "childcare_type_arc_flagged":false,
          "first_aid_training_status":"COMPLETED",
          "first_aid_training_arc_flagged":false,
-         "eyfs_training_status":"COMPLETED",
-         "eyfs_training_arc_flagged":false,
+         "childcare_training_status":"COMPLETED",
+         "childcare_training_arc_flagged":false,
          "criminal_record_check_status":"COMPLETED",
          "criminal_record_check_arc_flagged":false,
          "health_status":"COMPLETED",
@@ -149,7 +149,7 @@
       }
    },
    {
-      "model":"application.eyfs",
+      "model":"application.childcaretraining",
       "pk":"f1c5c3f5-5c5b-4e2a-860b-da60cbff39ad",
       "fields":{
          "application_id":"3e4c9bea-6c80-423f-af96-9553f565fa79",

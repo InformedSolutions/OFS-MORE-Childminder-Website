@@ -1,0 +1,41 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Childcare training{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+
+<div class="two-thirds">
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Childcare Training
+        </h1>
+
+    {% if register == 'childcare_register_only' %}
+
+        <p>You need to have one of the following:</p>
+        <ul class="list list-bullet" >
+            <li>training that covers the early years foundation stage (EYFS)</li>
+            <li>training in <a href="http://www.foundationyears.org.uk/2015/02/republication-of-common-core-of-skills-and-knowledge-for-the-childrens-and-young-peoples-workforce/">common core skills</a></li>
+        </ul>
+
+    {% elif register == 'early_years_register' %}
+
+        <p>You need to have training that covers the Early Years Foundation Stage (EYFS) standards.</p>
+        <p>These are the rules around teaching and caring for young children.</p>
+        <p><a href="https://www.gov.uk/find-local-council" target="_blank">Ask your council</a> for details of courses in your area.</p>
+
+    {% endif %}
+    </div>
+</div>
+
+
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    {% csrf_token %}
+    <input type="submit" class="button" value="Continue">
+</form>
+
+{% endblock %}

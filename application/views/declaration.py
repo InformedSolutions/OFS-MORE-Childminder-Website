@@ -9,6 +9,7 @@ from django.views.decorators.cache import never_cache
 from timeline_logger.models import TimelineLog
 
 from application.views.magic_link import magic_link_resubmission_confirmation_email
+from application import views
 from .. import status
 from ..forms import (DeclarationIntroForm,
                      DeclarationForm,
@@ -21,7 +22,7 @@ from ..models import (AdultInHome,
                       ChildInHome,
                       ChildcareType,
                       CriminalRecordCheck,
-                      EYFS,
+                      ChildcareTraining,
                       FirstAidTraining,
                       Reference,
                       UserDetails)
@@ -69,10 +70,9 @@ def declaration_summary(request, print=False):
             application_id=application_id_local)
         dbs_record = CriminalRecordCheck.objects.get(
             application_id=application_id_local)
-        eyfs_record = EYFS.objects.get(application_id=application_id_local)
-        eyfs_course_date = ' '.join(
-            [str(eyfs_record.eyfs_course_date_day), calendar.month_name[eyfs_record.eyfs_course_date_month],
-             str(eyfs_record.eyfs_course_date_year)])
+
+        childcare_training_table = views.ChildcareTrainingSummaryView.get_context_data(application_id_local)['table_list'][0]
+
         if childcare_record.zero_to_five:
             first_reference_record = Reference.objects.get(
                 application_id=application_id_local, reference=1)
@@ -196,7 +196,7 @@ def declaration_summary(request, print=False):
             else:
                 health_change = False
 
-            if application.eyfs_training_arc_flagged is True:
+            if application.childcare_training_arc_flagged is True:
                 early_years_training_change = True
             else:
                 early_years_training_change = False
@@ -268,8 +268,7 @@ def declaration_summary(request, print=False):
             'criminal_record_check_change': criminal_record_check_change,
             'send_hdb_declare': True,
             'health_change': health_change,
-            'eyfs_course_name': eyfs_record.eyfs_course_name,
-            'eyfs_course_date': eyfs_course_date,
+            'childcare_training_table': childcare_training_table,
             'early_years_training_change': early_years_training_change,
             'references_change': references_change,
             'adults_in_home': application.adults_in_home,
@@ -483,7 +482,7 @@ def generate_list_of_updated_tasks(application_id):
         updated_list.append('First aid training')
     if application.criminal_record_check_arc_flagged is True:
         updated_list.append('Criminal record (DBS) check')
-    if application.eyfs_training_arc_flagged is True:
+    if application.childcare_training_arc_flagged is True:
         updated_list.append('Early years training')
     if application.health_arc_flagged is True:
         updated_list.append('Health declaration booklet')
@@ -504,7 +503,7 @@ def clear_arc_flagged_statuses(application_id):
     flagged_fields_to_check = (
         "childcare_type_arc_flagged",
         "criminal_record_check_arc_flagged",
-        "eyfs_training_arc_flagged",
+        "childcare_training_arc_flagged",
         "first_aid_training_arc_flagged",
         "health_arc_flagged",
         "login_details_arc_flagged",

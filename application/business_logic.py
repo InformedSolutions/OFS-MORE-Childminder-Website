@@ -18,7 +18,7 @@ from .models import (AdultInHome,
                      ChildcareType,
                      ChildInHome,
                      CriminalRecordCheck,
-                     EYFS,
+                     ChildcareTraining,
                      FirstAidTraining,
                      HealthDeclarationBooklet,
                      Reference,
@@ -50,6 +50,19 @@ def childcare_type_logic(application_id_local, form):
         childcare_type_record.five_to_eight = five_to_eight_status
         childcare_type_record.eight_plus = eight_plus_status
     return childcare_type_record
+
+
+def childcare_register_type(application_id):
+    """
+    Function to determine the childcare register to which the applicant is applying.
+    :param application_id: app_id of the applicant for which the check is being made.
+    :return: a string containing the register to which the applicant is applying.
+    """
+    childcare_type_record = ChildcareType.objects.get(application_id=application_id)
+    if not childcare_type_record.zero_to_five and childcare_type_record.five_to_eight:
+        return 'childcare_register_only'
+    else:
+        return 'early_years_register'
 
 
 def login_contact_logic(application_id_local, form):
@@ -329,7 +342,7 @@ def first_aid_logic(application_id_local, form):
 
 def eyfs_details_logic(application_id_local, form):
     """
-    Business logic to create or update an EYFS record
+    Business logic to create or update an EYFS record for someone applying to the Early Years register.
     :param application_id_local: A string object containing the current application ID
     :param form: A form object containing the data to be stored
     :return: an EYFS object to be saved
@@ -340,16 +353,59 @@ def eyfs_details_logic(application_id_local, form):
     eyfs_course_date_month = form.cleaned_data.get('eyfs_course_date').month
     eyfs_course_date_year = form.cleaned_data.get('eyfs_course_date').year
     # If the user entered information for this task for the first time
-    if EYFS.objects.filter(application_id=application_id_local).count() == 0:
-        eyfs_record = EYFS(eyfs_course_name=eyfs_course_name, eyfs_course_date_day=eyfs_course_date_day, eyfs_course_date_month=eyfs_course_date_month, eyfs_course_date_year=eyfs_course_date_year, application_id=this_application)
+    if ChildcareTraining.objects.filter(application_id=application_id_local).count() == 0:
+        eyfs_record = ChildcareTraining(eyfs_course_name=eyfs_course_name, eyfs_course_date_day=eyfs_course_date_day, eyfs_course_date_month=eyfs_course_date_month, eyfs_course_date_year=eyfs_course_date_year, application_id=this_application)
     # If the user previously entered information for this task
-    elif EYFS.objects.filter(application_id=application_id_local).count() > 0:
-        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+    elif ChildcareTraining.objects.filter(application_id=application_id_local).count() > 0:
+        eyfs_record = ChildcareTraining.objects.get(application_id=application_id_local)
         eyfs_record.eyfs_course_name = eyfs_course_name
         eyfs_record.eyfs_course_date_day = eyfs_course_date_day
         eyfs_record.eyfs_course_date_month = eyfs_course_date_month
         eyfs_record.eyfs_course_date_year = eyfs_course_date_year
     return eyfs_record
+
+
+def training_for_childcare_register_logic(application_id_local, form):
+    """
+    Business logic to create or update an EYFS record for someone applying to the childcare register only.
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: an EYFS object to be saved
+    """
+    childcare_training = form.cleaned_data['childcare_training']
+
+    options = (
+        'eyfs_training',
+        'common_core_training',
+        'no_training',
+    )
+
+    if ChildcareTraining.objects.filter(application_id=application_id_local).count() == 0:
+        childcare_training_record = ChildcareTraining(application_id=application_id_local)
+    else:
+        childcare_training_record = ChildcareTraining.objects.get(application_id=application_id_local)
+
+    for option in options:
+        if option in childcare_training:
+            setattr(childcare_training_record, option, True)
+        else:
+            setattr(childcare_training_record, option, False)
+
+    return childcare_training_record
+
+
+def childcare_training_course_logic(application_id_local, form):
+    """
+
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: a call to the function required to update the model with the information provided.
+    """
+    childcare_type = childcare_register_type(application_id_local)
+    if childcare_type == 'childcare_register_only':
+        return training_for_childcare_register_logic(application_id_local, form)
+    else:
+        return eyfs_details_logic(application_id_local, form)
 
 
 def dbs_check_logic(application_id_local, form):

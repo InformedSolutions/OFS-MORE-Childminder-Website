@@ -1,0 +1,27 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Type of course{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+{{form.error_summary}}
+</div>
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <div class="two-thirds">
+        <h1 class="form-title heading-large">
+            Type of Course
+        </h1>
+        <p>What type of childcare course have you completed?</p>
+    </div>
+    {{form.as_div}}
+    {% csrf_token %}
+    <input type="submit" class="button" value="Save and continue">
+</form>
+<br>
+{% include 'return-to-list.html' %}
+
+{% endblock %}

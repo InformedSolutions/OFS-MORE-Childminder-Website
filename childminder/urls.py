@@ -55,10 +55,18 @@ urlpatterns = [
     url(r'^criminal-record/your-details/', views.dbs_check_dbs_details, name='DBS-Check-DBS-Details-View'),
     url(r'^criminal-record/post-certificate/', views.dbs_check_upload_dbs, name='DBS-Check-Upload-DBS-View'),
     url(r'^criminal-record/check-answers/', views.dbs_check_summary, name='DBS-Check-Summary-View'),
-    url(r'^early-years/$', views.eyfs_guidance, name='EYFS-Guidance-View'),
-    url(r'^early-years/details', views.eyfs_details, name='EYFS-Details-View'),
-    url(r'^early-years/certificate', views.eyfs_certificate, name='EYFS-Certificate-View'),
-    url(r'^early-years/check-answers/', views.eyfs_summary, name='EYFS-Summary-View'),
+
+    # ======================= #
+    # Childcare Training urls #
+    # ======================= #
+
+    url(r'^childcare-training/$', views.ChildcareTrainingGuidanceView.as_view(), name='Childcare-Training-Guidance-View'),
+    url(r'^childcare-training/details/', views.ChildcareTrainingDetailsView.as_view(), name='Childcare-Training-Details-View'),
+    url(r'^childcare-training/type/', views.TypeOfChildcareTrainingView.as_view(), name='Type-Of-Childcare-Training-View'),
+    url(r'^childcare-training-course/', views.ChildcareTrainingCourseRequiredView.as_view(), name='Childcare-Training-Course-Required-View'),
+    url(r'^childcare-training-certificate/', views.ChildcareTrainingCertificateView.as_view(), name='Childcare-Training-Certificate-View'),
+    url(r'^childcare-training/check-answers/', views.ChildcareTrainingSummaryView.as_view(), name='Childcare-Training-Summary-View'),
+
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),
     url(r'^health/booklet/', views.health_booklet, name='Health-Booklet-View'),
     url(r'^health/check-answers/', views.health_check_answers, name='Health-Check-Answers-View'),
