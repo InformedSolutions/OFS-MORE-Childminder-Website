@@ -922,15 +922,24 @@ def update_criminal_record_check(app_id, field, status):
     return True
 
 
-def get_criminal_record_check(app_id, field):
+def get_criminal_record_check(app_id, field_obj):
     """
-    TODO -mop
+    TODO -mop Add array of field returns list of results
     :param app_id:
     :param field:
     :return:
     """
     criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=app_id)
-    return getattr(criminal_record_check_record, field)
+
+    if isinstance(field_obj, list):
+        return {field: getattr(criminal_record_check_record, field) for field in field_obj}
+
+    elif isinstance(field_obj, str):
+        return getattr(criminal_record_check_record, field_obj)
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
 
 
 class UniqueDbsCheckResult:

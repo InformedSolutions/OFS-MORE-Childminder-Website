@@ -1,0 +1,64 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Check your answers: criminal record (DBS) check{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+{% load alt_text_extras %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<h1 class="form-title heading-large">Check your answers: your criminal record check</h1>
+
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="3">
+            <div class="heading-medium">
+                Your DBS certificate
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for row in table %}
+        {% if row.value is not None %}
+        <tr>
+            <td style="word-wrap: break-word" class=summary-column>
+                {{ row.title }}
+            </td>
+            <td style="word-wrap: break-word" class=summary-column>
+                {% if row.value|isinstance:"str" %}
+                    {{ row.value }}
+                {% elif row.value|isinstance:"bool" %}
+                    {% if row.value %}
+                        Yes
+                    {% else %}
+                        No
+                    {% endif %}
+                {% endif %}
+            </td>
+            <td class="change-answer">
+                <a href="{% url row.url %}?id={{id}}" alt=row.alt_text>
+                    Change <span class="visuallyhidden">{{ row.title }}</span>
+                </a>
+            </td>
+        </tr>
+        {% endif %}
+    {% endfor %}
+</table>
+<br>
+<div class="form-group">
+    <form action="{% url 'Task-List-View' %}?id={{id}}" method="get">
+        <input type="submit" class="button" value="Confirm and continue"/>
+        <input type="hidden" value="{{id}}" name="id"/>
+    </form>
+</div>
+<br>
+
+{% endblock %}

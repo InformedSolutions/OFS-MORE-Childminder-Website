@@ -175,14 +175,15 @@ class DBSUpdateView(DBSRadioView):
 class DBSCheckCapitaView(DBSCheckDetailsView):
     template_name = 'dbs-check-capita.html'
     form_class = DBSCheckCapitaForm
-    success_url = ('DBS-Upload-View', 'DBS-Summary-View')
+    success_url = ('DBS-Post-View', 'DBS-Summary-View')
 
 
 class DBSCheckNoCapitaView(DBSCheckDetailsView):
-    template_name = 'dbs-check-no-capita.html'
+    template_name = 'dbs-check-capita.html'
     form_class = DBSCheckNoCapitaForm
     # 'DBS-Post-View' is redirected to in both cases.
     success_url = ('DBS-Post-View', 'DBS-Post-View')
+
 
 class DBSGetView(DBSTemplateView):
     template_name = 'dbs-get.html'
@@ -198,12 +199,89 @@ class DBSGetView(DBSTemplateView):
 
         return super().post(request, *args, **kwargs)
 
+
 class DBSPostView(DBSTemplateView):
     template_name = 'dbs-post.html'
     success_url = 'DBS-Summary-View'
 
+
 class DBSSummaryView(DBSTemplateView):
-    pass
+    template_name = 'dbs-summary.html'
+    success_url = 'Task-List-View'
+
+    def get_context_data(self, **kwargs):
+        application_id = self.request.GET.get('id')
+
+        # Modify rows_to_generate to change displayed information
+        rows_to_generate = [
+            {
+                'field': 'dbs_certificate_number',
+                'title': 'DBS certificate number',
+                'url': self.get_certificate_number_url(application_id),
+                'alt_text': 'Change DBS certificate number'
+            },
+            {
+                'field': 'cautions_convictions',
+                'title': 'Do you have any criminal cautions or convictions?',
+                'url': 'DBS-Check-Capita-View',
+                'alt_text': 'Change answer on cautions or convictions?'
+            },
+            {
+                'field': 'lived_abroad',
+                'title': 'Have you lived outside of the UK in the last 5 years?',
+                'url': 'DBS-Lived-Abroad-View',
+                'alt_text': 'Change answer to living outside of the UK in the last 5 years'
+            },
+            {
+                'field': 'military_base',
+                'title': 'Have you lived or worked on a military base overseas in the last five years?',
+                'url': 'DBS-Military-View',
+                'alt_text': 'Change answer to living or working on a military base outside of the UK in the last 5 years'
+            },
+            {
+                'field': 'capita',
+                'title': 'Do you have an Ofsted DBS Check?',
+                'url': 'DBS-Type-View',
+                'alt_text': 'Change answer to having an Ofsted DBS Check'
+            },
+            {
+                'field': 'on_update',
+                'title': 'Are you on the DBS update service?',
+                'url': 'DBS-Update-View',
+                'alt_text': 'Change answer to being on the DBS update service'
+            },
+        ]
+
+        # Create a dictionary with the field as the key from rows_to_generate
+        # This is so that the relevant information can be accessed without having to loop through rows_to_generate
+        rows_to_generate_dict = {dict['field']: dict for dict in rows_to_generate}
+
+        # Generate a list of fields to pass into get_criminal_record_check()
+        field_list = [row['field'] for row in rows_to_generate]
+
+        # Dictionary is of format {'dbs_cert': ((dbs_cert_value_in_database)), ...}
+        table_content_dict = get_criminal_record_check(application_id, field_list)
+
+        # Create a list in format [{'id': dbs_cert, 'title': title_list[id], ...}, ...]
+        table_content = [
+            {'id': key,
+             'title': rows_to_generate_dict[key]['title'],
+             'value': value,
+             'url': rows_to_generate_dict[key]['url'],
+             'alt_text': rows_to_generate_dict[key]['alt_text']
+             }
+            for key, value in table_content_dict.items()]
+
+        return super().get_context_data(table=table_content, **kwargs)
+
+    def get_certificate_number_url(self, app_id):
+        capita_status = get_criminal_record_check(app_id, 'capita')
+        if capita_status:
+            return 'DBS-Check-Capita-View'
+        elif not capita_status:
+            return 'DBS-Check-No-Capita-View'
+        else:
+            raise ValueError('capita_status should be either True or False by this point, but it is {0}'.format(capita_status))
 
 # def dbs_check_dbs_details(request):
 #     """
