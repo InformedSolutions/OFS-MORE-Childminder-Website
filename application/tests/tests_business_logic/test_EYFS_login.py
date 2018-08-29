@@ -3,20 +3,20 @@ import datetime
 from django.test import TestCase
 from uuid import UUID
 
-from ...models import Application, EYFS, UserDetails
+from ...models import Application, ChildcareTraining, UserDetails
 
 
 class TestEYFSLogic(TestCase):
 
     def test_logic_to_create_new_record(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
-        EYFS.objects.filter(application_id=test_application_id).delete()
-        assert (EYFS.objects.filter(application_id=test_application_id).count() == 0)
+        ChildcareTraining.objects.filter(application_id=test_application_id).delete()
+        assert (ChildcareTraining.objects.filter(application_id=test_application_id).count() == 0)
 
     def test_logic_to_update_record(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'
-        EYFS.objects.filter(application_id=test_application_id).delete()
+        ChildcareTraining.objects.filter(application_id=test_application_id).delete()
         UserDetails.objects.filter(login_id=test_login_id).delete()
         test_app = Application.objects.create(
             application_id=(UUID(test_application_id)),
@@ -49,7 +49,7 @@ class TestEYFSLogic(TestCase):
             magic_link_sms=''
         )
         test_eyfs_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
-        EYFS.objects.create(
+        ChildcareTraining.objects.create(
             eyfs_id=(UUID(test_eyfs_id)),
             application_id=Application.objects.get(application_id=test_application_id),
             eyfs_course_name='course name',
@@ -57,9 +57,9 @@ class TestEYFSLogic(TestCase):
             eyfs_course_date_month=2,
             eyfs_course_date_year=2018
         )
-        assert (EYFS.objects.filter(application_id=test_application_id).count() > 0)
+        assert (ChildcareTraining.objects.filter(application_id=test_application_id).count() > 0)
 
     def delete(self):
-        EYFS.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
+        ChildcareTraining.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         Application.objects.filter(application_id='f8c42666-1367-4878-92e2-1cee6ebcb48c').delete()
         UserDetails.objects.get(login_id='004551ca-21fa-4dbe-9095-0384e73b3cbe').delete()

@@ -28,7 +28,7 @@ def get_app_task_models(app_id):
     if app_id:
 
         models = [
-            Application, Reference, CriminalRecordCheck, EYFS, HealthDeclarationBooklet, ChildInHome,
+            Application, Reference, CriminalRecordCheck, ChildcareTraining, HealthDeclarationBooklet, ChildInHome,
             ChildcareType, FirstAidTraining, ApplicantPersonalDetails, ApplicantName, ApplicantHomeAddress,
             AdultInHome
         ]
