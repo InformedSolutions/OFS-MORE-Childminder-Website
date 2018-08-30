@@ -17,7 +17,6 @@ from ...models import (ApplicantHomeAddress,
 
 
 class ApplicationTestBase(object):
-
     client = Client()
     app_id = None
 
@@ -597,6 +596,12 @@ class ApplicationTestBase(object):
 
     def TestAppPaymentCreditDetails(self):
         """Submit Credit Card details"""
+        application = Application.objects.get(application_id=self.app_id)
+        ChildcareType.objects.create(application_id=application,
+                                     zero_to_five=True,
+                                     five_to_eight=True,
+                                     eight_plus=True,
+                                     overnight_care=True)
 
         with mock.patch('application.payment_service.make_payment') as post_payment_mock:
             test_payment_response = {
