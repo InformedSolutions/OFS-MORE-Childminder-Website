@@ -115,7 +115,6 @@ urlpatterns = [
     url(r'^health-check/more-hospital', hospital_admission.MoreHospitalAdmissionsView.as_view(), name='Health-Check-Hospital-More'),
     url(r'^health-check/hospital/edit', hospital_admission.HospitalAdmissionEditView.as_view(),  name='Health-Check-Hospital-Edit'),
     url(r'^health-check/hospital-details', hospital_admission.HospitalAdmissionView.as_view(), name='Health-Check-Hospital'),
-
     url(r'^health-check/check-answers', summary.Summary.as_view(), name='Health-Check-Summary'),
     url(r'^health-check/declaration', declaration.Declaration.as_view(), name='Health-Check-Declaration'),
     url(r'^health-check/thank-you', thank_you.ThankYou.as_view(), name='Health-Check-Thank-You'),
