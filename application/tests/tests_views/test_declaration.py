@@ -3,11 +3,11 @@ from .view_parent import *
 
 class DeclarationTest(ViewsTest):
 
-    def test_url_resolves_to_page(self):
+    def test_url_resolves_to_page_check_answers(self):
         found = resolve(settings.URL_PREFIX + '/check-answers/')
         self.assertEqual(found.func, declaration_summary)
 
-    def test_page_not_displayed_without_id(self):
+    def test_page_not_displayed_without_id_check_answers(self):
         c = Client()
         try:
             c.get(settings.URL_PREFIX + '/check-answers?id=')
@@ -15,11 +15,11 @@ class DeclarationTest(ViewsTest):
         except:
             self.assertEqual(0, 0)
 
-    def test_url_resolves_to_page(self):
+    def test_url_resolves_to_page_declaration(self):
         found = resolve(settings.URL_PREFIX + '/declaration/')
         self.assertEqual(found.func, declaration_declaration)
 
-    def test_page_not_displayed_without_id(self):
+    def test_page_not_displayed_without_id_declaration(self):
         c = Client()
         try:
             c.get(settings.URL_PREFIX + '/declaration?id=')
@@ -27,11 +27,11 @@ class DeclarationTest(ViewsTest):
         except:
             self.assertEqual(0, 0)
 
-    def test_url_resolves_to_page(self):
+    def test_url_resolves_to_page_your_declaration(self):
         found = resolve(settings.URL_PREFIX + '/your-declaration/')
         self.assertEqual(found.func, declaration_declaration)
 
-    def test_page_not_displayed_without_id(self):
+    def test_page_not_displayed_without_id_your_declaration(self):
         c = Client()
         try:
             c.get(settings.URL_PREFIX + '/your-declaration?id=')
