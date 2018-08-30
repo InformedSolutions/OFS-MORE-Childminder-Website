@@ -381,7 +381,8 @@ def training_for_childcare_register_logic(application_id_local, form):
     )
 
     if ChildcareTraining.objects.filter(application_id=application_id_local).count() == 0:
-        childcare_training_record = ChildcareTraining(application_id=application_id_local)
+        application_record        = Application.objects.get(application_id=application_id_local)
+        childcare_training_record = ChildcareTraining.objects.create(application_id=application_record)
     else:
         childcare_training_record = ChildcareTraining.objects.get(application_id=application_id_local)
 
