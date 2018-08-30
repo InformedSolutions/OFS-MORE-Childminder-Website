@@ -180,8 +180,8 @@ def task_list(request):
                 'hidden': False,
                 'status_url': None,
                 'status_urls': [
-                    {'status': 'COMPLETED', 'url': 'DBS-Check-Summary-View'},
-                    {'status': 'FLAGGED', 'url': 'DBS-Check-Summary-View'},
+                    {'status': 'COMPLETED', 'url': 'DBS-Summary-View'},
+                    {'status': 'FLAGGED', 'url': 'DBS-Summary-View'},
                     {'status': 'OTHER', 'url': 'DBS-Lived-Abroad-View'}
                 ],
             },

@@ -31,10 +31,7 @@ class DBSRadioForm(ChildminderForms):
         self.dbs_field_name = kwargs.pop('dbs_field_name')
         super().__init__(*args, **kwargs)
 
-        self.fields[self.choice_field_name] = self.get_choice_field_data()
-
-        # If information was previously entered, display it on the form
-        self.fields = self.populate_initial_values()
+        self.fields[self.dbs_field_name] = self.get_choice_field_data()
 
     def get_options(self):
         options = (
@@ -43,18 +40,18 @@ class DBSRadioForm(ChildminderForms):
         )
         return options
 
-    def populate_initial_values(self):
-        if self.dbs_field_name is not None:
-            fields = self.fields
-
-            if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
-                dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
-                fields[self.choice_field_name].initial = getattr(dbs_record, self.dbs_field_name)
-
-            return fields
-
-        else:
-            raise NotImplementedError("dbs_field_name must not be None.")
+    # def populate_initial_values(self):
+    #     if self.dbs_field_name is not None:
+    #         fields = self.fields
+    #
+    #         if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
+    #             dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
+    #             fields[self.choice_field_name].initial = getattr(dbs_record, self.dbs_field_name)
+    #
+    #         return fields
+    #
+    #     else:
+    #         raise NotImplementedError("dbs_field_name must not be None.")
 
     def get_choice_field_data(self):
         raise NotImplementedError("No choice field was inherited.")
@@ -101,6 +98,18 @@ class DBSTypeForm(DBSRadioForm):
                                  error_messages={
                                      'required': 'Please say if you have an Ofsted DBS check'})
 
+class DBSUpdateForm(DBSRadioForm):
+    choice_field_name = 'on_update'
+
+    def get_choice_field_data(self):
+        return forms.ChoiceField(label='Are you on the DBS update service?',
+                                 choices=self.get_options(),
+                                 widget=InlineRadioSelect,
+                                 required=True,
+                                 error_messages={
+                                     'required': 'Please say if you are on the DBS update service'})
+
+
 class DBSCheckDetailsForm(DBSRadioForm):
     """
     GOV.UK form for the Your criminal record (DBS) check: details page
@@ -113,8 +122,6 @@ class DBSCheckDetailsForm(DBSRadioForm):
                                                 required=True,
                                                 error_messages={'required': 'Please enter the DBS certificate number'},
                                                 widget=dbs_certificate_number_widget)
-
-    show_cautions_convictions = None
     choice_field_name = 'cautions_convictions'
 
     def __init__(self, *args, **kwargs):
@@ -125,6 +132,7 @@ class DBSCheckDetailsForm(DBSRadioForm):
         """
         self.application_id = kwargs.pop('id')
         self.dbs_field_name = kwargs.pop('dbs_field_name')
+        self.show_cautions_convictions = kwargs.pop('show_cautions_convictions')
         super(ChildminderForms, self).__init__(*args, **kwargs)
 
         if self.show_cautions_convictions is None:
@@ -132,23 +140,23 @@ class DBSCheckDetailsForm(DBSRadioForm):
         elif self.show_cautions_convictions:
             self.fields[self.choice_field_name] = self.get_choice_field_data()
 
-        # If information was previously entered, display it on the form
-        self.fields = self.populate_initial_values()
+        # # If information was previously entered, display it on the form
+        # self.fields = self.populate_initial_values()
 
-    def populate_initial_values(self):
-        if self.show_cautions_convictions is not None:
-            fields = self.fields
-
-            if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
-                dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
-                fields['dbs_certificate_number'].initial = getattr(dbs_record, 'dbs_certificate_number')
-                if self.show_cautions_convictions:
-                    fields[self.choice_field_name].initial = getattr(dbs_record, self.dbs_field_name)
-
-            return fields
-
-        else:
-            raise NotImplementedError("show_cautions_convictions must not be None.")
+    # def populate_initial_values(self):
+    #     if self.show_cautions_convictions is not None:
+    #         fields = self.fields
+    #
+    #         if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
+    #             dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
+    #             fields['dbs_certificate_number'].initial = getattr(dbs_record, 'dbs_certificate_number')
+    #             if self.show_cautions_convictions:
+    #                 fields[self.choice_field_name].initial = getattr(dbs_record, self.dbs_field_name)
+    #
+    #         return fields
+    #
+    #     else:
+    #         raise NotImplementedError("show_cautions_convictions must not be None.")
 
     def clean_dbs_certificate_number(self):
         """
@@ -171,20 +179,8 @@ class DBSCheckDetailsForm(DBSRadioForm):
         return dbs_certificate_number
 
 
-class DBSUpdateForm(DBSRadioForm):
-    choice_field_name = 'on_update'
-
-    def get_choice_field_data(self):
-        return forms.ChoiceField(label='Are you on the DBS update service?',
-                                 choices=self.get_options(),
-                                 widget=InlineRadioSelect,
-                                 required=True,
-                                 error_messages={
-                                     'required': 'Please say if you are on the DBS update service'})
-
-
 class DBSCheckCapitaForm(DBSCheckDetailsForm):
-    show_cautions_convictions = True
+
 
     def get_choice_field_data(self):
         return forms.ChoiceField(label='Do you have any criminal cautions or convictions?',
@@ -196,4 +192,4 @@ class DBSCheckCapitaForm(DBSCheckDetailsForm):
                                      'required': 'Please say if you have any cautions or convictions'})
 
 class DBSCheckNoCapitaForm(DBSCheckDetailsForm):
-    show_cautions_convictions = False
+    pass

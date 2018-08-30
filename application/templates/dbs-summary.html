@@ -44,12 +44,10 @@
     {% endfor %}
 </table>
 <br>
-<div class="form-group">
-    <form action="{% url 'Task-List-View' %}?id={{id}}" method="get">
-        <input type="submit" class="button" value="Confirm and continue"/>
-        <input type="hidden" value="{{id}}" name="id"/>
-    </form>
-</div>
+<form method="post" novalidate>
+    {% csrf_token %}
+    <input type="submit" class="button" value="Confirm and continue"/>
+</form>
 <br>
 
 {% endblock %}
