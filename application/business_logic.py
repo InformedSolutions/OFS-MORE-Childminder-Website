@@ -59,7 +59,7 @@ def childcare_register_type(application_id):
     :return: a string containing the register to which the applicant is applying.
     """
     childcare_type_record = ChildcareType.objects.get(application_id=application_id)
-    if not childcare_type_record.zero_to_five and childcare_type_record.five_to_eight:
+    if not childcare_type_record.zero_to_five:
         return 'childcare_register_only'
     else:
         return 'early_years_register'
