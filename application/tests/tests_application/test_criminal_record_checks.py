@@ -95,7 +95,6 @@ class DBSPostViewTests(DBSTemplateViewTestCase):
         self.correct_url = 'DBS-Summary-View'
 
 class DBSRadioViewTests(NoMiddlewareTestCase):
-    #TODO -test
     def setUp(self):
         self.dbs_views_path = 'application.views.dbs'
         self.client = Client()

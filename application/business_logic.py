@@ -964,7 +964,6 @@ def update_criminal_record_check(app_id, field_obj, status):
 
 def get_criminal_record_check(app_id, field_obj):
     """
-    TODO -mop Add array of field returns list of results
     :param app_id: applicant's application_id
     :param field_obj: CriminalRecordCheck field or list of CriminalRecordCheck fields
     :return: Boolean True if successfully updated.

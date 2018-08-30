@@ -11,7 +11,6 @@ from ..business_logic import childminder_dbs_number_duplication_check, childmind
 
 class DBSRadioForm(ChildminderForms):
     """
-    TODO -mop
     GOV.UK form for the Criminal record check: generic radio button form
     """
     field_label_classes = 'form-label-bold'
@@ -39,19 +38,6 @@ class DBSRadioForm(ChildminderForms):
             ('False', 'No')
         )
         return options
-
-    # def populate_initial_values(self):
-    #     if self.dbs_field_name is not None:
-    #         fields = self.fields
-    #
-    #         if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
-    #             dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
-    #             fields[self.choice_field_name].initial = getattr(dbs_record, self.dbs_field_name)
-    #
-    #         return fields
-    #
-    #     else:
-    #         raise NotImplementedError("dbs_field_name must not be None.")
 
     def get_choice_field_data(self):
         raise NotImplementedError("No choice field was inherited.")
@@ -86,8 +72,8 @@ class DBSMilitaryForm(DBSRadioForm):
 
 class DBSTypeForm(DBSRadioForm):
     """
-        GOV.UK form for the Criminal record check: type page
-        """
+    GOV.UK form for the Criminal record check: type page
+    """
     choice_field_name = 'capita'
 
     def get_choice_field_data(self):
@@ -99,6 +85,9 @@ class DBSTypeForm(DBSRadioForm):
                                      'required': 'Please say if you have an Ofsted DBS check'})
 
 class DBSUpdateForm(DBSRadioForm):
+    """
+    GOV.UK form for the Criminal record check: update page
+    """
     choice_field_name = 'on_update'
 
     def get_choice_field_data(self):
@@ -112,7 +101,7 @@ class DBSUpdateForm(DBSRadioForm):
 
 class DBSCheckDetailsForm(DBSRadioForm):
     """
-    GOV.UK form for the Your criminal record (DBS) check: details page
+    GOV.UK form for generic check details forms
     """
     dbs_certificate_number_widget = NumberInput()
     dbs_certificate_number_widget.input_classes = 'form-control form-control-1-4'
@@ -140,24 +129,6 @@ class DBSCheckDetailsForm(DBSRadioForm):
         elif self.show_cautions_convictions:
             self.fields[self.choice_field_name] = self.get_choice_field_data()
 
-        # # If information was previously entered, display it on the form
-        # self.fields = self.populate_initial_values()
-
-    # def populate_initial_values(self):
-    #     if self.show_cautions_convictions is not None:
-    #         fields = self.fields
-    #
-    #         if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
-    #             dbs_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
-    #             fields['dbs_certificate_number'].initial = getattr(dbs_record, 'dbs_certificate_number')
-    #             if self.show_cautions_convictions:
-    #                 fields[self.choice_field_name].initial = getattr(dbs_record, self.dbs_field_name)
-    #
-    #         return fields
-    #
-    #     else:
-    #         raise NotImplementedError("show_cautions_convictions must not be None.")
-
     def clean_dbs_certificate_number(self):
         """
         DBS certificate number validation
@@ -180,7 +151,9 @@ class DBSCheckDetailsForm(DBSRadioForm):
 
 
 class DBSCheckCapitaForm(DBSCheckDetailsForm):
-
+    """
+    GOV.UK form for the Criminal record check: Capita page
+    """
 
     def get_choice_field_data(self):
         return forms.ChoiceField(label='Do you have any criminal cautions or convictions?',
@@ -192,4 +165,7 @@ class DBSCheckCapitaForm(DBSCheckDetailsForm):
                                      'required': 'Please say if you have any cautions or convictions'})
 
 class DBSCheckNoCapitaForm(DBSCheckDetailsForm):
+    """
+    GOV.UK form for the Criminal record check: No capita page
+    """
     pass

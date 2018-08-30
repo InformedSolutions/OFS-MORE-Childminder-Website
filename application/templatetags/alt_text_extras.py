@@ -23,8 +23,8 @@ def number_to_spatial_ordinal(value):
 @register.filter(name='isinstance')
 def is_instance_template_tag(value, arg):
     """
-    TODO -mop
-    :param value:
-    :return:
+    :param value: obj to check type of
+    :param arg: type to check against in string form.
+    :return: Boolean True if value's type is arg, else False.
     """
     return isinstance(value, locate(arg))

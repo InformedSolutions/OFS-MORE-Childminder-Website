@@ -1,19 +1,11 @@
 import uuid
 
-from django.utils import timezone
-
-from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.shortcuts import render
 from django.core.urlresolvers import reverse
 
-from ..summary_page_data import dbs_summary_dict
-from ..table_util import table_creator, submit_link_setter
 from .. import status
 from ..business_logic import (get_criminal_record_check,
-                              update_criminal_record_check,
-                              dbs_check_logic,
-                              reset_declaration)
+                              update_criminal_record_check)
 from ..forms import (DBSLivedAbroadForm,
                      DBSMilitaryForm,
                      DBSTypeForm,
@@ -25,7 +17,6 @@ from ..models import (Application,
 
 from ..utils import build_url
 
-# New Imports TODO: -mop
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
 
@@ -46,7 +37,7 @@ class DBSTemplateView(TemplateView):
         return HttpResponseRedirect(redirect_url)
 
 class DBSGuidanceView(DBSTemplateView):
-    template_name = 'dbs-check-guidance.html'
+    template_name = 'dbs-guidance.html'
     success_url = 'DBS-Type-View'
 
 
