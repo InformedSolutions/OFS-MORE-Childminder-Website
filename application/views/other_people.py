@@ -1068,7 +1068,7 @@ def other_people_resend_email(request):
                 # If health check has been flagged, remove flag once email resent; else, pass.
                 # form.remove_flag won't work because form is simply a 'Continue' button - it has no fields.
                 try:
-                    adult_arc_comment = ArcComments.objects.get(table_pk=adult_record.pk)
+                    adult_arc_comment = ArcComments.objects.get(table_pk=adult_record.pk, field_name='health_check_status')
                     if adult_arc_comment.flagged:
                         adult_arc_comment.flagged = False
                         adult_arc_comment.save()
