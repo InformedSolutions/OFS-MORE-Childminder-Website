@@ -145,7 +145,11 @@
       "fields":{
          "application_id":"3e4c9bea-6c80-423f-af96-9553f565fa79",
          "dbs_certificate_number":"000000000012",
-         "cautions_convictions":false
+         "cautions_convictions": false,
+         "lived_abroad": true,
+         "military_base": true,
+         "capita": true,
+         "on_update": null
       }
    },
    {

@@ -264,7 +264,11 @@
       "fields":{
          "application_id":"9c8e1285-84a0-439e-a824-42b94cf3d2c5",
          "dbs_certificate_number":"738947890237",
-         "cautions_convictions":false
+         "cautions_convictions": false,
+         "lived_abroad": true,
+         "military_base": true,
+         "capita": true,
+         "on_update": null
       }
    },
    {
