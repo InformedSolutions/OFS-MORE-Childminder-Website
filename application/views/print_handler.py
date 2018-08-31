@@ -12,7 +12,7 @@ def base_print_handler(request, page):
                      'order_code': order_code,
                      'print_class': 'visually-hidden'}
         if page == 'master-summary':
-            variables.update(declaration_summary(request, print=True))
+            variables.update(declaration_summary(request, print_mode=True))
 
         return render(request, str(page + '.html'), variables)
 

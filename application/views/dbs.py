@@ -16,6 +16,7 @@ from ..models import (Application,
                       CriminalRecordCheck)
 
 from ..utils import build_url
+from ..table_util import Table, Row
 
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
@@ -139,9 +140,18 @@ class DBSSummaryView(DBSTemplateView):
     template_name = 'dbs-summary.html'
     success_url = 'Task-List-View'
 
-    def get_context_data(self, **kwargs):
-        application_id = self.request.GET.get('id')
+    @staticmethod
+    def get_certificate_number_url(app_id):
+        capita_status = get_criminal_record_check(app_id, 'capita')
+        if capita_status:
+            return 'DBS-Check-Capita-View'
+        elif not capita_status:
+            return 'DBS-Check-No-Capita-View'
+        else:
+            raise ValueError('capita_status should be either True or False by this point, but it is {0}'.format(capita_status))
 
+    @staticmethod
+    def get_rows_to_generate(app_id):
         # Modify rows_to_generate to change displayed information
         rows_to_generate = [
             {
@@ -171,7 +181,7 @@ class DBSSummaryView(DBSTemplateView):
             {
                 'field': 'dbs_certificate_number',
                 'title': 'DBS certificate number',
-                'url': self.get_certificate_number_url(application_id),
+                'url': DBSSummaryView.get_certificate_number_url(app_id),
                 'alt_text': 'Change DBS certificate number'
             },
             {
@@ -181,6 +191,26 @@ class DBSSummaryView(DBSTemplateView):
                 'alt_text': 'Change answer on cautions or convictions?'
             }
         ]
+        return rows_to_generate
+
+    def get_context_data(self, **kwargs):
+        application_id = self.request.GET.get('id')
+
+        table_content = self.generate_rows(application_id)
+
+        return super().get_context_data(table=table_content, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        application_id = request.GET.get('id')
+
+        # Update the task status to 'COMPLETED' in all cases
+        status.update(application_id, 'criminal_record_check_status', 'COMPLETED')
+
+        return super().post(request, *args, **kwargs)
+
+    @staticmethod
+    def generate_rows(app_id):
+        rows_to_generate = DBSSummaryView.get_rows_to_generate(app_id)
 
         # Create a dictionary with the field as the key from rows_to_generate
         # This is so that the relevant information can be accessed without having to loop through rows_to_generate
@@ -190,7 +220,7 @@ class DBSSummaryView(DBSTemplateView):
         field_list = [row['field'] for row in rows_to_generate]
 
         # Dictionary is of format {'dbs_cert': ((dbs_cert_value_in_database)), ...}
-        table_content_dict = get_criminal_record_check(application_id, field_list)
+        table_content_dict = get_criminal_record_check(app_id, field_list)
 
         # Create a list in format [{'id': dbs_cert, 'title': title_list[id], ...}, ...]
         table_content = [
@@ -202,25 +232,12 @@ class DBSSummaryView(DBSTemplateView):
              }
             for key, value in table_content_dict.items()]
 
-        return super().get_context_data(table=table_content, **kwargs)
+        return table_content
 
-    def get_certificate_number_url(self, app_id):
-        capita_status = get_criminal_record_check(app_id, 'capita')
-        if capita_status:
-            return 'DBS-Check-Capita-View'
-        elif not capita_status:
-            return 'DBS-Check-No-Capita-View'
-        else:
-            raise ValueError('capita_status should be either True or False by this point, but it is {0}'.format(capita_status))
 
-    def post(self, request, *args, **kwargs):
-        application_id = request.GET.get('id')
-
-        # Update the task status to 'COMPLETED' in all cases
-        status.update(application_id, 'criminal_record_check_status', 'COMPLETED')
-
-        return super().post(request, *args, **kwargs)
-
+    @staticmethod
+    def get_context_data_static(app_id):
+        return DBSSummaryView.generate_rows(app_id)
 
 class DBSUpdateView(DBSRadioView):
     template_name = 'dbs-update.html'

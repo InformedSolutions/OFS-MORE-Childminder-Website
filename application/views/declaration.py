@@ -28,13 +28,33 @@ from ..models import (AdultInHome,
                       UserDetails)
 
 
-def declaration_summary(request, print=False):
+def declaration_summary(request, print_mode=False):
     """
     Method returning the template for the Declaration: summary page (for a given application) and navigating to
     the Declaration: declaration page when successfully completed
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Declaration: summary template
     """
+
+    def get_arc_flagged(application):
+        """
+        Iterate through db_task_names and get the related _arc_flagged database value
+        :param application: application model instance for the user
+        :return: Tuple containing all _arc_flagged values in order they appear within db_task_names
+        """
+
+        db_arc_flagged = ['login_details_arc_flagged',
+                          'childcare_type_arc_flagged',
+                          'personal_details_arc_flagged',
+                          'first_aid_training_arc_flagged',
+                          'health_arc_flagged',
+                          'childcare_training_arc_flagged',
+                          'criminal_record_check_arc_flagged',
+                          'people_in_home_arc_flagged',
+                          'references_arc_flagged']
+
+        return (getattr(application, task) for task in db_arc_flagged)
+
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = DeclarationSummaryForm()
@@ -72,6 +92,7 @@ def declaration_summary(request, print=False):
             application_id=application_id_local)
 
         childcare_training_table = views.ChildcareTrainingSummaryView.get_context_data(application_id_local)['table_list'][0]
+        criminal_record_check_context = views.DBSSummaryView.get_context_data_static(application_id_local)
 
         if childcare_record.zero_to_five:
             first_reference_record = Reference.objects.get(
@@ -170,51 +191,17 @@ def declaration_summary(request, print=False):
 
         # For returned applications, display change links only if task has been returned
         if application.application_status == 'FURTHER_INFORMATION':
+            arc_flagged_statuses = get_arc_flagged(application)
 
-            if application.login_details_arc_flagged is True:
-                sign_in_details_change = True
-            else:
-                sign_in_details_change = False
-
-            if application.childcare_type_arc_flagged is True:
-                type_of_childcare_change = True
-            else:
-                type_of_childcare_change = False
-
-            if application.personal_details_arc_flagged is True:
-                personal_details_change = True
-            else:
-                personal_details_change = False
-
-            if application.first_aid_training_arc_flagged is True:
-                first_aid_training_change = True
-            else:
-                first_aid_training_change = False
-            
-            if application.health_arc_flagged is True:
-                health_change = True
-            else:
-                health_change = False
-
-            if application.childcare_training_arc_flagged is True:
-                early_years_training_change = True
-            else:
-                early_years_training_change = False
-
-            if application.criminal_record_check_arc_flagged is True:
-                criminal_record_check_change = True
-            else:
-                criminal_record_check_change = False
-
-            if application.people_in_home_arc_flagged is True:
-                people_in_your_home_change = True
-            else:
-                people_in_your_home_change = False
-
-            if application.references_arc_flagged is True:
-                references_change = True
-            else:
-                references_change = False
+            sign_in_details_change,\
+            type_of_childcare_change, \
+            personal_details_change, \
+            first_aid_training_change, \
+            health_change, \
+            early_years_training_change, \
+            criminal_record_check_change, \
+            people_in_your_home_change, \
+            references_change = arc_flagged_statuses
 
         else:
             sign_in_details_change = True
@@ -263,8 +250,7 @@ def declaration_summary(request, print=False):
             'first_aid_certificate_month': first_aid_record.course_month,
             'first_aid_certificate_year': first_aid_record.course_year,
             'first_aid_training_change': first_aid_training_change,
-            'dbs_certificate_number': dbs_record.dbs_certificate_number,
-            'cautions_convictions': dbs_record.cautions_convictions,
+            'criminal_record_check_context': criminal_record_check_context,
             'criminal_record_check_change': criminal_record_check_change,
             'send_hdb_declare': True,
             'health_change': health_change,
@@ -279,16 +265,17 @@ def declaration_summary(request, print=False):
             'child_lists': child_lists,
             'turning_16': application.children_turning_16,
             'people_in_your_home_change': people_in_your_home_change,
-            'print': print
+            'print': print_mode
         }
 
         variables = {**variables, **references_vars}
 
         if application.declarations_status != 'COMPLETED':
             status.update(application_id_local, 'declarations_status', 'NOT_STARTED')
-        if print:
+        if print_mode:
             return variables
         return render(request, 'master-summary.html', variables)
+
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = DeclarationSummaryForm(request.POST)
