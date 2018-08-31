@@ -189,8 +189,10 @@ class ChildcareTrainingSummaryView(View):
             row_value = 'Childcare qualification (level 2 or higher) and training in common core skills'
         elif childcare_training_record.eyfs_training:
             row_value = 'Childcare qualification (level 2 or higher)'
-        else:
+        elif childcare_training_record.common_core_training:
             row_value = 'Training in common core skills'
+        else:
+            row_value = 'None'
 
         childcare_training_row = Row('childcare_training', 'What type of childcare course have you completed?',
                                      row_value, 'Type-Of-Childcare-Training-View', '')
