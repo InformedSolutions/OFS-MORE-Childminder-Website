@@ -14,25 +14,24 @@
         Your declaration
     </h1>
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <h3 class="heading-small">
-            I understand that Ofsted will:
-        </h3>
-        {{ fields.0 }}
-        <h3 class="heading-small">
-            I am happy for Ofsted to:
-        </h3>
-        {{ fields.1 }}
+        {% if registers %}
+        <p>
+            By continuing, I understand that I must follow the rules in the register.
+        </p>
+        {% endif %}
 
-        <h3 class="heading-small">
-            {% if is_resubmission %}
-            By continuing, I reconfirm that:
+        <p>
+            {% if registers %}
+                I confirm that:
             {% else %}
-            By continuing, I confirm that:
+                By continuing, I confirm that:
             {% endif %}
-        </h3>
-        {{ fields.2 }}
-        {{ fields.3 }}
-        {{ fields.4 }}
+            <ul class="list-bullet">
+                <li>I will get public liability insurance before I start work</li>
+                <li>the information I have given is correct</li>
+                <li>I will tell Ofsted if this information changes</li>
+            </ul>
+        </p>
 
         <p>
             <img src="{% static 'icon-important-2x.png' %}" alt="Important"
@@ -46,14 +45,12 @@
             </div>
         </p>
 
+
+        {{ form.as_div }}
+
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>
-
-        {% if is_resubmission %}
-            <input type="submit" class="button" value="Confirm"/>
-        {% else %}
-            <input type="submit" class="button" value="Confirm and pay your fee"/>
-        {% endif %}
+        <input type="submit" class="button" value="Continue"/>
     </form>
 </div>
 </div>
