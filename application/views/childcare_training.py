@@ -49,6 +49,11 @@ class ChildcareTrainingDetailsView(FormView):
     form_class = EYFSDetailsForm
     success_url = 'Childcare-Training-Certificate-View'
 
+    def get_context_data(self, **kwargs):
+        context = super(ChildcareTrainingDetailsView, self).get_context_data(**kwargs)
+        context['application_id'] = self.request.GET['id']
+        return context
+
     def get_form_kwargs(self):
         kwargs = super(ChildcareTrainingDetailsView, self).get_form_kwargs()
         kwargs['id'] = self.request.GET['id']
@@ -79,6 +84,11 @@ class TypeOfChildcareTrainingView(FormView):
     template_name = 'childcare-training-type.html'
     form_class = TypeOfChildcareTrainingForm
     success_url = None
+
+    def get_context_data(self, **kwargs):
+        context = super(TypeOfChildcareTrainingView, self).get_context_data(**kwargs)
+        context['application_id'] = self.request.GET['id']
+        return context
 
     def get_form_kwargs(self):
         kwargs = super(TypeOfChildcareTrainingView, self).get_form_kwargs()
@@ -116,7 +126,7 @@ class ChildcareTrainingCourseRequiredView(View):
     success_url = 'Task-List-View'
 
     def get(self, request):
-        return render(request, template_name=self.template_name)
+        return render(request, template_name=self.template_name, context=self.get_context_data())
 
     def post(self, request):
         application_id = self.request.GET['id']
@@ -126,6 +136,11 @@ class ChildcareTrainingCourseRequiredView(View):
             status.update(application_id, 'childcare_training_status', 'IN_PROGRESS')
 
         return HttpResponseRedirect(reverse(self.success_url) + '?id=' + request.GET['id'])
+
+    def get_context_data(self, **kwargs):
+        context = dict()
+        context['application_id'] = self.request.GET['id']
+        return context
 
 
 class ChildcareTrainingCertificateView(View):
