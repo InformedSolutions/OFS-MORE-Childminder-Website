@@ -1,4 +1,5 @@
 import uuid
+import collections
 
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
@@ -29,13 +30,14 @@ class DBSTemplateView(TemplateView):
     def get_context_data(self, **kwargs):
         application_id = self.request.GET.get('id')
 
-        return super().get_context_data(id=application_id, **kwargs)
+        return super().get_context_data(id=application_id, application_id=application_id, **kwargs)
 
     def post(self, request, *args, **kwargs):
         application_id = request.GET.get('id')
         redirect_url = build_url(self.success_url, get={'id': application_id})
 
         return HttpResponseRedirect(redirect_url)
+
 
 class DBSGuidanceView(DBSTemplateView):
     template_name = 'dbs-guidance.html'
@@ -45,6 +47,7 @@ class DBSGuidanceView(DBSTemplateView):
 class DBSGoodConductView(DBSTemplateView):
     template_name = 'dbs-good-conduct.html'
     success_url = 'DBS-Email-Certificates-View'
+
 
 class DBSEmailCertificatesView(DBSTemplateView):
     template_name = 'dbs-email-certificates.html'
@@ -113,8 +116,20 @@ class DBSRadioView(FormView):
 
     def get_context_data(self, **kwargs):
         application_id = self.request.GET.get('id')
+        application = Application.objects.get(application_id=application_id)
+        form = self.get_form()
 
-        return super().get_context_data(id=application_id, **kwargs)
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
+        form.check_flag()
+
+        context = {'id': application_id}
+        if 'form' not in kwargs:
+            context['form']: form
+
+        return super().get_context_data(**context, **kwargs)
 
     def form_valid(self, form):
         application_id = self.request.GET.get('id')
@@ -137,7 +152,7 @@ class DBSRadioView(FormView):
 
 
 class DBSSummaryView(DBSTemplateView):
-    template_name = 'dbs-summary.html'
+    template_name = 'generic-summary-template.html'
     success_url = 'Task-List-View'
 
     @staticmethod
@@ -196,9 +211,16 @@ class DBSSummaryView(DBSTemplateView):
     def get_context_data(self, **kwargs):
         application_id = self.request.GET.get('id')
 
+        # table_content is used for populating the dbs summary page, it is NOT the Table class object.
         table_content = self.generate_rows(application_id)
 
-        return super().get_context_data(table=table_content, **kwargs)
+        # table_obj is used primarily for getting errors, it IS the Table class object.
+        table_obj = self.get_table_object(application_id)
+
+        context = {'table_list': [table_obj],
+                   'page_title': 'Check your answers: your criminal record checks'}
+
+        return super().get_context_data(**context, **kwargs)
 
     def post(self, request, *args, **kwargs):
         application_id = request.GET.get('id')
@@ -234,10 +256,52 @@ class DBSSummaryView(DBSTemplateView):
 
         return table_content
 
+    @staticmethod
+    def get_table_object(app_id):
+        criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=app_id)
+        criminal_record_id = criminal_record_check_record.pk
+
+        # childcare_training_row = Row('childcare_training', 'What type of childcare course have you completed?', row_value, 'Type-Of-Childcare-Training', None)
+
+        rows_to_gen_list = DBSSummaryView.get_rows_to_generate(app_id)
+        rows_to_gen_tuple = tuple(rows_to_gen_list)
+
+        #Initialize rows initially as their rows_to_generate value IN ORDER.
+        lived_abroad_row,\
+        military_base_row, \
+        capita_row, \
+        on_update_row, \
+        dbs_certificate_number_row, \
+        cautions_convictions_row = rows_to_gen_tuple
+
+        row_list = [lived_abroad_row,
+                    military_base_row,
+                    capita_row,
+                    on_update_row,
+                    dbs_certificate_number_row,
+                    cautions_convictions_row]
+
+        non_empty_row_list = [row for row in row_list if get_criminal_record_check(app_id, row['field']) is not None]
+
+        Row_Obj_row_list = [Row(row['field'],
+                                row['title'],
+                                get_criminal_record_check(app_id, row['field']),
+                                row['url']
+                                , '')
+                            for row in non_empty_row_list]
+
+        criminal_record_check_summary_table = Table([criminal_record_id])
+        criminal_record_check_summary_table.error_summary_title = 'There was a problem'
+        criminal_record_check_summary_table.row_list = Row_Obj_row_list
+        criminal_record_check_summary_table.get_errors()
+
+        return criminal_record_check_summary_table
+
 
     @staticmethod
     def get_context_data_static(app_id):
         return DBSSummaryView.generate_rows(app_id)
+
 
 class DBSUpdateView(DBSRadioView):
     template_name = 'dbs-update.html'
@@ -258,9 +322,13 @@ class DBSTypeView(DBSRadioView):
         initial_bool = form.initial[self.dbs_field_name]
         update_bool = form.cleaned_data[self.dbs_field_name] == 'True'
 
+        application = Application.objects.get(application_id=application_id)
+
         # If the 'Type of DBS check' is changed then clear the user's dbs_certificate_number
-        if update_bool != initial_bool:
+        # Also check that the application is not in review as this can lead to blank fields being submitted.
+        if update_bool != initial_bool and application.application_status != 'FURTHER_INFORMATION':
             successfully_updated = update_criminal_record_check(application_id, 'dbs_certificate_number', '')
+            successfully_updated = update_criminal_record_check(application_id, 'cautions_convictions', None)
 
         return super().form_valid(form)
 
@@ -280,11 +348,13 @@ class DBSLivedAbroadView(DBSRadioView):
 
     def get(self, request, *args, **kwargs):
         application_id = self.request.GET.get('id')
+        change_mode = self.request.GET.get('change')
         application = Application.objects.get(application_id=application_id)
+        task_is_arc_flagged = application.criminal_record_check_arc_flagged
 
         # Re-route depending on task status (criminal_record_check_status)
         dbs_task_status = application.criminal_record_check_status
-        if dbs_task_status == 'NOT_STARTED' or 'IN_PROGRESS':
+        if dbs_task_status == 'NOT_STARTED':
             # Update the task status to 'IN_PROGRESS' from 'NOT_STARTED'
             status.update(application_id, 'criminal_record_check_status', 'IN_PROGRESS')
 
@@ -294,10 +364,9 @@ class DBSLivedAbroadView(DBSRadioView):
                                                    application_id=application,
                                                    dbs_certificate_number='')
 
-        elif dbs_task_status == 'FLAGGED' or 'COMPLETED':
-            # Re-route user to summary page
-            redirect_url = build_url(reverse('DBS-Summary-View'), get={'id': application_id})
-            return HttpResponseRedirect(redirect_url)
+        elif dbs_task_status in ['FLAGGED', 'IN_PROGRESS', 'COMPLETED']:
+            # Do nothing special
+            pass
 
         else:
             raise ValueError('Unexpected task_status passed: {0}'.format(dbs_task_status))

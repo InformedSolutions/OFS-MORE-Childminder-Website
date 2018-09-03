@@ -328,6 +328,29 @@ class DBSLivedAbroadViewTests(DBSRadioViewTests):
         self.view_url_name = 'DBS-Lived-Abroad-View'
         self.correct_url = ('DBS-Good-Conduct-View', 'DBS-Military-View')
 
+    def test_view_rendered_on_get(self):
+        if self.view_url_name is not None:
+            # Build env
+            criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
+            application = Application.objects.get(application_id=self.application_id)
+            crc_record = CriminalRecordCheck.objects.create(application_id=application,
+                                                            criminal_record_id=criminal_record_check_id)
+            # Set to stop error being raised
+            previous_criminal_record_check_status = application.criminal_record_check_status
+            application.criminal_record_check_status = 'IN_PROGRESS'
+            application.save()
+
+            response = self.client.get(reverse(self.view_url_name)+'?id='+self.application_id)
+            print('Returned a {0} response'.format(response.status_code))
+            self.assertTrue(response.status_code == 200)
+
+            #Tear down env
+            application.criminal_record_check_status = previous_criminal_record_check_status
+            application.save()
+            crc_record.delete()
+        else:
+            raise self.skipTest('view_url_name not set')
+
 class DBSMilitaryViewTests(DBSRadioViewTests):
     def setUp(self):
         super().setUp()

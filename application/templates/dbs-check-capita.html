@@ -7,17 +7,18 @@
 
 {% include "back-button.html" %}
 
-<form method="post" novalidate>
-    <div class="two-thirds">
+<div class="two-thirds">
+    {{form.error_summary}}
+
+    <form method="post" novalidate>
         <h1 class="form-title heading-large">
             Your criminal record (DBS) check details
         </h1>
-    </div>
-    {{form.as_div}}
-    {% csrf_token %}
-    <input type="submit" class="button" value="Save and continue">
-</form>
-
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Save and continue">
+    </form>
+</div>
 
 <br>
 {% include 'return-to-list.html' %}

@@ -31,6 +31,11 @@ class DBSRadioForm(ChildminderForms):
         super().__init__(*args, **kwargs)
 
         self.fields[self.dbs_field_name] = self.get_choice_field_data()
+        self.field_list = [*self.fields]
+
+        if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
+            CRC_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
+            self.pk = CRC_record.pk
 
     def get_options(self):
         options = (
@@ -128,6 +133,12 @@ class DBSCheckDetailsForm(DBSRadioForm):
             raise NotImplementedError('show_cautions_convictions cannot be None, it has not been inherited.')
         elif self.show_cautions_convictions:
             self.fields[self.choice_field_name] = self.get_choice_field_data()
+
+        self.field_list = [*self.fields]
+
+        if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
+            CRC_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
+            self.pk = CRC_record.pk
 
     def clean_dbs_certificate_number(self):
         """
