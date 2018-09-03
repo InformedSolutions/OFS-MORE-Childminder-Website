@@ -130,7 +130,7 @@ class DBSCheckDetailsForm(DBSRadioForm):
         super(ChildminderForms, self).__init__(*args, **kwargs)
 
         if self.show_cautions_convictions is None:
-            raise NotImplementedError('show_cautions_convictions cannot be None, it has not been inherited.')
+            raise AttributeError('show_cautions_convictions cannot be None, it has not been inherited.')
         elif self.show_cautions_convictions:
             self.fields[self.choice_field_name] = self.get_choice_field_data()
 
@@ -145,7 +145,7 @@ class DBSCheckDetailsForm(DBSRadioForm):
         DBS certificate number validation
         :return: integer
         """
-        # is_valid() call strips leading 0('s) required by DBS number. Use raw str input from user instead of cleaned_data.
+        # is_valid() call strips leading 0(s) required by DBS number. Use raw str input from user instead of cleaned_data.
         dbs_certificate_number = self.data['dbs_certificate_number']
         if len(str(dbs_certificate_number)) > 12:
             raise forms.ValidationError('The certificate number should be 12 digits long')
@@ -179,4 +179,6 @@ class DBSCheckNoCapitaForm(DBSCheckDetailsForm):
     """
     GOV.UK form for the Criminal record check: No capita page
     """
+    # This form is blank as the inherited form will provide all function.
+    # This form is kept to be consistent with each FormView having it's own form class
     pass

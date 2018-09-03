@@ -430,15 +430,6 @@ class DBSCheckCapitaView(DBSRadioViewTests):
 
 class DBSCheckNoCapitaView(DBSTemplateViewTestCase):
     def setUp(self):
-        # super().setUp()
-        #
-        # from application.views import DBSCheckNoCapitaView as view
-        # from application.forms import DBSCheckNoCapitaForm as form
-        #
-        # self.view = view
-        # self.form = form
-        # self.view_url_name = 'DBS-Update-View'
-        # self.correct_url = ('DBS-Post-View', 'DBS-Post-View')
 
         super().setUp()
         self.view_url_name = 'DBS-Check-No-Capita-View'
