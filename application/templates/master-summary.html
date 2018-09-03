@@ -664,11 +664,10 @@
     </tr>
     </thead>
     <tbody>
-    {% for dbs_row in criminal_record_check_context %}
-        {% if dbs_row.value is not None %}
+    {% for dbs_row in criminal_record_check_context.row_list %}
         <tr>
             <td style="word-wrap: break-word" class=summary-column>
-                {{ dbs_row.title }}
+                {{ dbs_row.row_name }}
             </td>
             <td style="word-wrap: break-word" class=summary-column>
                 {% if dbs_row.value|isinstance:"str" %}
@@ -683,14 +682,13 @@
             </td>
             <td class="change-answer {{ print_class }}">
             {% if criminal_record_check_change %}
-            <a href="{% url dbs_row.url %}?id={{application_id}}"
-               alt=dbs_row.alt_text>
+            <a href="{% url dbs_row.back_link %}?id={{application_id}}"
+               alt=dbs_row.change_link_description>
                 Change <span class="visuallyhidden">{{dbs_row.title}}</span>
             </a>
             {% endif %}
         </td>
         </tr>
-        {% endif %}
     {% endfor %}
 
     </tbody>

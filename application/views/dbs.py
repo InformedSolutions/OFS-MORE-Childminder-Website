@@ -286,7 +286,8 @@ class DBSSummaryView(DBSTemplateView):
                                 row['title'],
                                 get_criminal_record_check(app_id, row['field']),
                                 row['url']
-                                , '')
+                                , '',
+                                change_link_description=row['alt_text'])
                             for row in non_empty_row_list]
 
         criminal_record_check_summary_table = Table([criminal_record_id])
