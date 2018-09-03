@@ -169,25 +169,25 @@
         </td>
         {% if childcare_type_zero_to_five is True and childcare_type_five_to_eight is True and childcare_type_eight_plus is True %}
         <td style="word-wrap: break-word" class=summary-column>
-            Early Years Register
+            Early Years Register and
             <br>
-            Childcare Register
+            Childcare Register (both parts)
         </td>
         {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is True and childcare_type_eight_plus is False %}
         <td style="word-wrap: break-word" class=summary-column>
-            Early Years Register
+            Early Years Register and
             <br>
-            Childcare Register
+            Childcare Register (compulsory part)
         </td>
         {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is False and childcare_type_eight_plus is True %}
         <td style="word-wrap: break-word" class=summary-column>
-            Early Years Register
+            Early Years Register and
             <br>
-            Childcare Register
+            Childcare Register (voluntary part)
         </td>
         {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is True and childcare_type_eight_plus is True %}
         <td style="word-wrap: break-word" class=summary-column>
-            Childcare Register (compulsory & voluntary parts)
+            Childcare Register (both parts)
         </td>
         {% elif childcare_type_zero_to_five is True and childcare_type_five_to_eight is False and childcare_type_eight_plus is False %}
         <td style="word-wrap: break-word" class=summary-column>
@@ -196,13 +196,10 @@
         {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is True and childcare_type_eight_plus is False %}
         <td style="word-wrap: break-word" class=summary-column>
             Childcare Register (compulsory part)
-            Yes
         </td>
         {% elif childcare_type_zero_to_five is False and childcare_type_five_to_eight is False and childcare_type_eight_plus is True %}
-        {% elif childcare_overnight is False %}
         <td style="word-wrap: break-word" class=summary-column>
             Childcare Register (voluntary part)
-            No
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
