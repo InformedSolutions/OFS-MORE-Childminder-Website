@@ -17,7 +17,6 @@ from ...models import (ApplicantHomeAddress,
 
 
 class ApplicationTestBase(object):
-
     client = Client()
     app_id = None
 
@@ -580,23 +579,29 @@ class ApplicationTestBase(object):
     def TestAppDeclaration(self):
         """Send Declaration"""
 
+        application = Application.objects.get(application_id=self.app_id)
+        # ChildcareType.objects.create(application_id=application,
+        #                              zero_to_five=True,
+        #                              five_to_eight=True,
+        #                              eight_plus=True,
+        #                              overnight_care=True)
         r = self.client.post(
             reverse('Declaration-Declaration-View'),
             {
                 'id': self.app_id,
-                'background_check_declare': 'on',
-                'inspect_home_declare': 'on',
-                'interview_declare': 'on',
-                'change_declare': 'on',
-                'share_info_declare': 'on',
-                'information_correct_declare': 'on',
-                'suitable_declare': 'on',
+                'declaration_confirmation': 'on',
             }
         )
         self.assertEqual(r.status_code, 302)
 
     def TestAppPaymentCreditDetails(self):
         """Submit Credit Card details"""
+        application = Application.objects.get(application_id=self.app_id)
+        ChildcareType.objects.create(application_id=application,
+                                     zero_to_five=True,
+                                     five_to_eight=True,
+                                     eight_plus=True,
+                                     overnight_care=True)
 
         with mock.patch('application.payment_service.make_payment') as post_payment_mock:
             test_payment_response = {
@@ -659,11 +664,7 @@ class ApplicationTestBase(object):
             reverse('Declaration-Declaration-View'),
             {
                 'id': self.app_id,
-                'share_info_declare': True,
-                'suitable_declare': True,
-                'information_correct_declare': True,
-                'change_declare': True,
-                'display_contact_details_on_web': True
+                'declaration_confirmation': True
             }
         )
 

@@ -17,7 +17,7 @@ from django.views.decorators.cache import never_cache
 from ..application_reference_generator import *
 from .. import payment_service
 from ..forms import PaymentDetailsForm
-from ..models import Application, UserDetails, ApplicantPersonalDetails, ApplicantName, Payment
+from ..models import Application, UserDetails, ApplicantPersonalDetails, ApplicantName, Payment, ChildcareType
 from ..payment_service import created_formatted_payment_reference
 
 logger = logging.getLogger(__name__)
@@ -95,6 +95,7 @@ def card_payment_post_handler(request):
         return render(request, 'payment-details.html', variables)
 
     application = Application.objects.get(pk=app_id)
+    childcare_type = ChildcareType.objects.get(application_id=app_id)
 
     __assign_application_reference(application)
 
@@ -114,10 +115,11 @@ def card_payment_post_handler(request):
         card_security_code = str(request.POST["card_security_code"])
         expiry_month = request.POST["expiry_date_0"]
         expiry_year = '20' + request.POST["expiry_date_1"]
+        amount = 3500 if childcare_type.zero_to_five else 10300
 
         # Invoke Payment Gateway API
         create_payment_response = payment_service.make_payment(
-            3500, cardholders_name, card_number, card_security_code,
+            amount, cardholders_name, card_number, card_security_code,
             expiry_month, expiry_year, 'GBP', payment_reference,
             'Ofsted Fees')
 

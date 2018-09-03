@@ -1,0 +1,59 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Registration rules{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<div class="two-thirds">
+{{form.error_summary}}
+<div class="form-group">
+    <h1 class="form-title heading-large">
+        Childcare register rules for childminders
+    </h1>
+    <p>You must keep the children you’re looking after safe from harm and tell their parents about any health and safety risks.</p>
+    <p>You must manage children's behaviour in a suitable manner and you will not use corporal punishment.</p>
+    <p>You must supervise the children and be present at all times while you’re providing care.</p>
+    <p>You must not smoke or be under the influence of alcohol or drugs (including medication that might harm your ability to provide childcare) while looking after children.</p>
+    <p>You must be familiar with issues of child protection and procedures to safeguard children from abuse or neglect.</p>
+    <p>You must attend child protection training so that you can identify and act on any signs that a child may be suffering from harm. </p>
+    <p>You must make sure that no child can leave the childcare location unsupervised.</p>
+    <p>You must give any assistants support and guidance about child protection and make sure that they are alert to any signs that a child may be suffering from harm.</p>
+    <p>You must make sure that there’s at least one person aged 18 or over for every 6 children being looked after.</p>
+    <p>You must ensure that you and any assistants looking after children have good enough English to ensure children’s welfare and safety (for example, to read instructions or call for help).</p>
+    <p>You must arrange any necessary training to make sure that any assistants have suitable skills and experience to care for children.</p>
+    <p>You must make sure that the childcare you provide is as accessible and inclusive as possible, and meets the needs of each child. You will not refuse to provide childcare or treat any child less well because of their:</p>
+    <ul class="list list-bullet">
+        <li>race</li>
+        <li>religion</li>
+        <li>home language</li>
+        <li>family background</li>
+        <li>gender</li>
+        <li>special educational needs or disability</li>
+    </ul>
+    <p>You must give parents:</p>
+    <ul class="list list-bullet">
+        <li>a copy of your Ofsted registration certificate if they ask for it</li>
+        <li>information about Ofsted’s registration system for the Childcare Register</li>
+        <li>Ofsted’s address</li>
+    </ul>
+    <p>If you receive a notice of suspension, you will show it to the parents of each child you look after.</p>
+    <p>You must tell Ofsted about any of the following within 14 days of the change happening:</p>
+    <ul class="list list-bullet">
+        <li>a change to the address where you look after children</li>
+        <li>a change to your name, address or phone number</li>
+        <li>any significant event likely to affect your suitability to look after children</li>
+    </ul>
+    <p>You must tell Ofsted about any of the following if they happen while you are looking after children:</p>
+    <ul class="list list-bullet">
+        <li>food poisoning affecting two or more children you look after</li>
+        <li>any serious accident/injury to or death of any child</li>
+        <li>any serious accident or injury to, or the death of, any other person in the home where you look after children</li>
+        <li>any allegation of serious harm or abuse occurring where you work</li>
+        <li>any allegation of serious harm or abuse committed elsewhere by anyone who looks after children with you</li>
+    </ul>
+</div>
+</div>
+
+{% endblock %}

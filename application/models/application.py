@@ -58,11 +58,7 @@ class Application(models.Model):
     children_in_home = models.NullBooleanField(blank=True, null=True, default=None)
     children_turning_16 = models.NullBooleanField(blank=True, null=True, default=None)
     declarations_status = models.CharField(choices=TASK_STATUS, max_length=50)
-    share_info_declare = models.NullBooleanField(blank=True, null=True, default=None)
-    display_contact_details_on_web = models.NullBooleanField(blank=True, null=True, default=None)
-    suitable_declare = models.NullBooleanField(blank=True, null=True, default=None)
-    information_correct_declare = models.NullBooleanField(blank=True, null=True, default=None)
-    change_declare = models.NullBooleanField(blank=True, null=True, default=None)
+    declaration_confirmation = models.NullBooleanField(blank=True, null=True, default=None)
     date_created = models.DateTimeField(blank=True, null=True)
     date_updated = models.DateTimeField(blank=True, null=True)
     date_accepted = models.DateTimeField(blank=True, null=True)
@@ -70,6 +66,7 @@ class Application(models.Model):
     application_reference = models.CharField(blank=True, null=True, max_length=9,
                                              validators=[RegexValidator(r'(\w{2})([0-9]{7})')])
     ofsted_visit_email_sent = models.DateTimeField(blank=True, null=True)
+    publish_details = models.NullBooleanField(blank=True, null=True, default=None)
 
     @classmethod
     def get_id(cls, app_id):

@@ -561,9 +561,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
         submit_button = self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']")
         self.selenium_task_executor.get_driver().execute_script("arguments[0].click();", submit_button)
 
-        # Task summary confirmation
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").send_keys(Keys.RETURN)
-
         # Email confirmation page
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").send_keys(Keys.RETURN)
 
@@ -599,6 +596,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.complete_review()
         self.selenium_task_executor.complete_declaration()
+        self.selenium_task_executor.complete_publish_your_details()
 
         # Card number must be 5454... due to this being a Worldpay API test value
         test_cvc = ''.join(str(random.randint(0, 9)) for _ in range(3))
@@ -704,12 +702,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
-        self.selenium_task_executor.get_driver().find_element_by_id("id_share_info_declare").click()
-        self.selenium_task_executor.get_driver().find_element_by_id("id_display_contact_details_on_web").click()
-        self.selenium_task_executor.get_driver().find_element_by_id("id_suitable_declare").click()
-        self.selenium_task_executor.get_driver().find_element_by_id("id_information_correct_declare").click()
-        self.selenium_task_executor.get_driver().find_element_by_id("id_change_declare").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm']").click()
+        self.selenium_task_executor.get_driver().find_element_by_id("id_declaration_confirmation").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
         WebDriverWait(self.selenium_task_executor.get_driver(), 10).until(
             expected_conditions.title_contains("Payment confirmed"))
@@ -842,6 +836,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.complete_review()
         self.selenium_task_executor.complete_declaration()
+        self.selenium_task_executor.complete_publish_your_details()
 
         # Card number must be 5454... due to this being a Worldpay API test value
         test_cvc = ''.join(str(random.randint(0, 9)) for _ in range(3))

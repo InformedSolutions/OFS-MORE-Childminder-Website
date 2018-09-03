@@ -104,6 +104,7 @@ urlpatterns = [
     url(r'^references/second-reference-contact-details/', views.references_second_reference_contact_details,
         name='References-Second-Reference-Contact-Details-View'),
     url(r'^references/check-answers/', views.references_summary, name='References-Summary-View'),
+    url(r'^registration-rules/', TemplateView.as_view(template_name='registration-rules.html'), name='Registration-Rules'),
     url(r'^people/$', views.other_people_guidance, name='Other-People-Guidance-View'),
     url(r'^people/adults/', views.other_people_adult_question, name='Other-People-Adult-Question-View'),
     url(r'^people/adults-details/', views.other_people_adult_details, name='Other-People-Adult-Details-View'),
@@ -128,7 +129,6 @@ urlpatterns = [
     url(r'^health-check/more-hospital', hospital_admission.MoreHospitalAdmissionsView.as_view(), name='Health-Check-Hospital-More'),
     url(r'^health-check/hospital/edit', hospital_admission.HospitalAdmissionEditView.as_view(),  name='Health-Check-Hospital-Edit'),
     url(r'^health-check/hospital-details', hospital_admission.HospitalAdmissionView.as_view(), name='Health-Check-Hospital'),
-
     url(r'^health-check/check-answers', summary.Summary.as_view(), name='Health-Check-Summary'),
     url(r'^health-check/declaration', declaration.Declaration.as_view(), name='Health-Check-Declaration'),
     url(r'^health-check/thank-you', thank_you.ThankYou.as_view(), name='Health-Check-Thank-You'),
@@ -137,6 +137,7 @@ urlpatterns = [
     url(r'^people/email-resent/', views.other_people_resend_confirmation, name='Other-People-Resend-Confirmation-View'),
     url(r'^declaration/', views.declaration_intro, name='Declaration-Intro-View'),
     url(r'^your-declaration/', views.declaration_declaration, name='Declaration-Declaration-View'),
+    url(r'^publishing-your-details/', views.publishing_your_details, name='Publishing-Your-Details-View'),
     url(r'^check-answers/', views.declaration_summary, name='Declaration-Summary-View'),
     url(r'^payment/details/', views.card_payment_details, name='Payment-Details-View'),
     url(r'^application-saved/', views.application_saved, name='Application-Saved-View'),

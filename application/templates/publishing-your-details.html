@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Declaration{% endblock %}
+{% block page_title %}Publishing your details{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -10,11 +10,10 @@
 {{form.error_summary}}
 <div class="form-group">
     <h1 class="form-title heading-large">
-        Declaration
+        Publishing your details
     </h1>
-    <p>You need to confirm that the information you have given us is correct.</p>
-    <p>You also need to follow the rules around caring for children and keeping them safe.</p>
-    <p>Read the <a href="{% url 'Registration-Rules' %}">registration rules</a>.</p>
+    <p>After you are registered, Ofsted will publish your name and contact details on our website.</p>
+    <p>This helps parents find you.</p>
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         {{form.as_div}}
         {% csrf_token %}

@@ -23,7 +23,7 @@
 
 <form method="post" class="form-group" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     {% csrf_token %}
-    <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
+    <input type="submit" class="button" value="Continue" alt='Continue to declaration'>
     <input type="hidden" id="id" name="id" value="{{application_id}}"/>
 </form>
 
