@@ -297,7 +297,7 @@ def declaration_summary(request, print=False):
         if form.is_valid():
             if application.declarations_status != 'COMPLETED':
                 status.update(application_id_local, 'declarations_status', 'IN_PROGRESS')
-            if childcare_type.zero_to_five:
+            if not childcare_type.zero_to_five:
                 return HttpResponseRedirect(reverse('Declaration-Intro-View') + '?id=' + application_id_local)
             else:
                 return HttpResponseRedirect(reverse('Declaration-Declaration-View') + '?id=' + application_id_local)
