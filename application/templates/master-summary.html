@@ -2,6 +2,7 @@
 {% block page_title %}{% if not print %}Check all your details{% endif %}{% if print %}Print Application {% endif %}{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
+{% load alt_text_extras %}
 
 {% block inner_content %}
 <link href="{% static 'stylesheets/govuk-template-print.css' %}" media="print" rel="stylesheet" />
@@ -663,30 +664,6 @@
     </tr>
     </thead>
     <tbody>
-
-    <!--<tr>-->
-        <!--<td style="word-wrap: break-word" class=summary-column>-->
-            <!--Do you have any criminal cautions or convictions?-->
-        <!--</td>-->
-        <!--{% if cautions_convictions is True %}-->
-        <!--<td style="word-wrap: break-word" class=summary-column>-->
-            <!--Yes-->
-        <!--</td>-->
-        <!--{% elif cautions_convictions is False %}-->
-        <!--<td style="word-wrap: break-word" class=summary-column>-->
-            <!--No-->
-        <!--</td>-->
-        <!--{% endif %}-->
-        <!--<td class="change-answer {{ print_class }}">-->
-            <!--{% if criminal_record_check_change %}-->
-            <!--<a href="{% url 'DBS-Check-Capita-View' %}?id={{application_id}}"-->
-               <!--alt='Change answer on criminal cautions or convictions'>-->
-                <!--Change <span class="visuallyhidden">answer on criminal cautions or convictions</span>-->
-            <!--</a>-->
-            <!--{% endif %}-->
-        <!--</td>-->
-    <!--</tr>-->
-    {% load alt_text_extras %}
     {% for dbs_row in criminal_record_check_context %}
         {% if dbs_row.value is not None %}
         <tr>

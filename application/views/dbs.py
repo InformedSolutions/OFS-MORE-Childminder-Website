@@ -127,7 +127,7 @@ class DBSRadioView(FormView):
 
         context = {'id': application_id}
         if 'form' not in kwargs:
-            context['form']: form
+            context['form'] = form
 
         return super().get_context_data(**context, **kwargs)
 
