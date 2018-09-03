@@ -142,7 +142,7 @@ class DBSRadioViewTests(NoMiddlewareTestCase):
 
                 response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id)
 
-                mock_form_invalid.assert_called_once()
+                self.assertTrue(mock_form_invalid.called)
 
             # Tear down env
             crc_record.delete()
@@ -202,7 +202,7 @@ class DBSRadioViewTests(NoMiddlewareTestCase):
 
                 response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id, form_data)
 
-                mock_form_valid.assert_called_once()
+                self.assertTrue(mock_form_valid.called)
 
             # Tear down env
             crc_record.delete()

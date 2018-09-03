@@ -329,9 +329,9 @@ class ApplicationTestBase(object):
     def TestAppCriminalRecordCheckDetails(self):
         """Submit CRC details"""
         r = self.client.post(
-            reverse('DBS-Check-DBS-Details-View'),
+            reverse('DBS-Check-Capita-View'),
             {
-                'id': self.app_id,
+                'application_id': self.app_id,
                 'dbs_certificate_number': '123456789012',
                 'cautions_convictions': False
             }

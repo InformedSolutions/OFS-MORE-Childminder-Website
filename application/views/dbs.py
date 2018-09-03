@@ -1,8 +1,6 @@
 import uuid
-import collections
 
 from django.http import HttpResponseRedirect
-from django.core.urlresolvers import reverse
 
 from .. import status
 from ..business_logic import (get_criminal_record_check,
@@ -82,6 +80,19 @@ class DBSRadioView(FormView):
     dbs_field_name = None
     nullify_field_list = []
 
+    def get(self, request, *args, **kwargs):
+        application_id = self.request.GET.get('id')
+        application = Application.objects.get(application_id=application_id)
+
+        # Re-route depending on task status (criminal_record_check_status)
+        dbs_task_status = application.criminal_record_check_status
+
+        if dbs_task_status == 'FLAGGED':
+            # Update the task status to 'IN_PROGRESS' from 'FLAGGED'
+            status.update(application_id, 'criminal_record_check_status', 'IN_PROGRESS')
+
+        return super().get(request, *args, **kwargs)
+
     def get_initial(self):
         application_id = self.request.GET.get('id')
         initial = super().get_initial()
@@ -147,8 +158,15 @@ class DBSRadioView(FormView):
         return super().form_valid(form)
 
     def nullify_fields(self, app_id):
-        update_criminal_record_check(app_id, self.nullify_field_list, None)
-        return True
+        """
+        Takes a list of fields from self (nullify_field_list) and changes them to 'None' within the database ('Null')
+        This is due to the different journeys in the workflow.
+        For example, if the applicant has a capita application, they don't need the 'on_update' field, so it is nullified.
+        :param app_id: applicant's application id
+        :return: True if successfully nullified given field
+        """
+        successfully_updated = update_criminal_record_check(app_id, self.nullify_field_list, None)
+        return successfully_updated
 
 
 class DBSSummaryView(DBSTemplateView):
@@ -157,6 +175,11 @@ class DBSSummaryView(DBSTemplateView):
 
     @staticmethod
     def get_certificate_number_url(app_id):
+        """
+        Returns the url to redirect to when changing the dbs_certificate_number
+        :param app_id: applicant's application id
+        :return: Void
+        """
         capita_status = get_criminal_record_check(app_id, 'capita')
         if capita_status:
             return 'DBS-Check-Capita-View'
@@ -167,6 +190,11 @@ class DBSSummaryView(DBSTemplateView):
 
     @staticmethod
     def get_rows_to_generate(app_id):
+        """
+        Returns a dictionary with the purpose of dynamically generating the summary table.
+        :param app_id: applicant's application id
+        :return: Dictionary of 'rows'.
+        """
         # Modify rows_to_generate to change displayed information
         rows_to_generate = [
             {
@@ -211,10 +239,7 @@ class DBSSummaryView(DBSTemplateView):
     def get_context_data(self, **kwargs):
         application_id = self.request.GET.get('id')
 
-        # table_content is used for populating the dbs summary page, it is NOT the Table class object.
-        table_content = self.generate_rows(application_id)
-
-        # table_obj is used primarily for getting errors, it IS the Table class object.
+        # table_obj is used for getting errors and displaying template context, it is the Table class object.
         table_obj = self.get_table_object(application_id)
 
         context = {'table_list': [table_obj],
@@ -229,32 +254,6 @@ class DBSSummaryView(DBSTemplateView):
         status.update(application_id, 'criminal_record_check_status', 'COMPLETED')
 
         return super().post(request, *args, **kwargs)
-
-    @staticmethod
-    def generate_rows(app_id):
-        rows_to_generate = DBSSummaryView.get_rows_to_generate(app_id)
-
-        # Create a dictionary with the field as the key from rows_to_generate
-        # This is so that the relevant information can be accessed without having to loop through rows_to_generate
-        rows_to_generate_dict = {dict['field']: dict for dict in rows_to_generate}
-
-        # Generate a list of fields to pass into get_criminal_record_check()
-        field_list = [row['field'] for row in rows_to_generate]
-
-        # Dictionary is of format {'dbs_cert': ((dbs_cert_value_in_database)), ...}
-        table_content_dict = get_criminal_record_check(app_id, field_list)
-
-        # Create a list in format [{'id': dbs_cert, 'title': title_list[id], ...}, ...]
-        table_content = [
-            {'id': key,
-             'title': rows_to_generate_dict[key]['title'],
-             'value': value,
-             'url': rows_to_generate_dict[key]['url'],
-             'alt_text': rows_to_generate_dict[key]['alt_text']
-             }
-            for key, value in table_content_dict.items()]
-
-        return table_content
 
     @staticmethod
     def get_table_object(app_id):
@@ -300,7 +299,7 @@ class DBSSummaryView(DBSTemplateView):
 
     @staticmethod
     def get_context_data_static(app_id):
-        return DBSSummaryView.generate_rows(app_id)
+        return DBSSummaryView.get_table_object(app_id)
 
 
 class DBSUpdateView(DBSRadioView):
@@ -316,6 +315,7 @@ class DBSTypeView(DBSRadioView):
     form_class = DBSTypeForm
     success_url = ('DBS-Check-Capita-View', 'DBS-Update-View')
     dbs_field_name = 'capita'
+    nullify_field_list = ['cautions_convictions']
 
     def form_valid(self, form):
         application_id = self.request.GET.get('id')
@@ -328,7 +328,6 @@ class DBSTypeView(DBSRadioView):
         # Also check that the application is not in review as this can lead to blank fields being submitted.
         if update_bool != initial_bool and application.application_status != 'FURTHER_INFORMATION':
             successfully_updated = update_criminal_record_check(application_id, 'dbs_certificate_number', '')
-            successfully_updated = update_criminal_record_check(application_id, 'cautions_convictions', None)
 
         return super().form_valid(form)
 
@@ -348,9 +347,7 @@ class DBSLivedAbroadView(DBSRadioView):
 
     def get(self, request, *args, **kwargs):
         application_id = self.request.GET.get('id')
-        change_mode = self.request.GET.get('change')
         application = Application.objects.get(application_id=application_id)
-        task_is_arc_flagged = application.criminal_record_check_arc_flagged
 
         # Re-route depending on task status (criminal_record_check_status)
         dbs_task_status = application.criminal_record_check_status
@@ -363,13 +360,6 @@ class DBSLivedAbroadView(DBSRadioView):
                 CriminalRecordCheck.objects.create(criminal_record_id=uuid.uuid4(),
                                                    application_id=application,
                                                    dbs_certificate_number='')
-
-        elif dbs_task_status in ['FLAGGED', 'IN_PROGRESS', 'COMPLETED']:
-            # Do nothing special
-            pass
-
-        else:
-            raise ValueError('Unexpected task_status passed: {0}'.format(dbs_task_status))
 
         return super().get(request, *args, **kwargs)
 

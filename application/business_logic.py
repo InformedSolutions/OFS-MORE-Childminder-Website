@@ -765,6 +765,7 @@ def health_check_email_resend_logic(adult_record):
     else:
         return False
 
+
 def dbs_matches_childminder_dbs(application, candidate_dbs_certificate_number):
     """
     Helper function to determine whether a DBS number matches the DBS recorded for the childminder
@@ -901,6 +902,7 @@ def childminder_dbs_number_duplication_check(application, candidate_dbs_certific
 
     return response
 
+
 def convert_mobile_to_notify_standard(mobile):
 
     mobile_prefix_REGEX = "^(\+44|0044)[7][0-9]{9}$"
@@ -910,6 +912,7 @@ def convert_mobile_to_notify_standard(mobile):
         return new_mobile
     else:
         return mobile
+
 
 def childminder_references_and_user_email_duplication_check(email1, email2):
     """
@@ -923,6 +926,7 @@ def childminder_references_and_user_email_duplication_check(email1, email2):
         return True
     else:
         return False
+
 
 def show_resend_and_change_email(health_check_status, is_review):
     """
@@ -979,7 +983,6 @@ def get_criminal_record_check(app_id, field_obj):
 
     else:
         raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
-
 
 
 class UniqueDbsCheckResult:

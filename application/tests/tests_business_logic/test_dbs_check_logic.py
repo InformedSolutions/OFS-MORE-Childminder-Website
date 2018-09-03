@@ -154,9 +154,9 @@ class TestDBSCheckLogic(TestCase):
     })
     def test_http_dbs_numbers_deemed_unique_when_only_childminder_present(self):
         response = self.client.post(
-            reverse('DBS-Check-DBS-Details-View'),
+            reverse('DBS-Check-Capita-View'),
             {
-                'id': self.test_application_id,
+                'application_id': self.test_application_id,
                 'dbs_certificate_number': self.test_childminder_dbs_number,
                 'cautions_convictions': False
             },
@@ -188,9 +188,9 @@ class TestDBSCheckLogic(TestCase):
         )
 
         response = self.client.post(
-            reverse('DBS-Check-DBS-Details-View'),
+            reverse('DBS-Check-Capita-View'),
             {
-                'id': self.test_application_id,
+                'application_id': self.test_application_id,
                 'dbs_certificate_number': self.test_childminder_dbs_number,
                 'cautions_convictions': False
             },
@@ -231,9 +231,9 @@ class TestDBSCheckLogic(TestCase):
         )
 
         response = self.client.post(
-            reverse('DBS-Check-DBS-Details-View'),
+            reverse('DBS-Check-Capita-View'),
             {
-                'id': self.test_application_id,
+                'application_id': self.test_application_id,
                 'dbs_certificate_number': self.test_childminder_dbs_number,
                 'cautions_convictions': False
             },
@@ -254,9 +254,9 @@ class TestDBSCheckLogic(TestCase):
     def test_http_childminder_can_update_dbs_to_same_number(self):
 
         self.client.post(
-            reverse('DBS-Check-DBS-Details-View'),
+            reverse('DBS-Check-Capita-View'),
             {
-                'id': self.test_application_id,
+                'application_id': self.test_application_id,
                 'dbs_certificate_number': self.test_household_member_1_dbs_number,
                 'cautions_convictions': False
             },
@@ -264,9 +264,9 @@ class TestDBSCheckLogic(TestCase):
         )
 
         response = self.client.post(
-            reverse('DBS-Check-DBS-Details-View'),
+            reverse('DBS-Check-Capita-View'),
             {
-                'id': self.test_application_id,
+                'application_id': self.test_application_id,
                 'dbs_certificate_number': self.test_household_member_1_dbs_number,
                 'cautions_convictions': False
             },
@@ -307,9 +307,9 @@ class TestDBSCheckLogic(TestCase):
         )
 
         response = self.client.post(
-            reverse('DBS-Check-DBS-Details-View'),
+            reverse('DBS-Check-Capita-View'),
             {
-                'id': self.test_application_id,
+                'application_id': self.test_application_id,
                 'dbs_certificate_number': self.test_household_member_1_dbs_number,
                 'cautions_convictions': False
             },
@@ -330,9 +330,9 @@ class TestDBSCheckLogic(TestCase):
     })
     def test_http_error_raised_when_household_member_duplicates_childminder(self):
         self.client.post(
-            reverse('DBS-Check-DBS-Details-View'),
+            reverse('DBS-Check-Capita-View'),
             {
-                'id': self.test_application_id,
+                'application_id': self.test_application_id,
                 'dbs_certificate_number': self.test_childminder_dbs_number,
                 'cautions_convictions': False
             },
@@ -352,7 +352,7 @@ class TestDBSCheckLogic(TestCase):
         response = self.client.post(
             reverse('Other-People-Adult-DBS-View'),
             {
-                'id': self.test_application_id,
+                'application_id': self.test_application_id,
                 'adults': 1,
                 '1-dbs_certificate_number': self.test_childminder_dbs_number
             },
@@ -371,9 +371,9 @@ class TestDBSCheckLogic(TestCase):
     })
     def test_http_no_error_raised_when_household_members_dbs_numbers_added_which_differ_to_childminder(self):
         self.client.post(
-            reverse('DBS-Check-DBS-Details-View'),
+            reverse('DBS-Check-Capita-View'),
             {
-                'id': self.test_application_id,
+                'application_id': self.test_application_id,
                 'dbs_certificate_number': self.test_childminder_dbs_number,
                 'cautions_convictions': False
             },
@@ -403,7 +403,7 @@ class TestDBSCheckLogic(TestCase):
         response = self.client.post(
             reverse('Other-People-Adult-DBS-View'),
             {
-                'id': self.test_application_id,
+                'application_id': self.test_application_id,
                 'adults': 2,
                 '1-dbs_certificate_number': self.test_household_member_1_dbs_number,
                 '2-dbs_certificate_number': self.test_household_member_2_dbs_number
@@ -425,9 +425,9 @@ class TestDBSCheckLogic(TestCase):
     })
     def test_http_error_raised_when_household_member_duplicates_other_household_member(self):
         self.client.post(
-            reverse('DBS-Check-DBS-Details-View'),
+            reverse('DBS-Check-Capita-View'),
             {
-                'id': self.test_application_id,
+                'application_id': self.test_application_id,
                 'dbs_certificate_number': self.test_childminder_dbs_number,
                 'cautions_convictions': False
             },
@@ -457,7 +457,7 @@ class TestDBSCheckLogic(TestCase):
         response = self.client.post(
             reverse('Other-People-Adult-DBS-View'),
             {
-                'id': self.test_application_id,
+                'application_id': self.test_application_id,
                 'adults': 2,
                 '1-dbs_certificate_number': self.test_household_member_1_dbs_number,
                 '2-dbs_certificate_number': self.test_household_member_1_dbs_number
