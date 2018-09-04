@@ -89,13 +89,6 @@ class DBSRadioView(FormView):
         application_id = self.request.GET.get('id')
         application = Application.objects.get(application_id=application_id)
 
-        # Re-route depending on task status (criminal_record_check_status)
-        dbs_task_status = application.criminal_record_check_status
-
-        if dbs_task_status == 'FLAGGED':
-            # Update the task status to 'IN_PROGRESS' from 'FLAGGED'
-            status.update(application_id, 'criminal_record_check_status', 'IN_PROGRESS')
-
         return super().get(request, *args, **kwargs)
 
     def get_initial(self):
@@ -149,14 +142,26 @@ class DBSRadioView(FormView):
 
     def form_valid(self, form):
         application_id = self.request.GET.get('id')
-        update_bool = self.request.POST.get(self.dbs_field_name) == 'True'
+        application = Application.objects.get(application_id=application_id)
 
-        successfully_updated = update_criminal_record_check(application_id, self.dbs_field_name, update_bool)
+        # Update task status if flagged or completed (criminal_record_check_status)
+        dbs_task_status = application.criminal_record_check_status
+
+        if dbs_task_status in ['FLAGGED', 'COMPLETED']:
+            # Update the task status to 'IN_PROGRESS' from 'FLAGGED'
+            status.update(application_id, 'criminal_record_check_status', 'IN_PROGRESS')
+
+        # The following check will mean that cautions_convictions is not updated in the DBSCheckNoCapitaView
+        if not (self.dbs_field_name == 'cautions_convictions' and not self.show_cautions_convictions):
+            update_bool = self.request.POST.get(self.dbs_field_name) == 'True'
+
+            successfully_updated = update_criminal_record_check(application_id, self.dbs_field_name, update_bool)
+
+            if not successfully_updated:
+                raise BrokenPipeError("Something went wrong when updating criminal_record_check")
 
         successfully_nullified = self.nullify_fields(application_id)
 
-        if not successfully_updated:
-            raise BrokenPipeError("Something went wrong when updating criminal_record_check")
         if not successfully_nullified:
             raise BrokenPipeError("Something went wrong when nullifying fields in criminal_record_check")
 
@@ -332,7 +337,7 @@ class DBSTypeView(DBSRadioView):
 
         # If the 'Type of DBS check' is changed then clear the user's dbs_certificate_number
         # Also check that the application is not in review as this can lead to blank fields being submitted.
-        if update_bool != initial_bool and application.application_status != 'FURTHER_INFORMATION':
+        if update_bool != initial_bool:
             successfully_updated = update_criminal_record_check(application_id, 'dbs_certificate_number', '')
 
         return super().form_valid(form)
@@ -408,6 +413,7 @@ class DBSCheckNoCapitaView(DBSCheckDetailsView):
     template_name = 'dbs-check-capita.html'
     form_class = DBSCheckNoCapitaForm
     success_url = 'DBS-Post-View'
+    nullify_field_list = ['cautions_convictions']
     show_cautions_convictions = False
 
     def get_success_url(self):
