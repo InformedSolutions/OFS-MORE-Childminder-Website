@@ -137,7 +137,7 @@ class DBSRadioView(FormView):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem'
+            form.error_summary_title = 'There was a problem on this page'
 
         form.check_flag()
 
@@ -296,7 +296,7 @@ class DBSSummaryView(DBSTemplateView):
                             for row in non_empty_row_list]
 
         criminal_record_check_summary_table = Table([criminal_record_id])
-        criminal_record_check_summary_table.error_summary_title = 'There was a problem'
+        criminal_record_check_summary_table.error_summary_title = 'There was a problem on this page'
         criminal_record_check_summary_table.row_list = Row_Obj_row_list
         criminal_record_check_summary_table.get_errors()
 

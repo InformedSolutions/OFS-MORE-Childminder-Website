@@ -14,6 +14,7 @@ class DBSRadioForm(ChildminderForms):
     GOV.UK form for the Criminal record check: generic radio button form
     """
     field_label_classes = 'form-label-bold'
+    error_summary_title = 'There was a problem on this page'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
