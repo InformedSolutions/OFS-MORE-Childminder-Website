@@ -176,13 +176,13 @@ def task_list(request):
                 'name': 'dbs',
                 'status': application.criminal_record_check_status,
                 'arc_flagged': application.criminal_record_check_arc_flagged,
-                'description': "Criminal record (DBS) check",
+                'description': "Criminal record checks",
                 'hidden': False,
                 'status_url': None,
                 'status_urls': [
-                    {'status': 'COMPLETED', 'url': 'DBS-Check-Summary-View'},
-                    {'status': 'FLAGGED', 'url': 'DBS-Check-Summary-View'},
-                    {'status': 'OTHER', 'url': 'DBS-Check-Guidance-View'}
+                    {'status': 'COMPLETED', 'url': 'DBS-Summary-View'},
+                    {'status': 'FLAGGED', 'url': 'DBS-Summary-View'},
+                    {'status': 'OTHER', 'url': 'DBS-Lived-Abroad-View'}
                 ],
             },
             {

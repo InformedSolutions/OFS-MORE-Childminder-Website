@@ -19,13 +19,13 @@ childcare_type_change_link_description_dict = collections.OrderedDict([('childca
 
 dbs_summary_dict = collections.OrderedDict({'data_names': ['dbs_certificate_number', 'cautions_convictions'],
                                             'display_names': ['DBS certificate number',
-                                                              'Do you have any cautions or convictions?'],
+                                                              'Do you have any cautions or convictions?',],
                                             'back_url_names': ['DBS-Check-DBS-Details-View',
                                                                'DBS-Check-DBS-Details-View'],
                                             'table_names': [''],
                                             'table_error_names': [
                                                 'There was a problem'],
-                                            'page_title': 'Check your answers: criminal record (DBS) check'
+                                            'page_title': 'Check your answers: criminal record checks'
                                             })
 
 ###
@@ -170,7 +170,7 @@ submit_link_dict = collections.OrderedDict([('login_details', 'Contact-Email-Vie
                                             ('personal_details', 'Personal-Details-Guidance-View'),
                                             ('first_aid_training', 'First-Aid-Training-Guidance-View'),
                                             ('eyfs_training', 'Childcare-Training-Guidance-View'),
-                                            ('criminal_record_check', 'DBS-Check-Guidance-View'),
+                                            ('criminal_record_check', 'DBS-Lived-Abroad-View'),
                                             ('health', 'Health-Intro-View'),
                                             ('references', 'References-Intro-View'),
                                             ('people_in_home', 'Other-People-Guidance-View')])

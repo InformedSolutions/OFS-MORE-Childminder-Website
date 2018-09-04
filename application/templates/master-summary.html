@@ -2,6 +2,7 @@
 {% block page_title %}{% if not print %}Check all your details{% endif %}{% if print %}Print Application {% endif %}{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
+{% load alt_text_extras %}
 
 {% block inner_content %}
 <link href="{% static 'stylesheets/govuk-template-print.css' %}" media="print" rel="stylesheet" />
@@ -654,50 +655,39 @@
     <tr>
         <th colspan="{% if print_class %}2{% else %}3{% endif %}">
             <div class="heading-medium">
-                Criminal record (DBS) check
+                Criminal record checks
             </div>
         </th>
     </tr>
     </thead>
     <tbody>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            DBS certificate number
-        </td>
-        <td style="word-wrap: break-word" class=summary-column>
-            {{dbs_certificate_number}}
-        </td>
-        <td class="change-answer {{ print_class }}">
+    {% for dbs_row in criminal_record_check_context.row_list %}
+        <tr>
+            <td style="word-wrap: break-word" class=summary-column>
+                {{ dbs_row.row_name }}
+            </td>
+            <td style="word-wrap: break-word" class=summary-column>
+                {% if dbs_row.value|isinstance:"str" %}
+                    {{ dbs_row.value }}
+                {% elif dbs_row.value|isinstance:"bool" %}
+                    {% if dbs_row.value %}
+                        Yes
+                    {% else %}
+                        No
+                    {% endif %}
+                {% endif %}
+            </td>
+            <td class="change-answer {{ print_class }}">
             {% if criminal_record_check_change %}
-            <a href="{% url 'DBS-Check-DBS-Details-View' %}?id={{application_id}}#id_dbs_certificate_number"
-               alt='Change DBS certificate number'>
-                Change <span class="visuallyhidden">DBS certificate number</span>
+            <a href="{% url dbs_row.back_link %}?id={{application_id}}"
+               alt=dbs_row.change_link_description>
+                Change <span class="visuallyhidden">{{dbs_row.title}}</span>
             </a>
             {% endif %}
         </td>
-    </tr>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Do you have any criminal cautions or convictions?
-        </td>
-        {% if cautions_convictions is True %}
-        <td style="word-wrap: break-word" class=summary-column>
-            Yes
-        </td>
-        {% elif cautions_convictions is False %}
-        <td style="word-wrap: break-word" class=summary-column>
-            No
-        </td>
-        {% endif %}
-        <td class="change-answer {{ print_class }}">
-            {% if criminal_record_check_change %}
-            <a href="{% url 'DBS-Check-DBS-Details-View' %}?id={{application_id}}"
-               alt='Change answer on criminal cautions or convictions'>
-                Change <span class="visuallyhidden">answer on criminal cautions or convictions</span>
-            </a>
-            {% endif %}
-        </td>
-    </tr>
+        </tr>
+    {% endfor %}
+
     </tbody>
 </table>
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">

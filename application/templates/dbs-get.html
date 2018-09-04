@@ -1,0 +1,30 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Get an Ofsted DBS check{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<div class="two-thirds">
+<form method="post" novalidate>
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Criminal record checks
+        </h1>
+        <p>You can finish this section after you
+            <a href="http://ofsteddbsapplication.co.uk/step-one.aspx" target="_blank">
+                apply for an Ofsted DBS check.
+            </a>
+        </p>
+
+        {% csrf_token %}
+        <input type="submit" class="button" value="Continue">
+
+    </div>
+</form>
+</div>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}

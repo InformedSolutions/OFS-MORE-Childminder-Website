@@ -89,7 +89,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
         If the HEADLESS_CHROME value in Environment variables is set to true then it will launch chrome headless
         browser, else it will launch firefox.
         """
-
         if os.environ.get('HEADLESS_CHROME') == 'True':
             # To install chromedriver on an ubuntu machine:
             # https://tecadmin.net/setup-selenium-chromedriver-on-ubuntu/
@@ -100,6 +99,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
             chrome_options.add_argument("--headless")
             chrome_options.add_argument("--disable-gpu")
             self.selenium_driver = webdriver.Chrome(path_to_chromedriver, chrome_options=chrome_options)
+
         else:
             self.selenium_driver = webdriver.Firefox()
         self.selenium_driver.maximize_window()

@@ -1,0 +1,25 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Ministry of Defence checks{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<div class="two-thirds">
+<form method="post" novalidate>
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Ministry of Defence checks
+        </h1>
+        <p>We need to carry out more checks on you as agreed with Ministry of Defence (MOD).</p>
+        <p>We’ll send you a form to fill in after you submit your application.</p>
+        <input type="submit" class="button" value="Continue">
+        {% csrf_token %}
+    </div>
+</form>
+</div>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}

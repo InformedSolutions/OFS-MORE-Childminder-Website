@@ -51,10 +51,6 @@ urlpatterns = [
     url(r'^first-aid/renew/', views.first_aid_training_renew, name='First-Aid-Training-Renew-View'),
     url(r'^first-aid/update/', views.first_aid_training_training, name='First-Aid-Training-Training-View'),
     url(r'^first-aid/check-answers/', views.first_aid_training_summary, name='First-Aid-Training-Summary-View'),
-    url(r'^criminal-record/$', views.dbs_check_guidance, name='DBS-Check-Guidance-View'),
-    url(r'^criminal-record/your-details/', views.dbs_check_dbs_details, name='DBS-Check-DBS-Details-View'),
-    url(r'^criminal-record/post-certificate/', views.dbs_check_upload_dbs, name='DBS-Check-Upload-DBS-View'),
-    url(r'^criminal-record/check-answers/', views.dbs_check_summary, name='DBS-Check-Summary-View'),
 
     # ======================= #
     # Childcare Training urls #
@@ -66,6 +62,24 @@ urlpatterns = [
     url(r'^childcare-training-course/', views.ChildcareTrainingCourseRequiredView.as_view(), name='Childcare-Training-Course-Required-View'),
     url(r'^childcare-training-certificate/', views.ChildcareTrainingCertificateView.as_view(), name='Childcare-Training-Certificate-View'),
     url(r'^childcare-training/check-answers/', views.ChildcareTrainingSummaryView.as_view(), name='Childcare-Training-Summary-View'),
+
+    # =========================== #
+    # Criminal Record Checks urls #
+    # =========================== #
+
+    url(r'^criminal-record/UK/$', views.DBSGuidanceView.as_view(), name='DBS-Guidance-View'),
+    url(r'^criminal-record/type/$', views.DBSTypeView.as_view(), name='DBS-Type-View'),
+    url(r'^criminal-record/lived-abroad/$', views.DBSLivedAbroadView.as_view(), name='DBS-Lived-Abroad-View'),
+    url(r'^criminal-record/abroad/$', views.DBSGoodConductView.as_view(), name='DBS-Good-Conduct-View'),
+    url(r'^criminal-record/email-certificates/$', views.DBSEmailCertificatesView.as_view(), name='DBS-Email-Certificates-View'),
+    url(r'^criminal-record/military-base-abroad/$', views.DBSMilitaryView.as_view(), name='DBS-Military-View'),
+    url(r'^criminal-record/MOD-checks/$', views.DBSMinistryOfDefenceView.as_view(), name='DBS-Ministry-Of-Defence-View'),
+    url(r'^criminal-record/your-details/$', views.DBSCheckCapitaView.as_view(), name='DBS-Check-Capita-View'),
+    url(r'^criminal-record/DBS-details/$', views.DBSCheckNoCapitaView.as_view(), name='DBS-Check-No-Capita-View'),
+    url(r'^criminal-record/update/$', views.DBSUpdateView.as_view(), name='DBS-Update-View'),
+    url(r'^criminal-record/Ofsted-check/$', views.DBSGetView.as_view(), name='DBS-Get-View'),
+    url(r'^criminal-record/post-certificate/', views.DBSPostView.as_view(), name='DBS-Post-View'),
+    url(r'^criminal-record/check-answers/', views.DBSSummaryView.as_view(), name='DBS-Summary-View'),
 
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),
     url(r'^health/booklet/', views.health_booklet, name='Health-Booklet-View'),

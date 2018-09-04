@@ -1,3 +1,9 @@
+{% if application_id %}
 <a href="{% url 'Task-List-View' %}?id={{application_id}}">
     Return to list
 </a>
+{% elif id %}
+<a href="{% url 'Task-List-View' %}?id={{id}}">
+    Return to list
+</a>
+{% endif %}

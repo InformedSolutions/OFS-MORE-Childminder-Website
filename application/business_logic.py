@@ -765,6 +765,7 @@ def health_check_email_resend_logic(adult_record):
     else:
         return False
 
+
 def dbs_matches_childminder_dbs(application, candidate_dbs_certificate_number):
     """
     Helper function to determine whether a DBS number matches the DBS recorded for the childminder
@@ -901,6 +902,7 @@ def childminder_dbs_number_duplication_check(application, candidate_dbs_certific
 
     return response
 
+
 def convert_mobile_to_notify_standard(mobile):
 
     mobile_prefix_REGEX = "^(\+44|0044)[7][0-9]{9}$"
@@ -910,6 +912,7 @@ def convert_mobile_to_notify_standard(mobile):
         return new_mobile
     else:
         return mobile
+
 
 def childminder_references_and_user_email_duplication_check(email1, email2):
     """
@@ -924,6 +927,7 @@ def childminder_references_and_user_email_duplication_check(email1, email2):
     else:
         return False
 
+
 def show_resend_and_change_email(health_check_status, is_review):
     """
     Helper function to determine if the 'resend email' and 'change' email buttons should be visible inside the
@@ -936,6 +940,50 @@ def show_resend_and_change_email(health_check_status, is_review):
         return True
     else:
         return False
+
+
+def update_criminal_record_check(app_id, field_obj, status):
+    """
+    Updates the CriminalRecordCheck field with the given status.
+    :param app_id: applicant's application_id
+    :param field_obj: CriminalRecordCheck field or list of CriminalRecordCheck fields
+    :param status: Value to update entry/entries with
+    :return: Boolean True if successfully updated.
+    """
+    criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        for field in field_obj:
+            setattr(criminal_record_check_record, field, status)
+        criminal_record_check_record.save()
+
+    elif isinstance(field_obj, str):
+        setattr(criminal_record_check_record, field_obj, status)
+        criminal_record_check_record.save()
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+    return True
+
+
+def get_criminal_record_check(app_id, field_obj):
+    """
+    :param app_id: applicant's application_id
+    :param field_obj: CriminalRecordCheck field or list of CriminalRecordCheck fields
+    :return: Boolean True if successfully updated.
+    """
+    criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        return {field: getattr(criminal_record_check_record, field) for field in field_obj}
+
+    elif isinstance(field_obj, str):
+        return getattr(criminal_record_check_record, field_obj)
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
 
 class UniqueDbsCheckResult:
     """

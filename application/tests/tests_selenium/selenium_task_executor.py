@@ -327,30 +327,42 @@ class SeleniumTaskExecutor:
 
         driver.find_element_by_xpath("//tr[@id='dbs']/td/a/span").click()
 
-        # Guidance page
+        # Lived Abroad
+        driver.find_element_by_id("id_lived_abroad_1").click()
+        driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        # Military base abroad
+        driver.find_element_by_id("id_military_base_1").click()
+        driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        # Criminal record checks
         driver.find_element_by_xpath("//input[@value='Continue']").click()
 
-        # Set DBS number
+        # Type of DBS check
+        driver.find_element_by_id("id_capita_0").click()
+        driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        # DBS Check Capita
         driver.find_element_by_id("id_dbs_certificate_number").send_keys(dbs_number)
 
         if has_convictions is not True:
             driver.find_element_by_id("id_cautions_convictions_1").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+
             # Task summary
-            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Check your answers: criminal record (DBS) check"))
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Check your answers: your criminal record checks"))
             driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
 
         elif has_convictions is True:
-
             driver.find_element_by_id("id_cautions_convictions_0").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
             # Confirm will send DBS certificate
-            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Post your DBS certificate"))
-            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Get an Ofsted DBS check"))
+            driver.find_element_by_xpath("//input[@value='Continue']").click()
 
             # Task summary
-            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Check your answers: criminal record (DBS) check"))
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Check your answers: your criminal record checks"))
             driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
 
     def complete_people_in_your_home_task(self, other_adults_in_home, other_adult_forename, other_adult_middle_name,
