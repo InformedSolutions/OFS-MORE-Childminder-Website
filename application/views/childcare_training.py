@@ -130,12 +130,8 @@ class ChildcareTrainingCourseRequiredView(View):
 
     def post(self, request):
         application_id = self.request.GET['id']
-        application = Application.objects.get(pk=application_id)
-
-        if application.childcare_training_status != 'COMPLETED':
-            status.update(application_id, 'childcare_training_status', 'IN_PROGRESS')
-
-        return HttpResponseRedirect(reverse(self.success_url) + '?id=' + request.GET['id'])
+        status.update(application_id, 'childcare_training_status', 'IN_PROGRESS')
+        return HttpResponseRedirect(reverse(self.success_url) + '?id=' + application_id)
 
     def get_context_data(self, **kwargs):
         context = dict()
