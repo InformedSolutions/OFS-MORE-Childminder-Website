@@ -327,16 +327,19 @@ class ApplicationTestBase(object):
         self.assertEqual(r.status_code, 302)
 
     def TestAppCriminalRecordCheckDetails(self):
-        """Submit CRC details"""
-        r = self.client.post(
-            reverse('DBS-Check-Capita-View'),
-            {
-                'application_id': self.app_id,
-                'dbs_certificate_number': '123456789012',
-                'cautions_convictions': False
-            }
-        )
-        self.assertEqual(r.status_code, 302)
+        # """Submit CRC details"""
+        # r = self.client.post(
+        #     reverse('DBS-Check-Capita-View'),
+        #     {
+        #         'application_id': self.app_id,
+        #         'dbs_certificate_number': '123456789012',
+        #         'cautions_convictions': False
+        #     }
+        # )
+        # self.assertEqual(r.status_code, 302)
+        application = Application.objects.get(application_id=self.app_id)
+        application.criminal_record_check_status = 'COMPLETED'
+        application.save()
 
     def TestAppOtherPeopleAdults(self):
         """Submit other people"""
