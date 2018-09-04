@@ -13,6 +13,7 @@ from ...models import (ApplicantHomeAddress,
                        ApplicantPersonalDetails,
                        Application,
                        ChildcareType,
+                       CriminalRecordCheck,
                        UserDetails)
 
 
@@ -340,6 +341,15 @@ class ApplicationTestBase(object):
         application = Application.objects.get(application_id=self.app_id)
         application.criminal_record_check_status = 'COMPLETED'
         application.save()
+
+        crc = CriminalRecordCheck.objects.create(application_id=application)
+        crc.lived_abroad = True
+        crc.military = False
+        crc.capita = True
+        crc.on_update = None
+        crc.dbs_certificate_number = '123456789012'
+        crc.cautions_convictions = False
+        crc.save()
 
     def TestAppOtherPeopleAdults(self):
         """Submit other people"""
