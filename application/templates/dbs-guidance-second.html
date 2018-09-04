@@ -1,0 +1,43 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}UK criminal record check{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<div class="two-thirds">
+<form method="post" novalidate>
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            UK criminal record (DBS) check
+        </h1>
+        <p>You need to have a Disclosure and Barring Service (DBS) check.</p>
+
+        <p>This must be an enhanced check for a home-based childcare role.</p>
+
+        <p>You can apply for an
+            <a href="http://ofsteddbsapplication.co.uk/step-one.aspx" target="_blank">
+                Ofsted DBS check
+            </a>
+            .
+        </p>
+
+        <p>It can take about 6 weeks to get your certificate.</p>
+
+        <p>You might be able to
+            <a href="https://www.gov.uk/guidance/criminal-record-checks-for-childminders-and-childcare-workers#if-you-already-have-a-dbs-certificate" target="_blank">
+                use an existing check
+            </a>
+            .
+        </p>
+
+        <input type="submit" class="button" value="Continue">
+        {% csrf_token %}
+    </div>
+</form>
+</div>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}

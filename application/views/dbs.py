@@ -39,6 +39,11 @@ class DBSTemplateView(TemplateView):
 
 class DBSGuidanceView(DBSTemplateView):
     template_name = 'dbs-guidance.html'
+    success_url = 'DBS-Lived-Abroad-View'
+
+
+class DBSGuidanceSecondView(DBSTemplateView):
+    template_name = 'dbs-guidance-second.html'
     success_url = 'DBS-Type-View'
 
 
@@ -67,7 +72,7 @@ class DBSGetView(DBSTemplateView):
 
 class DBSMinistryOfDefenceView(DBSTemplateView):
     template_name = 'dbs-ministry-of-defence.html'
-    success_url = 'DBS-Guidance-View'
+    success_url = 'DBS-Guidance-Second-View'
 
 
 class DBSPostView(DBSTemplateView):
@@ -336,7 +341,7 @@ class DBSTypeView(DBSRadioView):
 class DBSMilitaryView(DBSRadioView):
     template_name = 'dbs-military.html'
     form_class = DBSMilitaryForm
-    success_url = ('DBS-Ministry-Of-Defence-View', 'DBS-Guidance-View')
+    success_url = ('DBS-Ministry-Of-Defence-View', 'DBS-Guidance-Second-View')
     dbs_field_name = 'military_base'
 
 
