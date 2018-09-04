@@ -25,22 +25,25 @@ def validate_magic_link(request, id):
         person = AdultInHome.objects.get(token=id)
         application = Application.objects.get(pk=person.application_id.pk)
 
-        try:
-            applicant_name = ApplicantName.objects.get(application_id=application.pk)
-            name = ' '.join([applicant_name.first_name, applicant_name.middle_names, applicant_name.last_name])
-        except:
-            name = 'An applicant'
+        if person.validated is not True:
+            try:
+                applicant_name = ApplicantName.objects.get(application_id=application.pk)
+                name = ' '.join([applicant_name.first_name, applicant_name.middle_names, applicant_name.last_name])
+            except:
+                name = 'An applicant'
 
-        dob_url = build_url('Health-Check-Dob', get={'person_id': person.pk})
+            dob_url = build_url('Health-Check-Dob', get={'person_id': person.pk})
 
-        context = {
-            'name': name,
-            'dob_url': dob_url,
-        }
+            context = {
+                'name': name,
+                'dob_url': dob_url,
+            }
 
-        response = render(request, 'other_people_health_check/start.html', context)
-        CustomAuthenticationHandler.create_session(response, person.email)
-        return response
+            response = render(request, 'other_people_health_check/start.html', context)
+            CustomAuthenticationHandler.create_session(response, person.email)
+            return response
+        else:
+            return render(request, 'bad-link.html')
 
     except Exception as ex:
         exception_data = traceback.format_exc().splitlines()

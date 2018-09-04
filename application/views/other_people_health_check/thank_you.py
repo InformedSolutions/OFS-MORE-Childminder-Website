@@ -73,5 +73,8 @@ class ThankYou(BaseTemplateView):
 
             update(application_id, 'people_in_home_status', 'COMPLETED')
 
+        adult_record.validated = True
+        adult_record.save()
+
         CustomAuthenticationHandler.destroy_session(response)
         return response
