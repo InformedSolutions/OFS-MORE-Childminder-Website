@@ -18,7 +18,7 @@ from .models import (AdultInHome,
                      ChildcareType,
                      ChildInHome,
                      CriminalRecordCheck,
-                     EYFS,
+                     ChildcareTraining,
                      FirstAidTraining,
                      HealthDeclarationBooklet,
                      Reference,
@@ -50,6 +50,19 @@ def childcare_type_logic(application_id_local, form):
         childcare_type_record.five_to_eight = five_to_eight_status
         childcare_type_record.eight_plus = eight_plus_status
     return childcare_type_record
+
+
+def childcare_register_type(application_id):
+    """
+    Function to determine the childcare register to which the applicant is applying.
+    :param application_id: app_id of the applicant for which the check is being made.
+    :return: a string containing the register to which the applicant is applying.
+    """
+    childcare_type_record = ChildcareType.objects.get(application_id=application_id)
+    if not childcare_type_record.zero_to_five:
+        return 'childcare_register_only'
+    else:
+        return 'early_years_register'
 
 
 def login_contact_logic(application_id_local, form):
@@ -329,7 +342,7 @@ def first_aid_logic(application_id_local, form):
 
 def eyfs_details_logic(application_id_local, form):
     """
-    Business logic to create or update an EYFS record
+    Business logic to create or update an EYFS record for someone applying to the Early Years register.
     :param application_id_local: A string object containing the current application ID
     :param form: A form object containing the data to be stored
     :return: an EYFS object to be saved
@@ -340,16 +353,60 @@ def eyfs_details_logic(application_id_local, form):
     eyfs_course_date_month = form.cleaned_data.get('eyfs_course_date').month
     eyfs_course_date_year = form.cleaned_data.get('eyfs_course_date').year
     # If the user entered information for this task for the first time
-    if EYFS.objects.filter(application_id=application_id_local).count() == 0:
-        eyfs_record = EYFS(eyfs_course_name=eyfs_course_name, eyfs_course_date_day=eyfs_course_date_day, eyfs_course_date_month=eyfs_course_date_month, eyfs_course_date_year=eyfs_course_date_year, application_id=this_application)
+    if ChildcareTraining.objects.filter(application_id=application_id_local).count() == 0:
+        eyfs_record = ChildcareTraining(eyfs_course_name=eyfs_course_name, eyfs_course_date_day=eyfs_course_date_day, eyfs_course_date_month=eyfs_course_date_month, eyfs_course_date_year=eyfs_course_date_year, application_id=this_application)
     # If the user previously entered information for this task
-    elif EYFS.objects.filter(application_id=application_id_local).count() > 0:
-        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+    elif ChildcareTraining.objects.filter(application_id=application_id_local).count() > 0:
+        eyfs_record = ChildcareTraining.objects.get(application_id=application_id_local)
         eyfs_record.eyfs_course_name = eyfs_course_name
         eyfs_record.eyfs_course_date_day = eyfs_course_date_day
         eyfs_record.eyfs_course_date_month = eyfs_course_date_month
         eyfs_record.eyfs_course_date_year = eyfs_course_date_year
     return eyfs_record
+
+
+def training_for_childcare_register_logic(application_id_local, form):
+    """
+    Business logic to create or update an EYFS record for someone applying to the childcare register only.
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: an EYFS object to be saved
+    """
+    childcare_training = form.cleaned_data['childcare_training']
+
+    options = (
+        'eyfs_training',
+        'common_core_training',
+        'no_training',
+    )
+
+    if ChildcareTraining.objects.filter(application_id=application_id_local).count() == 0:
+        application_record        = Application.objects.get(application_id=application_id_local)
+        childcare_training_record = ChildcareTraining.objects.create(application_id=application_record)
+    else:
+        childcare_training_record = ChildcareTraining.objects.get(application_id=application_id_local)
+
+    for option in options:
+        if option in childcare_training:
+            setattr(childcare_training_record, option, True)
+        else:
+            setattr(childcare_training_record, option, False)
+
+    return childcare_training_record
+
+
+def childcare_training_course_logic(application_id_local, form):
+    """
+
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: a call to the function required to update the model with the information provided.
+    """
+    childcare_type = childcare_register_type(application_id_local)
+    if childcare_type == 'childcare_register_only':
+        return training_for_childcare_register_logic(application_id_local, form)
+    else:
+        return eyfs_details_logic(application_id_local, form)
 
 
 def dbs_check_logic(application_id_local, form):
@@ -702,38 +759,11 @@ def health_check_email_resend_logic(adult_record):
         elif (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) > timedelta(1):
             # Reset the email resent count
             adult_record.email_resent = 0
-            adult_record.validated = False
             adult_record.save()
 
             return False
     else:
         return False
-
-
-def eligible_to_apply_based_on_childcare_ages(childcare_record):
-    """
-    Helper function to check whether an applicant can apply based on the ages of children they
-    will be looking after
-    :param childcare_record: A ChildcareType instance detailing the ages of children being looked after
-    :return: a boolean indicator for whether or not
-    an applicant can apply using the service based on the ages of children they
-    will be looking after
-    """
-
-    if (childcare_record.zero_to_five is False) \
-            & (childcare_record.five_to_eight is True) \
-            & (childcare_record.eight_plus is False):
-        return False
-    elif (childcare_record.zero_to_five is False) \
-            & (childcare_record.five_to_eight is True) \
-            & (childcare_record.eight_plus is True):
-        return False
-    elif (childcare_record.zero_to_five is False) \
-            & (childcare_record.five_to_eight is False) \
-            & (childcare_record.eight_plus is True):
-        return False
-    else:
-        return True
 
 
 def dbs_matches_childminder_dbs(application, candidate_dbs_certificate_number):
@@ -872,6 +902,7 @@ def childminder_dbs_number_duplication_check(application, candidate_dbs_certific
 
     return response
 
+
 def convert_mobile_to_notify_standard(mobile):
 
     mobile_prefix_REGEX = "^(\+44|0044)[7][0-9]{9}$"
@@ -881,6 +912,7 @@ def convert_mobile_to_notify_standard(mobile):
         return new_mobile
     else:
         return mobile
+
 
 def childminder_references_and_user_email_duplication_check(email1, email2):
     """
@@ -895,6 +927,7 @@ def childminder_references_and_user_email_duplication_check(email1, email2):
     else:
         return False
 
+
 def show_resend_and_change_email(health_check_status, is_review):
     """
     Helper function to determine if the 'resend email' and 'change' email buttons should be visible inside the
@@ -907,6 +940,50 @@ def show_resend_and_change_email(health_check_status, is_review):
         return True
     else:
         return False
+
+
+def update_criminal_record_check(app_id, field_obj, status):
+    """
+    Updates the CriminalRecordCheck field with the given status.
+    :param app_id: applicant's application_id
+    :param field_obj: CriminalRecordCheck field or list of CriminalRecordCheck fields
+    :param status: Value to update entry/entries with
+    :return: Boolean True if successfully updated.
+    """
+    criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        for field in field_obj:
+            setattr(criminal_record_check_record, field, status)
+        criminal_record_check_record.save()
+
+    elif isinstance(field_obj, str):
+        setattr(criminal_record_check_record, field_obj, status)
+        criminal_record_check_record.save()
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+    return True
+
+
+def get_criminal_record_check(app_id, field_obj):
+    """
+    :param app_id: applicant's application_id
+    :param field_obj: CriminalRecordCheck field or list of CriminalRecordCheck fields
+    :return: Boolean True if successfully updated.
+    """
+    criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        return {field: getattr(criminal_record_check_record, field) for field in field_obj}
+
+    elif isinstance(field_obj, str):
+        return getattr(criminal_record_check_record, field_obj)
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
 
 class UniqueDbsCheckResult:
     """

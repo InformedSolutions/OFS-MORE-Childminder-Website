@@ -1,0 +1,43 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Childcare training certificate{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<div class="form-group two-thirds">
+
+{% if register == 'childcare_register_only' %}
+
+    <h1 class="form-title heading-large">
+        Childcare training certificate
+    </h1>
+
+    <p>An inspector will ask to see your certificate when they inspect you.</p>
+    <p>You must show them your certificate.</p>
+
+{% elif register == 'early_years_register' %}
+
+    <h1 class="form-title heading-large">
+        Early years training certificate
+    </h1>
+
+    <p>An inspector will ask to see your certificate when they visit the home.</p>
+    <p>You must show them your certificate.</p>
+    <p>They’ll also check how you’ll follow the EYFS to keep children safe and help them learn.</p>
+
+{% endif %}
+</div>
+
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    <input type="submit" class="button" value="Continue">
+</form>
+
+<br>
+{% include 'return-to-list.html' %}
+
+{% endblock %}

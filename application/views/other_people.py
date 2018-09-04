@@ -1009,7 +1009,7 @@ def other_people_resend_email(request):
             if adult_record.health_check_status == 'Started':
                 variables['error_summary_title'] = "There was a problem with " \
                                                    + name + "'s answers to the health questions"
-                variables['arc_comment'] = ArcComments.objects.get(table_pk=adult_record.pk).comment
+                variables['arc_comment'] = ArcComments.objects.get(table_pk=adult_record.pk, field_name='health_check_status').comment
 
             return render(request, 'other-people-resend-email.html', variables)
 
@@ -1046,9 +1046,7 @@ def other_people_resend_email(request):
                 else:
                     template_id = '5bbf3677-49e9-47d0-acf2-55a9a03d8242'
                 email = adult_record.email
-                # Generate unique link for the household member to access their health check page
-                adult_record.token = ''.join([random.choice(string.digits[1:]) for n in range(7)])
-                adult_record.validated = False
+
                 base_url = settings.PUBLIC_APPLICATION_URL.replace('/childminder', '')
                 personalisation = {"link": base_url + reverse('Health-Check-Authentication',
                                                               kwargs={'id': adult_record.token}),
@@ -1070,7 +1068,7 @@ def other_people_resend_email(request):
                 # If health check has been flagged, remove flag once email resent; else, pass.
                 # form.remove_flag won't work because form is simply a 'Continue' button - it has no fields.
                 try:
-                    adult_arc_comment = ArcComments.objects.get(table_pk=adult_record.pk)
+                    adult_arc_comment = ArcComments.objects.get(table_pk=adult_record.pk, field_name='health_check_status')
                     if adult_arc_comment.flagged:
                         adult_arc_comment.flagged = False
                         adult_arc_comment.save()

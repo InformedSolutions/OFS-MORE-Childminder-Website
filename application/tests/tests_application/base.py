@@ -13,11 +13,11 @@ from ...models import (ApplicantHomeAddress,
                        ApplicantPersonalDetails,
                        Application,
                        ChildcareType,
+                       CriminalRecordCheck,
                        UserDetails)
 
 
 class ApplicationTestBase(object):
-
     client = Client()
     app_id = None
 
@@ -328,16 +328,28 @@ class ApplicationTestBase(object):
         self.assertEqual(r.status_code, 302)
 
     def TestAppCriminalRecordCheckDetails(self):
-        """Submit CRC details"""
-        r = self.client.post(
-            reverse('DBS-Check-DBS-Details-View'),
-            {
-                'id': self.app_id,
-                'dbs_certificate_number': '123456789012',
-                'cautions_convictions': False
-            }
-        )
-        self.assertEqual(r.status_code, 302)
+        # """Submit CRC details"""
+        # r = self.client.post(
+        #     reverse('DBS-Check-Capita-View'),
+        #     {
+        #         'application_id': self.app_id,
+        #         'dbs_certificate_number': '123456789012',
+        #         'cautions_convictions': False
+        #     }
+        # )
+        # self.assertEqual(r.status_code, 302)
+        application = Application.objects.get(application_id=self.app_id)
+        application.criminal_record_check_status = 'COMPLETED'
+        application.save()
+
+        crc = CriminalRecordCheck.objects.create(application_id=application)
+        crc.lived_abroad = True
+        crc.military = False
+        crc.capita = True
+        crc.on_update = None
+        crc.dbs_certificate_number = '123456789012'
+        crc.cautions_convictions = False
+        crc.save()
 
     def TestAppOtherPeopleAdults(self):
         """Submit other people"""
@@ -580,23 +592,29 @@ class ApplicationTestBase(object):
     def TestAppDeclaration(self):
         """Send Declaration"""
 
+        application = Application.objects.get(application_id=self.app_id)
+        # ChildcareType.objects.create(application_id=application,
+        #                              zero_to_five=True,
+        #                              five_to_eight=True,
+        #                              eight_plus=True,
+        #                              overnight_care=True)
         r = self.client.post(
             reverse('Declaration-Declaration-View'),
             {
                 'id': self.app_id,
-                'background_check_declare': 'on',
-                'inspect_home_declare': 'on',
-                'interview_declare': 'on',
-                'change_declare': 'on',
-                'share_info_declare': 'on',
-                'information_correct_declare': 'on',
-                'suitable_declare': 'on',
+                'declaration_confirmation': 'on',
             }
         )
         self.assertEqual(r.status_code, 302)
 
     def TestAppPaymentCreditDetails(self):
         """Submit Credit Card details"""
+        application = Application.objects.get(application_id=self.app_id)
+        ChildcareType.objects.create(application_id=application,
+                                     zero_to_five=True,
+                                     five_to_eight=True,
+                                     eight_plus=True,
+                                     overnight_care=True)
 
         with mock.patch('application.payment_service.make_payment') as post_payment_mock:
             test_payment_response = {
@@ -641,7 +659,7 @@ class ApplicationTestBase(object):
         flagged_fields_to_check = (
             "childcare_type_arc_flagged",
             "criminal_record_check_arc_flagged",
-            "eyfs_training_arc_flagged",
+            "childcare_training_arc_flagged",
             "first_aid_training_arc_flagged",
             "health_arc_flagged",
             "login_details_arc_flagged",
@@ -659,11 +677,7 @@ class ApplicationTestBase(object):
             reverse('Declaration-Declaration-View'),
             {
                 'id': self.app_id,
-                'share_info_declare': True,
-                'suitable_declare': True,
-                'information_correct_declare': True,
-                'change_declare': True,
-                'display_contact_details_on_web': True
+                'declaration_confirmation': True
             }
         )
 

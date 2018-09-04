@@ -133,8 +133,8 @@
          "childcare_type_arc_flagged":false,
          "first_aid_training_status":"COMPLETED",
          "first_aid_training_arc_flagged":false,
-         "eyfs_training_status":"COMPLETED",
-         "eyfs_training_arc_flagged":false,
+         "childcare_training_status":"COMPLETED",
+         "childcare_training_arc_flagged":false,
          "criminal_record_check_status":"COMPLETED",
          "criminal_record_check_arc_flagged":false,
          "health_status":"COMPLETED",
@@ -147,11 +147,7 @@
          "children_in_home":true,
          "children_turning_16":false,
          "declarations_status":"NOT_STARTED",
-         "share_info_declare":null,
-         "display_contact_details_on_web":null,
-         "suitable_declare":null,
-         "information_correct_declare":null,
-         "change_declare":null,
+         "declaration_confirmation":null,
          "date_created":"2018-08-17T18:53:30.312Z",
          "date_updated":"2018-08-17T18:55:23.980Z",
          "date_accepted":null,
@@ -264,11 +260,15 @@
       "fields":{
          "application_id":"9c8e1285-84a0-439e-a824-42b94cf3d2c5",
          "dbs_certificate_number":"738947890237",
-         "cautions_convictions":false
+         "cautions_convictions": false,
+         "lived_abroad": true,
+         "military_base": true,
+         "capita": true,
+         "on_update": null
       }
    },
    {
-      "model":"application.eyfs",
+      "model":"application.childcaretraining",
       "pk":"bd4dae8e-10ff-4b60-ae12-343af57611c9",
       "fields":{
          "application_id":"9c8e1285-84a0-439e-a824-42b94cf3d2c5",

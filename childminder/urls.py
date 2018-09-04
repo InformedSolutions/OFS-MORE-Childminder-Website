@@ -51,14 +51,37 @@ urlpatterns = [
     url(r'^first-aid/renew/', views.first_aid_training_renew, name='First-Aid-Training-Renew-View'),
     url(r'^first-aid/update/', views.first_aid_training_training, name='First-Aid-Training-Training-View'),
     url(r'^first-aid/check-answers/', views.first_aid_training_summary, name='First-Aid-Training-Summary-View'),
-    url(r'^criminal-record/$', views.dbs_check_guidance, name='DBS-Check-Guidance-View'),
-    url(r'^criminal-record/your-details/', views.dbs_check_dbs_details, name='DBS-Check-DBS-Details-View'),
-    url(r'^criminal-record/post-certificate/', views.dbs_check_upload_dbs, name='DBS-Check-Upload-DBS-View'),
-    url(r'^criminal-record/check-answers/', views.dbs_check_summary, name='DBS-Check-Summary-View'),
-    url(r'^early-years/$', views.eyfs_guidance, name='EYFS-Guidance-View'),
-    url(r'^early-years/details', views.eyfs_details, name='EYFS-Details-View'),
-    url(r'^early-years/certificate', views.eyfs_certificate, name='EYFS-Certificate-View'),
-    url(r'^early-years/check-answers/', views.eyfs_summary, name='EYFS-Summary-View'),
+
+    # ======================= #
+    # Childcare Training urls #
+    # ======================= #
+
+    url(r'^childcare-training/$', views.ChildcareTrainingGuidanceView.as_view(), name='Childcare-Training-Guidance-View'),
+    url(r'^childcare-training/details/', views.ChildcareTrainingDetailsView.as_view(), name='Childcare-Training-Details-View'),
+    url(r'^childcare-training/type/', views.TypeOfChildcareTrainingView.as_view(), name='Type-Of-Childcare-Training-View'),
+    url(r'^childcare-training-course/', views.ChildcareTrainingCourseRequiredView.as_view(), name='Childcare-Training-Course-Required-View'),
+    url(r'^childcare-training-certificate/', views.ChildcareTrainingCertificateView.as_view(), name='Childcare-Training-Certificate-View'),
+    url(r'^childcare-training/check-answers/', views.ChildcareTrainingSummaryView.as_view(), name='Childcare-Training-Summary-View'),
+
+    # =========================== #
+    # Criminal Record Checks urls #
+    # =========================== #
+
+    url(r'^criminal-record/$', views.DBSGuidanceView.as_view(), name='DBS-Guidance-View'),
+    url(r'^criminal-record/type/$', views.DBSTypeView.as_view(), name='DBS-Type-View'),
+    url(r'^criminal-record/lived-abroad/$', views.DBSLivedAbroadView.as_view(), name='DBS-Lived-Abroad-View'),
+    url(r'^criminal-record/abroad/$', views.DBSGoodConductView.as_view(), name='DBS-Good-Conduct-View'),
+    url(r'^criminal-record/email-certificates/$', views.DBSEmailCertificatesView.as_view(), name='DBS-Email-Certificates-View'),
+    url(r'^criminal-record/military-base-abroad/$', views.DBSMilitaryView.as_view(), name='DBS-Military-View'),
+    url(r'^criminal-record/MOD-checks/$', views.DBSMinistryOfDefenceView.as_view(), name='DBS-Ministry-Of-Defence-View'),
+    url(r'^criminal-record/UK/$', views.DBSGuidanceSecondView.as_view(), name='DBS-Guidance-Second-View'),
+    url(r'^criminal-record/your-details/$', views.DBSCheckCapitaView.as_view(), name='DBS-Check-Capita-View'),
+    url(r'^criminal-record/DBS-details/$', views.DBSCheckNoCapitaView.as_view(), name='DBS-Check-No-Capita-View'),
+    url(r'^criminal-record/update/$', views.DBSUpdateView.as_view(), name='DBS-Update-View'),
+    url(r'^criminal-record/Ofsted-check/$', views.DBSGetView.as_view(), name='DBS-Get-View'),
+    url(r'^criminal-record/post-certificate/', views.DBSPostView.as_view(), name='DBS-Post-View'),
+    url(r'^criminal-record/check-answers/', views.DBSSummaryView.as_view(), name='DBS-Summary-View'),
+
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),
     url(r'^health/booklet/', views.health_booklet, name='Health-Booklet-View'),
     url(r'^health/check-answers/', views.health_check_answers, name='Health-Check-Answers-View'),
@@ -82,6 +105,7 @@ urlpatterns = [
     url(r'^references/second-reference-contact-details/', views.references_second_reference_contact_details,
         name='References-Second-Reference-Contact-Details-View'),
     url(r'^references/check-answers/', views.references_summary, name='References-Summary-View'),
+    url(r'^registration-rules/', TemplateView.as_view(template_name='registration-rules.html'), name='Registration-Rules'),
     url(r'^people/$', views.other_people_guidance, name='Other-People-Guidance-View'),
     url(r'^people/adults/', views.other_people_adult_question, name='Other-People-Adult-Question-View'),
     url(r'^people/adults-details/', views.other_people_adult_details, name='Other-People-Adult-Details-View'),
@@ -106,7 +130,6 @@ urlpatterns = [
     url(r'^health-check/more-hospital', hospital_admission.MoreHospitalAdmissionsView.as_view(), name='Health-Check-Hospital-More'),
     url(r'^health-check/hospital/edit', hospital_admission.HospitalAdmissionEditView.as_view(),  name='Health-Check-Hospital-Edit'),
     url(r'^health-check/hospital-details', hospital_admission.HospitalAdmissionView.as_view(), name='Health-Check-Hospital'),
-
     url(r'^health-check/check-answers', summary.Summary.as_view(), name='Health-Check-Summary'),
     url(r'^health-check/declaration', declaration.Declaration.as_view(), name='Health-Check-Declaration'),
     url(r'^health-check/thank-you', thank_you.ThankYou.as_view(), name='Health-Check-Thank-You'),
@@ -115,6 +138,7 @@ urlpatterns = [
     url(r'^people/email-resent/', views.other_people_resend_confirmation, name='Other-People-Resend-Confirmation-View'),
     url(r'^declaration/', views.declaration_intro, name='Declaration-Intro-View'),
     url(r'^your-declaration/', views.declaration_declaration, name='Declaration-Declaration-View'),
+    url(r'^publishing-your-details/', views.publishing_your_details, name='Publishing-Your-Details-View'),
     url(r'^check-answers/', views.declaration_summary, name='Declaration-Summary-View'),
     url(r'^payment/details/', views.card_payment_details, name='Payment-Details-View'),
     url(r'^application-saved/', views.application_saved, name='Application-Saved-View'),

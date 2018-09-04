@@ -120,7 +120,7 @@ class SeriousIllnessView(BaseFormView):
         :return: serious_illness_record; HealthCheckSerious model/object containing cleaned form data.
         """
         clean = form.cleaned_data
-        description = clean['illness_details']
+        description = clean['description']
         start_date = clean['start_date']
         end_date = clean['end_date']
         person_id = AdultInHome.objects.get(pk=self.request.GET.get('person_id'))
@@ -177,7 +177,7 @@ class SeriousIllnessEditView(BaseFormView):
         """
         initial = super().get_initial()
         illness_record = HealthCheckSerious.objects.get(pk=self.request.GET.get('illness_id'))
-        initial['illness_details'] = illness_record.description
+        initial['description'] = illness_record.description
         initial['start_date'] = illness_record.start_date
         initial['end_date'] = illness_record.end_date
 
@@ -194,13 +194,25 @@ class SeriousIllnessEditView(BaseFormView):
 
         return context
 
+    def get_form_kwargs(self):
+        """
+        Method to return keyword arguments passed to the form, including the associated AdultInHome record.
+        :return: dict of keyword arguments.
+        """
+        person_id = self.request.GET.get('person_id')
+        person_record = AdultInHome.objects.get(pk=person_id)
+        kwargs = super(SeriousIllnessEditView, self).get_form_kwargs()
+        kwargs['adult'] = person_record
+
+        return kwargs
+
     def form_valid(self, form):
         """
         Method to save illness record given adult and then call base class form_valid()
         :return: redirect to appropriate success url.
         """
         clean = form.cleaned_data
-        description = clean['illness_details']
+        description = clean['description']
         start_date = clean['start_date']
         end_date = clean['end_date']
         illness_record = HealthCheckSerious.objects.get(pk=self.request.GET.get('illness_id'))

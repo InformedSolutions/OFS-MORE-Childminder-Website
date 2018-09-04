@@ -29,7 +29,7 @@ class ApplicationConfig(AppConfig):
             'ChildInHome',
             'ChildcareType',
             'CriminalRecordCheck',
-            'EYFS',
+            'ChildcareTraining',
             'FirstAidTraining',
             'HealthDeclarationBooklet',
             'Reference',
