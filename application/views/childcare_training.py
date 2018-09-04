@@ -197,9 +197,9 @@ class ChildcareTrainingSummaryView(View):
         :return: list of tables to be rendered on summary page.
         """
         if childcare_training_record.eyfs_training and childcare_training_record.common_core_training:
-            row_value = 'Childcare qualification (level 2 or higher) and training in common core skills'
+            row_value = 'Training that covers the EYFS and training in common core skills'
         elif childcare_training_record.eyfs_training:
-            row_value = 'Childcare qualification (level 2 or higher)'
+            row_value = 'Training that covers the EYFS'
         elif childcare_training_record.common_core_training:
             row_value = 'Training in common core skills'
         else:
