@@ -328,28 +328,55 @@ class ApplicationTestBase(object):
         self.assertEqual(r.status_code, 302)
 
     def TestAppCriminalRecordCheckDetails(self):
-        # """Submit CRC details"""
-        # r = self.client.post(
-        #     reverse('DBS-Check-Capita-View'),
-        #     {
-        #         'application_id': self.app_id,
-        #         'dbs_certificate_number': '123456789012',
-        #         'cautions_convictions': False
-        #     }
-        # )
-        # self.assertEqual(r.status_code, 302)
-        application = Application.objects.get(application_id=self.app_id)
-        application.criminal_record_check_status = 'COMPLETED'
-        application.save()
+        """Submit CRC details"""
+        r = self.client.get(
+            reverse('DBS-Lived-Abroad-View'),
+            {
+                'id': self.app_id
+            }
+        )
+        r = self.client.post(
+            reverse('DBS-Lived-Abroad-View'),
+            {
+                'id': self.app_id,
+                'lived_abroad': True
+            }
+        )
+        self.assertEqual(r.status_code, 302)
+        r = self.client.post(
+            reverse('DBS-Military-View'),
+            {
+                'id': self.app_id,
+                'military_base': True
+            }
+        )
+        self.assertEqual(r.status_code, 302)
+        r = self.client.post(
+            reverse('DBS-Type-View'),
+            {
+                'id': self.app_id,
+                'capita': True
+            }
+        )
+        self.assertEqual(r.status_code, 302)
+        r = self.client.post(
+            reverse('DBS-Check-Capita-View'),
+            {
+                'id': self.app_id,
+                'dbs_certificate_number': '123456789012',
+                'cautions_convictions': False
+            }
+        )
+        self.assertEqual(r.status_code, 302)
 
-        crc = CriminalRecordCheck.objects.create(application_id=application)
-        crc.lived_abroad = True
-        crc.military = False
-        crc.capita = True
-        crc.on_update = None
-        crc.dbs_certificate_number = '123456789012'
-        crc.cautions_convictions = False
-        crc.save()
+        # crc = CriminalRecordCheck.objects.create(application_id=application)
+        # crc.lived_abroad = True
+        # crc.military = False
+        # crc.capita = True
+        # crc.on_update = None
+        # crc.dbs_certificate_number = '123456789012'
+        # crc.cautions_convictions = False
+        # crc.save()
 
     def TestAppOtherPeopleAdults(self):
         """Submit other people"""
