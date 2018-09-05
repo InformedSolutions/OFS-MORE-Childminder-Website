@@ -339,7 +339,11 @@ class DBSTypeView(DBSRadioView):
         # If the 'Type of DBS check' is changed then clear the user's dbs_certificate_number
         # Also check that the application is not in review as this can lead to blank fields being submitted.
         if update_bool != initial_bool:
-            successfully_updated = update_criminal_record_check(application_id, 'dbs_certificate_number', '')
+
+            # dbs_certificate_number is NOT reset on capita change.
+            # successfully_updated = update_criminal_record_check(application_id, 'dbs_certificate_number', '')
+
+            # cautions_convictions is reset on capita change.
             successfully_updated = update_criminal_record_check(application_id, 'cautions_convictions', None)
 
         return super().form_valid(form)
