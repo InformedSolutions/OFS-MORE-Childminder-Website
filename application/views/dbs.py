@@ -39,6 +39,11 @@ class DBSTemplateView(TemplateView):
 
 class DBSGuidanceView(DBSTemplateView):
     template_name = 'dbs-guidance.html'
+    success_url = 'DBS-Lived-Abroad-View'
+
+
+class DBSGuidanceSecondView(DBSTemplateView):
+    template_name = 'dbs-guidance-second.html'
     success_url = 'DBS-Type-View'
 
 
@@ -67,7 +72,7 @@ class DBSGetView(DBSTemplateView):
 
 class DBSMinistryOfDefenceView(DBSTemplateView):
     template_name = 'dbs-ministry-of-defence.html'
-    success_url = 'DBS-Guidance-View'
+    success_url = 'DBS-Guidance-Second-View'
 
 
 class DBSPostView(DBSTemplateView):
@@ -79,19 +84,6 @@ class DBSRadioView(FormView):
     success_url = (None, None)
     dbs_field_name = None
     nullify_field_list = []
-
-    def get(self, request, *args, **kwargs):
-        application_id = self.request.GET.get('id')
-        application = Application.objects.get(application_id=application_id)
-
-        # Re-route depending on task status (criminal_record_check_status)
-        dbs_task_status = application.criminal_record_check_status
-
-        if dbs_task_status == 'FLAGGED':
-            # Update the task status to 'IN_PROGRESS' from 'FLAGGED'
-            status.update(application_id, 'criminal_record_check_status', 'IN_PROGRESS')
-
-        return super().get(request, *args, **kwargs)
 
     def get_initial(self):
         application_id = self.request.GET.get('id')
@@ -132,7 +124,7 @@ class DBSRadioView(FormView):
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem'
+            form.error_summary_title = 'There was a problem on this page'
 
         form.check_flag()
 
@@ -142,16 +134,35 @@ class DBSRadioView(FormView):
 
         return super().get_context_data(**context, **kwargs)
 
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+
+        form.remove_flag()
+
+        return super().post(request, *args, **kwargs)
+
     def form_valid(self, form):
         application_id = self.request.GET.get('id')
-        update_bool = self.request.POST.get(self.dbs_field_name) == 'True'
+        application = Application.objects.get(application_id=application_id)
 
-        successfully_updated = update_criminal_record_check(application_id, self.dbs_field_name, update_bool)
+        # Update task status if flagged or completed (criminal_record_check_status)
+        dbs_task_status = application.criminal_record_check_status
+
+        if dbs_task_status in ['FLAGGED', 'COMPLETED']:
+            # Update the task status to 'IN_PROGRESS' from 'FLAGGED'
+            status.update(application_id, 'criminal_record_check_status', 'IN_PROGRESS')
+
+        # The following check will mean that cautions_convictions is not updated in the DBSCheckNoCapitaView
+        if not (self.dbs_field_name == 'cautions_convictions' and not self.show_cautions_convictions):
+            update_bool = self.request.POST.get(self.dbs_field_name) == 'True'
+
+            successfully_updated = update_criminal_record_check(application_id, self.dbs_field_name, update_bool)
+
+            if not successfully_updated:
+                raise BrokenPipeError("Something went wrong when updating criminal_record_check")
 
         successfully_nullified = self.nullify_fields(application_id)
 
-        if not successfully_updated:
-            raise BrokenPipeError("Something went wrong when updating criminal_record_check")
         if not successfully_nullified:
             raise BrokenPipeError("Something went wrong when nullifying fields in criminal_record_check")
 
@@ -291,7 +302,7 @@ class DBSSummaryView(DBSTemplateView):
                             for row in non_empty_row_list]
 
         criminal_record_check_summary_table = Table([criminal_record_id])
-        criminal_record_check_summary_table.error_summary_title = 'There was a problem'
+        criminal_record_check_summary_table.error_summary_title = 'There was a problem on this page'
         criminal_record_check_summary_table.row_list = Row_Obj_row_list
         criminal_record_check_summary_table.get_errors()
 
@@ -316,19 +327,24 @@ class DBSTypeView(DBSRadioView):
     form_class = DBSTypeForm
     success_url = ('DBS-Check-Capita-View', 'DBS-Update-View')
     dbs_field_name = 'capita'
-    nullify_field_list = ['cautions_convictions']
+    nullify_field_list = []
 
     def form_valid(self, form):
         application_id = self.request.GET.get('id')
+        application = Application.objects.get(application_id=application_id)
+
         initial_bool = form.initial[self.dbs_field_name]
         update_bool = form.cleaned_data[self.dbs_field_name] == 'True'
 
-        application = Application.objects.get(application_id=application_id)
-
         # If the 'Type of DBS check' is changed then clear the user's dbs_certificate_number
         # Also check that the application is not in review as this can lead to blank fields being submitted.
-        if update_bool != initial_bool and application.application_status != 'FURTHER_INFORMATION':
-            successfully_updated = update_criminal_record_check(application_id, 'dbs_certificate_number', '')
+        if update_bool != initial_bool:
+
+            # dbs_certificate_number is NOT reset on capita change.
+            # successfully_updated = update_criminal_record_check(application_id, 'dbs_certificate_number', '')
+
+            # cautions_convictions is reset on capita change.
+            successfully_updated = update_criminal_record_check(application_id, 'cautions_convictions', None)
 
         return super().form_valid(form)
 
@@ -336,7 +352,7 @@ class DBSTypeView(DBSRadioView):
 class DBSMilitaryView(DBSRadioView):
     template_name = 'dbs-military.html'
     form_class = DBSMilitaryForm
-    success_url = ('DBS-Ministry-Of-Defence-View', 'DBS-Guidance-View')
+    success_url = ('DBS-Ministry-Of-Defence-View', 'DBS-Guidance-Second-View')
     dbs_field_name = 'military_base'
 
 
@@ -403,6 +419,7 @@ class DBSCheckNoCapitaView(DBSCheckDetailsView):
     template_name = 'dbs-check-capita.html'
     form_class = DBSCheckNoCapitaForm
     success_url = 'DBS-Post-View'
+    nullify_field_list = ['cautions_convictions']
     show_cautions_convictions = False
 
     def get_success_url(self):

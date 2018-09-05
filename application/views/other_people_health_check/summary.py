@@ -24,3 +24,5 @@ class Summary(BaseTemplateView):
 
         return context
 
+
+

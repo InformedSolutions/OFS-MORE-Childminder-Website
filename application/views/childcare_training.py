@@ -130,12 +130,8 @@ class ChildcareTrainingCourseRequiredView(View):
 
     def post(self, request):
         application_id = self.request.GET['id']
-        application = Application.objects.get(pk=application_id)
-
-        if application.childcare_training_status != 'COMPLETED':
-            status.update(application_id, 'childcare_training_status', 'IN_PROGRESS')
-
-        return HttpResponseRedirect(reverse(self.success_url) + '?id=' + request.GET['id'])
+        status.update(application_id, 'childcare_training_status', 'IN_PROGRESS')
+        return HttpResponseRedirect(reverse(self.success_url) + '?id=' + application_id)
 
     def get_context_data(self, **kwargs):
         context = dict()
@@ -201,9 +197,9 @@ class ChildcareTrainingSummaryView(View):
         :return: list of tables to be rendered on summary page.
         """
         if childcare_training_record.eyfs_training and childcare_training_record.common_core_training:
-            row_value = 'Childcare qualification (level 2 or higher) and training in common core skills'
+            row_value = 'Training that covers the EYFS and training in common core skills'
         elif childcare_training_record.eyfs_training:
-            row_value = 'Childcare qualification (level 2 or higher)'
+            row_value = 'Training that covers the EYFS'
         elif childcare_training_record.common_core_training:
             row_value = 'Training in common core skills'
         else:

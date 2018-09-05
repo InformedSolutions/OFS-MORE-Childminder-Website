@@ -14,6 +14,7 @@ class DBSRadioForm(ChildminderForms):
     GOV.UK form for the Criminal record check: generic radio button form
     """
     field_label_classes = 'form-label-bold'
+    error_summary_title = 'There was a problem on this page'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
@@ -80,6 +81,7 @@ class DBSTypeForm(DBSRadioForm):
     GOV.UK form for the Criminal record check: type page
     """
     choice_field_name = 'capita'
+    error_summary_title = 'There was a problem with the type of DBS check'
 
     def get_choice_field_data(self):
         return forms.ChoiceField(label='Do you have an Ofsted DBS Check?',
@@ -94,6 +96,7 @@ class DBSUpdateForm(DBSRadioForm):
     GOV.UK form for the Criminal record check: update page
     """
     choice_field_name = 'on_update'
+    error_summary_title = 'There was a problem with the type of DBS check'
 
     def get_choice_field_data(self):
         return forms.ChoiceField(label='Are you on the DBS update service?',
@@ -108,6 +111,7 @@ class DBSCheckDetailsForm(DBSRadioForm):
     """
     GOV.UK form for generic check details forms
     """
+    error_summary_title = 'There was a problem with your DBS details'
     dbs_certificate_number_widget = NumberInput()
     dbs_certificate_number_widget.input_classes = 'form-control form-control-1-4'
 

@@ -64,23 +64,34 @@ class DBSGoodConductViewTests(DBSTemplateViewTestCase):
         self.view_url_name = 'DBS-Good-Conduct-View'
         self.correct_url = 'DBS-Email-Certificates-View'
 
+
 class DBSSendCertificateViewTests(DBSTemplateViewTestCase):
     def setUp(self):
         super().setUp()
         self.view_url_name = 'DBS-Email-Certificates-View'
         self.correct_url = 'DBS-Military-View'
 
+
 class DBSMinistryOfDefenceViewTests(DBSTemplateViewTestCase):
     def setUp(self):
         super().setUp()
         self.view_url_name = 'DBS-Ministry-Of-Defence-View'
-        self.correct_url = 'DBS-Guidance-View'
+        self.correct_url = 'DBS-Guidance-Second-View'
+
 
 class DBSGuidanceViewTests(DBSTemplateViewTestCase):
     def setUp(self):
         super().setUp()
         self.view_url_name = 'DBS-Guidance-View'
+        self.correct_url = 'DBS-Lived-Abroad-View'
+
+
+class DBSGuidanceSecondViewTests(DBSTemplateViewTestCase):
+    def setUp(self):
+        super().setUp()
+        self.view_url_name = 'DBS-Guidance-Second-View'
         self.correct_url = 'DBS-Type-View'
+
 
 class DBSGetViewTests(DBSTemplateViewTestCase):
     def setUp(self):
@@ -88,11 +99,13 @@ class DBSGetViewTests(DBSTemplateViewTestCase):
         self.view_url_name = 'DBS-Get-View'
         self.correct_url = 'Task-List-View'
 
+
 class DBSPostViewTests(DBSTemplateViewTestCase):
     def setUp(self):
         super().setUp()
         self.view_url_name = 'DBS-Post-View'
         self.correct_url = 'DBS-Summary-View'
+
 
 class DBSRadioViewTests(NoMiddlewareTestCase):
     def setUp(self):
@@ -361,7 +374,7 @@ class DBSMilitaryViewTests(DBSRadioViewTests):
         self.view = view
         self.form = form
         self.view_url_name = 'DBS-Military-View'
-        self.correct_url = ('DBS-Ministry-Of-Defence-View', 'DBS-Guidance-View')
+        self.correct_url = ('DBS-Ministry-Of-Defence-View', 'DBS-Guidance-Second-View')
 
 class DBSTypeViewTests(DBSRadioViewTests):
     def setUp(self):

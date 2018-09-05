@@ -67,13 +67,14 @@ urlpatterns = [
     # Criminal Record Checks urls #
     # =========================== #
 
-    url(r'^criminal-record/UK/$', views.DBSGuidanceView.as_view(), name='DBS-Guidance-View'),
+    url(r'^criminal-record/$', views.DBSGuidanceView.as_view(), name='DBS-Guidance-View'),
     url(r'^criminal-record/type/$', views.DBSTypeView.as_view(), name='DBS-Type-View'),
     url(r'^criminal-record/lived-abroad/$', views.DBSLivedAbroadView.as_view(), name='DBS-Lived-Abroad-View'),
     url(r'^criminal-record/abroad/$', views.DBSGoodConductView.as_view(), name='DBS-Good-Conduct-View'),
     url(r'^criminal-record/email-certificates/$', views.DBSEmailCertificatesView.as_view(), name='DBS-Email-Certificates-View'),
     url(r'^criminal-record/military-base-abroad/$', views.DBSMilitaryView.as_view(), name='DBS-Military-View'),
     url(r'^criminal-record/MOD-checks/$', views.DBSMinistryOfDefenceView.as_view(), name='DBS-Ministry-Of-Defence-View'),
+    url(r'^criminal-record/UK/$', views.DBSGuidanceSecondView.as_view(), name='DBS-Guidance-Second-View'),
     url(r'^criminal-record/your-details/$', views.DBSCheckCapitaView.as_view(), name='DBS-Check-Capita-View'),
     url(r'^criminal-record/DBS-details/$', views.DBSCheckNoCapitaView.as_view(), name='DBS-Check-No-Capita-View'),
     url(r'^criminal-record/update/$', views.DBSUpdateView.as_view(), name='DBS-Update-View'),

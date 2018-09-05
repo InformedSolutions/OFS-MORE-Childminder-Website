@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}UK criminal record check{% endblock %}
+{% block page_title %}Criminal record checks{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -19,7 +19,7 @@
                 <li>lived or worked on a military base in the last 5 years</li>
             </ul>
 
-        <p>This is to make sure that you're suitable to care for children</p>
+        <p>This is to make sure that you're suitable to care for children.</p>
 
         <input type="submit" class="button" value="Continue">
         {% csrf_token %}
