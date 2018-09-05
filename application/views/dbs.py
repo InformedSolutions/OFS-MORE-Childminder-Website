@@ -85,12 +85,6 @@ class DBSRadioView(FormView):
     dbs_field_name = None
     nullify_field_list = []
 
-    def get(self, request, *args, **kwargs):
-        application_id = self.request.GET.get('id')
-        application = Application.objects.get(application_id=application_id)
-
-        return super().get(request, *args, **kwargs)
-
     def get_initial(self):
         application_id = self.request.GET.get('id')
         initial = super().get_initial()
@@ -139,6 +133,13 @@ class DBSRadioView(FormView):
             context['form'] = form
 
         return super().get_context_data(**context, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+
+        form.remove_flag()
+
+        return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
         application_id = self.request.GET.get('id')
@@ -326,19 +327,20 @@ class DBSTypeView(DBSRadioView):
     form_class = DBSTypeForm
     success_url = ('DBS-Check-Capita-View', 'DBS-Update-View')
     dbs_field_name = 'capita'
-    nullify_field_list = ['cautions_convictions']
+    nullify_field_list = []
 
     def form_valid(self, form):
         application_id = self.request.GET.get('id')
+        application = Application.objects.get(application_id=application_id)
+
         initial_bool = form.initial[self.dbs_field_name]
         update_bool = form.cleaned_data[self.dbs_field_name] == 'True'
-
-        application = Application.objects.get(application_id=application_id)
 
         # If the 'Type of DBS check' is changed then clear the user's dbs_certificate_number
         # Also check that the application is not in review as this can lead to blank fields being submitted.
         if update_bool != initial_bool:
             successfully_updated = update_criminal_record_check(application_id, 'dbs_certificate_number', '')
+            successfully_updated = update_criminal_record_check(application_id, 'cautions_convictions', None)
 
         return super().form_valid(form)
 
