@@ -928,7 +928,7 @@ def childminder_references_and_user_email_duplication_check(email1, email2):
         return False
 
 
-def show_resend_and_change_email(health_check_status, is_review):
+def show_resend_and_change_email(health_check_status, is_review=None):
     """
     Helper function to determine if the 'resend email' and 'change' email buttons should be visible inside the
         People in the Home task.
@@ -936,11 +936,9 @@ def show_resend_and_change_email(health_check_status, is_review):
     :param is_review: A boolean True if the application is in review mode, e.g 'FURTHER INFORMATION'
     :return: A boolean True if the buttons should be displayed, False if the buttons should not be displayed.
     """
-    if health_check_status != 'Done' or is_review:
-        return True
-    else:
-        return False
 
+    # is_review is no longer needed, kept for legacy purposes but defaults to None.
+    return health_check_status != 'Done'
 
 def update_criminal_record_check(app_id, field_obj, status):
     """
