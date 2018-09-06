@@ -38,6 +38,7 @@ class Application(models.Model):
     cygnum_urn = models.CharField(max_length=50, blank=True)
     login_details_status = models.CharField(choices=TASK_STATUS, max_length=50)
     login_details_arc_flagged = models.BooleanField(default=False)
+    working_in_other_childminder_home = models.NullBooleanField(blank=True)
     personal_details_status = models.CharField(choices=TASK_STATUS, max_length=50)
     personal_details_arc_flagged = models.BooleanField(default=False)
     childcare_type_status = models.CharField(choices=TASK_STATUS, max_length=50)

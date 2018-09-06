@@ -2,11 +2,13 @@ import re
 
 from django import forms
 from django.conf import settings
+from govuk_forms.widgets import InlineRadioSelect
 
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (ApplicantHomeAddress,
-                                ApplicantPersonalDetails)
+                                ApplicantPersonalDetails,
+                                Application)
 
 
 class PersonalDetailsChildcareAddressForm(ChildminderForms):
@@ -58,7 +60,7 @@ class PersonalDetailsChildcareAddressManualForm(ChildminderForms):
     auto_replace_widgets = True
 
     street_line1 = forms.CharField(label='Address line 1',
-                                             error_messages={'required': 'Please enter the first line of the address'})
+                                   error_messages={'required': 'Please enter the first line of the address'})
     street_line2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city',
                            error_messages={'required': 'Please enter the name of the town or city'})
@@ -169,6 +171,39 @@ class PersonalDetailsChildcareAddressLookupForm(ChildminderForms):
         super(PersonalDetailsChildcareAddressLookupForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         self.fields['address'].choices = self.choices
+
+
+class PersonalDetailsWorkingInOtherChildminderHomeForm(ChildminderForms):
+    """
+    GOV.UK form for the Your personal details: your childcare address details page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    auto_replace_widgets = True
+
+    options = (
+        ('True', 'Yes'),
+        ('False', 'No')
+    )
+    working_in_other_childminder_home = forms.ChoiceField(label="Is this another childminder's home?", choices=options,
+                                                          widget=InlineRadioSelect, required=True,
+                                                          error_messages={'required': 'Please answer yes or no'})
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: your childcare address details form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(PersonalDetailsWorkingInOtherChildminderHomeForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
+        # If information was previously entered, display it on the form
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            application = Application.objects.get(application_id=self.application_id_local)
+            self.fields['working_in_other_childminder_home'].initial = application.working_in_other_childminder_home
+            self.field_list = ['working_in_other_childminder_home']
+            self.pk = application.pk
 
 
 class PersonalDetailsSummaryForm(ChildminderForms):
