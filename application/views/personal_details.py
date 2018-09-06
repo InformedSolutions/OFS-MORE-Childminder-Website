@@ -468,8 +468,7 @@ def personal_details_location_of_care(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
-        personal_detail_id = ApplicantPersonalDetails.objects.get(
-            application_id=app_id).personal_detail_id
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=app_id).personal_detail_id
         form = PersonalDetailsLocationOfCareForm(request.POST, id=app_id)
         form.remove_flag()
         application = Application.get_id(app_id=app_id)
@@ -503,9 +502,23 @@ def personal_details_location_of_care(request):
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
+            applicant_home_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                      current_address=True)
+            street_line1 = applicant_home_address.street_line1
+            street_line2 = applicant_home_address.street_line2
+            town = applicant_home_address.town
+            county = applicant_home_address.county
+            postcode = applicant_home_address.postcode
+
             variables = {
                 'form': form,
-                'application_id': app_id
+                'application_id': app_id,
+                'street_line1': street_line1,
+                'street_line2': street_line2,
+                'town': town,
+                'county': county,
+                'postcode': postcode,
+                'personal_details_status': application.personal_details_status
             }
 
             return render(request, 'personal-details-location-of-care.html', variables)
