@@ -29,6 +29,10 @@ class AdultInHome(models.Model):
     health_check_status = models.CharField(max_length=50, default='To do')
     email_resent = models.IntegerField(default=0)
     email_resent_timestamp = models.DateTimeField(null=True, blank=True)
+    lived_abroad = models.NullBooleanField(blank=True)
+    military_base = models.NullBooleanField(blank=True)
+    capita = models.NullBooleanField(blank=True)
+    on_update = models.NullBooleanField(blank=True)
 
     @property
     def timelog_fields(self):
