@@ -187,7 +187,8 @@ class PersonalDetailsWorkingInOtherChildminderHomeForm(ChildminderForms):
     )
     working_in_other_childminder_home = forms.ChoiceField(label="Is this another childminder's home?", choices=options,
                                                           widget=InlineRadioSelect, required=True,
-                                                          error_messages={'required': 'Please answer yes or no'})
+                                                          error_messages={
+                                                              'required': "Please say if you'll be working in another childminder's home"})
 
     def __init__(self, *args, **kwargs):
         """

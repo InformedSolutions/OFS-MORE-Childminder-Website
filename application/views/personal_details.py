@@ -858,17 +858,14 @@ def personal_details_working_in_other_childminder_home(request):
     if request.method == 'GET':
 
         app_id = request.GET["id"]
-        personal_detail_id = ApplicantPersonalDetails.objects.get(
-            application_id=app_id).personal_detail_id
-        applicant_home_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                  childcare_address=True)
-        # Delete childcare address if it is marked the same as the home address
-        multiple_childcare_address_logic(personal_detail_id)
-        street_line1 = applicant_home_address.street_line1
-        street_line2 = applicant_home_address.street_line2
-        town = applicant_home_address.town
-        county = applicant_home_address.county
-        postcode = applicant_home_address.postcode
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=app_id).personal_detail_id
+        applicant_childcare_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                       childcare_address=True)
+        street_line1 = applicant_childcare_address.street_line1
+        street_line2 = applicant_childcare_address.street_line2
+        town = applicant_childcare_address.town
+        county = applicant_childcare_address.county
+        postcode = applicant_childcare_address.postcode
         application = Application.get_id(app_id=app_id)
         form = PersonalDetailsWorkingInOtherChildminderHomeForm(id=app_id)
         form.check_flag()
@@ -892,9 +889,7 @@ def personal_details_working_in_other_childminder_home(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
-        personal_detail_id = ApplicantPersonalDetails.objects.get(
-            application_id=app_id).personal_detail_id
-        form = PersonalDetailsLocationOfCareForm(request.POST, id=app_id)
+        form = PersonalDetailsWorkingInOtherChildminderHomeForm(request.POST, id=app_id)
         form.remove_flag()
         application = Application.get_id(app_id=app_id)
 
@@ -904,35 +899,48 @@ def personal_details_working_in_other_childminder_home(request):
                 status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
             # Update home address record
-            home_address_record = personal_location_of_care_logic(app_id, form)
-            home_address_record.save()
+            working_in_other_childminder_home = form.cleaned_data.get('working_in_other_childminder_home')
+            application.working_in_other_childminder_home = working_in_other_childminder_home
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
-            # Delete childcare address if it is marked the same as the home address
-            multiple_childcare_address_logic(personal_detail_id)
 
-            if home_address_record.childcare_address:
+            if application.working_in_other_childminder_home:
 
                 return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
 
             else:
 
-                return HttpResponseRedirect(reverse('Personal-Details-Childcare-Address-View') + '?id=' + app_id)
+                return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
         else:
 
-            form.error_summary_title = 'There was a problem with your address details'
+            form.error_summary_title = 'There was a problem'
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
+            personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=app_id).personal_detail_id
+            applicant_childcare_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                           childcare_address=True)
+            street_line1 = applicant_childcare_address.street_line1
+            street_line2 = applicant_childcare_address.street_line2
+            town = applicant_childcare_address.town
+            county = applicant_childcare_address.county
+            postcode = applicant_childcare_address.postcode
+
             variables = {
                 'form': form,
-                'application_id': app_id
+                'application_id': app_id,
+                'street_line1': street_line1,
+                'street_line2': street_line2,
+                'town': town,
+                'county': county,
+                'postcode': postcode,
+                'personal_details_status': application.personal_details_status
             }
 
-            return render(request, 'personal-details-location-of-care.html', variables)
+            return render(request, 'personal-details-childcare-address-details.html', variables)
 
 
 def personal_details_summary(request):
@@ -993,7 +1001,8 @@ def personal_details_summary(request):
         })
 
         address_dict = collections.OrderedDict({
-            'table_object': Table([applicant_home_address_record.pk, getattr(applicant_childcare_address_record, 'pk', None)]),
+            'table_object': Table(
+                [applicant_home_address_record.pk, getattr(applicant_childcare_address_record, 'pk', None)]),
             'fields': address_table_dict,
             'title': 'Your home address',
             'error_summary_title': 'There was a problem'
@@ -1019,7 +1028,6 @@ def personal_details_summary(request):
         return render(request, 'generic-summary-template.html', variables)
 
     if request.method == 'POST':
-
         app_id = request.POST["id"]
         status.update(app_id, 'personal_details_status', 'COMPLETED')
         return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + app_id)
