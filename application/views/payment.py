@@ -106,7 +106,4 @@ def send_payment_email(email, personalisation, template_id, application):
     """
     if application.application_status == 'DRAFTING':
         send_email(email, personalisation, template_id)
-
-
-def get_payed_amount():
-    pass
+        
