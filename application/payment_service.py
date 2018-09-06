@@ -65,29 +65,6 @@ def check_payment(payment_reference):
     return response
 
 
-def payment_email(email, name, application_reference, application_id):
-    """
-    A function to send an email through the notify gateway with a payment template, currently used to confirm a Worldpay
-    card order has been successful
-    :param email: The address to send the email to, sent as a string
-    :param name: The name to be placed on the email template to be sent to the user
-    :param application_reference
-    :param application_id
-    :return: Returns the response object obtained from the PayPal gateway method, as defined in swagger
-    """
-
-    template_id = '2cd5f1c5-4900-4922-a627-a0d1f674136b'
-    try:
-        conviction = CriminalRecordCheck.objects.get(application_id=application_id).cautions_convictions
-    except CriminalRecordCheck.DoesNotExist:
-        conviction = False
-    if conviction is True:
-        template_id = 'c7500574-df3c-4df1-b7f7-8755f6b61c7f'
-
-    response = send_email(email, {"firstName": name, "ref": application_reference}, template_id)
-    return response
-
-
 def created_formatted_payment_reference(application_reference):
     """
     Function for formatting a payment reference to be issued to the payment provider
