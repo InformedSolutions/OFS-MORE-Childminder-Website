@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from timeline_logger.models import TimelineLog
 
+from application.business_logic import get_childcare_register_type
 from ..models import (Application, ApplicantName, UserDetails, CriminalRecordCheck)
 from .. import status
 
@@ -24,7 +25,9 @@ def payment_confirmation(request):
     local_app = Application.objects.get(
         application_id=application_id_local)
 
-    template = get_template(criminal_record_check, application_id_local, local_app)
+    childcare_register_type, childcare_register_cost = get_childcare_register_type(application_id_local)
+
+    template = get_template(criminal_record_check, application_id_local, local_app, childcare_register_cost)
 
     local_app.application_status = 'SUBMITTED'
     local_app.save()
@@ -42,12 +45,13 @@ def payment_confirmation(request):
         'application_id': application_id_local,
         'order_code': request.GET["orderCode"],
         'conviction': conviction,
-        'health_status': Application.objects.get(application_id=application_id_local).health_status
+        'health_status': Application.objects.get(application_id=application_id_local).health_status,
+        'cost': childcare_register_cost
     }
 
     return render(request, template, variables)
 
-def get_template(crc, app_id, application):
+def get_template(crc, app_id, application, cost):
     lived_abroad = crc.lived_abroad
     capita = crc.capita
     if capita:
@@ -61,9 +65,11 @@ def get_template(crc, app_id, application):
     reference_number = application.application_reference
     first_name = applicant_name.first_name
     email = user_details.email
+    cost = str(35)
 
     personalisation = {'ref': reference_number,
-                       'firstName': first_name}
+                       'firstName': first_name,
+                       'cost': cost}
 
     if (capita and not cautions_convictions) and lived_abroad:
         send_payment_email(email, personalisation, 'ac595e14-1245-43e0-975d-139c8bdf98f9', application)
@@ -88,6 +94,7 @@ def get_template(crc, app_id, application):
         cautions_convictions as {1}, 
         capita as {2} """.format(lived_abroad, cautions_convictions, capita))
 
+
 def send_payment_email(email, personalisation, template_id, application):
     """
     Sends an email if
@@ -99,3 +106,7 @@ def send_payment_email(email, personalisation, template_id, application):
     """
     if application.application_status == 'DRAFTING':
         send_email(email, personalisation, template_id)
+
+
+def get_payed_amount():
+    pass
