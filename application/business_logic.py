@@ -1010,12 +1010,6 @@ def get_childcare_register_type(app_id):
         cost = 35
         return 'EYR', cost
 
-    elif (childcare_record.zero_to_five is True) \
-            & (childcare_record.five_to_eight is False) \
-            & (childcare_record.eight_plus is False):
-        cost = 35
-        return 'EYR', cost
-
     elif (childcare_record.zero_to_five is False) \
             & (childcare_record.five_to_eight is True) \
             & (childcare_record.eight_plus is False):
