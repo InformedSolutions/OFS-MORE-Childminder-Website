@@ -493,7 +493,7 @@ def personal_details_location_of_care(request):
 
             else:
 
-                return HttpResponseRedirect(reverse('Service-Unavailable') + '?id=' + app_id)
+                return HttpResponseRedirect(reverse('Personal-Details-Childcare-Address-View') + '?id=' + app_id)
         else:
 
             form.error_summary_title = 'There was a problem with your address details'
@@ -606,7 +606,7 @@ def personal_details_childcare_address(request):
 
         else:
 
-            form.error_summary_title = 'There was a problem with your postcode'
+            form.error_summary_title = 'There was a problem with the postcode'
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
