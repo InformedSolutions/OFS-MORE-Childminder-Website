@@ -1,0 +1,54 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Criminal record checks from abroad{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<div class="two-thirds">
+    {{form.error_summary}}
+
+    <form method="post" novalidate>
+        <div class="form-group">
+
+            <h1 class="form-title heading-large">
+                Criminal record checks from abroad
+            </h1>
+
+            The following adults need to have criminal record checks from living abroad in the last 5 years:
+
+            <ul style="list-style-type: disc; padding-left: 50px;">
+                {% for person in person_list %}
+                    <li>{{person.name}}</li>
+                {% endfor %}
+            </ul>
+
+            <p>They need to
+                <a href="https://www.gov.uk/government/publications/criminal-records-checks-for-overseas-applicants" target="_blank">
+                    contact the countries’ embassies to get certificates
+                </a>
+                for the checks.</p>
+
+            <p>The most common is a certificate of good conduct.</p>
+
+            <p>If the certificates are not in English, they must
+                <a href="https://www.gov.uk/certifying-a-document#certifying-a-translation" target="_blank">
+                    get certified translations
+                </a>
+                .
+            </p>
+
+            <div class="panel" style="margin-left: 10px;">
+                They must email Ofsted a copy of the certificates after they answer the health questions.
+            </div>
+
+            {% csrf_token %}
+            <input type="submit" class="button" value="Continue">
+        </div>
+    </form>
+</div>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}

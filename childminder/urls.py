@@ -14,6 +14,7 @@ from application import views, utils
 from application.views import security_question, magic_link, feedback
 from application.views.other_people_health_check import health_check_login, dob_auth, current_treatment, guidance, \
     declaration, serious_illness, hospital_admission, summary, thank_you
+from application.views import PITH_views
 
 urlpatterns = [
     url(r'^$', views.start_page, name='start-page.html'),
@@ -82,6 +83,16 @@ urlpatterns = [
     url(r'^criminal-record/post-certificate/', views.DBSPostView.as_view(), name='DBS-Post-View'),
     url(r'^criminal-record/check-answers/', views.DBSSummaryView.as_view(), name='DBS-Summary-View'),
 
+    # ======================= #
+    # People in the Home urls #
+    # ======================= #
+
+    url(r'^people/$', PITH_views.PITHGuidanceView.as_view(), name='PITH-Guidance-View'),
+    url(r'^people/adults-checks-abroad/$', PITH_views.PITHAbroadCriminalView.as_view(), name='PITH-Abroad-Criminal-View'),
+    url(r'^people/adults-MoD-checks/$', PITH_views.PITHMinistryView.as_view(), name='PITH-Ministry-View'),
+    url(r'^people/post-certificate/$', PITH_views.PITHPostView.as_view(), name='PITH-Post-View'),
+    url(r'^people/adults-apply/$', PITH_views.PITHApplyView.as_view(), name='PITH-Apply-View'),
+
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),
     url(r'^health/booklet/', views.health_booklet, name='Health-Booklet-View'),
     url(r'^health/check-answers/', views.health_check_answers, name='Health-Check-Answers-View'),
@@ -106,7 +117,6 @@ urlpatterns = [
         name='References-Second-Reference-Contact-Details-View'),
     url(r'^references/check-answers/', views.references_summary, name='References-Summary-View'),
     url(r'^registration-rules/', TemplateView.as_view(template_name='registration-rules.html'), name='Registration-Rules'),
-    url(r'^people/$', views.other_people_guidance, name='Other-People-Guidance-View'),
     url(r'^people/adults/', views.other_people_adult_question, name='Other-People-Adult-Question-View'),
     url(r'^people/adults-details/', views.other_people_adult_details, name='Other-People-Adult-Details-View'),
     url(r'^people/adult-dbs-details/', views.other_people_adult_dbs, name='Other-People-Adult-DBS-View'),

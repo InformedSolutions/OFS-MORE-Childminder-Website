@@ -1,0 +1,40 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Post the DBS certificate{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<div class="two-thirds">
+    {{form.error_summary}}
+
+    <form method="post" novalidate>
+        <div class="form-group">
+
+            <h1 class="form-title heading-large">
+                Post the DBS certificates
+            </h1>
+
+            The following adults in your home must post their original certificates (not a photocopy) to Ofsted:
+            <ul style="list-style-type: disc; padding-left: 50px;">
+                {% for person in person_list %}
+                    <li>{{person.name}}</li>
+                {% endfor %}
+            </ul>
+
+            <p>We need to check details of any cautions or convictions.</p>
+
+            <p>They can post it after they answer their health questions.</p>
+
+            <p>We’ll then send it back to them.</p>
+
+            {% csrf_token %}
+            <input type="submit" class="button" value="Continue">
+        </div>
+    </form>
+</div>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}

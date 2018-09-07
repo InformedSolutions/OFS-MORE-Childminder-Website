@@ -1,0 +1,41 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Apply for Ofsted DBS check{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<div class="two-thirds">
+    {{form.error_summary}}
+
+    <form method="post" novalidate>
+        <div class="form-group">
+
+            <h1 class="form-title heading-large">
+                Apply for an Ofsted DBS check
+            </h1>
+
+            The following adults need to
+            <a href="http://ofsteddbsapplication.co.uk/step-one.aspx" target="_blank">
+            apply for an Ofsted DBS check
+            </a>:
+            <ul style="list-style-type: disc; padding-left: 50px;">
+                {% for person in person_list %}
+                    <li>{{person.name}}</li>
+                {% endfor %}
+            </ul>
+
+            <p>You can finish this section after you enter their DBS certificate number.</p>
+
+
+
+            {% csrf_token %}
+            <input type="submit" class="button" value="Continue">
+        </div>
+    </form>
+</div>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}

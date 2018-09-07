@@ -1,0 +1,38 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Ministry of Defence checks{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<div class="two-thirds">
+    {{form.error_summary}}
+
+    <form method="post" novalidate>
+        <div class="form-group">
+
+            <h1 class="form-title heading-large">
+                Ministry of Defence checks
+            </h1>
+
+            We need to carry out more checks on the following adults:
+            <ul style="list-style-type: disc; padding-left: 50px;">
+                {% for person in person_list %}
+                    <li>{{person.name}}</li>
+                {% endfor %}
+            </ul>
+
+            <p>This is agreed with the Ministry of Defence (MOD).</p>
+
+            <p>We’ll send them a form to fill in after you submit your application.</p>
+
+            {% csrf_token %}
+            <input type="submit" class="button" value="Continue">
+        </div>
+    </form>
+</div>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}
