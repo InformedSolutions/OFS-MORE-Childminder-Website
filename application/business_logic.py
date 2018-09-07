@@ -983,6 +983,51 @@ def get_criminal_record_check(app_id, field_obj):
         raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
 
+def get_childcare_register_type(app_id):
+    childcare_record = ChildcareType.objects.get(application_id=app_id)
+
+    if (childcare_record.zero_to_five is True) \
+            & (childcare_record.five_to_eight is True) \
+            & (childcare_record.eight_plus is True):
+        cost = 35
+        return 'EYR-CR-both', cost
+
+    elif (childcare_record.zero_to_five is True) \
+            & (childcare_record.five_to_eight is True) \
+            & (childcare_record.eight_plus is False):
+        cost = 35
+        return 'EYR-CR-compulsory', cost
+
+    elif (childcare_record.zero_to_five is True) \
+            & (childcare_record.five_to_eight is False) \
+            & (childcare_record.eight_plus is True):
+        cost = 35
+        return 'EYR-CR-voluntary', cost
+
+    elif (childcare_record.zero_to_five is True) \
+            & (childcare_record.five_to_eight is False) \
+            & (childcare_record.eight_plus is False):
+        cost = 35
+        return 'EYR', cost
+
+    elif (childcare_record.zero_to_five is False) \
+            & (childcare_record.five_to_eight is True) \
+            & (childcare_record.eight_plus is False):
+        cost = 103
+        return 'CR-compulsory', cost
+
+    elif (childcare_record.zero_to_five is False) \
+            & (childcare_record.five_to_eight is True) \
+            & (childcare_record.eight_plus is True):
+        cost = 103
+        return 'CR-both', cost
+
+    elif (childcare_record.zero_to_five is False) \
+            & (childcare_record.five_to_eight is False) \
+            & (childcare_record.eight_plus is True):
+        cost = 103
+        return 'CR-voluntary', cost
+
 def get_adult_in_home(app_id, field_obj):
     """
     :param app_id: applicant's application_id
