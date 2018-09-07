@@ -207,6 +207,40 @@ class PersonalDetailsWorkingInOtherChildminderHomeForm(ChildminderForms):
             self.pk = application.pk
 
 
+class PersonalDetailsOwnChildrenForm(ChildminderForms):
+    """
+    GOV.UK form for the Your personal details: your own children page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    auto_replace_widgets = True
+
+    options = (
+        ('True', 'Yes'),
+        ('False', 'No')
+    )
+    own_children = forms.ChoiceField(label="Do you have children of your own under 16?", choices=options,
+                                     widget=InlineRadioSelect, required=True,
+                                     error_messages={
+                                         'required': "Please say if you have children of your own under 16"})
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: your childcare address details form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(PersonalDetailsOwnChildrenForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
+        # If information was previously entered, display it on the form
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            application = Application.objects.get(application_id=self.application_id_local)
+            self.fields['own_children'].initial = application.own_children
+            self.field_list = ['own_children']
+            self.pk = application.pk
+
+
 class PersonalDetailsSummaryForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: summary page

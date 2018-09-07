@@ -46,6 +46,8 @@ urlpatterns = [
         name='Personal-Details-Childcare-Address-Manual-View'),
     url(r'^personal-details/childcare-address-details/', views.personal_details_working_in_other_childminder_home,
         name='Personal-Details-Childcare-Address-Details-View'),
+    url(r'^personal-details/your-children/', views.personal_details_own_children,
+        name='Personal-Details-Your-Own-Children-View'),
     url(r'^personal-details/check-answers/', views.personal_details_summary, name='Personal-Details-Summary-View'),
     url(r'^first-aid/$', views.first_aid_training_guidance, name='First-Aid-Training-Guidance-View'),
     url(r'^first-aid/details/', views.first_aid_training_details, name='First-Aid-Training-Details-View'),

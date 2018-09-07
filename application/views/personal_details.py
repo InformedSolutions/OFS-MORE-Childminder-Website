@@ -24,6 +24,7 @@ from ..forms import (PersonalDetailsChildcareAddressForm,
                      PersonalDetailsHomeAddressLookupForm,
                      PersonalDetailsLocationOfCareForm,
                      PersonalDetailsNameForm,
+                     PersonalDetailsOwnChildrenForm,
                      PersonalDetailsSummaryForm,
                      PersonalDetailsWorkingInOtherChildminderHomeForm)
 from ..models import (ApplicantHomeAddress,
@@ -905,13 +906,8 @@ def personal_details_working_in_other_childminder_home(request):
             application.save()
             reset_declaration(application)
 
-            if application.working_in_other_childminder_home:
-
-                return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
-
-            else:
-
-                return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
+            return HttpResponseRedirect(reverse('Personal-Details-Your-Own-Children-View') + '?id=' + app_id)
+        
         else:
 
             form.error_summary_title = 'There was a problem'
@@ -941,6 +937,72 @@ def personal_details_working_in_other_childminder_home(request):
             }
 
             return render(request, 'personal-details-childcare-address-details.html', variables)
+
+
+def personal_details_own_children(request):
+    """
+    Method returning the template for the Your personal details: your own children page (for a given
+    application) and navigating to the Your personal details: check your answers page when successfully completed.
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your personal details: your own children template
+    """
+
+    current_date = timezone.now()
+
+    if request.method == 'GET':
+
+        app_id = request.GET["id"]
+        application = Application.get_id(app_id=app_id)
+        form = PersonalDetailsOwnChildrenForm(id=app_id)
+        form.check_flag()
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
+        variables = {
+            'form': form,
+            'application_id': app_id,
+            'personal_details_status': application.personal_details_status
+        }
+        return render(request, 'personal-details-your-own-children.html', variables)
+
+    if request.method == 'POST':
+
+        app_id = request.POST["id"]
+        form = PersonalDetailsOwnChildrenForm(request.POST, id=app_id)
+        form.remove_flag()
+        application = Application.get_id(app_id=app_id)
+
+        if form.is_valid():
+            # Reset status to in progress as question can change status of overall task
+            if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
+                status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
+
+            # Update home address record
+            own_children = form.cleaned_data.get('own_children')
+            application.own_children = own_children
+            application.date_updated = current_date
+            application.save()
+            reset_declaration(application)
+
+            return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
+
+        else:
+
+            form.error_summary_title = 'There was a problem on this page'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
+            variables = {
+                'form': form,
+                'application_id': app_id,
+                'personal_details_status': application.personal_details_status
+            }
+
+            return render(request, 'personal-details-your-own-children.html', variables)
 
 
 def personal_details_summary(request):

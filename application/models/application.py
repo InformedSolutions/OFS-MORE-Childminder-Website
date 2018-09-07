@@ -68,6 +68,7 @@ class Application(models.Model):
     ofsted_visit_email_sent = models.DateTimeField(blank=True, null=True)
     publish_details = models.NullBooleanField(blank=True, null=True, default=None)
     working_in_other_childminder_home = models.NullBooleanField(blank=True, null=True, default=None)
+    own_children = models.NullBooleanField(blank=True, null=True, default=None)
 
     @classmethod
     def get_id(cls, app_id):
