@@ -491,6 +491,10 @@ def personal_details_location_of_care(request):
 
             if home_address_record.childcare_address:
 
+                # Set working in other childminder home to false
+                application.working_in_other_childminder_home = False
+                application.date_updated = current_date
+                application.save()
                 return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
 
             else:
@@ -907,7 +911,7 @@ def personal_details_working_in_other_childminder_home(request):
             reset_declaration(application)
 
             return HttpResponseRedirect(reverse('Personal-Details-Your-Own-Children-View') + '?id=' + app_id)
-        
+
         else:
 
             form.error_summary_title = 'There was a problem'
@@ -1015,20 +1019,19 @@ def personal_details_summary(request):
 
     if request.method == 'GET':
         app_id = request.GET["id"]
-        # Move to models
-
-        personal_detail_id = ApplicantPersonalDetails.get_id(
-            app_id=app_id)
+        application = Application.objects.get(application_id=app_id)
+        personal_detail_id = ApplicantPersonalDetails.get_id(app_id=app_id)
         birth_day = personal_detail_id.birth_day
         birth_month = personal_detail_id.birth_month
         birth_year = personal_detail_id.birth_year
-        applicant_name_record = ApplicantName.get_id(
-            app_id=app_id)
+        applicant_name_record = ApplicantName.get_id(app_id=app_id)
         first_name = applicant_name_record.first_name
         middle_names = applicant_name_record.middle_names
         last_name = applicant_name_record.last_name
         applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                          current_address=True)
+        applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                              childcare_address=True)
         street_line1 = applicant_home_address_record.street_line1
         street_line2 = applicant_home_address_record.street_line2
         town = applicant_home_address_record.town
@@ -1036,12 +1039,28 @@ def personal_details_summary(request):
         postcode = applicant_home_address_record.postcode
         location_of_childcare = applicant_home_address_record.childcare_address
 
+        childcare_street_line1 = applicant_childcare_address_record.street_line1
+        childcare_street_line2 = applicant_childcare_address_record.street_line2
+        childcare_town = applicant_childcare_address_record.town
+        childcare_county = applicant_childcare_address_record.county
+        childcare_postcode = applicant_childcare_address_record.postcode
+
         if location_of_childcare:
-            childcare_location = 'Same as home address'
-            applicant_childcare_address_record = applicant_home_address_record
+            childcare_address = 'Same as home address'
         else:
-            childcare_location = 'Other'
-            applicant_childcare_address_record = None
+            childcare_address = ' '.join(
+                [childcare_street_line1, (childcare_street_line2 or ''), childcare_town, (childcare_county or ''),
+                 childcare_postcode])
+
+        if application.working_in_other_childminder_home:
+            working_in_other_childminder_home = 'Yes'
+        else:
+            working_in_other_childminder_home = 'No'
+
+        if application.own_children:
+            own_children = 'Yes'
+        else:
+            own_children = 'No'
 
         name_dob_table_dict = collections.OrderedDict([
             ('name', ' '.join([first_name, (middle_names or ''), last_name])),
@@ -1052,7 +1071,12 @@ def personal_details_summary(request):
 
         address_table_dict = collections.OrderedDict([
             ('home_address', home_address),
-            ('childcare_location', childcare_location)
+            ('childcare_address', childcare_address),
+            ('working_in_other_childminder_home', working_in_other_childminder_home)
+        ])
+
+        own_children_table_dict = collections.OrderedDict([
+            ('own_children', own_children)
         ])
 
         name_dob_dict = collections.OrderedDict({
@@ -1066,11 +1090,18 @@ def personal_details_summary(request):
             'table_object': Table(
                 [applicant_home_address_record.pk, getattr(applicant_childcare_address_record, 'pk', None)]),
             'fields': address_table_dict,
-            'title': 'Your home address',
+            'title': 'Your home and childcare address',
             'error_summary_title': 'There was a problem'
         })
 
-        tables = [name_dob_dict, address_dict]
+        own_children_dict = collections.OrderedDict({
+            'table_object': Table([application.pk]),
+            'fields': own_children_table_dict,
+            'title': 'Your children',
+            'error_summary_title': 'There was a problem'
+        })
+
+        tables = [name_dob_dict, address_dict, own_children_dict]
         table_list = create_tables(tables, personal_details_name_dict, personal_details_link_dict)
 
         form = PersonalDetailsSummaryForm()
