@@ -46,6 +46,20 @@ class ApplicationTestBase(object):
             self.assertEqual(r.status_code, 200)
             self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
 
+    def TestAppInvalidEmail(self):
+        """Submit invalid email format and verify app throws expected status code and return error message"""
+
+        invalid_email = 'test-address@informed'
+
+        r = self.client.post(
+            reverse('New-Email'),
+            {
+                'email_address': invalid_email
+            }
+        )
+        self.assertEqual(r.status_code, 200)
+        return r.context['error_summary_title']
+
     def TestReturnToApp(self):
         """Tests the submission of an existing email and a new email from the ."""
 
