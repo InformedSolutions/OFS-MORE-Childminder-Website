@@ -393,7 +393,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
                          self.selenium_task_executor.get_driver().title)
 
     @try_except_method
-    def test_can_complete_personal_details_task_when_location_of_care_is_same_as_home_address(self):
+    def test_complete_personal_details_task_when_location_of_care_is_same_as_home_address(self):
         """
         Test to make sure a user can choose Yes to the question Is this where you will be looking after the children?
         """
@@ -423,7 +423,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
     @tag('smoke_test')
     @try_except_method
-    def test_cannot_complete_personal_details_task_when_location_of_care_is_not_same_as_home_address(self):
+    def test_complete_personal_details_task_when_location_of_care_is_not_same_as_home_address(self):
         """
         Test to make sure a user cannot complete an application if they choose No to the question Is this where you
         will be looking after the children?
@@ -444,8 +444,13 @@ class ApplyAsAChildminder(LiveServerTestCase):
             False
         )
 
-        # Check Can't user service page is shown
-        self.assertEqual("Childcare location", self.selenium_task_executor.get_driver().title)
+        # Check task status set to done
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='account_details']/td/a/strong").text)
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='children']/td/a/strong").text)
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='personal_details']/td/a/strong").text)
 
     @try_except_method
     def test_can_complete_dbs_task_without_cautions_or_convictions(self):
