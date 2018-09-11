@@ -77,6 +77,16 @@ class ChildcareTrainingTestSuite(TestCase, ApplicationTestBase):
         self.assertEqual(302, response.status_code)
         self.assertEqual(resolve(response.url).func.__name__, TypeOfChildcareTrainingView.as_view().__name__)
 
+    def test_error_message_for_not_selecting_age_group(self):
+        self.create_childcare_register_applicant()
+
+        response = self.client.post(reverse('Type-Of-Childcare-Age-Groups-View') + self.url_suffix,  data={
+            'id': str(self.app_id)
+        })
+
+        self.assertEqual(200, response.status_code)
+        self.assertEqual(response.context['error_summary_title'], "There are problems in the form")
+
     def test_can_render_type_of_course_page(self):
         self.create_childcare_register_applicant()
 
