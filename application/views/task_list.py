@@ -134,6 +134,19 @@ def task_list(request):
                 ],
             },
             {
+                'name': 'your_children',
+                'status': application.your_children_status,
+                'arc_flagged': application.your_children_arc_flagged,
+                'description': "Your children",
+                'hidden': False,
+                'status_url': None,
+                'status_urls': [
+                    {'status': 'COMPLETED', 'url': 'Task-List-View'},
+                    {'status': 'FLAGGED', 'url': 'Task-List-View'},
+                    {'status': 'OTHER', 'url': 'Task-List-View'}
+                ],
+            },
+            {
                 'name': 'first_aid',
                 'status': application.first_aid_training_status,
                 'arc_flagged': application.first_aid_training_arc_flagged,
@@ -229,6 +242,14 @@ def task_list(request):
             },
         ]
     }
+
+    # Show/hide Your children task
+    for task in context['tasks']:
+        if task['name'] == 'your_children':
+            if application.own_children:
+                task['hidden'] = False
+            else:
+                task['hidden'] = True
 
     unfinished_tasks = [task for task in context['tasks'] if task['status'] in
                         ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]

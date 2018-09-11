@@ -40,6 +40,8 @@ class Application(models.Model):
     login_details_arc_flagged = models.BooleanField(default=False)
     personal_details_status = models.CharField(choices=TASK_STATUS, max_length=50)
     personal_details_arc_flagged = models.BooleanField(default=False)
+    your_children_status = models.CharField(choices=TASK_STATUS, max_length=50, default='NOT_STARTED')
+    your_children_arc_flagged = models.BooleanField(default=False)
     childcare_type_status = models.CharField(choices=TASK_STATUS, max_length=50)
     childcare_type_arc_flagged = models.BooleanField(default=False)
     first_aid_training_status = models.CharField(choices=TASK_STATUS, max_length=50)
