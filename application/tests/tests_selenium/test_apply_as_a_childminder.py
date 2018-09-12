@@ -1571,7 +1571,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
             False
         )
 
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
         time.sleep(1)
 
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
