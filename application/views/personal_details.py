@@ -1094,7 +1094,8 @@ def personal_details_summary(request):
 
         address_dict = collections.OrderedDict({
             'table_object': Table(
-                [applicant_home_address_record.pk, getattr(applicant_childcare_address_record, 'pk', None)]),
+                [applicant_home_address_record.pk, getattr(applicant_childcare_address_record, 'pk', None),
+                 application.pk]),
             'fields': address_table_dict,
             'title': 'Your home and childcare address',
             'error_summary_title': 'There was a problem'
