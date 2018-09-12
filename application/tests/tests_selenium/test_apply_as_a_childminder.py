@@ -785,7 +785,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
             False
         )
 
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
 
@@ -996,7 +996,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='dbs']/td/a/span").click()
-        self.assertEqual("Check your answers: criminal record (DBS) check",
+        self.assertEqual("Check your answers: your criminal record checks",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
                              "//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
@@ -1389,7 +1389,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='account_details']/td/a/strong").click()
-        self.selenium_task_executor.get_driver().find_element_by_link_text("Change Your email").click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text("Change").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").clear()
         self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(new_email)
@@ -1412,7 +1412,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='account_details']/td/a/strong").click()
-        self.selenium_task_executor.get_driver().find_element_by_link_text("Change Your email").click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text("Change").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").clear()
         self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(new_email)
@@ -1562,7 +1562,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
             False
         )
 
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
         time.sleep(1)
 
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()

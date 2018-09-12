@@ -326,6 +326,7 @@ class SeleniumTaskExecutor:
         driver = self.get_driver()
 
         driver.find_element_by_xpath("//tr[@id='dbs']/td/a/span").click()
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
 
         # Lived Abroad
         driver.find_element_by_id("id_lived_abroad_1").click()
@@ -358,7 +359,7 @@ class SeleniumTaskExecutor:
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
             # Confirm will send DBS certificate
-            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Get an Ofsted DBS check"))
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Post your DBS certificate"))
             driver.find_element_by_xpath("//input[@value='Continue']").click()
 
             # Task summary
