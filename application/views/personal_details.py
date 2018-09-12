@@ -986,6 +986,12 @@ def personal_details_own_children(request):
             # Update home address record
             own_children = form.cleaned_data.get('own_children')
             application.own_children = own_children
+
+            if own_children is True:
+                application.your_children_status = 'NOT_STARTED'
+            else:
+                application.your_children_status = 'COMPLETED'
+
             application.date_updated = current_date
             application.save()
             reset_declaration(application)

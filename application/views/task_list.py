@@ -253,6 +253,7 @@ def task_list(request):
 
     unfinished_tasks = [task for task in context['tasks'] if task['status'] in
                         ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]
+
     if len(unfinished_tasks) < 1:
         context['all_complete'] = True
     else:
