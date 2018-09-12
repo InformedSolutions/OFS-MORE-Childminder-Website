@@ -1,0 +1,32 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Ministry of Defence checks{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<div class="two-thirds">
+    {{form.error_summary}}
+
+    <form method="post" novalidate>
+        <div class="form-group">
+
+            <h1 class="form-title heading-large">
+                Adults who have lived abroad
+            </h1>
+
+            {% for form in form_list %}
+            {{ form.adult.get_full_name }}
+                {{ form.as_div }}
+            {% endfor %}
+
+            {% csrf_token %}
+            <input type="submit" class="button" value="Save and continue">
+        </div>
+    </form>
+</div>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}

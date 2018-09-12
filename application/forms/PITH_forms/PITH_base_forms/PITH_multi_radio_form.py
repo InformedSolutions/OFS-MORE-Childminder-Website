@@ -2,7 +2,7 @@ from application.forms import ChildminderForms
 from application.business_logic import get_adult_in_home, get_application
 
 
-class PITHRadioForm(ChildminderForms):
+class PITHMultiRadioForm(ChildminderForms):
     """
     GOV.UK form for the Criminal record check: generic radio butonton form
     """
@@ -20,14 +20,15 @@ class PITHRadioForm(ChildminderForms):
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
         self.application_id = kwargs.pop('id')
+        self.adult = kwargs.pop('adult')
 
         if 'PITH_field_name' in kwargs:
             self.PITH_field_name = kwargs.pop('PITH_field_name')
-            self.pk = get_adult_in_home(self.application_id, 'pk')
+            # self.pk = get_adult_in_home(self.application_id, 'pk')
 
             super().__init__(*args, **kwargs)
 
-            self.fields[self.PITH_field_name] = self.get_choice_field_data()
+            self.set_fields(self.PITH_field_name)
 
         elif 'application_field_name' in kwargs:
             self.application_field_name = kwargs.pop('application_field_name')
@@ -35,7 +36,7 @@ class PITHRadioForm(ChildminderForms):
 
             super().__init__(*args, **kwargs)
 
-            self.fields[self.application_field_name] = self.get_choice_field_data()
+            self.set_fields(self.application_field_name)
 
         else:
             raise ValueError('No x_field_name kwarg could be found.')
@@ -51,3 +52,6 @@ class PITHRadioForm(ChildminderForms):
 
     def get_choice_field_data(self):
         raise NotImplementedError("No choice field was inherited.")
+
+    def set_fields(self, field_name):
+        self.fields[field_name+str(self.adult.pk)] = self.get_choice_field_data()

@@ -74,12 +74,13 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
 
     first_name = forms.CharField(label='First name', required=True,
                                  error_messages={'required': "Please enter their first name"})
-    middle_names = forms.CharField(label='Middle names (if you have any on your DBS check)', required=False)
+    middle_names = forms.CharField(label='Middle names (if they have any on their DBS check) ', required=False)
     last_name = forms.CharField(label='Last name', required=True,
                                 error_messages={'required': "Please enter their last name"})
     date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980', error_messages={
         'required': "Please enter the full date, including the day, month and year"})
-    relationship = forms.CharField(label='How are they related to you?', help_text='For instance, husband or daughter',
+    relationship = forms.CharField(label='How are they related connected to you or your application?',
+                                   help_text='For example, husband, daughter, assistant',
                                    required=True,
                                    error_messages={'required': "Please say how the person is related to you"})
     email_address = forms.CharField(label='Email address',
@@ -87,7 +88,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
 
     def __init__(self, *args, **kwargs):
         """
-        Method to configure the initialisation of the People in your home: adult details form
+        Method to configure the initialisation of the People in the home: adult details form
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
@@ -187,25 +188,17 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
                 raise forms.ValidationError('Their email address cannot be the same as another person in your home')
             return email_address
         else:
-            application = Application.objects.get(application_id=self.application_id_local)
-
-            if application.application_status == 'FURTHER_INFORMATION':
-                is_review = True
-            else:
-                is_review = False
 
             if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).exists():
                 adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
                 adult_health_check_status = adult_record.health_check_status
-                if not show_resend_and_change_email(adult_health_check_status, is_review):
-                    email_disabled = True
-                else:
-                    email_disabled = False
+                email_disabled = not show_resend_and_change_email(adult_health_check_status)
 
-            if not email_disabled:
-                raise forms.ValidationError('Please enter an email address')
-            else:
-                return self.fields['email_address'].initial
+                if email_disabled:
+                    return self.fields['email_address'].initial
+
+            raise forms.ValidationError('Please enter an email address')
+
 
 
 class OtherPeopleAdultDBSForm(ChildminderForms):

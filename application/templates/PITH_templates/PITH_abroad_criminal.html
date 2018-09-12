@@ -19,10 +19,13 @@
             The following adults need to have criminal record checks from living abroad in the last 5 years:
 
             <ul style="list-style-type: disc; padding-left: 50px;">
-                {% for person in person_list %}
-                    <li>{{person.name}}</li>
+                <br>
+                {% for adult in adult_list %}
+                    <li>{{adult.get_full_name}}</li>
                 {% endfor %}
             </ul>
+
+            <br>
 
             <p>They need to
                 <a href="https://www.gov.uk/government/publications/criminal-records-checks-for-overseas-applicants" target="_blank">

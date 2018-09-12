@@ -203,8 +203,6 @@ def other_people_adult_details(request):
             else:
                 is_review = False
 
-
-
             # Disable email_address field if it cannot be changed.
             if AdultInHome.objects.filter(application_id=application_id_local, adult=i).exists():
                 adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=i)
@@ -277,7 +275,7 @@ def other_people_adult_details(request):
                     'application_id': application_id_local,
                     'people_in_home_status': application.people_in_home_status
                 }
-                return HttpResponseRedirect(reverse('Other-People-Adult-DBS-View') + '?id=' + application_id_local +
+                return HttpResponseRedirect(reverse('PITH-Lived-Abroad-View') + '?id=' + application_id_local +
                                             '&adults=' + number_of_adults, variables)
             # If there is an invalid form
             elif False in valid_list:

@@ -8,7 +8,7 @@ class PITHPostView(PITHTemplateView):
     success_url = ('PITH-DBS-Check-View', 'PITH-Military-View')
 
     def post(self, request, *args, **kwargs):
-        application_id = request.GET.get('id')
+        application_id = get_id(request)
 
         yes_url, no_url = self.success_url
 
