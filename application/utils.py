@@ -196,3 +196,10 @@ def get_duplicate_list_entry_indexes(list):
     duplicate_index = get_first_duplicate_index(list)
     item = list[duplicate_index]
     return [i for i, x in enumerate(list) if x == item]
+
+
+def get_id(request):
+    if request.GET.get('id'):
+        return request.GET.get('id')
+    else:
+        return request.POST.get('id')
