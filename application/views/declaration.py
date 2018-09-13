@@ -243,6 +243,8 @@ def declaration_summary(request, print_mode=False):
             'childcare_county': childcare_county,
             'childcare_postcode': childcare_postcode,
             'location_of_childcare': applicant_home_address_record.childcare_address,
+            'working_in_other_childminder_home': application.working_in_other_childminder_home,
+            'own_children': application.own_children,
             'personal_details_change': personal_details_change,
             'first_aid_training_organisation': first_aid_record.training_organisation,
             'first_aid_training_course': first_aid_record.course_title,
