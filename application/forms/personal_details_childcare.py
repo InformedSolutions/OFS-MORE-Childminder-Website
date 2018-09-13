@@ -226,7 +226,7 @@ class PersonalDetailsOwnChildrenForm(ChildminderForms):
 
     def __init__(self, *args, **kwargs):
         """
-        Method to configure the initialisation of the Your personal details: your childcare address details form
+        Method to configure the initialisation of the Your personal details: your childcare own children form
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
