@@ -14,7 +14,7 @@ from ..forms import (DBSLivedAbroadForm,
 from ..models import (Application,
                       CriminalRecordCheck)
 
-from ..utils import build_url
+from ..utils import build_url, get_id
 from ..table_util import Table, Row
 
 from django.views.generic.edit import FormView
@@ -26,7 +26,7 @@ class DBSTemplateView(TemplateView):
     success_url = None
 
     def get_context_data(self, **kwargs):
-        application_id = self.request.GET.get('id')
+        application_id = get_id(self.request)
 
         return super().get_context_data(id=application_id, application_id=application_id, **kwargs)
 
@@ -62,7 +62,7 @@ class DBSGetView(DBSTemplateView):
     success_url = 'Task-List-View'
 
     def post(self, request, *args, **kwargs):
-        application_id = self.request.GET.get('id')
+        application_id = get_id(self.request)
 
         # Update the task status to 'IN_PROGRESS' in all cases
         status.update(application_id, 'criminal_record_check_status', 'IN_PROGRESS')
@@ -84,9 +84,10 @@ class DBSRadioView(FormView):
     success_url = (None, None)
     dbs_field_name = None
     nullify_field_list = []
+    show_cautions_convictions = None
 
     def get_initial(self):
-        application_id = self.request.GET.get('id')
+        application_id = get_id(self.request)
         initial = super().get_initial()
         dbs_field = get_criminal_record_check(application_id, self.dbs_field_name)
         initial[self.dbs_field_name] = dbs_field
@@ -94,7 +95,7 @@ class DBSRadioView(FormView):
         return initial
 
     def get_success_url(self):
-        application_id = self.request.GET.get('id')
+        application_id = get_id(self.request)
         yes_choice, no_choice = self.success_url
 
         choice_bool = get_criminal_record_check(application_id, self.dbs_field_name)
@@ -109,7 +110,7 @@ class DBSRadioView(FormView):
         return build_url(redirect_url, get={'id': application_id})
 
     def get_form_kwargs(self):
-        application_id = self.request.GET.get('id')
+        application_id = get_id(self.request)
         kwargs = super().get_form_kwargs()
 
         kwargs['id'] = application_id
@@ -118,7 +119,7 @@ class DBSRadioView(FormView):
         return kwargs
 
     def get_context_data(self, **kwargs):
-        application_id = self.request.GET.get('id')
+        application_id = get_id(self.request)
         application = Application.objects.get(application_id=application_id)
         form = self.get_form()
 
@@ -142,7 +143,7 @@ class DBSRadioView(FormView):
         return super().post(request, *args, **kwargs)
 
     def form_valid(self, form):
-        application_id = self.request.GET.get('id')
+        application_id = get_id(self.request)
         application = Application.objects.get(application_id=application_id)
 
         # Update task status if flagged or completed (criminal_record_check_status)
@@ -248,7 +249,7 @@ class DBSSummaryView(DBSTemplateView):
         return rows_to_generate
 
     def get_context_data(self, **kwargs):
-        application_id = self.request.GET.get('id')
+        application_id = get_id(self.request)
 
         # table_obj is used for getting errors and displaying template context, it is the Table class object.
         table_obj = self.get_table_object(application_id)
@@ -330,7 +331,7 @@ class DBSTypeView(DBSRadioView):
     nullify_field_list = []
 
     def form_valid(self, form):
-        application_id = self.request.GET.get('id')
+        application_id = get_id(self.request)
         application = Application.objects.get(application_id=application_id)
 
         initial_bool = form.initial[self.dbs_field_name]
@@ -363,7 +364,7 @@ class DBSLivedAbroadView(DBSRadioView):
     dbs_field_name = 'lived_abroad'
 
     def get(self, request, *args, **kwargs):
-        application_id = self.request.GET.get('id')
+        application_id = get_id(self.request)
         application = Application.objects.get(application_id=application_id)
 
         # Re-route depending on task status (criminal_record_check_status)
@@ -386,7 +387,7 @@ class DBSCheckDetailsView(DBSRadioView):
     show_cautions_convictions = None
 
     def form_valid(self, form):
-        application_id = self.request.GET.get('id')
+        application_id = get_id(self.request)
         update_string = self.request.POST.get('dbs_certificate_number')
 
         successfully_updated = update_criminal_record_check(application_id, 'dbs_certificate_number', update_string)
@@ -394,7 +395,7 @@ class DBSCheckDetailsView(DBSRadioView):
         return super().form_valid(form)
 
     def get_initial(self):
-        application_id = self.request.GET.get('id')
+        application_id = get_id(self.request)
         initial = super().get_initial()
         dbs_certificate_number_field = get_criminal_record_check(application_id, 'dbs_certificate_number')
         initial['dbs_certificate_number'] = dbs_certificate_number_field
@@ -423,5 +424,5 @@ class DBSCheckNoCapitaView(DBSCheckDetailsView):
     show_cautions_convictions = False
 
     def get_success_url(self):
-        application_id = self.request.GET.get('id')
+        application_id = get_id(self.request)
         return build_url(self.success_url, get={'id': application_id})
