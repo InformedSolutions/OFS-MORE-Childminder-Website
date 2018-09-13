@@ -532,6 +532,42 @@ def health_check_logic(application_id_local, form):
     return hdb_record
 
 
+def your_children_details_logic(application_id_local, form, child):
+    """
+    Business logic to create or update an ChildInHome record
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :param child: child number (integer)
+    :return: an ChildInHome object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    first_name = form.cleaned_data.get('first_name')
+    middle_names = form.cleaned_data.get('middle_names')
+    last_name = form.cleaned_data.get('last_name')
+    birth_day = form.cleaned_data.get('date_of_birth')[0]
+    birth_month = form.cleaned_data.get('date_of_birth')[1]
+    birth_year = form.cleaned_data.get('date_of_birth')[2]
+    # If the user entered information for this task for the first time
+    if ChildInHome.objects.filter(application_id=this_application, child=child, outside_home=True).exists():
+
+        child_record = ChildInHome.objects.get(application_id=this_application, child=child)
+        child_record.first_name = first_name
+        child_record.middle_names = middle_names
+        child_record.last_name = last_name
+        child_record.birth_day = birth_day
+        child_record.birth_month = birth_month
+        child_record.birth_year = birth_year
+        child_record.outside_home = True
+
+
+    # If the user previously entered information for this task
+    else:
+        child_record = ChildInHome(first_name=first_name, middle_names=middle_names, last_name=last_name,
+                                   birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
+                                   application_id=this_application, child=child, outside_home=True)
+
+    return child_record
+
 def other_people_adult_details_logic(application_id_local, form, adult):
     """
     Business logic to create or update an AdultInHome record

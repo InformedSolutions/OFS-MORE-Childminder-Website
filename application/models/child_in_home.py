@@ -2,6 +2,7 @@ from uuid import uuid4
 from django.db import models
 from .application import Application
 
+
 class ChildInHome(models.Model):
     """
     Model for CHILD_IN_HOME table
@@ -17,6 +18,7 @@ class ChildInHome(models.Model):
     birth_month = models.IntegerField(blank=True)
     birth_year = models.IntegerField(blank=True)
     relationship = models.CharField(max_length=100, blank=True)
+    outside_home = models.BooleanField(blank=True, default=False)
 
     @classmethod
     def get_id(cls, app_id):

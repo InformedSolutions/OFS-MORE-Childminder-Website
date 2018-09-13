@@ -11,7 +11,7 @@ from django.conf.urls import url, include
 from django.views.generic import TemplateView
 
 from application import views, utils
-from application.views import security_question, magic_link, feedback
+from application.views import security_question, magic_link, feedback, your_children
 from application.views.other_people_health_check import health_check_login, dob_auth, current_treatment, guidance, \
     declaration, serious_illness, hospital_admission, summary, thank_you
 
@@ -196,7 +196,14 @@ urlpatterns = [
     url(r'^help-contact/$', views.help_and_contact, name='Help-And-Contact-View'),
     url(r'^childcare-location/cancel-application', views.cancel_application.cl_cancel_app, name='Service-Unavailable'),
     url(r'^feedback/', feedback.feedback, name='Feedback'),
-    url(r'^feedback-submitted/', feedback.feedback_confirmation, name='Feedback-Confirmation')
+    url(r'^feedback-submitted/', feedback.feedback_confirmation, name='Feedback-Confirmation'),
+
+    # =========================== #
+    # Your children urls #
+    # =========================== #
+    url(r'^your-children/$', your_children.your_children_guidance, name='Your-Children-Guidance-View'),
+    url(r'^your-children-details/$', your_children.your_children_details, name='Your-Children-Details-View'),
+    url(r'^your-children/address/$', your_children.your_children_living_with_you, name='Your-Children-Living-With-You-View'),
 ]
 
 if settings.DEBUG:

@@ -52,6 +52,7 @@ from application.notify import send_email
 
 logger = logging.getLogger()
 
+
 def other_people_guidance(request):
     """
     Method returning the template for the People in your home: guidance page (for a given application)

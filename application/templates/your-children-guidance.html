@@ -1,0 +1,32 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Your children{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<!-- Initialise error summary for page -->
+<div class="two-thirds">
+{{form.error_summary}}
+
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Your children
+        </h1>
+        <p>You need to tell us  about your children who are under 16.</p>
+        <p>Council social services will carry out checks on them.</p>
+        <p>This  is to make sure that you’re suitable to look after children. </p>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Continue">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+</form>
+</div>
+
+{% endblock %}
