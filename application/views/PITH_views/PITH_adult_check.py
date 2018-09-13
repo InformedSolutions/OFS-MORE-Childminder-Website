@@ -15,6 +15,8 @@ class PITHAdultCheckView(PITHRadioView):
     def form_valid(self, form):
         application_id = get_id(self.request)
 
+        super().update_db(application_id)
+
         num_adults = len(AdultInHome.objects.filter(application_id=application_id))
 
         context = {

@@ -3,15 +3,17 @@ from django.http import HttpResponseRedirect
 from application.utils import build_url, get_id
 from application.models import AdultInHome
 from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMultiRadioView
-from application.forms.PITH_forms.PITH_lived_abroad_form import PITHLivedAbroadForm
+from application.forms.PITH_forms.PITH_DBS_check_form import PITHDBSCheckForm
 from application.business_logic import get_childcare_register_type
 
 
-class PITHLivedAbroadView(PITHMultiRadioView):
-    template_name = 'PITH_templates/PITH_lived_abroad.html'
-    form_class = PITHLivedAbroadForm
-    success_url = ('PITH-Abroad-Criminal-View', 'PITH-Military-View', 'PITH-DBS-Check-View')
-    PITH_field_name = 'lived_abroad'
+class PITHDBSCheckView(PITHMultiRadioView):
+    template_name = 'PITH_templates/PITH_DBS_check.html'
+    form_class = PITHDBSCheckForm
+    success_url = ('PITH-Post-View', 'PITH-Apply-View', 'PITH-Children-Check-View')
+    capita_field = 'capita'
+    dbs_field = 'dbs_certificate_number'
+    on_update_field = 'on_update'
 
     def get_form_kwargs(self, adult=None):
         """
@@ -21,8 +23,10 @@ class PITHLivedAbroadView(PITHMultiRadioView):
 
         context = {
             'id': application_id,
-            'PITH_field_name': self.PITH_field_name,
-            'adult': adult
+            'adult': adult,
+            'capita_field': self.capita_field,
+            'dbs_field': self.dbs_field,
+            'on_update_field': self.on_update_field
         }
 
         return super().get_form_kwargs(context)
@@ -60,11 +64,11 @@ class PITHLivedAbroadView(PITHMultiRadioView):
 
         adults = AdultInHome.objects.filter(application_id=application_id)
 
-        for adult in adults:
-            lived_abroad_bool = self.request.POST.get(self.PITH_field_name+str(adult.pk))
-
-            setattr(adult, self.PITH_field_name, lived_abroad_bool)
-            adult.save()
+        # for adult in adults:
+        #     lived_abroad_bool = self.request.POST.get(self.PITH_field_name+str(adult.pk))
+        #
+        #     setattr(adult, self.PITH_field_name, lived_abroad_bool)
+        #     adult.save()
 
         return HttpResponseRedirect(self.get_success_url())
 
@@ -86,8 +90,13 @@ class PITHLivedAbroadView(PITHMultiRadioView):
 
         adults = AdultInHome.objects.filter(application_id=application_id)
 
-        initial_context = {self.PITH_field_name+str(adult.pk): adult.lived_abroad
-                           for adult in adults}
+        initial_context = {}
+        for adult in adults:
+            initial_context.update({
+                self.capita_field + str(adult.pk): adult.capita,
+                self.dbs_field + str(adult.pk): adult.dbs_certificate_number,
+                self.on_update_field + str(adult.pk): adult.on_update
+            })
 
         return initial_context
 

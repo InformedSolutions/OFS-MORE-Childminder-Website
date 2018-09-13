@@ -1,10 +1,10 @@
 from application.forms import ChildminderForms
-from application.business_logic import get_adult_in_home, get_application
+from application.business_logic import get_application
 
 
 class PITHMultiRadioForm(ChildminderForms):
     """
-    GOV.UK form for the Criminal record check: generic radio butonton form
+    GOV.UK form for the People in the Home: generic radio button form
     """
     field_label_classes = 'form-label-bold'
     error_summary_title = 'There was a problem on this page'
@@ -24,7 +24,7 @@ class PITHMultiRadioForm(ChildminderForms):
 
         if 'PITH_field_name' in kwargs:
             self.PITH_field_name = kwargs.pop('PITH_field_name')
-            # self.pk = get_adult_in_home(self.application_id, 'pk')
+            self.pk = self.adult.pk
 
             super().__init__(*args, **kwargs)
 

@@ -169,7 +169,6 @@ class DBSCheckCapitaForm(DBSCheckDetailsForm):
     """
     GOV.UK form for the Criminal record check: Capita page
     """
-
     def get_choice_field_data(self):
         return forms.ChoiceField(label='Do you have any criminal cautions or convictions?',
                                  help_text='Include any information recorded on your certificate',

@@ -48,20 +48,6 @@ class PITHRadioView(FormView):
         else:
             return build_url(redirect_url, get=get)
 
-    def get_form_kwargs(self):
-        application_id = get_id(self.request)
-        kwargs = super().get_form_kwargs()
-        active_model, active_field_name = self.get_active_field()
-
-        kwargs['id'] = application_id
-
-        if active_model == 'PITH':
-            kwargs['PITH_field_name'] = active_field_name
-        elif active_model == 'Application':
-            kwargs['application_field_name'] = active_field_name
-
-        return kwargs
-
     def get_context_data(self, **kwargs):
         application_id = get_id(self.request)
         application_status = get_application(application_id, 'application_status')
@@ -80,6 +66,20 @@ class PITHRadioView(FormView):
 
         return super().get_context_data(**context, **kwargs)
 
+    def get_form_kwargs(self):
+        application_id = get_id(self.request)
+        kwargs = super().get_form_kwargs()
+        active_model, active_field_name = self.get_active_field()
+
+        kwargs['id'] = application_id
+
+        if active_model == 'PITH':
+            kwargs['PITH_field_name'] = active_field_name
+        elif active_model == 'Application':
+            kwargs['application_field_name'] = active_field_name
+
+        return kwargs
+
     def post(self, request, *args, **kwargs):
         form = self.get_form()
 
@@ -90,23 +90,26 @@ class PITHRadioView(FormView):
     def form_valid(self, form):
         application_id = get_id(self.request)
 
+        self.update_db(application_id)
+
+        return super().form_valid(form)
+
+    def update_db(self, app_id):
         # Update task status if flagged or completed (people_in_home_status)
-        people_in_home_status = get_application(application_id, 'people_in_home_status')
+        people_in_home_status = get_application(app_id, 'people_in_home_status')
 
         if people_in_home_status in ['FLAGGED', 'COMPLETED']:
             # Update the task status to 'IN_PROGRESS' from 'FLAGGED'
-            update_application(application_id, 'people_in_home_status', 'IN_PROGRESS')
+            update_application(app_id, 'people_in_home_status', 'IN_PROGRESS')
 
         active_model, active_field_name = self.get_active_field()
 
         if active_model == 'PITH':
             update_bool = self.request.POST.get(active_field_name) == 'True'
-            successfully_updated = update_adult_in_home(application_id, active_field_name, update_bool)
+            successfully_updated = update_adult_in_home(app_id, active_field_name, update_bool)
         elif active_model == 'Application':
             update_bool = self.request.POST.get(active_field_name) == 'True'
-            successfully_updated = update_application(application_id, active_field_name, update_bool)
-
-        return super().form_valid(form)
+            successfully_updated = update_application(app_id, active_field_name, update_bool)
 
     def get_active_field(self):
         if self.PITH_field_name:
