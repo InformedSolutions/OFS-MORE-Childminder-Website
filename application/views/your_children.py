@@ -214,6 +214,8 @@ def your_children_living_with_you(request):
     """
     if request.method == 'GET':
         return your_children_living_with_you_get_handler(request)
+    if request.method == 'POST':
+        return your_children_living_with_you_post_handler(request)
 
 
 def your_children_living_with_you_get_handler(request):
@@ -230,3 +232,23 @@ def your_children_living_with_you_get_handler(request):
     }
 
     return render(request, 'your-children-living-with-you.html', variables)
+
+
+def your_children_living_with_you_post_handler(request):
+    """
+    Method for handling a submission to the "Your children addresses" page
+    """
+
+    application_id_local = request.GET["id"]
+    selections = request.POST.getlist('children_living_with_childminder_selection')
+
+    if len(selections) > 1 and 'none' in selections:
+        form = YourChildrenLivingWithYouForm(request.POST, id=application_id_local)
+        form.add_error('children_living_with_childminder_selection', 'Error tbc')
+
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+        }
+
+        return render(request, 'your-children-living-with-you.html', variables)

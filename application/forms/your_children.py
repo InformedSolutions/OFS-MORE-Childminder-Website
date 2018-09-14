@@ -128,6 +128,10 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
     auto_replace_widgets = True
     error_summary_title = 'There was a problem with the details'
 
+    children_living_with_childminder_selection = forms.MultipleChoiceField(label='Which of your children live with you?',
+        widget=CheckboxSelectMultiple, required=True, error_messages={
+                     'required': 'Please say if any of your children live with you'}, help_text="Tick all that apply")
+
     def __init__(self, *args, **kwargs):
 
         # Pop id
@@ -143,6 +147,8 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
         # Create outer tuple (to hold tuple of tuples containing children names and child int representation values)
         select_options = ()
 
+        previous_selections = []
+
         # Iterate child option and push to tuple of tuples
         for child_outside_home in children_outside_home:
             # Compile concatenated names
@@ -152,17 +158,14 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
             else:
                 concatenated_name = child_outside_home.first_name + " " + child_outside_home.last_name
 
+            if child_outside_home.outside_home:
+                previous_selections.append(str(child_outside_home.child))
+
             select_options += ((str(child_outside_home.child), concatenated_name),)
 
         # Add none selection as last entry (post-for-loop)
         select_options += (('none', 'None'),)
 
-        self.fields['children_living_with_childminder_selection'] = \
-            forms.MultipleChoiceField(label='Which of your children live with you?',
-                                                    choices=select_options,
-                                                   widget=CheckboxSelectMultiple, required=True,
-                                                   error_messages={
-                                                       'required': 'Please say if any of your children live with you'},
-                                                   help_text="Tick all that apply")
-
+        self.fields['children_living_with_childminder_selection'].choices = select_options
+        self.fields['children_living_with_childminder_selection'].initial = previous_selections
 
