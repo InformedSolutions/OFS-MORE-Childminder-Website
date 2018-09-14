@@ -40,11 +40,10 @@ class PITHDBSCheckForm(ChildminderForms):
         self.field_list = [*self.fields]
 
     def get_options(self):
-        options = (
+        return (
             (True, 'Yes'),
             (False, 'No')
         )
-        return options
 
     def get_on_update_field_data(self):
         return forms.ChoiceField(
@@ -88,5 +87,5 @@ class PITHDBSCheckForm(ChildminderForms):
         return cleaned_dbs_field
 
     def get_reveal_conditionally(self):
-        return {self.capita_field_name: {True: self.dbs_field_name,
-                                         False: self.on_update_field_name}}
+        return {self.capita_field_name: {'True': self.dbs_field_name,
+                                         'False': self.on_update_field_name}}
