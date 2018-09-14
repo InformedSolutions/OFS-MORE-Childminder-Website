@@ -9,7 +9,8 @@ from ..summary_page_data import eyfs_name_dict, eyfs_link_dict, eyfs_change_link
 
 from .. import status
 from ..business_logic import (childcare_register_type,
-                              childcare_training_course_logic,)
+                              childcare_training_course_logic,
+                              reset_declaration)
 from ..forms import EYFSDetailsForm, TypeOfChildcareTrainingForm
 from ..models import Application, ChildcareTraining
 
@@ -77,6 +78,8 @@ class ChildcareTrainingDetailsView(FormView):
         training_record = childcare_training_course_logic(application_id, form)
         training_record.save()
 
+        reset_declaration(application)
+
         return HttpResponseRedirect(reverse(self.success_url) + '?id=' + application_id)
 
 
@@ -112,6 +115,8 @@ class TypeOfChildcareTrainingView(FormView):
 
         training_record = childcare_training_course_logic(application_id, form)
         training_record.save()
+
+        reset_declaration(application)
 
         if 'no_training' in form.cleaned_data['childcare_training']:
             self.success_url = 'Childcare-Training-Course-Required-View'
