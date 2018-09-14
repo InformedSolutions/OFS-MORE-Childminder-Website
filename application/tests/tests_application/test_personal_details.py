@@ -49,3 +49,28 @@ class PersonalDetailsTests(TestCase):
 
         # Tear down env
         application.delete()
+
+    @tag('http')
+    def set_own_children_to_false(self):
+        """
+        Test to assert that the own_children attribute in the Application table is set to False when the applicant says
+        they don't have own children
+        """
+
+        # Build env
+        Application.objects.create(application_id=self.application_id)
+        form_data = {
+            'id': self.application_id,
+            'own_children': 'False'
+        }
+
+        response = self.client.post(reverse('Personal-Details-Your-Own-Children-View') + '?id=' + self.application_id,
+                                    form_data)
+
+        application = Application.objects.get(application_id=self.application_id)
+
+        self.assertTrue(response.status_code == 302)
+        self.assertEqual(False, application.own_children)
+
+        # Tear down env
+        application.delete()
