@@ -240,7 +240,6 @@ def your_children_living_with_you_post_handler(request):
     """
 
     application_id_local = request.GET["id"]
-    selections = request.POST.getlist('children_living_with_childminder_selection')
     form = YourChildrenLivingWithYouForm(request.POST, id=application_id_local)
 
     if not form.is_valid():
@@ -251,13 +250,3 @@ def your_children_living_with_you_post_handler(request):
 
         return render(request, 'your-children-living-with-you.html', variables)
 
-    if len(selections) > 1 and 'none' in selections:
-        form = YourChildrenLivingWithYouForm(request.POST, id=application_id_local)
-        form.add_error('children_living_with_childminder_selection', 'Error tbc')
-
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-        }
-
-        return render(request, 'your-children-living-with-you.html', variables)

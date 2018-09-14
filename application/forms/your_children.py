@@ -133,6 +133,9 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
                      'required': 'Please say if any of your children live with you'}, help_text="Tick all that apply")
 
     def __init__(self, *args, **kwargs):
+        """
+        Customer constructor implementation which loads child names from the data tier and sets any previous responses
+        """
 
         # Pop id
         self.application_id_local = kwargs.pop('id')
@@ -169,3 +172,14 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
         self.fields['children_living_with_childminder_selection'].choices = select_options
         self.fields['children_living_with_childminder_selection'].initial = previous_selections
 
+    def clean_children_living_with_childminder_selection(self):
+        """
+        Validator method to ensure options selected are permissible.
+        If for example, names have been chosen as well as 'none' an error should be raised
+        """
+        selections = self.cleaned_data['children_living_with_childminder_selection']
+        
+        if len(selections) > 1 and 'none' in selections:
+            raise forms.ValidationError('Error tbc')
+
+        return selections
