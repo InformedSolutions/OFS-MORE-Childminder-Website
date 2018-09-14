@@ -264,6 +264,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         # Confirm selection
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        time.sleep(5)
 
         self.assertEqual("Early Years and Childcare Register (both parts)",
                          self.selenium_task_executor.get_driver().title)
@@ -684,7 +685,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
     @try_except_method
     def test_updated_tasks_are_listed_in_confirmation_page(self):
         """
-        Tests that the costs link is not shown if an application has been returned to the applicant
+        Tests that updated tasks in a returned application are shown on the confirmation page
         """
         # Load fixtures to populate a test application
         call_command("loaddata", "test_returned_application.json", verbosity=0)
@@ -751,6 +752,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(test_email)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+        time.sleep(5)
         self.assertEqual("Check your email", self.selenium_task_executor.get_driver().title)
 
     @try_except_method
