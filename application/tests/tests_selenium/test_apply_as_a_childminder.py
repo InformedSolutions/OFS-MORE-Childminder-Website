@@ -36,7 +36,7 @@ def try_except_method(func):
         try:
             func(*args, **kwargs)
         except Exception as e:
-            # capture_screenshot(func)
+            capture_screenshot(func)
             raise e
 
     return func_wrapper
@@ -682,6 +682,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Test that the task-disabled class is present (for unflagged tasks which are disabled)
         self.assertTrue(self.selenium_task_executor.get_driver().find_element_by_class_name('task-disabled'))
 
+    @tag('failed')
     @try_except_method
     def test_updated_tasks_are_listed_in_confirmation_page(self):
         """
@@ -694,14 +695,15 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.sign_back_in('test@informed.com')
 
         self.selenium_task_executor.get_driver().find_element_by_id("health").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//a[contains(@href,'health/booklet/')]").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='eyfs']/td/a/span").click()
+        # self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         # Verify that the updated task is still accessible
-        self.selenium_task_executor.get_driver().find_element_by_id("health").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='eyfs']/td/a/span").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
+        # time.sleep(300)
+        # self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_id("id_declaration_confirmation").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
@@ -959,6 +961,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.get_driver().find_element_by_link_text("Cancel application").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath('/html/body/main/div[2]/form/div/input[2]').click()
+        time.sleep(2)
         self.assertEqual("Application Cancelled", self.selenium_task_executor.get_driver().title)
 
     @try_except_method
