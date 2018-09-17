@@ -1,0 +1,38 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Your home address{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<!-- Initialise error summary for page -->
+<div class="two-thirds">
+{{form.error_summary}}
+</div>
+
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Your home address
+        </h1>
+        {{form.as_div}}
+        {% csrf_token %}
+        <a href="{% url 'Personal-Details-Home-Address-View' %}?id={{application_id}}" name="manual"
+           id="manual">Use postcode search</a>
+    </div>
+    <div class="form-group">
+        <input type="submit" class="button" value="Save and continue">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+</form>
+<br>
+
+{% if personal_details_status == 'COMPLETED' or personal_details_status == 'FLAGGED' %}
+{% include 'return-to-list.html' %}
+{% endif %}
+
+{% endblock %}

@@ -22,7 +22,7 @@ from .models import (AdultInHome,
                      FirstAidTraining,
                      HealthDeclarationBooklet,
                      Reference,
-                     UserDetails)
+                     UserDetails, Child)
 
 from .utils import unique_values, get_first_duplicate_index, return_last_duplicate_index, \
     get_duplicate_list_entry_indexes
@@ -548,23 +548,22 @@ def your_children_details_logic(application_id_local, form, child):
     birth_month = form.cleaned_data.get('date_of_birth')[1]
     birth_year = form.cleaned_data.get('date_of_birth')[2]
     # If the user entered information for this task for the first time
-    if ChildInHome.objects.filter(application_id=this_application, child=child, outside_home=True).exists():
+    if Child.objects.filter(application_id=this_application, child=child).exists():
 
-        child_record = ChildInHome.objects.get(application_id=this_application, child=child)
+        child_record = Child.objects.get(application_id=this_application, child=child)
         child_record.first_name = first_name
         child_record.middle_names = middle_names
         child_record.last_name = last_name
         child_record.birth_day = birth_day
         child_record.birth_month = birth_month
         child_record.birth_year = birth_year
-        child_record.outside_home = True
 
 
     # If the user previously entered information for this task
     else:
-        child_record = ChildInHome(first_name=first_name, middle_names=middle_names, last_name=last_name,
+        child_record = Child(first_name=first_name, middle_names=middle_names, last_name=last_name,
                                    birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
-                                   application_id=this_application, child=child, outside_home=True)
+                                   application_id=this_application, child=child)
 
     return child_record
 
@@ -660,11 +659,40 @@ def remove_child(application_id_local, remove_person):
     :param remove_person: child to remove (integer)
     :return:
     """
+    if Child.objects.filter(application_id=application_id_local, child=remove_person).exists() is True:
+        Child.objects.get(application_id=application_id_local, child=remove_person).delete()
+
+
+def rearrange_children(number_of_children, application_id_local):
+    """
+    Method to rearrange numbers assigned to children
+    :param number_of_children: number of children in database (integer)
+    :param application_id_local: current application ID
+    :return:
+    """
+    for i in range(1, number_of_children + 1):
+        # If there is a gap in the sequence of child numbers
+        if Child.objects.filter(application_id=application_id_local, child=i).count() == 0:
+            next_child = i + 1
+            # If there is a child that has the next number in the sequence, assign the missing number
+            if Child.objects.filter(application_id=application_id_local, child=next_child).count() != 0:
+                next_child_record = ChildInHome.objects.get(application_id=application_id_local, child=next_child)
+                next_child_record.child = i
+                next_child_record.save()
+
+
+def remove_child_in_home(application_id_local, remove_person):
+    """
+    Method to remove a child in home from the database
+    :param application_id_local: current application ID
+    :param remove_person: child to remove (integer)
+    :return:
+    """
     if ChildInHome.objects.filter(application_id=application_id_local, child=remove_person).exists() is True:
         ChildInHome.objects.get(application_id=application_id_local, child=remove_person).delete()
 
 
-def rearrange_children(number_of_children, application_id_local):
+def rearrange_children_in_home(number_of_children, application_id_local):
     """
     Method to rearrange numbers assigned to adults
     :param number_of_children: number of children in database (integer)

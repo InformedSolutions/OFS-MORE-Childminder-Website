@@ -9,7 +9,7 @@ from django.conf import settings
 
 from ..customfields import CustomSplitDateFieldDOB
 from ..forms_helper import full_stop_stripper
-from ..models import ChildInHome
+from ..models import ChildInHome, Child
 from ..utils import date_formatter
 
 
@@ -50,8 +50,8 @@ class YourChildrenDetailsForm(ChildminderForms):
         super(YourChildrenDetailsForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
-        if ChildInHome.objects.filter(application_id=self.application_id_local, child=self.child, outside_home=True).count() > 0:
-            child_record = ChildInHome.objects.get(application_id=self.application_id_local, child=self.child)
+        if Child.objects.filter(application_id=self.application_id_local, child=self.child).count() > 0:
+            child_record = Child.objects.get(application_id=self.application_id_local, child=self.child)
 
             birth_day, birth_month, birth_year = date_formatter(child_record.birth_day,
                                                                 child_record.birth_month,
@@ -144,8 +144,8 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
         super(YourChildrenLivingWithYouForm, self).__init__(*args, **kwargs)
 
         # Fetch selection options ordering by the sequence children were added
-        children_outside_home = \
-            ChildInHome.objects.filter(application_id=self.application_id_local, outside_home=True).order_by('child')
+        children = \
+            Child.objects.filter(application_id=self.application_id_local).order_by('child')
 
         # Create outer tuple (to hold tuple of tuples containing children names and child int representation values)
         select_options = ()
@@ -153,18 +153,11 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
         previous_selections = []
 
         # Iterate child option and push to tuple of tuples
-        for child_outside_home in children_outside_home:
-            # Compile concatenated names
-            if len(child_outside_home.middle_names) > 0:
-                concatenated_name = child_outside_home.first_name + " " \
-                                    + child_outside_home.middle_names + " " + child_outside_home.last_name
-            else:
-                concatenated_name = child_outside_home.first_name + " " + child_outside_home.last_name
+        for child in children:
+            if child.lives_with_childminder:
+                previous_selections.append(str(child.child))
 
-            if child_outside_home.outside_home:
-                previous_selections.append(str(child_outside_home.child))
-
-            select_options += ((str(child_outside_home.child), concatenated_name),)
+            select_options += ((str(child.child), child.get_full_name()),)
 
         # Add none selection as last entry (post-for-loop)
         select_options += (('none', 'None'),)
@@ -183,3 +176,12 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
             raise forms.ValidationError('Error tbc')
 
         return selections
+
+
+class YourChildrenSummaryForm(ChildminderForms):
+    """
+    GOV.UK form for the People in your home: summary page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    auto_replace_widgets = True

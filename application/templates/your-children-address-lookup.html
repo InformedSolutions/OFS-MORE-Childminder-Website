@@ -16,7 +16,7 @@
     <!-- Content -->
     <div class="two-thirds">
         <h1 class="form-title heading-large">
-            << Child name >> address
+            {{ name }}'s address
         </h1>
     </div>
     {% if not form.errors %}
@@ -57,6 +57,7 @@
     <a href="{% url 'Personal-Details-Home-Address-Manual-View' %}?id={{application_id}}"
        name="manual" id="manual">Enter address manually</a>
     <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    <input type="hidden" id="child" name="child" value="{{child}}"/>
 </form>
 <br>
 

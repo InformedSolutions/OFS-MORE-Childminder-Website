@@ -1,11 +1,15 @@
+import collections
+import datetime
+
 from django.utils import timezone
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from ..forms import YourChildrenGuidanceForm, YourChildrenDetailsForm, YourChildrenLivingWithYouForm
-from ..models import Application, ChildInHome
+from ..forms import YourChildrenGuidanceForm, YourChildrenDetailsForm, YourChildrenLivingWithYouForm, ChildAddressForm, \
+    YourChildrenSummaryForm, YourChildManualAddressForm, YourChildrenHomeAddressLookupForm
+from ..models import Application, Child
 from .. import status
 from ..business_logic import remove_child, rearrange_children, your_children_details_logic, reset_declaration
 
@@ -63,7 +67,7 @@ def your_children_details_get_handler(request):
     if number_of_children_present_in_querystring:
         number_of_children = int(request.GET["children"])
     else:
-        number_of_children = ChildInHome.objects.filter(application_id=application_id_local, outside_home=True).count()
+        number_of_children = Child.objects.filter(application_id=application_id_local).count()
 
     remove_querystring_present = request.GET.get('remove') is not None
 
@@ -250,3 +254,94 @@ def your_children_living_with_you_post_handler(request):
 
         return render(request, 'your-children-living-with-you.html', variables)
 
+    # Mark children listed as living in the home
+
+    children = Child.objects.filter(application_id=application_id_local)
+
+    for child in children:
+        child.lives_with_childminder = \
+            str(child.child) in form.cleaned_data['children_living_with_childminder_selection']
+        child.save()
+
+    if Child.objects.filter(application_id=application_id_local, lives_with_childminder=False).count() > 0:
+        first_child_living_outside_home \
+            = Child.objects.filter(application_id=application_id_local, lives_with_childminder=False)\
+            .order_by('child').first()
+
+        return HttpResponseRedirect(reverse('Your-Children-Address-View') + '?id=' +
+                                    application_id_local + '&child=' + str(first_child_living_outside_home.child))
+    else:
+        return HttpResponseRedirect(reverse('Your-Children-Summary-View') + '?id=' +
+                                    application_id_local)
+
+
+def your_children_address_capture(request):
+    if request.method == 'GET':
+        return your_children_address_capture_get_handler(request)
+    if request.method == 'POST':
+        return your_children_address_capture_post_handler(request)
+
+
+def your_children_address_capture_get_handler(request):
+    application_id_local = request.GET["id"]
+    child = request.GET["child"]
+    form = ChildAddressForm(id=application_id_local, child=child)
+
+    child_record = Child.objects.get(application_id=application_id_local, child=child)
+
+    variables = {
+        'form': form,
+        'name': child_record.get_full_name(),
+        'application_id': application_id_local,
+        'child': child,
+    }
+
+    return render(request, 'your-children-address-lookup.html', variables)
+
+
+def your_children_address_capture_post_handler(request):
+    application_id_local = request.POST["id"]
+    child = request.POST["child"]
+
+    if 'postcode-search' in request.POST:
+
+        if Application.get_id(app_id=application_id_local).personal_details_status != 'COMPLETED':
+            status.update(application_id_local, 'your_children_status', 'IN_PROGRESS')
+
+        return HttpResponseRedirect(reverse('Your-Children-Address-Select-View')
+                                    + '?id=' + application_id_local + '&child=' + str(child))
+
+
+def your_children_summary(request):
+    """
+    View method for rendering the Your Children task summary page.
+    """
+    if request.method == "GET":
+        return your_children_summary_get_handler(request)
+
+
+def your_children_summary_get_handler(request):
+    application_id_local = request.GET["id"]
+    form = YourChildrenSummaryForm()
+
+    children_table = []
+    children = Child.objects.filter(application_id=application_id_local)
+
+    for child in children:
+        dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)
+        child_details = collections.OrderedDict([
+            ('child_number', child.child),
+            ('full_name', child.get_full_name()),
+            ('dob', dob),
+            ('lives_with_childminder', child.lives_with_childminder),
+        ])
+        children_table.append(child_details)
+
+    variables = {
+        'page_title': 'Check your answers: your children',
+        'form': form,
+        'application_id': application_id_local,
+        'children': children_table,
+    }
+
+    return render(request, 'your-children-summary.html', variables)

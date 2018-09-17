@@ -4,11 +4,11 @@ from .applicant_personal_details import ApplicantPersonalDetails
 from .application import Application
 
 
-class ChildOutsideHomeAddress(models.Model):
+class ChildAddress(models.Model):
     """
     Model for CHILD_OUTSIDE_HOME_ADDRESS table
     """
-    child_outside_home_address_id = models.UUIDField(primary_key=True, default=uuid4)
+    child_address_id = models.UUIDField(primary_key=True, default=uuid4)
     child = models.IntegerField(null=True, blank=True)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE,
                                        db_column='application_id')
@@ -42,4 +42,4 @@ class ChildOutsideHomeAddress(models.Model):
         )
 
     class Meta:
-        db_table = 'CHILD_OUTSIDE_HOME_ADDRESS'
+        db_table = 'CHILD_ADDRESS'

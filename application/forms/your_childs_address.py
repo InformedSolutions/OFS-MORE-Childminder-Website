@@ -2,14 +2,13 @@ import re
 
 from django import forms
 from django.conf import settings
-from govuk_forms.widgets import InlineRadioSelect
 
 from ..forms.childminder import ChildminderForms
 from ..forms_helper import full_stop_stripper
-from ..models import ChildOutsideHomeAddress
+from ..models import ChildAddress
 
 
-class ChildOutsideHomeAddressForm(ChildminderForms):
+class ChildAddressForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: home address page for postcode search
     """
@@ -27,10 +26,10 @@ class ChildOutsideHomeAddressForm(ChildminderForms):
         """
         self.application_id_local = kwargs.pop('id')
         self.child = kwargs.pop('child')
-        super(ChildOutsideHomeAddressForm, self).__init__(*args, **kwargs)
+        super(ChildAddressForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
-        if ChildOutsideHomeAddress.objects.filter(application_id=self.application_id_local, child=self.child).count() > 0:
-            self.fields['postcode'].initial = ChildOutsideHomeAddress.objects.get(application_id=self.application_id_local,
+        if ChildAddress.objects.filter(application_id=self.application_id_local, child=self.child).count() > 0:
+            self.fields['postcode'].initial = ChildAddress.objects.get(application_id=self.application_id_local,
                                                                                child=self.child).postcode
 
     def clean_postcode(self):
@@ -46,7 +45,7 @@ class ChildOutsideHomeAddressForm(ChildminderForms):
         return postcode
 
 
-class ChildOutsideHomeAddressManualForm(ChildminderForms):
+class YourChildManualAddressForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: home address page for manual entry
     """
@@ -69,19 +68,19 @@ class ChildOutsideHomeAddressManualForm(ChildminderForms):
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
         self.application_id_local = kwargs.pop('id')
-        super(ChildOutsideHomeAddressManualForm, self).__init__(*args, **kwargs)
+        super(YourChildManualAddressForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
-        if ChildOutsideHomeAddress.objects.filter(application_id=self.application_id_local,
+        if ChildAddress.objects.filter(application_id=self.application_id_local,
                                                   child=self.child).count() > 0:
-            child_outside_home_address = ChildOutsideHomeAddress.objects.get(application_id=self.application_id_local,
+            child_home_address = ChildAddress.objects.get(application_id=self.application_id_local,
                                                   child=self.child)
-            self.fields['street_line1'].initial = applicant_home_address.street_line1
-            self.fields['street_line2'].initial = applicant_home_address.street_line2
-            self.fields['town'].initial = applicant_home_address.town
-            self.fields['county'].initial = applicant_home_address.county
-            self.fields['postcode'].initial = applicant_home_address.postcode
-            self.pk = applicant_home_address.home_address_id
+            self.fields['street_line1'].initial = child_home_address.street_line1
+            self.fields['street_line2'].initial = child_home_address.street_line2
+            self.fields['town'].initial = child_home_address.town
+            self.fields['county'].initial = child_home_address.county
+            self.fields['postcode'].initial = child_home_address.postcode
+            self.pk = child_home_address.home_address_id
             self.field_list = ['street_line1', 'street_line2', 'town', 'county', 'postcode']
 
     def clean_street_line1(self):
@@ -142,7 +141,7 @@ class ChildOutsideHomeAddressManualForm(ChildminderForms):
         return postcode
 
 
-class PersonalDetailsHomeAddressLookupForm(ChildminderForms):
+class YourChildrenHomeAddressLookupForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: home address page for postcode search results
     """
@@ -161,44 +160,6 @@ class PersonalDetailsHomeAddressLookupForm(ChildminderForms):
         """
         self.application_id_local = kwargs.pop('id')
         self.choices = kwargs.pop('choices')
-        super(PersonalDetailsHomeAddressLookupForm, self).__init__(*args, **kwargs)
+        super(YourChildrenHomeAddressLookupForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         self.fields['address'].choices = self.choices
-
-
-class PersonalDetailsLocationOfCareForm(ChildminderForms):
-    """
-    GOV.UK form for the Your personal details: location of care page
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
-    auto_replace_widgets = True
-
-    options = (
-        ('True', 'Yes'),
-        ('False', 'No')
-    )
-    childcare_location = forms.ChoiceField(label='Is this where you will be looking after the children?',
-                                           choices=options,
-                                           widget=InlineRadioSelect, required=True,
-                                           error_messages={
-                                               'required': "Please say if this is where you'll be looking after the children"})
-
-    def __init__(self, *args, **kwargs):
-        """
-        Method to configure the initialisation of the Your personal details: location of care form
-        :param args: arguments passed to the form
-        :param kwargs: keyword arguments passed to the form, e.g. application ID
-        """
-        self.application_id_local = kwargs.pop('id')
-        super(PersonalDetailsLocationOfCareForm, self).__init__(*args, **kwargs)
-        full_stop_stripper(self)
-        # If information was previously entered, display it on the form
-        personal_detail_id = ApplicantPersonalDetails.objects.get(
-            application_id=self.application_id_local).personal_detail_id
-        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
-            address = ApplicantHomeAddress.objects.get(
-                personal_detail_id=personal_detail_id, current_address=True)
-            self.fields['childcare_location'].initial = address.childcare_address
-            self.field_list = ['childcare_location']
-            self.pk = address.pk
