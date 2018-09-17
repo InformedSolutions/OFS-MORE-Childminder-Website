@@ -30,7 +30,8 @@ from ..forms import (PersonalDetailsChildcareAddressForm,
 from ..models import (ApplicantHomeAddress,
                       ApplicantName,
                       ApplicantPersonalDetails,
-                      Application)
+                      Application,
+                      Arc)
 
 
 def personal_details_guidance(request):
@@ -977,6 +978,7 @@ def personal_details_own_children(request):
         form = PersonalDetailsOwnChildrenForm(request.POST, id=app_id)
         form.remove_flag()
         application = Application.get_id(app_id=app_id)
+        arc = Arc.objects.get(application_id=app_id)
 
         if form.is_valid():
             # Reset status to in progress as question can change status of overall task
@@ -987,10 +989,14 @@ def personal_details_own_children(request):
             own_children = form.cleaned_data.get('own_children')
             application.own_children = own_children
 
+            # Set Your children task status to Completed when the applicant has no own children
             if own_children is True:
                 application.your_children_status = 'NOT_STARTED'
+                if arc.your_children_status != 'FLAGGED':
+                    arc.your_children_status = 'NOT_STARTED'
             else:
                 application.your_children_status = 'COMPLETED'
+                arc.your_children_status = 'COMPLETED'
 
             application.date_updated = current_date
             application.save()

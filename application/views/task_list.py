@@ -20,6 +20,23 @@ from ..models import (ApplicantName, ApplicantPersonalDetails, Application, Chil
 from ..utils import can_cancel
 
 
+def show_hide_your_children(context, application):
+    """
+    Method hiding or showing the Your children task based on whether the applicant has children
+    :param context: a dictionary containing all tasks for the task list
+    :param context: Application object
+    :return: dictionary object
+    """
+
+    for task in context['tasks']:
+        if task['name'] == 'your_children':
+            if application.own_children:
+                task['hidden'] = False
+            else:
+                task['hidden'] = True
+    return context
+
+
 @never_cache
 def task_list(request):
     """
@@ -244,12 +261,7 @@ def task_list(request):
     }
 
     # Show/hide Your children task
-    for task in context['tasks']:
-        if task['name'] == 'your_children':
-            if application.own_children:
-                task['hidden'] = False
-            else:
-                task['hidden'] = True
+    context = show_hide_your_children(context, application)
 
     unfinished_tasks = [task for task in context['tasks'] if task['status'] in
                         ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]
