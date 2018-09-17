@@ -28,7 +28,7 @@
             Which of your children live with you?
         </td>
         <td style="word-wrap: break-word">
-                {{ children_not_living_with_childminder }}
+                {{ children_living_with_childminder|default:"None" }}
         </td>
         <td class="change-answer">
             <a href="{% url 'Your-Children-Living-With-You-View' %}?id={{application_id}}" alt='Change which of your children live with you?'>

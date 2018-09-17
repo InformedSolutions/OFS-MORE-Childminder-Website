@@ -13,6 +13,45 @@ from ..models import Application, Child, ChildAddress
 from .. import status, address_helper
 from ..business_logic import remove_child, rearrange_children, your_children_details_logic, reset_declaration
 
+def __get_first_child_number_for_address_entry(application_id):
+    """
+    Helper method to fetch the child number for the first child for which address details are to be supplied
+    :param application_id: the application identifier to be queried against
+    :return: the next child number or None if no more children require address details to be provided
+    """
+    first_child = Child.objects.filter(application_id=application_id, lives_with_childminder=False).order_by('child').first()
+    return first_child.child
+
+def __get_next_child_number_for_address_entry(application_id, current_child):
+    """
+    Helper method for sequencing a user through the workflow for providing child address details
+    :param application_id: the application identifier to be queried against
+    :param current_child: the current child information is being supplied for
+    :return: the next child number or None if no more children require address details to be provided
+    """
+    if __get_children_not_living_with_childminder_count(application_id) > current_child:
+        return current_child + 1
+    else:
+        return None
+
+
+def __get_all_children_count(application_id):
+    """
+    Helper method for providing a count of how many children are associated with a childminder
+    :param application_id: the application identifier to be queried against
+    :return: a count of of how many children do not live a childminder
+    """
+    return Child.objects.filter(application_id=application_id).count()
+
+
+def __get_children_not_living_with_childminder_count(application_id):
+    """
+    Helper method for providing a count of how many children do not live a childminder
+    :param application_id: the application identifier to be queried against
+    :return: a count of of how many children do not live a childminder
+    """
+    return Child.objects.filter(application_id=application_id, lives_with_childminder=False).count()
+
 
 def your_children_guidance(request):
     """
@@ -336,44 +375,6 @@ def __your_children_living_with_you_post_handler(request):
 
 
 
-def __get_first_child_number_for_address_entry(application_id):
-    """
-    Helper method to fetch the child number for the first child for which address details are to be supplied
-    :param application_id: the application identifier to be queried against
-    :return: the next child number or None if no more children require address details to be provided
-    """
-    first_child = Child.objects.filter(application_id=application_id, lives_with_childminder=False).order_by('child').first()
-    return first_child.child
-
-def __get_next_child_number_for_address_entry(application_id, current_child):
-    """
-    Helper method for sequencing a user through the workflow for providing child address details
-    :param application_id: the application identifier to be queried against
-    :param current_child: the current child information is being supplied for
-    :return: the next child number or None if no more children require address details to be provided
-    """
-    if __get_children_not_living_with_childminder_count(application_id) > current_child:
-        return current_child + 1
-    else:
-        return None
-
-
-def __get_all_children_count(application_id):
-    """
-    Helper method for providing a count of how many children are associated with a childminder
-    :param application_id: the application identifier to be queried against
-    :return: a count of of how many children do not live a childminder
-    """
-    return Child.objects.filter(application_id=application_id).count()
-
-
-def __get_children_not_living_with_childminder_count(application_id):
-    """
-    Helper method for providing a count of how many children do not live a childminder
-    :param application_id: the application identifier to be queried against
-    :return: a count of of how many children do not live a childminder
-    """
-    return Child.objects.filter(application_id=application_id, lives_with_childminder=False).count()
 
 
 
@@ -670,7 +671,7 @@ def __your_children_summary_get_handler(request):
     form = YourChildrenSummaryForm()
 
     children_table = []
-    children_not_living_with_childminder = []
+    children_living_with_childminder = []
     children = Child.objects.filter(application_id=application_id_local)
 
     for child in children:
@@ -691,15 +692,15 @@ def __your_children_summary_get_handler(request):
         ])
         children_table.append(child_details)
 
-        if not child.lives_with_childminder:
-            children_not_living_with_childminder.append(child.get_full_name())
+        if child.lives_with_childminder:
+            children_living_with_childminder.append(child.get_full_name())
 
     variables = {
         'page_title': 'Check your answers: your children',
         'form': form,
         'application_id': application_id_local,
         'children': children_table,
-        'children_not_living_with_childminder': ", ".join(children_not_living_with_childminder)
+        'children_living_with_childminder': ", ".join(children_living_with_childminder)
     }
 
     return render(request, 'your-children-summary.html', variables)

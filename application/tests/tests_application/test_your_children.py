@@ -8,7 +8,7 @@ from django.test import TestCase, tag
 from django.urls import reverse, resolve
 
 from .base import ApplicationTestBase
-from ...models import Child
+from ...models import Child, ChildAddress
 
 
 class YourChildrenTests(TestCase, ApplicationTestBase):
@@ -363,8 +363,9 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
     def test_address_lookup_renders_list(self):
         with mock.patch('application.address_helper.AddressHelper.create_address_lookup_list') as address_lookup_mock:
 
-            address_lookup_mock.return_value
+            address_lookup_response_object = [(None, 2), ('0', 'test address string')]
 
+            address_lookup_mock.return_value = address_lookup_response_object
             self.__submit_test_children_details()
 
             response = self.client.post(
@@ -372,8 +373,8 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
                 {
                     'id': self.app_id,
                     'child': '1',
-                    'postcode-search': 'WA14 4PA',
-                    'postcode': '',
+                    'postcode-search': '',
+                    'postcode': 'WA14 4PA',
                 },
                 follow=True
             )
@@ -381,10 +382,71 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
             self.assertEqual(response.status_code, 200)
 
             # Check user is redirected to address capture page
-            self.assertEqual(response.resolver_match.view_name, 'Your-Children-Address-View')
-            self.assertIsNotNone(response.context['errors']['postcode'])
+            self.assertEqual(response.resolver_match.view_name, 'Your-Children-Address-Select-View')
+            self.assertTrue('Select address' in str(response.content))
 
+    @tag('http')
+    def test_posting_address_lookup_creates_record(self):
+        with mock.patch('application.address_helper.AddressHelper.create_address_lookup_list') as address_lookup_mock, \
+                mock.patch('application.address_helper.AddressHelper.get_posted_address') as full_address_mock:
 
+            address_lookup_response_object = [(None, 2), ('0', 'test address string')]
+
+            test_address_line_1 =  'Informed Solutions'
+
+            full_address_mock_response_object = {
+                'line1': test_address_line_1,
+                'line2': ' OLD MARKET PLACE',
+                'townOrCity': 'ALTRINCHAM',
+                'postcode': 'WA14 4PA',
+            }
+
+            address_lookup_mock.return_value = address_lookup_response_object
+            full_address_mock.return_value = full_address_mock_response_object
+
+            self.__submit_test_children_details()
+
+            self.client.post(
+                reverse('Your-Children-Living-With-You-View'),
+                {
+                    'id': self.app_id,
+                    'children_living_with_childminder_selection': ['none'],
+                },
+                follow=True
+            )
+
+            self.client.post(
+                reverse('Your-Children-Address-View'),
+                {
+                    'id': self.app_id,
+                    'child': '1',
+                    'postcode-search': '',
+                    'postcode': 'WA14 4PA',
+                },
+                follow=True
+            )
+
+            postcode_selection_response = self.client.post(
+                reverse('Your-Children-Address-Select-View'),
+                {
+                    'id': self.app_id,
+                    'child': '1',
+                    'address': 0,
+                },
+                follow=True
+            )
+
+            self.assertEqual(postcode_selection_response.status_code, 200)
+
+            # Check user is redirected to capture page for second child
+            self.assertEqual(postcode_selection_response.resolver_match.view_name, 'Your-Children-Address-View')
+
+            # Check address was properly set
+            child_address_record = ChildAddress.objects.get(application_id=self.app_id, child=1)
+            self.assertEqual(child_address_record.street_line1, test_address_line_1)
+
+            self.assertTrue(self.test_2_forename in str(postcode_selection_response.content))
+            self.assertTrue('Find address' in str(postcode_selection_response.content))
 
 
 
