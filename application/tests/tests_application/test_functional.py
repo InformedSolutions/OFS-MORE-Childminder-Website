@@ -189,7 +189,7 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
             self.TestAppPersonalDetailsDOB()
             self.TestAppPersonalDetailsHomeAddress()
             self.TestAppPersonalDetailsHomeAddressDetails()
-            self.TestAppPersonalDetailsSummaryView()
+            # self.TestAppPersonalDetailsSummaryView()
 
             self.TestVerifyPhone()
             self.TestVerifyPhoneEmailApostrophe()

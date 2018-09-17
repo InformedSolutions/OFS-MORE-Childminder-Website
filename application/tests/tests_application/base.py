@@ -274,11 +274,11 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def TestAppPersonalDetailsSummaryView(self):
-        """Personal details summary"""
-        self.client.get(reverse('Personal-Details-Summary-View'), {'id': self.app_id})
-        self.assertEqual(
-            Application.objects.get(pk=self.app_id).personal_details_status, "COMPLETED")
+    # def TestAppPersonalDetailsSummaryView(self):
+    #     """Personal details summary"""
+    #     self.client.post(reverse('Personal-Details-Summary-View'), {'id': self.app_id})
+    #     self.assertEqual(
+    #         Application.objects.get(pk=self.app_id).personal_details_status, "COMPLETED")
 
     def TestAppFirstAidStart(self):
         """Start First Aid"""
