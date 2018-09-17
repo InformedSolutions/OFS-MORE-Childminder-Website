@@ -16,9 +16,9 @@ from ..business_logic import remove_child, rearrange_children, your_children_det
 
 def your_children_guidance(request):
     """
-    Method for handling submissions to the "Your Children" task's guidance page
+    Method for handling HTTP requests made to the "Your Children" task's guidance page
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered guidance page template
+    :return: a routed request to either the guidance page or the next page in the workflow
     """
     if request.method == 'GET':
         return __your_children_guidance_get_handler(request)
