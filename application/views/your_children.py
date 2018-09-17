@@ -39,7 +39,7 @@ def __your_children_guidance_get_handler(request):
     variables = {
         'form': form,
         'application_id': app_id,
-        'your_children_status': application.childcare_type_status,
+        'your_children_status': application.your_children_status,
     }
 
     if application.your_children_status != 'COMPLETED':
@@ -667,7 +667,8 @@ def your_children_summary(request):
     """
     if request.method == "GET":
         return __your_children_summary_get_handler(request)
-
+    if request.method == "POST":
+        return __your_children_summary_post_handler(request)
 
 def __your_children_summary_get_handler(request):
     application_id_local = request.GET["id"]
@@ -701,3 +702,14 @@ def __your_children_summary_get_handler(request):
     }
 
     return render(request, 'your-children-summary.html', variables)
+
+
+def __your_children_summary_post_handler(request):
+    """
+    View handler for actioning the summary page of the "Your children" task
+    :param request: inbound HTTP request object
+    :return: redirect to the Task List with a status update marked on the "Your children" task
+    """
+    application_id = request.POST["id"]
+    status.update(application_id, 'your_children_status', 'COMPLETED')
+    return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id)

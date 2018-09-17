@@ -141,8 +141,8 @@ def task_list(request):
                 'hidden': False,
                 'status_url': None,
                 'status_urls': [
-                    {'status': 'COMPLETED', 'url': 'Your-Children-Guidance-View'},
-                    {'status': 'FLAGGED', 'url': 'Your-Children-Guidance-View'},
+                    {'status': 'COMPLETED', 'url': 'Your-Children-Summary-View'},
+                    {'status': 'FLAGGED', 'url': 'Your-Children-Summary-View'},
                     {'status': 'OTHER', 'url': 'Your-Children-Guidance-View'}
                 ],
             },
