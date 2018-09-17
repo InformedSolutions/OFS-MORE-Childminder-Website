@@ -987,9 +987,10 @@ def personal_details_own_children(request):
             # Update home address record
             own_children = form.cleaned_data.get('own_children')
             application.own_children = own_children
+            application.save()
 
             # Set Your children task status to Completed when the applicant has no own children
-            if own_children is True:
+            if application.own_children is True:
                 application.your_children_status = 'NOT_STARTED'
 
                 # Reset ARC status if there are comments
