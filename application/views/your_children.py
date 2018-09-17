@@ -61,22 +61,6 @@ def __your_children_guidance_post_handler(request):
         reverse('Your-Children-Details-View') + '?id=' + app_id)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def your_children_details(request):
     """
     Method for rendering the page responsible for capturing details of a Childminder's children
@@ -310,7 +294,7 @@ def __your_children_living_with_you_post_handler(request):
     Method for handling a submission to the "Your children addresses" page
     """
 
-    application_id_local = request.GET["id"]
+    application_id_local = request.POST["id"]
     form = YourChildrenLivingWithYouForm(request.POST, id=application_id_local)
 
     if not form.is_valid():
@@ -670,6 +654,7 @@ def your_children_summary(request):
     if request.method == "POST":
         return __your_children_summary_post_handler(request)
 
+
 def __your_children_summary_get_handler(request):
     application_id_local = request.GET["id"]
     form = YourChildrenSummaryForm()
@@ -680,7 +665,13 @@ def __your_children_summary_get_handler(request):
 
     for child in children:
         dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)
-        full_address = ChildAddress.objects.get(application_id=application_id_local, child=child.child)
+
+        # If the child does not live with the childminder, append their full address for display on the summary page
+        full_address = None
+
+        if not child.lives_with_childminder:
+            full_address = ChildAddress.objects.get(application_id=application_id_local, child=child.child)
+
         child_details = collections.OrderedDict([
             ('child_number', child.child),
             ('full_name', child.get_full_name()),
