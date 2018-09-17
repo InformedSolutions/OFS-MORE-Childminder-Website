@@ -978,7 +978,6 @@ def personal_details_own_children(request):
         form = PersonalDetailsOwnChildrenForm(request.POST, id=app_id)
         form.remove_flag()
         application = Application.get_id(app_id=app_id)
-        arc = Arc.objects.get(application_id=app_id)
 
         if form.is_valid():
             # Reset status to in progress as question can change status of overall task
@@ -992,11 +991,21 @@ def personal_details_own_children(request):
             # Set Your children task status to Completed when the applicant has no own children
             if own_children is True:
                 application.your_children_status = 'NOT_STARTED'
-                if arc.your_children_status != 'FLAGGED':
-                    arc.your_children_status = 'NOT_STARTED'
+
+                # Reset ARC status if there are comments
+                if Arc.objects.filter(application_id=app_id).count() > 0:
+
+                    arc = Arc.objects.get(application_id=app_id)
+
+                    if arc.your_children_status != 'FLAGGED':
+                        arc.your_children_status = 'NOT_STARTED'
             else:
                 application.your_children_status = 'COMPLETED'
-                arc.your_children_status = 'COMPLETED'
+
+                if Arc.objects.filter(application_id=app_id).count() > 0:
+
+                    arc = Arc.objects.get(application_id=app_id)
+                    arc.your_children_status = 'COMPLETED'
 
             application.date_updated = current_date
             application.save()
