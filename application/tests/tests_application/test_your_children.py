@@ -254,6 +254,24 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
         # Also check none appears as an option in the presented checkboxes on the resulting page
         self.assertTrue('none' in str(response.content))
 
+    def test_error_raised_on_children_living_with_childminder_page_if_mutually_exclusive_options_selected(self):
+        self.__submit_children_details()
+
+        response = self.client.post(
+            reverse('Your-Children-Living-With-You-View'),
+            {
+                'id': self.app_id,
+                'children_living_with_childminder_selection': ['1', '2', 'none'],
+            },
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check user is redirected to page asking them which of their children live with them
+        self.assertEqual(response.resolver_match.view_name, 'Your-Children-Living-With-You-View')
+        self.assertIsNotNone(response.context['errors']['children_living_with_childminder_selection'])
+
     def test_if_all_children_living_with_childminder_redirected_to_summary(self):
         self.__submit_children_details()
 
