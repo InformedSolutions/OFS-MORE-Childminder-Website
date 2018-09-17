@@ -1142,12 +1142,109 @@ def personal_details_summary(request):
         }
         variables = submit_link_setter(variables, table_list, 'personal_details', app_id)
 
-        if not sum([table.get_error_amount() for table in variables['table_list']]):  # If no errors found.
-            status.update(app_id, 'personal_details_status', 'COMPLETED')
-
         return render(request, 'generic-summary-template.html', variables)
 
     if request.method == 'POST':
         app_id = request.POST["id"]
-        status.update(app_id, 'personal_details_status', 'COMPLETED')
+
+        application = Application.objects.get(application_id=app_id)
+        personal_detail_id = ApplicantPersonalDetails.get_id(app_id=app_id)
+        birth_day = personal_detail_id.birth_day
+        birth_month = personal_detail_id.birth_month
+        birth_year = personal_detail_id.birth_year
+        applicant_name_record = ApplicantName.get_id(app_id=app_id)
+        first_name = applicant_name_record.first_name
+        middle_names = applicant_name_record.middle_names
+        last_name = applicant_name_record.last_name
+        applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                         current_address=True)
+        applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                              childcare_address=True)
+        street_line1 = applicant_home_address_record.street_line1
+        street_line2 = applicant_home_address_record.street_line2
+        town = applicant_home_address_record.town
+        county = applicant_home_address_record.county
+        postcode = applicant_home_address_record.postcode
+        location_of_childcare = applicant_home_address_record.childcare_address
+
+        childcare_street_line1 = applicant_childcare_address_record.street_line1
+        childcare_street_line2 = applicant_childcare_address_record.street_line2
+        childcare_town = applicant_childcare_address_record.town
+        childcare_county = applicant_childcare_address_record.county
+        childcare_postcode = applicant_childcare_address_record.postcode
+
+        if location_of_childcare:
+            childcare_address = 'Same as home address'
+        else:
+            childcare_address = ' '.join(
+                [childcare_street_line1, (childcare_street_line2 or ''), childcare_town, (childcare_county or ''),
+                 childcare_postcode])
+
+        if application.working_in_other_childminder_home:
+            working_in_other_childminder_home = 'Yes'
+        else:
+            working_in_other_childminder_home = 'No'
+
+        if application.own_children:
+            own_children = 'Yes'
+        else:
+            own_children = 'No'
+
+        name_dob_table_dict = collections.OrderedDict([
+            ('name', ' '.join([first_name, (middle_names or ''), last_name])),
+            ('date_of_birth', ' '.join([str(birth_day), calendar.month_name[birth_month], str(birth_year)]))
+        ])
+
+        home_address = ' '.join([street_line1, (street_line2 or ''), town, (county or ''), postcode])
+
+        address_table_dict = collections.OrderedDict([
+            ('home_address', home_address),
+            ('childcare_address', childcare_address),
+            ('working_in_other_childminder_home', working_in_other_childminder_home)
+        ])
+
+        own_children_table_dict = collections.OrderedDict([
+            ('own_children', own_children)
+        ])
+
+        name_dob_dict = collections.OrderedDict({
+            'table_object': Table([personal_detail_id.pk, applicant_name_record.pk]),
+            'fields': name_dob_table_dict,
+            'title': 'Your name and date of birth',
+            'error_summary_title': 'There was a problem'
+        })
+
+        address_dict = collections.OrderedDict({
+            'table_object': Table(
+                [applicant_home_address_record.pk, getattr(applicant_childcare_address_record, 'pk', None),
+                 application.pk]),
+            'fields': address_table_dict,
+            'title': 'Your home and childcare address',
+            'error_summary_title': 'There was a problem'
+        })
+
+        own_children_dict = collections.OrderedDict({
+            'table_object': Table([application.pk]),
+            'fields': own_children_table_dict,
+            'title': 'Your children',
+            'error_summary_title': 'There was a problem'
+        })
+
+        tables = [name_dob_dict, address_dict, own_children_dict]
+        table_list = create_tables(tables, personal_details_name_dict, personal_details_link_dict)
+
+        form = PersonalDetailsSummaryForm()
+        application = Application.get_id(app_id=app_id)
+        variables = {
+            'form': form,
+            'application_id': app_id,
+            'table_list': table_list,
+            'page_title': 'Check your answers: your personal details',
+            'personal_details_status': application.personal_details_status
+        }
+        variables = submit_link_setter(variables, table_list, 'personal_details', app_id)
+
+        if not sum([table.get_error_amount() for table in variables['table_list']]):  # If no errors found.
+            status.update(app_id, 'personal_details_status', 'COMPLETED')
+
         return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + app_id)
