@@ -9,7 +9,7 @@ from django.conf import settings
 
 from ..customfields import CustomSplitDateFieldDOB
 from ..forms_helper import full_stop_stripper
-from ..models import ChildInHome, Child
+from ..models import ChildInHome, Child, ChildAddress
 from ..utils import date_formatter
 
 
@@ -161,6 +161,12 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
 
         # Add none selection as last entry (post-for-loop)
         select_options += (('none', 'None'),)
+
+        # If previous selections were empty but addresses are present it is safe to assume that
+        # the user has previously answered this question as "None" in light of validation rules enforced.
+        prior_child_address_count = ChildAddress.objects.filter(application_id=self.application_id_local).count()
+        if (len(previous_selections) == 0) and (prior_child_address_count > 0):
+            previous_selections.append('none')
 
         self.fields['children_living_with_childminder_selection'].choices = select_options
         self.fields['children_living_with_childminder_selection'].initial = previous_selections
