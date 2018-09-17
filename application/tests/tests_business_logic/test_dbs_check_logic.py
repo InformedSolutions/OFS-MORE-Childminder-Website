@@ -350,7 +350,7 @@ class TestDBSCheckLogic(TestCase):
     #     )
     #
     #     response = self.client.post(
-    #         reverse('Other-People-Adult-DBS-View'),
+    #         reverse('PITH-DBS-Check-View'),
     #         {
     #             'application_id': self.test_application_id,
     #             'adults': 1,
@@ -401,7 +401,7 @@ class TestDBSCheckLogic(TestCase):
     #     )
     #
     #     response = self.client.post(
-    #         reverse('Other-People-Adult-DBS-View'),
+    #         reverse('PITH-DBS-Check-View'),
     #         {
     #             'application_id': self.test_application_id,
     #             'adults': 2,
@@ -455,7 +455,7 @@ class TestDBSCheckLogic(TestCase):
     #     )
     #
     #     response = self.client.post(
-    #         reverse('Other-People-Adult-DBS-View'),
+    #         reverse('PITH-DBS-Check-View'),
     #         {
     #             'application_id': self.test_application_id,
     #             'adults': 2,

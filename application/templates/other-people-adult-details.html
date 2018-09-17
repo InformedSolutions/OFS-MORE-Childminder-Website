@@ -27,7 +27,7 @@
     </h2>
     {{form.as_div}}
     {% if remove_button is True %}
-        <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{remove_adult}}&remove={{form.prefix}}"
+        <a href="{% url 'PITH-Adult-Details-View' %}?id={{application_id}}&adults={{remove_adult}}&remove={{form.prefix}}"
            class="no-left-margin"><b>Remove this person</b>
         </a>
     {% endif %}

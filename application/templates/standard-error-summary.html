@@ -5,17 +5,21 @@
     </h1>
     <p> You need to do the following: </p>
     <ul class="error-summary-list">
-      {% for field, field_errors in field_errors.items %}
-        <li class="field-error {% if field.is_hidden %}hidden-field-error{% endif %}">
-            {% for field_error in field_errors %}
-            <ul>
-                <li class = "field-error">
-                    <a {% if not field.is_hidden %}href="#{{ field.auto_id }}-label"{% endif %}>{{ field_error }}</a>
-                </li>
-            </ul>
-            {% endfor %}
-        </li>
-      {% endfor %}
+        {% for form in form_list %}
+
+        {% for field, field_errors in field_errors.items %}
+            <li class="field-error {% if field.is_hidden %}hidden-field-error{% endif %}">
+                {% for field_error in field_errors %}
+                <ul>
+                    <li class = "field-error">
+                        <a {% if not field.is_hidden %}href="#{{ field.auto_id }}-label"{% endif %}>{{ field_error }}</a>
+                    </li>
+                </ul>
+                {% endfor %}
+            </li>
+          {% endfor %}
+
+        {% endfor %}
     </ul>
   </div>
 {% endif %}

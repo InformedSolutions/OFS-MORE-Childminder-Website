@@ -721,7 +721,7 @@
         {% endif %}
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
-            <a href="{% url 'Other-People-Adult-Question-View' %}?id={{application_id}}"
+            <a href="{% url 'PITH-Adult-Check-View' %}?id={{application_id}}"
                alt='Change answer on adults living or working in your home'>
                 Change <span class="visuallyhidden">answer on adults living or working in your home</span>
             </a>
@@ -806,7 +806,7 @@
         </td>
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
-            <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+            <a href="{% url 'PITH-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Change the adult's name">
                 Change <span class="visuallyhidden">the adult's name</span>
             </a>
@@ -868,7 +868,7 @@
         {% endif %}
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
-            <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+            <a href="{% url 'PITH-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Change the adult's date of birth">
                 Change <span class="visuallyhidden">the adult's date of birth</span>
             </a>
@@ -884,7 +884,7 @@
         </td>
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
-            <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+            <a href="{% url 'PITH-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Change your relationship with the adult">
                 Change <span class="visuallyhidden">your relationship with the adult</span>
             </a>
@@ -900,7 +900,7 @@
         </td>
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
-            <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+            <a href="{% url 'PITH-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Change the adult's email">
                 Change <span class="visuallyhidden">the adult's email</span>
             </a>
@@ -916,7 +916,7 @@
         </td>
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
-            <a href="{% url 'Other-People-Adult-DBS-View' %}?id={{application_id}}&adults={{number_of_adults}}"
+            <a href="{% url 'PITH-DBS-Check-View' %}?id={{application_id}}&adults={{number_of_adults}}"
                alt="Change the adult's DBS certificate number">
                 Change <span class="visuallyhidden">the adult's DBS certificate number</span>
             </a>

@@ -18,10 +18,12 @@
 
             The following adults in your home must post their original certificates (not a photocopy) to Ofsted:
             <ul style="list-style-type: disc; padding-left: 50px;">
-                {% for person in person_list %}
-                    <li>{{person.name}}</li>
+                <br>
+                {% for adult in adult_list %}
+                    <li>{{adult.get_full_name}}</li>
                 {% endfor %}
             </ul>
+            <br>
 
             <p>We need to check details of any cautions or convictions.</p>
 

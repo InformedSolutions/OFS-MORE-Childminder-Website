@@ -6,7 +6,7 @@ from application.models import Application
 from govuk_forms import widgets as govuk_widgets
 
 from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
-
+from application.business_logic import update_adult_in_home
 
 class PITHDBSCheckForm(ChildminderForms):
     """
@@ -14,7 +14,7 @@ class PITHDBSCheckForm(ChildminderForms):
     """
     field_label_classes = 'form-label-bold'
     error_summary_title = 'There was a problem with your DBS details'
-    error_summary_template_name = 'standard-error-summary.html'
+    error_summary_template_name = 'PITH_templates/PITH_error_summary.html'
     auto_replace_widgets = True
 
     def __init__(self, *args, **kwargs):
@@ -45,13 +45,13 @@ class PITHDBSCheckForm(ChildminderForms):
             (False, 'No')
         )
 
-    def get_on_update_field_data(self):
+    def get_capita_field_data(self):
         return forms.ChoiceField(
-            label='Are they on the DBS update service?',
+            label='Do they have an Ofsted DBS check?',
             choices=self.get_options(),
-            widget=ConditionalPostInlineRadioSelect,
+            widget=InlineRadioSelect,
             required=True,
-            error_messages={'required': 'Please say if this person is on the DBS update service'})
+            error_messages={'required': 'Please say if this person has an Ofsted DBS check'})
 
     def get_dbs_field_data(self):
         dbs_certificate_number_widget = NumberInput()
@@ -63,20 +63,20 @@ class PITHDBSCheckForm(ChildminderForms):
                                   error_messages={'required': 'Please enter their DBS certificate number'},
                                   widget=dbs_certificate_number_widget)
 
-    def get_capita_field_data(self):
+    def get_on_update_field_data(self):
         return forms.ChoiceField(
-            label='Do they have an Ofsted DBS check?',
+            label='Are they on the DBS update service?',
             choices=self.get_options(),
-            widget=InlineRadioSelect,
+            widget=ConditionalPostInlineRadioSelect,
             required=True,
-            error_messages={'required': 'Please say if this person has an Ofsted DBS check'})
+            error_messages={'required': 'Please say if this person is on the DBS update service'})
 
     def clean_dbs_field_data(self):
         """
         DBS field validation
         :return: DBS field string
         """
-        cleaned_dbs_field = self.cleaned_data['dbs_field']
+        cleaned_dbs_field = self.cleaned_data[self.dbs_field_name]
         application = Application.objects.get(application_id=self.application_id)
 
         if len(cleaned_dbs_field) != 12:
@@ -86,6 +86,50 @@ class PITHDBSCheckForm(ChildminderForms):
                                         'You entered this number for someone in your childcare location')
         return cleaned_dbs_field
 
+    def clean(self):
+        """
+        Nullify fields
+        DBS field validation
+        :return: DBS field string
+        """
+        super().clean()
+
+        cleaned_capita_field = self.cleaned_data[self.capita_field_name] == 'True'\
+            if self.cleaned_data.get(self.capita_field_name)\
+            else None
+        cleaned_dbs_field = self.cleaned_data[self.dbs_field_name]\
+            if self.cleaned_data[self.dbs_field_name] != ""\
+            else None
+        cleaned_on_update_field = self.cleaned_data[self.on_update_field_name] == 'True'\
+            if self.cleaned_data[self.on_update_field_name] != ""\
+            else None
+        application = Application.objects.get(application_id=self.application_id)
+
+        if cleaned_capita_field is not None:
+            if cleaned_capita_field:
+                if cleaned_dbs_field is None:
+                    self.add_error(self.dbs_field_name, 'Please say if this person has an Ofsted DBS check')
+                elif len(str(cleaned_dbs_field)) != 12:
+                    self.add_error(self.dbs_field_name, 'Check your certificate: the number should be 12 digits long')
+                elif childminder_dbs_duplicates_household_member_check(application, cleaned_dbs_field):
+                    self.add_error(self.dbs_field_name, 'Please enter a different DBS number. '
+                                                        'You entered this number for someone in your childcare location')
+                else:
+                    #TODO Move this code to more appropriate place (e.g form_valid)
+                    update_adult_in_home(self.adult.pk, 'capita', cleaned_capita_field)
+                    update_adult_in_home(self.adult.pk, 'on_update', None)
+                    update_adult_in_home(self.adult.pk, 'dbs_certificate_number', cleaned_dbs_field)
+
+            elif not cleaned_capita_field:
+                if cleaned_on_update_field is None:
+                    self.add_error(self.on_update_field_name, 'Please say if this person is on the DBS update service')
+                else:
+                    update_adult_in_home(self.adult.pk, 'capita', cleaned_capita_field)
+                    update_adult_in_home(self.adult.pk, 'on_update', cleaned_on_update_field)
+                    update_adult_in_home(self.adult.pk, 'dbs_certificate_number', '')
+
+        return self.cleaned_data
+
     def get_reveal_conditionally(self):
-        return {self.capita_field_name: {'True': self.dbs_field_name,
-                                         'False': self.on_update_field_name}}
+        return {self.capita_field_name: {True: self.dbs_field_name,
+                                         False: self.on_update_field_name}}

@@ -7,7 +7,9 @@
 
 {% include "back-button.html" %}
 <div class="two-thirds">
-    {{form.error_summary}}
+    {% for form in form_list %}
+        {{form.error_summary}}
+    {% endfor %}
 
     <form method="post" novalidate>
         <div class="form-group">

@@ -88,6 +88,8 @@ urlpatterns = [
     # ======================= #
 
     url(r'^people/$', PITH_views.PITHGuidanceView.as_view(), name='PITH-Guidance-View'),
+
+    #Adults
     url(r'^people/adults/$', PITH_views.PITHAdultCheckView.as_view(), name='PITH-Adult-Check-View'),
     url(r'^people/adults-details/$', views.other_people_adult_details, name='PITH-Adult-Details-View'),
     url(r'^people/adults-lived-abroad/$', PITH_views.PITHLivedAbroadView.as_view(), name='PITH-Lived-Abroad-View'),
@@ -97,6 +99,9 @@ urlpatterns = [
     url(r'^people/adult-dbs-checks/$', PITH_views.PITHDBSCheckView.as_view(), name='PITH-DBS-Check-View'),
     url(r'^people/post-certificate/$', PITH_views.PITHPostView.as_view(), name='PITH-Post-View'),
     url(r'^people/adults-apply/$', PITH_views.PITHApplyView.as_view(), name='PITH-Apply-View'),
+
+    #Children
+    url(r'^people/children/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
 
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),
     url(r'^health/booklet/', views.health_booklet, name='Health-Booklet-View'),
@@ -122,10 +127,7 @@ urlpatterns = [
         name='References-Second-Reference-Contact-Details-View'),
     url(r'^references/check-answers/', views.references_summary, name='References-Summary-View'),
     url(r'^registration-rules/', TemplateView.as_view(template_name='registration-rules.html'), name='Registration-Rules'),
-    url(r'^people/adults/', views.other_people_adult_question, name='Other-People-Adult-Question-View'),
-    url(r'^people/adults-details/', views.other_people_adult_details, name='Other-People-Adult-Details-View'),
-    url(r'^people/adult-dbs-details/', views.other_people_adult_dbs, name='Other-People-Adult-DBS-View'),
-    url(r'^people/children/', views.other_people_children_question,
+    url(r'^people/children/old/', views.other_people_children_question,
         name='Other-People-Children-Question-View'),
     url(r'^people/children-details/', views.other_people_children_details,
         name='Other-People-Children-Details-View'),

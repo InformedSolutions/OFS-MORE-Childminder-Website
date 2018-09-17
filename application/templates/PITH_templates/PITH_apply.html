@@ -21,10 +21,12 @@
             apply for an Ofsted DBS check
             </a>:
             <ul style="list-style-type: disc; padding-left: 50px;">
-                {% for person in person_list %}
-                    <li>{{person.name}}</li>
+                <br>
+                {% for adult in adult_list %}
+                    <li>{{adult.get_full_name}}</li>
                 {% endfor %}
             </ul>
+            <br>
 
             <p>You can finish this section after you enter their DBS certificate number.</p>
 

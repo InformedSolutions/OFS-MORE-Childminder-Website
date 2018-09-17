@@ -1,25 +1,23 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}British military bases abroad{% endblock %}
+{% block page_title %}Adults in the home{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
 {% include "back-button.html" %}
+
 <div class="two-thirds">
     {{form.error_summary}}
 
+    This is a placeholder page and will redirect to the old version of this page regardless of answer.
+
     <form method="post" novalidate>
         <div class="form-group">
-
             <h1 class="form-title heading-large">
-                British military bases abroad
+                Children in the home
             </h1>
-
-            {% for form in form_list %}
-            {{ form.adult.get_full_name }}
-                {{ form.as_div }}
-            {% endfor %}
+            {{ form.as_div }}
 
             {% csrf_token %}
             <input type="submit" class="button" value="Save and continue">

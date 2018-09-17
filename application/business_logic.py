@@ -1046,15 +1046,15 @@ def get_adult_in_home(app_id, field_obj):
         raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
 
-def update_adult_in_home(app_id, field_obj, status):
+def update_adult_in_home(pk, field_obj, status):
     """
     Updates the AdultInHome field with the given status.
-    :param app_id: applicant's application_id
+    :param pk: AdultInHome primary key
     :param field_obj: AdultInHome field or list of AdultInHome fields
     :param status: Value to update entry/entries with
     :return: Boolean True if successfully updated.
     """
-    adult_in_home_record = AdultInHome.objects.get(application_id=app_id)
+    adult_in_home_record = AdultInHome.objects.get(pk=pk)
 
     if isinstance(field_obj, list):
         for field in field_obj:

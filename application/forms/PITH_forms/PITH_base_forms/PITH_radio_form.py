@@ -8,7 +8,7 @@ class PITHRadioForm(ChildminderForms):
     """
     field_label_classes = 'form-label-bold'
     error_summary_title = 'There was a problem on this page'
-    error_summary_template_name = 'standard-error-summary.html'
+    error_summary_template_name = 'PITH_templates/PITH_error_summary.html'
     auto_replace_widgets = True
 
     choice_field_name = 'generic_choice_field_name'

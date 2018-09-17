@@ -3,7 +3,7 @@ from application.forms.PITH_forms.PITH_children_check_form import PITHChildrenCh
 
 
 class PITHChildrenCheckView(PITHRadioView):
-    template_name = 'PITH_children_check.html'
+    template_name = 'PITH_templates/PITH_children_check.html'
     form_class = PITHChildrenCheckForm
-    success_url = ('PITH-Children-Check', 'PITH-Children-Check')
+    success_url = ('Other-People-Children-Question-View', 'Other-People-Children-Question-View')
     application_field_name = 'children_in_home'

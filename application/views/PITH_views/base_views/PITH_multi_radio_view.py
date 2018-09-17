@@ -62,15 +62,6 @@ class PITHMultiRadioView(TemplateView, TemplateResponseMixin):
         """
         If the form is valid, redirect to the supplied URL.
         """
-        application_id = get_id(self.request)
-
-        adults = AdultInHome.objects.filter(application_id=application_id)
-
-        for adult in adults:
-            lived_abroad_bool = self.request.POST.get(self.field_name+str(adult.pk))
-            setattr(adult, self.field_name, lived_abroad_bool)
-            adult.save()
-
         return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form):
@@ -78,7 +69,7 @@ class PITHMultiRadioView(TemplateView, TemplateResponseMixin):
         If the form is invalid, re-render the context data with the
         data-filled form and errors.
         """
-        return self.render_to_response(self.get_context_data(form=form))
+        return self.render_to_response(self.get_context_data(form_list=form))
 
     def get_form_list(self):
         raise ImproperlyConfigured(
