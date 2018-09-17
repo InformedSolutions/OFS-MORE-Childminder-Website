@@ -8,8 +8,7 @@ from django.test import TestCase, tag
 from django.urls import reverse, resolve
 
 from .base import ApplicationTestBase
-from ...payment_service import *
-from ...models import Payment, Application, Child
+from ...models import Child
 
 
 class YourChildrenTests(TestCase, ApplicationTestBase):
@@ -18,14 +17,16 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
     test_2_forename = 'TEST SECOND FORENAME'
 
     def setUp(self):
-        with mock.patch('application.notify.send_email') as notify_mock, \
-            mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
+        with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
+            mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
+                mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
 
             notify_connection_test_mock.return_value.status_code = 201
-            notify_mock.return_value.status_code = 201
+            magic_link_email_mock.return_value.status_code = 201
+            magic_link_text_mock.return_value.status_code = 201
 
             # Initial steps required here as client object needs to be authenticated to
-            # access payment pages
+            # access Your Children pages
             self.TestAppInit()
 
             self.TestAppEmail()
@@ -178,6 +179,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
         self.assertEqual(response.resolver_match.view_name, 'Your-Children-Details-View')
         self.assertIsNotNone(response.context['errors']['date_of_birth'])
 
+    @tag('http')
     def test_can_add_more_children(self):
         test_forename = 'TEST FORENAME'
 
@@ -205,6 +207,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
         # Make sure placeholder was returned for child 2 details
         self.assertTrue('Child 2' in str(response.content))
 
+    @tag('http')
     def test_can_remove_child(self):
         self.__submit_children_details()
 
@@ -236,6 +239,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
         self.assertEqual(get_removed_response.status_code, 200)
         self.assertFalse(self.test_2_forename in str(get_removed_response.content))
 
+    @tag('http')
     def test_child_names_shown_on_children_living_with_you_page(self):
         response = self.__submit_children_details()
 
@@ -254,6 +258,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
         # Also check none appears as an option in the presented checkboxes on the resulting page
         self.assertTrue('none' in str(response.content))
 
+    @tag('http')
     def test_error_raised_on_children_living_with_childminder_page_if_mutually_exclusive_options_selected(self):
         self.__submit_children_details()
 
@@ -272,6 +277,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
         self.assertEqual(response.resolver_match.view_name, 'Your-Children-Living-With-You-View')
         self.assertIsNotNone(response.context['errors']['children_living_with_childminder_selection'])
 
+    @tag('http')
     def test_if_all_children_living_with_childminder_redirected_to_summary(self):
         self.__submit_children_details()
 
@@ -288,6 +294,94 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
         # Check user is redirected to page asking them which of their children live with them
         self.assertEqual(response.resolver_match.view_name, 'Your-Children-Summary-View')
+
+    @tag('http')
+    def test_asked_for_first_child_address_if_not_living_with_any_children(self):
+        self.__submit_children_details()
+
+        response = self.client.post(
+            reverse('Your-Children-Living-With-You-View'),
+            {
+                'id': self.app_id,
+                'children_living_with_childminder_selection': ['none'],
+            },
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check user is redirected to address capture page
+        self.assertEqual(response.resolver_match.view_name, 'Your-Children-Address-View')
+
+        # Check child 1's name is present in the response content
+        self.assertTrue(self.test_1_forename in str(response.content))
+        self.assertTrue('Find address' in str(response.content))
+
+    @tag('http')
+    def test_asked_for_second_child_address_if_living_with_first_children(self):
+        self.__submit_children_details()
+
+        response = self.client.post(
+            reverse('Your-Children-Living-With-You-View'),
+            {
+                'id': self.app_id,
+                'children_living_with_childminder_selection': ['1'],
+            },
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check user is redirected to address capture page
+        self.assertEqual(response.resolver_match.view_name, 'Your-Children-Address-View')
+
+        self.assertTrue(self.test_2_forename in str(response.content))
+        self.assertTrue('Find address' in str(response.content))
+
+    @tag('http')
+    def test_error_raised_if_postcode_not_entered_on_child_address_lookup(self):
+        self.__submit_children_details()
+
+        response = self.client.post(
+            reverse('Your-Children-Address-View'),
+            {
+                'id': self.app_id,
+                'child': '1',
+                'postcode-search': '',
+                'postcode': '',
+            },
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+
+        # Check user is redirected to address capture page
+        self.assertEqual(response.resolver_match.view_name, 'Your-Children-Address-View')
+        self.assertIsNotNone(response.context['errors']['postcode'])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # Test validation on postcode fields
+
+    # Test address selection updates correct child
+
+    # Add manual address pages and relevant unit tests
 
     def test_if_child_not_living_with_childminder_asked_for_address(self):
         response = self.__submit_children_details()

@@ -401,7 +401,7 @@ def __your_children_address_capture_get_handler(request):
 
 
 def __your_children_address_capture_post_handler(request):
-    application_id_local = request.GET["id"]
+    application_id_local = request.POST["id"]
     child = request.POST["child"]
     form = ChildAddressForm(request.POST, id=application_id_local, child=child)
 
