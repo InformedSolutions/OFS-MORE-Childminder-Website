@@ -444,45 +444,103 @@ def __your_children_address_capture_post_handler(request):
 
 def your_children_address_selection(request):
     if request.method == 'GET':
+        return __your_children_address_selection_get_handler(request)
+    if request.method == 'POST':
+        return __your_children_address_selection_post_handler(request)
 
-        app_id = request.GET["id"]
-        child = request.GET["child"]
-        application = Application.get_id(app_id=app_id)
 
-        child_address_record = ChildAddress.objects.get(application_id=app_id, child=child)
-        postcode = child_address_record.postcode
-        addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
 
-        if len(addresses) != 0:
-            form = YourChildrenAddressLookupForm(id=app_id, choices=addresses)
 
-            if application.application_status == 'FURTHER_INFORMATION':
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem'
+def __your_children_address_selection_get_handler(request):
+    app_id = request.GET["id"]
+    child = request.GET["child"]
+    application = Application.get_id(app_id=app_id)
 
-            variables = {
-                'form': form,
-                'application_id': app_id,
-                'postcode': postcode,
-                'your_children_status': application.childcare_type_status,
-            }
+    child_address_record = ChildAddress.objects.get(application_id=app_id, child=child)
+    postcode = child_address_record.postcode
+    addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
 
-            return render(request, 'your-childs-address.html', variables)
+    if len(addresses) != 0:
+        form = YourChildrenAddressLookupForm(id=app_id, choices=addresses)
 
-        else:
-            form = ChildAddressForm(id=app_id, child=child)
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
 
-            if application.application_status == 'FURTHER_INFORMATION':
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem'
+        variables = {
+            'form': form,
+            'application_id': app_id,
+            'postcode': postcode,
+            'child': child,
+            'your_children_status': application.childcare_type_status,
+        }
 
-            variables = {
-                'form': form,
-                'application_id': app_id,
-                'your_children_status': application.childcare_type_status,
-            }
+        return render(request, 'your-childs-address.html', variables)
 
-            return render(request, 'your-children-address-lookup.html', variables)
+    else:
+        form = ChildAddressForm(id=app_id, child=child)
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
+        variables = {
+            'form': form,
+            'application_id': app_id,
+            'child': child,
+            'your_children_status': application.childcare_type_status,
+        }
+
+        return render(request, 'your-children-address-lookup.html', variables)
+
+
+def __your_children_address_selection_post_handler(request):
+    app_id = request.POST["id"]
+    child = request.POST["child"]
+    application = Application.get_id(app_id=app_id)
+    child_record = Child.objects.get(application_id=app_id, child=str(child))
+    child_address_record = ChildAddress.objects.get(application_id=app_id, child=str(child))
+    postcode = child_address_record.postcode
+    addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
+    form = YourChildrenAddressLookupForm(request.POST, id=app_id, choices=addresses)
+
+    if form.is_valid():
+        selected_address_index = int(request.POST["address"])
+        selected_address = address_helper.AddressHelper.get_posted_address(selected_address_index, postcode)
+        line1 = selected_address['line1']
+        line2 = selected_address['line2']
+        town = selected_address['townOrCity']
+        postcode = selected_address['postcode']
+
+        child_address_record.street_line1 = line1
+        child_address_record.street_line2 = line2
+        child_address_record.town = town
+        child_address_record.postcode = postcode
+        child_address_record.country = 'United Kingdom'
+        child_address_record.save()
+
+        if Application.get_id(app_id=app_id).your_children_status != 'COMPLETED':
+            status.update(app_id, 'your_children_status', 'IN_PROGRESS')
+        return HttpResponseRedirect(reverse('Personal-Details-Location-Of-Care-View') + '?id=' + app_id)
+    else:
+
+        form.error_summary_title = 'There was a problem finding your address'
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
+        variables = {
+            'postcode': postcode,
+            'form': form,
+            'application_id': app_id,
+            'child': child,
+            'name': child_record.get_full_name(),
+            'your_children_status': application.childcare_type_status,
+        }
+
+        return render(request, 'your-childs-address.html', variables)
+
 
 
 
