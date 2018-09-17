@@ -20,6 +20,23 @@ from ..models import (ApplicantName, ApplicantPersonalDetails, Application, Chil
 from ..utils import can_cancel
 
 
+def show_hide_your_children(context, application):
+    """
+    Method hiding or showing the Your children task based on whether the applicant has children
+    :param context: a dictionary containing all tasks for the task list
+    :param context: Application object
+    :return: dictionary object
+    """
+
+    for task in context['tasks']:
+        if task['name'] == 'your_children':
+            if application.own_children:
+                task['hidden'] = False
+            else:
+                task['hidden'] = True
+    return context
+
+
 @never_cache
 def task_list(request):
     """
@@ -134,6 +151,19 @@ def task_list(request):
                 ],
             },
             {
+                'name': 'your_children',
+                'status': application.your_children_status,
+                'arc_flagged': application.your_children_arc_flagged,
+                'description': "Your children",
+                'hidden': False,
+                'status_url': None,
+                'status_urls': [
+                    {'status': 'COMPLETED', 'url': 'Task-List-View'},
+                    {'status': 'FLAGGED', 'url': 'Task-List-View'},
+                    {'status': 'OTHER', 'url': 'Task-List-View'}
+                ],
+            },
+            {
                 'name': 'first_aid',
                 'status': application.first_aid_training_status,
                 'arc_flagged': application.first_aid_training_arc_flagged,
@@ -230,8 +260,12 @@ def task_list(request):
         ]
     }
 
+    # Show/hide Your children task
+    context = show_hide_your_children(context, application)
+
     unfinished_tasks = [task for task in context['tasks'] if task['status'] in
                         ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]
+
     if len(unfinished_tasks) < 1:
         context['all_complete'] = True
     else:

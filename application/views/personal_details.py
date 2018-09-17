@@ -24,11 +24,14 @@ from ..forms import (PersonalDetailsChildcareAddressForm,
                      PersonalDetailsHomeAddressLookupForm,
                      PersonalDetailsLocationOfCareForm,
                      PersonalDetailsNameForm,
-                     PersonalDetailsSummaryForm)
+                     PersonalDetailsOwnChildrenForm,
+                     PersonalDetailsSummaryForm,
+                     PersonalDetailsWorkingInOtherChildminderHomeForm)
 from ..models import (ApplicantHomeAddress,
                       ApplicantName,
                       ApplicantPersonalDetails,
-                      Application)
+                      Application,
+                      Arc)
 
 
 def personal_details_guidance(request):
@@ -489,11 +492,15 @@ def personal_details_location_of_care(request):
 
             if home_address_record.childcare_address:
 
+                # Set working in other childminder home to false
+                application.working_in_other_childminder_home = False
+                application.date_updated = current_date
+                application.save()
                 return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
 
             else:
 
-                return HttpResponseRedirect(reverse('Service-Unavailable') + '?id=' + app_id)
+                return HttpResponseRedirect(reverse('Personal-Details-Childcare-Address-View') + '?id=' + app_id)
         else:
 
             form.error_summary_title = 'There was a problem with your address details'
@@ -606,7 +613,7 @@ def personal_details_childcare_address(request):
 
         else:
 
-            form.error_summary_title = 'There was a problem with your postcode'
+            form.error_summary_title = 'There was a problem with the postcode'
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
@@ -731,7 +738,7 @@ def personal_details_childcare_address_select(request):
             if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                 status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
-            return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
+            return HttpResponseRedirect(reverse('Personal-Details-Childcare-Address-Details-View') + '?id=' + app_id)
         else:
 
             form.error_summary_title = 'There was a problem finding your address'
@@ -826,7 +833,7 @@ def personal_details_childcare_address_manual(request):
             if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                 status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
             reset_declaration(application)
-            return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
+            return HttpResponseRedirect(reverse('Personal-Details-Childcare-Address-Details-View') + '?id=' + app_id)
 
         else:
 
@@ -844,6 +851,176 @@ def personal_details_childcare_address_manual(request):
             return render(request, 'personal-details-childcare-address-manual.html', variables)
 
 
+def personal_details_working_in_other_childminder_home(request):
+    """
+    Method returning the template for the Your personal details: your childcare address details page (for a given
+    application) and navigating to the Your personal details: your own children page when successfully completed.
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your personal details: your childcare address details template
+    """
+
+    current_date = timezone.now()
+
+    if request.method == 'GET':
+
+        app_id = request.GET["id"]
+        personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=app_id).personal_detail_id
+        applicant_childcare_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                       childcare_address=True)
+        street_line1 = applicant_childcare_address.street_line1
+        street_line2 = applicant_childcare_address.street_line2
+        town = applicant_childcare_address.town
+        county = applicant_childcare_address.county
+        postcode = applicant_childcare_address.postcode
+        application = Application.get_id(app_id=app_id)
+        form = PersonalDetailsWorkingInOtherChildminderHomeForm(id=app_id)
+        form.check_flag()
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
+        variables = {
+            'form': form,
+            'application_id': app_id,
+            'street_line1': street_line1,
+            'street_line2': street_line2,
+            'town': town,
+            'county': county,
+            'postcode': postcode,
+            'personal_details_status': application.personal_details_status
+        }
+        return render(request, 'personal-details-childcare-address-details.html', variables)
+
+    if request.method == 'POST':
+
+        app_id = request.POST["id"]
+        form = PersonalDetailsWorkingInOtherChildminderHomeForm(request.POST, id=app_id)
+        form.remove_flag()
+        application = Application.get_id(app_id=app_id)
+
+        if form.is_valid():
+            # Reset status to in progress as question can change status of overall task
+            if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
+                status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
+
+            # Update home address record
+            working_in_other_childminder_home = form.cleaned_data.get('working_in_other_childminder_home')
+            application.working_in_other_childminder_home = working_in_other_childminder_home
+            application.date_updated = current_date
+            application.save()
+            reset_declaration(application)
+
+            return HttpResponseRedirect(reverse('Personal-Details-Your-Own-Children-View') + '?id=' + app_id)
+
+        else:
+
+            form.error_summary_title = 'There was a problem'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
+            personal_detail_id = ApplicantPersonalDetails.objects.get(application_id=app_id).personal_detail_id
+            applicant_childcare_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                           childcare_address=True)
+            street_line1 = applicant_childcare_address.street_line1
+            street_line2 = applicant_childcare_address.street_line2
+            town = applicant_childcare_address.town
+            county = applicant_childcare_address.county
+            postcode = applicant_childcare_address.postcode
+
+            variables = {
+                'form': form,
+                'application_id': app_id,
+                'street_line1': street_line1,
+                'street_line2': street_line2,
+                'town': town,
+                'county': county,
+                'postcode': postcode,
+                'personal_details_status': application.personal_details_status
+            }
+
+            return render(request, 'personal-details-childcare-address-details.html', variables)
+
+
+def personal_details_own_children(request):
+    """
+    Method returning the template for the Your personal details: your own children page (for a given
+    application) and navigating to the Your personal details: check your answers page when successfully completed.
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered Your personal details: your own children template
+    """
+
+    current_date = timezone.now()
+
+    if request.method == 'GET':
+
+        app_id = request.GET["id"]
+        application = Application.get_id(app_id=app_id)
+        form = PersonalDetailsOwnChildrenForm(id=app_id)
+        form.check_flag()
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+
+        variables = {
+            'form': form,
+            'application_id': app_id,
+            'personal_details_status': application.personal_details_status
+        }
+        return render(request, 'personal-details-your-own-children.html', variables)
+
+    if request.method == 'POST':
+
+        app_id = request.POST["id"]
+        form = PersonalDetailsOwnChildrenForm(request.POST, id=app_id)
+        form.remove_flag()
+        application = Application.get_id(app_id=app_id)
+        arc = Arc.objects.get(application_id=app_id)
+
+        if form.is_valid():
+            # Reset status to in progress as question can change status of overall task
+            if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
+                status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
+
+            # Update home address record
+            own_children = form.cleaned_data.get('own_children')
+            application.own_children = own_children
+
+            # Set Your children task status to Completed when the applicant has no own children
+            if own_children is True:
+                application.your_children_status = 'NOT_STARTED'
+                if arc.your_children_status != 'FLAGGED':
+                    arc.your_children_status = 'NOT_STARTED'
+            else:
+                application.your_children_status = 'COMPLETED'
+                arc.your_children_status = 'COMPLETED'
+
+            application.date_updated = current_date
+            application.save()
+            reset_declaration(application)
+
+            return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
+
+        else:
+
+            form.error_summary_title = 'There was a problem on this page'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
+            variables = {
+                'form': form,
+                'application_id': app_id,
+                'personal_details_status': application.personal_details_status
+            }
+
+            return render(request, 'personal-details-your-own-children.html', variables)
+
+
 def personal_details_summary(request):
     """
     Method returning the template for the Your personal details: summary page (for a given application)
@@ -854,20 +1031,19 @@ def personal_details_summary(request):
 
     if request.method == 'GET':
         app_id = request.GET["id"]
-        # Move to models
-
-        personal_detail_id = ApplicantPersonalDetails.get_id(
-            app_id=app_id)
+        application = Application.objects.get(application_id=app_id)
+        personal_detail_id = ApplicantPersonalDetails.get_id(app_id=app_id)
         birth_day = personal_detail_id.birth_day
         birth_month = personal_detail_id.birth_month
         birth_year = personal_detail_id.birth_year
-        applicant_name_record = ApplicantName.get_id(
-            app_id=app_id)
+        applicant_name_record = ApplicantName.get_id(app_id=app_id)
         first_name = applicant_name_record.first_name
         middle_names = applicant_name_record.middle_names
         last_name = applicant_name_record.last_name
         applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                          current_address=True)
+        applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                              childcare_address=True)
         street_line1 = applicant_home_address_record.street_line1
         street_line2 = applicant_home_address_record.street_line2
         town = applicant_home_address_record.town
@@ -875,12 +1051,28 @@ def personal_details_summary(request):
         postcode = applicant_home_address_record.postcode
         location_of_childcare = applicant_home_address_record.childcare_address
 
+        childcare_street_line1 = applicant_childcare_address_record.street_line1
+        childcare_street_line2 = applicant_childcare_address_record.street_line2
+        childcare_town = applicant_childcare_address_record.town
+        childcare_county = applicant_childcare_address_record.county
+        childcare_postcode = applicant_childcare_address_record.postcode
+
         if location_of_childcare:
-            childcare_location = 'Same as home address'
-            applicant_childcare_address_record = applicant_home_address_record
+            childcare_address = 'Same as home address'
         else:
-            childcare_location = 'Other'
-            applicant_childcare_address_record = None
+            childcare_address = ' '.join(
+                [childcare_street_line1, (childcare_street_line2 or ''), childcare_town, (childcare_county or ''),
+                 childcare_postcode])
+
+        if application.working_in_other_childminder_home:
+            working_in_other_childminder_home = 'Yes'
+        else:
+            working_in_other_childminder_home = 'No'
+
+        if application.own_children:
+            own_children = 'Yes'
+        else:
+            own_children = 'No'
 
         name_dob_table_dict = collections.OrderedDict([
             ('name', ' '.join([first_name, (middle_names or ''), last_name])),
@@ -891,7 +1083,12 @@ def personal_details_summary(request):
 
         address_table_dict = collections.OrderedDict([
             ('home_address', home_address),
-            ('childcare_location', childcare_location)
+            ('childcare_address', childcare_address),
+            ('working_in_other_childminder_home', working_in_other_childminder_home)
+        ])
+
+        own_children_table_dict = collections.OrderedDict([
+            ('own_children', own_children)
         ])
 
         name_dob_dict = collections.OrderedDict({
@@ -902,13 +1099,22 @@ def personal_details_summary(request):
         })
 
         address_dict = collections.OrderedDict({
-            'table_object': Table([applicant_home_address_record.pk, getattr(applicant_childcare_address_record, 'pk', None)]),
+            'table_object': Table(
+                [applicant_home_address_record.pk, getattr(applicant_childcare_address_record, 'pk', None),
+                 application.pk]),
             'fields': address_table_dict,
-            'title': 'Your home address',
+            'title': 'Your home and childcare address',
             'error_summary_title': 'There was a problem'
         })
 
-        tables = [name_dob_dict, address_dict]
+        own_children_dict = collections.OrderedDict({
+            'table_object': Table([application.pk]),
+            'fields': own_children_table_dict,
+            'title': 'Your children',
+            'error_summary_title': 'There was a problem'
+        })
+
+        tables = [name_dob_dict, address_dict, own_children_dict]
         table_list = create_tables(tables, personal_details_name_dict, personal_details_link_dict)
 
         form = PersonalDetailsSummaryForm()
@@ -928,7 +1134,6 @@ def personal_details_summary(request):
         return render(request, 'generic-summary-template.html', variables)
 
     if request.method == 'POST':
-
         app_id = request.POST["id"]
         status.update(app_id, 'personal_details_status', 'COMPLETED')
         return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + app_id)

@@ -40,6 +40,8 @@ class Application(models.Model):
     login_details_arc_flagged = models.BooleanField(default=False)
     personal_details_status = models.CharField(choices=TASK_STATUS, max_length=50)
     personal_details_arc_flagged = models.BooleanField(default=False)
+    your_children_status = models.CharField(choices=TASK_STATUS, max_length=50, default='NOT_STARTED')
+    your_children_arc_flagged = models.BooleanField(default=False)
     childcare_type_status = models.CharField(choices=TASK_STATUS, max_length=50)
     childcare_type_arc_flagged = models.BooleanField(default=False)
     first_aid_training_status = models.CharField(choices=TASK_STATUS, max_length=50)
@@ -67,6 +69,8 @@ class Application(models.Model):
                                              validators=[RegexValidator(r'(\w{2})([0-9]{7})')])
     ofsted_visit_email_sent = models.DateTimeField(blank=True, null=True)
     publish_details = models.NullBooleanField(blank=True, null=True, default=None)
+    working_in_other_childminder_home = models.NullBooleanField(blank=True, null=True, default=None)
+    own_children = models.NullBooleanField(blank=True, null=True, default=None)
 
     @classmethod
     def get_id(cls, app_id):

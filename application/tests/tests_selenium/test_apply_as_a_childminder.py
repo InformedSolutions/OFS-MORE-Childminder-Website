@@ -371,7 +371,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            True
+            True, False
         )
 
         # Costs page
@@ -393,7 +393,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
                          self.selenium_task_executor.get_driver().title)
 
     @try_except_method
-    def test_can_complete_personal_details_task_when_location_of_care_is_same_as_home_address(self):
+    def test_complete_personal_details_task_when_location_of_care_is_same_as_home_address(self):
         """
         Test to make sure a user can choose Yes to the question Is this where you will be looking after the children?
         """
@@ -410,7 +410,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            True
+            True, False
         )
 
         # Check task status set to done
@@ -421,9 +421,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='personal_details']/td/a/strong").text)
 
-    @tag('smoke_test')
     @try_except_method
-    def test_cannot_complete_personal_details_task_when_location_of_care_is_not_same_as_home_address(self):
+    def test_complete_personal_details_task_when_location_of_care_is_not_same_as_home_address(self):
         """
         Test to make sure a user cannot complete an application if they choose No to the question Is this where you
         will be looking after the children?
@@ -441,11 +440,73 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            False
+            False, False
         )
 
-        # Check Can't user service page is shown
-        self.assertEqual("Childcare location", self.selenium_task_executor.get_driver().title)
+        # Check task status set to done
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='account_details']/td/a/strong").text)
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='children']/td/a/strong").text)
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='personal_details']/td/a/strong").text)
+
+    @try_except_method
+    def test_display_your_children_task(self):
+        """
+        Test to make sure the Your children task is displayed when the applicant says they have own children in their
+        home
+        """
+        self.selenium_task_executor.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+
+        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+        self.selenium_task_executor.complete_type_of_childcare(True, False, False, True)
+
+        # Below DOB means they are an adult so do not fire validation triggers
+        self.selenium_task_executor.complete_personal_details(
+            faker.first_name(), faker.first_name(), faker.last_name_female(),
+            random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
+            False, True
+        )
+
+        # Check your children task displays
+        self.assertEqual("To do", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='your_children']/td/a/strong").text)
+
+    @try_except_method
+    def test_hide_your_children_task(self):
+        """
+        Test to make sure the Your children task is hidden when the applicant says they don't have own children in their
+        home
+        """
+        self.selenium_task_executor.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+
+        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+        self.selenium_task_executor.complete_type_of_childcare(True, False, False, True)
+
+        # Below DOB means they are an adult so do not fire validation triggers
+        self.selenium_task_executor.complete_personal_details(
+            faker.first_name(), faker.first_name(), faker.last_name_female(),
+            random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
+            False, False
+        )
+
+        # Check Your children task displays
+        try:
+            # Fail test if Your children task displays
+            self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='your_children']/td/a/strong")
+            self.assertEqual(True, False)
+        except:
+            # Pass test if Your children task does not display
+            self.assertEqual(True, True)
 
     @try_except_method
     def test_can_complete_dbs_task_without_cautions_or_convictions(self):
@@ -771,7 +832,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            True
+            True, False
         )
 
         # Check task status marked as Done
@@ -863,7 +924,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            True
+            True, False
         )
 
         # Check task status set to done
@@ -890,7 +951,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            True
+            True, False
         )
 
         # Check task status set to done
@@ -1187,7 +1248,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
                                                               dob_day="1",
                                                               dob_month="1",
                                                               dob_year="1985",
-                                                              is_location_of_care=True)
+                                                              is_location_of_care=True,
+                                                              own_children=False)
         self.selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
         self.selenium_task_executor.navigate_to_SMS_validation_page(test_email)
 
@@ -1343,7 +1405,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            True
+            True, False
         )
 
         # Check task status set to done
@@ -1630,7 +1692,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            True
+            True, False
         )
 
         # Check task status set to done

@@ -202,7 +202,7 @@ class SeleniumTaskExecutor:
         driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
 
     def complete_personal_details(self, forename, middle_name, surname, dob_day, dob_month, dob_year,
-                                  is_location_of_care):
+                                  is_location_of_care, own_children):
         """
         Selenium steps to complete the personal details task
         :param forename: the applicant's forename
@@ -211,7 +211,8 @@ class SeleniumTaskExecutor:
         :param dob_day: the day value for an applicant's date of birth
         :param dob_month: the month value for an applicant's date of birth
         :param dob_year: the year value for an applicant's date of birth
-        :param is_location_of_care: a boolean flag for whether the applicant's address will be the location of car
+        :param is_location_of_care: a boolean flag for whether the applicant's address will be the location of care
+        :param own_children: a boolean flag for whether the applicant has own children in their home
         """
         driver = self.get_driver()
 
@@ -247,6 +248,30 @@ class SeleniumTaskExecutor:
 
         driver.find_element_by_id("id_childcare_location_1").click()
         driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        # Enter childcare address
+        self.select_test_address()
+
+        driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        if own_children:
+            driver.find_element_by_id("id_working_in_other_childminder_home_0").click()
+            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+            driver.find_element_by_id("id_own_children_0").click()
+            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+
+            # Confirm task summary page
+            driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
+            return
+        else:
+            driver.find_element_by_id("id_working_in_other_childminder_home_0").click()
+            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+            driver.find_element_by_id("id_own_children_1").click()
+            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+
+            # Confirm task summary page
+            driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
+            return
 
     def complete_first_aid_training(self, training_provider, completion_date_day, completion_date_month,
                                     completion_date_year, expect_update_page):
