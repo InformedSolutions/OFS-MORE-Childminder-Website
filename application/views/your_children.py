@@ -456,6 +456,7 @@ def __your_children_address_selection_get_handler(request):
     child = request.GET["child"]
     application = Application.get_id(app_id=app_id)
 
+    child_record = Child.objects.get(application_id=app_id, child=child)
     child_address_record = ChildAddress.objects.get(application_id=app_id, child=child)
     postcode = child_address_record.postcode
     addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
@@ -471,6 +472,7 @@ def __your_children_address_selection_get_handler(request):
             'form': form,
             'application_id': app_id,
             'postcode': postcode,
+            'name': child_record.get_full_name(),
             'child': child,
             'your_children_status': application.childcare_type_status,
         }

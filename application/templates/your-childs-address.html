@@ -16,7 +16,7 @@
     <!-- Content -->
     <div class="two-thirds">
         <h1 class="form-title heading-large">
-            Select your home address
+            Select {{ name }}'s address
         </h1>
         <h2 class="form-title heading-small">Postcode</h2>
         <p>{{postcode}} <a
@@ -27,7 +27,7 @@
     {% csrf_token %}
     <a href="{% url 'Personal-Details-Home-Address-Manual-View' %}?id={{application_id}}" name="manual"
        id="manual">I
-        can't find my address in the list</a>
+        can't find the address in the list</a>
     <input type="submit" class="button button-submit" value="Save and continue">
     <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     <input type="hidden" id="child" name="child" value="{{child}}"/>

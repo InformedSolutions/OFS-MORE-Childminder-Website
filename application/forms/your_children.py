@@ -9,7 +9,7 @@ from django.conf import settings
 
 from ..customfields import CustomSplitDateFieldDOB
 from ..forms_helper import full_stop_stripper
-from ..models import ChildInHome, Child, ChildAddress
+from ..models import Child, ChildAddress
 from ..utils import date_formatter
 
 
@@ -126,7 +126,7 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
-    error_summary_title = 'There was a problem with the details'
+    error_summary_title = 'There was a problem on this page'
 
     children_living_with_childminder_selection = forms.MultipleChoiceField(label='Which of your children live with you?',
         widget=CheckboxSelectMultiple, required=True, error_messages={
@@ -179,7 +179,7 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
         selections = self.cleaned_data['children_living_with_childminder_selection']
         
         if len(selections) > 1 and 'none' in selections:
-            raise forms.ValidationError('Error tbc')
+            raise forms.ValidationError('Please select your children''s names or none.')
 
         return selections
 
