@@ -85,7 +85,7 @@ def __your_children_details_get_handler(request):
     if number_of_children_present_in_querystring:
         number_of_children = int(request.GET["children"])
     else:
-        number_of_children = __get_children_not_living_with_childminder_count(application_id_local)
+        number_of_children = __get_all_children_count(application_id_local)
 
     remove_querystring_present = request.GET.get('remove') is not None
 
@@ -356,6 +356,16 @@ def __get_next_child_number_for_address_entry(application_id, current_child):
         return current_child + 1
     else:
         return None
+
+
+def __get_all_children_count(application_id):
+    """
+    Helper method for providing a count of how many children are associated with a childminder
+    :param application_id: the application identifier to be queried against
+    :return: a count of of how many children do not live a childminder
+    """
+    return Child.objects.filter(application_id=application_id).count()
+
 
 def __get_children_not_living_with_childminder_count(application_id):
     """

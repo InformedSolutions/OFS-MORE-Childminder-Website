@@ -40,7 +40,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
             self.TestAppPersonalDetailsNames()
 
-    def __submit_children_details(self):
+    def __submit_test_children_details(self):
         return self.client.post(
             reverse('Your-Children-Details-View'),
             {
@@ -209,7 +209,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
     @tag('http')
     def test_can_remove_child(self):
-        self.__submit_children_details()
+        self.__submit_test_children_details()
 
         # Fetch record to pull ID of child
         second_child_record = Child.objects.filter(application_id=self.app_id, first_name=self.test_2_forename).first()
@@ -241,7 +241,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
     @tag('http')
     def test_child_names_shown_on_children_living_with_you_page(self):
-        response = self.__submit_children_details()
+        response = self.__submit_test_children_details()
 
         self.assertEqual(response.status_code, 200)
 
@@ -260,7 +260,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
     @tag('http')
     def test_error_raised_on_children_living_with_childminder_page_if_mutually_exclusive_options_selected(self):
-        self.__submit_children_details()
+        self.__submit_test_children_details()
 
         response = self.client.post(
             reverse('Your-Children-Living-With-You-View'),
@@ -279,7 +279,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
     @tag('http')
     def test_if_all_children_living_with_childminder_redirected_to_summary(self):
-        self.__submit_children_details()
+        self.__submit_test_children_details()
 
         response = self.client.post(
             reverse('Your-Children-Living-With-You-View'),
@@ -297,7 +297,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
     @tag('http')
     def test_asked_for_first_child_address_if_not_living_with_any_children(self):
-        self.__submit_children_details()
+        self.__submit_test_children_details()
 
         response = self.client.post(
             reverse('Your-Children-Living-With-You-View'),
@@ -319,7 +319,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
     @tag('http')
     def test_asked_for_second_child_address_if_living_with_first_children(self):
-        self.__submit_children_details()
+        self.__submit_test_children_details()
 
         response = self.client.post(
             reverse('Your-Children-Living-With-You-View'),
@@ -340,7 +340,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
     @tag('http')
     def test_error_raised_if_postcode_not_entered_on_child_address_lookup(self):
-        self.__submit_children_details()
+        self.__submit_test_children_details()
 
         response = self.client.post(
             reverse('Your-Children-Address-View'),
@@ -359,7 +359,30 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
         self.assertEqual(response.resolver_match.view_name, 'Your-Children-Address-View')
         self.assertIsNotNone(response.context['errors']['postcode'])
 
+    @tag('http')
+    def test_address_lookup_renders_list(self):
+        with mock.patch('application.address_helper.AddressHelper.create_address_lookup_list') as address_lookup_mock:
 
+            address_lookup_mock.return_value
+
+            self.__submit_test_children_details()
+
+            response = self.client.post(
+                reverse('Your-Children-Address-View'),
+                {
+                    'id': self.app_id,
+                    'child': '1',
+                    'postcode-search': 'WA14 4PA',
+                    'postcode': '',
+                },
+                follow=True
+            )
+
+            self.assertEqual(response.status_code, 200)
+
+            # Check user is redirected to address capture page
+            self.assertEqual(response.resolver_match.view_name, 'Your-Children-Address-View')
+            self.assertIsNotNone(response.context['errors']['postcode'])
 
 
 
@@ -384,7 +407,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
     # Add manual address pages and relevant unit tests
 
     def test_if_child_not_living_with_childminder_asked_for_address(self):
-        response = self.__submit_children_details()
+        response = self.__submit_test_children_details()
 
         self.assertEqual(response.status_code, 200)
 
