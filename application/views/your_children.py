@@ -8,7 +8,7 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from ..forms import YourChildrenGuidanceForm, YourChildrenDetailsForm, YourChildrenLivingWithYouForm, ChildAddressForm, \
-    YourChildrenSummaryForm, YourChildrenAddressLookupForm
+    YourChildrenSummaryForm, YourChildrenAddressLookupForm, YourChildManualAddressForm
 from ..models import Application, Child, ChildAddress
 from .. import status, address_helper
 from ..business_logic import remove_child, rearrange_children, your_children_details_logic, reset_declaration
@@ -542,6 +542,62 @@ def __your_children_address_selection_post_handler(request):
         }
 
         return render(request, 'your-childs-address.html', variables)
+
+
+def your_children_address_manual(request):
+    if request.method == 'GET':
+        return __your_children_address_manual_get_handler(request)
+    if request.method == 'POST':
+        return _your_children_address_manual_post_handler(request)
+
+def __your_children_address_manual_get_handler(request):
+    application_id_local = request.GET["id"]
+    child = request.GET["child"]
+
+    child_record = Child.objects.get(application_id=application_id_local, child=child)
+    application = Application.objects.get(pk=application_id_local)
+    form = YourChildManualAddressForm(id=application_id_local, child=child)
+    form.check_flag()
+
+    if application.application_status == 'FURTHER_INFORMATION':
+        form.error_summary_template_name = 'returned-error-summary.html'
+        form.error_summary_title = 'There was a problem'
+
+    variables = {
+        'form': form,
+        'child': child,
+        'name': child_record.get_full_name(),
+        'application_id': application_id_local,
+        'your_children_status': application.childcare_type_status,
+    }
+
+    return render(request, 'your-children-address-manual.html', variables)
+
+
+def _your_children_address_manual_post_handler(request):
+    return None
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

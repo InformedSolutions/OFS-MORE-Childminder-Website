@@ -17,7 +17,7 @@
     <!-- Content -->
     <div class="form-group">
         <h1 class="form-title heading-large">
-            Your home address
+            Enter {{ name }}’s address
         </h1>
         {{form.as_div}}
         {% csrf_token %}
@@ -27,6 +27,7 @@
     <div class="form-group">
         <input type="submit" class="button" value="Save and continue">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+        <input type="hidden" id="child" name="child" value="{{child}}"/>
     </div>
 </form>
 <br>

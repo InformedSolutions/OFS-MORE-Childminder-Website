@@ -68,6 +68,7 @@ class YourChildManualAddressForm(ChildminderForms):
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
         self.application_id_local = kwargs.pop('id')
+        self.child = kwargs.pop('child')
         super(YourChildManualAddressForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
@@ -80,7 +81,7 @@ class YourChildManualAddressForm(ChildminderForms):
             self.fields['town'].initial = child_home_address.town
             self.fields['county'].initial = child_home_address.county
             self.fields['postcode'].initial = child_home_address.postcode
-            self.pk = child_home_address.home_address_id
+            self.pk = child_home_address.child_address_id
             self.field_list = ['street_line1', 'street_line2', 'town', 'county', 'postcode']
 
     def clean_street_line1(self):

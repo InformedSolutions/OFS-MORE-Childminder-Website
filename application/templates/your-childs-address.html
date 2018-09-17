@@ -20,12 +20,12 @@
         </h1>
         <h2 class="form-title heading-small">Postcode</h2>
         <p>{{postcode}} <a
-                href="{% url 'Personal-Details-Home-Address-View' %}?id={{application_id}}">Change</a></p>
+                href="{% url 'Your-Children-Address-View' %}?id={{application_id}}&child={{child}}">Change</a></p>
     </div>
     <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
     {{form.as_div}}
     {% csrf_token %}
-    <a href="{% url 'Personal-Details-Home-Address-Manual-View' %}?id={{application_id}}" name="manual"
+    <a href="{% url 'Your-Children-Address-Manual-View' %}?id={{application_id}}&child={{child}}" name="manual"
        id="manual">I
         can't find the address in the list</a>
     <input type="submit" class="button button-submit" value="Save and continue">

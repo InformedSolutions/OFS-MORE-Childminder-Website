@@ -54,7 +54,7 @@
     </div>
     {% endif %}
     {% csrf_token %}
-    <a href="{% url 'Personal-Details-Home-Address-Manual-View' %}?id={{application_id}}"
+    <a href="{% url 'Your-Children-Address-Manual-View' %}?id={{application_id}}&child={{child}}"
        name="manual" id="manual">Enter address manually</a>
     <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     <input type="hidden" id="child" name="child" value="{{child}}"/>

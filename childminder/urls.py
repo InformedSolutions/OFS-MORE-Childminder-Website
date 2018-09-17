@@ -206,6 +206,7 @@ urlpatterns = [
     url(r'^your-children/living-with-you/$', your_children.your_children_living_with_you, name='Your-Children-Living-With-You-View'),
     url(r'^your-children/address/$', your_children.your_children_address_capture, name='Your-Children-Address-View'),
     url(r'^your-children/address-details/$', your_children.your_children_address_selection, name='Your-Children-Address-Select-View'),
+    url(r'^your-children/enter-address/$', your_children.your_children_address_manual, name='Your-Children-Address-Manual-View'),
     url(r'^your-children/check-answers/$', your_children.your_children_summary, name='Your-Children-Summary-View'),
 ]
 
