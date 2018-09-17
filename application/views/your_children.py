@@ -8,9 +8,9 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from ..forms import YourChildrenGuidanceForm, YourChildrenDetailsForm, YourChildrenLivingWithYouForm, ChildAddressForm, \
-    YourChildrenSummaryForm, YourChildManualAddressForm, YourChildrenHomeAddressLookupForm
-from ..models import Application, Child
-from .. import status
+    YourChildrenSummaryForm, YourChildrenAddressLookupForm
+from ..models import Application, Child, ChildAddress
+from .. import status, address_helper
 from ..business_logic import remove_child, rearrange_children, your_children_details_logic, reset_declaration
 
 
@@ -204,7 +204,9 @@ def __your_children_details_post_handler(request):
                                                                     remove_button, application)
 
     if 'add_person' in request.POST:
-        return __your_children_details_post_handler_for_adding_children(request)
+        return __your_children_details_post_handler_for_adding_children(request, application_id_local,
+                                                                    valid_list, form_list, number_of_children,
+                                                                    remove_button, application)
 
 
 def __your_children_details_post_handler_for_submissions(request, application_id_local, valid_list, form_list,
@@ -386,20 +388,101 @@ def __your_children_address_capture_get_handler(request):
 
 
 def __your_children_address_capture_post_handler(request):
-    application_id_local = request.POST["id"]
+    application_id_local = request.GET["id"]
     child = request.POST["child"]
+    form = ChildAddressForm(request.POST, id=application_id_local, child=child)
+
+    application = Application.objects.get(application_id=application_id_local)
 
     if 'postcode-search' in request.POST:
 
-        if Application.get_id(app_id=application_id_local).personal_details_status != 'COMPLETED':
-            status.update(application_id_local, 'your_children_status', 'IN_PROGRESS')
+        if form.is_valid():
+            # If postcode search triggered instantiate address record with postcode saved
+            postcode = form.cleaned_data.get('postcode')
 
-        return HttpResponseRedirect(reverse('Your-Children-Address-Select-View')
-                                    + '?id=' + application_id_local + '&child=' + str(child))
+            # Create or update address record based on presence test
+            if ChildAddress.objects.filter(application_id=application_id_local, child=child).count() == 0:
+                child_address_record = ChildAddress(street_line1='',
+                                                    street_line2='',
+                                                    town='',
+                                                    county='',
+                                                    country='',
+                                                    postcode=postcode,
+                                                    application_id=application,
+                                                    child=child, )
+                child_address_record.save()
+            else:
+                child_address_record = ChildAddress.objects.get(application_id=application_id_local, child=child)
+                child_address_record.postcode = postcode
+                child_address_record.save()
+
+            if Application.get_id(app_id=application_id_local).personal_details_status != 'COMPLETED':
+                status.update(application_id_local, 'your_children_status', 'IN_PROGRESS')
+
+            return HttpResponseRedirect(reverse('Your-Children-Address-Select-View')
+                                        + '?id=' + application_id_local + '&child=' + str(child))
+        else:
+            form.error_summary_title = 'There was a problem with your postcode'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
+            child_record = Child.objects.get(application_id=application_id_local, child=child)
+
+            variables = {
+                'form': form,
+                'name': child_record.get_full_name(),
+                'application_id': application_id_local,
+                'child': child,
+            }
+
+            return render(request, 'your-children-address-lookup.html', variables)
 
 
 
 
+def your_children_address_selection(request):
+    if request.method == 'GET':
+
+        app_id = request.GET["id"]
+        child = request.GET["child"]
+        application = Application.get_id(app_id=app_id)
+
+        child_address_record = ChildAddress.objects.get(application_id=app_id, child=child)
+        postcode = child_address_record.postcode
+        addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
+
+        if len(addresses) != 0:
+            form = YourChildrenAddressLookupForm(id=app_id, choices=addresses)
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
+            variables = {
+                'form': form,
+                'application_id': app_id,
+                'postcode': postcode,
+                'your_children_status': application.childcare_type_status,
+            }
+
+            return render(request, 'your-childs-address.html', variables)
+
+        else:
+            form = ChildAddressForm(id=app_id, child=child)
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
+            variables = {
+                'form': form,
+                'application_id': app_id,
+                'your_children_status': application.childcare_type_status,
+            }
+
+            return render(request, 'your-children-address-lookup.html', variables)
 
 
 

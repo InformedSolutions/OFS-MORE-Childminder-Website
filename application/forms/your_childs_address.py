@@ -141,7 +141,7 @@ class YourChildManualAddressForm(ChildminderForms):
         return postcode
 
 
-class YourChildrenHomeAddressLookupForm(ChildminderForms):
+class YourChildrenAddressLookupForm(ChildminderForms):
     """
     GOV.UK form for the Your personal details: home address page for postcode search results
     """
@@ -160,6 +160,6 @@ class YourChildrenHomeAddressLookupForm(ChildminderForms):
         """
         self.application_id_local = kwargs.pop('id')
         self.choices = kwargs.pop('choices')
-        super(YourChildrenHomeAddressLookupForm, self).__init__(*args, **kwargs)
+        super(YourChildrenAddressLookupForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         self.fields['address'].choices = self.choices
