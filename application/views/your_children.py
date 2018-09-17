@@ -101,7 +101,7 @@ def __your_children_details_get_handler(request):
     if number_of_children_present_in_querystring:
         number_of_children = int(request.GET["children"])
     else:
-        number_of_children = Child.objects.filter(application_id=application_id_local).count()
+        number_of_children = __get_children_not_living_with_childminder_count(application_id_local)
 
     remove_querystring_present = request.GET.get('remove') is not None
 
@@ -330,13 +330,11 @@ def __your_children_living_with_you_post_handler(request):
             str(child.child) in form.cleaned_data['children_living_with_childminder_selection']
         child.save()
 
-    if Child.objects.filter(application_id=application_id_local, lives_with_childminder=False).count() > 0:
-        first_child_living_outside_home \
-            = Child.objects.filter(application_id=application_id_local, lives_with_childminder=False)\
-            .order_by('child').first()
+    if __get_children_not_living_with_childminder_count(application_id_local) > 0:
+        child_number = __get_first_child_number_for_address_entry(application_id_local)
 
         return HttpResponseRedirect(reverse('Your-Children-Address-View') + '?id=' +
-                                    application_id_local + '&child=' + str(first_child_living_outside_home.child))
+                                    application_id_local + '&child=' + str(child_number))
     else:
         return HttpResponseRedirect(reverse('Your-Children-Summary-View') + '?id=' +
                                     application_id_local)
@@ -351,6 +349,37 @@ def __your_children_living_with_you_post_handler(request):
 
 
 
+
+
+
+def __get_first_child_number_for_address_entry(application_id):
+    """
+    Helper method to fetch the child number for the first child for which address details are to be supplied
+    :param application_id: the application identifier to be queried against
+    :return: the next child number or None if no more children require address details to be provided
+    """
+    first_child = Child.objects.filter(application_id=application_id, lives_with_childminder=False).order_by('child').first()
+    return first_child.child
+
+def __get_next_child_number_for_address_entry(application_id, current_child):
+    """
+    Helper method for sequencing a user through the workflow for providing child address details
+    :param application_id: the application identifier to be queried against
+    :param current_child: the current child information is being supplied for
+    :return: the next child number or None if no more children require address details to be provided
+    """
+    if __get_children_not_living_with_childminder_count(application_id) > current_child:
+        return current_child + 1
+    else:
+        return None
+
+def __get_children_not_living_with_childminder_count(application_id):
+    """
+    Helper method for providing a count of how many children do not live a childminder
+    :param application_id: the application identifier to be queried against
+    :return: a count of of how many children do not live a childminder
+    """
+    return Child.objects.filter(application_id=application_id, lives_with_childminder=False).count()
 
 
 
@@ -523,7 +552,15 @@ def __your_children_address_selection_post_handler(request):
 
         if Application.get_id(app_id=app_id).your_children_status != 'COMPLETED':
             status.update(app_id, 'your_children_status', 'IN_PROGRESS')
-        return HttpResponseRedirect(reverse('Personal-Details-Location-Of-Care-View') + '?id=' + app_id)
+
+        # Recurse through querystring params
+        next_child = __get_next_child_number_for_address_entry(app_id, int(child))
+
+        if next_child is None:
+            return HttpResponseRedirect(reverse('Your-Children-Summary-View') + '?id=' +
+                                        app_id)
+
+        return HttpResponseRedirect(reverse('Your-Children-Address-View') + '?id=' + app_id + '&child=' + str(next_child))
     else:
 
         form.error_summary_title = 'There was a problem finding your address'
@@ -637,23 +674,30 @@ def __your_children_summary_get_handler(request):
     form = YourChildrenSummaryForm()
 
     children_table = []
+    children_not_living_with_childminder = []
     children = Child.objects.filter(application_id=application_id_local)
 
     for child in children:
         dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)
+        full_address = ChildAddress.objects.get(application_id=application_id_local, child=child.child)
         child_details = collections.OrderedDict([
             ('child_number', child.child),
             ('full_name', child.get_full_name()),
             ('dob', dob),
             ('lives_with_childminder', child.lives_with_childminder),
+            ('full_address', full_address),
         ])
         children_table.append(child_details)
+
+        if not child.lives_with_childminder:
+            children_not_living_with_childminder.append(child.get_full_name())
 
     variables = {
         'page_title': 'Check your answers: your children',
         'form': form,
         'application_id': application_id_local,
         'children': children_table,
+        'children_not_living_with_childminder': ", ".join(children_not_living_with_childminder)
     }
 
     return render(request, 'your-children-summary.html', variables)
