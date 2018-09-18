@@ -85,7 +85,7 @@
             {% endwith %}
         </td>
         <!-- People in the Home task -- Email address row -->
-        {% elif row.row_name == 'Email address' and row.back_link == 'Other-People-Adult-Details-View' %}
+        {% elif row.row_name == 'Email address' and row.back_link == 'PITH-Adult-Details-View' %}
         <td class="change-answer">
             {% load people_in_your_home %}
             {% with table.loop_counter|subtract:"1" as index %}

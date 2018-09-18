@@ -1109,6 +1109,92 @@ def get_childcare_register_type(app_id):
         cost = 103
         return 'CR-voluntary', cost
 
+def get_adult_in_home(app_id, field_obj):
+    """
+    :param app_id: applicant's application_id
+    :param field_obj: AdultInHome field or list of AdultInHome fields
+    :return: Boolean True if successfully updated.
+    """
+    adult_in_home_record = AdultInHome.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        return {field: getattr(adult_in_home_record, field) for field in field_obj}
+
+    elif isinstance(field_obj, str):
+        return getattr(adult_in_home_record, field_obj)
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+
+def update_adult_in_home(pk, field_obj, status):
+    """
+    Updates the AdultInHome field with the given status.
+    :param pk: AdultInHome primary key
+    :param field_obj: AdultInHome field or list of AdultInHome fields
+    :param status: Value to update entry/entries with
+    :return: Boolean True if successfully updated.
+    """
+    adult_in_home_record = AdultInHome.objects.get(pk=pk)
+
+    if isinstance(field_obj, list):
+        for field in field_obj:
+            setattr(adult_in_home_record, field, status)
+            adult_in_home_record.save()
+
+    elif isinstance(field_obj, str):
+        setattr(adult_in_home_record, field_obj, status)
+        adult_in_home_record.save()
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+    return True
+
+
+def get_application(app_id, field_obj):
+    """
+    :param app_id: applicant's application_id
+    :param field_obj: Application field or list of Application fields
+    :return: Boolean True if successfully updated.
+    """
+    application_record = Application.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        return {field: getattr(application_record, field) for field in field_obj}
+
+    elif isinstance(field_obj, str):
+        return getattr(application_record, field_obj)
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+
+def update_application(app_id, field_obj, status):
+    """
+    Updates the Application field with the given status.
+    :param app_id: applicant's application_id
+    :param field_obj: Application field or list of Application fields
+    :param status: Value to update entry/entries with
+    :return: Boolean True if successfully updated.
+    """
+    application_record = Application.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        for field in field_obj:
+            setattr(application_record, field, status)
+            application_record.save()
+
+    elif isinstance(field_obj, str):
+        setattr(application_record, field_obj, status)
+        application_record.save()
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+    return True
+
+
 class UniqueDbsCheckResult:
     """
     Class definition for the response object returned by a DBS uniqueness check

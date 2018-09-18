@@ -404,7 +404,7 @@ class ApplicationTestBase(object):
     def TestAppOtherPeopleAdults(self):
         """Submit other people"""
         r = self.client.post(
-            reverse('Other-People-Adult-Question-View'),
+            reverse('PITH-Adult-Check-View'),
             {
                 'id': self.app_id,
                 'adults_in_home': False,
@@ -429,7 +429,7 @@ class ApplicationTestBase(object):
 
         }
 
-        r = self.client.post(reverse('Other-People-Adult-Details-View'), data)
+        r = self.client.post(reverse('PITH-Adult-Details-View'), data)
 
         self.assertEqual(r.status_code, 302)
 

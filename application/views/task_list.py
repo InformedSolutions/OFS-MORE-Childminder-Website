@@ -225,14 +225,14 @@ def task_list(request):
                 'name': 'other_people',
                 'status': application.people_in_home_status,
                 'arc_flagged': application.people_in_home_arc_flagged,
-                'description': "People in your home",
+                'description': "People in the home",
                 'hidden': False,
                 'status_url': None,
                 'status_urls': [
                     {'status': 'COMPLETED', 'url': 'Other-People-Summary-View'},
                     {'status': 'FLAGGED', 'url': 'Other-People-Summary-View'},
                     {'status': 'WAITING', 'url': 'Other-People-Summary-View'},
-                    {'status': 'OTHER', 'url': 'Other-People-Guidance-View'}
+                    {'status': 'OTHER', 'url': 'PITH-Guidance-View'}
                 ],
             },
             {

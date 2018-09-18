@@ -1,0 +1,38 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}People in the home{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<div class="two-thirds">
+    {{form.error_summary}}
+
+    <form method="post" novalidate>
+        <div class="form-group">
+            <h1 class="form-title heading-large">
+                People in the home
+            </h1>
+            <p>Tell us about everyone who lives in the home where you’ll look after children.</p>
+
+            <p>Include anyone who stays with you regularly, like a student who stays during university holidays.</p>
+
+            <p>Also tell us about anyone who works there during childcare hours, like an assistant, carer or cleaner.</p>
+
+            Anyone aged 16 or over must:
+            <ul style="list-style-type: disc; padding-left: 50px;">
+                <li>have a criminal records (DBS) check</li>
+                <li>answer a few questions about their health</li>
+            </ul>
+
+            <p>This is to check that the home is safe for children.</p>
+            {% csrf_token %}
+            <input type="submit" class="button" value="Continue">
+        </div>
+    </form>
+</div>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}
