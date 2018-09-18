@@ -4,7 +4,7 @@ from django.views.generic import TemplateView
 from django.views.generic.base import TemplateResponseMixin
 
 from application.utils import build_url, get_id
-from application.models import AdultInHome
+from application.business_logic import update_application, get_application
 
 class PITHMultiRadioView(TemplateView, TemplateResponseMixin):
     template_name = None
@@ -55,6 +55,7 @@ class PITHMultiRadioView(TemplateView, TemplateResponseMixin):
         Handles POST requests, instantiating a form instance with the passed
         POST variables and then checked for validity.
         """
+
         form_list = self.get_form_list()
         if all(form.is_valid() for form in form_list):
             return self.form_valid(form_list)
@@ -65,6 +66,15 @@ class PITHMultiRadioView(TemplateView, TemplateResponseMixin):
         """
         If the form is valid, redirect to the supplied URL.
         """
+        application_id = get_id(self.request)
+
+        # Update task status if flagged or completed (people_in_home_status)
+        people_in_home_status = get_application(application_id, 'people_in_home_status')
+
+        if people_in_home_status in ['FLAGGED', 'COMPLETED']:
+            # Update the task status to 'IN_PROGRESS' from 'FLAGGED'
+            update_application(application_id, 'people_in_home_status', 'IN_PROGRESS')
+
         return HttpResponseRedirect(self.get_success_url())
 
     def form_invalid(self, form):

@@ -65,7 +65,7 @@ class PITHLivedAbroadView(PITHMultiRadioView):
             setattr(adult, self.PITH_field_name, lived_abroad_bool)
             adult.save()
 
-        return HttpResponseRedirect(self.get_success_url())
+        return super().form_valid(form)
 
     def get_form_list(self):
         application_id = get_id(self.request)

@@ -36,21 +36,7 @@ class PITHDBSCheckView(PITHMultiRadioView):
         """
         application_id = get_id(self.request)
 
-        self.nullify_fields(application_id)
-
-        adults = AdultInHome.objects.filter(application_id=application_id)
-
-        # for adult in adults:
-        #     lived_abroad_bool = self.request.POST.get(self.PITH_field_name+str(adult.pk))
-        #
-        #     setattr(adult, self.PITH_field_name, lived_abroad_bool)
-        #     adult.save()
-
-        return HttpResponseRedirect(self.get_success_url())
-
-    def nullify_fields(self, app_id):
-        #TODO
-        adults = AdultInHome.objects.filter(application_id=app_id)
+        return super().form_valid(form)
 
     def get_form_list(self):
         application_id = get_id(self.request)
