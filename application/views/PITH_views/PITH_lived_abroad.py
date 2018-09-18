@@ -100,7 +100,7 @@ class PITHLivedAbroadView(PITHMultiRadioView):
         if any(adult.lived_abroad for adult in adults):
             return yes_choice
         else:
-            if 'CR' in childcare_register_status and 'EYR' not in childcare_register_status:
+            if not ('CR' in childcare_register_status and 'EYR' not in childcare_register_status):
                 return no_yes_choice
             else:
                 return no_no_choice
