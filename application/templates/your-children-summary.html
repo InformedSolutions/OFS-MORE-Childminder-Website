@@ -76,7 +76,7 @@
                         Date of birth
                     </td>
                     <td style="word-wrap: break-word" class=summary-column>
-                        {{ child.dob |date:"d m Y" }}
+                        {{ child.dob |date:"d F Y" }}
                     </td>
                    <td class="change-answer">
                     <a href="{% url 'Your-Children-Details-View' %}?id={{application_id}}" alt="Change date of birth">
@@ -92,7 +92,7 @@
 
                     {% if child.lives_with_childminder %}
                         <td style="word-wrap: break-word" class=summary-column>
-                            Same as your own
+                            Same as your home address
                         </td>
                         <td class="change-answer">
                             <a href="{% url 'Your-Children-Living-With-You-View' %}?id={{application_id}}" alt="Change address">
