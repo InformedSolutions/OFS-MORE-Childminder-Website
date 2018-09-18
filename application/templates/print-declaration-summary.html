@@ -930,7 +930,7 @@
         </td>
         {% endif %}
         <td class="change-answer">
-            <a href="{% url 'Other-People-Adult-Question-View' %}?id={{application_id}}"
+            <a href="{% url 'PITH-Adult-Check-View' %}?id={{application_id}}"
                alt='Update the adults in your home'>
                 Change <span class="visuallyhidden">adults in your home</span>
             </a>
@@ -1001,7 +1001,7 @@
             {{name}}
         </td>
         <td class="change-answer">
-            <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+            <a href="{% url 'PITH-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Update the adult's name">
                 Change <span class="visuallyhidden">adult name</span>
             </a>
@@ -1061,7 +1061,7 @@
         </td>
         {% endif %}
         <td class="change-answer">
-            <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+            <a href="{% url 'PITH-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Update the adult's date of birth">
                 Change <span class="visuallyhidden">date of birth</span>
             </a>
@@ -1075,7 +1075,7 @@
             {{relationship}}
         </td>
         <td class="change-answer">
-            <a href="{% url 'Other-People-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+            <a href="{% url 'PITH-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Update the adult's relationship">
                 Change <span class="visuallyhidden">adult relationship</span>
             </a>
@@ -1089,7 +1089,7 @@
             {{dbs_certificate_number}}
         </td>
         <td class="change-answer">
-            <a href="{% url 'Other-People-Adult-DBS-View' %}?id={{application_id}}&adults={{number_of_adults}}"
+            <a href="{% url 'PITH-DBS-Check-View' %}?id={{application_id}}&adults={{number_of_adults}}"
                alt="Update the adult's DBS certificate number">
                 Change <span class="visuallyhidden">adult DBS certificate number</span>
             </a>

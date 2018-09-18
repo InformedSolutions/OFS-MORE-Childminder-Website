@@ -20,9 +20,10 @@ from ..models import (ApplicantName, ApplicantPersonalDetails, Application, Chil
 from ..utils import can_cancel
 
 
-def show_hide_your_children(context, application):
+def show_hide_tasks(context, application):
     """
-    Method hiding or showing the Your children task based on whether the applicant has children
+    Method hiding or showing the Your children and/or People in your home tasks based on whether the applicant has
+    children and/or works in another childminder's home
     :param context: a dictionary containing all tasks for the task list
     :param context: Application object
     :return: dictionary object
@@ -30,10 +31,15 @@ def show_hide_your_children(context, application):
 
     for task in context['tasks']:
         if task['name'] == 'your_children':
-            if application.own_children:
+            if application.own_children is True:
                 task['hidden'] = False
             else:
                 task['hidden'] = True
+        if task['name'] == 'other_people':
+            if application.working_in_other_childminder_home is True:
+                task['hidden'] = True
+            else:
+                task['hidden'] = False
     return context
 
 
@@ -219,14 +225,14 @@ def task_list(request):
                 'name': 'other_people',
                 'status': application.people_in_home_status,
                 'arc_flagged': application.people_in_home_arc_flagged,
-                'description': "People in your home",
+                'description': "People in the home",
                 'hidden': False,
                 'status_url': None,
                 'status_urls': [
                     {'status': 'COMPLETED', 'url': 'Other-People-Summary-View'},
                     {'status': 'FLAGGED', 'url': 'Other-People-Summary-View'},
                     {'status': 'WAITING', 'url': 'Other-People-Summary-View'},
-                    {'status': 'OTHER', 'url': 'Other-People-Guidance-View'}
+                    {'status': 'OTHER', 'url': 'PITH-Guidance-View'}
                 ],
             },
             {
@@ -260,8 +266,8 @@ def task_list(request):
         ]
     }
 
-    # Show/hide Your children task
-    context = show_hide_your_children(context, application)
+    # Show/hide Your children and People in your home tasks
+    context = show_hide_tasks(context, application)
 
     unfinished_tasks = [task for task in context['tasks'] if task['status'] in
                         ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]
@@ -283,7 +289,6 @@ def task_list(request):
                     task['status'] = application.declarations_status
 
     # Prepare task links
-
     for task in context['tasks']:
 
         # Iterating through tasks
