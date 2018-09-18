@@ -74,7 +74,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
 
     first_name = forms.CharField(label='First name', required=True,
                                  error_messages={'required': "Please enter their first name"})
-    middle_names = forms.CharField(label='Middle names (if they have any on your DBS check)', required=False)
+    middle_names = forms.CharField(label='Middle names (if they have any on their DBS check)', required=False)
     last_name = forms.CharField(label='Last name', required=True,
                                 error_messages={'required': "Please enter their last name"})
     date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980', error_messages={
