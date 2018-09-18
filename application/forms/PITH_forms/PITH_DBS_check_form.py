@@ -51,7 +51,7 @@ class PITHDBSCheckForm(ChildminderForms):
         return forms.ChoiceField(
             label='Do they have an Ofsted DBS check?',
             choices=self.get_options(),
-            widget=InlineRadioSelect,
+            widget=ConditionalPostInlineRadioSelect,
             required=True,
             error_messages={'required': 'Please say if this person has an Ofsted DBS check'})
 
@@ -66,14 +66,10 @@ class PITHDBSCheckForm(ChildminderForms):
                                   widget=dbs_certificate_number_widget)
 
     def get_on_update_field_data(self):
-        on_update_widget = ConditionalPostInlineRadioSelect()
-        on_update_widget.input_classes = 'block'
-        on_update_widget.field_group_classes = 'inline form-block'
-
         return forms.ChoiceField(
             label='Are they on the DBS update service?',
             choices=self.get_options(),
-            widget=on_update_widget,
+            widget=InlineRadioSelect,
             required=True,
             error_messages={'required': 'Please say if this person is on the DBS update service'})
 
