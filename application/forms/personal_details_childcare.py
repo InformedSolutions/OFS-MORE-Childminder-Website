@@ -60,12 +60,12 @@ class PersonalDetailsChildcareAddressManualForm(ChildminderForms):
     auto_replace_widgets = True
 
     street_line1 = forms.CharField(label='Address line 1',
-                                   error_messages={'required': 'Please enter the first line of the address'})
+                                   error_messages={'required': 'Please enter the first line of your address'})
     street_line2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city',
                            error_messages={'required': 'Please enter the name of the town or city'})
     county = forms.CharField(label='County (optional)', required=False)
-    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter the postcode'})
+    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -98,7 +98,7 @@ class PersonalDetailsChildcareAddressManualForm(ChildminderForms):
         """
         street_line1 = self.cleaned_data['street_line1']
         if len(street_line1) > 50:
-            raise forms.ValidationError('The first line of the address must be under 50 characters long')
+            raise forms.ValidationError('The first line of your address must be under 50 characters long')
         return street_line1
 
     def clean_street_line2(self):
@@ -108,7 +108,7 @@ class PersonalDetailsChildcareAddressManualForm(ChildminderForms):
         """
         street_line2 = self.cleaned_data['street_line2']
         if len(street_line2) > 50:
-            raise forms.ValidationError('The second line of the address must be under 50 characters long')
+            raise forms.ValidationError('The second line of your address must be under 50 characters long')
         return street_line2
 
     def clean_town(self):
@@ -158,7 +158,7 @@ class PersonalDetailsChildcareAddressLookupForm(ChildminderForms):
     auto_replace_widgets = True
 
     address = forms.ChoiceField(label='Select address', required=True,
-                                error_messages={'required': 'Please select the address from the list'})
+                                error_messages={'required': 'Please select your address'})
 
     def __init__(self, *args, **kwargs):
         """
