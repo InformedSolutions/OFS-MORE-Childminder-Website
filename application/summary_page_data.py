@@ -114,12 +114,12 @@ other_adult_name_dict = collections.OrderedDict([('health_check_status', 'Health
                                                  ('permission', 'Permission for checks')])
 
 other_adult_link_dict = collections.OrderedDict([('health_check_status', 'Other-People-Resend-Email-View'),
-                                                 ('full_name', 'Other-People-Adult-Details-View'),
-                                                 ('date_of_birth', 'Other-People-Adult-Details-View'),
-                                                 ('relationship', 'Other-People-Adult-Details-View'),
-                                                 ('email', 'Other-People-Adult-Details-View'),
-                                                 ('dbs_certificate_number', 'Other-People-Adult-DBS-View'),
-                                                 ('permission', 'Other-People-Adult-Permission-View')])
+                                                ('full_name', 'PITH-Adult-Details-View'),
+                                                ('date_of_birth', 'PITH-Adult-Details-View'),
+                                                ('relationship', 'PITH-Adult-Details-View'),
+                                                ('email', 'PITH-Adult-Details-View'),
+                                                ('dbs_certificate_number', 'PITH-DBS-Check-View'),
+                                                ('permission', 'Other-People-Adult-Permission-View')])
 
 ###
 
@@ -135,7 +135,7 @@ other_child_link_dict = collections.OrderedDict([('full_name', 'Other-People-Chi
 
 other_adult_summary_name_dict = collections.OrderedDict(
     [('adults_in_home', 'Do you live with anyone who is 16 or over?')])
-other_adult_summary_link_dict = collections.OrderedDict([('adults_in_home', 'Other-People-Adult-Question-View')])
+other_adult_summary_link_dict = collections.OrderedDict([('adults_in_home', 'PITH-Adult-Check-View')])
 
 other_child_summary_name_dict = collections.OrderedDict([('children_in_home', 'Do you live with any children?')])
 other_child_summary_link_dict = collections.OrderedDict([('children_in_home', 'Other-People-Children-Question-View')])
