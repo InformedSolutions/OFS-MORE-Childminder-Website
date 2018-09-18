@@ -25,10 +25,12 @@
         <p>You’ll need to give us their DBS certificate number and email address.</p>
         {{form.as_div}}
         {% csrf_token %}
-        <input type="submit" class="button" value="Continue">
+        <input type="submit" class="button" value="Save and continue">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
 </form>
 </div>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}
