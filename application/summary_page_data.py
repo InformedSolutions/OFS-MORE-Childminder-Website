@@ -52,7 +52,15 @@ personal_details_name_dict = collections.OrderedDict([('name', 'Your name'),
                                                        "Is this another childminder's home?"),
                                                       ('own_children', 'Do you have children of your own under 16?')])
 
-personal_details_link_dict = collections.OrderedDict([('name', 'Personal-Details-Name-View'),
+personal_details_link_dict_different_childcare_address = collections.OrderedDict([('name', 'Personal-Details-Name-View'),
+                                                      ('date_of_birth', 'Personal-Details-DOB-View'),
+                                                      ('home_address', 'Personal-Details-Home-Address-Manual-View'),
+                                                      ('childcare_address', 'Personal-Details-Childcare-Address-Manual-View'),
+                                                      ('working_in_other_childminder_home',
+                                                       'Personal-Details-Childcare-Address-Details-View'),
+                                                      ('own_children', 'Personal-Details-Your-Own-Children-View')])
+
+personal_details_link_dict_same_childcare_address = collections.OrderedDict([('name', 'Personal-Details-Name-View'),
                                                       ('date_of_birth', 'Personal-Details-DOB-View'),
                                                       ('home_address', 'Personal-Details-Home-Address-Manual-View'),
                                                       ('childcare_address', 'Personal-Details-Location-Of-Care-View'),
