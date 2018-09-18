@@ -74,3 +74,53 @@ class PersonalDetailsTests(TestCase):
 
         # Tear down env
         application.delete()
+
+    @tag('http')
+    def set_working_in_other_childminder_home_to_true(self):
+        """
+        Test to assert that the working_in_other_childminder_home attribute in the Application table is set to True
+        when the applicant says they work in another childminder's home
+        """
+
+        # Build env
+        Application.objects.create(application_id=self.application_id)
+        form_data = {
+            'id': self.application_id,
+            'working_in_other_childminder_home': 'True'
+        }
+
+        response = self.client.post(
+            reverse('Personal-Details-Childcare-Address-Details-View') + '?id=' + self.application_id, form_data)
+
+        application = Application.objects.get(application_id=self.application_id)
+
+        self.assertTrue(response.status_code == 302)
+        self.assertEqual(True, application.working_in_other_childminder_home)
+
+        # Tear down env
+        application.delete()
+
+    @tag('http')
+    def set_working_in_other_childminder_home_to_false(self):
+        """
+        Test to assert that the working_in_other_childminder_home attribute in the Application table is set to False
+        when the applicant says they don't work in another childminder's home
+        """
+
+        # Build env
+        Application.objects.create(application_id=self.application_id)
+        form_data = {
+            'id': self.application_id,
+            'working_in_other_childminder_home': 'False'
+        }
+
+        response = self.client.post(
+            reverse('Personal-Details-Childcare-Address-Details-View') + '?id=' + self.application_id, form_data)
+
+        application = Application.objects.get(application_id=self.application_id)
+
+        self.assertTrue(response.status_code == 302)
+        self.assertEqual(False, application.working_in_other_childminder_home)
+
+        # Tear down env
+        application.delete()
