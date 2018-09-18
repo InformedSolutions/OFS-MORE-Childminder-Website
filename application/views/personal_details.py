@@ -9,7 +9,7 @@ from django.shortcuts import render, reverse
 
 from ..table_util import Table, create_tables, submit_link_setter
 from ..summary_page_data import personal_details_name_dict, personal_details_link_dict_same_childcare_address,\
-    personal_details_link_dict_different_childcare_address
+    personal_details_link_dict_different_childcare_address, personal_details_change_link_description_dict
 from .. import address_helper, status
 from ..business_logic import (multiple_childcare_address_logic,
                               personal_dob_logic,
@@ -501,6 +501,8 @@ def personal_details_location_of_care(request):
                     arc.your_children_review = 'COMPLETED'
                     arc.save()
 
+                # Set own_children to false
+                application.own_children = False
                 # Set working in other childminder home to false
                 application.working_in_other_childminder_home = False
                 application.date_updated = current_date
@@ -1170,10 +1172,12 @@ def personal_details_summary(request):
         # address
         if location_of_childcare:
             table_list = create_tables(tables, personal_details_name_dict,
-                                       personal_details_link_dict_same_childcare_address)
+                                       personal_details_link_dict_same_childcare_address,
+                                       personal_details_change_link_description_dict)
         else:
             table_list = create_tables(tables, personal_details_name_dict,
-                                       personal_details_link_dict_different_childcare_address)
+                                       personal_details_link_dict_different_childcare_address,
+                                       personal_details_change_link_description_dict)
 
         form = PersonalDetailsSummaryForm()
         application = Application.get_id(app_id=app_id)
