@@ -289,7 +289,6 @@ def task_list(request):
                     task['status'] = application.declarations_status
 
     # Prepare task links
-
     for task in context['tasks']:
 
         # Iterating through tasks

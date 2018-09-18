@@ -1161,7 +1161,7 @@ def personal_details_summary(request):
             'form': form,
             'application_id': app_id,
             'table_list': table_list,
-            'page_title': 'Check your answers: your personal details',
+            'page_title': 'Check your answers: personal details',
             'personal_details_status': application.personal_details_status
         }
         variables = submit_link_setter(variables, table_list, 'personal_details', app_id)
