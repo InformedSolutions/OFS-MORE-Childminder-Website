@@ -913,24 +913,6 @@ def childminder_dbs_duplicates_household_member_check(application, candidate_dbs
     :param candidate_dbs_certificate_number: the candidate DBS number to be assigned
     :return: True/False result
     """
-    # dbs_numbers = list()
-    #
-    # # Check how many additional adults feature in application form
-    # additional_adults = AdultInHome.objects.filter(application_id=application.application_id)
-    # count_of_additional_adults_in_home = AdultInHome.objects.filter(application_id=application.application_id).count()
-    #
-    # # Iterate and push DBS numbers to comparison array
-    # if count_of_additional_adults_in_home > 0:
-    #     for i in range(1, int(additional_adults.count()) + 1):
-    #         adult = AdultInHome.objects.get(
-    #             application_id=application.application_id, adult=i)
-    #         # filter out any empty values so as not to get a false match on duplicate index
-    #         if adult.dbs_certificate_number:
-    #             dbs_numbers.append(adult.dbs_certificate_number)
-    #
-    # # Yield result of whether DBS number to the last entry in the list
-    # return candidate_dbs_certificate_number in dbs_numbers
-
     adults = AdultInHome.objects.filter(application_id=application.application_id)
     if adult_record:
         adults_dbs_list = [adult.dbs_certificate_number for adult in adults if not adult.pk == adult_record.pk]
