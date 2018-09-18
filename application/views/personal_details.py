@@ -8,7 +8,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
 from ..table_util import Table, create_tables, submit_link_setter
-from ..summary_page_data import personal_details_name_dict, personal_details_link_dict
+from ..summary_page_data import personal_details_name_dict, personal_details_link_dict_same_childcare_address,\
+    personal_details_link_dict_different_childcare_address
 from .. import address_helper, status
 from ..business_logic import (multiple_childcare_address_logic,
                               personal_dob_logic,
@@ -1154,7 +1155,15 @@ def personal_details_summary(request):
         })
 
         tables = [name_dob_dict, address_dict, own_children_dict]
-        table_list = create_tables(tables, personal_details_name_dict, personal_details_link_dict)
+
+        # Set change link for childcare address according to whether the childcare address is the same as the home
+        # address
+        if location_of_childcare:
+            table_list = create_tables(tables, personal_details_name_dict,
+                                       personal_details_link_dict_same_childcare_address)
+        else:
+            table_list = create_tables(tables, personal_details_name_dict,
+                                       personal_details_link_dict_different_childcare_address)
 
         form = PersonalDetailsSummaryForm()
         application = Application.get_id(app_id=app_id)
