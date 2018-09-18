@@ -915,21 +915,23 @@ def personal_details_working_in_other_childminder_home(request):
 
             # Set People in your home task status to Completed when the applicant works in another childminder's home
             if application.working_in_other_childminder_home is True:
-                application.people_in_home_status = 'NOT_STARTED'
+                application.people_in_home_status = 'COMPLETED'
 
                 # Reset ARC status if there are comments
                 if Arc.objects.filter(application_id=app_id).count() > 0:
 
                     arc = Arc.objects.get(application_id=app_id)
 
-                    if arc.people_in_home_review != 'FLAGGED':
-                        arc.people_in_home_review = 'NOT_STARTED'
+                    arc.people_in_home_review = 'COMPLETED'
+                    arc.save()
             else:
-                application.people_in_home_status = 'COMPLETED'
+                application.people_in_home_status = 'NOT_STARTED'
 
                 if Arc.objects.filter(application_id=app_id).count() > 0:
                     arc = Arc.objects.get(application_id=app_id)
-                    arc.people_in_home_review = 'COMPLETED'
+                    if arc.people_in_home_review != 'FLAGGED':
+                        arc.people_in_home_review = 'NOT_STARTED'
+                        arc.save()
 
             application.date_updated = current_date
             application.save()
