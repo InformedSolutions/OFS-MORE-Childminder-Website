@@ -17,3 +17,5 @@ from .personal_details_childcare import *
 from .references import *
 from .security_question import *
 from .feedback import *
+from .your_children import *
+from .your_childs_address import *

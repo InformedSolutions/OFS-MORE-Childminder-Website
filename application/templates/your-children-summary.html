@@ -1,0 +1,165 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Check your answers: your children{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+<h1 class="form-title heading-large">Check your answers: your children</h1>
+
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="3">
+            <div class="heading-medium">
+                Your children's addresses
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word">
+            Which of your children live with you?
+        </td>
+        <td style="word-wrap: break-word">
+                {{ children_living_with_childminder|default:"None" }}
+        </td>
+        <td class="change-answer">
+            <a href="{% url 'Your-Children-Living-With-You-View' %}?id={{application_id}}" alt='Change which of your children live with you?'>
+                Change <span class="visuallyhidden">which of your children live with you?</span>
+            </a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+{% for child in children %}
+    <table class="check-your-answers" style="table-layout: fixed; width: 100%">
+        <colgroup>
+            <col class="td">
+            <col class="td">
+            <col class="change-answer">
+        </colgroup>
+
+        <thead>
+            <tr>
+                <th colspan="3">
+                    <div class="heading-medium">
+                        {{ child.full_name }}
+                    </div>
+                </th>
+            </tr>
+        </thead>
+
+        <tbody>
+           <tr>
+                <td style="word-wrap: break-word" class=summary-column>
+                    Full name
+                </td>
+                <td style="word-wrap: break-word" class=summary-column>
+                    {{ child.full_name }}
+                </td>
+                <td class="change-answer">
+                    <a href="{% url 'Your-Children-Details-View' %}?id={{application_id}}" alt="Change full name">
+                        Change <span class="visuallyhidden">full name for {{ child.full_name }}</span>
+                    </a>
+                </td>
+            </tr>
+            <tr>
+                    <td style="word-wrap: break-word" class=summary-column>
+                        Date of birth
+                    </td>
+                    <td style="word-wrap: break-word" class=summary-column>
+                        {{ child.dob |date:"d F Y" }}
+                    </td>
+                   <td class="change-answer">
+                    <a href="{% url 'Your-Children-Details-View' %}?id={{application_id}}" alt="Change date of birth">
+                        Change <span class="visuallyhidden">date of birth for {{ child.full_name }}</span>
+                    </a>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="word-wrap: break-word" class=summary-column>
+                        Address
+                    </td>
+
+                    {% if child.lives_with_childminder %}
+                        <td style="word-wrap: break-word" class=summary-column>
+                            Same as your home address
+                        </td>
+                        <td class="change-answer">
+                            <a href="{% url 'Your-Children-Living-With-You-View' %}?id={{application_id}}" alt="Change address">
+                                Change <span class="visuallyhidden">address for {{ child.full_name }}</span>
+                            </a>
+                        </td>
+                    {% else %}
+                        {% if child.full_address.street_line2 and child.full_address.county %}
+                            <td style="word-wrap: break-word">
+                                {{child.full_address.street_line1}}
+                                </br>
+                                {{child.full_address.street_line2}}
+                                </br>
+                                {{child.full_address.town}}
+                                </br>
+                                {{child.full_address.county}}
+                                </br>
+                                {{child.full_address.postcode}}
+                            </td>
+                            {% elif child.full_address.street_line2 and not child.full_address.county %}
+                            <td style="word-wrap: break-word">
+                                {{child.full_address.street_line1}}
+                                </br>
+                                {{child.full_address.street_line2}}
+                                </br>
+                                {{child.full_address.town}}
+                                </br>
+                                {{child.full_address.postcode}}
+                            </td>
+                            {% elif not child.full_address.street_line2 and child.full_address.county %}
+                            <td style="word-wrap: break-word">
+                                {{child.full_address.street_line1}}
+                                </br>
+                                {{child.full_address.town}}
+                                </br>
+                                {{child.full_address.county}}
+                                </br>
+                                {{child.full_address.postcode}}
+                            </td>
+                            {% elif not child.full_address.street_line2 and not child.full_address.county %}
+                            <td style="word-wrap: break-word">
+                                {{child.full_address.street_line1}}
+                                </br>
+                                {{child.full_address.town}}
+                                </br>
+                                {{child.full_address.postcode}}
+                            </td>
+                        {% endif %}
+
+                        <td class="change-answer">
+                            <a href="{% url 'Your-Children-Address-Manual-View' %}?id={{application_id}}&child={{child.child_number}}"
+                               alt='Change your home address'>
+                                Change <span class="visuallyhidden">your home address</span>
+                            </a>
+                        </td>
+                    {% endif %}
+             </tr>
+        </tbody>
+    </table>
+{% endfor %}
+
+<div class="form-group">
+    <form action="{% url 'Your-Children-Summary-View' %}?id={{application_id}}" method="post">
+        {% csrf_token %}
+        <input type="submit" class="button" value="Confirm and continue"/>
+        <input type="hidden" value="{{application_id}}" name="id"/>
+    </form>
+</div>
+
+{% endblock %}
