@@ -18,11 +18,6 @@ WORKDIR /source
 RUN pip install -r requirements.txt
 ADD . /source/
 
-# If dev env install python depedencies specifically for dev
-RUN  if [ "`echo $PROJECT_SETTINGS | rev | cut -c -3 | rev`" = "dev" ]; then \
-        pip install -r requirements.dev.txt; \
-     fi
-
 RUN chmod +x /source/docker-entrypoint.sh
 EXPOSE 8000
 CMD ["/source/docker-entrypoint.sh"]

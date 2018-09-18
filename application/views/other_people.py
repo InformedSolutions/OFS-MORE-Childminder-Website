@@ -26,9 +26,9 @@ from ..business_logic import (health_check_email_resend_logic,
                               other_people_adult_details_logic,
                               other_people_children_details_logic,
                               rearrange_adults,
-                              rearrange_children,
+                              rearrange_children_in_home,
                               remove_adult,
-                              remove_child,
+                              remove_child_in_home,
                               reset_declaration,
                               show_resend_and_change_email)
 from ..forms import (
@@ -296,8 +296,8 @@ def other_people_children_details(request):
             # Disable the remove person button
             remove_button = False
         application = Application.objects.get(pk=application_id_local)
-        remove_child(application_id_local, remove_person)
-        rearrange_children(number_of_children, application_id_local)
+        remove_child_in_home(application_id_local, remove_person)
+        rearrange_children_in_home(number_of_children, application_id_local)
         # Generate a list of forms to iterate through in the HTML
         form_list = []
         for i in range(1, number_of_children + 1):

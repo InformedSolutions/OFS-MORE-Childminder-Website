@@ -1010,7 +1010,7 @@ def personal_details_own_children(request):
 
             # Update Application record
             own_children = form.cleaned_data.get('own_children')
-            
+
             if own_children == 'True':
                 application.own_children = True
             elif own_children == 'False':
@@ -1032,7 +1032,6 @@ def personal_details_own_children(request):
                 application.your_children_status = 'COMPLETED'
 
                 if Arc.objects.filter(application_id=app_id).count() > 0:
-
                     arc = Arc.objects.get(application_id=app_id)
                     arc.your_children_review = 'COMPLETED'
 

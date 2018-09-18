@@ -1,37 +1,39 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Personal details{% endblock %}
+{% block page_title %}Your child's address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
 {% include "back-button.html" %}
+
 <!-- Initialise error summary for page -->
 <div class="two-thirds">
 {{form.error_summary}}
 </div>
-
+<!-- Form -->
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <!-- Content -->
-    <h1 class="form-title heading-large">
-        Select childcare address
-    </h1>
-    <p>Where will you be looking after the children?</p>
-    <h2 class="form-title heading-small">Postcode</h2>
-    <p>{{postcode}} <a
-            href="{% url 'Personal-Details-Childcare-Address-View' %}?id={{application_id}}">Change</a></p>
+    <div class="two-thirds">
+        <h1 class="form-title heading-large">
+            Select {{ name }}'s address
+        </h1>
+        <h2 class="form-title heading-small">Postcode</h2>
+        <p>{{postcode}} <a
+                href="{% url 'Your-Children-Address-View' %}?id={{application_id}}&child={{child}}">Change</a></p>
+    </div>
     <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
     {{form.as_div}}
     {% csrf_token %}
-    <a href="{% url 'Personal-Details-Childcare-Address-Manual-View' %}?id={{application_id}}" name="manual"
-       id="manual">I cannot find my address in the list</a>
+    <a href="{% url 'Your-Children-Address-Manual-View' %}?id={{application_id}}&child={{child}}" name="manual"
+       id="manual">I
+        cannot find the address in the list</a>
     <input type="submit" class="button button-submit" value="Save and continue">
     <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    <input type="hidden" id="child" name="child" value="{{child}}"/>
 </form>
 <br>
 
-{% if personal_details_status == 'COMPLETED' or personal_details_status == 'FLAGGED' %}
 {% include 'return-to-list.html' %}
-{% endif %}
 
 {% endblock %}

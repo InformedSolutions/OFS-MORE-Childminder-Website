@@ -1,3 +1,5 @@
+from unittest import mock
+
 from django.core.management import call_command
 from django.test import TestCase
 from .base import ApplicationTestBase
@@ -350,16 +352,23 @@ class AdultInHomeTests(TestCase, ApplicationTestBase):
         self.assertEqual(response.resolver_match.view_name, 'Health-Check-Summary')
 
     def test_can_get_confirmation_page(self):
-        self.authenticate_client()
+        with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
+                mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
+                mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
+            notify_connection_test_mock.return_value.status_code = 201
+            magic_link_email_mock.return_value.status_code = 201
+            magic_link_text_mock.return_value.status_code = 201
 
-        endpoint = reverse('Health-Check-Thank-You') + '?person_id=a82295f2-d3a1-4ccc-85f6-ac3acc028265'
+            self.authenticate_client()
 
-        response = self.client.get(
-            endpoint,
-            follow=True
-        )
+            endpoint = reverse('Health-Check-Thank-You') + '?person_id=a82295f2-d3a1-4ccc-85f6-ac3acc028265'
 
-        self.assertEqual(response.status_code, 200)
+            response = self.client.get(
+                endpoint,
+                follow=True
+            )
 
-        # Check user is returned to details page
-        self.assertEqual(response.resolver_match.view_name, 'Health-Check-Thank-You')
+            self.assertEqual(response.status_code, 200)
+
+            # Check user is returned to details page
+            self.assertEqual(response.resolver_match.view_name, 'Health-Check-Thank-You')
