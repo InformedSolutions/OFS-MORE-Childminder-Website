@@ -127,7 +127,7 @@ urlpatterns = [
         name='Other-People-Children-Question-View'),
     url(r'^people/children-details/', views.other_people_children_details,
         name='Other-People-Children-Details-View'),
-    url(r'^other-people/approaching-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
+    url(r'^other-people/children-turning-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
     url(r'^people/check-answers/', views.other_people_summary, name='Other-People-Summary-View'),
     url(r'^health-check/(?P<id>[\w-]+)/$', health_check_login.validate_magic_link, name='Health-Check-Authentication'),
     url(r'^health-check/birth-date', dob_auth.DobAuthView.as_view(), name='Health-Check-Dob'),
