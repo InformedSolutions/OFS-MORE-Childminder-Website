@@ -1,5 +1,6 @@
 from django.http import HttpResponseRedirect
 
+from application.utils import get_id
 from application.views.PITH_views.base_views.PITH_radio_view import PITHRadioView
 from application.forms.PITH_forms.PITH_adult_details_form import PITHAdultDetailsForm
 
@@ -21,8 +22,8 @@ class PITHAdultDetailsView(PITHRadioView):
             # Remove adult flagged for being removed.
             remove_adult(application_id, remove_person)
 
-            # Rearrange adults if an adult has been removed.
-            rearrange_adults(num_adults, application_id)
+        # Rearrange adults to remove empty spaces in adult list.
+        rearrange_adults(num_adults, application_id)
 
         return super().get(request, *args, **kwargs)
 

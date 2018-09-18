@@ -3,7 +3,6 @@ from govuk_forms.widgets import InlineRadioSelect, NumberInput
 
 from application.forms import ChildminderForms, childminder_dbs_duplicates_household_member_check
 from application.models import Application
-from govuk_forms import widgets as govuk_widgets
 
 from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
 from application.business_logic import update_adult_in_home
@@ -71,21 +70,6 @@ class PITHDBSCheckForm(ChildminderForms):
             required=True,
             error_messages={'required': 'Please say if this person is on the DBS update service'})
 
-    def clean_dbs_field_data(self):
-        """
-        DBS field validation
-        :return: DBS field string
-        """
-        cleaned_dbs_field = self.cleaned_data[self.dbs_field_name]
-        application = Application.objects.get(application_id=self.application_id)
-
-        if len(cleaned_dbs_field) != 12:
-            raise forms.ValidationError('Check your certificate: the number should be 12 digits long')
-        if childminder_dbs_duplicates_household_member_check(application, cleaned_dbs_field):
-            raise forms.ValidationError('Please enter a different DBS number. '
-                                        'You entered this number for someone in your childcare location')
-        return cleaned_dbs_field
-
     def clean(self):
         """
         Nullify fields
@@ -110,7 +94,7 @@ class PITHDBSCheckForm(ChildminderForms):
                 if cleaned_dbs_field is None:
                     self.add_error(self.dbs_field_name, 'Please say if this person has an Ofsted DBS check')
                 elif len(str(cleaned_dbs_field)) != 12:
-                    self.add_error(self.dbs_field_name, 'Check your certificate: the number should be 12 digits long')
+                    self.add_error(self.dbs_field_name, 'Check the certificate: the number should be 12 digits long')
                 elif childminder_dbs_duplicates_household_member_check(application, cleaned_dbs_field):
                     self.add_error(self.dbs_field_name, 'Please enter a different DBS number. '
                                                         'You entered this number for someone in your childcare location')

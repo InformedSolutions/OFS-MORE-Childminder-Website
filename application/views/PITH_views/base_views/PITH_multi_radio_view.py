@@ -15,6 +15,9 @@ class PITHMultiRadioView(TemplateView, TemplateResponseMixin):
     def get_context_data(self, **kwargs):
         if 'form_list' not in kwargs:
             kwargs['form_list'] = self.get_form_list()
+        else:
+            kwargs['error_summary_list'] = [form.error_summary for form in kwargs['form_list']]
+            kwargs['error_summary_title'] = self.form_class.error_summary_title
         return super().get_context_data(**kwargs)
 
     def get_form_kwargs(self, kwargs):
