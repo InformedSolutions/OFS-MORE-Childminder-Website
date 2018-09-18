@@ -138,28 +138,31 @@ def __your_children_details_get_handler(request):
     else:
         number_of_children = __get_all_children_count(application_id)
 
-    remove_querystring_present = request.GET.get('remove') is not None
+    remove_request_querystring_present = (request.GET.get('remove') is not None)
 
-    remove_person = 0
+    child_to_remove = 0
 
     remove_button = True
 
-    if remove_querystring_present:
-        remove_person = int(request.GET.get('remove'))
+    if remove_request_querystring_present:
+        child_to_remove = int(request.GET.get('remove'))
 
-    # If there are no adults in the database
+    # If there are no children in the database
     if number_of_children == 0:
-        # Set the number of adults to 1 to initialise one instance of the form
+        # Set the number of children to 1 to initialise one instance of the form
         number_of_children = 1
-    # If there is only one adult in the database
+    # If there is only one children in the database
     if number_of_children == 1:
         # Disable the remove person button
         remove_button = False
+
     application = Application.objects.get(pk=application_id)
-    # Remove specific adult if remove button is pressed
-    remove_child(application_id, remove_person)
-    # Rearrange adult numbers if there are gaps
-    rearrange_children(number_of_children, application_id)
+
+    # Remove specific children if remove link is clicked
+    if remove_request_querystring_present:
+        remove_child(application_id, child_to_remove)
+        rearrange_children(number_of_children, application_id)
+
     # Generate a list of forms to iterate through in the HTML
     form_list = []
 
@@ -312,7 +315,7 @@ def __your_children_details_post_handler_for_adding_children(request, applicatio
             'application_id': application_id,
             'number_of_adults': number_of_children,
             'add_adult': int(number_of_children) + 1,
-            'remove_adult': int(number_of_children) - 1,
+            'remove_child': int(number_of_children) - 1,
             'remove_button': remove_button,
             'your_children_status': application.your_children_status
         }

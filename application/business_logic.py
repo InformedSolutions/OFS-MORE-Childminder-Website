@@ -680,7 +680,6 @@ def remove_child(application_id_local, remove_person):
     Method to remove a child from the database
     :param application_id_local: current application ID
     :param remove_person: child to remove (integer)
-    :return:
     """
     if Child.objects.filter(application_id=application_id_local, child=remove_person).exists() is True:
         Child.objects.get(application_id=application_id_local, child=remove_person).delete()
@@ -691,17 +690,12 @@ def rearrange_children(number_of_children, application_id_local):
     Method to rearrange numbers assigned to children
     :param number_of_children: number of children in database (integer)
     :param application_id_local: current application ID
-    :return:
     """
-    for i in range(1, number_of_children + 1):
-        # If there is a gap in the sequence of child numbers
-        if Child.objects.filter(application_id=application_id_local, child=i).count() == 0:
-            next_child = i + 1
-            # If there is a child that has the next number in the sequence, assign the missing number
-            if Child.objects.filter(application_id=application_id_local, child=next_child).count() != 0:
-                next_child_record = ChildInHome.objects.get(application_id=application_id_local, child=next_child)
-                next_child_record.child = i
-                next_child_record.save()
+    children_records = Child.objects.filter(application_id=application_id_local).order_by('child')
+
+    for index, child_record in enumerate(children_records):
+        child_record.child = index + 1
+        child_record.save()
 
 
 def remove_child_in_home(application_id_local, remove_person):

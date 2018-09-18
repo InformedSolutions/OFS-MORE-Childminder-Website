@@ -283,6 +283,38 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
         self.assertFalse(self.test_2_forename in str(get_removed_response.content))
 
     @tag('http')
+    def test_can_remove_first_child_when_multiple_present(self):
+        self.__submit_test_children_details()
+
+        # Fetch record to pull ID of child
+        first_child_record = Child.objects.filter(application_id=self.app_id, first_name=self.test_1_forename).first()
+
+        get_response = self.client.get(
+            reverse('Your-Children-Details-View'),
+            {
+                'id': self.app_id,
+                'children': '2'
+            },
+            follow=True
+        )
+
+        self.assertEqual(get_response.status_code, 200)
+        self.assertTrue(self.test_2_forename in str(get_response.content))
+
+        get_removed_response = self.client.get(
+            reverse('Your-Children-Details-View'),
+            {
+                'id': self.app_id,
+                'children': '2',
+                'remove': first_child_record.child,
+            },
+            follow=True
+        )
+
+        self.assertEqual(get_removed_response.status_code, 200)
+        self.assertFalse(self.test_1_forename in str(get_removed_response.content))
+
+    @tag('http')
     def test_child_names_shown_on_children_living_with_you_page(self):
         response = self.__submit_test_children_details()
 
