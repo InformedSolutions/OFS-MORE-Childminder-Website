@@ -31,14 +31,12 @@ from ..business_logic import (health_check_email_resend_logic,
                               remove_child,
                               reset_declaration,
                               show_resend_and_change_email)
-from ..forms import (OtherPeopleAdultDBSForm,
+from ..forms import (
                      OtherPeopleAdultDetailsForm,
-                     OtherPeopleAdultQuestionForm,
                      OtherPeopleApproaching16Form,
                      OtherPeopleChildrenDetailsForm,
                      OtherPeopleChildrenQuestionForm,
                      OtherPeopleEmailConfirmationForm,
-                     OtherPeopleGuidanceForm,
                      OtherPeopleResendEmailForm,
                      OtherPeopleSummaryForm)
 from ..models import (AdultInHome,

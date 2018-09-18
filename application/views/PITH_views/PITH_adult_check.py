@@ -9,7 +9,7 @@ from application.utils import get_id
 class PITHAdultCheckView(PITHRadioView):
     template_name = 'PITH_templates/PITH_adult_check.html'
     form_class = PITHAdultCheckForm
-    success_url = ('PITH-Adult-Details-View', 'PITH-Children-Check-View')
+    success_url = ('PITH-Adult-Details-View', 'Other-People-Children-Question-View')
     application_field_name = 'adults_in_home'
 
     def form_valid(self, form):

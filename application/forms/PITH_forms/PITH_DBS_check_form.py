@@ -7,6 +7,7 @@ from application.models import Application
 from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
 from application.business_logic import update_adult_in_home
 
+
 class PITHDBSCheckForm(ChildminderForms):
     """
     GOV.UK form for the People in the Home: Non generic form for the DBSCheckView.
@@ -28,10 +29,12 @@ class PITHDBSCheckForm(ChildminderForms):
         self.dbs_field_name = self.dbs_field + str(self.adult.pk)
         self.on_update_field_name = self.on_update_field + str(self.adult.pk)
 
-        self.base_fields = {}
-        self.base_fields[self.dbs_field_name] = self.get_dbs_field_data()
-        self.base_fields[self.on_update_field_name] = self.get_on_update_field_data()
-        self.base_fields[self.capita_field_name] = self.get_capita_field_data()
+        self.base_fields = {
+            self.dbs_field_name: self.get_dbs_field_data(),
+            self.on_update_field_name: self.get_on_update_field_data(),
+            self.capita_field_name: self.get_capita_field_data()
+        }
+
         self.reveal_conditionally = self.get_reveal_conditionally()
 
         super().__init__(*args, **kwargs)
@@ -63,10 +66,14 @@ class PITHDBSCheckForm(ChildminderForms):
                                   widget=dbs_certificate_number_widget)
 
     def get_on_update_field_data(self):
+        on_update_widget = ConditionalPostInlineRadioSelect()
+        on_update_widget.input_classes = 'block'
+        on_update_widget.field_group_classes = 'inline form-block'
+
         return forms.ChoiceField(
             label='Are they on the DBS update service?',
             choices=self.get_options(),
-            widget=ConditionalPostInlineRadioSelect,
+            widget=on_update_widget,
             required=True,
             error_messages={'required': 'Please say if this person is on the DBS update service'})
 

@@ -50,18 +50,13 @@ class PITHRadioView(FormView):
 
     def get_context_data(self, **kwargs):
         application_id = get_id(self.request)
-        application_status = get_application(application_id, 'application_status')
-        form = self.get_form()
-
-        if application_status == 'FURTHER_INFORMATION':
-            form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem on this page'
-
-        form.check_flag()
 
         context = {'id': application_id}
 
         if 'form' not in kwargs:
+            form = self.get_form()
+            form.check_flag()
+
             context['form'] = form
 
         return super().get_context_data(**context, **kwargs)

@@ -7,7 +7,9 @@
 
 {% include "back-button.html" %}
 <div class="two-thirds">
-    {{form.error_summary}}
+    {% if error_summary_list %}
+        {% include "PITH_templates/PITH_error_summary.html" %}
+    {% endif %}
 
     <form method="post" novalidate>
         <div class="form-group">

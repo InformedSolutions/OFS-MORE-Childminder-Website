@@ -101,7 +101,13 @@ urlpatterns = [
     url(r'^people/adults-apply/$', PITH_views.PITHApplyView.as_view(), name='PITH-Apply-View'),
 
     #Children
-    url(r'^people/children/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
+    url(r'^people/children/temporary/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
+    url(r'^people/children/$', views.other_people_children_question,
+        name='Other-People-Children-Question-View'),
+    url(r'^people/children-details/', views.other_people_children_details,
+        name='Other-People-Children-Details-View'),
+    url(r'^other-people/approaching-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
+    url(r'^people/check-answers/', views.other_people_summary, name='Other-People-Summary-View'),
 
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),
     url(r'^health/booklet/', views.health_booklet, name='Health-Booklet-View'),
@@ -127,12 +133,6 @@ urlpatterns = [
         name='References-Second-Reference-Contact-Details-View'),
     url(r'^references/check-answers/', views.references_summary, name='References-Summary-View'),
     url(r'^registration-rules/', TemplateView.as_view(template_name='registration-rules.html'), name='Registration-Rules'),
-    url(r'^people/children/old/', views.other_people_children_question,
-        name='Other-People-Children-Question-View'),
-    url(r'^people/children-details/', views.other_people_children_details,
-        name='Other-People-Children-Details-View'),
-    url(r'^other-people/approaching-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
-    url(r'^people/check-answers/', views.other_people_summary, name='Other-People-Summary-View'),
     url(r'^health-check/(?P<id>[\w-]+)/$', health_check_login.validate_magic_link, name='Health-Check-Authentication'),
     url(r'^health-check/birth-date', dob_auth.DobAuthView.as_view(), name='Health-Check-Dob'),
     url(r'^health-check/adults', guidance.Guidance.as_view(), name='Health-Check-Guidance'),
