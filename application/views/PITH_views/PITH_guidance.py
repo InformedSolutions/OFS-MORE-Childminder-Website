@@ -12,7 +12,7 @@ class PITHGuidanceView(PITHTemplateView):
         # Update task status if flagged or completed (people_in_home_status)
         people_in_home_status = get_application(application_id, 'people_in_home_status')
 
-        if people_in_home_status is 'NOT_STARTED':
+        if people_in_home_status == 'NOT_STARTED':
             # Update the task status to 'IN_PROGRESS' from 'FLAGGED'
             update_application(application_id, 'people_in_home_status', 'IN_PROGRESS')
 

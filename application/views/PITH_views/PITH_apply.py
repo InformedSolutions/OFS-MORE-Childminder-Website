@@ -5,7 +5,7 @@ from application.views.PITH_views.base_views.PITH_template_view import PITHTempl
 
 class PITHApplyView(PITHTemplateView):
     template_name = 'PITH_templates/PITH_apply.html'
-    success_url = 'PITH-Children-Check-View'
+    success_url = 'Other-People-Children-Question-View'
 
     def get_context_data(self, **kwargs):
         application_id = get_id(self.request)
