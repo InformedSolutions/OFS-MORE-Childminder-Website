@@ -1,11 +1,11 @@
 """
-Tests targetting the payment process
+Tests targetting the Your Children task
 """
 
 from unittest import mock
 
 from django.test import TestCase, tag
-from django.urls import reverse, resolve
+from django.urls import reverse
 
 from .base import ApplicationTestBase
 from ...models import Child, ChildAddress

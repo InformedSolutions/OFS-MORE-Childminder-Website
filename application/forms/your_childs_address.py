@@ -10,7 +10,7 @@ from ..models import ChildAddress
 
 class ChildAddressForm(ChildminderForms):
     """
-    GOV.UK form for the Your personal details: home address page for postcode search
+    GOV.UK form for the Your children's address page for postcode search
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
@@ -20,7 +20,7 @@ class ChildAddressForm(ChildminderForms):
 
     def __init__(self, *args, **kwargs):
         """
-        Method to configure the initialisation of the Your personal details: home address form for postcode search
+        Method to configure the initialisation of the Your children's address form for postcode search
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
@@ -47,7 +47,7 @@ class ChildAddressForm(ChildminderForms):
 
 class YourChildManualAddressForm(ChildminderForms):
     """
-    GOV.UK form for the Your personal details: home address page for manual entry
+    GOV.UK form for the Your children's address page for manual entry
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
@@ -64,7 +64,7 @@ class YourChildManualAddressForm(ChildminderForms):
 
     def __init__(self, *args, **kwargs):
         """
-        Method to configure the initialisation of the Your personal details: home address form for manual entry
+        Method to configure the initialisation of the Your children's address form for manual entry
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
@@ -145,7 +145,7 @@ class YourChildManualAddressForm(ChildminderForms):
 
 class YourChildrenAddressLookupForm(ChildminderForms):
     """
-    GOV.UK form for the Your personal details: home address page for postcode search results
+    GOV.UK form for the Your children's address page for postcode search results
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
