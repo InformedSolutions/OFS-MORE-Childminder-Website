@@ -61,7 +61,8 @@ class PITHDBSCheckView(PITHMultiRadioView):
             initial_context.update({
                 self.capita_field + str(adult.pk): adult.capita,
                 self.dbs_field + str(adult.pk): adult.dbs_certificate_number,
-                self.on_update_field + str(adult.pk): adult.on_update
+                self.on_update_field + str(adult.pk): adult.on_update,
+                self.dbs_field + "_no_update" + str(adult.pk): adult.dbs_certificate_number
             })
 
         return initial_context

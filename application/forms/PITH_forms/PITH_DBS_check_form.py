@@ -121,7 +121,7 @@ class PITHDBSCheckForm(ChildminderForms):
         elif len(str(cleaned_dbs_value)) != 12:
             self.add_error(field_name,
                            'Check the certificate: the number should be 12 digits long')
-        elif childminder_dbs_duplicates_household_member_check(application, cleaned_dbs_value):
+        elif childminder_dbs_duplicates_household_member_check(application, cleaned_dbs_value, self.adult):
             self.add_error(field_name, 'Please enter a different DBS number. '
                                        'You entered this number for someone in your childcare location')
         else:
