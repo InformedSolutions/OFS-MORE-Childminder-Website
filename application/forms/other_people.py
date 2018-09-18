@@ -44,7 +44,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
                                 error_messages={'required': "Please enter their last name"})
     date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980', error_messages={
         'required': "Please enter the full date, including the day, month and year"})
-    relationship = forms.CharField(label='How are they related connected to you or your application?',
+    relationship = forms.CharField(label='How are they connected to you or your application?',
                                    help_text='For example, husband, daughter, assistant',
                                    required=True,
                                    error_messages={'required': "Please say how the person is related to you"})
