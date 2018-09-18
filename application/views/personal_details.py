@@ -499,7 +499,7 @@ def personal_details_location_of_care(request):
                 if Arc.objects.filter(application_id=app_id).count() > 0:
                     arc = Arc.objects.get(application_id=app_id)
                     arc.your_children_review = 'COMPLETED'
-                arc.save()
+                    arc.save()
 
                 # Set working in other childminder home to false
                 application.working_in_other_childminder_home = False
@@ -1039,14 +1039,14 @@ def personal_details_own_children(request):
 
                     if arc.your_children_review != 'FLAGGED':
                         arc.your_children_review = 'NOT_STARTED'
-                    arc.save()
+                        arc.save()
             else:
                 application.your_children_status = 'COMPLETED'
 
                 if Arc.objects.filter(application_id=app_id).count() > 0:
                     arc = Arc.objects.get(application_id=app_id)
                     arc.your_children_review = 'COMPLETED'
-                arc.save()
+                    arc.save()
 
             application.date_updated = current_date
             application.save()
