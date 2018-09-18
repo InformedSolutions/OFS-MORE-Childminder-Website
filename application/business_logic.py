@@ -22,7 +22,7 @@ from .models import (AdultInHome,
                      FirstAidTraining,
                      HealthDeclarationBooklet,
                      Reference,
-                     UserDetails, Child)
+                     UserDetails, Child, ChildAddress)
 
 from .utils import unique_values, get_first_duplicate_index, return_last_duplicate_index, \
     get_duplicate_list_entry_indexes
@@ -232,6 +232,25 @@ def personal_home_address_logic(app_id, form):
         home_address_record.postcode = postcode
 
     return home_address_record
+
+
+def child_address_logic(app_id, child, form):
+    """
+    Business logic to create or update a child address record with address details
+    :param app_id: A string object containing the current application ID
+    :param child: A numerical identifier for the child
+    :param form: A form object containing the data to be stored
+    :return: an ChildAddress object to be saved
+    """
+
+    child_address = ChildAddress.objects.get(application_id=app_id, child=child)
+    child_address.street_line1 = form.cleaned_data.get('street_line1')
+    child_address.street_line2 = form.cleaned_data.get('street_line2')
+    child_address.town = form.cleaned_data.get('town')
+    child_address.county = form.cleaned_data.get('county')
+    child_address.postcode = form.cleaned_data.get('postcode')
+
+    return child_address
 
 
 def personal_location_of_care_logic(application_id_local, form):

@@ -11,7 +11,9 @@ from ..forms import YourChildrenGuidanceForm, YourChildrenDetailsForm, YourChild
     YourChildrenSummaryForm, YourChildrenAddressLookupForm, YourChildManualAddressForm
 from ..models import Application, Child, ChildAddress
 from .. import status, address_helper
-from ..business_logic import remove_child, rearrange_children, your_children_details_logic, reset_declaration
+from ..business_logic import remove_child, rearrange_children, your_children_details_logic, reset_declaration, \
+    child_address_logic
+
 
 def __get_first_child_number_for_address_entry(application_id):
     """
@@ -577,12 +579,23 @@ def __your_children_address_selection_post_handler(request):
 
 
 def your_children_address_manual(request):
+    """
+    View logic implementation for managing the manual address entry page in the Your Children task
+    :param request: inbound HTTP request object using either a GET or POST method
+    :return: Either a redirect to the next section in the task workflow or a rendered template of the requested page
+    """
     if request.method == 'GET':
         return __your_children_address_manual_get_handler(request)
     if request.method == 'POST':
         return _your_children_address_manual_post_handler(request)
 
+
 def __your_children_address_manual_get_handler(request):
+    """
+    View logic implementation for managing GET requests to the manual address entry page in the Your Children task
+    :param request: inbound HTTP request
+    :return: Manual address entry page
+    """
     application_id_local = request.GET["id"]
     child = request.GET["child"]
 
@@ -607,7 +620,50 @@ def __your_children_address_manual_get_handler(request):
 
 
 def _your_children_address_manual_post_handler(request):
-    return None
+    current_date = timezone.now()
+
+    application_id_local = request.POST["id"]
+    child = request.POST["child"]
+    application = Application.objects.get(pk=application_id_local)
+
+    form = YourChildManualAddressForm(request.POST, id=application_id_local, child=child)
+    form.remove_flag()
+
+    if form.is_valid():
+
+        child_address_record = child_address_logic(application_id_local, child, form)
+        child_address_record.save()
+        application = Application.objects.get(pk=application_id_local)
+        application.date_updated = current_date
+        application.save()
+
+        if Application.objects \
+                .get(pk=application_id_local) \
+                .personal_details_status != 'COMPLETED':
+            status.update(application_id_local, 'your_children_status', 'IN_PROGRESS')
+
+        reset_declaration(application)
+
+        # Recurse through querystring params
+        next_child = __get_next_child_number_for_address_entry(application_id_local, int(child))
+
+        if next_child is None:
+            return HttpResponseRedirect(reverse('Your-Children-Summary-View') + '?id=' +
+                                        application_id_local)
+
+        return HttpResponseRedirect(
+            reverse('Your-Children-Address-View') + '?id=' + application_id_local + '&child=' + str(next_child))
+    else:
+        form.error_summary_title = 'There was a problem with your address'
+        if application.application_status == 'FURTHER_INFORMATION':
+            form.error_summary_template_name = 'returned-error-summary.html'
+            form.error_summary_title = 'There was a problem'
+        variables = {
+            'form': form,
+            'application_id': application_id_local,
+            'personal_details_status': application.personal_details_status
+        }
+        return render(request, 'your-children-address-manual.html', variables)
 
 
 
