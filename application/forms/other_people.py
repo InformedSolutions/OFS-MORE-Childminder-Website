@@ -74,12 +74,12 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
 
     first_name = forms.CharField(label='First name', required=True,
                                  error_messages={'required': "Please enter their first name"})
-    middle_names = forms.CharField(label='Middle names (if you have any on your DBS check)', required=False)
+    middle_names = forms.CharField(label='Middle names (if they have any on your DBS check)', required=False)
     last_name = forms.CharField(label='Last name', required=True,
                                 error_messages={'required': "Please enter their last name"})
     date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980', error_messages={
         'required': "Please enter the full date, including the day, month and year"})
-    relationship = forms.CharField(label='How are they related to you?', help_text='For instance, husband or daughter',
+    relationship = forms.CharField(label='How are they connected to you or your application?', help_text='For example, husband, daughter, assistant',
                                    required=True,
                                    error_messages={'required': "Please say how the person is related to you"})
     email_address = forms.CharField(label='Email address',
