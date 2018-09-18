@@ -21,8 +21,11 @@ def __get_first_child_number_for_address_entry(application_id):
     :param application_id: the application identifier to be queried against
     :return: the next child number or None if no more children require address details to be provided
     """
-    first_child = Child.objects.filter(application_id=application_id, lives_with_childminder=False).order_by('child').first()
+
+    first_child = Child.objects.filter(application_id=application_id, lives_with_childminder=False).order_by(
+        'child').first()
     return first_child.child
+
 
 def __get_next_child_number_for_address_entry(application_id, current_child):
     """
@@ -31,6 +34,7 @@ def __get_next_child_number_for_address_entry(application_id, current_child):
     :param current_child: the current child information is being supplied for
     :return: the next child number or None if no more children require address details to be provided
     """
+
     if __get_children_not_living_with_childminder_count(application_id) > current_child:
         return current_child + 1
     else:
@@ -39,7 +43,7 @@ def __get_next_child_number_for_address_entry(application_id, current_child):
 
 def __get_all_children_count(application_id):
     """
-    Helper method for providing a count of how many children are associated with a childminder
+    Helper method for providing a count of all children are associated with a childminder
     :param application_id: the application identifier to be queried against
     :return: a count of of how many children do not live a childminder
     """
@@ -52,6 +56,7 @@ def __get_children_not_living_with_childminder_count(application_id):
     :param application_id: the application identifier to be queried against
     :return: a count of of how many children do not live a childminder
     """
+
     return Child.objects.filter(application_id=application_id, lives_with_childminder=False).count()
 
 
@@ -61,6 +66,7 @@ def your_children_guidance(request):
     :param request: a request object used to generate the HttpResponse
     :return: a routed request to either the guidance page or the next page in the workflow
     """
+
     if request.method == 'GET':
         return __your_children_guidance_get_handler(request)
     if request.method == 'POST':
@@ -74,17 +80,17 @@ def __your_children_guidance_get_handler(request):
     :return: an HttpResponse object with the rendered guidance page template
     """
 
-    app_id = request.GET["id"]
+    application_id = request.GET["id"]
     form = YourChildrenGuidanceForm()
-    application = Application.get_id(app_id=app_id)
+    application = Application.get_id(app_id=application_id)
     variables = {
         'form': form,
-        'application_id': app_id,
+        'application_id': application_id,
         'your_children_status': application.your_children_status,
     }
 
     if application.your_children_status != 'COMPLETED':
-        status.update(app_id, 'your_children_status', 'IN_PROGRESS')
+        status.update(application_id, 'your_children_status', 'IN_PROGRESS')
 
     return render(request, 'your-children-guidance.html', variables)
 
@@ -96,10 +102,10 @@ def __your_children_guidance_post_handler(request):
     :return: a redirect to a page asking for details of the children
     """
 
-    app_id = request.POST["id"]
+    application_id = request.POST["id"]
 
     return HttpResponseRedirect(
-        reverse('Your-Children-Details-View') + '?id=' + app_id)
+        reverse('Your-Children-Details-View') + '?id=' + application_id)
 
 
 def your_children_details(request):
@@ -108,6 +114,7 @@ def your_children_details(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered children's details capture template
     """
+
     if request.method == 'GET':
         return __your_children_details_get_handler(request)
 
@@ -117,16 +124,19 @@ def your_children_details(request):
 
 def __your_children_details_get_handler(request):
     """
-    Method for handling a request to view the "Your children details" page
+    Method for handling a GET request to view the "Your children details" page
+    :param request: a request object used to generate the HttpResponse
+    :return the "Your children details" page which allows a user to supply information regarding their children
     """
-    application_id_local = request.GET["id"]
+
+    application_id = request.GET["id"]
 
     number_of_children_present_in_querystring = request.GET.get('children') is not None
 
     if number_of_children_present_in_querystring:
         number_of_children = int(request.GET["children"])
     else:
-        number_of_children = __get_all_children_count(application_id_local)
+        number_of_children = __get_all_children_count(application_id)
 
     remove_querystring_present = request.GET.get('remove') is not None
 
@@ -145,43 +155,47 @@ def __your_children_details_get_handler(request):
     if number_of_children == 1:
         # Disable the remove person button
         remove_button = False
-    application = Application.objects.get(pk=application_id_local)
+    application = Application.objects.get(pk=application_id)
     # Remove specific adult if remove button is pressed
-    remove_child(application_id_local, remove_person)
+    remove_child(application_id, remove_person)
     # Rearrange adult numbers if there are gaps
-    rearrange_children(number_of_children, application_id_local)
+    rearrange_children(number_of_children, application_id)
     # Generate a list of forms to iterate through in the HTML
     form_list = []
 
     for i in range(1, number_of_children + 1):
         form = YourChildrenDetailsForm(
-            id=application_id_local, child=i, prefix=i)
+            id=application_id, child=i, prefix=i)
 
         form.check_flag()
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
             form.error_summary_title = "There was a problem (Child " + str(i) + ")"
-            is_review = True
-        else:
-            is_review = False
 
         form_list.append(form)
 
     variables = {
         'form_list': form_list,
-        'application_id': application_id_local,
+        'application_id': application_id,
         'number_of_children': number_of_children,
         'add_child': number_of_children + 1,
         'remove_child': number_of_children - 1,
         'remove_button': remove_button,
-        'your_children_status': application.your_children_status
     }
-    status.update(application_id_local, 'your_children_status', 'IN_PROGRESS')
+
+    status.update(application_id, 'your_children_status', 'IN_PROGRESS')
+
     return render(request, 'your-children-details.html', variables)
 
 
 def __your_children_details_post_handler(request):
-    application_id_local = request.POST["id"]
+    """
+    View handler for managing details of children being submitted
+    :param request: a request object used to generate the HttpResponse
+    :return the Your Children details page containing either validation errors or a redirect to either the summary page
+    or pages where a user gets asked for their respective addresses
+    """
+    application_id = request.POST["id"]
     number_of_children = request.POST["children"]
     current_date = timezone.now()
 
@@ -194,7 +208,7 @@ def __your_children_details_post_handler(request):
     if number_of_children == 1:
         remove_button = False
 
-    application = Application.objects.get(pk=application_id_local)
+    application = Application.objects.get(pk=application_id)
 
     form_list = []
     valid_list = []
@@ -202,7 +216,7 @@ def __your_children_details_post_handler(request):
     for i in range(1, int(number_of_children) + 1):
 
         form = YourChildrenDetailsForm(
-            request.POST, id=application_id_local, child=i, prefix=i)
+            request.POST, id=application_id, child=i, prefix=i)
         form.remove_flag()
         form_list.append(form)
         form.error_summary_title = 'There was a problem with the details (Child ' + str(
@@ -214,7 +228,7 @@ def __your_children_details_post_handler(request):
 
         if form.is_valid():
             child_record = your_children_details_logic(
-                application_id_local, form, i)
+                application_id, form, i)
             child_record.save()
             application.date_updated = current_date
             application.save()
@@ -224,26 +238,38 @@ def __your_children_details_post_handler(request):
             valid_list.append(False)
 
     if 'submit' in request.POST:
-        return __your_children_details_post_handler_for_submissions(request, application_id_local,
+        return __your_children_details_post_handler_for_submissions(request, application_id,
                                                                     valid_list, form_list, number_of_children,
                                                                     remove_button, application)
 
     if 'add_person' in request.POST:
-        return __your_children_details_post_handler_for_adding_children(request, application_id_local,
-                                                                    valid_list, form_list, number_of_children,
-                                                                    remove_button, application)
+        return __your_children_details_post_handler_for_adding_children(request, application_id,
+                                                                        valid_list, form_list, number_of_children,
+                                                                        remove_button, application)
 
 
-def __your_children_details_post_handler_for_submissions(request, application_id_local, valid_list, form_list,
+def __your_children_details_post_handler_for_submissions(request, application_id, valid_list, form_list,
                                                          number_of_children, remove_button, application):
+    """
+    A dedicated post handler for cases where submissions are being made to the "Your children details" page
+    :param request: a request object used to generate the HttpResponse
+    :param application_id: the unique identifier of an application
+    :param valid_list: a list of validated children details forms
+    :param form_list: a full list of forms containing children details
+    :param number_of_children: the total number of children associated with a childminder
+    :param remove_button: a boolean flag that switches the visiblity of the remove link
+    :param application: a full application object based on the supplied identifier
+    :return: a redirect to the next portion of the workflow (Your Children Living with you page)
+    """
+
     if False not in valid_list:
-        return HttpResponseRedirect(reverse('Your-Children-Living-With-You-View') + '?id=' + application_id_local)
+        return HttpResponseRedirect(reverse('Your-Children-Living-With-You-View') + '?id=' + application_id)
 
     # If there is an invalid form
     elif False in valid_list:
         variables = {
             'form_list': form_list,
-            'application_id': application_id_local,
+            'application_id': application_id,
             'number_of_children': number_of_children,
             'add_child': int(number_of_children) + 1,
             'remove_child': int(number_of_children) - 1,
@@ -253,25 +279,37 @@ def __your_children_details_post_handler_for_submissions(request, application_id
         return render(request, 'your-children-details.html', variables)
 
 
-def __your_children_details_post_handler_for_adding_children(request, application_id_local, valid_list, form_list,
+def __your_children_details_post_handler_for_adding_children(request, application_id, valid_list, form_list,
                                                              number_of_children, remove_button, application):
+    """
+    A dedicated post handler for cases where children are being added on the "Your children details" page
+    :param request: a request object used to generate the HttpResponse
+    :param application_id: the unique identifier of an application
+    :param valid_list: a list of validated children details forms
+    :param form_list: a full list of forms containing children details
+    :param number_of_children: the total number of children associated with a childminder
+    :param remove_button: a boolean flag that switches the visiblity of the remove link
+    :param application: a full application object based on the supplied identifier
+    :return: a refreshed "Your children details" page with new input fields for the additional child
+    """
+
     if False not in valid_list:
         variables = {
-            'application_id': application_id_local,
+            'application_id': application_id,
             'your_children_status': application.your_children_status
         }
         add_child = int(number_of_children) + 1
         add_child_string = str(add_child)
         # Reset task status to IN_PROGRESS if adults are updated
-        status.update(application_id_local, 'your_children_status', 'IN_PROGRESS')
+        status.update(application_id, 'your_children_status', 'IN_PROGRESS')
         return HttpResponseRedirect(reverse('Your-Children-Details-View') + '?id=' +
-                                    application_id_local + '&children=' + add_child_string + '&remove=0#person'
+                                    application_id + '&children=' + add_child_string + '&remove=0#person'
                                     + add_child_string, variables)
     # If there is an invalid form
     elif False in valid_list:
         variables = {
             'form_list': form_list,
-            'application_id': application_id_local,
+            'application_id': application_id,
             'number_of_adults': number_of_children,
             'add_adult': int(number_of_children) + 1,
             'remove_adult': int(number_of_children) - 1,
@@ -282,32 +320,13 @@ def __your_children_details_post_handler_for_adding_children(request, applicatio
         return render(request, 'your-children-details.html', variables)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 def your_children_living_with_you(request):
     """
     View handler for the "Your children addresses" page
+    :param request: a request object used to generate the HttpResponse
+    :return: a routed request to either the Your children address page or the next page in the workflow
     """
+
     if request.method == 'GET':
         return __your_children_living_with_you_get_handler(request)
     if request.method == 'POST':
@@ -317,14 +336,16 @@ def your_children_living_with_you(request):
 def __your_children_living_with_you_get_handler(request):
     """
     Method for handling a request to view the "Your children addresses" page
+    :param request: a request object used to generate the HttpResponse
+    :return the "Your children addresses" page
     """
 
-    application_id_local = request.GET["id"]
-    form = YourChildrenLivingWithYouForm(id=application_id_local)
+    application_id = request.GET["id"]
+    form = YourChildrenLivingWithYouForm(id=application_id)
 
     variables = {
         'form': form,
-        'application_id': application_id_local,
+        'application_id': application_id,
     }
 
     return render(request, 'your-children-living-with-you.html', variables)
@@ -333,92 +354,88 @@ def __your_children_living_with_you_get_handler(request):
 def __your_children_living_with_you_post_handler(request):
     """
     Method for handling a submission to the "Your children addresses" page
+    :param request: a request object used to generate the HttpResponse
+    :return: a redirect to the next portion of the workflow (Your Children Addresses with you page)
     """
 
-    application_id_local = request.POST["id"]
-    form = YourChildrenLivingWithYouForm(request.POST, id=application_id_local)
+    application_id = request.POST["id"]
+    form = YourChildrenLivingWithYouForm(request.POST, id=application_id)
 
     if not form.is_valid():
         variables = {
             'form': form,
-            'application_id': application_id_local,
+            'application_id': application_id,
         }
 
         return render(request, 'your-children-living-with-you.html', variables)
 
     # Mark children listed as living in the home
 
-    children = Child.objects.filter(application_id=application_id_local)
+    children = Child.objects.filter(application_id=application_id)
 
     for child in children:
         child.lives_with_childminder = \
             str(child.child) in form.cleaned_data['children_living_with_childminder_selection']
         child.save()
 
-    if __get_children_not_living_with_childminder_count(application_id_local) > 0:
-        child_number = __get_first_child_number_for_address_entry(application_id_local)
+    if __get_children_not_living_with_childminder_count(application_id) > 0:
+        child_number = __get_first_child_number_for_address_entry(application_id)
 
         return HttpResponseRedirect(reverse('Your-Children-Address-View') + '?id=' +
-                                    application_id_local + '&child=' + str(child_number))
+                                    application_id + '&child=' + str(child_number))
     else:
         return HttpResponseRedirect(reverse('Your-Children-Summary-View') + '?id=' +
-                                    application_id_local)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                                    application_id)
 
 
 def your_children_address_capture(request):
+    """
+    Method for rendering the page responsible for capturing details of a Child's address
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered children's address capture template
+    """
+
     if request.method == 'GET':
         return __your_children_address_capture_get_handler(request)
     if request.method == 'POST':
-        return __your_children_address_capture_post_handler(request)
+        return __your_children_address_lookup_post_handler(request)
 
 
 def __your_children_address_capture_get_handler(request):
-    application_id_local = request.GET["id"]
-    child = request.GET["child"]
-    form = ChildAddressForm(id=application_id_local, child=child)
+    """
+    View method for rendering the Your Children's address lookup page
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered children's address capture template
+    """
 
-    child_record = Child.objects.get(application_id=application_id_local, child=child)
+    application_id = request.GET["id"]
+    child = request.GET["child"]
+    form = ChildAddressForm(id=application_id, child=child)
+
+    child_record = Child.objects.get(application_id=application_id, child=child)
 
     variables = {
         'form': form,
         'name': child_record.get_full_name(),
-        'application_id': application_id_local,
+        'application_id': application_id,
         'child': child,
     }
 
     return render(request, 'your-children-address-lookup.html', variables)
 
 
-def __your_children_address_capture_post_handler(request):
-    application_id_local = request.POST["id"]
-    child = request.POST["child"]
-    form = ChildAddressForm(request.POST, id=application_id_local, child=child)
+def __your_children_address_lookup_post_handler(request):
+    """
+    Method for managing POST requests to lookup addresses from a postcode
+    :param request: a request object used to generate the HttpResponse
+    :return: a redirect to a list of matched addresses or a returned page including any validation errors.
+    """
 
-    application = Application.objects.get(application_id=application_id_local)
+    application_id = request.POST["id"]
+    child = request.POST["child"]
+    form = ChildAddressForm(request.POST, id=application_id, child=child)
+
+    application = Application.objects.get(application_id=application_id)
 
     if 'postcode-search' in request.POST:
 
@@ -427,7 +444,7 @@ def __your_children_address_capture_post_handler(request):
             postcode = form.cleaned_data.get('postcode')
 
             # Create or update address record based on presence test
-            if ChildAddress.objects.filter(application_id=application_id_local, child=child).count() == 0:
+            if ChildAddress.objects.filter(application_id=application_id, child=child).count() == 0:
                 child_address_record = ChildAddress(street_line1='',
                                                     street_line2='',
                                                     town='',
@@ -438,15 +455,15 @@ def __your_children_address_capture_post_handler(request):
                                                     child=child, )
                 child_address_record.save()
             else:
-                child_address_record = ChildAddress.objects.get(application_id=application_id_local, child=child)
+                child_address_record = ChildAddress.objects.get(application_id=application_id, child=child)
                 child_address_record.postcode = postcode
                 child_address_record.save()
 
-            if Application.get_id(app_id=application_id_local).personal_details_status != 'COMPLETED':
-                status.update(application_id_local, 'your_children_status', 'IN_PROGRESS')
+            if Application.get_id(app_id=application_id).personal_details_status != 'COMPLETED':
+                status.update(application_id, 'your_children_status', 'IN_PROGRESS')
 
             return HttpResponseRedirect(reverse('Your-Children-Address-Select-View')
-                                        + '?id=' + application_id_local + '&child=' + str(child))
+                                        + '?id=' + application_id + '&child=' + str(child))
         else:
             form.error_summary_title = 'There was a problem with your postcode'
 
@@ -454,41 +471,52 @@ def __your_children_address_capture_post_handler(request):
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
 
-            child_record = Child.objects.get(application_id=application_id_local, child=child)
+            child_record = Child.objects.get(application_id=application_id, child=child)
 
             variables = {
                 'form': form,
                 'name': child_record.get_full_name(),
-                'application_id': application_id_local,
+                'application_id': application_id,
                 'child': child,
             }
 
             return render(request, 'your-children-address-lookup.html', variables)
 
 
-
-
 def your_children_address_selection(request):
+    """
+    Method for rendering the page that allows a user to select their Child's address from a list of addresses that match
+    a supplied postcode
+    :param request: a request object used to generate the HttpResponse
+    :return: a redirect to the next portion of the workflow. This could be either another address capture request
+    (for other children), or a redirect to the task summary page.
+    """
+
     if request.method == 'GET':
         return __your_children_address_selection_get_handler(request)
     if request.method == 'POST':
         return __your_children_address_selection_post_handler(request)
 
 
-
-
 def __your_children_address_selection_get_handler(request):
-    app_id = request.GET["id"]
-    child = request.GET["child"]
-    application = Application.get_id(app_id=app_id)
+    """
+    Method for handling GET requests to the page that allows a user to select their Child's address from a list of
+    addresses that match a supplied postcode
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered children's address selection template
+    """
 
-    child_record = Child.objects.get(application_id=app_id, child=child)
-    child_address_record = ChildAddress.objects.get(application_id=app_id, child=child)
+    application_id = request.GET["id"]
+    child = request.GET["child"]
+    application = Application.get_id(app_id=application_id)
+
+    child_record = Child.objects.get(application_id=application_id, child=child)
+    child_address_record = ChildAddress.objects.get(application_id=application_id, child=child)
     postcode = child_address_record.postcode
     addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
 
     if len(addresses) != 0:
-        form = YourChildrenAddressLookupForm(id=app_id, choices=addresses)
+        form = YourChildrenAddressLookupForm(id=application_id, choices=addresses)
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
@@ -496,17 +524,16 @@ def __your_children_address_selection_get_handler(request):
 
         variables = {
             'form': form,
-            'application_id': app_id,
+            'application_id': application_id,
             'postcode': postcode,
             'name': child_record.get_full_name(),
             'child': child,
-            'your_children_status': application.childcare_type_status,
         }
 
         return render(request, 'your-childs-address.html', variables)
 
     else:
-        form = ChildAddressForm(id=app_id, child=child)
+        form = ChildAddressForm(id=application_id, child=child)
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
@@ -514,23 +541,30 @@ def __your_children_address_selection_get_handler(request):
 
         variables = {
             'form': form,
-            'application_id': app_id,
+            'application_id': application_id,
             'child': child,
-            'your_children_status': application.childcare_type_status,
         }
 
         return render(request, 'your-children-address-lookup.html', variables)
 
 
 def __your_children_address_selection_post_handler(request):
-    app_id = request.POST["id"]
+    """
+    Method for handling POST requests to the page that allows a user to select their Child's address from a list of
+    addresses that match a supplied postcode
+    :param request: a request object used to generate the HttpResponse
+    :return: a redirect to the next portion of the workflow. This could be either another address capture request
+    (for other children), or a redirect to the task summary page.
+    """
+
+    application_id = request.POST["id"]
     child = request.POST["child"]
-    application = Application.get_id(app_id=app_id)
-    child_record = Child.objects.get(application_id=app_id, child=str(child))
-    child_address_record = ChildAddress.objects.get(application_id=app_id, child=str(child))
+    application = Application.get_id(app_id=application_id)
+    child_record = Child.objects.get(application_id=application_id, child=str(child))
+    child_address_record = ChildAddress.objects.get(application_id=application_id, child=str(child))
     postcode = child_address_record.postcode
     addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
-    form = YourChildrenAddressLookupForm(request.POST, id=app_id, choices=addresses)
+    form = YourChildrenAddressLookupForm(request.POST, id=application_id, choices=addresses)
 
     if form.is_valid():
         selected_address_index = int(request.POST["address"])
@@ -547,17 +581,18 @@ def __your_children_address_selection_post_handler(request):
         child_address_record.country = 'United Kingdom'
         child_address_record.save()
 
-        if Application.get_id(app_id=app_id).your_children_status != 'COMPLETED':
-            status.update(app_id, 'your_children_status', 'IN_PROGRESS')
+        if Application.get_id(app_id=application_id).your_children_status != 'COMPLETED':
+            status.update(application_id, 'your_children_status', 'IN_PROGRESS')
 
-        # Recurse through querystring params
-        next_child = __get_next_child_number_for_address_entry(app_id, int(child))
+        next_child = __get_next_child_number_for_address_entry(application_id, int(child))
 
         if next_child is None:
             return HttpResponseRedirect(reverse('Your-Children-Summary-View') + '?id=' +
-                                        app_id)
+                                        application_id)
 
-        return HttpResponseRedirect(reverse('Your-Children-Address-View') + '?id=' + app_id + '&child=' + str(next_child))
+        # Recurse through use of querystring params
+        return HttpResponseRedirect(
+            reverse('Your-Children-Address-View') + '?id=' + application_id + '&child=' + str(next_child))
     else:
 
         form.error_summary_title = 'There was a problem finding your address'
@@ -569,10 +604,9 @@ def __your_children_address_selection_post_handler(request):
         variables = {
             'postcode': postcode,
             'form': form,
-            'application_id': app_id,
+            'application_id': application_id,
             'child': child,
             'name': child_record.get_full_name(),
-            'your_children_status': application.childcare_type_status,
         }
 
         return render(request, 'your-childs-address.html', variables)
@@ -596,12 +630,12 @@ def __your_children_address_manual_get_handler(request):
     :param request: inbound HTTP request
     :return: Manual address entry page
     """
-    application_id_local = request.GET["id"]
+    application_id = request.GET["id"]
     child = request.GET["child"]
 
-    child_record = Child.objects.get(application_id=application_id_local, child=child)
-    application = Application.objects.get(pk=application_id_local)
-    form = YourChildManualAddressForm(id=application_id_local, child=child)
+    child_record = Child.objects.get(application_id=application_id, child=child)
+    application = Application.objects.get(pk=application_id)
+    form = YourChildManualAddressForm(id=application_id, child=child)
     form.check_flag()
 
     if application.application_status == 'FURTHER_INFORMATION':
@@ -612,110 +646,74 @@ def __your_children_address_manual_get_handler(request):
         'form': form,
         'child': child,
         'name': child_record.get_full_name(),
-        'application_id': application_id_local,
-        'your_children_status': application.childcare_type_status,
+        'application_id': application_id,
     }
 
     return render(request, 'your-children-address-manual.html', variables)
 
 
 def _your_children_address_manual_post_handler(request):
+    """
+    Method for handling POST requests to the page that allows a user to enter their Child's address using a manual form
+    :param request: a request object used to generate the HttpResponse
+    :return: Either a redirect to the next section in the task workflow or a rendered template of the requested page
+    """
     current_date = timezone.now()
 
-    application_id_local = request.POST["id"]
+    application_id = request.POST["id"]
     child = request.POST["child"]
-    application = Application.objects.get(pk=application_id_local)
+    application = Application.objects.get(pk=application_id)
 
-    form = YourChildManualAddressForm(request.POST, id=application_id_local, child=child)
+    form = YourChildManualAddressForm(request.POST, id=application_id, child=child)
     form.remove_flag()
 
     if form.is_valid():
 
-        child_address_record = child_address_logic(application_id_local, child, form)
+        child_address_record = child_address_logic(application_id, child, form)
         child_address_record.save()
-        application = Application.objects.get(pk=application_id_local)
+        application = Application.objects.get(pk=application_id)
         application.date_updated = current_date
         application.save()
 
         if Application.objects \
-                .get(pk=application_id_local) \
+                .get(pk=application_id) \
                 .personal_details_status != 'COMPLETED':
-            status.update(application_id_local, 'your_children_status', 'IN_PROGRESS')
+            status.update(application_id, 'your_children_status', 'IN_PROGRESS')
 
         reset_declaration(application)
 
         # Recurse through querystring params
-        next_child = __get_next_child_number_for_address_entry(application_id_local, int(child))
+        next_child = __get_next_child_number_for_address_entry(application_id, int(child))
 
         if next_child is None:
             return HttpResponseRedirect(reverse('Your-Children-Summary-View') + '?id=' +
-                                        application_id_local)
+                                        application_id)
 
         return HttpResponseRedirect(
-            reverse('Your-Children-Address-View') + '?id=' + application_id_local + '&child=' + str(next_child))
+            reverse('Your-Children-Address-View') + '?id=' + application_id + '&child=' + str(next_child))
     else:
         form.error_summary_title = 'There was a problem with your address'
+        child_record = Child.objects.get(application_id=application_id, child=child)
+
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
             form.error_summary_title = 'There was a problem'
         variables = {
             'form': form,
-            'application_id': application_id_local,
-            'personal_details_status': application.personal_details_status
+            'child': child,
+            'name': child_record.get_full_name(),
+            'application_id': application_id,
         }
         return render(request, 'your-children-address-manual.html', variables)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 def your_children_summary(request):
     """
     View method for rendering the Your Children task summary page.
+    :param request: a request object used to generate the HttpResponse
+    :return: Either a redirect to the task list or the Your Children task summary page
     """
+
     if request.method == "GET":
         return __your_children_summary_get_handler(request)
     if request.method == "POST":
@@ -723,12 +721,18 @@ def your_children_summary(request):
 
 
 def __your_children_summary_get_handler(request):
-    application_id_local = request.GET["id"]
+    """
+    View method for rendering the Your Children task summary page
+    :param request: a request object used to generate the HttpResponse
+    :return: The Your Children task summary page
+    """
+
+    application_id = request.GET["id"]
     form = YourChildrenSummaryForm()
 
     children_table = []
     children_living_with_childminder = []
-    children = Child.objects.filter(application_id=application_id_local)
+    children = Child.objects.filter(application_id=application_id)
 
     for child in children:
         dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)
@@ -737,7 +741,7 @@ def __your_children_summary_get_handler(request):
         full_address = None
 
         if not child.lives_with_childminder:
-            full_address = ChildAddress.objects.get(application_id=application_id_local, child=child.child)
+            full_address = ChildAddress.objects.get(application_id=application_id, child=child.child)
 
         child_details = collections.OrderedDict([
             ('child_number', child.child),
@@ -754,7 +758,7 @@ def __your_children_summary_get_handler(request):
     variables = {
         'page_title': 'Check your answers: your children',
         'form': form,
-        'application_id': application_id_local,
+        'application_id': application_id,
         'children': children_table,
         'children_living_with_childminder': ", ".join(children_living_with_childminder)
     }

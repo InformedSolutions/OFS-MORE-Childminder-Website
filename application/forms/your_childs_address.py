@@ -53,13 +53,13 @@ class YourChildManualAddressForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    street_line1 = forms.CharField(label='Address line 1', error_messages={
+    street_line1 = forms.CharField(label='Address line 1', required=True, error_messages={
         'required': 'Please enter the first line of your address'})
     street_line2 = forms.CharField(label='Address line 2', required=False)
-    town = forms.CharField(label='Town or city',
+    town = forms.CharField(label='Town or city', required=True,
                            error_messages={'required': 'Please enter the name of the town or city'})
     county = forms.CharField(label='County (optional)', required=False)
-    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode'})
+    postcode = forms.CharField(label='Postcode', required=True, error_messages={'required': 'Please enter your postcode'})
 
     def __init__(self, *args, **kwargs):
         """

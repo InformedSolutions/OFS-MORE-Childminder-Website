@@ -242,8 +242,12 @@ def child_address_logic(app_id, child, form):
     :param form: A form object containing the data to be stored
     :return: an ChildAddress object to be saved
     """
+    application = Application.objects.get(application_id=app_id)
+    child_address = ChildAddress(application_id=application)
 
-    child_address = ChildAddress.objects.get(application_id=app_id, child=child)
+    if ChildAddress.objects.filter(application_id=app_id, child=child).exists():
+        child_address = ChildAddress.objects.get(application_id=app_id, child=child)
+
     child_address.street_line1 = form.cleaned_data.get('street_line1')
     child_address.street_line2 = form.cleaned_data.get('street_line2')
     child_address.town = form.cleaned_data.get('town')

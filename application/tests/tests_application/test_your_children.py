@@ -41,6 +41,11 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
             self.TestAppPersonalDetailsNames()
 
     def __submit_test_children_details(self):
+        """
+        Test helper method for setting up test children in the Your Children Task
+        :return: HTTP response object from request library
+        """
+
         return self.client.post(
             reverse('Your-Children-Details-View'),
             {
@@ -59,6 +64,21 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
                 '2-date_of_birth_2': '2013',
                 'children': '2',
                 'submit': ''
+            },
+            follow=True
+        )
+
+    def __submit_no_children_living_with_childminder_response(self):
+        """
+        Test helper method for marking that no children live with the childminder in the Your Children Task
+        :return: HTTP response object from request library
+        """
+
+        return self.client.post(
+            reverse('Your-Children-Living-With-You-View'),
+            {
+                'id': self.app_id,
+                'children_living_with_childminder_selection': ['none'],
             },
             follow=True
         )
@@ -125,13 +145,11 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
         self.assertEqual(single_child_record.first_name, test_forename)
 
     def test_can_retrieve_previously_entered_child_details(self):
-        test_forename = 'TEST FORENAME'
-
         self.client.post(
             reverse('Your-Children-Details-View'),
             {
                 'id': self.app_id,
-                '1-first_name': test_forename,
+                '1-first_name': self.test_1_forename,
                 '1-middle_names': 'TEST MIDDLE NAMES',
                 '1-last_name': 'TEST LAST NAME',
                 '1-date_of_birth_0': '22',
@@ -153,17 +171,15 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
         self.assertEqual(get_response.status_code, 200)
         self.assertEqual(get_response.resolver_match.view_name, 'Your-Children-Details-View')
-        self.assertTrue(test_forename in str(get_response.content))
+        self.assertTrue(self.test_1_forename in str(get_response.content))
 
     @tag('http')
     def test_error_raised_if_child_dob_makes_them_over_16(self):
-        test_forename = 'TEST FORENAME'
-
         response = self.client.post(
             reverse('Your-Children-Details-View'),
             {
                 'id': self.app_id,
-                '1-first_name': test_forename,
+                '1-first_name': self.test_1_forename,
                 '1-middle_names': 'TEST MIDDLE NAMES',
                 '1-last_name': 'TEST LAST NAME',
                 '1-date_of_birth_0': '22',
@@ -180,14 +196,41 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
         self.assertIsNotNone(response.context['errors']['date_of_birth'])
 
     @tag('http')
+    def test_error_raised_if_additional_child_dob_makes_them_over_16(self):
+        response = self.client.post(
+            reverse('Your-Children-Details-View'),
+            {
+                'id': self.app_id,
+                '1-first_name': self.test_1_forename,
+                '1-middle_names': 'TEST MIDDLE NAMES',
+                '1-last_name': 'TEST LAST NAME',
+                '1-date_of_birth_0': '22',
+                '1-date_of_birth_1': '1',
+                '1-date_of_birth_2': '2016',
+                '2-first_name': self.test_2_forename,
+                '2-middle_names': 'TEST SECOND MIDDLE NAMES',
+                '2-last_name': 'TEST SECOND LAST NAME',
+                '2-date_of_birth_0': '17',
+                '2-date_of_birth_1': '2',
+                '2-date_of_birth_2': '1990',
+                'children': '2',
+                'submit': ''
+            },
+            follow=True
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.resolver_match.view_name, 'Your-Children-Details-View')
+        self.assertIsNotNone(response.context['errors']['date_of_birth'])
+
+    @tag('http')
     def test_can_add_more_children(self):
-        test_forename = 'TEST FORENAME'
 
         response = self.client.post(
             reverse('Your-Children-Details-View'),
             {
                 'id': self.app_id,
-                '1-first_name': test_forename,
+                '1-first_name': self.test_1_forename,
                 '1-middle_names': 'TEST MIDDLE NAMES',
                 '1-last_name': 'TEST LAST NAME',
                 '1-date_of_birth_0': '22',
@@ -298,15 +341,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
     @tag('http')
     def test_asked_for_first_child_address_if_not_living_with_any_children(self):
         self.__submit_test_children_details()
-
-        response = self.client.post(
-            reverse('Your-Children-Living-With-You-View'),
-            {
-                'id': self.app_id,
-                'children_living_with_childminder_selection': ['none'],
-            },
-            follow=True
-        )
+        response = self.__submit_no_children_living_with_childminder_response()
 
         self.assertEqual(response.status_code, 200)
 
@@ -392,7 +427,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
             address_lookup_response_object = [(None, 2), ('0', 'test address string')]
 
-            test_address_line_1 =  'Informed Solutions'
+            test_address_line_1 = 'Informed Solutions'
 
             full_address_mock_response_object = {
                 'line1': test_address_line_1,
@@ -406,14 +441,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
             self.__submit_test_children_details()
 
-            self.client.post(
-                reverse('Your-Children-Living-With-You-View'),
-                {
-                    'id': self.app_id,
-                    'children_living_with_childminder_selection': ['none'],
-                },
-                follow=True
-            )
+            self.__submit_no_children_living_with_childminder_response()
 
             self.client.post(
                 reverse('Your-Children-Address-View'),
@@ -448,25 +476,99 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
             self.assertTrue(self.test_2_forename in str(postcode_selection_response.content))
             self.assertTrue('Find address' in str(postcode_selection_response.content))
 
+    @tag('http')
+    def test_can_render_manual_address_entry_page(self):
+            self.__submit_test_children_details()
+            self.__submit_no_children_living_with_childminder_response()
 
+            response = self.client.get(
+                reverse('Your-Children-Address-Manual-View'),
+                {
+                    'id': self.app_id,
+                    'child': '1',
+                },
+                follow=True
+            )
 
+            self.assertEqual(response.status_code, 200)
 
+            self.assertEqual(response.resolver_match.view_name, 'Your-Children-Address-Manual-View')
+            self.assertTrue('Address line 1' in str(response.content))
 
+    @tag('http')
+    def test_manual_address_required_field_validation_applied(self):
+        self.__submit_test_children_details()
+        self.__submit_no_children_living_with_childminder_response()
 
+        response = self.client.post(
+            reverse('Your-Children-Address-Manual-View'),
+            {
+                'id': self.app_id,
+                'child': '1',
+            },
+            follow=True
+        )
 
+        self.assertEqual(response.status_code, 200)
 
+        # Check user is redirected to capture page for second child
+        self.assertEqual(response.resolver_match.view_name, 'Your-Children-Address-Manual-View')
+        self.assertIsNotNone(response.context['errors']['street_line1'])
+        self.assertIsNotNone(response.context['errors']['town'])
+        self.assertIsNotNone(response.context['errors']['postcode'])
 
+    @tag('http')
+    def test_manual_address_required_field_validation_applied(self):
+        self.__submit_test_children_details()
+        self.__submit_no_children_living_with_childminder_response()
 
+        response = self.client.post(
+            reverse('Your-Children-Address-Manual-View'),
+            {
+                'id': self.app_id,
+                'child': '1',
+                'street_line1': 'Test Line 1',
+                'town': 'Test Town',
+                'postcode': 'testinvalidregex'
+            },
+            follow=True
+        )
 
+        self.assertEqual(response.status_code, 200)
 
+        # Check validation has been triggered against postcode field only
+        self.assertEqual(response.resolver_match.view_name, 'Your-Children-Address-Manual-View')
+        self.assertIsNotNone(response.context['errors']['postcode'])
 
+    @tag('http')
+    def test_can_add_manual_address_for_child(self):
+        self.__submit_test_children_details()
+        self.__submit_no_children_living_with_childminder_response()
 
+        test_address_line_1 = 'Test Line 1'
+        test_address_line_2 = 'Test Line 2'
+        test_town = 'Test Town'
+        test_county = 'Test County'
+        test_postcode = 'WA14 4PA'
 
-    # Test validation on postcode fields
+        response = self.client.post(
+            reverse('Your-Children-Address-Manual-View'),
+            {
+                'id': self.app_id,
+                'child': '1',
+                'street_line1': test_address_line_1,
+                'street_line2': test_address_line_2,
+                'town': test_town,
+                'county': test_county,
+                'postcode': test_postcode
+            },
+            follow=True
+        )
 
-    # Test address selection updates correct child
+        self.assertEqual(response.status_code, 200)
 
-    # Add manual address pages and relevant unit tests
+        # Check user is redirected to capture page for second child
+        self.assertEqual(response.resolver_match.view_name, 'Your-Children-Address-View')
 
     def test_if_child_not_living_with_childminder_asked_for_address(self):
         response = self.__submit_test_children_details()
