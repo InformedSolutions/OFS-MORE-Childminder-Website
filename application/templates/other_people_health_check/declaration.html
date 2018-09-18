@@ -13,11 +13,8 @@
     <p>We will also carry out background checks with social services as well as other organisations.</p>
     <p><a href="{% static 'Household members information on background checks.pdf'%}">Leaflet on background
         checks</a> (PDF, 174KB, 1 page)</p>
-    <p>By continuing, I confirm that</p>
-    <ul class="list list-bullet">
-        <li>I am suitable to be in regular contact with children</li>
-        <li>the information I have given is correct</li>
-    </ul>
+    <p>By continuing, I confirm that the information I have given is correct.</p>
+
     <div class="notice">
         <i class="icon icon-important icon-ofsted-download"
            style="background-image: url(/childminder/static/images/icon-important.png)">
@@ -30,6 +27,8 @@
             </ul>
         </strong>
     </div>
+    <br>
+    {{ form.as_div }}
     <br>
     <a href="{{ thank_you_url }}" class="button">Continue</a>
 </div>

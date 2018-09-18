@@ -1,15 +1,16 @@
+from django.views.generic import FormView
+
+from application.forms.other_person_health_check.declaration import OtherPeopleDeclarationForm
 from application.utils import build_url
-from application.views.other_people_health_check.BaseViews import BaseTemplateView
-from application.models import AdultInHome
 
 
-class Declaration(BaseTemplateView):
+class Declaration(FormView):
     """
     Template view to render the declaration template and navigate the user to the thank you page
     """
-
     template_name = 'other_people_health_check/declaration.html'
     success_url_name = 'Health-Check-Declaration'
+    form_class = OtherPeopleDeclarationForm
 
     def get_context_data(self, **kwargs):
         """
