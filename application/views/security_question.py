@@ -182,10 +182,11 @@ def get_security_question(app_id):
     """
     app = Application.objects.get(pk=app_id)
     acc = UserDetails.objects.get(application_id=app_id)
+    adults = AdultInHome.objects.filter(application_id=app_id)
     question = ''
     if app.criminal_record_check_status == 'COMPLETED':
         question = 'dbs'
-    elif app.people_in_home_status == 'COMPLETED' or app.people_in_home_status == 'WAITING':
+    elif app.people_in_home_status in ['COMPLETED', 'WAITING'] and len(adults) != 0:
         question = 'oldest'
     elif app.personal_details_status == 'COMPLETED':
         question = 'postcode'
