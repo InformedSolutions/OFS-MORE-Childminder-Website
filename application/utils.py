@@ -201,5 +201,7 @@ def get_duplicate_list_entry_indexes(list):
 def get_id(request):
     if request.GET.get('id'):
         return request.GET.get('id')
-    else:
+    elif request.POST.get('id'):
         return request.POST.get('id')
+    else:
+        raise ValueError("Couldn't retrieve id from request")

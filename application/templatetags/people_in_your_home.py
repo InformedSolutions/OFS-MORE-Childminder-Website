@@ -10,3 +10,7 @@ def subtract(value, arg):
 def list_index(value, arg):
     index = int(arg)
     return value[index]
+
+@register.filter(name='len')
+def list_index(value):
+    return len(value)

@@ -14,9 +14,7 @@ from ..models import (AdultInHome,
                                 ChildInHome,
                                 UserDetails)
 from ..utils import date_formatter
-from ..business_logic import childminder_dbs_number_duplication_check,\
-    household_member_dbs_form_duplicates_check,\
-    show_resend_and_change_email
+from ..business_logic import show_resend_and_change_email
 
 logger = logging.getLogger()
 
@@ -30,39 +28,6 @@ class OtherPeopleGuidanceForm(ChildminderForms):
     auto_replace_widgets = True
 
 
-class OtherPeopleAdultQuestionForm(ChildminderForms):
-    """
-    GOV.UK form for the People in your home: adult question page
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
-    error_summary_title = 'There was a problem on this page'
-    auto_replace_widgets = True
-
-    options = (
-        ('True', 'Yes'),
-        ('False', 'No')
-    )
-    adults_in_home = forms.ChoiceField(label='Does anyone aged 16 or over live or work in your home?', error_messages={
-        'required': "Tell us if anyone aged 16 or over lives or works in your home"}, choices=options,
-                                       widget=InlineRadioSelect, required=True)
-
-    def __init__(self, *args, **kwargs):
-        """
-        Method to configure the initialisation of the People in your home: adult question form
-        :param args: arguments passed to the form
-        :param kwargs: keyword arguments passed to the form, e.g. application ID
-        """
-        self.application_id_local = kwargs.pop('id')
-        super(OtherPeopleAdultQuestionForm, self).__init__(*args, **kwargs)
-        full_stop_stripper(self)
-        # If information was previously entered, display it on the form
-        self.fields['adults_in_home'].initial = Application.objects.get(
-            application_id=self.application_id_local).adults_in_home
-        self.pk = self.application_id_local
-        self.field_list = ['adults_in_home']
-
-
 class OtherPeopleAdultDetailsForm(ChildminderForms):
     """
     GOV.UK form for the People in your home: adult details page
@@ -74,12 +39,13 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
 
     first_name = forms.CharField(label='First name', required=True,
                                  error_messages={'required': "Please enter their first name"})
-    middle_names = forms.CharField(label='Middle names (if you have any on your DBS check)', required=False)
+    middle_names = forms.CharField(label='Middle names (if they have any on their DBS check) ', required=False)
     last_name = forms.CharField(label='Last name', required=True,
                                 error_messages={'required': "Please enter their last name"})
     date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980', error_messages={
         'required': "Please enter the full date, including the day, month and year"})
-    relationship = forms.CharField(label='How are they related to you?', help_text='For instance, husband or daughter',
+    relationship = forms.CharField(label='How are they connected to you or your application?',
+                                   help_text='For example, husband, daughter, assistant',
                                    required=True,
                                    error_messages={'required': "Please say how the person is related to you"})
     email_address = forms.CharField(label='Email address',
@@ -87,7 +53,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
 
     def __init__(self, *args, **kwargs):
         """
-        Method to configure the initialisation of the People in your home: adult details form
+        Method to configure the initialisation of the People in the home: adult details form
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
@@ -187,103 +153,16 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
                 raise forms.ValidationError('Their email address cannot be the same as another person in your home')
             return email_address
         else:
-            application = Application.objects.get(application_id=self.application_id_local)
-
-            if application.application_status == 'FURTHER_INFORMATION':
-                is_review = True
-            else:
-                is_review = False
 
             if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).exists():
                 adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
                 adult_health_check_status = adult_record.health_check_status
-                if not show_resend_and_change_email(adult_health_check_status, is_review):
-                    email_disabled = True
-                else:
-                    email_disabled = False
+                email_disabled = not show_resend_and_change_email(adult_health_check_status)
 
-            if not email_disabled:
-                raise forms.ValidationError('Please enter an email address')
-            else:
-                return self.fields['email_address'].initial
+                if email_disabled:
+                    return self.fields['email_address'].initial
 
-
-class OtherPeopleAdultDBSForm(ChildminderForms):
-    """
-    GOV.UK form for the People in your home: adult DBS page
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
-    auto_replace_widgets = True
-    error_summary_title = 'There was a problem with the DBS details'
-
-    widget_instance = NumberInput()
-    widget_instance.input_classes = 'form-control form-control-1-4'
-
-    dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
-                                                help_text='12-digit number on their certificate',
-                                                required=True,
-                                                widget=widget_instance,
-                                                error_messages={'required': "Please enter the DBS certificate number"})
-
-    def __init__(self, *args, **kwargs):
-        """
-        Method to configure the initialisation of the People in your home: adult DBS form
-        :param args: arguments passed to the form
-        :param kwargs: keyword arguments passed to the form, e.g. application ID
-        """
-        self.application_id_local = kwargs.pop('id')
-        self.adult = kwargs.pop('adult')
-        self.name = kwargs.pop('name')
-        super(OtherPeopleAdultDBSForm, self).__init__(*args, **kwargs)
-        full_stop_stripper(self)
-        # If information was previously entered, display it on the form
-        if AdultInHome.objects.filter(application_id=self.application_id_local, adult=self.adult).count() > 0:
-            adult_record = AdultInHome.objects.get(application_id=self.application_id_local, adult=self.adult)
-            self.fields['dbs_certificate_number'].initial = adult_record.dbs_certificate_number
-            self.pk = adult_record.adult_id
-            self.field_list = ['dbs_certificate_number']
-
-    def clean_dbs_certificate_number(self):
-        """
-        DBS certificate number validation
-        :return: integer
-        """
-        dbs_certification_key = str(self.prefix) + '-dbs_certificate_number'
-        dbs_certificate_number = self.data[dbs_certification_key]
-        if len(str(dbs_certificate_number)) > 12:
-            raise forms.ValidationError('The certificate number should be 12 digits long')
-        if len(str(dbs_certificate_number)) < 12:
-            raise forms.ValidationError('The certificate number should be 12 digits long')
-
-        form_check = household_member_dbs_form_duplicates_check(self.data)
-
-        if not form_check.dbs_numbers_unique:
-            if self.adult in form_check.duplicate_entry_indexes:
-                logger.debug('Received following form data for other adults DBS entries:' + str(self.data))
-                logger.debug('Marking adult ' + str(self.adult) + ' DBS number as duplicate')
-                self.add_error('dbs_certificate_number',
-                               'Please enter a different DBS number for each person')
-
-        application_id = self.data['id']
-        application = Application.objects.get(pk=application_id)
-
-        household_member_dbs_to_test = self['dbs_certificate_number'].data
-        childminder_dbs_check = childminder_dbs_number_duplication_check(application, household_member_dbs_to_test)
-
-        if childminder_dbs_check.duplicates_childminder_dbs:
-            self.add_error('dbs_certificate_number', 'Please enter a DBS number that is different from your own')
-
-        return dbs_certificate_number
-
-
-class OtherPeopleAdultPermissionForm(ChildminderForms):
-    """
-    GOV.UK form for the People in your home: adult permission page
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
-    auto_replace_widgets = True
+            raise forms.ValidationError('Please enter an email address')
 
 
 class OtherPeopleChildrenQuestionForm(ChildminderForms):

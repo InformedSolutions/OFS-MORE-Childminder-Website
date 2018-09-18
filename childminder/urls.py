@@ -14,6 +14,7 @@ from application import views, utils
 from application.views import security_question, magic_link, feedback
 from application.views.other_people_health_check import health_check_login, dob_auth, current_treatment, guidance, \
     declaration, serious_illness, hospital_admission, summary, thank_you
+from application.views import PITH_views
 
 urlpatterns = [
     url(r'^$', views.start_page, name='start-page.html'),
@@ -94,6 +95,32 @@ urlpatterns = [
     url(r'^criminal-record/post-certificate/', views.DBSPostView.as_view(), name='DBS-Post-View'),
     url(r'^criminal-record/check-answers/', views.DBSSummaryView.as_view(), name='DBS-Summary-View'),
 
+    # ======================= #
+    # People in the Home urls #
+    # ======================= #
+
+    url(r'^people/$', PITH_views.PITHGuidanceView.as_view(), name='PITH-Guidance-View'),
+
+    #Adults
+    url(r'^people/adults/$', PITH_views.PITHAdultCheckView.as_view(), name='PITH-Adult-Check-View'),
+    url(r'^people/adults-details/$', views.other_people_adult_details, name='PITH-Adult-Details-View'),
+    url(r'^people/adults-lived-abroad/$', PITH_views.PITHLivedAbroadView.as_view(), name='PITH-Lived-Abroad-View'),
+    url(r'^people/adults-checks-abroad/$', PITH_views.PITHAbroadCriminalView.as_view(), name='PITH-Abroad-Criminal-View'),
+    url(r'^people/adults-military-bases/$', PITH_views.PITHMilitaryView.as_view(), name='PITH-Military-View'),
+    url(r'^people/adults-MoD-checks/$', PITH_views.PITHMinistryView.as_view(), name='PITH-Ministry-View'),
+    url(r'^people/adult-dbs-checks/$', PITH_views.PITHDBSCheckView.as_view(), name='PITH-DBS-Check-View'),
+    url(r'^people/post-certificate/$', PITH_views.PITHPostView.as_view(), name='PITH-Post-View'),
+    url(r'^people/adults-apply/$', PITH_views.PITHApplyView.as_view(), name='PITH-Apply-View'),
+
+    #Children
+    url(r'^people/children/temporary/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
+    url(r'^people/children/$', views.other_people_children_question,
+        name='Other-People-Children-Question-View'),
+    url(r'^people/children-details/', views.other_people_children_details,
+        name='Other-People-Children-Details-View'),
+    url(r'^other-people/approaching-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
+    url(r'^people/check-answers/', views.other_people_summary, name='Other-People-Summary-View'),
+
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),
     url(r'^health/booklet/', views.health_booklet, name='Health-Booklet-View'),
     url(r'^health/check-answers/', views.health_check_answers, name='Health-Check-Answers-View'),
@@ -119,16 +146,6 @@ urlpatterns = [
     url(r'^references/check-answers/', views.references_summary, name='References-Summary-View'),
     url(r'^registration-rules/', TemplateView.as_view(template_name='registration-rules.html'),
         name='Registration-Rules'),
-    url(r'^people/$', views.other_people_guidance, name='Other-People-Guidance-View'),
-    url(r'^people/adults/', views.other_people_adult_question, name='Other-People-Adult-Question-View'),
-    url(r'^people/adults-details/', views.other_people_adult_details, name='Other-People-Adult-Details-View'),
-    url(r'^people/adult-dbs-details/', views.other_people_adult_dbs, name='Other-People-Adult-DBS-View'),
-    url(r'^people/children/', views.other_people_children_question,
-        name='Other-People-Children-Question-View'),
-    url(r'^people/children-details/', views.other_people_children_details,
-        name='Other-People-Children-Details-View'),
-    url(r'^other-people/approaching-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
-    url(r'^people/check-answers/', views.other_people_summary, name='Other-People-Summary-View'),
     url(r'^health-check/(?P<id>[\w-]+)/$', health_check_login.validate_magic_link, name='Health-Check-Authentication'),
     url(r'^health-check/birth-date', dob_auth.DobAuthView.as_view(), name='Health-Check-Dob'),
     url(r'^health-check/adults', guidance.Guidance.as_view(), name='Health-Check-Guidance'),

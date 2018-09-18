@@ -29,6 +29,10 @@ class AdultInHome(models.Model):
     health_check_status = models.CharField(max_length=50, default='To do')
     email_resent = models.IntegerField(default=0)
     email_resent_timestamp = models.DateTimeField(null=True, blank=True)
+    lived_abroad = models.NullBooleanField(blank=True)
+    military_base = models.NullBooleanField(blank=True)
+    capita = models.NullBooleanField(blank=True)
+    on_update = models.NullBooleanField(blank=True)
 
     @property
     def timelog_fields(self):
@@ -65,6 +69,10 @@ class AdultInHome(models.Model):
     @property
     def date_of_birth(self):
         return datetime(year=self.birth_year, month=self.birth_month, day=self.birth_day)
+
+    @property
+    def get_full_name(self):
+        return '{0}{1} {2}'.format(self.first_name, " "+self.middle_names if self.middle_names else "", self.last_name)
 
     class Meta:
         db_table = 'ADULT_IN_HOME'

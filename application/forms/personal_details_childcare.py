@@ -132,7 +132,7 @@ class PersonalDetailsChildcareAddressManualForm(ChildminderForms):
         if county != '':
             if re.match(settings.REGEX['COUNTY'], county) is None:
                 raise forms.ValidationError('Please spell out the name of the county using letters')
-            if len(county) > 100:
+            if len(county) > 50:
                 raise forms.ValidationError('The name of the county must be under 50 characters long')
         return county
 

@@ -904,9 +904,33 @@ def personal_details_working_in_other_childminder_home(request):
             if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                 status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
-            # Update home address record
+            # Update Application record
             working_in_other_childminder_home = form.cleaned_data.get('working_in_other_childminder_home')
-            application.working_in_other_childminder_home = working_in_other_childminder_home
+
+            if working_in_other_childminder_home == 'True':
+                application.working_in_other_childminder_home = True
+            elif working_in_other_childminder_home == 'False':
+                application.working_in_other_childminder_home = False
+            application.save()
+
+            # Set People in your home task status to Completed when the applicant works in another childminder's home
+            if application.working_in_other_childminder_home is True:
+                application.people_in_home_status = 'NOT_STARTED'
+
+                # Reset ARC status if there are comments
+                if Arc.objects.filter(application_id=app_id).count() > 0:
+
+                    arc = Arc.objects.get(application_id=app_id)
+
+                    if arc.people_in_home_review != 'FLAGGED':
+                        arc.people_in_home_review = 'NOT_STARTED'
+            else:
+                application.people_in_home_status = 'COMPLETED'
+
+                if Arc.objects.filter(application_id=app_id).count() > 0:
+                    arc = Arc.objects.get(application_id=app_id)
+                    arc.people_in_home_review = 'COMPLETED'
+
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
@@ -984,7 +1008,7 @@ def personal_details_own_children(request):
             if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
                 status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
-            # Update home address record
+            # Update Application record
             own_children = form.cleaned_data.get('own_children')
             
             if own_children == 'True':
@@ -1137,7 +1161,7 @@ def personal_details_summary(request):
             'form': form,
             'application_id': app_id,
             'table_list': table_list,
-            'page_title': 'Check your answers: your personal details',
+            'page_title': 'Check your answers: personal details',
             'personal_details_status': application.personal_details_status
         }
         variables = submit_link_setter(variables, table_list, 'personal_details', app_id)
