@@ -1031,12 +1031,14 @@ def personal_details_own_children(request):
 
                     if arc.your_children_review != 'FLAGGED':
                         arc.your_children_review = 'NOT_STARTED'
+                    arc.save()
             else:
                 application.your_children_status = 'COMPLETED'
 
                 if Arc.objects.filter(application_id=app_id).count() > 0:
                     arc = Arc.objects.get(application_id=app_id)
                     arc.your_children_review = 'COMPLETED'
+                arc.save()
 
             application.date_updated = current_date
             application.save()
