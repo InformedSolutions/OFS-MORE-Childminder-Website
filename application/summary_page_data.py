@@ -3,9 +3,9 @@ import collections
 ###
 
 
-childcare_type_name_dict = collections.OrderedDict([('childcare_age_groups', 'What age groups will you be able to care for?'),
-                                                    (
-                                                    'overnight_care', 'Will you be looking after children overnight?')])
+childcare_type_name_dict = collections.OrderedDict(
+    [('childcare_age_groups', 'What age groups will you be able to care for?'),
+     ('overnight_care', 'Will you be looking after children overnight?')])
 
 childcare_type_link_dict = collections.OrderedDict([('childcare_age_groups', 'Type-Of-Childcare-Age-Groups-View'),
                                                     ('overnight_care', 'Type-Of-Childcare-Overnight-Care-View')])
@@ -19,12 +19,11 @@ childcare_type_change_link_description_dict = collections.OrderedDict([('childca
 
 dbs_summary_dict = collections.OrderedDict({'data_names': ['dbs_certificate_number', 'cautions_convictions'],
                                             'display_names': ['DBS certificate number',
-                                                              'Do you have any cautions or convictions?',],
+                                                              'Do you have any cautions or convictions?', ],
                                             'back_url_names': ['DBS-Check-DBS-Details-View',
                                                                'DBS-Check-DBS-Details-View'],
                                             'table_names': [''],
-                                            'table_error_names': [
-                                                'There was a problem'],
+                                            'table_error_names': ['There was a problem'],
                                             'page_title': 'Check your answers: criminal record checks'
                                             })
 
@@ -34,8 +33,8 @@ dbs_summary_dict = collections.OrderedDict({'data_names': ['dbs_certificate_numb
 
 
 contact_info_name_dict = collections.OrderedDict([('email_address', 'Your email'),
-                                                 ('mobile_number', 'Your mobile number'),
-                                                 ('add_phone_number', 'Other phone number')])
+                                                  ('mobile_number', 'Your mobile number'),
+                                                  ('add_phone_number', 'Other phone number')])
 
 # Link dict contains the data_name of each table field and the name of the change_link view to be reversed in template
 
@@ -46,14 +45,28 @@ contact_info_link_dict = collections.OrderedDict([('email_address', 'Contact-Ema
 ###
 
 personal_details_name_dict = collections.OrderedDict([('name', 'Your name'),
-                                                      ('date_of_birth', 'Your date of birth'),
-                                                      ('home_address', 'Home address'),
-                                                      ('childcare_location', 'Childcare location')])
+                                                      ('date_of_birth', 'Date of birth'),
+                                                      ('home_address', 'Your home address'),
+                                                      ('childcare_address', 'Childcare address'),
+                                                      ('working_in_other_childminder_home',
+                                                       "Is this another childminder's home?"),
+                                                      ('own_children', 'Do you have children of your own under 16?')])
 
 personal_details_link_dict = collections.OrderedDict([('name', 'Personal-Details-Name-View'),
                                                       ('date_of_birth', 'Personal-Details-DOB-View'),
                                                       ('home_address', 'Personal-Details-Home-Address-Manual-View'),
-                                                      ('childcare_location', 'Personal-Details-Location-Of-Care-View')])
+                                                      ('childcare_address', 'Personal-Details-Location-Of-Care-View'),
+                                                      ('working_in_other_childminder_home',
+                                                       'Personal-Details-Childcare-Address-Details-View'),
+                                                      ('own_children', 'Personal-Details-Your-Own-Children-View')])
+
+personal_details_change_link_description_dict = collections.OrderedDict([('name', 'your name'),
+                                                      ('date_of_birth', 'date of birth'),
+                                                      ('home_address', 'your home address'),
+                                                      ('childcare_address', 'childcare address'),
+                                                      ('working_in_other_childminder_home',
+                                                       "childcare address as another childminder's home"),
+                                                      ('own_children', 'children of your own')])
 
 ###
 
@@ -76,10 +89,10 @@ first_aid_change_link_description_dict = collections.OrderedDict([('course_date'
 ###
 
 eyfs_name_dict = collections.OrderedDict([('eyfs_course_name', 'Title of training course'),
-                                               ('eyfs_course_date', 'Date you completed course')])
+                                          ('eyfs_course_date', 'Date you completed course')])
 
 eyfs_link_dict = collections.OrderedDict([('eyfs_course_name', 'Childcare-Training-Details-View'),
-                                               ('eyfs_course_date', 'Childcare-Training-Details-View')])
+                                          ('eyfs_course_date', 'Childcare-Training-Details-View')])
 
 eyfs_change_link_description_dict = collections.OrderedDict([('eyfs_course_name', 'course title'),
                                                              ('eyfs_course_date', 'course completion date')])
@@ -94,11 +107,11 @@ health_link_dict = collections.OrderedDict([('health_submission_consent', 'Healt
 ###
 other_adult_name_dict = collections.OrderedDict([('health_check_status', 'Health check status'),
                                                  ('full_name', 'Name'),
-                                                ('date_of_birth', 'Date of birth'),
-                                                ('relationship', 'Relationship'),
-                                                ('email', 'Email address'),
-                                                ('dbs_certificate_number', 'DBS certificate number'),
-                                                ('permission', 'Permission for checks')])
+                                                 ('date_of_birth', 'Date of birth'),
+                                                 ('relationship', 'Relationship'),
+                                                 ('email', 'Email address'),
+                                                 ('dbs_certificate_number', 'DBS certificate number'),
+                                                 ('permission', 'Permission for checks')])
 
 other_adult_link_dict = collections.OrderedDict([('health_check_status', 'Other-People-Resend-Email-View'),
                                                 ('full_name', 'PITH-Adult-Details-View'),
@@ -141,7 +154,8 @@ first_reference_link_dict = collections.OrderedDict([('full_name', 'References-F
                                                      ('known_for', 'References-First-Reference-View'),
                                                      ('address', 'References-Enter-First-Reference-Address-View'),
                                                      (
-                                                     'phone_number', 'References-First-Reference-Contact-Details-View'),
+                                                         'phone_number',
+                                                         'References-First-Reference-Contact-Details-View'),
                                                      ('email_address',
                                                       'References-First-Reference-Contact-Details-View')])
 

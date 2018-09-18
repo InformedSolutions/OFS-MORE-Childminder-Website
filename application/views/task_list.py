@@ -20,6 +20,29 @@ from ..models import (ApplicantName, ApplicantPersonalDetails, Application, Chil
 from ..utils import can_cancel
 
 
+def show_hide_tasks(context, application):
+    """
+    Method hiding or showing the Your children and/or People in your home tasks based on whether the applicant has
+    children and/or works in another childminder's home
+    :param context: a dictionary containing all tasks for the task list
+    :param context: Application object
+    :return: dictionary object
+    """
+
+    for task in context['tasks']:
+        if task['name'] == 'your_children':
+            if application.own_children is True:
+                task['hidden'] = False
+            else:
+                task['hidden'] = True
+        if task['name'] == 'other_people':
+            if application.working_in_other_childminder_home is True:
+                task['hidden'] = True
+            else:
+                task['hidden'] = False
+    return context
+
+
 @never_cache
 def task_list(request):
     """
@@ -134,6 +157,19 @@ def task_list(request):
                 ],
             },
             {
+                'name': 'your_children',
+                'status': application.your_children_status,
+                'arc_flagged': application.your_children_arc_flagged,
+                'description': "Your children",
+                'hidden': False,
+                'status_url': None,
+                'status_urls': [
+                    {'status': 'COMPLETED', 'url': 'Task-List-View'},
+                    {'status': 'FLAGGED', 'url': 'Task-List-View'},
+                    {'status': 'OTHER', 'url': 'Task-List-View'}
+                ],
+            },
+            {
                 'name': 'first_aid',
                 'status': application.first_aid_training_status,
                 'arc_flagged': application.first_aid_training_arc_flagged,
@@ -230,8 +266,12 @@ def task_list(request):
         ]
     }
 
+    # Show/hide Your children and People in your home tasks
+    context = show_hide_tasks(context, application)
+
     unfinished_tasks = [task for task in context['tasks'] if task['status'] in
                         ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]
+
     if len(unfinished_tasks) < 1:
         context['all_complete'] = True
     else:
@@ -249,7 +289,6 @@ def task_list(request):
                     task['status'] = application.declarations_status
 
     # Prepare task links
-
     for task in context['tasks']:
 
         # Iterating through tasks

@@ -388,7 +388,7 @@
     </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Childcare location
+            Childcare address
         </td>
         {% if location_of_childcare == True %}
         <td style="word-wrap: break-word" class=summary-column>
@@ -398,7 +398,7 @@
             {% if personal_details_change %}
             <a href="{% url 'Personal-Details-Location-Of-Care-View' %}?id={{application_id}}"
                alt='Change answer to childcare location'>
-                Change <span class="visuallyhidden">answer to childcare location</span>
+                Change <span class="visuallyhidden">answer to childcare address</span>
             </a>
             {% endif %}
         </td>
@@ -453,6 +453,48 @@
             {% endif %}
         </td>
         {% endif %}
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Is this another childminder's home?
+        </td>
+        {% if working_in_other_childminder_home %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% else %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            {% if personal_details_change %}
+            <a href="{% url 'Personal-Details-Childcare-Address-Details-View' %}?id={{application_id}}" alt="Change your answer on whether this is another  childminder's home">
+                Change <span class="visuallyhidden">your answer on whether this is another  childminder's home</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Do you have children  of your own under 16?
+        </td>
+        {% if own_children %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% else %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            {% if personal_details_change %}
+            <a href="{% url 'Personal-Details-Your-Own-Children-View' %}?id={{application_id}}" alt="Change your answer on whether you have children of your own under 16">
+                Change <span class="visuallyhidden">your answer on whether you have children of your own under 16</span>
+            </a>
+            {% endif %}
+        </td>
     </tr>
     </tbody>
 </table>
