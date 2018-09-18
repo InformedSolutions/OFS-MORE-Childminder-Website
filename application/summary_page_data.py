@@ -45,7 +45,7 @@ contact_info_link_dict = collections.OrderedDict([('email_address', 'Contact-Ema
 ###
 
 personal_details_name_dict = collections.OrderedDict([('name', 'Your name'),
-                                                      ('date_of_birth', 'Your date of birth'),
+                                                      ('date_of_birth', 'Date of birth'),
                                                       ('home_address', 'Your home address'),
                                                       ('childcare_address', 'Childcare address'),
                                                       ('working_in_other_childminder_home',
@@ -61,7 +61,7 @@ personal_details_link_dict = collections.OrderedDict([('name', 'Personal-Details
                                                       ('own_children', 'Personal-Details-Your-Own-Children-View')])
 
 personal_details_change_link_description_dict = collections.OrderedDict([('name', 'your name'),
-                                                      ('date_of_birth', 'your date of birth'),
+                                                      ('date_of_birth', 'date of birth'),
                                                       ('home_address', 'your home address'),
                                                       ('childcare_address', 'childcare address'),
                                                       ('working_in_other_childminder_home',
