@@ -24,7 +24,7 @@
     {{form.as_div}}
     {% csrf_token %}
     <a href="{% url 'Personal-Details-Childcare-Address-Manual-View' %}?id={{application_id}}" name="manual"
-       id="manual">I can't find my address in the list</a>
+       id="manual">I cannot find my address in the list</a>
     <input type="submit" class="button button-submit" value="Save and continue">
     <input type="hidden" id="id" name="id" value="{{application_id}}"/>
 </form>

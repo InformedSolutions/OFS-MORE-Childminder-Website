@@ -27,7 +27,7 @@
     {% csrf_token %}
     <a href="{% url 'Your-Children-Address-Manual-View' %}?id={{application_id}}&child={{child}}" name="manual"
        id="manual">I
-        can't find the address in the list</a>
+        cannot find the address in the list</a>
     <input type="submit" class="button button-submit" value="Save and continue">
     <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     <input type="hidden" id="child" name="child" value="{{child}}"/>
