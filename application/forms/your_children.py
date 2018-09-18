@@ -128,9 +128,10 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
     auto_replace_widgets = True
     error_summary_title = 'There was a problem on this page'
 
-    children_living_with_childminder_selection = forms.MultipleChoiceField(label='Which of your children live with you?',
+    children_living_with_childminder_selection = forms.MultipleChoiceField(
+        label='Which of your children live with you?',
         widget=CheckboxSelectMultiple, required=True, error_messages={
-                     'required': 'Please say if any of your children live with you'}, help_text="Tick all that apply")
+            'required': 'Please say if any of your children live with you'}, help_text="Tick all that apply")
 
     def __init__(self, *args, **kwargs):
         """
@@ -177,7 +178,7 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
         If for example, names have been chosen as well as 'none' an error should be raised
         """
         selections = self.cleaned_data['children_living_with_childminder_selection']
-        
+
         if len(selections) > 1 and 'none' in selections:
             raise forms.ValidationError('Please select your children''s names or none.')
 

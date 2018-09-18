@@ -30,7 +30,7 @@ class ChildAddressForm(ChildminderForms):
         full_stop_stripper(self)
         if ChildAddress.objects.filter(application_id=self.application_id_local, child=self.child).count() > 0:
             self.fields['postcode'].initial = ChildAddress.objects.get(application_id=self.application_id_local,
-                                                                               child=self.child).postcode
+                                                                       child=self.child).postcode
 
     def clean_postcode(self):
         """
@@ -59,7 +59,8 @@ class YourChildManualAddressForm(ChildminderForms):
     town = forms.CharField(label='Town or city', required=True,
                            error_messages={'required': 'Please enter the name of the town or city'})
     county = forms.CharField(label='County (optional)', required=False)
-    postcode = forms.CharField(label='Postcode', required=True, error_messages={'required': 'Please enter your postcode'})
+    postcode = forms.CharField(label='Postcode', required=True,
+                               error_messages={'required': 'Please enter your postcode'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -73,9 +74,9 @@ class YourChildManualAddressForm(ChildminderForms):
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if ChildAddress.objects.filter(application_id=self.application_id_local,
-                                                  child=self.child).count() > 0:
+                                       child=self.child).count() > 0:
             child_home_address = ChildAddress.objects.get(application_id=self.application_id_local,
-                                                  child=self.child)
+                                                          child=self.child)
             self.fields['street_line1'].initial = child_home_address.street_line1
             self.fields['street_line2'].initial = child_home_address.street_line2
             self.fields['town'].initial = child_home_address.town
