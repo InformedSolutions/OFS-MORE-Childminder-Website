@@ -49,7 +49,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
                                    required=True,
                                    error_messages={'required': "Please say how the person is related to you"})
     email_address = forms.CharField(label='Email address',
-                                    help_text='They need to answer simple questions about their health', required=False)
+                                    help_text='We need to email them simple questions about their health', required=False)
 
     def __init__(self, *args, **kwargs):
         """
