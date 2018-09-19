@@ -1,5 +1,3 @@
-from django.http import HttpResponseRedirect
-
 from application.utils import get_id
 from application.models import AdultInHome
 from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMultiRadioView
@@ -29,14 +27,6 @@ class PITHDBSCheckView(PITHMultiRadioView):
         }
 
         return super().get_form_kwargs(context)
-
-    def form_valid(self, form):
-        """
-        If the form is valid, redirect to the supplied URL.
-        """
-        application_id = get_id(self.request)
-
-        return super().form_valid(form)
 
     def get_form_list(self):
         application_id = get_id(self.request)
