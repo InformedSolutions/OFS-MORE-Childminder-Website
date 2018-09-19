@@ -570,12 +570,9 @@ def other_people_summary(request):
 
         child_table_list = []
         for child in children_list:
-            name = ' '.join([child.first_name, (child.middle_names or ''), child.last_name])
-
             other_child_fields = collections.OrderedDict([
-                ('full_name', name),
-                ('date_of_birth', ' '.join([str(child.birth_day), calendar.month_name[child.birth_month],
-                                            str(child.birth_year)])),
+                ('full_name', child.get_full_name()),
+                ('date_of_birth', child.get_dob_as_date()),
                 ('relationship', child.relationship)
             ])
 
