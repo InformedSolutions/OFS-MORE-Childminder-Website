@@ -31,12 +31,12 @@ class PITHDBSCheckForm(ChildminderForms):
         self.on_update_field_name = self.on_update_field + str(self.adult.pk)
         self.dbs_field_no_update_name = self.dbs_field +'_no_update'+str(self.adult.pk)
 
-        self.base_fields = {
-            self.dbs_field_name: self.get_dbs_field_data(),
-            self.on_update_field_name: self.get_on_update_field_data(),
-            self.capita_field_name: self.get_capita_field_data(),
-            self.dbs_field_no_update_name: self.get_dbs_field_data()
-        }
+        self.base_fields = collections.OrderedDict([
+            (self.dbs_field_name, self.get_dbs_field_data()),
+            (self.on_update_field_name, self.get_on_update_field_data()),
+            (self.capita_field_name, self.get_capita_field_data()),
+            (self.dbs_field_no_update_name, self.get_dbs_field_data())
+        ])
 
         self.reveal_conditionally = self.get_reveal_conditionally()
 
