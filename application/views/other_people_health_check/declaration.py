@@ -1,7 +1,7 @@
 from django.views.generic import FormView
 
 from application.forms.other_person_health_check.declaration import OtherPeopleDeclarationForm
-from application.utils import build_url
+from application.utils import build_url, get_id
 
 
 class Declaration(FormView):
@@ -11,6 +11,16 @@ class Declaration(FormView):
     template_name = 'other_people_health_check/declaration.html'
     success_url_name = 'Health-Check-Declaration'
     form_class = OtherPeopleDeclarationForm
+
+    def get_initial(self):
+        application_id = get_id(self.request)
+
+
+        initial = {
+            'declaration_confirmation':
+        }
+
+        return initial
 
     def get_context_data(self, **kwargs):
         """

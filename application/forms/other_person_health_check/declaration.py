@@ -11,9 +11,10 @@ class OtherPeopleDeclarationForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    declaration_confirmation = forms.BooleanField(label='I confirm', required=True,
-                                        error_messages={
-                                            'required': 'You must confirm everything on this page to continue'})
+    declaration_confirmation = forms.BooleanField(label='I confirm',
+                                                  required=True,
+                                                  error_messages={
+                                                      'required': 'You must confirm everything on this page to continue'})
 
     def __init__(self, *args, **kwargs):
         """
