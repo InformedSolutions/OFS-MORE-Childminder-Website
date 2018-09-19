@@ -1,5 +1,6 @@
+import collections
 from django import forms
-from govuk_forms.widgets import InlineRadioSelect, NumberInput
+from govuk_forms.widgets import NumberInput
 
 from application.forms import ChildminderForms, childminder_dbs_duplicates_household_member_check
 from application.models import Application
@@ -111,9 +112,11 @@ class PITHDBSCheckForm(ChildminderForms):
         return self.cleaned_data
 
     def get_reveal_conditionally(self):
-        return {self.on_update_field_name: {True: self.dbs_field_no_update_name},
-                self.capita_field_name: {True: self.dbs_field_name,
-                                         False: self.on_update_field_name}}
+        return collections.OrderedDict([
+            (self.on_update_field_name, {True: self.dbs_field_no_update_name}),
+            (self.capita_field_name, {True: self.dbs_field_name,
+                                      False: self.on_update_field_name})
+        ])
 
     def clean_dbs(self, cleaned_dbs_value, field_name, application, cleaned_capita_value, cleaned_on_update_value):
         if cleaned_dbs_value is None:
