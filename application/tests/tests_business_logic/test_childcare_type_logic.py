@@ -216,29 +216,3 @@ class TestChildcareTypeLogic(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, expected_redirect_url)
-
-    @modify_settings(MIDDLEWARE={
-        'remove': [
-            'application.middleware.CustomAuthenticationHandler',
-        ]
-    })
-    def test_http_can_access_task_list_if_eligible_based_on_childcare_ages_and_personal_details_complete(self):
-        """
-        Test to assert a user can continue to access the task list if they are eligible to apply
-        based on the age of children they will be looking after once they have completed
-        the personal details task.
-        """
-        self.test_childcare_record.zero_to_five = True
-        self.test_childcare_record.five_to_eight = False
-        self.test_childcare_record.eight_plus = False
-        self.test_childcare_record.save()
-
-        self.test_application.personal_details_status = 'COMPLETE'
-        self.test_application.save()
-
-        response = self.client.get(
-            reverse('Task-List-View') + '?id=' + self.test_application_id)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Fill in the sections below to apply.')
-
