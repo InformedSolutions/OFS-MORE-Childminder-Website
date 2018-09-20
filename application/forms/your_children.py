@@ -29,7 +29,7 @@ class YourChildrenDetailsForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
-    error_summary_title = 'There was a problem with the details'
+    error_summary_title = 'There was a problem with your children''s details'
 
     first_name = forms.CharField(label='First name', required=True,
                                  error_messages={'required': "Please enter their first name"})

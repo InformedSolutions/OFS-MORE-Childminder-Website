@@ -227,12 +227,11 @@ def __your_children_details_post_handler(request):
             request.POST, id=application_id, child=i, prefix=i)
         form.remove_flag()
         form_list.append(form)
-        form.error_summary_title = 'There was a problem with the details (Child ' + str(
-            i) + ')'
+        form.error_summary_title = "There was a problem with your children's details"
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = "There was a problem (Child " + str(i) + ")"
+            form.error_summary_title = "There was a problem with your children's details"
 
         if form.is_valid():
             child_record = your_children_details_logic(
