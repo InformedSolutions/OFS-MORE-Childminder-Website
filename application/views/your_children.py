@@ -35,8 +35,13 @@ def __get_next_child_number_for_address_entry(application_id, current_child):
     :return: the next child number or None if no more children require address details to be provided
     """
 
-    if __get_children_not_living_with_childminder_count(application_id) > current_child:
-        return current_child + 1
+    if __get_all_children_count(application_id) > current_child:
+        next_child = current_child + 1
+        next_child_record = Child.objects.get(application_id=application_id, child=next_child)
+        if not next_child_record.lives_with_childminder:
+            return next_child
+        else:
+            return __get_next_child_number_for_address_entry(application_id, next_child)
     else:
         return None
 
@@ -735,7 +740,7 @@ def __your_children_summary_get_handler(request):
 
     children_table = []
     children_living_with_childminder = []
-    children = Child.objects.filter(application_id=application_id)
+    children = Child.objects.filter(application_id=application_id).order_by('child')
 
     for child in children:
         dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)

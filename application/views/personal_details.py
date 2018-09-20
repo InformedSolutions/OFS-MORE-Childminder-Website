@@ -1133,11 +1133,17 @@ def personal_details_summary(request):
 
         home_address = ' '.join([street_line1, (street_line2 or ''), town, (county or ''), postcode])
 
-        address_table_dict = collections.OrderedDict([
-            ('home_address', home_address),
-            ('childcare_address', childcare_address),
-            ('working_in_other_childminder_home', working_in_other_childminder_home)
-        ])
+        if location_of_childcare:
+            address_table_dict = collections.OrderedDict([
+                ('home_address', home_address),
+                ('childcare_address', childcare_address)
+            ])
+        else:
+            address_table_dict = collections.OrderedDict([
+                ('home_address', home_address),
+                ('childcare_address', childcare_address),
+                ('working_in_other_childminder_home', working_in_other_childminder_home)
+            ])
 
         own_children_table_dict = collections.OrderedDict([
             ('own_children', own_children)
@@ -1166,7 +1172,10 @@ def personal_details_summary(request):
             'error_summary_title': 'There was a problem'
         })
 
-        tables = [name_dob_dict, address_dict, own_children_dict]
+        tables = [name_dob_dict, address_dict]
+
+        if not location_of_childcare:
+            tables.append(own_children_dict)
 
         # Set change link for childcare address according to whether the childcare address is the same as the home
         # address
