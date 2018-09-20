@@ -317,7 +317,7 @@ def __your_children_details_post_handler_for_adding_children(request, applicatio
         variables = {
             'form_list': form_list,
             'application_id': application_id,
-            'number_of_adults': number_of_children,
+            'number_of_children': number_of_children,
             'add_adult': int(number_of_children) + 1,
             'remove_child': int(number_of_children) - 1,
             'remove_button': remove_button,
