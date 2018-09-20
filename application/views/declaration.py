@@ -205,7 +205,7 @@ def declaration_summary(request, print_mode=False):
             full_address = None
 
             if not child.lives_with_childminder:
-                full_address = ChildAddress.objects.get(application_id=application_id, child=child.child)
+                full_address = ChildAddress.objects.get(application_id=application_id_local, child=child.child)
 
             child_details = collections.OrderedDict([
                 ('child_number', child.child),
