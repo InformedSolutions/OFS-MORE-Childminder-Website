@@ -29,57 +29,80 @@ class ApplicationTestBase(object):
     def TestAppEmail(self):
         """Submit email"""
 
-        self.email = 'test-address@informed.com'
+        with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
+            mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
+                mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
 
-        r = self.client.post(
-            reverse('New-Email'),
-            {
-                'email_address': self.email
-            }
-        )
-        self.assertEqual(r.status_code, 302)
-        self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
+            notify_connection_test_mock.return_value.status_code = 201
+            magic_link_email_mock.return_value.status_code = 201
+            magic_link_text_mock.return_value.status_code = 201
+
+            self.email = 'test-address@informed.com'
+
+            r = self.client.post(
+                reverse('New-Email'),
+                {
+                    'email_address': self.email
+                }
+            )
+            self.assertEqual(r.status_code, 302)
+            self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
 
     def TestReturnToApp(self):
         """Tests returning to application for both a new and existing email."""
 
-        self.email = 'omelette.du.fromage@gmail.com'
-        new_email = 'cheese.omelette@gmail.com'
+        with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
+                mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
+                mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
 
-        r = self.client.post(
-            reverse('Existing-Email'),
-            {
-                'email_address': self.email
-            }
-        )
-        self.assertEqual(r.status_code, 302)
-        self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
+            notify_connection_test_mock.return_value.status_code = 201
+            magic_link_email_mock.return_value.status_code = 201
+            magic_link_text_mock.return_value.status_code = 201
 
-        self.assertEqual(False, UserDetails.objects.filter(email=new_email).exists())
-        r = self.client.post(
-            reverse('Existing-Email'),
-            {
-                'email_address': new_email
-            }
-        )
-        self.assertEqual(r.status_code, 302)  # Create account for new email and send link.
-        self.assertEqual(new_email, UserDetails.objects.get(email=new_email).email)
+            self.email = 'omelette.du.fromage@gmail.com'
+            new_email = 'cheese.omelette@gmail.com'
+
+            r = self.client.post(
+                reverse('Existing-Email'),
+                {
+                    'email_address': self.email
+                }
+            )
+            self.assertEqual(r.status_code, 302)
+            self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
+
+            self.assertEqual(False, UserDetails.objects.filter(email=new_email).exists())
+            r = self.client.post(
+                reverse('Existing-Email'),
+                {
+                    'email_address': new_email
+                }
+            )
+            self.assertEqual(r.status_code, 302)  # Create account for new email and send link.
+            self.assertEqual(new_email, UserDetails.objects.get(email=new_email).email)
 
     def TestValidateEmail(self):
         """Validate Email"""
 
-        acc = UserDetails.objects.get(email=self.email)
-        self.app_id = acc.application_id.pk
-        r = self.client.get(
-            '/childminder/validate/' + str(acc.magic_link_email), follow=True
-        )
+        with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
+                mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
+                mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
+            notify_connection_test_mock.return_value.status_code = 201
+            magic_link_email_mock.return_value.status_code = 201
+            magic_link_text_mock.return_value.status_code = 201
 
-        self.assertEqual(r.status_code, 200)
-        self.assertTrue(
-            Application.objects.get(
-                pk=self.app_id
-            ).application_status == "DRAFTING"
-        )
+            acc = UserDetails.objects.get(email=self.email)
+            self.app_id = acc.application_id.pk
+            r = self.client.get(
+                '/childminder/validate/' + str(acc.magic_link_email), follow=True
+            )
+
+            self.assertEqual(r.status_code, 200)
+            self.assertTrue(
+                Application.objects.get(
+                    pk=self.app_id
+                ).application_status == "DRAFTING"
+            )
 
     def TestAppPhone(self):
         """Submit phone"""
@@ -274,11 +297,11 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def TestAppPersonalDetailsSummaryView(self):
-        """Personal details summary"""
-        self.client.get(reverse('Personal-Details-Summary-View'), {'id': self.app_id})
-        self.assertEqual(
-            Application.objects.get(pk=self.app_id).personal_details_status, "COMPLETED")
+    # def TestAppPersonalDetailsSummaryView(self):
+    #     """Personal details summary"""
+    #     self.client.post(reverse('Personal-Details-Summary-View'), {'id': self.app_id})
+    #     self.assertEqual(
+    #         Application.objects.get(pk=self.app_id).personal_details_status, "COMPLETED")
 
     def TestAppFirstAidStart(self):
         """Start First Aid"""
@@ -381,7 +404,7 @@ class ApplicationTestBase(object):
     def TestAppOtherPeopleAdults(self):
         """Submit other people"""
         r = self.client.post(
-            reverse('Other-People-Adult-Question-View'),
+            reverse('PITH-Adult-Check-View'),
             {
                 'id': self.app_id,
                 'adults_in_home': False,
@@ -406,7 +429,7 @@ class ApplicationTestBase(object):
 
         }
 
-        r = self.client.post(reverse('Other-People-Adult-Details-View'), data)
+        r = self.client.post(reverse('PITH-Adult-Details-View'), data)
 
         self.assertEqual(r.status_code, 302)
 

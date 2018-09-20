@@ -1,5 +1,6 @@
 selenium/*
 xmlrunner/*
+logs/*
 
 ### Python ###
 # Byte-compiled / optimized / DLL files

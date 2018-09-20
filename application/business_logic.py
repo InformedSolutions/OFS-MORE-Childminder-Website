@@ -22,7 +22,7 @@ from .models import (AdultInHome,
                      FirstAidTraining,
                      HealthDeclarationBooklet,
                      Reference,
-                     UserDetails)
+                     UserDetails, Child, ChildAddress)
 
 from .utils import unique_values, get_first_duplicate_index, return_last_duplicate_index, \
     get_duplicate_list_entry_indexes
@@ -232,6 +232,29 @@ def personal_home_address_logic(app_id, form):
         home_address_record.postcode = postcode
 
     return home_address_record
+
+
+def child_address_logic(app_id, child, form):
+    """
+    Business logic to create or update a child address record with address details
+    :param app_id: A string object containing the current application ID
+    :param child: A numerical identifier for the child
+    :param form: A form object containing the data to be stored
+    :return: an ChildAddress object to be saved
+    """
+    application = Application.objects.get(application_id=app_id)
+    child_address = ChildAddress(application_id=application)
+
+    if ChildAddress.objects.filter(application_id=app_id, child=child).exists():
+        child_address = ChildAddress.objects.get(application_id=app_id, child=child)
+
+    child_address.street_line1 = form.cleaned_data.get('street_line1')
+    child_address.street_line2 = form.cleaned_data.get('street_line2')
+    child_address.town = form.cleaned_data.get('town')
+    child_address.county = form.cleaned_data.get('county')
+    child_address.postcode = form.cleaned_data.get('postcode')
+
+    return child_address
 
 
 def personal_location_of_care_logic(application_id_local, form):
@@ -532,6 +555,41 @@ def health_check_logic(application_id_local, form):
     return hdb_record
 
 
+def your_children_details_logic(application_id_local, form, child):
+    """
+    Business logic to create or update an ChildInHome record
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :param child: child number (integer)
+    :return: an ChildInHome object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    first_name = form.cleaned_data.get('first_name')
+    middle_names = form.cleaned_data.get('middle_names')
+    last_name = form.cleaned_data.get('last_name')
+    birth_day = form.cleaned_data.get('date_of_birth')[0]
+    birth_month = form.cleaned_data.get('date_of_birth')[1]
+    birth_year = form.cleaned_data.get('date_of_birth')[2]
+    # If the user entered information for this task for the first time
+    if Child.objects.filter(application_id=this_application, child=child).exists():
+
+        child_record = Child.objects.get(application_id=this_application, child=child)
+        child_record.first_name = first_name
+        child_record.middle_names = middle_names
+        child_record.last_name = last_name
+        child_record.birth_day = birth_day
+        child_record.birth_month = birth_month
+        child_record.birth_year = birth_year
+
+
+    # If the user previously entered information for this task
+    else:
+        child_record = Child(first_name=first_name, middle_names=middle_names, last_name=last_name,
+                                   birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
+                                   application_id=this_application, child=child)
+
+    return child_record
+
 def other_people_adult_details_logic(application_id_local, form, adult):
     """
     Business logic to create or update an AdultInHome record
@@ -622,13 +680,36 @@ def remove_child(application_id_local, remove_person):
     Method to remove a child from the database
     :param application_id_local: current application ID
     :param remove_person: child to remove (integer)
+    """
+    if Child.objects.filter(application_id=application_id_local, child=remove_person).exists() is True:
+        Child.objects.get(application_id=application_id_local, child=remove_person).delete()
+
+
+def rearrange_children(number_of_children, application_id_local):
+    """
+    Method to rearrange numbers assigned to children
+    :param number_of_children: number of children in database (integer)
+    :param application_id_local: current application ID
+    """
+    children_records = Child.objects.filter(application_id=application_id_local).order_by('child')
+
+    for index, child_record in enumerate(children_records):
+        child_record.child = index + 1
+        child_record.save()
+
+
+def remove_child_in_home(application_id_local, remove_person):
+    """
+    Method to remove a child in home from the database
+    :param application_id_local: current application ID
+    :param remove_person: child to remove (integer)
     :return:
     """
     if ChildInHome.objects.filter(application_id=application_id_local, child=remove_person).exists() is True:
         ChildInHome.objects.get(application_id=application_id_local, child=remove_person).delete()
 
 
-def rearrange_children(number_of_children, application_id_local):
+def rearrange_children_in_home(number_of_children, application_id_local):
     """
     Method to rearrange numbers assigned to adults
     :param number_of_children: number of children in database (integer)
@@ -826,29 +907,19 @@ def get_duplicate_household_member_dbs_indexes(other_people_dbs_form_data):
     return response
 
 
-def childminder_dbs_duplicates_household_member_check(application, candidate_dbs_certificate_number):
+def childminder_dbs_duplicates_household_member_check(application, candidate_dbs_certificate_number, adult_record=None):
     """
     Helper method to check whether a childminder DBS number duplicates an existing household member's
     :param candidate_dbs_certificate_number: the candidate DBS number to be assigned
     :return: True/False result
     """
-    dbs_numbers = list()
+    adults = AdultInHome.objects.filter(application_id=application.application_id)
+    if adult_record:
+        adults_dbs_list = [adult.dbs_certificate_number for adult in adults if not adult.pk == adult_record.pk]
+    else:
+        adults_dbs_list = [adult.dbs_certificate_number for adult in adults]
 
-    # Check how many additional adults feature in application form
-    additional_adults = AdultInHome.objects.filter(application_id=application.application_id)
-    count_of_additional_adults_in_home = AdultInHome.objects.filter(application_id=application.application_id).count()
-
-    # Iterate and push DBS numbers to comparison array
-    if count_of_additional_adults_in_home > 0:
-        for i in range(1, int(additional_adults.count()) + 1):
-            adult = AdultInHome.objects.get(
-                application_id=application.application_id, adult=i)
-            # filter out any empty values so as not to get a false match on duplicate index
-            if adult.dbs_certificate_number:
-                dbs_numbers.append(adult.dbs_certificate_number)
-
-    # Yield result of whether DBS number to the last entry in the list
-    return candidate_dbs_certificate_number in dbs_numbers
+    return candidate_dbs_certificate_number in adults_dbs_list
 
 
 def get_duplicate_dbs_index(application, candidate_dbs_certificate_number):
@@ -1027,6 +1098,92 @@ def get_childcare_register_type(app_id):
             & (childcare_record.eight_plus is True):
         cost = 103
         return 'CR-voluntary', cost
+
+def get_adult_in_home(app_id, field_obj):
+    """
+    :param app_id: applicant's application_id
+    :param field_obj: AdultInHome field or list of AdultInHome fields
+    :return: Boolean True if successfully updated.
+    """
+    adult_in_home_record = AdultInHome.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        return {field: getattr(adult_in_home_record, field) for field in field_obj}
+
+    elif isinstance(field_obj, str):
+        return getattr(adult_in_home_record, field_obj)
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+
+def update_adult_in_home(pk, field_obj, status):
+    """
+    Updates the AdultInHome field with the given status.
+    :param pk: AdultInHome primary key
+    :param field_obj: AdultInHome field or list of AdultInHome fields
+    :param status: Value to update entry/entries with
+    :return: Boolean True if successfully updated.
+    """
+    adult_in_home_record = AdultInHome.objects.get(pk=pk)
+
+    if isinstance(field_obj, list):
+        for field in field_obj:
+            setattr(adult_in_home_record, field, status)
+            adult_in_home_record.save()
+
+    elif isinstance(field_obj, str):
+        setattr(adult_in_home_record, field_obj, status)
+        adult_in_home_record.save()
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+    return True
+
+
+def get_application(app_id, field_obj):
+    """
+    :param app_id: applicant's application_id
+    :param field_obj: Application field or list of Application fields
+    :return: Boolean True if successfully updated.
+    """
+    application_record = Application.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        return {field: getattr(application_record, field) for field in field_obj}
+
+    elif isinstance(field_obj, str):
+        return getattr(application_record, field_obj)
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+
+def update_application(app_id, field_obj, status):
+    """
+    Updates the Application field with the given status.
+    :param app_id: applicant's application_id
+    :param field_obj: Application field or list of Application fields
+    :param status: Value to update entry/entries with
+    :return: Boolean True if successfully updated.
+    """
+    application_record = Application.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        for field in field_obj:
+            setattr(application_record, field, status)
+            application_record.save()
+
+    elif isinstance(field_obj, str):
+        setattr(application_record, field_obj, status)
+        application_record.save()
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+    return True
+
 
 class UniqueDbsCheckResult:
     """

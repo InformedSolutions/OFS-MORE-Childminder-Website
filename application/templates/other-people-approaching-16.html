@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}People in your home{% endblock %}
+{% block page_title %}Children turning 16{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -17,17 +17,20 @@
     <!-- Content -->
     <div class="form-group">
         <h1 class="form-title heading-large">
-            Children in your home - turning 16
+            Children turning 16
         </h1>
-        <p>From the details provided, one of the children in your home will be turning 16 in the coming months.</p>
-        <p>Once they turn 16, they will need to get a criminal record (DBS) check.</p>
-        <p>You do not need to do anything now, unless they turn 16 prior to submitting your application.</p>
+        <p>You have children in the home who will be turning 16 in the coming months.</p>
+        <p>You do not need to do anything now.</p>
+        <p>Once they turn 16, the children will need to get a criminal record (DBS) check and answer a few health questions.</p>
+        <p>You’ll need to give us their DBS certificate number and email address.</p>
         {{form.as_div}}
         {% csrf_token %}
-        <input type="submit" class="button" value="Continue">
+        <input type="submit" class="button" value="Save and continue">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
     </div>
 </form>
 </div>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}

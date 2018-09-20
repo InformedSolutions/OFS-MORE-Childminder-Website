@@ -71,7 +71,7 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
 
     def TestSMSLoginResetsSMSResendNumber(self):
         acc = UserDetails.objects.get(application_id=self.app_id)
-        acc.sms_resend_attempts  = 10  # Some non-zero value.
+        acc.sms_resend_attempts = 10  # Some non-zero value.
         correct_sms_code = acc.magic_link_sms
         acc.save()
 
@@ -82,11 +82,23 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
 
     def TestSecurityQuestionLoginResetsSMSResendNumber(self):
         acc = UserDetails.objects.get(application_id=self.app_id)
-        acc.sms_resend_attempts  = 10  # Some non-zero value.
+        acc.sms_resend_attempts = 10  # Some non-zero value.
         acc.save()
         # security_answer = CriminalRecordCheck.objects.get(application_id=self.app_id).dbs_certificate_number
         security_answer = acc.mobile_number
-        r = self.client.post(reverse('Security-Question') + '?id=' + str(self.app_id), {'id': self.app_id, 'security_answer': security_answer})
+        r = self.client.post(reverse('Security-Question') + '?id=' + str(self.app_id),
+                             {'id': self.app_id, 'security_answer': security_answer})
+
+        self.assertIs(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
+
+    def TestSecurityQuestionLoginResetsSMSResendNumber(self):
+        acc = UserDetails.objects.get(application_id=self.app_id)
+        acc.sms_resend_attempts = 10  # Some non-zero value.
+        acc.save()
+        # security_answer = CriminalRecordCheck.objects.get(application_id=self.app_id).dbs_certificate_number
+        security_answer = acc.mobile_number
+        r = self.client.post(reverse('Security-Question') + '?id=' + str(self.app_id),
+                             {'id': self.app_id, 'security_answer': security_answer})
 
         self.assertIs(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
 
@@ -189,7 +201,7 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
             self.TestAppPersonalDetailsDOB()
             self.TestAppPersonalDetailsHomeAddress()
             self.TestAppPersonalDetailsHomeAddressDetails()
-            self.TestAppPersonalDetailsSummaryView()
+            # self.TestAppPersonalDetailsSummaryView()
 
             self.TestVerifyPhone()
             self.TestVerifyPhoneEmailApostrophe()
