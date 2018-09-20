@@ -11,9 +11,10 @@ from django.conf.urls import url, include
 from django.views.generic import TemplateView
 
 from application import views, utils
-from application.views import security_question, magic_link, feedback
+from application.views import security_question, magic_link, feedback, your_children
 from application.views.other_people_health_check import health_check_login, dob_auth, current_treatment, guidance, \
     declaration, serious_illness, hospital_admission, summary, thank_you
+from application.views import PITH_views
 
 urlpatterns = [
     url(r'^$', views.start_page, name='start-page.html'),
@@ -44,6 +45,10 @@ urlpatterns = [
         name='Personal-Details-Childcare-Address-Select-View'),
     url(r'^personal-details/enter-childcare-address/', views.personal_details_childcare_address_manual,
         name='Personal-Details-Childcare-Address-Manual-View'),
+    url(r'^personal-details/childcare-address-details/', views.personal_details_working_in_other_childminder_home,
+        name='Personal-Details-Childcare-Address-Details-View'),
+    url(r'^personal-details/your-children/', views.personal_details_own_children,
+        name='Personal-Details-Your-Own-Children-View'),
     url(r'^personal-details/check-answers/', views.personal_details_summary, name='Personal-Details-Summary-View'),
     url(r'^first-aid/$', views.first_aid_training_guidance, name='First-Aid-Training-Guidance-View'),
     url(r'^first-aid/details/', views.first_aid_training_details, name='First-Aid-Training-Details-View'),
@@ -56,12 +61,18 @@ urlpatterns = [
     # Childcare Training urls #
     # ======================= #
 
-    url(r'^childcare-training/$', views.ChildcareTrainingGuidanceView.as_view(), name='Childcare-Training-Guidance-View'),
-    url(r'^childcare-training/details/', views.ChildcareTrainingDetailsView.as_view(), name='Childcare-Training-Details-View'),
-    url(r'^childcare-training/type/', views.TypeOfChildcareTrainingView.as_view(), name='Type-Of-Childcare-Training-View'),
-    url(r'^childcare-training-course/', views.ChildcareTrainingCourseRequiredView.as_view(), name='Childcare-Training-Course-Required-View'),
-    url(r'^childcare-training-certificate/', views.ChildcareTrainingCertificateView.as_view(), name='Childcare-Training-Certificate-View'),
-    url(r'^childcare-training/check-answers/', views.ChildcareTrainingSummaryView.as_view(), name='Childcare-Training-Summary-View'),
+    url(r'^childcare-training/$', views.ChildcareTrainingGuidanceView.as_view(),
+        name='Childcare-Training-Guidance-View'),
+    url(r'^childcare-training/details/', views.ChildcareTrainingDetailsView.as_view(),
+        name='Childcare-Training-Details-View'),
+    url(r'^childcare-training/type/', views.TypeOfChildcareTrainingView.as_view(),
+        name='Type-Of-Childcare-Training-View'),
+    url(r'^childcare-training-course/', views.ChildcareTrainingCourseRequiredView.as_view(),
+        name='Childcare-Training-Course-Required-View'),
+    url(r'^childcare-training-certificate/', views.ChildcareTrainingCertificateView.as_view(),
+        name='Childcare-Training-Certificate-View'),
+    url(r'^childcare-training/check-answers/', views.ChildcareTrainingSummaryView.as_view(),
+        name='Childcare-Training-Summary-View'),
 
     # =========================== #
     # Criminal Record Checks urls #
@@ -71,9 +82,11 @@ urlpatterns = [
     url(r'^criminal-record/type/$', views.DBSTypeView.as_view(), name='DBS-Type-View'),
     url(r'^criminal-record/lived-abroad/$', views.DBSLivedAbroadView.as_view(), name='DBS-Lived-Abroad-View'),
     url(r'^criminal-record/abroad/$', views.DBSGoodConductView.as_view(), name='DBS-Good-Conduct-View'),
-    url(r'^criminal-record/email-certificates/$', views.DBSEmailCertificatesView.as_view(), name='DBS-Email-Certificates-View'),
+    url(r'^criminal-record/email-certificates/$', views.DBSEmailCertificatesView.as_view(),
+        name='DBS-Email-Certificates-View'),
     url(r'^criminal-record/military-base-abroad/$', views.DBSMilitaryView.as_view(), name='DBS-Military-View'),
-    url(r'^criminal-record/MOD-checks/$', views.DBSMinistryOfDefenceView.as_view(), name='DBS-Ministry-Of-Defence-View'),
+    url(r'^criminal-record/MOD-checks/$', views.DBSMinistryOfDefenceView.as_view(),
+        name='DBS-Ministry-Of-Defence-View'),
     url(r'^criminal-record/UK/$', views.DBSGuidanceSecondView.as_view(), name='DBS-Guidance-Second-View'),
     url(r'^criminal-record/your-details/$', views.DBSCheckCapitaView.as_view(), name='DBS-Check-Capita-View'),
     url(r'^criminal-record/DBS-details/$', views.DBSCheckNoCapitaView.as_view(), name='DBS-Check-No-Capita-View'),
@@ -81,6 +94,32 @@ urlpatterns = [
     url(r'^criminal-record/Ofsted-check/$', views.DBSGetView.as_view(), name='DBS-Get-View'),
     url(r'^criminal-record/post-certificate/', views.DBSPostView.as_view(), name='DBS-Post-View'),
     url(r'^criminal-record/check-answers/', views.DBSSummaryView.as_view(), name='DBS-Summary-View'),
+
+    # ======================= #
+    # People in the Home urls #
+    # ======================= #
+
+    url(r'^people/$', PITH_views.PITHGuidanceView.as_view(), name='PITH-Guidance-View'),
+
+    #Adults
+    url(r'^people/adults/$', PITH_views.PITHAdultCheckView.as_view(), name='PITH-Adult-Check-View'),
+    url(r'^people/adults-details/$', views.other_people_adult_details, name='PITH-Adult-Details-View'),
+    url(r'^people/adults-lived-abroad/$', PITH_views.PITHLivedAbroadView.as_view(), name='PITH-Lived-Abroad-View'),
+    url(r'^people/adults-checks-abroad/$', PITH_views.PITHAbroadCriminalView.as_view(), name='PITH-Abroad-Criminal-View'),
+    url(r'^people/adults-military-bases/$', PITH_views.PITHMilitaryView.as_view(), name='PITH-Military-View'),
+    url(r'^people/adults-MoD-checks/$', PITH_views.PITHMinistryView.as_view(), name='PITH-Ministry-View'),
+    url(r'^people/adult-dbs-checks/$', PITH_views.PITHDBSCheckView.as_view(), name='PITH-DBS-Check-View'),
+    url(r'^people/post-certificate/$', PITH_views.PITHPostView.as_view(), name='PITH-Post-View'),
+    url(r'^people/adults-apply/$', PITH_views.PITHApplyView.as_view(), name='PITH-Apply-View'),
+
+    #Children
+    url(r'^people/children/temporary/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
+    url(r'^people/children/$', views.other_people_children_question,
+        name='Other-People-Children-Question-View'),
+    url(r'^people/children-details/', views.other_people_children_details,
+        name='Other-People-Children-Details-View'),
+    url(r'^people/children-turning-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
+    url(r'^people/check-answers/', views.other_people_summary, name='Other-People-Summary-View'),
 
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),
     url(r'^health/booklet/', views.health_booklet, name='Health-Booklet-View'),
@@ -105,17 +144,8 @@ urlpatterns = [
     url(r'^references/second-reference-contact-details/', views.references_second_reference_contact_details,
         name='References-Second-Reference-Contact-Details-View'),
     url(r'^references/check-answers/', views.references_summary, name='References-Summary-View'),
-    url(r'^registration-rules/', TemplateView.as_view(template_name='registration-rules.html'), name='Registration-Rules'),
-    url(r'^people/$', views.other_people_guidance, name='Other-People-Guidance-View'),
-    url(r'^people/adults/', views.other_people_adult_question, name='Other-People-Adult-Question-View'),
-    url(r'^people/adults-details/', views.other_people_adult_details, name='Other-People-Adult-Details-View'),
-    url(r'^people/adult-dbs-details/', views.other_people_adult_dbs, name='Other-People-Adult-DBS-View'),
-    url(r'^people/children/', views.other_people_children_question,
-        name='Other-People-Children-Question-View'),
-    url(r'^people/children-details/', views.other_people_children_details,
-        name='Other-People-Children-Details-View'),
-    url(r'^other-people/approaching-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
-    url(r'^people/check-answers/', views.other_people_summary, name='Other-People-Summary-View'),
+    url(r'^registration-rules/', TemplateView.as_view(template_name='registration-rules.html'),
+        name='Registration-Rules'),
     url(r'^health-check/(?P<id>[\w-]+)/$', health_check_login.validate_magic_link, name='Health-Check-Authentication'),
     url(r'^health-check/birth-date', dob_auth.DobAuthView.as_view(), name='Health-Check-Dob'),
     url(r'^health-check/adults', guidance.Guidance.as_view(), name='Health-Check-Guidance'),
@@ -124,12 +154,18 @@ urlpatterns = [
         name='Health-Check-Serious-Start'),
     url(r'^health-check/more-serious-illness', serious_illness.MoreSeriousIllnessesView.as_view(),
         name='Health-Check-Serious-More'),
-    url(r'^health-check/serious-illness/edit', serious_illness.SeriousIllnessEditView.as_view(),  name='Health-Check-Serious-Edit'),
-    url(r'^health-check/serious-illness-details$', serious_illness.SeriousIllnessView.as_view(), name='Health-Check-Serious'),
-    url(r'^health-check/hospital$', hospital_admission.HospitalAdmissionStartView.as_view(), name='Health-Check-Hospital-Start'),
-    url(r'^health-check/more-hospital', hospital_admission.MoreHospitalAdmissionsView.as_view(), name='Health-Check-Hospital-More'),
-    url(r'^health-check/hospital/edit', hospital_admission.HospitalAdmissionEditView.as_view(),  name='Health-Check-Hospital-Edit'),
-    url(r'^health-check/hospital-details', hospital_admission.HospitalAdmissionView.as_view(), name='Health-Check-Hospital'),
+    url(r'^health-check/serious-illness/edit', serious_illness.SeriousIllnessEditView.as_view(),
+        name='Health-Check-Serious-Edit'),
+    url(r'^health-check/serious-illness-details$', serious_illness.SeriousIllnessView.as_view(),
+        name='Health-Check-Serious'),
+    url(r'^health-check/hospital$', hospital_admission.HospitalAdmissionStartView.as_view(),
+        name='Health-Check-Hospital-Start'),
+    url(r'^health-check/more-hospital', hospital_admission.MoreHospitalAdmissionsView.as_view(),
+        name='Health-Check-Hospital-More'),
+    url(r'^health-check/hospital/edit', hospital_admission.HospitalAdmissionEditView.as_view(),
+        name='Health-Check-Hospital-Edit'),
+    url(r'^health-check/hospital-details', hospital_admission.HospitalAdmissionView.as_view(),
+        name='Health-Check-Hospital'),
     url(r'^health-check/check-answers', summary.Summary.as_view(), name='Health-Check-Summary'),
     url(r'^health-check/declaration', declaration.Declaration.as_view(), name='Health-Check-Declaration'),
     url(r'^health-check/thank-you', thank_you.ThankYou.as_view(), name='Health-Check-Thank-You'),
@@ -177,7 +213,18 @@ urlpatterns = [
     url(r'^help-contact/$', views.help_and_contact, name='Help-And-Contact-View'),
     url(r'^childcare-location/cancel-application', views.cancel_application.cl_cancel_app, name='Service-Unavailable'),
     url(r'^feedback/', feedback.feedback, name='Feedback'),
-    url(r'^feedback-submitted/', feedback.feedback_confirmation, name='Feedback-Confirmation')
+    url(r'^feedback-submitted/', feedback.feedback_confirmation, name='Feedback-Confirmation'),
+
+    # =========================== #
+    # Your children urls #
+    # =========================== #
+    url(r'^your-children/$', your_children.your_children_guidance, name='Your-Children-Guidance-View'),
+    url(r'^your-children-details/$', your_children.your_children_details, name='Your-Children-Details-View'),
+    url(r'^your-children/living-with-you/$', your_children.your_children_living_with_you, name='Your-Children-Living-With-You-View'),
+    url(r'^your-children/addresses/$', your_children.your_children_address_capture, name='Your-Children-Address-View'),
+    url(r'^your-children/address-details/$', your_children.your_children_address_selection, name='Your-Children-Address-Select-View'),
+    url(r'^your-children/enter-address/$', your_children.your_children_address_manual, name='Your-Children-Address-Manual-View'),
+    url(r'^your-children/check-answers/$', your_children.your_children_summary, name='Your-Children-Summary-View'),
 ]
 
 if settings.DEBUG:

@@ -123,6 +123,30 @@ class PersonalDetailsTest(ViewsTest):
         except:
             self.assertEqual(0, 0)
 
+    def test_childcare_address_details_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/personal-details/childcare-address-details/')
+        self.assertEqual(found.func, personal_details_working_in_other_childminder_home)
+
+    def test_childcare_address_details_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/personal-details/childcare-address-details/?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
+    def test_own_children_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/personal-details/your-children/')
+        self.assertEqual(found.func, personal_details_own_children)
+
+    def test_own_children_page_not_displayed_without_id(self):
+        c = Client()
+        try:
+            c.get(settings.URL_PREFIX + '/personal-details/your-children/?id=')
+            self.assertEqual(1, 0)
+        except:
+            self.assertEqual(0, 0)
+
     def test_summary_url_resolves_to_page(self):
         found = resolve(settings.URL_PREFIX + '/personal-details/check-answers/')
         self.assertEqual(found.func, personal_details_summary)

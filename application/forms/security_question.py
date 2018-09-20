@@ -27,7 +27,7 @@ class SecurityQuestionForm(ChildminderForms):
         full_stop_stripper(self)
 
     def clean_security_answer(self):
-        security_answer = self.cleaned_data['security_answer']
+        security_answer = self.cleaned_data['security_answer'].upper()
         if self.answer.replace(' ', '') != security_answer.replace(' ', ''):
             raise forms.ValidationError('Your answer must match what you told us in your application')
 

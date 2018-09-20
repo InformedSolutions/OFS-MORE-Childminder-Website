@@ -164,7 +164,7 @@ def create_tables(tables_values, page_name_dict, page_link_dict, change_link_des
     table_output_list = []
     for table in tables_values:
 
-        # Each iteration of table will be a dictionary (see a call of this funciton for the definition of this)
+        # Each iteration of table will be a dictionary (see a call of this function for the definition of this)
         for key, value in table['fields'].items():
             # Create a row object as defined above, using the data name as the key
             if change_link_description_dict is not None \
@@ -175,7 +175,7 @@ def create_tables(tables_values, page_name_dict, page_link_dict, change_link_des
             # The actual table object is passed into the function without rows, the row is added here
             table['table_object'].add_row(temp_row)
 
-        # Once all rows have been addded to the object, get errors can be called, getting any errors for all of the rows
+        # Once all rows have been added to the object, get errors can be called, getting any errors for all of the rows
         table['table_object'].get_errors()
         table['table_object'].title = table['title']
         table['table_object'].error_summary_title = table['error_summary_title']

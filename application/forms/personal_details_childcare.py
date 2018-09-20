@@ -2,11 +2,13 @@ import re
 
 from django import forms
 from django.conf import settings
+from govuk_forms.widgets import InlineRadioSelect
 
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (ApplicantHomeAddress,
-                                ApplicantPersonalDetails)
+                                ApplicantPersonalDetails,
+                                Application)
 
 
 class PersonalDetailsChildcareAddressForm(ChildminderForms):
@@ -58,12 +60,12 @@ class PersonalDetailsChildcareAddressManualForm(ChildminderForms):
     auto_replace_widgets = True
 
     street_line1 = forms.CharField(label='Address line 1',
-                                             error_messages={'required': 'Please enter the first line of the address'})
+                                   error_messages={'required': 'Please enter the first line of your address'})
     street_line2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city',
                            error_messages={'required': 'Please enter the name of the town or city'})
     county = forms.CharField(label='County (optional)', required=False)
-    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter the postcode'})
+    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -96,7 +98,7 @@ class PersonalDetailsChildcareAddressManualForm(ChildminderForms):
         """
         street_line1 = self.cleaned_data['street_line1']
         if len(street_line1) > 50:
-            raise forms.ValidationError('The first line of the address must be under 50 characters long')
+            raise forms.ValidationError('The first line of your address must be under 50 characters long')
         return street_line1
 
     def clean_street_line2(self):
@@ -106,7 +108,7 @@ class PersonalDetailsChildcareAddressManualForm(ChildminderForms):
         """
         street_line2 = self.cleaned_data['street_line2']
         if len(street_line2) > 50:
-            raise forms.ValidationError('The second line of the address must be under 50 characters long')
+            raise forms.ValidationError('The second line of your address must be under 50 characters long')
         return street_line2
 
     def clean_town(self):
@@ -130,7 +132,7 @@ class PersonalDetailsChildcareAddressManualForm(ChildminderForms):
         if county != '':
             if re.match(settings.REGEX['COUNTY'], county) is None:
                 raise forms.ValidationError('Please spell out the name of the county using letters')
-            if len(county) > 100:
+            if len(county) > 50:
                 raise forms.ValidationError('The name of the county must be under 50 characters long')
         return county
 
@@ -156,7 +158,7 @@ class PersonalDetailsChildcareAddressLookupForm(ChildminderForms):
     auto_replace_widgets = True
 
     address = forms.ChoiceField(label='Select address', required=True,
-                                error_messages={'required': 'Please select the address from the list'})
+                                error_messages={'required': 'Please select your address'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -169,6 +171,74 @@ class PersonalDetailsChildcareAddressLookupForm(ChildminderForms):
         super(PersonalDetailsChildcareAddressLookupForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         self.fields['address'].choices = self.choices
+
+
+class PersonalDetailsWorkingInOtherChildminderHomeForm(ChildminderForms):
+    """
+    GOV.UK form for the Your personal details: your childcare address details page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    auto_replace_widgets = True
+
+    options = (
+        ('True', 'Yes'),
+        ('False', 'No')
+    )
+    working_in_other_childminder_home = forms.ChoiceField(label="Is this another childminder's home?", choices=options,
+                                                          widget=InlineRadioSelect, required=True,
+                                                          error_messages={
+                                                              'required': "Please say if you'll be working in another childminder's home"})
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: your childcare address details form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(PersonalDetailsWorkingInOtherChildminderHomeForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
+        # If information was previously entered, display it on the form
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            application = Application.objects.get(application_id=self.application_id_local)
+            self.fields['working_in_other_childminder_home'].initial = application.working_in_other_childminder_home
+            self.field_list = ['working_in_other_childminder_home']
+            self.pk = application.pk
+
+
+class PersonalDetailsOwnChildrenForm(ChildminderForms):
+    """
+    GOV.UK form for the Your personal details: your own children page
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    auto_replace_widgets = True
+
+    options = (
+        ('True', 'Yes'),
+        ('False', 'No')
+    )
+    own_children = forms.ChoiceField(label="Do you have children of your own under 16?", choices=options,
+                                     widget=InlineRadioSelect, required=True,
+                                     error_messages={
+                                         'required': "Please say if you have children of your own under 16"})
+
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your personal details: your childcare own children form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        super(PersonalDetailsOwnChildrenForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
+        # If information was previously entered, display it on the form
+        if Application.objects.filter(application_id=self.application_id_local).count() > 0:
+            application = Application.objects.get(application_id=self.application_id_local)
+            self.fields['own_children'].initial = application.own_children
+            self.field_list = ['own_children']
+            self.pk = application.pk
 
 
 class PersonalDetailsSummaryForm(ChildminderForms):
