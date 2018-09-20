@@ -145,7 +145,7 @@
     </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Looking after 8 years and older?
+            Looking after 8 year olds and older?
         </td>
         {% if childcare_type_eight_plus is True %}
         <td style="word-wrap: break-word" class=summary-column>
@@ -244,7 +244,7 @@
     <tr>
         <th colspan="{% if print_class %}2{% else %}3{% endif %}">
             <div class="heading-medium">
-                Your personal details
+                Your name and date of birth
             </div>
         </th>
     </tr>
@@ -277,19 +277,19 @@
         </td>
         {% if personal_details_birth_month == 1 %}
         <td style="word-wrap: break-word" class=summary-column>
-            {{personal_details_birth_day}} January {{personal_details_birth_year}}
+            {{personal_details_birth_day}} Jan {{personal_details_birth_year}}
         </td>
         {% elif personal_details_birth_month == 2 %}
         <td style="word-wrap: break-word" class=summary-column>
-            {{personal_details_birth_day}} February {{personal_details_birth_year}}
+            {{personal_details_birth_day}} Feb {{personal_details_birth_year}}
         </td>
         {% elif personal_details_birth_month == 3 %}
         <td style="word-wrap: break-word" class=summary-column>
-            {{personal_details_birth_day}} March {{personal_details_birth_year}}
+            {{personal_details_birth_day}} Mar {{personal_details_birth_year}}
         </td>
         {% elif personal_details_birth_month == 4 %}
         <td style="word-wrap: break-word" class=summary-column>
-            {{personal_details_birth_day}} April {{personal_details_birth_year}}
+            {{personal_details_birth_day}} Apr {{personal_details_birth_year}}
         </td>
         {% elif personal_details_birth_month == 5 %}
         <td style="word-wrap: break-word" class=summary-column>
@@ -297,31 +297,31 @@
         </td>
         {% elif personal_details_birth_month == 6 %}
         <td style="word-wrap: break-word" class=summary-column>
-            {{personal_details_birth_day}} June {{personal_details_birth_year}}
+            {{personal_details_birth_day}} Jun {{personal_details_birth_year}}
         </td>
         {% elif personal_details_birth_month == 7 %}
         <td style="word-wrap: break-word" class=summary-column>
-            {{personal_details_birth_day}} July {{personal_details_birth_year}}
+            {{personal_details_birth_day}} Jul {{personal_details_birth_year}}
         </td>
         {% elif personal_details_birth_month == 8 %}
         <td style="word-wrap: break-word" class=summary-column>
-            {{personal_details_birth_day}} August {{personal_details_birth_year}}
+            {{personal_details_birth_day}} Aug {{personal_details_birth_year}}
         </td>
         {% elif personal_details_birth_month == 9 %}
         <td style="word-wrap: break-word" class=summary-column>
-            {{personal_details_birth_day}} September {{personal_details_birth_year}}
+            {{personal_details_birth_day}} Sep {{personal_details_birth_year}}
         </td>
         {% elif personal_details_birth_month == 10 %}
         <td style="word-wrap: break-word" class=summary-column>
-            {{personal_details_birth_day}} October {{personal_details_birth_year}}
+            {{personal_details_birth_day}} Oct {{personal_details_birth_year}}
         </td style="word-wrap: break-word">
         {% elif personal_details_birth_month == 11 %}
         <td style="word-wrap: break-word" class=summary-column>
-            {{personal_details_birth_day}} November {{personal_details_birth_year}}
+            {{personal_details_birth_day}} Nov {{personal_details_birth_year}}
         </td>
         {% elif personal_details_birth_month == 12 %}
         <td style="word-wrap: break-word" class=summary-column>
-            {{personal_details_birth_day}} December {{personal_details_birth_year}}
+            {{personal_details_birth_day}} Dec {{personal_details_birth_year}}
         </td>
         {% endif %}
         <td class="change-answer {{ print_class }}">
@@ -332,6 +332,24 @@
             {% endif %}
         </td>
     </tr>
+    </tbody>
+</table>
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Your home and childcare address
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
             Your home address
@@ -454,6 +472,7 @@
         </td>
         {% endif %}
     </tr>
+    {% if location_of_childcare == False %}
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
             Is this another childminder's home?
@@ -470,16 +489,35 @@
         <td class="change-answer {{ print_class }}">
             {% if personal_details_change %}
             <a href="{% url 'Personal-Details-Childcare-Address-Details-View' %}?id={{application_id}}" alt="Change your answer on whether this is another  childminder's home">
-                Change <span class="visuallyhidden">your answer on whether this is another  childminder's home</span>
+                Change <span class="visuallyhidden">your answer on whether this is another childminder's home</span>
             </a>
             {% endif %}
         </td>
     </tr>
+    {% endif %}
+    </tbody>
+</table>
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Your children
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Do you have children  of your own under 16?
+            Do you have children of your own under 16?
         </td>
-        {% if own_children %}
+        {% if own_children == True %}
         <td style="word-wrap: break-word" class=summary-column>
             Yes
         </td>
@@ -494,6 +532,37 @@
                 Change <span class="visuallyhidden">your answer on whether you have children of your own under 16</span>
             </a>
             {% endif %}
+        </td>
+    </tr>
+    </tbody>
+</table>
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Your children's addresses
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Which of your children live with you?
+        </td>
+        <td style="word-wrap: break-word">
+                {{ children_living_with_childminder|default:"None" }}
+        </td>
+        <td class="change-answer">
+            <a href="{% url 'Your-Children-Living-With-You-View' %}?id={{application_id}}" alt='Change which of your children live with you?'>
+                Change <span class="visuallyhidden">which of your children live with you?</span>
+            </a>
         </td>
     </tr>
     </tbody>

@@ -1,6 +1,8 @@
 from django.urls import reverse
 from django.utils import timezone
 import calendar
+import collections
+import datetime
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -19,6 +21,8 @@ from ..models import (AdultInHome,
                       ApplicantName,
                       ApplicantPersonalDetails,
                       Application,
+                      Child,
+                      ChildAddress,
                       ChildInHome,
                       ChildcareType,
                       CriminalRecordCheck,
@@ -189,6 +193,32 @@ def declaration_summary(request, print_mode=False):
         child_lists = zip(child_name_list, child_birth_day_list, child_birth_month_list, child_birth_year_list,
                           child_relationship_list)
 
+        # Retrieve children living with childminder information
+        children_table = []
+        children_living_with_childminder = []
+        children = Child.objects.filter(application_id=application_id_local).order_by('child')
+        for child in children:
+
+            dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)
+
+            # If the child does not live with the childminder, append their full address for display on the summary page
+            full_address = None
+
+            if not child.lives_with_childminder:
+                full_address = ChildAddress.objects.get(application_id=application_id, child=child.child)
+
+            child_details = collections.OrderedDict([
+                ('child_number', child.child),
+                ('full_name', child.get_full_name()),
+                ('dob', dob),
+                ('lives_with_childminder', child.lives_with_childminder),
+                ('full_address', full_address),
+            ])
+            children_table.append(child_details)
+
+            if child.lives_with_childminder:
+                children_living_with_childminder.append(child.get_full_name())
+
         # For returned applications, display change links only if task has been returned
         if application.application_status == 'FURTHER_INFORMATION':
             arc_flagged_statuses = get_arc_flagged(application)
@@ -267,7 +297,9 @@ def declaration_summary(request, print_mode=False):
             'child_lists': child_lists,
             'turning_16': application.children_turning_16,
             'people_in_your_home_change': people_in_your_home_change,
-            'print': print_mode
+            'print': print_mode,
+            'children': children_table,
+            'children_living_with_childminder': ", ".join(children_living_with_childminder)
         }
 
         variables = {**variables, **references_vars}
