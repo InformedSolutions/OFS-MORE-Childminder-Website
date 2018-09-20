@@ -1,26 +1,24 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Children in the home{% endblock %}
+{% block page_title %}Address details for children not in the home{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
 {% include "back-button.html" %}
-
 <div class="two-thirds">
-    {{form.error_summary}}
 
     <form method="post" novalidate>
         <div class="form-group">
+
             <h1 class="form-title heading-large">
-                Children in the home
+                Address details for children not in the home
             </h1>
 
-            <p>We need to know about any children under 16 who live in the home.</p>
-
-            <p>Council social services will carry out checks on all of these children.</p>
-            
-            {{ form.as_div }}
+            {% for child in child_list %}
+                {{ child.get_full_name }}
+                {{ child.get_full_address }}
+            {% endfor %}
 
             {% csrf_token %}
             <input type="submit" class="button" value="Save and continue">

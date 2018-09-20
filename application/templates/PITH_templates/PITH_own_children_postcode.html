@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Children in the home{% endblock %}
+{% block page_title %}Your child's address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -13,17 +13,15 @@
     <form method="post" novalidate>
         <div class="form-group">
             <h1 class="form-title heading-large">
-                Children in the home
+                {{form.child.get_full_name}}'s address
             </h1>
-
-            <p>We need to know about any children under 16 who live in the home.</p>
-
-            <p>Council social services will carry out checks on all of these children.</p>
             
             {{ form.as_div }}
 
             {% csrf_token %}
             <input type="submit" class="button" value="Save and continue">
+            
+            <a href="{{manual_url}}">Enter address manually</a>
         </div>
     </form>
 </div>
