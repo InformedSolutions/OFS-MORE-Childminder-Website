@@ -12,11 +12,11 @@ class Declaration(FormView):
     """
     template_name = 'other_people_health_check/declaration.html'
     success_url_name = 'Health-Check-Declaration'
-    form_name = PITHDeclarationForm
+    form_class = PITHDeclarationForm
 
-    def form_valid(self):
+    def form_valid(self, **kwargs):
 
-        return super(Declaration, self).form_valid()
+        return super(Declaration, self).form_valid(**kwargs)
 
     def get_context_data(self, **kwargs):
         """

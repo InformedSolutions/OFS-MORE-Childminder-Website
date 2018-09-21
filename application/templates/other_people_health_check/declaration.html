@@ -1,48 +1,50 @@
 {% extends 'govuk_template.html' %}
 {% block page_title %}Your declaration{% endblock %}
 {% load static %}
-{% load govuk_template_base %}
-{% block proposition_menu %}
-{% endblock %}
-{% block inner_content %}
-{% include 'back-button.html' %}
+    {% load govuk_template_base %}
+    {% block proposition_menu %}
+    {% endblock %}
+    {% block inner_content %}
+    {% include 'back-button.html' %}
 
+<!-- Initialise error summary for page -->
 <div class="two-thirds">
-    <h1 class="form-title heading-large">Your declaration</h1>
-    <p>Ofsted will check your details.</p>
-    <p>We will also carry out background checks with social services as well as other organisations.</p>
-    <p><a href="{% static 'Household members information on background checks.pdf'%}">Leaflet on background
-        checks</a> (PDF, 174KB, 1 page)</p>
-    <p>By continuing, I confirm that the information I have given is correct.</p>
+{{form.error_summary}}
 
-    <div class="notice">
-        <i class="icon icon-important icon-ofsted-download"
-           style="background-image: url(/childminder/static/images/icon-important.png)">
-            <span class="visually-hidden">Warning</span>
+    <div class="two-thirds">
+            <h1 class="form-title heading-large">Your declaration</h1>
+            <p>Ofsted will check your details.</p>
+        <p>We will also carry out background checks with social services as well as other organisations.</p>
+        <p><a href="{% static 'Household members information on background checks.pdf'%}">Leaflet on background
+            checks</a> (PDF, 174KB, 1 page)</p>
+        <p>By continuing, I confirm that the information I have given is correct.</p>
+
+        <div class="notice">
+            <i class="icon icon-important icon-ofsted-download"
+            style="background-image: url(/childminder/static/images/icon-important.png)">
+                <span class="visually-hidden">Warning</span>
         </i>
-        <strong class="bold-small">Ofsted can disqualify the childminder if you:
-            <ul class="list list-bullet">
-                <li>give us false information</li>
-                <li>hide information</li>
+            <strong class="bold-small">Ofsted can disqualify the childminder if you:
+                <ul class="list list-bullet">
+                    <li>give us false information</li>
+                    <li>hide information</li>
             </ul>
         </strong>
-    </div>
+        </div>
 
-    <!-- Initialise error summary for page -->
-    <div class="two-thirds">
-    {{form.error_summary}}
 
     <!-- Form -->
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-        <!-- Content -->
         <div class="form-group">
             {{form.as_div}}
         </div>
+
+        {% csrf_token %}
+        <input type="submit" class="button" value="Continue">
     </form>
     </div>
 
-        <br>
-        <a href="{{ thank_you_url }}" class="button">Continue</a>
+    <br>
     </div>
 
 {% endblock %}
