@@ -13,6 +13,8 @@ from ..models import Application, Child, ChildAddress
 from .. import status, address_helper
 from ..business_logic import remove_child, rearrange_children, your_children_details_logic, reset_declaration, \
     child_address_logic
+from ..table_util import create_tables, Table, submit_link_setter
+from ..summary_page_data import your_children_children_dict, your_children_children_link_dict
 
 
 def __get_first_child_number_for_address_entry(application_id):
@@ -178,7 +180,7 @@ def __your_children_details_get_handler(request):
         form.check_flag()
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = "There was a problem (Child " + str(i) + ")"
+            form.error_summary_title = "There was a problem with your children's details"
 
         form_list.append(form)
 
@@ -735,42 +737,83 @@ def __your_children_summary_get_handler(request):
     """
 
     application_id = request.GET["id"]
+    application = Application.objects.get(application_id=application_id)
+
     form = YourChildrenSummaryForm()
 
-    children_table = []
-    children_living_with_childminder = []
     children = Child.objects.filter(application_id=application_id).order_by('child')
 
-    for child in children:
-        dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)
+    child_table_list = []
+    child_address_table_list = []
 
-        # If the child does not live with the childminder, append their full address for display on the summary page
-        full_address = None
+    for child in children:
+        child_table = __create_child_table(child)
+        child_table_list.append(child_table)
 
         if not child.lives_with_childminder:
-            full_address = ChildAddress.objects.get(application_id=application_id, child=child.child)
+            child_address = ChildAddress.objects.get(application_id=application_id, child=child.child)
+            child_address_table = __create_child_address_table(application, child, child_address)
+            child_address_table_list.append(child_address_table)
 
-        child_details = collections.OrderedDict([
-            ('child_number', child.child),
-            ('full_name', child.get_full_name()),
-            ('dob', dob),
-            ('lives_with_childminder', child.lives_with_childminder),
-            ('full_address', full_address),
-        ])
-        children_table.append(child_details)
+    child_table_list = create_tables(child_table_list, your_children_children_dict, your_children_children_link_dict)
 
-        if child.lives_with_childminder:
-            children_living_with_childminder.append(child.get_full_name())
+    table_list = child_table_list
 
     variables = {
         'page_title': 'Check your answers: your children',
         'form': form,
         'application_id': application_id,
-        'children': children_table,
-        'children_living_with_childminder': ", ".join(children_living_with_childminder)
+        'table_list': table_list,
+        'your_children_status': application.your_children_status
     }
 
-    return render(request, 'your-children-summary.html', variables)
+    variables = submit_link_setter(variables, table_list, 'your_children', application_id)
+
+    return render(request, 'generic-summary-template.html', variables)
+
+
+def __create_child_table(child):
+    dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)
+
+    # Sets fields to be displayed in summary table. These map to the object type
+    child_fields = collections.OrderedDict([
+        ('full_name', child.get_full_name()),
+        ('date_of_birth', dob)
+    ])
+
+    # Table container object including title, errors etc.
+    child_table = collections.OrderedDict({
+        'table_object': Table([child.pk]),
+        'fields': child_fields,
+        'title': child.get_full_name(),
+        'error_summary_title': "There was a problem with your children's details"
+    })
+
+    return child_table
+
+
+def __create_child_address_table(application, child, child_address):
+    table = Table(
+                [child_address.pk, getattr(child_address, 'pk', None),
+                 application.pk])
+
+    address_dict = ' '.join([child_address.street_line1, (child_address.street_line2 or ''),
+                             child_address.town, (child_address.county or ''), child_address.postcode])
+
+    fields = collections.OrderedDict([
+        ('child_address', address_dict)
+    ])
+
+    # Table container object including title, errors etc.
+    child_table = collections.OrderedDict({
+        'table_object': table,
+        'fields': fields,
+        'title': child.get_full_name(),
+        'error_summary_title': "There was a problem with your children's details"
+    })
+
+    return child_table
+
 
 
 def __your_children_summary_post_handler(request):
