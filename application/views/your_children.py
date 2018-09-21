@@ -13,7 +13,7 @@ from ..models import Application, Child, ChildAddress
 from .. import status, address_helper
 from ..business_logic import remove_child, rearrange_children, your_children_details_logic, reset_declaration, \
     child_address_logic
-from ..table_util import create_tables, Table, submit_link_setter
+from ..table_util import create_tables, Table, submit_link_setter, Row
 from ..summary_page_data import your_children_children_dict, your_children_children_link_dict
 
 
@@ -757,7 +757,7 @@ def __your_children_summary_get_handler(request):
 
     child_table_list = create_tables(child_table_list, your_children_children_dict, your_children_children_link_dict)
 
-    table_list = child_table_list
+    table_list = child_table_list + child_address_table_list
 
     variables = {
         'page_title': 'Check your answers: your children',
@@ -793,27 +793,21 @@ def __create_child_table(child):
 
 
 def __create_child_address_table(application, child, child_address):
-    table = Table(
-                [child_address.pk, getattr(child_address, 'pk', None),
-                 application.pk])
+    table = Table([child_address.pk])
 
-    address_dict = ' '.join([child_address.street_line1, (child_address.street_line2 or ''),
+    table.title = child.get_full_name() + "'s address"
+    table.error_summary_title = "There was a problem with your children's details"
+    table.other_people_numbers = '&child=' + str(child.child)
+
+    back_link = 'Your-Children-Address-Manual-View'
+
+    address_value = ' '.join([child_address.street_line1, (child_address.street_line2 or ''),
                              child_address.town, (child_address.county or ''), child_address.postcode])
 
-    fields = collections.OrderedDict([
-        ('child_address', address_dict)
-    ])
+    row = Row('child_address', 'Address', address_value, back_link, None)
+    table.add_row(row)
 
-    # Table container object including title, errors etc.
-    child_table = collections.OrderedDict({
-        'table_object': table,
-        'fields': fields,
-        'title': child.get_full_name(),
-        'error_summary_title': "There was a problem with your children's details"
-    })
-
-    return child_table
-
+    return table
 
 
 def __your_children_summary_post_handler(request):
