@@ -135,9 +135,9 @@ other_child_name_dict = collections.OrderedDict([('full_name', 'Name'),
                                                  ('date_of_birth', 'Date of birth'),
                                                  ('relationship', 'Relationship')])
 
-other_child_link_dict = collections.OrderedDict([('full_name', 'Other-People-Children-Details-View'),
-                                                 ('date_of_birth', 'Other-People-Children-Details-View'),
-                                                 ('relationship', 'Other-People-Children-Details-View')])
+other_child_link_dict = collections.OrderedDict([('full_name', 'PITH-Children-Details-View'),
+                                                 ('date_of_birth', 'PITH-Children-Details-View'),
+                                                 ('relationship', 'PITH-Children-Details-View')])
 
 # The below dictionaries are for the two tables at the top of the other people summary page
 

@@ -113,11 +113,9 @@ urlpatterns = [
     url(r'^people/adults-apply/$', PITH_views.PITHApplyView.as_view(), name='PITH-Apply-View'),
 
     #Children
-    url(r'^people/children/temporary/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
-    url(r'^people/children/$', views.other_people_children_question,
-        name='Other-People-Children-Question-View'),
+    url(r'^people/children/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
     url(r'^people/children-details/', views.other_people_children_details,
-        name='Other-People-Children-Details-View'),
+        name='PITH-Children-Details-View'),
     url(r'^people/children-turning-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
     url(r'^people/check-answers/', views.other_people_summary, name='Other-People-Summary-View'),
 

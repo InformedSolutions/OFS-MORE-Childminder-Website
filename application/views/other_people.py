@@ -251,7 +251,7 @@ def other_people_children_question(request):
             reset_declaration(application)
             if children_in_home == 'True':
                 return HttpResponseRedirect(
-                    reverse('Other-People-Children-Details-View') + '?id=' + application_id_local + '&children=' + str(
+                    reverse('PITH-Children-Details-View') + '?id=' + application_id_local + '&children=' + str(
                         number_of_children) + '&remove=0')
             elif children_in_home == 'False':
                 # Delete any existing children from database
@@ -418,7 +418,7 @@ def other_people_children_details(request):
                 }
                 add_child = int(number_of_children) + 1
                 add_child_string = str(add_child)
-                return HttpResponseRedirect(reverse('Other-People-Children-Details-View') + '?id=' +
+                return HttpResponseRedirect(reverse('PITH-Children-Details-View') + '?id=' +
                                             application_id_local + '&children=' + add_child_string + '&remove=0#person' + add_child_string,
                                             variables)
             # If there is an invalid form
