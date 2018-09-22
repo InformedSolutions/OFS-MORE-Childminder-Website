@@ -146,7 +146,7 @@ other_adult_summary_name_dict = collections.OrderedDict(
 other_adult_summary_link_dict = collections.OrderedDict([('adults_in_home', 'PITH-Adult-Check-View')])
 
 other_child_summary_name_dict = collections.OrderedDict([('children_in_home', 'Do you live with any children?')])
-other_child_summary_link_dict = collections.OrderedDict([('children_in_home', 'Other-People-Children-Question-View')])
+other_child_summary_link_dict = collections.OrderedDict([('children_in_home', 'PITH-Children-Check-View')])
 
 ###
 
@@ -195,7 +195,8 @@ submit_link_dict = collections.OrderedDict([('login_details', 'Contact-Email-Vie
                                             ('criminal_record_check', 'DBS-Lived-Abroad-View'),
                                             ('health', 'Health-Intro-View'),
                                             ('references', 'References-Intro-View'),
-                                            ('people_in_home', 'Other-People-Guidance-View')])
+                                            ('people_in_home', 'PITH-Guidance-View')
+                                            ])
 
 back_link_dict = collections.OrderedDict([('login_details', 'Question-View'),
                                           ('type_of_childcare', 'Type-Of-Childcare-Guidance-View'),
@@ -205,4 +206,6 @@ back_link_dict = collections.OrderedDict([('login_details', 'Question-View'),
                                           ('criminal_record_check', 'DBS-Check-DBS-Details-View'),
                                           ('health', 'Health-Booklet-View'),
                                           ('references', 'References-Second-Reference-Contact-Details-View'),
-                                          ('people_in_home', 'Other-People-Children-Question-View')])
+                                          # ('people_in_home', 'Other-People-Children-Question-View')
+                                          ('people_in_home', 'PITH-Children-Check-View')
+                                          ])
