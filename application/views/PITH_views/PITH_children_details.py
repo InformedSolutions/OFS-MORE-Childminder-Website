@@ -12,7 +12,7 @@ from application.business_logic import (
     reset_declaration,
 )
 from application.forms import OtherPeopleChildrenDetailsForm
-from application.models import Application
+from application.models import Application, ApplicantHomeAddress
 
 
 class PITHChildrenDetailsView(View):
@@ -108,13 +108,7 @@ class PITHChildrenDetailsView(View):
                     'people_in_home_status': application.people_in_home_status,
                 }
 
-                if children_turning_16:
-                    application.children_turning_16 = True
-                    success_url = 'Other-People-Approaching-16-View' # If a child is approaching 16, navigate to approaching 16 page
-                else:
-                    application.children_turning_16 = False
-                    success_url = 'Other-People-Summary-View' # If no child is approaching 16, navigate to summary page
-
+                success_url = self.get_success_url(children_turning_16, application)
                 application.date_updated = current_date
                 application.save()
                 reset_declaration(application)
@@ -164,5 +158,29 @@ class PITHChildrenDetailsView(View):
                 }
                 return render(request, 'other-people-children-details.html', variables)
 
+    def get_success_url(self, children_turning_16, application):
+        """
+        Function containing logic for determining success_url.
 
+        :param: children_turning_16: bool indicating whether or not any children were turning 16.
+        :param: application: application object for the applicant.
+        :return: reversable string for redirect target page.
 
+        If a child is approaching 16, navigate to approaching 16 page.
+        If no child is approaching 16 AND applicant IS providing care in own home, navigate to own children page.
+        If no child is approaching 16 AND applicant NOT providing care in own home, navigate to summary page.
+        """
+        if children_turning_16:
+            application.children_turning_16 = True
+            success_url = 'Other-People-Approaching-16-View'
+        else:
+            application.children_turning_16 = False
+
+            if ApplicantHomeAddress.objects.get(application_id=application.pk).childcare_address:
+                success_url = 'Your-Own-Children-View'
+            else:
+                success_url = 'Other-People-Summary-View'
+
+        application.save()
+
+        return success_url
