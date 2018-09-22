@@ -14,6 +14,7 @@ from datetime import date, datetime, timedelta
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
+from django.views.generic import View
 from django.shortcuts import render, reverse
 
 from application.utils import build_url
@@ -206,108 +207,36 @@ def other_people_adult_details(request):
                 }
                 return render(request, 'other-people-adult-details.html', variables)
 
-def other_people_children_question(request):
-    """
-    Method returning the template for the People in your home: children question page (for a given application) and
-    navigating to the People in your home: children details page or summary page when successfully completed
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered People in your home: children question template
-    """
-    current_date = timezone.now()
-    if request.method == 'GET':
-        application_id_local = request.GET["id"]
-        form = OtherPeopleChildrenQuestionForm(id=application_id_local)
-        form.check_flag()
-        application = Application.objects.get(pk=application_id_local)
-        number_of_adults = AdultInHome.objects.filter(
-            application_id=application_id_local).count()
-        adults_in_home = application.adults_in_home
-        if application.application_status == 'FURTHER_INFORMATION':
-            form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = "There was a problem"
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'number_of_adults': number_of_adults,
-            'adults_in_home': adults_in_home,
-            'people_in_home_status': application.people_in_home_status
-        }
-        return render(request, 'other-people-children-question.html', variables)
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = OtherPeopleChildrenQuestionForm(
-            request.POST, id=application_id_local)
-        application = Application.objects.get(pk=application_id_local)
-        form.remove_flag()
-        number_of_children = ChildInHome.objects.filter(
-            application_id=application_id_local).count()
-        if form.is_valid():
-            children_in_home = form.cleaned_data.get('children_in_home')
-            application.children_in_home = children_in_home
-            application.children_turning_16 = False
-            application.save()
-            application.date_updated = current_date
-            application.save()
-            reset_declaration(application)
-            if children_in_home == 'True':
-                return HttpResponseRedirect(
-                    reverse('PITH-Children-Details-View') + '?id=' + application_id_local + '&children=' + str(
-                        number_of_children) + '&remove=0')
-            elif children_in_home == 'False':
-                # Delete any existing children from database
-                children = ChildInHome.objects.filter(
-                    application_id=application_id_local)
-                for child in children:
-                    child.delete()
-                reset_declaration(application)
-                return HttpResponseRedirect(reverse('Other-People-Summary-View') + '?id=' + application_id_local)
-        else:
-            if application.application_status == 'FURTHER_INFORMATION':
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem"
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'other-people-children-question.html', variables)
 
-
-def other_people_children_details(request):
+class OtherPeopleChildrenDetailsView(View):
     """
-    Method returning the template for the People in your home: children details page (for a given application) and
-    navigating to the People in your home: approaching 16 page when successfully completed
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered People in your home: children details template
+    Class containing the methods responsible for handling requests to the 'Children-In-The-Home-Details' page.
     """
-    current_date = timezone.now()
-    if request.method == 'GET':
+    def get(self, request):
         application_id_local = request.GET["id"]
+        application = Application.objects.get(pk=application_id_local)
+
         number_of_children = int(request.GET["children"])
         remove_person = int(request.GET["remove"])
         remove_button = True
-        # If there are no adults in the database
-        if number_of_children == 0:
-            # Set the number of children to 1 to initialise one instance of the form
-            number_of_children = 1
-            # Disable the remove person button
-            remove_button = False
-        # If there is only one child in the database
+
+        if number_of_children == 0:  # If there are no children in the database
+            number_of_children = 1   # Set the number of children to 1 to initialise one instance of the form
+
         if number_of_children == 1:
-            # Disable the remove person button
-            remove_button = False
-        application = Application.objects.get(pk=application_id_local)
+            remove_button = False    # Disable the remove person button
+
         remove_child_in_home(application_id_local, remove_person)
         rearrange_children_in_home(number_of_children, application_id_local)
-        # Generate a list of forms to iterate through in the HTML
-        form_list = []
-        for i in range(1, number_of_children + 1):
-            form = OtherPeopleChildrenDetailsForm(
-                id=application_id_local, child=i, prefix=i)
-            if application.application_status == 'FURTHER_INFORMATION':
+
+        form_list = [OtherPeopleChildrenDetailsForm(id=application_id_local, child=i, prefix=i) for i in range(1, number_of_children + 1)]
+
+        if application.application_status == 'FURTHER_INFORMATION':
+            for index, form in enumerate(form_list):
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem (Child " + str(i) + ")"
-            form_list.append(form)
-            form.check_flag()
+                form.error_summary_title = "There was a problem (Child " + str(index + 1) + ")"
+                form.check_flag()
+
         variables = {
             'form_list': form_list,
             'application_id': application_id_local,
@@ -317,82 +246,75 @@ def other_people_children_details(request):
             'remove_child': number_of_children - 1,
             'people_in_home_status': application.people_in_home_status
         }
+
         return render(request, 'other-people-children-details.html', variables)
-    if request.method == 'POST':
+
+    def post(self, request):
+        current_date = timezone.now()
         application_id_local = request.POST["id"]
-        number_of_children = request.POST["children"]
-        remove_button = True
-        # If there are no adults in the database
-        if number_of_children == 0:
-            # Set the number of children to 1 to initialise one instance of the form
-            number_of_children = 1
-            # Disable the remove person button
-            remove_button = False
-        # If there is only one child in the database
-        if number_of_children == 1:
-            # Disable the remove person button
-            remove_button = False
         application = Application.objects.get(pk=application_id_local)
-        # Generate a list of forms to iterate through in the HTML
-        form_list = []
-        # List to allow for the validation of each form
-        valid_list = []
-        # List to allow for the age verification of each form
-        age_list = []
+
+        number_of_children = int(request.POST["children"])
+        remove_button = True
+
+        if number_of_children == 0:  # If there are no children in the database
+            number_of_children = 1   # Set the number of children to 1 to initialise one instance of the form
+
+        if number_of_children == 1:
+            remove_button = False  # Disable the remove person button
+
+        form_list   = []
+        forms_valid = True           # Bool indicating whether or not all the forms are valid
+        children_turning_16 = False  # Bool indicating whether or not all any children are turning 16
+
         for i in range(1, int(number_of_children) + 1):
-            form = OtherPeopleChildrenDetailsForm(
-                request.POST, id=application_id_local, child=i, prefix=i)
+            form = OtherPeopleChildrenDetailsForm(request.POST, id=application_id_local, child=i, prefix=i)
             form.remove_flag()
-            form_list.append(form)
             form.error_summary_title = 'There was a problem with the details (Child ' + str(i) + ')'
+            form_list.append(form)
+
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem (Person " + str(i) + ")"
+
             if form.is_valid():
-                child_record = other_people_children_details_logic(
-                    application_id_local, form, i)
+                child_record = other_people_children_details_logic(application_id_local, form, i)
                 child_record.save()
                 reset_declaration(application)
-                valid_list.append(True)
+
                 # Calculate child's age
-                birth_day = form.cleaned_data.get('date_of_birth')[0]
-                birth_month = form.cleaned_data.get('date_of_birth')[1]
-                birth_year = form.cleaned_data.get('date_of_birth')[2]
+                birth_day, birth_month, birth_year = form.cleaned_data.get('date_of_birth')
                 applicant_dob = date(birth_year, birth_month, birth_day)
                 today = date.today()
-                age = today.year - applicant_dob.year - (
-                        (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
+
+                age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
                 if 15 <= age < 16:
-                    age_list.append(True)
-                elif age < 15:
-                    age_list.append(False)
+                    children_turning_16 = True
+
             else:
-                valid_list.append(False)
+                forms_valid = False
+
         if 'submit' in request.POST:
             # If all forms are valid
-            if False not in valid_list:
+            if forms_valid:
                 variables = {
                     'application_id': application_id_local,
                     'people_in_home_status': application.people_in_home_status,
                 }
-                # If a child is approaching 16, navigate to approaching 16 page
-                if True in age_list:
+
+                if children_turning_16:
                     application.children_turning_16 = True
-                    application.date_updated = current_date
-                    application.save()
-                    reset_declaration(application)
-                    return HttpResponseRedirect(
-                        reverse('Other-People-Approaching-16-View') + '?id=' + application_id_local, variables)
-                # If no child is approaching 16, navigate to summary page
-                elif True not in age_list:
+                    success_url = 'Other-People-Approaching-16-View' # If a child is approaching 16, navigate to approaching 16 page
+                else:
                     application.children_turning_16 = False
-                    application.date_updated = current_date
-                    application.save()
-                    reset_declaration(application)
-                    return HttpResponseRedirect(reverse('Other-People-Summary-View') + '?id=' + application_id_local,
-                                                variables)
+                    success_url = 'Other-People-Summary-View' # If no child is approaching 16, navigate to summary page
+
+                application.date_updated = current_date
+                application.save()
+                reset_declaration(application)
+                return HttpResponseRedirect(reverse(success_url) + '?id=' + application_id_local, variables)
+
             # If there is an invalid form
-            elif False in valid_list:
+            else:
                 variables = {
                     'form_list': form_list,
                     'application_id': application_id_local,
@@ -403,26 +325,27 @@ def other_people_children_details(request):
                     'people_in_home_status': application.people_in_home_status
                 }
                 return render(request, 'other-people-children-details.html', variables)
+
         if 'add_child' in request.POST:
             # If all forms are valid
-            if False not in valid_list:
-                # If a child is approaching 16, navigate to approaching 16 page
-                if True in age_list:
-                    application.children_turning_16 = True
-                    application.date_updated = current_date
-                    application.save()
-                    reset_declaration(application)
+            if forms_valid:
                 variables = {
                     'application_id': application_id_local,
                     'people_in_home_status': application.people_in_home_status
                 }
+
                 add_child = int(number_of_children) + 1
                 add_child_string = str(add_child)
-                return HttpResponseRedirect(reverse('PITH-Children-Details-View') + '?id=' +
-                                            application_id_local + '&children=' + add_child_string + '&remove=0#person' + add_child_string,
+
+                # Redirect to self.get(), it seems.
+                return HttpResponseRedirect(reverse('PITH-Children-Details-View') + \
+                                            '?id=' + application_id_local + \
+                                            '&children=' + add_child_string + \
+                                            '&remove=0#person' + add_child_string,
                                             variables)
+
             # If there is an invalid form
-            elif False in valid_list:
+            else:
                 variables = {
                     'form_list': form_list,
                     'application_id': application_id_local,

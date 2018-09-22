@@ -101,7 +101,7 @@ urlpatterns = [
 
     url(r'^people/$', PITH_views.PITHGuidanceView.as_view(), name='PITH-Guidance-View'),
 
-    #Adults
+    # Adults
     url(r'^people/adults/$', PITH_views.PITHAdultCheckView.as_view(), name='PITH-Adult-Check-View'),
     url(r'^people/adults-details/$', views.other_people_adult_details, name='PITH-Adult-Details-View'),
     url(r'^people/adults-lived-abroad/$', PITH_views.PITHLivedAbroadView.as_view(), name='PITH-Lived-Abroad-View'),
@@ -112,9 +112,9 @@ urlpatterns = [
     url(r'^people/post-certificate/$', PITH_views.PITHPostView.as_view(), name='PITH-Post-View'),
     url(r'^people/adults-apply/$', PITH_views.PITHApplyView.as_view(), name='PITH-Apply-View'),
 
-    #Children
+    # Children
     url(r'^people/children/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
-    url(r'^people/children-details/', views.other_people_children_details,
+    url(r'^people/children-details/', views.OtherPeopleChildrenDetailsView.as_view(),
         name='PITH-Children-Details-View'),
     url(r'^people/children-turning-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
     url(r'^people/check-answers/', views.other_people_summary, name='Other-People-Summary-View'),
