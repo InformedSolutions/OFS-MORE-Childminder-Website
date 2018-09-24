@@ -380,6 +380,9 @@ def __your_children_living_with_you_post_handler(request):
 
         return render(request, 'your-children-living-with-you.html', variables)
 
+    # If form has been deemed valid and was flagged by ARC, the comment can now be removed at this stage
+    form.remove_flag()
+
     # Mark children listed as living in the home
 
     children = Child.objects.filter(application_id=application_id)
