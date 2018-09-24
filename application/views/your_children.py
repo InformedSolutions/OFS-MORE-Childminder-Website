@@ -8,14 +8,14 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from ..forms import YourChildrenGuidanceForm, YourChildrenDetailsForm, YourChildrenLivingWithYouForm, ChildAddressForm, \
-    YourChildrenSummaryForm, YourChildrenAddressLookupForm, YourChildManualAddressForm
+    YourChildrenSummaryForm, YourChildrenAddressLookupForm, YourChildManualAddressForm, ArcComments
 from ..models import Application, Child, ChildAddress
 from .. import status, address_helper
 from ..business_logic import remove_child, rearrange_children, your_children_details_logic, reset_declaration, \
     child_address_logic
 from ..table_util import create_tables, Table, submit_link_setter, Row
 from ..summary_page_data import your_children_children_dict, your_children_children_link_dict
-
+from ..utils import get_non_db_field_arc_comment
 
 def __get_first_child_number_for_address_entry(application_id):
     """
@@ -741,23 +741,23 @@ def __your_children_summary_get_handler(request):
 
     form = YourChildrenSummaryForm()
 
+    if application.application_status == 'FURTHER_INFORMATION':
+        form.error_summary_template_name = 'returned-error-summary.html'
+        form.error_summary_title = "There was a problem"
+
     children = Child.objects.filter(application_id=application_id).order_by('child')
 
     child_table_list = []
-    child_address_table_list = []
 
     for child in children:
         child_table = __create_child_table(child)
         child_table_list.append(child_table)
 
-        if not child.lives_with_childminder:
-            child_address = ChildAddress.objects.get(application_id=application_id, child=child.child)
-            child_address_table = __create_child_address_table(application, child, child_address)
-            child_address_table_list.append(child_address_table)
-
     child_table_list = create_tables(child_table_list, your_children_children_dict, your_children_children_link_dict)
 
-    table_list = child_table_list + child_address_table_list
+    children_living_with_you_table = __create_children_living_with_you_table(application)
+
+    table_list = [children_living_with_you_table] + child_table_list
 
     variables = {
         'page_title': 'Check your answers: your children',
@@ -769,21 +769,64 @@ def __your_children_summary_get_handler(request):
 
     variables = submit_link_setter(variables, table_list, 'your_children', application_id)
 
+    __add_arc_comments_to_child_tables(application_id, child_table_list)
+
     return render(request, 'generic-summary-template.html', variables)
+
+
+def __create_children_living_with_you_table(application):
+    children_living_with_childminder_temp_store = []
+
+    children_living_with_childminder = \
+        Child.objects.filter(application_id=application.application_id, lives_with_childminder=True)
+
+    for child in children_living_with_childminder:
+        children_living_with_childminder_temp_store.append(child.get_full_name())
+
+    if len(children_living_with_childminder_temp_store) == 0:
+        children_living_with_you_response_string = 'None'
+    else:
+        children_living_with_you_response_string = ", ".join(children_living_with_childminder_temp_store)
+
+    table = Table([application.pk])
+
+    table.title = "Children living with you"
+    table.error_summary_title = "There was a problem with your children's details"
+
+    back_link = 'Your-Children-Living-With-You-View'
+
+    arc_comment = get_non_db_field_arc_comment(application.application_id, 'children_living_with_childminder_selection')
+
+    row = Row('children_living_with_you', 'Which of your children live with you?', children_living_with_you_response_string, back_link, arc_comment)
+    table.add_row(row)
+    return table
 
 
 def __create_child_table(child):
     dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)
 
-    # Sets fields to be displayed in summary table. These map to the object type
-    child_fields = collections.OrderedDict([
-        ('full_name', child.get_full_name()),
-        ('date_of_birth', dob)
-    ])
+    if not child.lives_with_childminder:
+        child_address = ChildAddress.objects.get(application_id=child.application_id, child=child.child)
+        child_address_string = ' '.join([child_address.street_line1, (child_address.street_line2 or ''),
+                  child_address.town, (child_address.county or ''), child_address.postcode])
+        child_fields = collections.OrderedDict([
+            ('full_name', child.get_full_name()),
+            ('date_of_birth', dob),
+            ('address', child_address_string)
+        ])
+    else:
+        child_fields = collections.OrderedDict([
+            ('full_name', child.get_full_name()),
+            ('date_of_birth', dob),
+            ('address', 'Same as your own')
+        ])
+
+    table = Table([child.pk])
+    table.other_people_numbers = '&child=' + str(child.child)
 
     # Table container object including title, errors etc.
     child_table = collections.OrderedDict({
-        'table_object': Table([child.pk]),
+        'table_object': table,
         'fields': child_fields,
         'title': child.get_full_name(),
         'error_summary_title': "There was a problem with your children's details"
@@ -792,22 +835,29 @@ def __create_child_table(child):
     return child_table
 
 
-def __create_child_address_table(application, child, child_address):
-    table = Table([child_address.pk])
+def __add_arc_comments_to_child_tables(application_id, child_tables):
+    for index, table in enumerate(child_tables):
+        # Set child index to plus 1 as these are not zero indexed
+        child_index = index + 1
+        name_field_name = 'full_name'
 
-    table.title = child.get_full_name() + "'s address"
-    table.error_summary_title = "There was a problem with your children's details"
-    table.other_people_numbers = '&child=' + str(child.child)
+        if ArcComments.objects.filter(table_pk=table.table_pk[0], field_name=name_field_name, flagged=True).count() == 1:
+            log = ArcComments.objects.get(table_pk=table.table_pk[0], field_name=name_field_name)
+            for row in table.get_row_list():
+                if row.data_name == name_field_name:
+                    row.error = log.comment
+                    break
 
-    back_link = 'Your-Children-Address-Manual-View'
+        if ChildAddress.objects.filter(application_id=application_id, child=child_index).exists():
+            child_address = ChildAddress.objects.get(application_id=application_id, child=child_index)
+            address_field_name = 'address'
 
-    address_value = ' '.join([child_address.street_line1, (child_address.street_line2 or ''),
-                             child_address.town, (child_address.county or ''), child_address.postcode])
-
-    row = Row('child_address', 'Address', address_value, back_link, None)
-    table.add_row(row)
-
-    return table
+            if ArcComments.objects.filter(table_pk=child_address.child_address_id, field_name=address_field_name, flagged=True).exists():
+                log = ArcComments.objects.get(table_pk=child_address.child_address_id, field_name=address_field_name, flagged=True)
+                for row in table.get_row_list():
+                    if row.data_name == address_field_name:
+                        row.error = log.comment
+                        break
 
 
 def __your_children_summary_post_handler(request):

@@ -80,10 +80,12 @@ personal_details_change_link_description_dict = collections.OrderedDict([('name'
 
 
 your_children_children_dict = collections.OrderedDict([('full_name', 'Name'),
-                            ('date_of_birth', 'Date of birth')])
+                            ('date_of_birth', 'Date of birth'),
+                            ('address', 'Address')])
 
 your_children_children_link_dict = collections.OrderedDict([('full_name', 'Your-Children-Details-View'),
-                            ('date_of_birth', 'Your-Children-Details-View')])
+                            ('date_of_birth', 'Your-Children-Details-View'),
+                            ('address', 'Your-Children-Address-Manual-View')])
 
 
 ###
