@@ -18,6 +18,10 @@ from ..summary_page_data import your_children_children_dict, your_children_child
 from ..utils import get_non_db_field_arc_comment
 
 
+#
+# Helper method for Your Children tasks
+#
+
 def __get_first_child_number_for_address_entry(application_id):
     """
     Helper method to fetch the child number for the first child for which address details are to be supplied
@@ -79,6 +83,130 @@ def __remove_arc_address_flag(child_address):
         arc_comment.flagged = False
         arc_comment.save()
 
+
+def __create_children_living_with_you_table(application):
+    """
+    Helper method for creating a table object that can be consumed by the generic summary page template that includes
+    details of children living with the childminder
+    :param application: the application containing information regarding children living with a childminder
+    :return: a table object that can be consumed by the generic summary page template including details of children living
+    with the childminder
+    """
+
+    children_living_with_childminder_temp_store = []
+
+    children_living_with_childminder = \
+        Child.objects.filter(application_id=application.application_id, lives_with_childminder=True)
+
+    for child in children_living_with_childminder:
+        children_living_with_childminder_temp_store.append(child.get_full_name())
+
+    if len(children_living_with_childminder_temp_store) == 0:
+        children_living_with_you_response_string = 'None'
+    else:
+        children_living_with_you_response_string = ", ".join(children_living_with_childminder_temp_store)
+
+    table = Table([application.pk])
+
+    table.title = "Children living with you"
+    table.error_summary_title = "There was a problem with your children's details"
+
+    back_link = 'Your-Children-Living-With-You-View'
+
+    arc_comment = get_non_db_field_arc_comment(application.application_id, 'children_living_with_childminder_selection')
+
+    row = Row('children_living_with_you', 'Which of your children live with you?',
+              children_living_with_you_response_string, back_link, arc_comment)
+    table.add_row(row)
+    return table
+
+
+def __create_child_table(child):
+    """
+    Helper method for creating a table object that can be consumed by the generic summary page template that includes details
+    of a child listed by the childminder
+    :param child: the child for which a summary table is to be produced
+    :return: A table object that can be consumed by the generic summary page template that includes details
+    of a child listed by the childminder
+    """
+
+    dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)
+
+    if not child.lives_with_childminder:
+        child_address = ChildAddress.objects.get(application_id=child.application_id, child=child.child)
+        child_address_string = ' '.join([child_address.street_line1, (child_address.street_line2 or ''),
+                                         child_address.town, (child_address.county or ''), child_address.postcode])
+        child_fields = collections.OrderedDict([
+            ('full_name', child.get_full_name()),
+            ('date_of_birth', dob),
+            ('address', child_address_string)
+        ])
+    else:
+        child_fields = collections.OrderedDict([
+            ('full_name', child.get_full_name()),
+            ('date_of_birth', dob),
+            ('address', 'Same as your own')
+        ])
+
+    table = Table([child.pk])
+    table.other_people_numbers = '&child=' + str(child.child)
+
+    # Table container object including title, errors etc.
+    child_table = collections.OrderedDict({
+        'table_object': table,
+        'fields': child_fields,
+        'title': child.get_full_name(),
+        'error_summary_title': "There was a problem with your children's details"
+    })
+
+    return child_table
+
+
+def __add_arc_comments_to_child_tables(application_id, child_tables):
+    """
+    Helper method for applying ARC comments to dynamic tables presented on the task summary page
+    :param application_id: the unique identifier of the application
+    :param child_tables: a collection of table objects consumed by the generic summary page
+    """
+    for index, table in enumerate(child_tables):
+        # Set child index to plus 1 as these are not zero indexed
+        child_index = index + 1
+
+        # Append any dynamic errors to the full name of a child field
+        name_field_name = 'full_name'
+
+        if ArcComments.objects.filter(table_pk=table.table_pk[0], field_name=name_field_name,
+                                      flagged=True).count() == 1:
+            log = ArcComments.objects.get(table_pk=table.table_pk[0], field_name=name_field_name)
+            for row in table.get_row_list():
+                if row.data_name == name_field_name:
+                    row.error = log.comment
+                    break
+
+        # Append any dynamic errors to respective child addresses
+
+        if ChildAddress.objects.filter(application_id=application_id, child=child_index).exists():
+            child_address = ChildAddress.objects.get(application_id=application_id, child=child_index)
+            address_field_name = 'address'
+
+            if ArcComments.objects.filter(table_pk=child_address.child_address_id, field_name=address_field_name,
+                                          flagged=True).exists():
+                log = ArcComments.objects.get(table_pk=child_address.child_address_id, field_name=address_field_name,
+                                              flagged=True)
+                for row in table.get_row_list():
+                    if row.data_name == address_field_name:
+                        row.error = log.comment
+                        break
+
+
+#
+# End helper methods
+#
+
+
+#
+# View functions for rendering Your Children task pages
+#
 
 def your_children_guidance(request):
     """
@@ -794,105 +922,6 @@ def __your_children_summary_get_handler(request):
     __add_arc_comments_to_child_tables(application_id, child_table_list)
 
     return render(request, 'generic-summary-template.html', variables)
-
-
-def __create_children_living_with_you_table(application):
-    children_living_with_childminder_temp_store = []
-
-    children_living_with_childminder = \
-        Child.objects.filter(application_id=application.application_id, lives_with_childminder=True)
-
-    for child in children_living_with_childminder:
-        children_living_with_childminder_temp_store.append(child.get_full_name())
-
-    if len(children_living_with_childminder_temp_store) == 0:
-        children_living_with_you_response_string = 'None'
-    else:
-        children_living_with_you_response_string = ", ".join(children_living_with_childminder_temp_store)
-
-    table = Table([application.pk])
-
-    table.title = "Children living with you"
-    table.error_summary_title = "There was a problem with your children's details"
-
-    back_link = 'Your-Children-Living-With-You-View'
-
-    arc_comment = get_non_db_field_arc_comment(application.application_id, 'children_living_with_childminder_selection')
-
-    row = Row('children_living_with_you', 'Which of your children live with you?',
-              children_living_with_you_response_string, back_link, arc_comment)
-    table.add_row(row)
-    return table
-
-
-def __create_child_table(child):
-    dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)
-
-    if not child.lives_with_childminder:
-        child_address = ChildAddress.objects.get(application_id=child.application_id, child=child.child)
-        child_address_string = ' '.join([child_address.street_line1, (child_address.street_line2 or ''),
-                                         child_address.town, (child_address.county or ''), child_address.postcode])
-        child_fields = collections.OrderedDict([
-            ('full_name', child.get_full_name()),
-            ('date_of_birth', dob),
-            ('address', child_address_string)
-        ])
-    else:
-        child_fields = collections.OrderedDict([
-            ('full_name', child.get_full_name()),
-            ('date_of_birth', dob),
-            ('address', 'Same as your own')
-        ])
-
-    table = Table([child.pk])
-    table.other_people_numbers = '&child=' + str(child.child)
-
-    # Table container object including title, errors etc.
-    child_table = collections.OrderedDict({
-        'table_object': table,
-        'fields': child_fields,
-        'title': child.get_full_name(),
-        'error_summary_title': "There was a problem with your children's details"
-    })
-
-    return child_table
-
-
-def __add_arc_comments_to_child_tables(application_id, child_tables):
-    """
-    Helper method for applying ARC comments to dynamic tables presented on the task summary page
-    :param application_id: the unique identifier of the application
-    :param child_tables: a collection of table objects consumed by the generic summary page
-    """
-    for index, table in enumerate(child_tables):
-        # Set child index to plus 1 as these are not zero indexed
-        child_index = index + 1
-
-        # Append any dynamic errors to the full name of a child field
-        name_field_name = 'full_name'
-
-        if ArcComments.objects.filter(table_pk=table.table_pk[0], field_name=name_field_name,
-                                      flagged=True).count() == 1:
-            log = ArcComments.objects.get(table_pk=table.table_pk[0], field_name=name_field_name)
-            for row in table.get_row_list():
-                if row.data_name == name_field_name:
-                    row.error = log.comment
-                    break
-
-        # Append any dynamic errors to respective child addresses
-
-        if ChildAddress.objects.filter(application_id=application_id, child=child_index).exists():
-            child_address = ChildAddress.objects.get(application_id=application_id, child=child_index)
-            address_field_name = 'address'
-
-            if ArcComments.objects.filter(table_pk=child_address.child_address_id, field_name=address_field_name,
-                                          flagged=True).exists():
-                log = ArcComments.objects.get(table_pk=child_address.child_address_id, field_name=address_field_name,
-                                              flagged=True)
-                for row in table.get_row_list():
-                    if row.data_name == address_field_name:
-                        row.error = log.comment
-                        break
 
 
 def __your_children_summary_post_handler(request):
