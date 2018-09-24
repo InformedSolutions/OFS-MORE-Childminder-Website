@@ -17,6 +17,7 @@ from ..table_util import create_tables, Table, submit_link_setter, Row
 from ..summary_page_data import your_children_children_dict, your_children_children_link_dict
 from ..utils import get_non_db_field_arc_comment
 
+
 def __get_first_child_number_for_address_entry(application_id):
     """
     Helper method to fetch the child number for the first child for which address details are to be supplied
@@ -797,7 +798,8 @@ def __create_children_living_with_you_table(application):
 
     arc_comment = get_non_db_field_arc_comment(application.application_id, 'children_living_with_childminder_selection')
 
-    row = Row('children_living_with_you', 'Which of your children live with you?', children_living_with_you_response_string, back_link, arc_comment)
+    row = Row('children_living_with_you', 'Which of your children live with you?',
+              children_living_with_you_response_string, back_link, arc_comment)
     table.add_row(row)
     return table
 
@@ -808,7 +810,7 @@ def __create_child_table(child):
     if not child.lives_with_childminder:
         child_address = ChildAddress.objects.get(application_id=child.application_id, child=child.child)
         child_address_string = ' '.join([child_address.street_line1, (child_address.street_line2 or ''),
-                  child_address.town, (child_address.county or ''), child_address.postcode])
+                                         child_address.town, (child_address.county or ''), child_address.postcode])
         child_fields = collections.OrderedDict([
             ('full_name', child.get_full_name()),
             ('date_of_birth', dob),
@@ -836,24 +838,36 @@ def __create_child_table(child):
 
 
 def __add_arc_comments_to_child_tables(application_id, child_tables):
+    """
+    Helper method for applying ARC comments to dynamic tables presented on the task summary page
+    :param application_id: the unique identifier of the application
+    :param child_tables: a collection of table objects consumed by the generic summary page
+    """
     for index, table in enumerate(child_tables):
         # Set child index to plus 1 as these are not zero indexed
         child_index = index + 1
+
+        # Append any dynamic errors to the full name of a child field
         name_field_name = 'full_name'
 
-        if ArcComments.objects.filter(table_pk=table.table_pk[0], field_name=name_field_name, flagged=True).count() == 1:
+        if ArcComments.objects.filter(table_pk=table.table_pk[0], field_name=name_field_name,
+                                      flagged=True).count() == 1:
             log = ArcComments.objects.get(table_pk=table.table_pk[0], field_name=name_field_name)
             for row in table.get_row_list():
                 if row.data_name == name_field_name:
                     row.error = log.comment
                     break
 
+        # Append any dynamic errors to respective child addresses
+
         if ChildAddress.objects.filter(application_id=application_id, child=child_index).exists():
             child_address = ChildAddress.objects.get(application_id=application_id, child=child_index)
             address_field_name = 'address'
 
-            if ArcComments.objects.filter(table_pk=child_address.child_address_id, field_name=address_field_name, flagged=True).exists():
-                log = ArcComments.objects.get(table_pk=child_address.child_address_id, field_name=address_field_name, flagged=True)
+            if ArcComments.objects.filter(table_pk=child_address.child_address_id, field_name=address_field_name,
+                                          flagged=True).exists():
+                log = ArcComments.objects.get(table_pk=child_address.child_address_id, field_name=address_field_name,
+                                              flagged=True)
                 for row in table.get_row_list():
                     if row.data_name == address_field_name:
                         row.error = log.comment
