@@ -352,6 +352,7 @@ def __your_children_living_with_you_get_handler(request):
 
     application_id = request.GET["id"]
     form = YourChildrenLivingWithYouForm(id=application_id)
+    form.check_flag()
 
     variables = {
         'form': form,
