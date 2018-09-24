@@ -212,7 +212,7 @@ def get_id(request):
 def get_non_db_field_arc_comment(application_id, field_name):
     table_name = 'DYNAMIC_VALUE'
     prior_dynamic_comment_exists = \
-        ArcComments.objects.filter(table_name=table_name, field_name=field_name, table_pk=application_id).exists()
+        ArcComments.objects.filter(table_name=table_name, field_name=field_name, table_pk=application_id, flagged=True).exists()
 
     if prior_dynamic_comment_exists:
         arc_comment_container = ArcComments.objects.get(table_name=table_name, field_name=field_name, table_pk=application_id)

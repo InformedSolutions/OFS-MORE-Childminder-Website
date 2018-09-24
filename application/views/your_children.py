@@ -75,7 +75,9 @@ def __remove_arc_address_flag(child_address):
     """
     address_field_name = 'address'
     if ArcComments.objects.filter(table_pk=child_address.child_address_id, field_name=address_field_name).exists():
-        ArcComments.objects.filter(table_pk=child_address.child_address_id, field_name=address_field_name).delete()
+        arc_comment = ArcComments.objects.get(table_pk=child_address.child_address_id, field_name=address_field_name)
+        arc_comment.flagged = False
+        arc_comment.save()
 
 
 def your_children_guidance(request):
