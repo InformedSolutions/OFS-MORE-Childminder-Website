@@ -156,7 +156,7 @@ def __create_child_table(child):
         'table_object': table,
         'fields': child_fields,
         'title': child.get_full_name(),
-        'error_summary_title': "There was a problem with your children's details"
+        'error_summary_title': "There was a problem with your children's details (" + child.get_full_name() + ")"
     })
 
     return child_table

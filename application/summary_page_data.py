@@ -209,7 +209,7 @@ submit_link_dict = collections.OrderedDict([('login_details', 'Contact-Email-Vie
                                             ('criminal_record_check', 'DBS-Lived-Abroad-View'),
                                             ('health', 'Health-Intro-View'),
                                             ('references', 'References-Intro-View'),
-                                            ('people_in_home', 'Other-People-Guidance-View')])
+                                            ('people_in_home', 'PITH-Guidance-View')])
 
 back_link_dict = collections.OrderedDict([('login_details', 'Question-View'),
                                           ('type_of_childcare', 'Type-Of-Childcare-Guidance-View'),
@@ -220,5 +220,5 @@ back_link_dict = collections.OrderedDict([('login_details', 'Question-View'),
                                           ('criminal_record_check', 'DBS-Check-DBS-Details-View'),
                                           ('health', 'Health-Booklet-View'),
                                           ('references', 'References-Second-Reference-Contact-Details-View'),
-                                          ('people_in_home', 'Other-People-Children-Question-View')])
+                                          ('people_in_home', 'PITH-Children-Check-View')])
 
