@@ -68,6 +68,16 @@ def __get_children_not_living_with_childminder_count(application_id):
     return Child.objects.filter(application_id=application_id, lives_with_childminder=False).count()
 
 
+def __remove_arc_address_flag(child_address):
+    """
+    Helper method for deleting an ARC comment from a flagged address
+    :param child_address: the child address record for which an ARC comment is to be removed
+    """
+    address_field_name = 'address'
+    if ArcComments.objects.filter(table_pk=child_address.child_address_id, field_name=address_field_name).exists():
+        ArcComments.objects.filter(table_pk=child_address.child_address_id, field_name=address_field_name).delete()
+
+
 def your_children_guidance(request):
     """
     Method for handling HTTP requests made to the "Your Children" task's guidance page
@@ -598,6 +608,9 @@ def __your_children_address_selection_post_handler(request):
         if Application.get_id(app_id=application_id).your_children_status != 'COMPLETED':
             status.update(application_id, 'your_children_status', 'IN_PROGRESS')
 
+        # At this point, if an address was previously flagged by ARC, the comment can be safely removed
+        __remove_arc_address_flag(child_address_record)
+
         next_child = __get_next_child_number_for_address_entry(application_id, int(child))
 
         if next_child is None:
@@ -695,6 +708,8 @@ def _your_children_address_manual_post_handler(request):
             status.update(application_id, 'your_children_status', 'IN_PROGRESS')
 
         reset_declaration(application)
+
+        __remove_arc_address_flag(child_address_record)
 
         # Recurse through querystring params
         next_child = __get_next_child_number_for_address_entry(application_id, int(child))
