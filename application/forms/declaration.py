@@ -37,7 +37,8 @@ class DeclarationForm(ChildminderForms):
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
-            declaration_confirmation = Application.objects.declaration_confirmation
+            declaration_confirmation = Application.objects.get(
+                application_id=self.application_id_local).declaration_confirmation
             if declaration_confirmation is True:
                 self.fields['declaration_confirmation'].initial = '1'
             elif declaration_confirmation is False:
