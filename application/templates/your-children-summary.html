@@ -66,7 +66,7 @@
                     {{ child.full_name }}
                 </td>
                 <td class="change-answer">
-                    <a href="{% url 'Your-Children-Details-View' %}?id={{application_id}}" alt="Change full name">
+                    <a href="{% url 'Your-Children-Details-View' %}?id={{application_id}}" alt="Change name">
                         Change <span class="visuallyhidden">full name for {{ child.full_name }}</span>
                     </a>
                 </td>
@@ -144,7 +144,7 @@
 
                         <td class="change-answer">
                             <a href="{% url 'Your-Children-Address-Manual-View' %}?id={{application_id}}&child={{child.child_number}}"
-                               alt='Change your home address'>
+                               alt='Change address'>
                                 Change <span class="visuallyhidden">your home address</span>
                             </a>
                         </td>

@@ -1,5 +1,11 @@
+import collections
+
 from django import forms
-from govuk_forms.widgets import InlineRadioSelect, NumberInput
+from django.utils.html import conditional_escape, format_html_join
+
+from govuk_forms.forms import GOVUKForm
+from govuk_forms import widgets as govuk_widgets
+from govuk_forms.widgets import NumberInput
 
 from application.forms import ChildminderForms, childminder_dbs_duplicates_household_member_check
 from application.models import Application
@@ -30,16 +36,45 @@ class PITHDBSCheckForm(ChildminderForms):
         self.on_update_field_name = self.on_update_field + str(self.adult.pk)
         self.dbs_field_no_update_name = self.dbs_field +'_no_update'+str(self.adult.pk)
 
-        self.base_fields = {
-            self.dbs_field_name: self.get_dbs_field_data(),
-            self.on_update_field_name: self.get_on_update_field_data(),
-            self.capita_field_name: self.get_capita_field_data(),
-            self.dbs_field_no_update_name: self.get_dbs_field_data()
-        }
+        self.base_fields = collections.OrderedDict([
+            (self.dbs_field_name, self.get_dbs_field_data()),
+            (self.on_update_field_name, self.get_on_update_field_data()),
+            (self.capita_field_name, self.get_capita_field_data()),
+            (self.dbs_field_no_update_name, self.get_dbs_field_data())
+        ])
 
         self.reveal_conditionally = self.get_reveal_conditionally()
 
-        super().__init__(*args, **kwargs)
+        # ============================================================================================================ #
+        # The code that follows is identical to that of gov_uk_forms v0.4 GOVUKForm.__init__(*args, **kwargs), barring
+        # one exception: self.conditionally_revealed is an OrderedDict(), not a dict().
+        # This is to prevent Python3.5 errors when not preserving order in which items are added to a dictionary.
+        #
+        # Thus we use the code in that __init__() and super back to the __init__() of forms.Form, using
+        # super(GOVUKForm, self).__init__(*args, **kwargs), not super(PITHDBSCheckForm, self).__init__(*args, **kwargs)
+
+        kwargs.setdefault('label_suffix', '')
+        super(GOVUKForm, self).__init__(*args, **kwargs)
+
+        if self.auto_replace_widgets:
+            widget_replacements = govuk_widgets.widget_replacements
+            if hasattr(self, 'widget_replacements'):
+                widget_replacements = widget_replacements.copy().update(self.widget_replacements)
+            for field in self.fields.values():
+                field.widget = govuk_widgets.replace_widget(field.widget, widget_replacements)
+
+        # XXX: This is an OrderedDict(), not a dict()
+        self.conditionally_revealed = collections.OrderedDict([])
+
+        for target_fields in self.reveal_conditionally.values():
+            for target_field in target_fields.values():
+                field = self.fields[target_field]
+                self.conditionally_revealed[target_field] = {
+                    'required': field.required,
+                }
+                field.required = False
+
+        # ============================================================================================================ #
 
         self.field_list = [*self.fields]
 
@@ -111,9 +146,11 @@ class PITHDBSCheckForm(ChildminderForms):
         return self.cleaned_data
 
     def get_reveal_conditionally(self):
-        return {self.on_update_field_name: {True: self.dbs_field_no_update_name},
-                self.capita_field_name: {True: self.dbs_field_name,
-                                         False: self.on_update_field_name}}
+        return collections.OrderedDict([
+            (self.on_update_field_name, {True: self.dbs_field_no_update_name}),
+            (self.capita_field_name, {True: self.dbs_field_name,
+                                      False: self.on_update_field_name})
+        ])
 
     def clean_dbs(self, cleaned_dbs_value, field_name, application, cleaned_capita_value, cleaned_on_update_value):
         if cleaned_dbs_value is None:
