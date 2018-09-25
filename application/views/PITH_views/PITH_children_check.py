@@ -35,16 +35,6 @@ class PITHChildrenCheckView(PITHRadioView):
 
         return HttpResponseRedirect(self.get_success_url(get=context))
 
-    def get_success_url(self, get=None):
-        application_id = get_id(self.request)
-
-        redirect_url = self.get_choice_url(application_id)
-
-        if not get:
-            return build_url(redirect_url, get={'id': application_id})
-        else:
-            return build_url(redirect_url, get=get)
-
     def get_choice_url(self, app_id):
         yes_choice, no_yes_choice, no_no_yes_choice, no_no_no_choice = self.success_url
         choice_bool = get_application(app_id, self.application_field_name)

@@ -27,21 +27,8 @@ class PITHRadioView(FormView):
 
     def get_success_url(self, get=None):
         application_id = get_id(self.request)
-        yes_choice, no_choice = self.success_url
 
-        active_model, active_field_name = self.get_active_field()
-
-        if active_model == 'PITH':
-            choice_bool = get_adult_in_home(application_id, active_field_name)
-        elif active_model == 'Application':
-            choice_bool = get_application(application_id, active_field_name)
-        else:
-            raise ValueError("Wasn't able to select a url in {0}, active_model not recognized.".format(self.__name__))
-
-        if choice_bool:
-            redirect_url = yes_choice
-        else:
-            redirect_url = no_choice
+        redirect_url = self.get_choice_url(application_id)
 
         if not get:
             return build_url(redirect_url, get={'id': application_id})
@@ -113,3 +100,20 @@ class PITHRadioView(FormView):
             return 'Application', self.application_field_name
         else:
             raise ValueError('PITH_field_name and application_field_name cannot both be None')
+
+    def get_choice_url(self, app_id):
+        yes_choice, no_choice = self.success_url
+
+        active_model, active_field_name = self.get_active_field()
+
+        if active_model == 'PITH':
+            choice_bool = get_adult_in_home(app_id, active_field_name)
+        elif active_model == 'Application':
+            choice_bool = get_application(app_id, active_field_name)
+        else:
+            raise ValueError("Wasn't able to select a url in {0}, active_model not recognized.".format(self.__name__))
+
+        if choice_bool:
+            return yes_choice
+        else:
+            return no_choice
