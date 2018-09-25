@@ -1,5 +1,6 @@
 import collections
 import datetime
+import logging
 
 from django.utils import timezone
 
@@ -8,11 +9,21 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from ..forms import YourChildrenGuidanceForm, YourChildrenDetailsForm, YourChildrenLivingWithYouForm, ChildAddressForm, \
-    YourChildrenSummaryForm, YourChildrenAddressLookupForm, YourChildManualAddressForm
+    YourChildrenSummaryForm, YourChildrenAddressLookupForm, YourChildManualAddressForm, ArcComments
 from ..models import Application, Child, ChildAddress
 from .. import status, address_helper
 from ..business_logic import remove_child, rearrange_children, your_children_details_logic, reset_declaration, \
     child_address_logic
+from ..table_util import create_tables, Table, submit_link_setter, Row
+from ..summary_page_data import your_children_children_dict, your_children_children_link_dict
+from ..utils import get_non_db_field_arc_comment
+
+
+logger = logging.getLogger('')
+
+#
+# Helper method for Your Children tasks
+#
 
 
 def __get_first_child_number_for_address_entry(application_id):
@@ -65,6 +76,152 @@ def __get_children_not_living_with_childminder_count(application_id):
     return Child.objects.filter(application_id=application_id, lives_with_childminder=False).count()
 
 
+def __remove_arc_address_flag(child_address):
+    """
+    Helper method for deleting an ARC comment from a flagged address
+    :param child_address: the child address record for which an ARC comment is to be removed
+    """
+    address_field_name = 'address'
+    if ArcComments.objects.filter(table_pk=child_address.child_address_id, field_name=address_field_name).exists():
+        arc_comment = ArcComments.objects.get(table_pk=child_address.child_address_id, field_name=address_field_name)
+        arc_comment.flagged = False
+        arc_comment.save()
+
+
+def __create_children_living_with_you_table(application):
+    """
+    Helper method for creating a table object that can be consumed by the generic summary page template that includes
+    details of children living with the childminder
+    :param application: the application containing information regarding children living with a childminder
+    :return: a table object that can be consumed by the generic summary page template including details of children living
+    with the childminder
+    """
+
+    logger.debug('Creating summary table of children living with childminder for application with id: '
+                 + str(application.application_id))
+
+    children_living_with_childminder_temp_store = []
+
+    children_living_with_childminder = \
+        Child.objects.filter(application_id=application.application_id, lives_with_childminder=True)
+
+    for child in children_living_with_childminder:
+        children_living_with_childminder_temp_store.append(child.get_full_name())
+
+    if len(children_living_with_childminder_temp_store) == 0:
+        children_living_with_you_response_string = 'None'
+    else:
+        children_living_with_you_response_string = ", ".join(children_living_with_childminder_temp_store)
+
+    table = Table([application.pk])
+
+    table.title = "Children living with you"
+    table.error_summary_title = "There was a problem with your children's details"
+
+    back_link = 'Your-Children-Living-With-You-View'
+
+    arc_comment = get_non_db_field_arc_comment(application.application_id, 'children_living_with_childminder_selection')
+
+    row = Row('children_living_with_you', 'Which of your children live with you?',
+              children_living_with_you_response_string, back_link, arc_comment)
+    table.add_row(row)
+    return table
+
+
+def __create_child_table(child):
+    """
+    Helper method for creating a table object that can be consumed by the generic summary page template that includes details
+    of a child listed by the childminder
+    :param child: the child for which a summary table is to be produced
+    :return: A table object that can be consumed by the generic summary page template that includes details
+    of a child listed by the childminder
+    """
+
+    logger.debug('Creating summary table of details for child record with id: '
+                 + str(child.child_id))
+
+    dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)
+
+    if not child.lives_with_childminder:
+        child_address = ChildAddress.objects.get(application_id=child.application_id, child=child.child)
+        child_address_string = ' '.join([child_address.street_line1, (child_address.street_line2 or ''),
+                                         child_address.town, (child_address.county or ''), child_address.postcode])
+        child_fields = collections.OrderedDict([
+            ('full_name', child.get_full_name()),
+            ('date_of_birth', dob),
+            ('address', child_address_string)
+        ])
+    else:
+        child_fields = collections.OrderedDict([
+            ('full_name', child.get_full_name()),
+            ('date_of_birth', dob),
+            ('address', 'Same as your own')
+        ])
+
+    table = Table([child.pk])
+    table.other_people_numbers = '&child=' + str(child.child)
+
+    # Table container object including title, errors etc.
+    child_table = collections.OrderedDict({
+        'table_object': table,
+        'fields': child_fields,
+        'title': child.get_full_name(),
+        'error_summary_title': "There was a problem with your children's details (" + child.get_full_name() + ")"
+    })
+
+    return child_table
+
+
+def __add_arc_comments_to_child_tables(application_id, child_tables):
+    """
+    Helper method for applying ARC comments to dynamic tables presented on the task summary page
+    :param application_id: the unique identifier of the application
+    :param child_tables: a collection of table objects consumed by the generic summary page
+    """
+
+    logger.debug('Appending arc comments to child tables for application with id: '
+                 + str(application_id))
+
+    for index, table in enumerate(child_tables):
+        # Set child index to plus 1 as these are not zero indexed
+        child_index = index + 1
+
+        # Append any dynamic errors to the full name of a child field
+        name_field_name = 'full_name'
+
+        if ArcComments.objects.filter(table_pk=table.table_pk[0], field_name=name_field_name,
+                                      flagged=True).count() == 1:
+            log = ArcComments.objects.get(table_pk=table.table_pk[0], field_name=name_field_name)
+            for row in table.get_row_list():
+                if row.data_name == name_field_name:
+                    row.error = log.comment
+                    break
+
+        # Append any dynamic errors to respective child addresses
+
+        if ChildAddress.objects.filter(application_id=application_id, child=child_index).exists():
+            child_address = ChildAddress.objects.get(application_id=application_id, child=child_index)
+            address_field_name = 'address'
+
+            if ArcComments.objects.filter(table_pk=child_address.child_address_id, field_name=address_field_name,
+                                          flagged=True).exists():
+                log = ArcComments.objects.get(table_pk=child_address.child_address_id, field_name=address_field_name,
+                                              flagged=True)
+                for row in table.get_row_list():
+                    if row.data_name == address_field_name:
+                        row.error = log.comment
+                        break
+
+
+#
+# End helper methods
+#
+
+
+#
+# View functions for rendering Your Children task pages
+#
+
 def your_children_guidance(request):
     """
     Method for handling HTTP requests made to the "Your Children" task's guidance page
@@ -86,6 +243,10 @@ def __your_children_guidance_get_handler(request):
     """
 
     application_id = request.GET["id"]
+
+    logger.debug('Rendering Your Children task guidance for application with id: '
+                 + str(application_id))
+
     form = YourChildrenGuidanceForm()
     application = Application.get_id(app_id=application_id)
     variables = {
@@ -136,6 +297,9 @@ def __your_children_details_get_handler(request):
 
     application_id = request.GET["id"]
 
+    logger.debug('Rendering Children Details capture page for application with id: '
+                 + str(application_id))
+
     number_of_children_present_in_querystring = request.GET.get('children') is not None
 
     if number_of_children_present_in_querystring:
@@ -178,7 +342,7 @@ def __your_children_details_get_handler(request):
         form.check_flag()
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = "There was a problem (Child " + str(i) + ")"
+            form.error_summary_title = "There was a problem with your children's details"
 
         form_list.append(form)
 
@@ -204,6 +368,10 @@ def __your_children_details_post_handler(request):
     or pages where a user gets asked for their respective addresses
     """
     application_id = request.POST["id"]
+
+    logger.debug('Saving details supplied in Children Details capture page for application with id: '
+                 + str(application_id))
+
     number_of_children = request.POST["children"]
     current_date = timezone.now()
 
@@ -300,6 +468,9 @@ def __your_children_details_post_handler_for_adding_children(request, applicatio
     :return: a refreshed "Your children details" page with new input fields for the additional child
     """
 
+    logger.debug('Adding new child entry fields for application with id: '
+                 + str(application_id))
+
     if False not in valid_list:
         variables = {
             'application_id': application_id,
@@ -348,7 +519,12 @@ def __your_children_living_with_you_get_handler(request):
     """
 
     application_id = request.GET["id"]
+
+    logger.debug('Rendering children living with you page for application with id: '
+                 + str(application_id))
+
     form = YourChildrenLivingWithYouForm(id=application_id)
+    form.check_flag()
 
     variables = {
         'form': form,
@@ -366,6 +542,10 @@ def __your_children_living_with_you_post_handler(request):
     """
 
     application_id = request.POST["id"]
+
+    logger.debug('Saving details of children living with you page for application with id: '
+                 + str(application_id))
+
     form = YourChildrenLivingWithYouForm(request.POST, id=application_id)
 
     if not form.is_valid():
@@ -375,6 +555,9 @@ def __your_children_living_with_you_post_handler(request):
         }
 
         return render(request, 'your-children-living-with-you.html', variables)
+
+    # If form has been deemed valid and was flagged by ARC, the comment can now be removed at this stage
+    form.remove_flag()
 
     # Mark children listed as living in the home
 
@@ -417,6 +600,10 @@ def __your_children_address_capture_get_handler(request):
 
     application_id = request.GET["id"]
     child = request.GET["child"]
+
+    logger.debug('Rendering postcode lookup page to capture a child address for application with id: '
+                 + str(application_id) + " and child number: " + str(child))
+
     form = ChildAddressForm(id=application_id, child=child)
 
     child_record = Child.objects.get(application_id=application_id, child=child)
@@ -440,6 +627,10 @@ def __your_children_address_lookup_post_handler(request):
 
     application_id = request.POST["id"]
     child = request.POST["child"]
+
+    logger.debug('Fetching postcode lookup matches for child address details using application id: '
+                 + str(application_id) + " and child number: " + str(child))
+
     form = ChildAddressForm(request.POST, id=application_id, child=child)
 
     application = Application.objects.get(application_id=application_id)
@@ -566,6 +757,10 @@ def __your_children_address_selection_post_handler(request):
 
     application_id = request.POST["id"]
     child = request.POST["child"]
+
+    logger.debug('Saving full address child address (acquired by postcode lookup) for application with id: '
+                 + str(application_id) + " and child number: " + str(child))
+
     application = Application.get_id(app_id=application_id)
     child_record = Child.objects.get(application_id=application_id, child=str(child))
     child_address_record = ChildAddress.objects.get(application_id=application_id, child=str(child))
@@ -590,6 +785,9 @@ def __your_children_address_selection_post_handler(request):
 
         if Application.get_id(app_id=application_id).your_children_status != 'COMPLETED':
             status.update(application_id, 'your_children_status', 'IN_PROGRESS')
+
+        # At this point, if an address was previously flagged by ARC, the comment can be safely removed
+        __remove_arc_address_flag(child_address_record)
 
         next_child = __get_next_child_number_for_address_entry(application_id, int(child))
 
@@ -640,6 +838,9 @@ def __your_children_address_manual_get_handler(request):
     application_id = request.GET["id"]
     child = request.GET["child"]
 
+    logger.debug('Rendering manual child address capture page for application with id: '
+                 + str(application_id) + " and child number: " + str(child))
+
     child_record = Child.objects.get(application_id=application_id, child=child)
     application = Application.objects.get(pk=application_id)
     form = YourChildManualAddressForm(id=application_id, child=child)
@@ -669,6 +870,10 @@ def _your_children_address_manual_post_handler(request):
 
     application_id = request.POST["id"]
     child = request.POST["child"]
+
+    logger.debug('Saving manual child address details for application with id: '
+                 + str(application_id) + " and child number: " + str(child))
+
     application = Application.objects.get(pk=application_id)
 
     form = YourChildManualAddressForm(request.POST, id=application_id, child=child)
@@ -688,6 +893,8 @@ def _your_children_address_manual_post_handler(request):
             status.update(application_id, 'your_children_status', 'IN_PROGRESS')
 
         reset_declaration(application)
+
+        __remove_arc_address_flag(child_address_record)
 
         # Recurse through querystring params
         next_child = __get_next_child_number_for_address_entry(application_id, int(child))
@@ -735,42 +942,44 @@ def __your_children_summary_get_handler(request):
     """
 
     application_id = request.GET["id"]
+    application = Application.objects.get(application_id=application_id)
+
+    logger.debug('Rendering Your Children task summary for application with id: '
+                 + str(application_id))
+
     form = YourChildrenSummaryForm()
 
-    children_table = []
-    children_living_with_childminder = []
+    if application.application_status == 'FURTHER_INFORMATION':
+        form.error_summary_template_name = 'returned-error-summary.html'
+        form.error_summary_title = "There was a problem"
+
     children = Child.objects.filter(application_id=application_id).order_by('child')
 
+    child_table_list = []
+
     for child in children:
-        dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)
+        child_table = __create_child_table(child)
+        child_table_list.append(child_table)
 
-        # If the child does not live with the childminder, append their full address for display on the summary page
-        full_address = None
+    child_table_list = create_tables(child_table_list, your_children_children_dict, your_children_children_link_dict)
 
-        if not child.lives_with_childminder:
-            full_address = ChildAddress.objects.get(application_id=application_id, child=child.child)
+    children_living_with_you_table = __create_children_living_with_you_table(application)
 
-        child_details = collections.OrderedDict([
-            ('child_number', child.child),
-            ('full_name', child.get_full_name()),
-            ('dob', dob),
-            ('lives_with_childminder', child.lives_with_childminder),
-            ('full_address', full_address),
-        ])
-        children_table.append(child_details)
-
-        if child.lives_with_childminder:
-            children_living_with_childminder.append(child.get_full_name())
+    table_list = [children_living_with_you_table] + child_table_list
 
     variables = {
         'page_title': 'Check your answers: your children',
         'form': form,
         'application_id': application_id,
-        'children': children_table,
-        'children_living_with_childminder': ", ".join(children_living_with_childminder)
+        'table_list': table_list,
+        'your_children_status': application.your_children_status
     }
 
-    return render(request, 'your-children-summary.html', variables)
+    variables = submit_link_setter(variables, table_list, 'your_children', application_id)
+
+    __add_arc_comments_to_child_tables(application_id, child_table_list)
+
+    return render(request, 'generic-summary-template.html', variables)
 
 
 def __your_children_summary_post_handler(request):
@@ -780,5 +989,9 @@ def __your_children_summary_post_handler(request):
     :return: redirect to the Task List with a status update marked on the "Your children" task
     """
     application_id = request.POST["id"]
+
+    logger.debug('Marking Your Children task as complete for application with id: '
+                 + str(application_id))
+
     status.update(application_id, 'your_children_status', 'COMPLETED')
     return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id)
