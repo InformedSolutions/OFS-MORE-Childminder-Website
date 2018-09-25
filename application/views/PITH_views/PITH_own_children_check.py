@@ -7,7 +7,7 @@ from application.views.PITH_views.base_views.PITH_radio_view import PITHRadioVie
 from application.forms.PITH_forms.PITH_children_check_form import PITHChildrenCheckForm
 
 
-class PITHChildrenCheckView(PITHRadioView):
+class PITHOwnChildrenCheckView(PITHRadioView):
     template_name = 'PITH_templates/PITH_children_check.html'
     form_class = PITHChildrenCheckForm
     success_url = ('PITH-Children-Details-View', 'PITH-Own-Children-Check-View', 'Task-List-View', 'PITH-Summary-View')
