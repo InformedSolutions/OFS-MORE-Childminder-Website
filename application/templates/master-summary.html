@@ -619,55 +619,9 @@
         <td style="word-wrap: break-word" class=summary-column>
             Date you completed course
         </td>
-        {% if first_aid_certificate_month == 1 %}
         <td style="word-wrap: break-word" class=summary-column>
-            {{first_aid_certificate_day}} January {{first_aid_certificate_year}}
+            {{first_aid_certificate_day}}/{{first_aid_certificate_month}}/{{first_aid_certificate_year}}
         </td>
-        {% elif first_aid_certificate_month == 2 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_aid_certificate_day}} February {{first_aid_certificate_year}}
-        </td>
-        {% elif first_aid_certificate_month == 3 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_aid_certificate_day}} March {{first_aid_certificate_year}}
-        </td>
-        {% elif first_aid_certificate_month == 4 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_aid_certificate_day}} April {{first_aid_certificate_year}}
-        </td>
-        {% elif first_aid_certificate_month == 5 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_aid_certificate_day}} May {{first_aid_certificate_year}}
-        </td>
-        {% elif first_aid_certificate_month == 6 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_aid_certificate_day}} June {{first_aid_certificate_year}}
-        </td>
-        {% elif first_aid_certificate_month == 7 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_aid_certificate_day}} July {{first_aid_certificate_year}}
-        </td>
-        {% elif first_aid_certificate_month == 8 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_aid_certificate_day}} August {{first_aid_certificate_year}}
-        </td>
-        {% elif first_aid_certificate_month == 9 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_aid_certificate_day}} September {{first_aid_certificate_year}}
-        </td>
-        {% elif first_aid_certificate_month == 10 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_aid_certificate_day}} October {{first_aid_certificate_year}}
-        </td>
-        {% elif first_aid_certificate_month == 11 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_aid_certificate_day}} November {{first_aid_certificate_year}}
-        </td>
-        {% elif first_aid_certificate_month == 12 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{first_aid_certificate_day}} December {{first_aid_certificate_year}}
-        </td>
-        {% endif %}
         <td class="change-answer {{ print_class }}">
             {% if first_aid_training_change %}
             <a href="{% url 'First-Aid-Training-Details-View' %}?id={{application_id}}"

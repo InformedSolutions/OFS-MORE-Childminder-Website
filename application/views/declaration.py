@@ -90,10 +90,21 @@ def declaration_summary(request, print_mode=False):
             childcare_town = ''
             childcare_county = ''
             childcare_postcode = ''
-        first_aid_record = FirstAidTraining.objects.get(
-            application_id=application_id_local)
-        dbs_record = CriminalRecordCheck.objects.get(
-            application_id=application_id_local)
+
+        first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
+
+        # Format first aid training dates
+        if first_aid_record.course_day < 10:
+            first_aid_course_day = '0' + str(first_aid_record.course_day)
+        else:
+            first_aid_course_day = str(first_aid_record.course_day)
+
+        if first_aid_record.course_month < 10:
+            first_aid_course_month = '0' + str(first_aid_record.course_month)
+        else:
+            first_aid_course_month = str(first_aid_record.course_month)
+
+        dbs_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
 
         childcare_training_table = views.ChildcareTrainingSummaryView.get_context_data(application_id_local)['table_list'][0]
         criminal_record_check_context = views.DBSSummaryView.get_context_data_static(application_id_local)
@@ -278,8 +289,8 @@ def declaration_summary(request, print_mode=False):
             'personal_details_change': personal_details_change,
             'first_aid_training_organisation': first_aid_record.training_organisation,
             'first_aid_training_course': first_aid_record.course_title,
-            'first_aid_certificate_day': first_aid_record.course_day,
-            'first_aid_certificate_month': first_aid_record.course_month,
+            'first_aid_certificate_day': first_aid_course_day,
+            'first_aid_certificate_month': first_aid_course_month,
             'first_aid_certificate_year': first_aid_record.course_year,
             'first_aid_training_change': first_aid_training_change,
             'criminal_record_check_context': criminal_record_check_context,
