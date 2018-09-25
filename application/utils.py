@@ -8,8 +8,8 @@ import json
 from urllib.parse import urlencode
 
 import requests
+import logging
 from django.conf import settings
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.http import urlencode
 from django.core.urlresolvers import reverse
@@ -18,6 +18,9 @@ from .models import Application, Reference, CriminalRecordCheck, ChildcareTraini
     ChildInHome, \
     ChildcareType, FirstAidTraining, ApplicantPersonalDetails, ApplicantName, ApplicantHomeAddress, AdultInHome, \
     ArcComments
+
+
+logger = logging.getLogger('')
 
 
 def get_app_task_models(app_id):
@@ -210,6 +213,8 @@ def get_id(request):
 
 
 def get_non_db_field_arc_comment(application_id, field_name):
+    logger.debug('Fetching non db field arc comment for application with id: '
+                 + str(application_id))
     table_name = 'DYNAMIC_VALUE'
     prior_dynamic_comment_exists = \
         ArcComments.objects.filter(table_name=table_name, field_name=field_name, table_pk=application_id, flagged=True).exists()

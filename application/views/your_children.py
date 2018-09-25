@@ -1,5 +1,6 @@
 import collections
 import datetime
+import logging
 
 from django.utils import timezone
 
@@ -18,9 +19,12 @@ from ..summary_page_data import your_children_children_dict, your_children_child
 from ..utils import get_non_db_field_arc_comment
 
 
+logger = logging.getLogger('')
+
 #
 # Helper method for Your Children tasks
 #
+
 
 def __get_first_child_number_for_address_entry(application_id):
     """
@@ -93,6 +97,9 @@ def __create_children_living_with_you_table(application):
     with the childminder
     """
 
+    logger.debug('Creating summary table of children living with childminder for application with id: '
+                 + str(application.application_id))
+
     children_living_with_childminder_temp_store = []
 
     children_living_with_childminder = \
@@ -129,6 +136,9 @@ def __create_child_table(child):
     :return: A table object that can be consumed by the generic summary page template that includes details
     of a child listed by the childminder
     """
+
+    logger.debug('Creating summary table of details for child record with id: '
+                 + str(child.child_id))
 
     dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)
 
@@ -168,6 +178,10 @@ def __add_arc_comments_to_child_tables(application_id, child_tables):
     :param application_id: the unique identifier of the application
     :param child_tables: a collection of table objects consumed by the generic summary page
     """
+
+    logger.debug('Appending arc comments to child tables for application with id: '
+                 + str(application_id))
+
     for index, table in enumerate(child_tables):
         # Set child index to plus 1 as these are not zero indexed
         child_index = index + 1
@@ -229,6 +243,10 @@ def __your_children_guidance_get_handler(request):
     """
 
     application_id = request.GET["id"]
+
+    logger.debug('Rendering Your Children task guidance for application with id: '
+                 + str(application_id))
+
     form = YourChildrenGuidanceForm()
     application = Application.get_id(app_id=application_id)
     variables = {
@@ -278,6 +296,9 @@ def __your_children_details_get_handler(request):
     """
 
     application_id = request.GET["id"]
+
+    logger.debug('Rendering Children Details capture page for application with id: '
+                 + str(application_id))
 
     number_of_children_present_in_querystring = request.GET.get('children') is not None
 
@@ -347,6 +368,10 @@ def __your_children_details_post_handler(request):
     or pages where a user gets asked for their respective addresses
     """
     application_id = request.POST["id"]
+
+    logger.debug('Saving details supplied in Children Details capture page for application with id: '
+                 + str(application_id))
+
     number_of_children = request.POST["children"]
     current_date = timezone.now()
 
@@ -443,6 +468,9 @@ def __your_children_details_post_handler_for_adding_children(request, applicatio
     :return: a refreshed "Your children details" page with new input fields for the additional child
     """
 
+    logger.debug('Adding new child entry fields for application with id: '
+                 + str(application_id))
+
     if False not in valid_list:
         variables = {
             'application_id': application_id,
@@ -491,6 +519,10 @@ def __your_children_living_with_you_get_handler(request):
     """
 
     application_id = request.GET["id"]
+
+    logger.debug('Rendering children living with you page for application with id: '
+                 + str(application_id))
+
     form = YourChildrenLivingWithYouForm(id=application_id)
     form.check_flag()
 
@@ -510,6 +542,10 @@ def __your_children_living_with_you_post_handler(request):
     """
 
     application_id = request.POST["id"]
+
+    logger.debug('Saving details of children living with you page for application with id: '
+                 + str(application_id))
+
     form = YourChildrenLivingWithYouForm(request.POST, id=application_id)
 
     if not form.is_valid():
@@ -564,6 +600,10 @@ def __your_children_address_capture_get_handler(request):
 
     application_id = request.GET["id"]
     child = request.GET["child"]
+
+    logger.debug('Rendering postcode lookup page to capture a child address for application with id: '
+                 + str(application_id) + " and child number: " + str(child))
+
     form = ChildAddressForm(id=application_id, child=child)
 
     child_record = Child.objects.get(application_id=application_id, child=child)
@@ -587,6 +627,10 @@ def __your_children_address_lookup_post_handler(request):
 
     application_id = request.POST["id"]
     child = request.POST["child"]
+
+    logger.debug('Fetching postcode lookup matches for child address details using application id: '
+                 + str(application_id) + " and child number: " + str(child))
+
     form = ChildAddressForm(request.POST, id=application_id, child=child)
 
     application = Application.objects.get(application_id=application_id)
@@ -713,6 +757,10 @@ def __your_children_address_selection_post_handler(request):
 
     application_id = request.POST["id"]
     child = request.POST["child"]
+
+    logger.debug('Saving full address child address (acquired by postcode lookup) for application with id: '
+                 + str(application_id) + " and child number: " + str(child))
+
     application = Application.get_id(app_id=application_id)
     child_record = Child.objects.get(application_id=application_id, child=str(child))
     child_address_record = ChildAddress.objects.get(application_id=application_id, child=str(child))
@@ -790,6 +838,9 @@ def __your_children_address_manual_get_handler(request):
     application_id = request.GET["id"]
     child = request.GET["child"]
 
+    logger.debug('Rendering manual child address capture page for application with id: '
+                 + str(application_id) + " and child number: " + str(child))
+
     child_record = Child.objects.get(application_id=application_id, child=child)
     application = Application.objects.get(pk=application_id)
     form = YourChildManualAddressForm(id=application_id, child=child)
@@ -819,6 +870,10 @@ def _your_children_address_manual_post_handler(request):
 
     application_id = request.POST["id"]
     child = request.POST["child"]
+
+    logger.debug('Saving manual child address details for application with id: '
+                 + str(application_id) + " and child number: " + str(child))
+
     application = Application.objects.get(pk=application_id)
 
     form = YourChildManualAddressForm(request.POST, id=application_id, child=child)
@@ -889,6 +944,9 @@ def __your_children_summary_get_handler(request):
     application_id = request.GET["id"]
     application = Application.objects.get(application_id=application_id)
 
+    logger.debug('Rendering Your Children task summary for application with id: '
+                 + str(application_id))
+
     form = YourChildrenSummaryForm()
 
     if application.application_status == 'FURTHER_INFORMATION':
@@ -931,5 +989,9 @@ def __your_children_summary_post_handler(request):
     :return: redirect to the Task List with a status update marked on the "Your children" task
     """
     application_id = request.POST["id"]
+
+    logger.debug('Marking Your Children task as complete for application with id: '
+                 + str(application_id))
+
     status.update(application_id, 'your_children_status', 'COMPLETED')
     return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id)
