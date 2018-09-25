@@ -170,9 +170,20 @@ def declaration_summary(request, print_mode=False):
                 name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
             elif adult.middle_names == '':
                 name = adult.first_name + ' ' + adult.last_name
+
+            if adult.birth_day < 10:
+                adult_birth_day = '0' + str(adult.birth_day)
+            else:
+                adult_birth_day = str(adult.birth_day)
+
+            if adult.birth_month < 10:
+                adult_birth_month = '0' + str(adult.birth_month)
+            else:
+                adult_birth_month = str(adult.birth_month)
+
             adult_name_list.append(name)
-            adult_birth_day_list.append(adult.birth_day)
-            adult_birth_month_list.append(adult.birth_month)
+            adult_birth_day_list.append(adult_birth_day)
+            adult_birth_month_list.append(adult_birth_month)
             adult_birth_year_list.append(adult.birth_year)
             adult_relationship_list.append(adult.relationship)
             adult_dbs_list.append(adult.dbs_certificate_number)
