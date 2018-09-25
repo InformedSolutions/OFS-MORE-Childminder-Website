@@ -114,15 +114,16 @@ urlpatterns = [
 
     # Children
     url(r'^people/children/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
-    url(r'^people/children-details/', PITH_views.PITHChildrenDetailsView.as_view(),
+    url(r'^people/children-details/$', PITH_views.PITHChildrenDetailsView.as_view(),
         name='PITH-Children-Details-View'),
-    url(r'^people/your-children', PITH_views.PITHOwnChildrenCheckView.as_view(), name='PITH-Own-Children-Check-View'),
-    url(r'^people/children-turning-16/', views.other_people_approaching_16, name='PITH-Approaching-16-View'),
-    url(r'^people/your-children-address', PITH_views.PITHOwnChildrenPostcodeView,
+    url(r'^people/children-turning-16/$', views.other_people_approaching_16, name='PITH-Approaching-16-View'),
+    url(r'^people/your-children/$', PITH_views.PITHOwnChildrenCheckView.as_view(), name='PITH-Own-Children-Check-View'),
+    url(r'^people/your-children-details/$', PITH_views.PITHOwnChildrenDetailsView.as_view(), name='PITH-Own-Children-Details-View'),
+    url(r'^people/your-children-address/$', PITH_views.PITHOwnChildrenPostcodeView,
         name='PITH-Own-Children-Postcode-View'),
-    url(r'^people/enter-children-address', PITH_views.PITHOwnChildrenManualView.as_view(),
+    url(r'^people/enter-children-address/$', PITH_views.PITHOwnChildrenManualView.as_view(),
         name='PITH-Own-Children-Manual-View'),
-    url(r'^people/check-answers/', views.other_people_summary, name='Other-People-Summary-View'),
+    url(r'^people/check-answers/$', views.other_people_summary, name='Other-People-Summary-View'),
 
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),
     url(r'^health/booklet/', views.health_booklet, name='Health-Booklet-View'),

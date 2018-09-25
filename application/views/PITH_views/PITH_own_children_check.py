@@ -2,7 +2,7 @@ from django.http import HttpResponseRedirect
 
 from application.business_logic import get_application
 from application.forms.PITH_forms.PITH_base_forms.PITH_own_children_check_form import PITHOwnChildrenCheckForm
-from application.models import AdultInHome, ChildInHome
+from application.models import AdultInHome, Child
 from application.utils import get_id, build_url
 from application.views.PITH_views.base_views.PITH_radio_view import PITHRadioView
 
@@ -10,7 +10,7 @@ class PITHOwnChildrenCheckView(PITHRadioView):
     template_name = 'PITH_templates/PITH_own_children_check.html'
     form_class = PITHOwnChildrenCheckForm
     success_url = ('PITH-Own-Children-Details-View', 'Task-List-View', 'PITH-Summary-View')
-    application_field_name = 'own_children'
+    application_field_name = 'own_children_not_in_home'
 
     def form_valid(self, form):
         application_id = get_id(self.request)
@@ -24,7 +24,7 @@ class PITHOwnChildrenCheckView(PITHRadioView):
         }
 
         if choice_bool:
-            num_children = len(ChildInHome.objects.filter(application_id=application_id))
+            num_children = len(Child.objects.filter(application_id=application_id))
 
             adults_context = {
                 'children': num_children,

@@ -6,16 +6,17 @@ from django.utils import timezone
 from django.views.generic import View
 
 from application.business_logic import (
-    other_people_children_details_logic,
+    PITH_own_children_details_logic,
     rearrange_children_in_home,
     remove_child_in_home,
     reset_declaration,
 )
 from application.forms import OtherPeopleChildrenDetailsForm
+from application.forms.PITH_forms.PITH_own_children_details_form import PITHOwnChildrenDetailsForm
 from application.models import Application, ApplicantHomeAddress
 
 
-class PITHChildrenDetailsView(View):
+class PITHOwnChildrenDetailsView(View):
     """
     Class containing the methods responsible for handling requests to the 'Children-In-The-Home-Details' page.
     """
@@ -36,7 +37,7 @@ class PITHChildrenDetailsView(View):
         remove_child_in_home(application_id_local, remove_person)
         rearrange_children_in_home(number_of_children, application_id_local)
 
-        form_list = [OtherPeopleChildrenDetailsForm(id=application_id_local, child=i, prefix=i) for i in range(1, number_of_children + 1)]
+        form_list = [PITHOwnChildrenDetailsForm(id=application_id_local, child=i, prefix=i) for i in range(1, number_of_children + 1)]
 
         if application.application_status == 'FURTHER_INFORMATION':
             for index, form in enumerate(form_list):
@@ -54,7 +55,7 @@ class PITHChildrenDetailsView(View):
             'people_in_home_status': application.people_in_home_status
         }
 
-        return render(request, 'other-people-children-details.html', variables)
+        return render(request, 'PITH_templates/PITH_own_children_details.html', variables)
 
     def post(self, request):
         current_date = timezone.now()
@@ -75,8 +76,8 @@ class PITHChildrenDetailsView(View):
         children_turning_16 = False  # Bool indicating whether or not all any children are turning 16
 
         for i in range(1, int(number_of_children) + 1):
-            form = OtherPeopleChildrenDetailsForm(request.POST, id=application_id_local, child=i, prefix=i)
-            form.remove_flag()
+            form = PITHOwnChildrenDetailsForm(request.POST, id=application_id_local, child=i, prefix=i)
+            # form.remove_flag()
             form.error_summary_title = 'There was a problem with the details (Child ' + str(i) + ')'
             form_list.append(form)
 
@@ -84,7 +85,7 @@ class PITHChildrenDetailsView(View):
                 form.error_summary_template_name = 'returned-error-summary.html'
 
             if form.is_valid():
-                child_record = other_people_children_details_logic(application_id_local, form, i)
+                child_record = PITH_own_children_details_logic(application_id_local, form, i)
                 child_record.save()
                 reset_declaration(application)
 
@@ -125,7 +126,7 @@ class PITHChildrenDetailsView(View):
                     'remove_button': remove_button,
                     'people_in_home_status': application.people_in_home_status
                 }
-                return render(request, 'other-people-children-details.html', variables)
+                return render(request, 'PITH_templates/PITH_own_children_details.html', variables)
 
         if 'add_child' in request.POST:
             # If all forms are valid
@@ -139,7 +140,7 @@ class PITHChildrenDetailsView(View):
                 add_child_string = str(add_child)
 
                 # Redirect to self.get(), it seems.
-                return HttpResponseRedirect(reverse('PITH-Children-Details-View') + \
+                return HttpResponseRedirect(reverse('PITH-Own-Children-Details-View') + \
                                             '?id=' + application_id_local + \
                                             '&children=' + add_child_string + \
                                             '&remove=0#person' + add_child_string,
@@ -156,7 +157,7 @@ class PITHChildrenDetailsView(View):
                     'remove_button': remove_button,
                     'people_in_home_status': application.people_in_home_status
                 }
-                return render(request, 'other-people-children-details.html', variables)
+                return render(request, 'PITH_templates/PITH_own_children_details.html', variables)
 
     def get_success_url(self, children_turning_16, application):
         """
