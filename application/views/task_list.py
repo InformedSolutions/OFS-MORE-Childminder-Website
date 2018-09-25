@@ -31,7 +31,12 @@ def show_hide_tasks(context, application):
 
     for task in context['tasks']:
         if task['name'] == 'your_children':
-            if application.own_children is True:
+            personal_detail_id = ApplicantPersonalDetails.get_id(app_id=application.application_id)
+            applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                             current_address=True)
+            location_of_childcare = applicant_home_address_record.childcare_address
+
+            if location_of_childcare is False and application.own_children is True:
                 task['hidden'] = False
             else:
                 task['hidden'] = True

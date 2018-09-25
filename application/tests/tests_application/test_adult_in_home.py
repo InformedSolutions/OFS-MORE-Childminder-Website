@@ -27,8 +27,8 @@ class AdultInHomeTests(TestCase, ApplicationTestBase):
         self.assertEqual(response.status_code, 200)
 
         # Assert user taken is taken to the date of birth validation page
-        self.assertTrue('We need to ask all adults in the home about their health. '
-                        'This is to make sure the home is safe for children.' in str(response.content))
+        self.assertTrue('We need to ask all adults in the home about their health '
+                        'to make sure the home is safe for children.' in str(response.content))
 
     def test_incorrect_additional_adult_dob_produces_raises_error(self):
 
