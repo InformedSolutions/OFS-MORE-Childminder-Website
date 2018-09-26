@@ -33,7 +33,13 @@ class PITHAdultCheckView(PITHRadioView):
                 'remove': 0
             }
             context.update(adults_context)
+        else:
+            self.__clear_adults(application_id)
 
         return HttpResponseRedirect(self.get_success_url(get=context))
 
+    def __clear_adults(self, app_id):
+        adults = AdultInHome.objects.filter(application_id=app_id)
 
+        for adult in adults:
+            adult.delete()
