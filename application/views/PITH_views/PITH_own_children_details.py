@@ -180,7 +180,7 @@ class PITHOwnChildrenDetailsView(View):
             if ApplicantHomeAddress.objects.get(application_id=application.pk).childcare_address:
                 success_url = 'PITH-Own-Children-Address-Postcode-View'
             else:
-                success_url = 'Other-People-Summary-View'
+                success_url = 'PITH-Summary-View'
 
         application.save()
 
