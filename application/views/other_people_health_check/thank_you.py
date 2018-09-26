@@ -11,12 +11,10 @@ class ThankYou(BaseTemplateView):
     template_name = 'other_people_health_check/thank_you.html'
     success_url_name = 'Health-Check-Thank-You'
 
-    def clean_string_from_list(list):
+    def clean_string_from_list(self, list):
         """
-
         :param list: List of adult names required for application emails
-        :param string: Desired string name to be passed into email template
-        :return: string with formatted names
+        :return: string with formatted names to be passed into email template as personalisation
         """
         string = ', '.join(list[-1])
         string = string + ' and ' + list[-1]
