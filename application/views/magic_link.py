@@ -5,7 +5,6 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 """
 
-import datetime
 import os
 import random
 import string
@@ -17,6 +16,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils import timezone
 from django.views import View
 
 from application import login_redirect_helper
@@ -188,7 +188,7 @@ def validate_magic_link(request, id):
                 response = HttpResponseRedirect(reverse('Task-List-View') + '?id=' + str(app_id))
                 CustomAuthenticationHandler.create_session(response, acc.email)
                 # Update date last accessed when successfully logged in
-                application.date_last_accessed = datetime.now()
+                application.date_last_accessed = timezone.now()
                 application.save()
                 return response
             if len(acc.mobile_number) == 0:
@@ -198,7 +198,7 @@ def validate_magic_link(request, id):
                 acc.email_expiry_date = 0
                 acc.save()
                 # Update date last accessed when successfully logged in
-                application.date_last_accessed = datetime.now()
+                application.date_last_accessed = timezone.now()
                 application.save()
                 return response
 
@@ -271,7 +271,7 @@ class SMSValidationView(View):
                     acc.save()
 
                     # Update date last accessed when successfully logged in
-                    application.date_last_accessed = datetime.now()
+                    application.date_last_accessed = timezone.now()
                     application.save()
 
                     # Forward back onto application

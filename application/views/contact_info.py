@@ -1,5 +1,4 @@
 import collections
-import datetime
 
 from django.utils import timezone
 
@@ -34,7 +33,7 @@ def contact_phone(request):
         if len(acc.mobile_number) == 0 and 'f' not in request.GET:
             flag = '&f=1'
             # Update date last accessed when successfully logged in
-            application.date_last_accessed = datetime.now()
+            application.date_last_accessed = timezone.now()
             application.save()
             return HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + app_id + flag)
 
