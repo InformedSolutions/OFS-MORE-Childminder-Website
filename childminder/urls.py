@@ -123,7 +123,7 @@ urlpatterns = [
         name='PITH-Own-Children-Postcode-View'),
     url(r'^people/enter-children-address/$', PITH_views.PITHOwnChildrenManualView.as_view(),
         name='PITH-Own-Children-Manual-View'),
-    url(r'^people/check-answers/$', views.other_people_summary, name='Other-People-Summary-View'),
+    url(r'^people/check-answers/$', views.other_people_summary, name='PITH-Summary-View'),
 
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),
     url(r'^health/booklet/', views.health_booklet, name='Health-Booklet-View'),
