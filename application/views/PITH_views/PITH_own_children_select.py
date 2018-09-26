@@ -4,13 +4,12 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from application import status, address_helper
-from application.business_logic import get_application
 from application.forms import ChildAddressForm, YourChildrenAddressLookupForm
-from application.models import AdultInHome, ApplicantHomeAddress, ChildInHome, Child, Application, ChildAddress
-from application.utils import get_id, build_url
-from application.views.PITH_views.base_views.PITH_form_view import PITHFormView
-from application.forms.PITH_forms.PITH_children_check_form import PITHChildrenCheckForm
+from application.models import Child, Application, ChildAddress
+from application.utils import build_url
 from application.views.your_children import __remove_arc_address_flag, __get_next_child_number_for_address_entry
+
+logger = logging.getLogger()
 
 
 def PITHOwnChildrenSelectView(request):
@@ -19,15 +18,23 @@ def PITHOwnChildrenSelectView(request):
 
 # The following code is a modified version of the your_children views
 def __own_children_address_selection(request):
-    template =
+    template = 'PITH_templates/PITH_own_children_select.html'
+    address_lookup_template = 'PITH_templates/PITH_own_children_postcode.html'
+    success_url = 'PITH-Summary-View'
+    address_url = 'PITH-Own-Children-Postcode-View'
 
     if request.method == 'GET':
-        return __own_children_address_selection_get_handler(request)
+        return __own_children_address_selection_get_handler(request,
+                                                            template=template,
+                                                            address_lookup_template=address_lookup_template)
     if request.method == 'POST':
-        return __own_children_address_selection_post_handler(request)
+        return __own_children_address_selection_post_handler(request,
+                                                             template=template,
+                                                             success_url=success_url,
+                                                             address_url=address_url)
 
 
-def __own_children_address_selection_get_handler(request, template):
+def __own_children_address_selection_get_handler(request, template, address_lookup_template):
     """
     Method for handling GET requests to the page that allows a user to select their Child's address from a list of
     addresses that match a supplied postcode
@@ -59,7 +66,7 @@ def __own_children_address_selection_get_handler(request, template):
             'child': child,
         }
 
-        return render(request, 'your-childs-address.html', variables)
+        return render(request, template, variables)
 
     else:
         form = ChildAddressForm(id=application_id, child=child)
@@ -74,10 +81,10 @@ def __own_children_address_selection_get_handler(request, template):
             'child': child,
         }
 
-        return render(request, 'your-children-address-lookup.html', variables)
+        return render(request, address_lookup_template, variables)
 
 
-def __own_children_address_selection_post_handler(request, template, success_url):
+def __own_children_address_selection_post_handler(request, template, success_url, address_url):
     """
     Method for handling POST requests to the page that allows a user to select their Child's address from a list of
     addresses that match a supplied postcode
@@ -123,12 +130,11 @@ def __own_children_address_selection_post_handler(request, template, success_url
         next_child = __get_next_child_number_for_address_entry(application_id, int(child))
 
         if next_child is None:
-            return HttpResponseRedirect(reverse('Your-Children-Summary-View') + '?id=' +
-                                        application_id)
+            return HttpResponseRedirect(build_url(success_url, get={'id':application_id}))
 
         # Recurse through use of querystring params
         return HttpResponseRedirect(
-            reverse('Your-Children-Address-View') + '?id=' + application_id + '&child=' + str(next_child))
+            reverse(address_url) + '?id=' + application_id + '&child=' + str(next_child))
     else:
 
         form.error_summary_title = 'There was a problem finding your address'
@@ -145,4 +151,4 @@ def __own_children_address_selection_post_handler(request, template, success_url
             'name': child_record.get_full_name(),
         }
 
-        return render(request, 'your-childs-address.html', variables)
+        return render(request, template, variables)
