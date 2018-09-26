@@ -1,3 +1,4 @@
+import datetime
 import time
 
 from django.conf import settings
@@ -94,6 +95,9 @@ class UpdateEmailView(View):
             email = form.cleaned_data['email_address']
 
             if acc.email == email:
+                # Update date last accessed when successfully logged in
+                application.date_last_accessed = datetime.now()
+                application.save()
                 return HttpResponseRedirect(reverse('Contact-Summary-View') + '?id=' + app_id)
 
             elif UserDetails.objects.filter(email=email).exists():
