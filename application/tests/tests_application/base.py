@@ -505,7 +505,7 @@ class ApplicationTestBase(object):
 
         }
 
-        r = self.client.post(reverse('Other-People-Children-Details-View'), data)
+        r = self.client.post(reverse('PITH-Children-Details-View'), data)
 
         self.assertEqual(r.status_code, 302)
 
