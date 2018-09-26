@@ -75,15 +75,15 @@ class ThankYou(BaseTemplateView):
             dbs_list = [adult for adult in all_adults if not all_adults.capita and not all_adults.on_update]
             crc_list = [adult for adult in all_adults if all_adults.lived_abroad]
 
+            dbs_names = ThankYou.clean_string_from_list(dbs_list)
+            crc_names = ThankYou.clean_string_from_list(crc_list)
+
             email = user_details.email
             link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + create_account_magic_link(user_details)
             personalisation = {"link": link,
                                "firstName": firstname,
                                "ApplicantName": firstname
                                }
-
-            dbs_names = ThankYou.clean_string_from_list(dbs_list)
-            crc_names = ThankYou.clean_string_from_list(crc_list)
 
             if len(dbs_list) > 0 and len(crc_names) == 0:
                 personalisation["dbs_names"] = dbs_names
