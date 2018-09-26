@@ -13,15 +13,16 @@
     <form method="post" novalidate>
         <div class="form-group">
             <h1 class="form-title heading-large">
-                {{form.child.get_full_name}}'s address
+                {{name}}'s address
             </h1>
             
             {{ form.as_div }}
 
             {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue">
-            
-            <a href="{{manual_url}}">Enter address manually</a>
+            <input name="postcode-search" type="submit" class="button" value="Save and continue">
+
+            <br>
+            <a href="{% url 'PITH-Own-Children-Manual-View' %}?id={{application_id}}&child={{child}}">Enter address manually</a>
         </div>
     </form>
 </div>

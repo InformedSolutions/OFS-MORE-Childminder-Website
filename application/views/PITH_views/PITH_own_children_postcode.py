@@ -2,41 +2,45 @@ import logging
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from application.business_logic import get_application
-from application.models import AdultInHome, ApplicantHomeAddress, ChildInHome
+from application import status
+from application.forms import ChildAddressForm
+from application.models import Child, Application, ChildAddress
 from application.utils import get_id, build_url
-from application.views.PITH_views.base_views.PITH_form_view import PITHFormView
-from application.forms.PITH_forms.PITH_children_check_form import PITHChildrenCheckForm
-from application.views.your_children import your_children_address_selection
 
 logger = logging.getLogger('')
 
+
 def PITHOwnChildrenPostcodeView(request):
-    return your_children_address_selection(request)
+    return __own_children_address_capture(request)
 
 
 # The following code is a modified version of the your_children views
-def your_children_address_capture(request):
+def __own_children_address_capture(request):
     """
     Method for rendering the page responsible for capturing details of a Child's address
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered children's address capture template
     """
+    template = 'PITH_templates/PITH_own_children_postcode.html'
+    success_url = 'PITH-Own-Children-Select-View'
 
     if request.method == 'GET':
-        return __your_children_address_capture_get_handler(request)
+        return __own_children_address_capture_get_handler(request,
+                                                          template=template)
     if request.method == 'POST':
-        return __your_children_address_lookup_post_handler(request)
+        return __own_children_address_lookup_post_handler(request,
+                                                          template=template,
+                                                          success_url=success_url)
 
 
-def __your_children_address_capture_get_handler(request):
+def __own_children_address_capture_get_handler(request, template):
     """
     View method for rendering the Your Children's address lookup page
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered children's address capture template
     """
 
-    application_id = request.GET["id"]
+    application_id = get_id(request)
     child = request.GET["child"]
 
     logger.debug('Rendering postcode lookup page to capture a child address for application with id: '
@@ -53,18 +57,18 @@ def __your_children_address_capture_get_handler(request):
         'child': child,
     }
 
-    return render(request, 'your-children-address-lookup.html', variables)
+    return render(request, template, variables)
 
 
-def __your_children_address_lookup_post_handler(request):
+def __own_children_address_lookup_post_handler(request, template, success_url):
     """
     Method for managing POST requests to lookup addresses from a postcode
     :param request: a request object used to generate the HttpResponse
     :return: a redirect to a list of matched addresses or a returned page including any validation errors.
     """
 
-    application_id = request.POST["id"]
-    child = request.POST["child"]
+    application_id = get_id(request)
+    child = request.GET["child"]
 
     logger.debug('Fetching postcode lookup matches for child address details using application id: '
                  + str(application_id) + " and child number: " + str(child))
@@ -95,11 +99,10 @@ def __your_children_address_lookup_post_handler(request):
                 child_address_record.postcode = postcode
                 child_address_record.save()
 
-            if Application.get_id(app_id=application_id).personal_details_status != 'COMPLETED':
-                status.update(application_id, 'your_children_status', 'IN_PROGRESS')
+            status.update(application_id, 'people_in_home_status', 'IN_PROGRESS')
 
-            return HttpResponseRedirect(reverse('Your-Children-Address-Select-View')
-                                        + '?id=' + application_id + '&child=' + str(child))
+            return HttpResponseRedirect(build_url(success_url, get={'id': application_id,
+                                                                    'child': str(child)}))
         else:
             form.error_summary_title = 'There was a problem with your postcode'
 
@@ -116,4 +119,4 @@ def __your_children_address_lookup_post_handler(request):
                 'child': child,
             }
 
-            return render(request, 'your-children-address-lookup.html', variables)
+            return render(request, template, variables)

@@ -14,6 +14,7 @@ from application.business_logic import (
 from application.forms import OtherPeopleChildrenDetailsForm
 from application.forms.PITH_forms.PITH_own_children_details_form import PITHOwnChildrenDetailsForm
 from application.models import Application, ApplicantHomeAddress
+from application.utils import build_url
 
 
 class PITHOwnChildrenDetailsView(View):
@@ -113,7 +114,8 @@ class PITHOwnChildrenDetailsView(View):
                 application.date_updated = current_date
                 application.save()
                 reset_declaration(application)
-                return HttpResponseRedirect(reverse(success_url) + '?id=' + application_id_local, variables)
+                return HttpResponseRedirect(build_url(success_url, get={'id': application_id_local,
+                                                                        'child': 1}))
 
             # If there is an invalid form
             else:
@@ -178,7 +180,7 @@ class PITHOwnChildrenDetailsView(View):
             application.children_turning_16 = False
 
             if ApplicantHomeAddress.objects.get(application_id=application.pk).childcare_address:
-                success_url = 'PITH-Own-Children-Address-Postcode-View'
+                success_url = 'PITH-Own-Children-Postcode-View'
             else:
                 success_url = 'PITH-Summary-View'
 

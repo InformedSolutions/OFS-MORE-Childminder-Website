@@ -121,6 +121,8 @@ urlpatterns = [
     url(r'^people/your-children-details/$', PITH_views.PITHOwnChildrenDetailsView.as_view(), name='PITH-Own-Children-Details-View'),
     url(r'^people/your-children-address/$', PITH_views.PITHOwnChildrenPostcodeView,
         name='PITH-Own-Children-Postcode-View'),
+    url(r'^people/select-children-address/$', PITH_views.PITHOwnChildrenSelectView,
+        name='PITH-Own-Children-Select-View'),
     url(r'^people/enter-children-address/$', PITH_views.PITHOwnChildrenManualView.as_view(),
         name='PITH-Own-Children-Manual-View'),
     url(r'^people/check-answers/$', views.other_people_summary, name='PITH-Summary-View'),
