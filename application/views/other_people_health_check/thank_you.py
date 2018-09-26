@@ -11,6 +11,18 @@ class ThankYou(BaseTemplateView):
     template_name = 'other_people_health_check/thank_you.html'
     success_url_name = 'Health-Check-Thank-You'
 
+    def clean_string_from_list(list):
+        """
+
+        :param list: List of adult names required for application emails
+        :param string: Desired string name to be passed into email template
+        :return: string with formatted names
+        """
+        string = ', '.join(list[-1])
+        string = string + ' and ' + list[-1]
+
+        return string
+
     def get(self, request, *args, **kwargs):
         response = super().get(request=self.request)
         adult_id = self.request.GET.get('person_id')
@@ -62,14 +74,42 @@ class ThankYou(BaseTemplateView):
                     CustomAuthenticationHandler.destroy_session(response)
                     return response
 
-            template_id = '0acc42fa-9ba0-4c5e-8171-e49c08c22b67'
+            dbs_list = [adult for adult in all_adults if not all_adults.capita and not all_adults.on_update]
+            crc_list = [adult for adult in all_adults if all_adults.lived_abroad]
+
             email = user_details.email
             link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + create_account_magic_link(user_details)
             personalisation = {"link": link,
                                "firstName": firstname,
-                               "ApplicantName": firstname}
-            r = send_email(email, personalisation, template_id)
-            print(link)
+                               "ApplicantName": firstname
+                               }
+
+            dbs_names = ThankYou.clean_string_from_list(dbs_list)
+            crc_names = ThankYou.clean_string_from_list(crc_list)
+
+            if len(dbs_list) > 0 and len(crc_names) == 0:
+                personalisation["dbs_names"] = dbs_names
+                template_id = '9aa3a240-0a00-44bc-ac49-88125eb7c749'
+                r = send_email(email, personalisation, template_id)
+                print(link)
+
+            elif len(crc_list) > 0 and len(dbs_list) == 0:
+                personalisation["crc_names"] = crc_names
+                template_id = '07438eef-d88b-48fe-9812-2bc9e09dbae6'
+                r = send_email(email, personalisation, template_id)
+                print(link)
+
+            elif len(dbs_list) > 0 and len(crc_list) > 0:
+                personalisation["dbs_names"] = dbs_names
+                personalisation["crc_names"] = crc_names
+                template_id = '5d5db808-2c83-41f6-adba-eda1b24c5714'
+                r = send_email(email, personalisation, template_id)
+                print(link)
+
+            else:
+                template_id = '0acc42fa-9ba0-4c5e-8171-e49c08c22b67'
+                r = send_email(email, personalisation, template_id)
+                print(link)
 
             update(application_id, 'people_in_home_status', 'COMPLETED')
 
