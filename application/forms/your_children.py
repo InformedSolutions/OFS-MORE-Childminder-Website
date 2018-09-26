@@ -29,7 +29,7 @@ class YourChildrenDetailsForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
-    error_summary_title = 'There was a problem with the details'
+    error_summary_title = 'There was a problem with your children''s details'
 
     first_name = forms.CharField(label='First name', required=True,
                                  error_messages={'required': "Please enter their first name"})
@@ -171,6 +171,11 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
 
         self.fields['children_living_with_childminder_selection'].choices = select_options
         self.fields['children_living_with_childminder_selection'].initial = previous_selections
+
+        # Note that as this question is constructed dynamically, the application id is used as the primary key attribute
+        # for checking ARC comment presence
+        self.field_list = ['children_living_with_childminder_selection']
+        self.pk = self.application_id_local
 
     def clean_children_living_with_childminder_selection(self):
         """
