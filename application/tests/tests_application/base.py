@@ -532,7 +532,7 @@ class ApplicationTestBase(object):
 
     def TestAppOtherPeopleSummary(self):
         """Submit Other People Summary"""
-        r = self.client.get(reverse('Other-People-Summary-View'), {'id': self.app_id})
+        r = self.client.get(reverse('PITH-Summary-View'), {'id': self.app_id})
         self.assertEqual(r.status_code, 200)
 
     def TestAppFirstReferenceName(self):
