@@ -29,11 +29,11 @@
       <nav id="proposition-menu">
           {% block proposition %}
               {% if id and AUTHENTICATED and task_list_link %}
-                <a href="{% url 'Task-List-View' %}?id={{ id }}" id="proposition-name" style="color: pink;">
+                <a href="{% url 'Task-List-View' %}?id={{ id }}" id="proposition-name">
                      Register as a childminder
                 </a>
               {% else %}
-                <a href="{{ URL_PREFIX }}" id="proposition-name" style="color: pink;">
+                <a href="{{ URL_PREFIX }}" id="proposition-name">
                    Register as a childminder
                 </a>
               {% endif %}
