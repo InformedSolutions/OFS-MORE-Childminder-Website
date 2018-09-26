@@ -81,7 +81,7 @@ class ThankYou(BaseTemplateView):
             link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + create_account_magic_link(user_details)
             personalisation = {"link": link,
                                "firstName": firstname,
-                               "ApplicantName": firstnameand
+                               "ApplicantName": firstname
                                }
 
             if len(dbs_qset) > 0 and len(crc_qset) == 0:
