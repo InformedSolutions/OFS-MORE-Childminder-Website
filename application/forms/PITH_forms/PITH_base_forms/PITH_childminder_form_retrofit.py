@@ -5,7 +5,7 @@ class PITHChildminderFormAdapter(ChildminderForms):
     """
     - Childminder forms' methods require a field_list whose names correspond exactly to the field names in the database
       tables in order to work.
-    - The People in the home forms currently use fields whose names are the field_name + person_id, for example:
+    - The PITHMultiRadioForm currently use fields whose names are the field_name + person_id, for example:
       'lived_abroad17aea132-7f9a-4cc1-b9d1-a92e69b9758c'.
     - This was done to determine which data contained in a POST request related to which adult.
     - These form names will not work with the existing Childminder forms.
