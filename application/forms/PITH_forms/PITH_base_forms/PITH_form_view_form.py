@@ -1,8 +1,8 @@
-from application.forms import ChildminderForms
+from application.forms.PITH_forms.PITH_base_forms.PITH_childminder_form_retrofit import PITHChildminderFormAdapter
 from application.business_logic import get_adult_in_home, get_application
 
 
-class PITHRadioForm(ChildminderForms):
+class PITHRadioForm(PITHChildminderFormAdapter):
     """
     GOV.UK form for the Criminal record check: generic radio button form
     """

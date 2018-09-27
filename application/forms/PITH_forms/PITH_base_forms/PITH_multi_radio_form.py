@@ -1,8 +1,8 @@
-from application.forms import ChildminderForms
+from application.forms.PITH_forms.PITH_base_forms.PITH_childminder_form_retrofit import PITHChildminderFormAdapter
 from application.business_logic import get_application
 
 
-class PITHMultiRadioForm(ChildminderForms):
+class PITHMultiRadioForm(PITHChildminderFormAdapter):
     """
     GOV.UK form for the People in the Home: generic radio button form
     """
