@@ -1,20 +1,21 @@
 import collections
 
 from django import forms
-from django.utils.html import conditional_escape, format_html_join
 
 from govuk_forms.forms import GOVUKForm
 from govuk_forms import widgets as govuk_widgets
 from govuk_forms.widgets import NumberInput
 
-from application.forms import ChildminderForms, childminder_dbs_duplicates_household_member_check
+from application.forms import childminder_dbs_duplicates_household_member_check
+from application.forms.PITH_forms.PITH_base_forms.PITH_childminder_form_retrofit import PITHChildminderFormAdapter
+
 from application.models import Application
 
 from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
 from application.business_logic import update_adult_in_home
 
 
-class PITHDBSCheckForm(ChildminderForms):
+class PITHDBSCheckForm(PITHChildminderFormAdapter):
     """
     GOV.UK form for the People in the Home: Non generic form for the DBSCheckView.
     """
