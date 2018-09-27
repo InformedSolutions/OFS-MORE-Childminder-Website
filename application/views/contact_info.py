@@ -32,9 +32,6 @@ def contact_phone(request):
         acc = UserDetails.objects.get(application_id=app_id)
         if len(acc.mobile_number) == 0 and 'f' not in request.GET:
             flag = '&f=1'
-            # Update date last accessed when successfully logged in
-            application.date_last_accessed = timezone.now()
-            application.save()
             return HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + app_id + flag)
 
         if application.application_status == 'FURTHER_INFORMATION':
