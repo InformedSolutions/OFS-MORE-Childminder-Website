@@ -71,12 +71,11 @@ class PITHLivedAbroadView(PITHMultiRadioView):
         application_id = get_id(self.request)
 
         adults = AdultInHome.objects.filter(application_id=application_id)
+        form_list = [self.form_class(**self.get_form_kwargs(adult=adult)) for adult in adults]
+        sorted_form_list = sorted(form_list, key=lambda form: form.adult.adult)
 
-        form_list = [self.form_class(**self.get_form_kwargs(adult=adult))
-                     for adult in adults]
-
-        sorted_form_list = \
-            sorted(form_list, key=lambda form: form.adult.adult)
+        for form in sorted_form_list:
+            form.check_flag()
 
         return sorted_form_list
 
