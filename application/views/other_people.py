@@ -17,11 +17,13 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
 from application.utils import build_url
+from application.views.your_children import __create_child_table
 from .. import status
 from ..table_util import create_tables, Table, submit_link_setter
 from ..summary_page_data import other_adult_link_dict, other_adult_name_dict, other_child_link_dict, \
     other_child_name_dict, other_adult_summary_link_dict, other_adult_summary_name_dict, \
-    other_child_summary_name_dict, other_child_summary_link_dict
+    other_child_summary_name_dict, other_child_summary_link_dict, child_not_in_the_home_link_dict, \
+    child_not_in_the_home_name_dict
 from ..business_logic import (health_check_email_resend_logic,
                               other_people_adult_details_logic,
                               rearrange_adults,
@@ -39,7 +41,7 @@ from ..models import (AdultInHome,
                       ApplicantPersonalDetails,
                       Application,
                       ArcComments,
-                      ChildInHome)
+                      ChildInHome, Child)
 from application.notify import send_email
 
 
@@ -255,6 +257,7 @@ def other_people_summary(request):
         application_id_local = request.GET["id"]
         adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
         children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
+        children_not_in_the_home_list = Child.objects.filter(application_id=application_id_local).order_by('child')
         form = OtherPeopleSummaryForm()
         application = Application.objects.get(pk=application_id_local)
         adult_table_list = []
@@ -359,17 +362,10 @@ def other_people_summary(request):
 
         for table in child_table_list:
             table['other_people_numbers'] = back_link_addition
-        child_table_list = create_tables(child_table_list, other_child_name_dict, other_child_link_dict, )
+        child_table_list = create_tables(child_table_list, other_child_name_dict, other_child_link_dict)
 
-        if not adult_table_list:
-            adults_in_home = False
-        else:
-            adults_in_home = True
-
-        if not child_table_list:
-            children_in_home = False
-        else:
-            children_in_home = True
+        adults_in_home = bool(adult_table_list)
+        children_in_home = bool(child_table_list)
 
         adult_table = collections.OrderedDict({
             'table_object': Table([application_id_local]),
@@ -388,11 +384,18 @@ def other_people_summary(request):
         adult_table = create_tables([adult_table], other_adult_summary_name_dict, other_adult_summary_link_dict)
         child_table = create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
 
-        table_list = adult_table + child_table + adult_table_list + child_table_list
+        # Populating Children not in the Home:
+        children_not_in_the_home_table_list = [__create_child_table(child) for child in children_not_in_the_home_list]
+        children_not_in_the_home_table = create_tables(children_not_in_the_home_table_list, child_not_in_the_home_name_dict, child_not_in_the_home_link_dict)
+
+        table_list = adult_table + adult_table_list + child_table + child_table_list + children_not_in_the_home_table
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
             form.error_summary_title = "There was a problem"
+
+        sending_emails = application.adults_in_home is True and any(
+                [adult.email_resent_timestamp is None for adult in adults_list])
 
         variables = {
             'page_title': 'Check your answers: people in your home',
@@ -401,7 +404,8 @@ def other_people_summary(request):
             'table_list': table_list,
             'turning_16': application.children_turning_16,
             'people_in_home_status': application.people_in_home_status,
-            'display_buttons_list': display_buttons_list
+            'display_buttons_list': display_buttons_list,
+            'sending_emails': sending_emails
         }
         variables = submit_link_setter(variables, table_list, 'people_in_home', application_id_local)
 
