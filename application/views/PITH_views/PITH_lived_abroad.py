@@ -74,9 +74,6 @@ class PITHLivedAbroadView(PITHMultiRadioView):
         form_list = [self.form_class(**self.get_form_kwargs(adult=adult)) for adult in adults]
         sorted_form_list = sorted(form_list, key=lambda form: form.adult.adult)
 
-        for form in sorted_form_list:
-            form.check_flag()
-
         return sorted_form_list
 
     def get_initial(self):
