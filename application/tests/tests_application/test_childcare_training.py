@@ -41,8 +41,8 @@ class ChildcareTrainingTestSuite(TestCase, ApplicationTestBase):
             magic_link_text_mock.return_value.status_code = 201
 
             self.test_app_email()
-            self.TestValidateEmail()
-            self.TestAppPhone()
+            self.test_validate_email()
+            self.test_app_phone()
             self.url_suffix = '?id=' + str(self.app_id)
 
             app = models.Application.objects.get(pk=self.app_id)

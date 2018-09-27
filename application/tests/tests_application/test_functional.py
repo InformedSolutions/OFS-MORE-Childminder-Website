@@ -43,8 +43,8 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
         super().setUp()
 
     def TestEmailValidationDoesNotCountAsResend(self):
-        self.TestUpdateEmail()
-        self.TestValidateEmail()
+        self.test_update_email()
+        self.test_validate_email()
 
         self.assertEqual(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
         self.assertEqual(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts_expiry_date)
@@ -181,12 +181,12 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
             notify_connection_test_mock.return_value.status_code = 201
             notify_mock.return_value.status_code = 201
 
-            self.TestAppInit()
+            self.test_app_init()
 
             self.test_app_email()
-            self.TestValidateEmail()
-            self.TestAppPhone()
-            self.TestReturnToApp()
+            self.test_validate_email()
+            self.test_app_phone()
+            self.test_return_to_application()
 
             self.TestEmailValidationDoesNotCountAsResend()
             self.TestResendCodeIncrementsCount()
@@ -195,46 +195,46 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
             self.TestSMSLoginResetsSMSResendNumber()
             self.TestSecurityQuestionLoginResetsSMSResendNumber()
 
-            self.TestContactSummaryView()
-            self.TestTypeOfChildcareAgeGroups()
-            self.TestTypeOfChildcareOvernightCare()
-            self.TestSecurityQuestion()
-            self.AppTestTypeOfChildcareRegister()
+            self.test_contact_summary_view()
+            self.test_type_of_childcare_age_groups()
+            self.test_type_of_childcare_overnight_care()
+            self.test_security_question()
+            self.test_type_of_childcare_register()
 
-            self.TestAppPersonalDetailsNames()
-            self.TestAppPersonalDetailsDOB()
-            self.TestAppPersonalDetailsHomeAddress()
-            self.TestAppPersonalDetailsHomeAddressDetails()
+            self.test_personal_details_names()
+            self.test_personal_details_dob()
+            self.test_personal_details_home_address()
+            self.test_personal_details_home_address_details()
             # self.TestAppPersonalDetailsSummaryView()
 
-            self.TestVerifyPhone()
-            self.TestVerifyPhoneEmailApostrophe()
+            self.test_verify_phone()
+            self.test_verify_phone_email_apostrophe()
 
-            self.TestAppFirstAid()
-            self.TestAppFirstAidCert()
-            self.TestAppHealthBooklet()
+            self.test_first_aid_details()
+            self.test_first_aid_certificate()
+            self.test_health_declaration_booklet()
 
-            self.TestAppCriminalRecordCheckDetails()
+            self.test_criminal_record_check_details()
 
-            self.TestAppOtherPeopleAdults()
-            self.TestAppOtherPeopleChildren()
-            self.TestAppOtherPeopleSummary()
+            self.test_other_people_adults()
+            self.test_other_people_children()
+            self.test_other_people_summary()
 
-            self.TestAppOtherPeopleAdultsDetails()
-            self.TestAppOtherPeopleChildrenDetails()
+            self.test_other_people_adult_details()
+            self.test_other_people_children_details()
 
-            self.TestAppFirstReferenceName()
-            self.TestAppFirstReferenceAddress()
-            self.TestAppFirstReferenceContactDetails()
-            self.TestAppSecondReferenceName()
-            self.TestAppSecondReferenceAddress()
-            self.TestAppSecondReferenceContactDetails()
-            self.TestReferencesSummary()
+            self.test_first_reference_name()
+            self.test_first_reference_address()
+            self.test_first_reference_contact_details()
+            self.test_second_reference_name()
+            self.test_second_reference_address()
+            self.test_second_reference_contact_details()
+            self.test_references_summary()
 
-            self.TestAppDeclaration()
-            self.TestAppArcFlaggedStatuses()
-            self.TestAppPaymentCreditDetails()
-            self.TestAppPaymentConfirmation()
+            self.test_declaration()
+            self.test_arc_flagged_statuses()
+            self.test_payment_credit_credentials()
+            self.test_payment_confirmation()
             self.TestAppPaymentConfirmationWithHealthBookletNoConviction()
             self.TestAppPaymentConfirmationWithHealthBookletAndConviction()
             self.TestAppPaymentConfirmationWithNoHealthBookletNoConviction()
@@ -251,7 +251,7 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
         Check logging trigger right after application was drafted/started
         """
 
-        self.TestAppInit()
+        self.test_app_init()
         self.assertEqual(
             TimelineLog.objects.filter(object_id=self.app_id)[0].extra_data['action'], "created by"
         )
@@ -283,7 +283,7 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
             'last_name': "Holmes"
         }
 
-        self.TestAppPersonalDetailsNames(data)
+        self.test_personal_details_names(data)
 
         # Check if logs appareade
         self.assertTrue(
