@@ -5,7 +5,7 @@ from django.urls import reverse
 
 from application import status, address_helper
 from application.forms import ChildAddressForm, YourChildrenAddressLookupForm
-from application.models import Child, Application, ChildAddress
+from application.models import Child, Application, ChildAddress, AdultInHome
 from application.utils import build_url
 from application.views.your_children import __remove_arc_address_flag, __get_next_child_number_for_address_entry
 
@@ -130,8 +130,15 @@ def __own_children_address_selection_post_handler(request, template, success_url
         next_child = __get_next_child_number_for_address_entry(application_id, int(child))
 
         if next_child is None:
-            return HttpResponseRedirect(build_url(success_url, get={'id':application_id}))
+            invalid_adults_url, valid_adults_url = success_url
+            adults = AdultInHome.objects.filter(application_id=application_id)
 
+            if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+                redirect_url = invalid_adults_url
+            else:
+                redirect_url = valid_adults_url
+
+            return HttpResponseRedirect(build_url(redirect_url, get={'id': application_id}))
         # Recurse through use of querystring params
         return HttpResponseRedirect(
             reverse(address_url) + '?id=' + application_id + '&child=' + str(next_child))

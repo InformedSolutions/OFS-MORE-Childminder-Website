@@ -6,7 +6,7 @@ from django.utils import timezone
 from application import status
 from application.business_logic import child_address_logic, reset_declaration
 from application.forms import YourChildManualAddressForm, Child
-from application.models import Application
+from application.models import Application, AdultInHome
 from application.utils import build_url, get_id
 from application.views.your_children import __remove_arc_address_flag, __get_next_child_number_for_address_entry
 
@@ -19,7 +19,7 @@ def PITHOwnChildrenManualView(request):
 
 def __own_children_address_manual(request):
     template = 'PITH_templates/PITH_own_children_manual.html'
-    success_url = 'PITH-Summary-View'
+    success_url = ('Task-List-View', 'PITH-Summary-View')
     address_url = 'PITH-Own-Children-Postcode-View'
 
     if request.method == 'GET':
@@ -99,7 +99,15 @@ def __own_children_address_manual_post_handler(request, template, success_url, a
         next_child = __get_next_child_number_for_address_entry(application_id, int(child))
 
         if next_child is None:
-            return HttpResponseRedirect(build_url(success_url, get={'id': application_id}))
+            invalid_adults_url, valid_adults_url = success_url
+            adults = AdultInHome.objects.filter(application_id=application_id)
+
+            if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+                redirect_url = invalid_adults_url
+            else:
+                redirect_url = valid_adults_url
+
+            return HttpResponseRedirect(build_url(redirect_url, get={'id': application_id}))
 
         return HttpResponseRedirect(
             build_url(address_url, get={'id': application_id, 'child': str(next_child)}))

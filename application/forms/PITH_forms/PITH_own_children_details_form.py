@@ -1,3 +1,5 @@
+import collections
+
 from django import forms
 
 from application.customfields import CustomSplitDateFieldDOB
@@ -17,12 +19,12 @@ class PITHOwnChildrenDetailsForm(ChildminderForms):
         self.child = kwargs.pop('child')
         self.prefix = kwargs.pop('prefix')
 
-        self.base_fields = {
-            'first_name': self.get_first_name_field(),
-            'middle_names': self.get_middle_name_field(),
-            'last_name': self.get_last_name_field(),
-            'date_of_birth': self.get_date_of_birth_field()
-        }
+        self.base_fields = collections.OrderedDict([
+            ('first_name', self.get_first_name_field()),
+            ('middle_names', self.get_middle_name_field()),
+            ('last_name', self.get_last_name_field()),
+            ('date_of_birth', self.get_date_of_birth_field())
+        ])
 
         super().__init__(*args, **kwargs)
 
