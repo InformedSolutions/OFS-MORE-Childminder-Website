@@ -304,9 +304,6 @@ def other_people_summary(request):
                     ('dbs_certificate_number', adult.dbs_certificate_number),
                 ])
 
-            if adult.health_check_status == 'To do':
-                status.update(application_id_local, 'people_in_home_status', 'WAITING')
-
             # If adult health check status is not complete, add to health check status list
             if adult.health_check_status != 'Done':
                 adult_health_check_status_list.append('To do')
@@ -432,6 +429,7 @@ def other_people_summary(request):
             adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
             if application.adults_in_home is True and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):
+                status.update(application_id_local, 'people_in_home_status', 'WAITING')
                 return HttpResponseRedirect(
                     reverse('Other-People-Email-Confirmation-View') + '?id=' + application_id_local)
             elif application.adults_in_home is False:

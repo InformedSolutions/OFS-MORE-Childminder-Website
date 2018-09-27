@@ -248,6 +248,7 @@ def child_address_logic(app_id, child, form):
     if ChildAddress.objects.filter(application_id=app_id, child=child).exists():
         child_address = ChildAddress.objects.get(application_id=app_id, child=child)
 
+    child_address.child = int(child)
     child_address.street_line1 = form.cleaned_data.get('street_line1')
     child_address.street_line2 = form.cleaned_data.get('street_line2')
     child_address.town = form.cleaned_data.get('town')

@@ -92,7 +92,7 @@ def __own_children_address_lookup_post_handler(request, template, success_url):
                                                     country='',
                                                     postcode=postcode,
                                                     application_id=application,
-                                                    child=child, )
+                                                    child=child)
                 child_address_record.save()
             else:
                 child_address_record = ChildAddress.objects.get(application_id=application_id, child=child)

@@ -162,28 +162,9 @@ class PITHOwnChildrenDetailsView(View):
                 return render(request, 'PITH_templates/PITH_own_children_details.html', variables)
 
     def get_success_url(self, children_turning_16, application):
-        """
-        Function containing logic for determining success_url.
-
-        :param: children_turning_16: bool indicating whether or not any children were turning 16.
-        :param: application: application object for the applicant.
-        :return: reversable string for redirect target page.
-
-        If a child is approaching 16, navigate to approaching 16 page.
-        If no child is approaching 16 AND applicant IS providing care in own home, navigate to own children page.
-        If no child is approaching 16 AND applicant NOT providing care in own home, navigate to summary page.
-        """
-        if children_turning_16:
-            application.children_turning_16 = True
-            success_url = 'PITH-Approaching-16-View'
+        if ApplicantHomeAddress.objects.get(application_id=application.pk).childcare_address:
+            success_url = 'PITH-Own-Children-Postcode-View'
         else:
-            application.children_turning_16 = False
-
-            if ApplicantHomeAddress.objects.get(application_id=application.pk).childcare_address:
-                success_url = 'PITH-Own-Children-Postcode-View'
-            else:
-                success_url = 'PITH-Summary-View'
-
-        application.save()
+            success_url = 'PITH-Summary-View'
 
         return success_url
