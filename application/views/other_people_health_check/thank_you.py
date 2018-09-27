@@ -7,6 +7,18 @@ from application.views.other_people_health_check.BaseViews import BaseTemplateVi
 from childminder import settings
 
 
+def qset_to_formatted_string(qset):
+    if len(qset) == 1:
+        name_string = qset[0].get_full_name
+
+    else:
+        names = [adult.get_full_name for adult in qset]
+        name_string = ', '.join(names[:-1])
+        name_string += ' and ' + names[-1]
+
+    return name_string
+
+
 class ThankYou(BaseTemplateView):
     template_name = 'other_people_health_check/thank_you.html'
     success_url_name = 'Health-Check-Thank-You'
@@ -62,14 +74,43 @@ class ThankYou(BaseTemplateView):
                     CustomAuthenticationHandler.destroy_session(response)
                     return response
 
-            template_id = '0acc42fa-9ba0-4c5e-8171-e49c08c22b67'
+            dbs_qset = AdultInHome.objects.filter(application_id=application_id, capita=False, on_update=True)
+            crc_qset = AdultInHome.objects.filter(application_id=application_id, lived_abroad=True)
+
             email = user_details.email
             link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + create_account_magic_link(user_details)
             personalisation = {"link": link,
                                "firstName": firstname,
-                               "ApplicantName": firstname}
-            r = send_email(email, personalisation, template_id)
-            print(link)
+                               "ApplicantName": firstname
+                               }
+
+            if len(dbs_qset) > 0 and len(crc_qset) == 0:
+                dbs_names_string = qset_to_formatted_string(dbs_qset)
+                personalisation["dbs_names"] = dbs_names_string
+                template_id = '9aa3a240-0a00-44bc-ac49-88125eb7c749'
+                r = send_email(email, personalisation, template_id)
+                print(link)
+
+            elif len(crc_qset) > 0 and len(dbs_qset) == 0:
+                crc_names_string = qset_to_formatted_string(crc_qset)
+                personalisation["crc_names"] = crc_names_string
+                template_id = '07438eef-d88b-48fe-9812-2bc9e09dbae6'
+                r = send_email(email, personalisation, template_id)
+                print(link)
+
+            elif len(dbs_qset) > 0 and len(crc_qset) > 0:
+                dbs_names_string = qset_to_formatted_string(dbs_qset)
+                crc_names_string = qset_to_formatted_string(crc_qset)
+                personalisation["dbs_names"] = dbs_names_string
+                personalisation["crc_names"] = crc_names_string
+                template_id = '5d5db808-2c83-41f6-adba-eda1b24c5714'
+                r = send_email(email, personalisation, template_id)
+                print(link)
+
+            else:
+                template_id = '0acc42fa-9ba0-4c5e-8171-e49c08c22b67'
+                r = send_email(email, personalisation, template_id)
+                print(link)
 
             update(application_id, 'people_in_home_status', 'COMPLETED')
 

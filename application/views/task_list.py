@@ -234,9 +234,9 @@ def task_list(request):
                 'hidden': False,
                 'status_url': None,
                 'status_urls': [
-                    {'status': 'COMPLETED', 'url': 'Other-People-Summary-View'},
-                    {'status': 'FLAGGED', 'url': 'Other-People-Summary-View'},
-                    {'status': 'WAITING', 'url': 'Other-People-Summary-View'},
+                    {'status': 'COMPLETED', 'url': 'PITH-Summary-View'},
+                    {'status': 'FLAGGED', 'url': 'PITH-Summary-View'},
+                    {'status': 'WAITING', 'url': 'PITH-Summary-View'},
                     {'status': 'OTHER', 'url': 'PITH-Guidance-View'}
                 ],
             },
