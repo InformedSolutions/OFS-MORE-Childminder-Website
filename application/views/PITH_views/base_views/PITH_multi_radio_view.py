@@ -19,8 +19,9 @@ class PITHMultiRadioView(TemplateView, TemplateResponseMixin):
         for form in kwargs['form_list']:
             form.check_flag()
 
-        kwargs['error_summary_list'] = [form.error_summary for form in kwargs['form_list']]
-        kwargs['error_summary_title'] = self.form_class.error_summary_title
+        if sum([len(form.errors) for form in kwargs['form_list']]) != 0:
+            kwargs['error_summary_list'] = [form.error_summary for form in kwargs['form_list']]
+            kwargs['error_summary_title'] = self.form_class.error_summary_title
 
         return super().get_context_data(**kwargs)
 
@@ -59,8 +60,11 @@ class PITHMultiRadioView(TemplateView, TemplateResponseMixin):
         Handles POST requests, instantiating a form instance with the passed
         POST variables and then checked for validity.
         """
-
         form_list = self.get_form_list()
+
+        for form in form_list:
+            form.remove_flag()
+
         if all(form.is_valid() for form in form_list):
             return self.form_valid(form_list)
         else:
