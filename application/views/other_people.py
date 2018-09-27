@@ -23,7 +23,8 @@ from ..table_util import create_tables, Table, submit_link_setter
 from ..summary_page_data import other_adult_link_dict, other_adult_name_dict, other_child_link_dict, \
     other_child_name_dict, other_adult_summary_link_dict, other_adult_summary_name_dict, \
     other_child_summary_name_dict, other_child_summary_link_dict, child_not_in_the_home_link_dict, \
-    child_not_in_the_home_name_dict
+    child_not_in_the_home_name_dict, other_child_not_in_the_home_summary_name_dict, \
+    other_child_not_in_the_home_summary_link_dict
 from ..business_logic import (health_check_email_resend_logic,
                               other_people_adult_details_logic,
                               rearrange_adults,
@@ -46,6 +47,7 @@ from application.notify import send_email
 
 
 logger = logging.getLogger()
+
 
 def other_people_adult_details(request):
     """
@@ -364,8 +366,14 @@ def other_people_summary(request):
             table['other_people_numbers'] = back_link_addition
         child_table_list = create_tables(child_table_list, other_child_name_dict, other_child_link_dict)
 
+        # Populating Children not in the Home:
+        children_not_in_the_home_table_list = [__create_child_table(child) for child in children_not_in_the_home_list]
+        children_not_in_the_home_table = create_tables(children_not_in_the_home_table_list,
+                                                       child_not_in_the_home_name_dict, child_not_in_the_home_link_dict)
+
         adults_in_home = bool(adult_table_list)
         children_in_home = bool(child_table_list)
+        children_not_in_home = bool(children_not_in_the_home_table_list)
 
         adult_table = collections.OrderedDict({
             'table_object': Table([application_id_local]),
@@ -381,14 +389,18 @@ def other_people_summary(request):
             'error_summary_title': 'There was a problem'
         })
 
+        not_child_table = collections.OrderedDict({
+            'table_object': Table([application_id_local]),
+            'fields': {'children_not_in_the_home': children_not_in_home},
+            'title': 'Children not in the home',
+            'error_summary_title': 'There was a problem'
+        })
+
         adult_table = create_tables([adult_table], other_adult_summary_name_dict, other_adult_summary_link_dict)
         child_table = create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
+        not_child_table = create_tables([not_child_table], other_child_not_in_the_home_summary_name_dict, other_child_not_in_the_home_summary_link_dict)
 
-        # Populating Children not in the Home:
-        children_not_in_the_home_table_list = [__create_child_table(child) for child in children_not_in_the_home_list]
-        children_not_in_the_home_table = create_tables(children_not_in_the_home_table_list, child_not_in_the_home_name_dict, child_not_in_the_home_link_dict)
-
-        table_list = adult_table + adult_table_list + child_table + child_table_list + children_not_in_the_home_table
+        table_list = adult_table + adult_table_list + child_table + child_table_list + not_child_table + children_not_in_the_home_table
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
