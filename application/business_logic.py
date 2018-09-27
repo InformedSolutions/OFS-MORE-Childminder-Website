@@ -248,6 +248,7 @@ def child_address_logic(app_id, child, form):
     if ChildAddress.objects.filter(application_id=app_id, child=child).exists():
         child_address = ChildAddress.objects.get(application_id=app_id, child=child)
 
+    child_address.child = int(child)
     child_address.street_line1 = form.cleaned_data.get('street_line1')
     child_address.street_line2 = form.cleaned_data.get('street_line2')
     child_address.town = form.cleaned_data.get('town')
@@ -758,6 +759,47 @@ def other_people_children_details_logic(application_id_local, form, child):
         child_record.birth_month = birth_month
         child_record.birth_year = birth_year
         child_record.relationship = relationship
+    return child_record
+
+def PITH_own_children_details_logic(application_id_local, form, child):
+    """
+    A subset mirror function of the above 'other_people_children_details_logic' function.
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :param child: child number (integer)
+    :return: an ChildInHome object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    first_name = form.cleaned_data.get('first_name')
+    middle_names = form.cleaned_data.get('middle_names')
+    last_name = form.cleaned_data.get('last_name')
+    birth_day = form.cleaned_data.get('date_of_birth')[0]
+    birth_month = form.cleaned_data.get('date_of_birth')[1]
+    birth_year = form.cleaned_data.get('date_of_birth')[2]
+
+    if middle_names is None:
+        middle_names = ""
+
+    # If the user entered information for this task for the first time
+    if Child.objects.filter(application_id=this_application, child=child).count() == 0:
+        child_record = Child(first_name=first_name,
+                             middle_names=middle_names,
+                             last_name=last_name,
+                             birth_day=birth_day,
+                             birth_month=birth_month,
+                             birth_year=birth_year,
+                             application_id=this_application,
+                             child=child)
+    # If the user previously entered information for this task
+    elif Child.objects.filter(application_id=this_application, child=child).count() > 0:
+        child_record = Child.objects.get(application_id=this_application,
+                                         child=child)
+        child_record.first_name = first_name
+        child_record.middle_names = middle_names
+        child_record.last_name = last_name
+        child_record.birth_day = birth_day
+        child_record.birth_month = birth_month
+        child_record.birth_year = birth_year
     return child_record
 
 

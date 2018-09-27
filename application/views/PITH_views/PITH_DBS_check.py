@@ -7,7 +7,7 @@ from application.forms.PITH_forms.PITH_DBS_check_form import PITHDBSCheckForm
 class PITHDBSCheckView(PITHMultiRadioView):
     template_name = 'PITH_templates/PITH_DBS_check.html'
     form_class = PITHDBSCheckForm
-    success_url = ('PITH-Post-View', 'PITH-Apply-View', 'Other-People-Children-Question-View')
+    success_url = ('PITH-Post-View', 'PITH-Apply-View', 'PITH-Children-Check-View')
     capita_field = 'capita'
     dbs_field = 'dbs_certificate_number'
     on_update_field = 'on_update'

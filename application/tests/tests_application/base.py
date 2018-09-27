@@ -492,7 +492,7 @@ class ApplicationTestBase(object):
     def TestAppOtherPeopleChildren(self):
         """Submit other children"""
         r = self.client.post(
-            reverse('Other-People-Children-Question-View'),
+            reverse('PITH-Children-Check-View'),
             {
                 'id': self.app_id,
                 'children_in_home': False,
@@ -519,7 +519,7 @@ class ApplicationTestBase(object):
 
         }
 
-        r = self.client.post(reverse('Other-People-Children-Details-View'), data)
+        r = self.client.post(reverse('PITH-Children-Details-View'), data)
 
         self.assertEqual(r.status_code, 302)
 
@@ -546,7 +546,7 @@ class ApplicationTestBase(object):
 
     def TestAppOtherPeopleSummary(self):
         """Submit Other People Summary"""
-        r = self.client.get(reverse('Other-People-Summary-View'), {'id': self.app_id})
+        r = self.client.get(reverse('PITH-Summary-View'), {'id': self.app_id})
         self.assertEqual(r.status_code, 200)
 
     def TestAppFirstReferenceName(self):

@@ -968,7 +968,7 @@
         </td>
         {% endif %}
         <td class="change-answer">
-            <a href="{% url 'Other-People-Children-Question-View' %}?id={{application_id}}"
+            <a href="{% url 'PITH-Children-Check-View' %}?id={{application_id}}"
                alt='Update the children in your home'>
                 Change <span class="visuallyhidden">children in your home</span>
             </a>
@@ -1123,7 +1123,7 @@
             {{name}}
         </td>
         <td class="change-answer">
-            <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
+            <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
                alt="Update the child's name">
                 Change <span class="visuallyhidden">child name</span>
             </a>
@@ -1183,7 +1183,7 @@
         </td>
         {% endif %}
         <td class="change-answer">
-            <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
+            <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
                alt="Update the child's date of birth">
                 Change <span class="visuallyhidden">date of birth</span>
             </a>
@@ -1197,7 +1197,7 @@
             {{relationship}}
         </td>
         <td class="change-answer">
-            <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
+            <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
                alt="Update the child's relationship">
                 Change <span class="visuallyhidden">child relationship</span>
             </a>

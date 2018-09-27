@@ -71,6 +71,7 @@ class Application(models.Model):
     publish_details = models.NullBooleanField(blank=True, null=True, default=None)
     working_in_other_childminder_home = models.NullBooleanField(blank=True, null=True, default=None)
     own_children = models.NullBooleanField(blank=True, null=True, default=None)
+    own_children_not_in_home = models.NullBooleanField(blank=True, null=True, default=None)
 
     @classmethod
     def get_id(cls, app_id):
