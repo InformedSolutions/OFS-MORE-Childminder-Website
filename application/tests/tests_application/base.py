@@ -478,7 +478,7 @@ class ApplicationTestBase(object):
     def TestAppOtherPeopleChildren(self):
         """Submit other children"""
         r = self.client.post(
-            reverse('Other-People-Children-Question-View'),
+            reverse('PITH-Children-Check-View'),
             {
                 'id': self.app_id,
                 'children_in_home': False,

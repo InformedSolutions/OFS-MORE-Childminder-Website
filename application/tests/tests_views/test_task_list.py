@@ -1,8 +1,11 @@
+import uuid
+
 from .view_parent import *
 from uuid import uuid4
 from django.utils import timezone
 
 from application.views.task_list import show_hide_tasks
+from ...models import ApplicantPersonalDetails, ApplicantHomeAddress
 
 
 class TaskListTest(ViewsTest):
@@ -44,6 +47,20 @@ class TaskListTest(ViewsTest):
             own_children=False,
             working_in_other_childminder_home=True
         )
+
+        personal_details = ApplicantPersonalDetails.objects.create(
+            application_id=application
+        )
+
+        ApplicantHomeAddress.objects.create(
+            application_id=application,
+            personal_detail_id=personal_details,
+            childcare_address=False,
+            move_in_month=1,
+            move_in_year=2017,
+            current_address=True
+        )
+
         context = {
             'tasks': [
                 {
@@ -86,6 +103,7 @@ class TaskListTest(ViewsTest):
             own_children=True,
             working_in_other_childminder_home=False
         )
+
         context = {
             'tasks': [
                 {
@@ -98,6 +116,19 @@ class TaskListTest(ViewsTest):
                 }
             ]
         }
+
+        personal_details = ApplicantPersonalDetails.objects.create(
+            application_id=application
+        )
+
+        ApplicantHomeAddress.objects.create(
+            application_id=application,
+            personal_detail_id=personal_details,
+            childcare_address=False,
+            move_in_month=1,
+            move_in_year=2017,
+            current_address=True,
+        )
 
         context = show_hide_tasks(context, application)
         self.assertEqual(False, context['tasks'][0]['hidden'])
@@ -128,6 +159,20 @@ class TaskListTest(ViewsTest):
             own_children=True,
             working_in_other_childminder_home=True
         )
+
+        personal_details = ApplicantPersonalDetails.objects.create(
+            application_id=application
+        )
+
+        ApplicantHomeAddress.objects.create(
+            application_id=application,
+            personal_detail_id=personal_details,
+            childcare_address=False,
+            move_in_month=1,
+            move_in_year=2017,
+            current_address=True
+        )
+
         context = {
             'tasks': [
                 {
@@ -170,6 +215,20 @@ class TaskListTest(ViewsTest):
             own_children=False,
             working_in_other_childminder_home=False
         )
+
+        personal_details = ApplicantPersonalDetails.objects.create(
+            application_id=application
+        )
+
+        ApplicantHomeAddress.objects.create(
+            application_id=application,
+            personal_detail_id=personal_details,
+            childcare_address=True,
+            move_in_month=1,
+            move_in_year=2017,
+            current_address=True
+        )
+
         context = {
             'tasks': [
                 {
