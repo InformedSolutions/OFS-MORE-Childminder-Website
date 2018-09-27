@@ -21,7 +21,7 @@ class ApplicationTestBase(object):
     client = Client()
     app_id = None
 
-    def test_app_init(self):
+    def TestAppInit(self):
         """Start application"""
         r = self.client.post(reverse('Account-Selection'), {'acc_selection': 'new'})
         self.assertEqual(r.status_code, 302)
@@ -47,7 +47,7 @@ class ApplicationTestBase(object):
             self.assertEqual(r.status_code, 302)
             self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
 
-    def test_return_to_application(self):
+    def TestReturnToApp(self):
         """Tests returning to application for both a new and existing email."""
 
         with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
@@ -83,7 +83,7 @@ class ApplicationTestBase(object):
             self.assertEqual(datetime.now().date(),
                              Application.objects.get(application_id=self.app_id).date_last_accessed.date())
 
-    def test_validate_email(self):
+    def TestValidateEmail(self):
         """Validate Email"""
 
         with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
@@ -106,7 +106,7 @@ class ApplicationTestBase(object):
                 ).application_status == "DRAFTING"
             )
 
-    def test_app_phone(self):
+    def TestAppPhone(self):
         """Submit phone"""
 
         data = {
@@ -128,13 +128,13 @@ class ApplicationTestBase(object):
             UserDetails.objects.get(email=self.email).mobile_number, data['mobile_number']
         )
 
-    def test_contact_summary_view(self):
+    def TestContactSummaryView(self):
         self.client.post(reverse('Contact-Summary-View'), {'id': self.app_id})
 
         self.assertEqual(
             Application.objects.get(pk=self.app_id).login_details_status, "COMPLETED")
 
-    def test_type_of_childcare_age_groups(self):
+    def TestTypeOfChildcareAgeGroups(self):
         """Type of childcare age groups"""
 
         data = {
@@ -149,7 +149,7 @@ class ApplicationTestBase(object):
         self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).five_to_eight, True)
         self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).eight_plus, True)
 
-    def test_type_of_childcare_overnight_care(self):
+    def TestTypeOfChildcareOvernightCare(self):
         """Type of childcare overnight care"""
 
         data = {
@@ -162,66 +162,66 @@ class ApplicationTestBase(object):
 
         self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).overnight_care, True)
 
-    def test_type_of_childcare_summary_view(self):
+    def TestTypeOfChildcareSummaryView(self):
         r = self.client.post(reverse('Type-Of-Childcare-Summary-View'), {'id': self.app_id})
 
         self.assertEqual(
             Application.objects.get(pk=self.app_id).childcare_type_status, "COMPLETED")
 
-    def test_type_of_childcare_register(self):
+    def AppTestTypeOfChildcareRegister(self):
         """Type of childcare register"""
         r = self.client.post(reverse('Type-Of-Childcare-Register-View'), {'id': self.app_id})
         self.assertEqual(r.status_code, 302)
 
-    def test_application_overnight_care(self):
+    def AppTestOvernightCare(self):
         """Overnight care provision"""
         r = self.client.post(reverse('Type-Of-Childcare-Overnight-Care-View'), {'id': self.app_id})
         self.assertEqual(r.status_code, 302)
         self.assertEqual(Application.objects.get(pk=self.app_id).childcare_type_status, "COMPLETED")
 
-    def test_update_email(self):
+    def TestUpdateEmail(self):
         """Update email address field"""
         r = self.client.post(reverse('Contact-Email-View'), {'id': self.app_id, 'email_address': 'y@y.com'})
 
         self.assertEqual(r.status_code, 302)
         self.assertIsNot('y@y.com', UserDetails.objects.get(application_id=self.app_id).email)
 
-    def test_update_email_apostrophe(self):
+    def TestUpdateEmailApostrophe(self):
         """Update email address field with apostrophe """
         r = self.client.post(reverse('Contact-Email-View'), {'id': self.app_id, 'email_address': 'yapostrophe\'@y.com'})
 
         self.assertEqual(r.status_code, 302)
         self.assertIsNot('yapostrophe\'@y.com', UserDetails.objects.get(application_id=self.app_id).email)
 
-    def test_verify_phone(self):
+    def TestVerifyPhone(self):
         """Test update email address process- update, validate and redirect"""
-        self.test_update_email()
-        self.test_validate_email()
+        self.TestUpdateEmail()
+        self.TestValidateEmail()
         r = self.client.post(reverse('Security-Code') + '?id=' + str(self.app_id), {'id': self.app_id,
                                                                                     'magic_link_sms': UserDetails.objects.get(
                                                                                         application_id=self.app_id).magic_link_sms})
         self.assertEqual(r.status_code, 302)
 
-    def test_verify_phone_email_apostrophe(self):
+    def TestVerifyPhoneEmailApostrophe(self):
         """Test update email address process with apostrophe in email- update, validate and redirect"""
-        self.test_update_email_apostrophe()
-        self.test_validate_email()
+        self.TestUpdateEmailApostrophe()
+        self.TestValidateEmail()
         r = self.client.post(reverse('Security-Code') + '?id=' + str(self.app_id), {'id': self.app_id,
                                                                                     'magic_link_sms': UserDetails.objects.get(
                                                                                         application_id=self.app_id).magic_link_sms})
         self.assertEqual(r.status_code, 302)
 
-    def test_security_question(self):
+    def TestSecurityQuestion(self):
         """Test """
         self.test_app_email()
-        self.test_validate_email()
+        self.TestValidateEmail()
         r = self.client.post(reverse('Security-Question'), {'id': self.app_id,
                                                             'security_answer': UserDetails.objects.get(
                                                                 application_id=self.app_id).mobile_number})
 
         self.assertEqual(r.status_code, 302)
 
-    def test_personal_details_names(self, data=None):
+    def TestAppPersonalDetailsNames(self, data=None):
         """Submit your name in Personal details task"""
 
         if not data:
@@ -240,7 +240,7 @@ class ApplicationTestBase(object):
         self.assertEqual(ApplicantName.objects.get(personal_detail_id=p_id).middle_names, data['middle_names'])
         self.assertEqual(ApplicantName.objects.get(personal_detail_id=p_id).last_name, data['last_name'])
 
-    def test_personal_details_dob(self):
+    def TestAppPersonalDetailsDOB(self):
         """Submit DOB"""
         data = {
             'id': self.app_id,
@@ -261,7 +261,7 @@ class ApplicationTestBase(object):
         self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_year,
                          data['date_of_birth_2'])
 
-    def test_personal_details_home_address(self):
+    def TestAppPersonalDetailsHomeAddress(self):
         """Submit Personal Home address"""
 
         data = {
@@ -286,7 +286,7 @@ class ApplicationTestBase(object):
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).county, data['county'])
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).postcode, data['postcode'])
 
-    def test_personal_details_home_address_details(self):
+    def TestAppPersonalDetailsHomeAddressDetails(self):
         """Submit Personal Home address"""
 
         data = {
@@ -305,7 +305,7 @@ class ApplicationTestBase(object):
     #     self.assertEqual(
     #         Application.objects.get(pk=self.app_id).personal_details_status, "COMPLETED")
 
-    def test_first_aid_guidance(self):
+    def TestAppFirstAidStart(self):
         """Start First Aid"""
         r = self.client.post(
             reverse('First-Aid-Training-Guidance-View'),
@@ -315,7 +315,7 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def test_first_aid_details(self):
+    def TestAppFirstAid(self):
         """Submit First Aid"""
         r = self.client.post(
             reverse('First-Aid-Training-Details-View'),
@@ -330,7 +330,7 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def test_first_aid_certificate(self):
+    def TestAppFirstAidCert(self):
         """Submit First Aid certificate"""
         r = self.client.post(
             reverse('First-Aid-Training-Declaration-View'),
@@ -341,7 +341,7 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def test_health_declaration_booklet(self):
+    def TestAppHealthBooklet(self):
         """Submit Health booklet"""
         r = self.client.post(
             reverse('Health-Booklet-View'),
@@ -352,7 +352,7 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def test_criminal_record_check_details(self):
+    def TestAppCriminalRecordCheckDetails(self):
         """Submit CRC details"""
         r = self.client.get(
             reverse('DBS-Lived-Abroad-View'),
@@ -403,7 +403,7 @@ class ApplicationTestBase(object):
         # crc.cautions_convictions = False
         # crc.save()
 
-    def test_other_people_adults(self):
+    def TestAppOtherPeopleAdults(self):
         """Submit other people"""
         r = self.client.post(
             reverse('PITH-Adult-Check-View'),
@@ -414,7 +414,7 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def test_other_people_adult_details(self):
+    def TestAppOtherPeopleAdultsDetails(self):
         """Submit other people"""
         data = {
             'id': self.app_id,
@@ -456,7 +456,7 @@ class ApplicationTestBase(object):
         self.assertEqual(r.wsgi_request.POST['1-date_of_birth_2'],
                          data['1-date_of_birth_2'])
 
-    def test_application_personal_details_dob(self):
+    def TestAppPersonalDetailsDOB(self):
         """Submit DOB"""
         data = {
             'id': self.app_id,
@@ -477,7 +477,7 @@ class ApplicationTestBase(object):
         self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).birth_year,
                          data['date_of_birth_2'])
 
-    def test_other_people_children(self):
+    def TestAppOtherPeopleChildren(self):
         """Submit other children"""
         r = self.client.post(
             reverse('PITH-Children-Check-View'),
@@ -488,7 +488,7 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def test_other_people_children_details(self):
+    def TestAppOtherPeopleChildrenDetails(self):
         """Submit other people"""
         # get a birth date year that is actually valid for a child (within the last 10 years from now will do)
         birth_year = str(datetime.now().year - 10)
@@ -532,12 +532,12 @@ class ApplicationTestBase(object):
         self.assertEqual(r.wsgi_request.POST['1-date_of_birth_2'],
                          data['1-date_of_birth_2'])
 
-    def test_other_people_summary(self):
+    def TestAppOtherPeopleSummary(self):
         """Submit Other People Summary"""
         r = self.client.get(reverse('PITH-Summary-View'), {'id': self.app_id})
         self.assertEqual(r.status_code, 200)
 
-    def test_first_reference_name(self):
+    def TestAppFirstReferenceName(self):
         """Submit first reference name"""
         r = self.client.post(
             reverse('References-First-Reference-View'),
@@ -552,7 +552,7 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def test_first_reference_address(self):
+    def TestAppFirstReferenceAddress(self):
         """Submit First reference address"""
         r = self.client.post(
             reverse('References-First-Reference-Address-View'),
@@ -572,7 +572,7 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def test_first_reference_contact_details(self):
+    def TestAppFirstReferenceContactDetails(self):
         """Submit First reference contact details"""
         r = self.client.post(
             reverse('References-First-Reference-Contact-Details-View'),
@@ -584,7 +584,7 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def test_second_reference_name(self):
+    def TestAppSecondReferenceName(self):
         """Submit Second Reference Name"""
 
         r = self.client.post(
@@ -600,7 +600,7 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def test_second_reference_address(self):
+    def TestAppSecondReferenceAddress(self):
         """Submit Second Reference Address"""
         r = self.client.post(
             reverse('References-Second-Reference-Address-View'),
@@ -621,7 +621,7 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def test_second_reference_contact_details(self, data=None):
+    def TestAppSecondReferenceContactDetails(self, data=None):
         """Submit Second Reference Contact Details"""
 
         if not data:
@@ -635,15 +635,21 @@ class ApplicationTestBase(object):
             reverse('References-Second-Reference-Contact-Details-View'), data)
         self.assertEqual(r.status_code, 302)
 
-    def test_references_summary(self):
+    def TestReferencesSummary(self):
         """Submit Second Reference Contact Details"""
         r = self.client.get(reverse('References-Summary-View'), {'id': self.app_id})
         self.assertEqual(r.status_code, 200)
         self.assertEqual(Application.objects.get(pk=self.app_id).references_status, "COMPLETED")
 
-    def test_declaration(self):
+    def TestAppDeclaration(self):
         """Send Declaration"""
 
+        application = Application.objects.get(application_id=self.app_id)
+        # ChildcareType.objects.create(application_id=application,
+        #                              zero_to_five=True,
+        #                              five_to_eight=True,
+        #                              eight_plus=True,
+        #                              overnight_care=True)
         r = self.client.post(
             reverse('Declaration-Declaration-View'),
             {
@@ -653,7 +659,7 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def test_payment_credit_credentials(self):
+    def TestAppPaymentCreditDetails(self):
         """Submit Credit Card details"""
         application = Application.objects.get(application_id=self.app_id)
         ChildcareType.objects.create(application_id=application,
@@ -685,7 +691,7 @@ class ApplicationTestBase(object):
             )
             self.assertEqual(r.status_code, 302)
 
-    def test_payment_confirmation(self):
+    def TestAppPaymentConfirmation(self):
         """Send Payment Confirmation"""
 
         r = self.client.get(
@@ -698,7 +704,7 @@ class ApplicationTestBase(object):
 
         self.assertEqual(r.status_code, 200)
 
-    def test_arc_flagged_statuses(self):
+    def TestAppArcFlaggedStatuses(self):
         """Test that field_arc_flagged is false once successful declaration has been made."""
         app = Application.objects.get(application_id=self.app_id)
 

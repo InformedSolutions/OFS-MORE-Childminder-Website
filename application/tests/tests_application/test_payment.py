@@ -23,18 +23,18 @@ class PaymentTests(TestCase, ApplicationTestBase):
 
             # Initial steps required here as client object needs to be authenticated to
             # access payment pages
-            self.test_app_init()
+            self.TestAppInit()
 
             self.test_app_email()
-            self.test_validate_email()
-            self.test_app_phone()
-            self.test_contact_summary_view()
-            self.test_type_of_childcare_age_groups()
-            self.test_type_of_childcare_overnight_care()
-            self.test_security_question()
-            self.test_type_of_childcare_register()
+            self.TestValidateEmail()
+            self.TestAppPhone()
+            self.TestContactSummaryView()
+            self.TestTypeOfChildcareAgeGroups()
+            self.TestTypeOfChildcareOvernightCare()
+            self.TestSecurityQuestion()
+            self.AppTestTypeOfChildcareRegister()
 
-            self.test_personal_details_names()
+            self.TestAppPersonalDetailsNames()
 
     def test_payment_reference_formatted(self):
         test_cm_reference = 'CM1000000'
