@@ -239,7 +239,7 @@ def other_people_approaching_16(request):
                 'application_id': application_id_local,
                 'people_in_home_status': application.people_in_home_status
             }
-            return HttpResponseRedirect(reverse('PITH-Summary-View') + '?id=' + application_id_local, variables)
+            return HttpResponseRedirect(reverse('PITH-Own-Children-Check-View') + '?id=' + application_id_local, variables)
         else:
             variables = {
                 'form': form,
