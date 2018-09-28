@@ -20,7 +20,7 @@ def PITHOwnChildrenSelectView(request):
 def __own_children_address_selection(request):
     template = 'PITH_templates/PITH_own_children_select.html'
     address_lookup_template = 'PITH_templates/PITH_own_children_postcode.html'
-    success_url = 'PITH-Summary-View'
+    success_url = ('task-list-view', 'PITH-Summary-View')
     address_url = 'PITH-Own-Children-Postcode-View'
 
     if request.method == 'GET':
