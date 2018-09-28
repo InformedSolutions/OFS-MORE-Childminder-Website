@@ -148,9 +148,17 @@ other_child_name_dict = collections.OrderedDict([('full_name', 'Name'),
                                                  ('date_of_birth', 'Date of birth'),
                                                  ('relationship', 'Relationship')])
 
-other_child_link_dict = collections.OrderedDict([('full_name', 'Other-People-Children-Details-View'),
-                                                 ('date_of_birth', 'Other-People-Children-Details-View'),
-                                                 ('relationship', 'Other-People-Children-Details-View')])
+other_child_link_dict = collections.OrderedDict([('full_name', 'PITH-Children-Details-View'),
+                                                 ('date_of_birth', 'PITH-Children-Details-View'),
+                                                 ('relationship', 'PITH-Children-Details-View')])
+
+child_not_in_the_home_name_dict = collections.OrderedDict([('full_name', 'Name'),
+                                                 ('date_of_birth', 'Date of birth'),
+                                                 ('address', 'Address')])
+
+child_not_in_the_home_link_dict = collections.OrderedDict([('full_name', 'PITH-Children-Details-View'),
+                                                 ('date_of_birth', 'PITH-Children-Details-View'),
+                                                 ('address', 'PITH-Children-Details-View')])
 
 # The below dictionaries are for the two tables at the top of the other people summary page
 
@@ -159,7 +167,10 @@ other_adult_summary_name_dict = collections.OrderedDict(
 other_adult_summary_link_dict = collections.OrderedDict([('adults_in_home', 'PITH-Adult-Check-View')])
 
 other_child_summary_name_dict = collections.OrderedDict([('children_in_home', 'Do you live with any children?')])
-other_child_summary_link_dict = collections.OrderedDict([('children_in_home', 'Other-People-Children-Question-View')])
+other_child_summary_link_dict = collections.OrderedDict([('children_in_home', 'PITH-Children-Check-View')])
+
+other_child_not_in_the_home_summary_name_dict = collections.OrderedDict([('children_not_in_the_home', 'Do you have children under 16 who do not live with you?')])
+other_child_not_in_the_home_summary_link_dict = collections.OrderedDict([('children_not_in_the_home', 'PITH-Own-Children-Check-View')])
 
 ###
 

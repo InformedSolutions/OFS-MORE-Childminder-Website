@@ -411,7 +411,7 @@ class TestDBSCheckLogic(TestCase):
     #         follow=True
     #     )
     #
-    #     expected_redirect_url = reverse('Other-People-Children-Question-View') \
+    #     expected_redirect_url = reverse('PITH-Children-Check-View') \
     #                             + '?id=' + self.test_application_id + '&adults=2'
     #
     #     # Assert user is redirected on to check answers page

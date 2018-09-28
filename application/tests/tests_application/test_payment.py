@@ -25,7 +25,7 @@ class PaymentTests(TestCase, ApplicationTestBase):
             # access payment pages
             self.TestAppInit()
 
-            self.TestAppEmail()
+            self.test_app_email()
             self.TestValidateEmail()
             self.TestAppPhone()
             self.TestContactSummaryView()

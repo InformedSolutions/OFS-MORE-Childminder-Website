@@ -75,7 +75,7 @@
             </td>
             {% endif %}
             <td class="change-answer">
-                <a href="{% url 'Other-People-Children-Question-View' %}?id={{application_id}}" alt='Change children in your home'>
+                <a href="{% url 'PITH-Children-Check-View' %}?id={{application_id}}" alt='Change children in your home'>
                     Change <span class="visuallyhidden">children in your home</span>
                 </a>
             </td>
@@ -225,7 +225,7 @@
                 {{name}}
             </td>
             <td class="change-answer">
-                <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0" alt='Change child name'>
+                <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0" alt='Change child name'>
                     Change <span class="visuallyhidden">child name</span>
                 </a>
             </td>
@@ -284,7 +284,7 @@
             </td>
             {% endif %}
             <td class="change-answer">
-                <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0" alt='Change child date of birth'>
+                <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0" alt='Change child date of birth'>
                     Change <span class="visuallyhidden">date of birth</span>
                 </a>
             </td>
@@ -297,7 +297,7 @@
                 {{relationship}}
             </td>
             <td class="change-answer">
-                <a href="{% url 'Other-People-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0" alt='Change child relationship'>
+                <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0" alt='Change child relationship'>
                     Change <span class="visuallyhidden">child relationship</span>
                 </a>
             </td>

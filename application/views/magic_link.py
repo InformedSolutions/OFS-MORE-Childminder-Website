@@ -16,6 +16,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils import timezone
 from django.views import View
 
 from application import login_redirect_helper
@@ -178,6 +179,7 @@ def validate_magic_link(request, id):
         acc = UserDetails.objects.get(magic_link_email=id)
         app_id = acc.application_id.pk
         exp = acc.email_expiry_date
+        application = Application.objects.get(application_id=app_id)
         if not has_expired(exp) and len(id) > 0:
             acc.email_expiry_date = 0
             if 'email' in request.GET:
@@ -185,6 +187,9 @@ def validate_magic_link(request, id):
                 acc.save()
                 response = HttpResponseRedirect(reverse('Task-List-View') + '?id=' + str(app_id))
                 CustomAuthenticationHandler.create_session(response, acc.email)
+                # Update date last accessed when successfully logged in
+                application.date_last_accessed = timezone.now()
+                application.save()
                 return response
             if len(acc.mobile_number) == 0:
                 acc.save()
@@ -192,6 +197,9 @@ def validate_magic_link(request, id):
                 CustomAuthenticationHandler.create_session(response, acc.email)
                 acc.email_expiry_date = 0
                 acc.save()
+                # Update date last accessed when successfully logged in
+                application.date_last_accessed = timezone.now()
+                application.save()
                 return response
 
             phone = acc.mobile_number
@@ -224,7 +232,7 @@ class SMSValidationView(View):
         if has_expired(acc.sms_resend_attempts_expiry_date):
             acc.sms_resend_attempts_expiry_date = 0
 
-        if request.META.get('HTTP_REFERER') is not None:  # If they have come from email valdiation link, this is None.
+        if request.META.get('HTTP_REFERER') is not None:  # If they have come from email validation link, this is None.
             code_resent = True
         else:
             code_resent = False
@@ -261,6 +269,10 @@ class SMSValidationView(View):
                     # Set SMS code to expired after a one time successful login
                     acc.sms_expiry_date = int(time.time()) - ((settings.EMAIL_EXPIRY + 1) * 60 * 60)
                     acc.save()
+
+                    # Update date last accessed when successfully logged in
+                    application.date_last_accessed = timezone.now()
+                    application.save()
 
                     # Forward back onto application
                     return response
