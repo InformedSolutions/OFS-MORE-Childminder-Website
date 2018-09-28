@@ -41,11 +41,11 @@
         {% block proposition_menu %}
            <ul id="proposition-links">
                {% if id and AUTHENTICATED %}
-                   {% if not HIDE_COSTS %}
-                       <li>
-                           <a href="{% url 'Costs-View' %}?id={{ id }}">Costs</a>
-                       </li>
-                   {% endif %}
+                   <!--{% if not HIDE_COSTS %}-->
+                       <!--<li>-->
+                           <!--<a href="{% url 'Costs-View' %}?id={{ id }}">Costs</a>-->
+                       <!--</li>-->
+                   <!--{% endif %}-->
                    <li>
                       <a href="{% url 'Help-And-Contact-View' %}?id={{ id }}">Help and contacts</a>
                    </li>
@@ -53,11 +53,11 @@
                       <a href="{% url 'Application-Saved-View' %}">Sign out</a>
                    </li>
                {% else %}
-                   {% if not HIDE_COSTS %}
-                        <li>
-                          <a href="{% url 'Costs-View' %}">Costs</a>
-                        </li>
-                   {% endif %}
+                   <!--{% if not HIDE_COSTS %}-->
+                        <!--<li>-->
+                          <!--<a href="{% url 'Costs-View' %}">Costs</a>-->
+                        <!--</li>-->
+                   <!--{% endif %}-->
                    <li>
                       <a href="{% url 'Help-And-Contact-View' %}">Help and contacts</a>
                    </li>
