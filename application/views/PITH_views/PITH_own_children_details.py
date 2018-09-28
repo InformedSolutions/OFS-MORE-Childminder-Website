@@ -81,6 +81,7 @@ class PITHOwnChildrenDetailsView(View):
             form = PITHOwnChildrenDetailsForm(request.POST, id=application_id_local, child=i, prefix=i)
             # form.remove_flag()
             form.error_summary_title = 'There was a problem with the details (Child ' + str(i) + ')'
+            form.remove_flag()
             form_list.append(form)
 
             if application.application_status == 'FURTHER_INFORMATION':
