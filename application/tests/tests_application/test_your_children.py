@@ -29,7 +29,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
             # access Your Children pages
             self.TestAppInit()
 
-            self.TestAppEmail()
+            self.test_app_email()
             self.TestValidateEmail()
             self.TestAppPhone()
             self.TestContactSummaryView()
