@@ -1147,7 +1147,7 @@
     </tr>
     </tbody>
 </table>
-{% for name, day, month, year, child_address_street_line1, child_address_street_line2, child_address_town, child_address_county, child_address_postcode, child_address_country in child_not_in_home_lists %}
+{% for child, name, day, month, year, child_address_street_line1, child_address_street_line2, child_address_town, child_address_county, child_address_postcode, child_address_country in child_not_in_home_lists %}
 <table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
@@ -1243,7 +1243,7 @@
         {% endif %}
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
-            <a href="{% url 'PITH-Own-Children-Manual-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
+            <a href="{% url 'PITH-Own-Children-Manual-View' %}?id={{application_id}}&child={{child}}"
                alt="Change the child's name">
                 Change <span class="visuallyhidden">the child's name</span>
             </a>

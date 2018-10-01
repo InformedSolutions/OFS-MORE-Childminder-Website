@@ -194,7 +194,7 @@ def declaration_summary(request, print_mode=False):
         adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
                           adult_relationship_list, adult_dbs_list, adult_health_check_status_list, adult_email_list)
         # Generate lists of data for children in your home, to be iteratively displayed on the summary page
-        # The HTML will then parse through each list simultaneously, to display the correct data for each adult
+        # The HTML will then parse through each list simultaneously, to display the correct data for each child
         child_name_list = []
         child_birth_day_list = []
         child_birth_month_list = []
@@ -224,7 +224,8 @@ def declaration_summary(request, print_mode=False):
         child_lists = zip(child_name_list, child_birth_day_list, child_birth_month_list, child_birth_year_list,
                           child_relationship_list)
         # Generate lists of data for children not in your home, to be iteratively displayed on the summary page
-        # The HTML will then parse through each list simultaneously, to display the correct data for each adult
+        # The HTML will then parse through each list simultaneously, to display the correct data for each child
+        child_not_in_home_id_list = []
         child_not_in_home_name_list = []
         child_not_in_home_birth_day_list = []
         child_not_in_home_birth_month_list = []
@@ -237,6 +238,8 @@ def declaration_summary(request, print_mode=False):
         child_not_in_home_country_list = []
         for child in children_not_in_the_home_list:
             # For each child, append the correct attribute (e.g. name, relationship) to the relevant list
+            child_not_in_home_id = child.child
+            child_not_in_home_id_list.append(child_not_in_home_id)
             # Concatenate the child's name for display, displaying any middle names if present
             if child.middle_names != '':
                 name = child.first_name + ' ' + child.middle_names + ' ' + child.last_name
@@ -262,11 +265,12 @@ def declaration_summary(request, print_mode=False):
             child_not_in_home_postcode_list.append(child_not_in_home_address.postcode)
             child_not_in_home_country_list.append(child_not_in_home_address.country)
         # Zip the appended lists together for the HTML to simultaneously parse
-        child_not_in_home_lists = zip(child_not_in_home_name_list, child_not_in_home_birth_day_list,
-                                      child_not_in_home_birth_month_list, child_not_in_home_birth_year_list,
-                                      child_not_in_home_street_line1_list, child_not_in_home_street_line2_list,
-                                      child_not_in_home_town_list, child_not_in_home_county_list,
-                                      child_not_in_home_postcode_list, child_not_in_home_country_list)
+        child_not_in_home_lists = zip(child_not_in_home_id_list, child_not_in_home_name_list,
+                                      child_not_in_home_birth_day_list, child_not_in_home_birth_month_list,
+                                      child_not_in_home_birth_year_list, child_not_in_home_street_line1_list,
+                                      child_not_in_home_street_line2_list, child_not_in_home_town_list,
+                                      child_not_in_home_county_list, child_not_in_home_postcode_list,
+                                      child_not_in_home_country_list)
 
         # Retrieve children living with childminder information
         children_table = []
