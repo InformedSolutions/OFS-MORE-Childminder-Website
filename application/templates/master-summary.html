@@ -1049,120 +1049,76 @@
     </tr>
     </tbody>
 </table>
-{% for name, day, month, year, relationship in child_lists %}
-<table class="check-your-answers">
-    <colgroup>
-        <col class="summary-column">
-        <col class="summary-column">
-        <col class="change-answer {{ print_class }}">
-    </colgroup>
-    <thead>
-    <tr>
-        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-            <div class="heading-medium">
+{% if children_in_home is True %}
+    {% for name, day, month, year, relationship in child_lists %}
+    <table class="check-your-answers">
+        <colgroup>
+            <col class="summary-column">
+            <col class="summary-column">
+            <col class="change-answer {{ print_class }}">
+        </colgroup>
+        <thead>
+        <tr>
+            <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+                <div class="heading-medium">
+                    {{name}}
+                </div>
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td style="word-wrap: break-word" class=summary-column>
+                Name
+            </td>
+            <td style="word-wrap: break-word" class=summary-column>
                 {{name}}
-            </div>
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Name
-        </td>
-        <td style="word-wrap: break-word" class=summary-column>
-            {{name}}
-        </td>
-        <td class="change-answer {{ print_class }}">
-            {% if people_in_your_home_change %}
-            <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
-               alt="Change the child's name">
-                Change <span class="visuallyhidden">the child's name</span>
-            </a>
-            {% endif %}
-        </td>
-    </tr>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Date of birth
-        </td>
-        {% if month == 1 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{day}} January {{year}}
-        </td>
-        {% elif month == 2 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{day}} February {{year}}
-        </td>
-        {% elif month == 3 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{day}} March {{year}}
-        </td>
-        {% elif month == 4 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{day}} April {{year}}
-        </td>
-        {% elif month == 5 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{day}} May {{year}}
-        </td>
-        {% elif month == 6 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{day}} June {{year}}
-        </td>
-        {% elif month == 7 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{day}} July {{year}}
-        </td>
-        {% elif month == 8 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{day}} August {{year}}
-        </td>
-        {% elif month == 9 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{day}} September {{year}}
-        </td>
-        {% elif month == 10 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{day}} October {{year}}
-        </td>
-        {% elif month == 11 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{day}} November {{year}}
-        </td>
-        {% elif month == 12 %}
-        <td style="word-wrap: break-word" class=summary-column>
-            {{day}} December {{year}}
-        </td>
-        {% endif %}
-        <td class="change-answer {{ print_class }}">
-            {% if people_in_your_home_change %}
-            <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
-               alt="Change the child's date of birth">
-                Change <span class="visuallyhidden">the child's date of birth</span>
-            </a>
-            {% endif %}
-        </td>
-    </tr>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Relationship
-        </td>
-        <td style="word-wrap: break-word" class=summary-column>
-            {{relationship}}
-        </td>
-        <td class="change-answer {{ print_class }}">
-            {% if people_in_your_home_change %}
-            <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
-               alt="Change your relationship with the child">
-                Change <span class="visuallyhidden">your relationship with the child</span>
-            </a>
-            {% endif %}
-        </td>
-    </tr>
-    </tbody>
-</table>
-{% endfor %}
+            </td>
+            <td class="change-answer {{ print_class }}">
+                {% if people_in_your_home_change %}
+                <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
+                   alt="Change the child's name">
+                    Change <span class="visuallyhidden">the child's name</span>
+                </a>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td style="word-wrap: break-word" class=summary-column>
+                Date of birth
+            </td>
+            <td style="word-wrap: break-word" class=summary-column>
+                {{day}} {{month}} {{year}}
+            </td>
+            <td class="change-answer {{ print_class }}">
+                {% if people_in_your_home_change %}
+                <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
+                   alt="Change the child's date of birth">
+                    Change <span class="visuallyhidden">the child's date of birth</span>
+                </a>
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <td style="word-wrap: break-word" class=summary-column>
+                Relationship
+            </td>
+            <td style="word-wrap: break-word" class=summary-column>
+                {{relationship}}
+            </td>
+            <td class="change-answer {{ print_class }}">
+                {% if people_in_your_home_change %}
+                <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
+                   alt="Change your relationship with the child">
+                    Change <span class="visuallyhidden">your relationship with the child</span>
+                </a>
+                {% endif %}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    {% endfor %}
+{% endif %}
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
     <colgroup>
         <col class="summary-column">
@@ -1203,6 +1159,112 @@
     </tr>
     </tbody>
 </table>
+{% for name, day, month, year, child_address_street_line1, child_address_street_line2, child_address_town, child_address_county, child_address_postcode, child_address_country in child_not_in_home_lists %}
+<table class="check-your-answers">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                {{name}}
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Name
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{name}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
+               alt="Change the child's name">
+                Change <span class="visuallyhidden">the child's name</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Date of birth
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{day}} {{month}} {{year}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
+               alt="Change the child's date of birth">
+                Change <span class="visuallyhidden">the child's date of birth</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Address
+        </td>
+        {% if child_address_street_line2 and child_address_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{child_address_street_line1}}
+            </br>
+            {{child_address_street_line2}}
+            </br>
+            {{child_address_town}}
+            </br>
+            {{child_address_county}}
+            </br>
+            {{child_address_postcode}}
+        </td>
+        {% elif child_address_street_line2 and not child_address_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{child_address_street_line1}}
+            </br>
+            {{child_address_street_line2}}
+            </br>
+            {{child_address_town}}
+            </br>
+            {{child_address_postcode}}
+        </td>
+        {% elif not child_address_street_line2 and child_address_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{child_address_street_line1}}
+            </br>
+            {{child_address_town}}
+            </br>
+            {{child_address_county}}
+            </br>
+            {{child_address_postcode}}
+        </td>
+        {% elif not child_address_street_line2 and not child_address_county %}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{child_address_street_line1}}
+            </br>
+            {{child_address_town}}
+            </br>
+            {{child_address_postcode}}
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
+               alt="Change the child's name">
+                Change <span class="visuallyhidden">the child's name</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    </tbody>
+</table>
+{% endfor %}
 {% if childcare_type_zero_to_five %}
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
     <colgroup>
