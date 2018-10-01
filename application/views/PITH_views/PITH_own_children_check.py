@@ -31,6 +31,11 @@ class PITHOwnChildrenCheckView(PITHRadioView):
                 'remove': 0
             }
             context.update(adults_context)
+        else:
+            # Remove any existing children_not_in_the_home
+            children = Child.objects.filter(application_id=application_id)
+            for child in children:
+                child.delete()
 
         return HttpResponseRedirect(self.get_success_url(get=context))
 
