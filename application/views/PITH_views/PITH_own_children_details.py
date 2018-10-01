@@ -109,7 +109,7 @@ class PITHOwnChildrenDetailsView(View):
                     'people_in_home_status': application.people_in_home_status,
                 }
 
-                success_url = self.get_success_url(children_turning_16, application)
+                success_url = self.get_success_url(application)
                 application.date_updated = current_date
                 application.save()
                 reset_declaration(application)
@@ -160,8 +160,12 @@ class PITHOwnChildrenDetailsView(View):
                 }
                 return render(request, 'PITH_templates/PITH_own_children_details.html', variables)
 
-    def get_success_url(self, children_turning_16, application):
-        if ApplicantHomeAddress.objects.get(application_id=application.pk).childcare_address:
+    def get_success_url(self, application):
+
+        home_address = ApplicantHomeAddress.objects.get(application_id=application.pk, current_address=True)
+        childcare_address = ApplicantHomeAddress.objects.get(application_id=application.pk, childcare_address=True)
+
+        if home_address == childcare_address:
             success_url = 'PITH-Own-Children-Postcode-View'
         else:
             success_url = 'PITH-Summary-View'
