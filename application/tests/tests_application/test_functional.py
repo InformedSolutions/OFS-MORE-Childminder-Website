@@ -4,6 +4,11 @@ Functional tests for views
 NOTE! If it throws you status 200, that means form submission is failing!
 
 """
+import datetime
+import uuid
+
+from uuid import uuid4
+
 from unittest import mock
 
 from django.core.urlresolvers import reverse
@@ -172,14 +177,13 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
         """Submit whole application"""
 
         with mock.patch('application.notify.send_email') as notify_mock, \
-            mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
-
+                mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
             notify_connection_test_mock.return_value.status_code = 201
             notify_mock.return_value.status_code = 201
 
             self.TestAppInit()
 
-            self.TestAppEmail()
+            self.test_app_email()
             self.TestValidateEmail()
             self.TestAppPhone()
             self.TestReturnToApp()

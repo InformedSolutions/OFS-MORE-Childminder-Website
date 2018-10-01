@@ -176,7 +176,10 @@ class PITHChildrenDetailsView(View):
         else:
             application.children_turning_16 = False
 
-            if ApplicantHomeAddress.objects.get(application_id=application.pk).childcare_address:
+            home_address = ApplicantHomeAddress.objects.get(application_id=application.pk, current_address=True)
+            childcare_address = ApplicantHomeAddress.objects.get(application_id=application.pk, childcare_address=True)
+
+            if home_address == childcare_address:
                 success_url = 'PITH-Own-Children-Check-View'
             else:
                 success_url = 'PITH-Summary-View'

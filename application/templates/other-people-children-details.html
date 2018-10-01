@@ -17,9 +17,9 @@
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <div class="two-thirds">
         <h1 class="form-title heading-large">
-            Details of children in your home
+            Details of children in the home
         </h1>
-        <p>Please give details of the children you live with.</p>
+        <p>Please give details of the children who live in the home.</p>
         {% for form in form_list %}
         <h2 class="form-title heading-medium" id="person{{form.prefix}}">
             Child {{form.prefix}}
