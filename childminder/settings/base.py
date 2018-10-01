@@ -108,7 +108,6 @@ TEMPLATES = [
                 "application.middleware.globalise_server_name",
                 "application.middleware.register_as_childminder_link_location",
                 'govuk_template_base.context_processors.govuk_template_base',
-                "application.middleware.hide_costs_link",
             ],
         },
     },

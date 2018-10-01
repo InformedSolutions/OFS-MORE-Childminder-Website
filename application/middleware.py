@@ -124,34 +124,6 @@ def globalise_server_name(request):
         return {'SERVER_LABEL': None}
 
 
-def hide_costs_link(request):
-    """
-    Middleware function for hiding the navigation menus costs link depending on an application's status
-    """
-    application_id = request.GET.get('id')
-
-    # If an application id is not quoted in the request
-    if application_id is None or len(application_id) == 0:
-        return {'HIDE_COSTS': False}
-
-    # Test whether application is in further information status
-    application_with_further_information_required = Application.objects.filter(
-        pk=application_id, application_status='FURTHER_INFORMATION'
-    ).count()
-
-    # If so, hide costs link (see gov uk template for test logic)
-    if application_with_further_information_required > 0:
-        return {
-            'id': application_id,
-            'HIDE_COSTS': True,
-        }
-    else:
-        return {
-            'id': application_id,
-            'HIDE_COSTS': False,
-        }
-
-
 def globalise_authentication_flag(request):
     """
     Middleware function to expose a flag to all templates to determine whether a user is authenticated.

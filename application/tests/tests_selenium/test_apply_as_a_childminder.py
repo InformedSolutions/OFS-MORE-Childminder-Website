@@ -333,64 +333,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertEqual("Your name",
                          self.selenium_task_executor.get_driver().title)
 
-    # @try_except_method
-    # def test_can_return_to_task_list_from_help_and_costs_when_authenticated(self):
-    #     """
-    #     Test to make sure the correct guidance page gets shown when only minding children of all ages
-    #     """
-    #     self.selenium_task_executor.navigate_to_base_url()
-    #
-    #     test_email = faker.email()
-    #     test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
-    #     test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
-    #
-    #     self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number,
-    #                                                             test_alt_phone_number)
-    #
-    #     # Guidance page
-    #     self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
-    #
-    #     # Choose 0-5 year olds option
-    #     self.selenium_task_executor.get_driver().find_element_by_id("id_type_of_childcare_0").click()
-    #
-    #     # Confirm selection
-    #     self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
-    #
-    #     # Guidance page
-    #     self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
-    #
-    #     # Overnight care page
-    #     self.selenium_task_executor.get_driver().find_element_by_id("id_overnight_care_0").click()
-    #
-    #     self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
-    #
-    #     # Confirmation page
-    #     self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
-    #
-    #     # Below DOB means they are an adult so do not fire validation triggers
-    #     self.selenium_task_executor.complete_personal_details(
-    #         faker.first_name(), faker.first_name(), faker.last_name_female(),
-    #         random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-    #         True, False, False
-    #     )
-    #
-    #     # Costs page
-    #     self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='proposition-links']/li[1]/a").click()
-    #
-    #     # Go back to task list
-    #     self.selenium_task_executor.get_driver().find_element_by_xpath("//html/body/main/div[2]/a").click()
-    #
-    #     self.assertEqual("Register as a childminder",
-    #                      self.selenium_task_executor.get_driver().title)
-    #
-    #     # Help page
-    #     self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='proposition-links']/li[2]/a").click()
-    #
-    #     # Go back to task list
-    #     self.selenium_task_executor.get_driver().find_element_by_link_text("Return to application").click()
-    #
-    #     self.assertEqual("Register as a childminder",
-    #                      self.selenium_task_executor.get_driver().title)
 
     @try_except_method
     def test_complete_personal_details_task_when_location_of_care_is_same_as_home_address(self):
@@ -754,50 +696,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_link_text('Register as a childminder').click()
         self.assertEqual("Register as a childminder", self.selenium_task_executor.get_driver().title)
 
-    # @tag('smoke_test')
-    # @try_except_method
-    # def test_can_access_costs_without_authenticating(self):
-    #     """
-    #     Tests the costs page can be accessed without logging in.
-    #     """
-    #     self.selenium_task_executor.navigate_to_base_url()
-    #     self.selenium_task_executor.get_driver().find_element_by_link_text('Costs').click()
-    #     self.assertEqual("Costs of becoming a childminder", self.selenium_task_executor.get_driver().title)
-    #
-    # @try_except_method
-    # def test_can_access_costs_when_authenticated(self):
-    #     """
-    #     Tests the costs page can be accessed when logged in.
-    #     """
-    #     self.create_standard_eyfs_application()
-    #     self.selenium_task_executor.get_driver().find_element_by_link_text('Costs').click()
-    #     self.assertEqual("Costs of becoming a childminder", self.selenium_task_executor.get_driver().title)
-
-    # @try_except_method
-    # def test_costs_not_shown_if_further_information_required(self):
-    #     """
-    #     Tests that the costs link is not shown if an application has been returned to the applicant
-    #     """
-    #     # Load fixtures to populate a test application
-    #     call_command("loaddata", "test_returned_application.json", verbosity=0)
-    #
-    #     # Note that this email address is loaded from fixture
-    #     self.selenium_task_executor.sign_back_in('test@informed.com')
-    #
-    #     # Test that costs link is not shown in header
-    #     with self.assertRaises(NoSuchElementException):
-    #         self.selenium_task_executor.get_driver().find_element_by_link_text('Costs')
-    #
-    #     # Test that costs link is not shown above task list
-    #     with self.assertRaises(NoSuchElementException):
-    #         self.selenium_task_executor.get_driver().find_element_by_link_text('more about costs')
-    #
-    #     # Test that the grayed out class is present (for unflagged tasks which are disabled)
-    #     self.assertTrue(self.selenium_task_executor.get_driver().find_element_by_class_name('grayed-out'))
-    #
-    #     # Test that the task-disabled class is present (for unflagged tasks which are disabled)
-    #     self.assertTrue(self.selenium_task_executor.get_driver().find_element_by_class_name('task-disabled'))
-
     @try_except_method
     def test_updated_tasks_are_listed_in_confirmation_page(self):
         """
@@ -846,15 +744,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.create_standard_eyfs_application()
         self.selenium_task_executor.get_driver().find_element_by_link_text('Help and contacts').click()
         self.assertEqual("Help and contacts", self.selenium_task_executor.get_driver().title)
-
-    # @try_except_method
-    # def test_can_access_costs(self):
-    #     """
-    #     Tests that the costs page can be reached
-    #     """
-    #     self.create_standard_eyfs_application()
-    #     self.selenium_task_executor.get_driver().find_element_by_link_text("Costs").click()
-    #     self.assertEqual("Costs of becoming a childminder", self.selenium_task_executor.get_driver().title)
 
     @try_except_method
     def test_can_begin_returning_user_sign_in_process(self):
