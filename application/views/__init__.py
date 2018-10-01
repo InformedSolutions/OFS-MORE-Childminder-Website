@@ -18,7 +18,6 @@ from .other_people import *
 from .payment import *
 from .references import *
 from .print_handler import *
-from .costs import *
 from .cancel_application import *
 from .login import *
 from .help_and_contact import *
