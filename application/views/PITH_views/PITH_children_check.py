@@ -38,7 +38,7 @@ class PITHChildrenCheckView(PITHRadioView):
     def get_choice_url(self, app_id):
         yes_choice, no_yes_choice, no_no_yes_choice, no_no_no_choice = self.success_url
         choice_bool = get_application(app_id, self.application_field_name)
-        care_in_home = ApplicantHomeAddress(app_id, 'childcare_address')
+        care_in_home = ApplicantHomeAddress.objects.get(app_id, 'childcare_address')
         adults = AdultInHome.objects.filter(application_id=app_id)
 
         if choice_bool:
