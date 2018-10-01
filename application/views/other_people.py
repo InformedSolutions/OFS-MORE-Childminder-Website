@@ -87,7 +87,7 @@ def other_people_adult_details(request):
             form.check_flag()
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem Person {0}".format(str(i))
+                form.error_summary_title = "There was a problem with Person {0}".format(str(i))
                 is_review = True
             else:
                 is_review = False
@@ -145,7 +145,7 @@ def other_people_adult_details(request):
             form.error_summary_title = 'There was a problem with the details Person {0}'.format(str(i))
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem Person {0}".format(str(i))
+                form.error_summary_title = "There was a problem with Person {0}".format(str(i))
             if form.is_valid():
                 adult_record = other_people_adult_details_logic(
                     application_id_local, form, i)
@@ -331,7 +331,7 @@ def other_people_summary(request):
                 'table_object': table,
                 'fields': other_adult_fields,
                 'title': name,
-                'error_summary_title': ('There was a problem {0}'.format(name))
+                'error_summary_title': ('There was a problem with {0}'.format(name))
             })
 
             adult_table_list.append(other_adult_table)
@@ -362,7 +362,7 @@ def other_people_summary(request):
                 'table_object': Table([child.pk]),
                 'fields': other_child_fields,
                 'title': name,
-                'error_summary_title': ('There was a problem {0}'.format(name))
+                'error_summary_title': ('There was a problem with {0}'.format(name))
             })
 
             child_table_list.append(other_child_table)
