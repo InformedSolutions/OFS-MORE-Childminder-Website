@@ -7,11 +7,10 @@ from django.views.generic import View
 
 from application.business_logic import (
     PITH_own_children_details_logic,
-    rearrange_children_in_home,
-    remove_child_in_home,
+    rearrange_children,
+    remove_child,
     reset_declaration,
 )
-from application.forms import OtherPeopleChildrenDetailsForm
 from application.forms.PITH_forms.PITH_own_children_details_form import PITHOwnChildrenDetailsForm
 from application.models import Application, ApplicantHomeAddress
 from application.utils import build_url
@@ -35,8 +34,8 @@ class PITHOwnChildrenDetailsView(View):
         if number_of_children == 1:
             remove_button = False    # Disable the remove person button
 
-        remove_child_in_home(application_id_local, remove_person)
-        rearrange_children_in_home(number_of_children, application_id_local)
+        remove_child(application_id_local, remove_person)
+        rearrange_children(number_of_children, application_id_local)
 
         form_list = [PITHOwnChildrenDetailsForm(id=application_id_local, child=i, prefix=i) for i in range(1, number_of_children + 1)]
 
