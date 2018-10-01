@@ -42,7 +42,7 @@ from ..models import (AdultInHome,
                       ApplicantPersonalDetails,
                       Application,
                       ArcComments,
-                      ChildInHome, Child)
+                      ChildInHome, Child, ApplicantHomeAddress)
 from application.notify import send_email
 
 
@@ -213,6 +213,16 @@ def other_people_approaching_16(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered People in your home: approaching 16 template
     """
+
+    def get_success_url(app_id):
+        home_address = ApplicantHomeAddress.objects.get(application_id=app_id, current_address=True)
+        childcare_address = ApplicantHomeAddress.objects.get(application_id=app_id, childcare_address=True)
+
+        if home_address == childcare_address:
+            return 'PITH-Own-Children-Check-View'
+        else:
+            return 'PITH-Summary-View'
+
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = OtherPeopleApproaching16Form()
@@ -226,6 +236,7 @@ def other_people_approaching_16(request):
             'people_in_home_status': application.people_in_home_status
         }
         return render(request, 'other-people-approaching-16.html', variables)
+
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = OtherPeopleApproaching16Form(request.POST)
@@ -239,7 +250,7 @@ def other_people_approaching_16(request):
                 'application_id': application_id_local,
                 'people_in_home_status': application.people_in_home_status
             }
-            return HttpResponseRedirect(reverse('PITH-Own-Children-Check-View') + '?id=' + application_id_local, variables)
+            return HttpResponseRedirect(reverse(get_success_url(application_id_local)) + '?id=' + application_id_local, variables)
         else:
             variables = {
                 'form': form,
@@ -397,7 +408,9 @@ def other_people_summary(request):
         child_table = create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
         not_child_table = create_tables([not_child_table], other_child_not_in_the_home_summary_name_dict, other_child_not_in_the_home_summary_link_dict)
 
-        table_list = adult_table + adult_table_list + child_table + child_table_list + not_child_table + children_not_in_the_home_table
+        table_list = adult_table + adult_table_list + child_table + child_table_list
+        if application.own_children_not_in_home is not None:
+            table_list += not_child_table + children_not_in_the_home_table
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
