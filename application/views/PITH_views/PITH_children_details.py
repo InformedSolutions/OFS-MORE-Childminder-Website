@@ -41,7 +41,7 @@ class PITHChildrenDetailsView(View):
         if application.application_status == 'FURTHER_INFORMATION':
             for index, form in enumerate(form_list):
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem (Child " + str(index + 1) + ")"
+                form.error_summary_title = "There was a problem Child {0}".format(str(index + 1))
                 form.check_flag()
 
         variables = {
