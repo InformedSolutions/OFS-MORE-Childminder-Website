@@ -314,7 +314,7 @@
         {% elif personal_details_birth_month == 10 %}
         <td style="word-wrap: break-word" class=summary-column>
             {{personal_details_birth_day}} Oct {{personal_details_birth_year}}
-        </td style="word-wrap: break-word">
+        </td>
         {% elif personal_details_birth_month == 11 %}
         <td style="word-wrap: break-word" class=summary-column>
             {{personal_details_birth_day}} Nov {{personal_details_birth_year}}
@@ -397,7 +397,7 @@
         {% endif %}
         <td class="change-answer {{ print_class }}">
             {% if personal_details_change %}
-            <a href="{% url 'Personal-Details-Home-Address-View' %}?id={{application_id}}&manual=True&lookup=False"
+            <a href="{% url 'Personal-Details-Home-Address-Manual-View' %}?id={{application_id}}"
                alt='Change your home address'>
                 Change <span class="visuallyhidden">your home address</span>
             </a>
@@ -414,7 +414,7 @@
         </td>
         <td class="change-answer {{ print_class }}">
             {% if personal_details_change %}
-            <a href="{% url 'Personal-Details-Location-Of-Care-View' %}?id={{application_id}}"
+            <a href="{% url 'Personal-Details-Childcare-Address-View' %}?id={{application_id}}"
                alt='Change answer to childcare location'>
                 Change <span class="visuallyhidden">answer to childcare address</span>
             </a>
@@ -464,7 +464,7 @@
         {% endif %}
         <td class="change-answer {{ print_class }}">
             {% if personal_details_change %}
-            <a href="{% url 'Personal-Details-Location-Of-Care-View' %}?id={{application_id}}&manual=True&lookup=False"
+            <a href="{% url 'Personal-Details-Childcare-Address-Manual-View' %}?id={{application_id}}"
                alt='Change answer to childcare location'>
                 Change <span class="visuallyhidden">answer to childcare location</span>
             </a>
@@ -666,7 +666,6 @@
                             {{child.full_address.postcode}}
                         </td>
                     {% endif %}
-
                     <td class="change-answer">
                         <a href="{% url 'Your-Children-Address-Manual-View' %}?id={{application_id}}&child={{child.child_number}}"
                            alt='Change address'>
@@ -744,25 +743,20 @@
     </tr>
     </tbody>
 </table>
-
 <table class="check-your-answers">
-
     <th colspan="{% if print_class %}2{% else %}3{% endif %}">
         <div class="heading-medium">
             Childcare training
         </div>
     </th>
-
     {% for row in childcare_training_table.row_list %}
         <tr id="{{row.data_name}}">
             <td class=summary-column>
                 {{row.row_name}}
             </td>
-
             <td>
                 {{row.value}}
             </td>
-
         {% if early_years_training_change %}
             <td class="change-answer {{ print_class }}">
                 <a href="{% url row.back_link %}?id={{application_id}}{{table.other_people_numbers}}#id_{{row.data_name}}-group"
@@ -771,15 +765,11 @@
                 </a>
             </td>
         {% endif %}
-
         </tr>
-
     {% endfor %}
 
 </table>
-
 {% if childcare_type_zero_to_five %}
-
     <table class="check-your-answers">
         <colgroup>
             <col class="summary-column">
@@ -813,7 +803,6 @@
         </tbody>
     </table>
 {% endif %}
-
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
     <colgroup>
         <col class="summary-column">
@@ -856,7 +845,6 @@
         </td>
         </tr>
     {% endfor %}
-
     </tbody>
 </table>
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
@@ -1150,7 +1138,7 @@
         {% endif %}
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
-            <a href="{% url 'PITH-Children-Check-View' %}?id={{application_id}}"
+            <a href="{% url 'PITH-Own-Children-Check-View' %}?id={{application_id}}"
                alt='Change answer on living with children'>
                 Change <span class="visuallyhidden">answer on living with children</span>
             </a>
@@ -1185,7 +1173,7 @@
         </td>
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
-            <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
+            <a href="{% url 'PITH-Own-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
                alt="Change the child's name">
                 Change <span class="visuallyhidden">the child's name</span>
             </a>
@@ -1201,7 +1189,7 @@
         </td>
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
-            <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
+            <a href="{% url 'PITH-Own-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
                alt="Change the child's date of birth">
                 Change <span class="visuallyhidden">the child's date of birth</span>
             </a>
@@ -1255,7 +1243,7 @@
         {% endif %}
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
-            <a href="{% url 'PITH-Children-Details-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
+            <a href="{% url 'PITH-Own-Children-Manual-View' %}?id={{application_id}}&children={{number_of_children}}&remove=0"
                alt="Change the child's name">
                 Change <span class="visuallyhidden">the child's name</span>
             </a>
