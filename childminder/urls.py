@@ -199,7 +199,6 @@ urlpatterns = [
     url(r'^awaiting-review/', views.awaiting_review, name='Awaiting-Review-View'),
     url(r'^accepted/', views.application_accepted, name='Accepted-View'),
     url(r'^print-application/(?P<page>[-\w]+)/$', views.base_print_handler, name='Print-Handler-View'),
-    url(r'^costs/$', views.costs, name='Costs-View'),
     url(r'^cancel-application/guidance/$', views.cancel_app, name='Cancel-Application'),
     url(r'^cancel-application/confirmation/$', views.cancel_app_confirmation, name='Cancel-Application-Confirmation'),
     url(r'^childcare-register/cancel-application/$', views.cr_cancel_app, name='CR-Cancel-Application'),
