@@ -13,4 +13,4 @@ class PITHOwnChildrenCheckForm(PITHRadioForm):
             widget=InlineRadioSelect,
             required=True,
             error_messages={
-                'required': 'Please tell us if children under 16 live in the home?'})
+                'required': 'Please say if you have children of your own who are under 16 and do not live with you'})

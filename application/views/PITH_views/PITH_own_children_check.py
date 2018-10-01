@@ -3,7 +3,7 @@ from django.http import HttpResponseRedirect
 from application.business_logic import get_application
 from application.forms.PITH_forms.PITH_base_forms.PITH_own_children_check_form import PITHOwnChildrenCheckForm
 from application.models import AdultInHome, Child
-from application.utils import get_id, build_url
+from application.utils import get_id
 from application.views.PITH_views.base_views.PITH_radio_view import PITHRadioView
 
 class PITHOwnChildrenCheckView(PITHRadioView):
