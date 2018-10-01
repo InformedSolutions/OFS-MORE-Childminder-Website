@@ -217,7 +217,7 @@ class DBSSummaryView(DBSTemplateView):
             },
             {
                 'field': 'military_base',
-                'title': 'Have you lived or worked on a British military base in the last 5 years?',
+                'title': 'Have you lived or worked on a British military base outside of the UK in the last 5 years?',
                 'url': 'DBS-Military-View',
                 'alt_text': 'Change answer to living or working on a military base outside of the UK in the last 5 years'
             },
