@@ -152,6 +152,7 @@ def declaration_summary(request, print_mode=False):
             application_id=application_id_local).order_by('adult')
         children_list = ChildInHome.objects.filter(
             application_id=application_id_local).order_by('child')
+        children_not_in_the_home_list = Child.objects.filter(application_id=application_id_local).order_by('child')
         # Generate lists of data for adults in your home, to be iteratively displayed on the summary page
         # The HTML will then parse through each list simultaneously, to display the correct data for each adult
         adult_name_list = []
@@ -313,6 +314,7 @@ def declaration_summary(request, print_mode=False):
             'references_change': references_change,
             'adults_in_home': application.adults_in_home,
             'children_in_home': application.children_in_home,
+            'children_not_in_home': application.own_children_not_in_home,
             'number_of_adults': adults_list.count(),
             'number_of_children': children_list.count(),
             'adult_lists': adult_lists,

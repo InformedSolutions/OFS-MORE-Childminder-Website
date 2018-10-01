@@ -1163,7 +1163,46 @@
     </tbody>
 </table>
 {% endfor %}
-
+<table class="check-your-answers" style="table-layout: fixed; width: 100%">
+    <colgroup>
+        <col class="summary-column">
+        <col class="summary-column">
+        <col class="change-answer {{ print_class }}">
+    </colgroup>
+    <thead>
+    <tr>
+        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
+            <div class="heading-medium">
+                Children not in the home
+            </div>
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Do have children of your own under 16 who do not live with you?
+        </td>
+        {% if children_not_in_home is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif children_not_in_home is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Children-Check-View' %}?id={{application_id}}"
+               alt='Change answer on living with children'>
+                Change <span class="visuallyhidden">answer on living with children</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    </tbody>
+</table>
 {% if childcare_type_zero_to_five %}
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
     <colgroup>
