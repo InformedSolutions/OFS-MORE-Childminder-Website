@@ -21,6 +21,8 @@ from ..utils import get_non_db_field_arc_comment
 
 logger = logging.getLogger('')
 
+address_matches_childminder_text = 'Same as your own'
+
 #
 # Helper method for Your Children tasks
 #
@@ -83,6 +85,7 @@ def __remove_arc_address_flag(child_address):
     """
     address_field_name = 'address'
     if ArcComments.objects.filter(table_pk=child_address.child_address_id, field_name=address_field_name).exists():
+        logger.debug('Removing ARC address comment for child address record: ' + str(child_address.child_address_id))
         arc_comment = ArcComments.objects.get(table_pk=child_address.child_address_id, field_name=address_field_name)
         arc_comment.flagged = False
         arc_comment.save()
@@ -155,7 +158,7 @@ def __create_child_table(child):
         child_fields = collections.OrderedDict([
             ('full_name', child.get_full_name()),
             ('date_of_birth', dob),
-            ('address', 'Same as your own')
+            ('address', address_matches_childminder_text)
         ])
 
     table = Table([child.pk])
@@ -566,6 +569,15 @@ def __your_children_living_with_you_post_handler(request):
     for child in children:
         child.lives_with_childminder = \
             str(child.child) in form.cleaned_data['children_living_with_childminder_selection']
+
+        # If post submission marks the child as residing with the childminder, delete any previously attributed
+        # address details for data cleanliness purposes. Likewise, remove any ARC comments
+        if child.lives_with_childminder:
+            if ChildAddress.objects.filter(application_id=application_id, child=child.child).exists():
+                child_address_record = ChildAddress.objects.get(application_id=application_id, child=child.child)
+                __remove_arc_address_flag(child_address_record)
+                child_address_record.delete()
+
         child.save()
 
     if __get_children_not_living_with_childminder_count(application_id) > 0:
@@ -962,6 +974,13 @@ def __your_children_summary_get_handler(request):
         child_table_list.append(child_table)
 
     child_table_list = create_tables(child_table_list, your_children_children_dict, your_children_children_link_dict)
+
+    # If child is noted as living with the childminder, update the change link such that it takes them to the question
+    # about which of their children live with them
+    for table in child_table_list:
+        for row in table.get_row_list():
+            if row.data_name == 'address' and row.value == address_matches_childminder_text:
+                row.back_link = 'Your-Children-Living-With-You-View'
 
     children_living_with_you_table = __create_children_living_with_you_table(application)
 
