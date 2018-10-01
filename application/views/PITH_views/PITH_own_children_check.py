@@ -33,9 +33,7 @@ class PITHOwnChildrenCheckView(PITHRadioView):
             context.update(adults_context)
         else:
             # Remove any existing children_not_in_the_home
-            children = Child.objects.filter(application_id=application_id)
-            for child in children:
-                child.delete()
+            self.__clear_children(application_id)
 
         return HttpResponseRedirect(self.get_success_url(get=context))
 
@@ -51,3 +49,9 @@ class PITHOwnChildrenCheckView(PITHRadioView):
                 return no_yes_choice
             else:
                 return no_no_choice
+
+    def __clear_children(self, app_id):
+        children = Child.objects.filter(application_id=application_id)
+
+        for child in children:
+            child.delete()

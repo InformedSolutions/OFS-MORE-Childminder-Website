@@ -42,7 +42,7 @@ def start_page(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered start page template
     """
-    return render(request, 'start-page.html')
+    return render(request, 'Start-Page-View')
 
 
 def awaiting_review(request):

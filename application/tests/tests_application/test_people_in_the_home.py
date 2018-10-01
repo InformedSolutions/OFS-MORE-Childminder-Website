@@ -4,6 +4,7 @@ from django.test import TestCase, tag
 from django.urls import reverse
 
 from application import models
+from application.utils import build_url
 
 from .base import ApplicationTestBase
 
@@ -124,7 +125,7 @@ class PeopleInTheHomeTestSuite(TestCase, ApplicationTestBase):
         )
 
         self.assertEqual(response.status_code, 200)
-        self.assertTrue('<title>Children in your home</title>' in str(response.content))
+        self.assertTrue('<title>Children in the home</title>' in str(response.content))
 
     @tag('ragha')
     def test_error_messages_on_empty_form_submission_in_details_of_adults_in_your_home_page(self):
@@ -157,22 +158,20 @@ class PeopleInTheHomeTestSuite(TestCase, ApplicationTestBase):
     @tag('ragha')
     def test_error_messages_on_future_date_in_adults_in_your_home_page(self):
         # url = reverse('PITH-Adult-Details-View') + '?&id=' + str(self.app_id) + '&remove=0&adults=1',
-        url = reverse('PITH-Adult-Details-View') + '?remove = 0' + '& adults = 0'
-        response = self.client.post(url,
+        url = build_url('PITH-Adult-Details-View', get={'adults': 0, 'remove': 0})
+        response = self.client.post(url, {})
 
-            {
-                'id': self.app_id,
-                '1 - first_name': 'FirstPerson',
-                '1 - middle_names': 'me',
-                '1 - last_name': 'LastName',
-                '1 - date_of_birth_0': '01',
-                '1 - date_of_birth_1': '02',
-                '1 - date_of_birth_2': '2020',
-                '1 - relationship': 'Friend',
-                '1 - email_address': 'tester1@informed.com'
-            },
-            # follow=True
-        )
+        # {
+        #     'id': self.app_id,
+        #     'first_name': 'FirstPerson',
+        #     'middle_names': 'me',
+        #     'last_name': 'LastName',
+        #     'date_of_birth_0': '01',
+        #     'date_of_birth_1': '02',
+        #     'date_of_birth_2': '2020',
+        #     'relationship': 'Friend',
+        #     'email_address': 'tester1@informed.com'
+        # }
         print("********************************************")
         print(url)
         print("********************************************")
@@ -184,7 +183,7 @@ class PeopleInTheHomeTestSuite(TestCase, ApplicationTestBase):
         # self.assertTrue('Please check the year' in response.content.decode())
         self.assertContains(response, 'Please check the year')
 
-
+    # test_error_messages_on_empty_form_submission_in_details_of_adults_in_your_home_page
     #
     # @tag('ragha')
     # def test_error_messages_on_future_date_in_adults_in_your_home_page(self):

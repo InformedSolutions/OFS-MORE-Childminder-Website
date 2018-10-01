@@ -17,7 +17,7 @@ from application.views.other_people_health_check import health_check_login, dob_
 from application.views import PITH_views
 
 urlpatterns = [
-    url(r'^$', views.start_page, name='start-page.html'),
+    url(r'^$', views.start_page, name='Start-Page-View'),
     url(r'^task-list/', views.task_list, name='Task-List-View'),
     url(r'^childcare/type/', views.type_of_childcare_guidance, name='Type-Of-Childcare-Guidance-View'),
     url(r'^childcare/age-groups/', views.type_of_childcare_age_groups, name='Type-Of-Childcare-Age-Groups-View'),
