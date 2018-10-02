@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 
 class PITHPostView(PITHTemplateView):
     template_name = 'PITH_templates/PITH_post.html'
-    success_url = ('PITH-Apply-View', 'Other-People-Children-Question-View')
+    success_url = ('PITH-Apply-View', 'PITH-Children-Check-View')
 
     def post(self, request, *args, **kwargs):
         application_id = get_id(request)

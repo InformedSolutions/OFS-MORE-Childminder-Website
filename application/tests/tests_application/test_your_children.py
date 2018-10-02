@@ -8,7 +8,7 @@ from django.test import TestCase, tag
 from django.urls import reverse
 
 from .base import ApplicationTestBase
-from ...models import Child, ChildAddress
+from ...models import Child, ChildAddress, Application, ArcComments
 
 
 class YourChildrenTests(TestCase, ApplicationTestBase):
@@ -29,7 +29,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
             # access Your Children pages
             self.TestAppInit()
 
-            self.TestAppEmail()
+            self.test_app_email()
             self.TestValidateEmail()
             self.TestAppPhone()
             self.TestContactSummaryView()
@@ -172,6 +172,102 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
         self.assertEqual(get_response.status_code, 200)
         self.assertEqual(get_response.resolver_match.view_name, 'Your-Children-Details-View')
         self.assertTrue(self.test_1_forename in str(get_response.content))
+
+    def test_can_retrieve_previously_entered_child_details_when_name_flagged(self):
+
+        self.client.post(
+            reverse('Your-Children-Details-View'),
+            {
+                'id': self.app_id,
+                '1-first_name': self.test_1_forename,
+                '1-middle_names': 'TEST MIDDLE NAMES',
+                '1-last_name': 'TEST LAST NAME',
+                '1-date_of_birth_0': '22',
+                '1-date_of_birth_1': '1',
+                '1-date_of_birth_2': '2015',
+                'children': '1',
+                'submit': ''
+            },
+            follow=True
+        )
+
+        application = Application.objects.get(application_id=self.app_id)
+        application.your_children_status = 'FLAGGED'
+        application.application_status = 'FURTHER_INFORMATION'
+        application.save()
+
+        test_child = Child.objects.get(application_id=self.app_id)
+
+        comment = ArcComments(
+            table_name='CHILD',
+            table_pk=test_child.child_id,
+            field_name='full_name',
+            comment='TEST COMMENT',
+            flagged=True
+        )
+
+        comment.save()
+
+        get_response = self.client.get(
+            reverse('Your-Children-Details-View'),
+            {
+                'id': self.app_id,
+            },
+            follow=True
+        )
+
+        self.assertEqual(get_response.status_code, 200)
+        self.assertEqual(get_response.resolver_match.view_name, 'Your-Children-Details-View')
+        self.assertIsNotNone(get_response.context['errors']['first_name'])
+        self.assertIsNotNone(get_response.context['errors']['middle_names'])
+        self.assertIsNotNone(get_response.context['errors']['last_name'])
+
+    def test_can_retrieve_previously_entered_child_details_when_name_flagged(self):
+
+        self.client.post(
+            reverse('Your-Children-Details-View'),
+            {
+                'id': self.app_id,
+                '1-first_name': self.test_1_forename,
+                '1-middle_names': 'TEST MIDDLE NAMES',
+                '1-last_name': 'TEST LAST NAME',
+                '1-date_of_birth_0': '22',
+                '1-date_of_birth_1': '1',
+                '1-date_of_birth_2': '2015',
+                'children': '1',
+                'submit': ''
+            },
+            follow=True
+        )
+
+        application = Application.objects.get(application_id=self.app_id)
+        application.your_children_status = 'FLAGGED'
+        application.application_status = 'FURTHER_INFORMATION'
+        application.save()
+
+        test_child = Child.objects.get(application_id=self.app_id)
+
+        comment = ArcComments(
+            table_name='CHILD',
+            table_pk=test_child.child_id,
+            field_name='date_of_birth',
+            comment='TEST COMMENT',
+            flagged=True
+        )
+
+        comment.save()
+
+        get_response = self.client.get(
+            reverse('Your-Children-Details-View'),
+            {
+                'id': self.app_id,
+            },
+            follow=True
+        )
+
+        self.assertEqual(get_response.status_code, 200)
+        self.assertEqual(get_response.resolver_match.view_name, 'Your-Children-Details-View')
+        self.assertIsNotNone(get_response.context['errors']['date_of_birth'])
 
     @tag('http')
     def test_error_raised_if_child_dob_makes_them_over_16(self):
@@ -334,6 +430,35 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
         self.assertTrue('none' in str(response.content))
 
     @tag('http')
+    def test_child_names_shown_on_children_living_with_you_page_when_flagged(self):
+        self.__submit_test_children_details()
+
+        application = Application.objects.get(application_id=self.app_id)
+        application.your_children_status = 'FLAGGED'
+        application.application_status = 'FURTHER_INFORMATION'
+        application.save()
+
+        comment = ArcComments(
+            table_name='DYNAMIC',
+            table_pk=self.app_id,
+            field_name='children_living_with_childminder_selection',
+            comment='TEST COMMENT',
+            flagged=True
+        )
+
+        comment.save()
+
+        response = self.client.get(
+            reverse('Your-Children-Living-With-You-View'),
+            {
+                'id': self.app_id
+            }
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIsNotNone(response.context['errors']['children_living_with_childminder_selection'])
+
+    @tag('http')
     def test_error_raised_on_children_living_with_childminder_page_if_mutually_exclusive_options_selected(self):
         self.__submit_test_children_details()
 
@@ -354,6 +479,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
     @tag('http')
     def test_if_all_children_living_with_childminder_redirected_to_summary(self):
+        self.TestAppPersonalDetailsHomeAddress()
         self.__submit_test_children_details()
 
         response = self.client.post(
@@ -386,6 +512,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
     @tag('http')
     def test_asked_for_second_child_address_if_living_with_first_children(self):
+        self.TestAppPersonalDetailsHomeAddress()
         self.__submit_test_children_details()
 
         response = self.client.post(
@@ -527,6 +654,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
             self.assertEqual(response.resolver_match.view_name, 'Your-Children-Address-Manual-View')
             self.assertTrue('Address line 1' in str(response.content))
 
+
     @tag('http')
     def test_manual_address_required_field_validation_applied(self):
         self.__submit_test_children_details()
@@ -602,6 +730,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
         # Check user is redirected to capture page for second child
         self.assertEqual(response.resolver_match.view_name, 'Your-Children-Address-View')
 
+    @tag('http')
     def test_if_child_not_living_with_childminder_asked_for_address(self):
         response = self.__submit_test_children_details()
 

@@ -101,7 +101,7 @@ urlpatterns = [
 
     url(r'^people/$', PITH_views.PITHGuidanceView.as_view(), name='PITH-Guidance-View'),
 
-    #Adults
+    # Adults
     url(r'^people/adults/$', PITH_views.PITHAdultCheckView.as_view(), name='PITH-Adult-Check-View'),
     url(r'^people/adults-details/$', views.other_people_adult_details, name='PITH-Adult-Details-View'),
     url(r'^people/adults-lived-abroad/$', PITH_views.PITHLivedAbroadView.as_view(), name='PITH-Lived-Abroad-View'),
@@ -112,14 +112,20 @@ urlpatterns = [
     url(r'^people/post-certificate/$', PITH_views.PITHPostView.as_view(), name='PITH-Post-View'),
     url(r'^people/adults-apply/$', PITH_views.PITHApplyView.as_view(), name='PITH-Apply-View'),
 
-    #Children
-    url(r'^people/children/temporary/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
-    url(r'^people/children/$', views.other_people_children_question,
-        name='Other-People-Children-Question-View'),
-    url(r'^people/children-details/', views.other_people_children_details,
-        name='Other-People-Children-Details-View'),
-    url(r'^people/children-turning-16/', views.other_people_approaching_16, name='Other-People-Approaching-16-View'),
-    url(r'^people/check-answers/', views.other_people_summary, name='Other-People-Summary-View'),
+    # Children
+    url(r'^people/children/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
+    url(r'^people/children-details/$', PITH_views.PITHChildrenDetailsView.as_view(),
+        name='PITH-Children-Details-View'),
+    url(r'^people/children-turning-16/$', views.other_people_approaching_16, name='PITH-Approaching-16-View'),
+    url(r'^people/your-children/$', PITH_views.PITHOwnChildrenCheckView.as_view(), name='PITH-Own-Children-Check-View'),
+    url(r'^people/your-children-details/$', PITH_views.PITHOwnChildrenDetailsView.as_view(), name='PITH-Own-Children-Details-View'),
+    url(r'^people/your-children-address/$', PITH_views.PITHOwnChildrenPostcodeView,
+        name='PITH-Own-Children-Postcode-View'),
+    url(r'^people/select-children-address/$', PITH_views.PITHOwnChildrenSelectView,
+        name='PITH-Own-Children-Select-View'),
+    url(r'^people/enter-children-address/$', PITH_views.PITHOwnChildrenManualView,
+        name='PITH-Own-Children-Manual-View'),
+    url(r'^people/check-answers/$', views.other_people_summary, name='PITH-Summary-View'),
 
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),
     url(r'^health/booklet/', views.health_booklet, name='Health-Booklet-View'),

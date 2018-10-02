@@ -1,5 +1,5 @@
 """
-A base class for reusable test steps across applicaiton unit tests
+A base class for reusable test steps across application unit tests
 """
 import json
 from datetime import datetime
@@ -26,13 +26,12 @@ class ApplicationTestBase(object):
         r = self.client.post(reverse('Account-Selection'), {'acc_selection': 'new'})
         self.assertEqual(r.status_code, 302)
 
-    def TestAppEmail(self):
+    def test_app_email(self):
         """Submit email"""
 
         with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
-            mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
+                mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
                 mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
-
             notify_connection_test_mock.return_value.status_code = 201
             magic_link_email_mock.return_value.status_code = 201
             magic_link_text_mock.return_value.status_code = 201
@@ -54,7 +53,6 @@ class ApplicationTestBase(object):
         with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
                 mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
                 mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
-
             notify_connection_test_mock.return_value.status_code = 201
             magic_link_email_mock.return_value.status_code = 201
             magic_link_text_mock.return_value.status_code = 201
@@ -70,6 +68,8 @@ class ApplicationTestBase(object):
             )
             self.assertEqual(r.status_code, 302)
             self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
+            self.assertEqual(datetime.now().date(),
+                             Application.objects.get(application_id=self.app_id).date_last_accessed.date())
 
             self.assertEqual(False, UserDetails.objects.filter(email=new_email).exists())
             r = self.client.post(
@@ -80,6 +80,8 @@ class ApplicationTestBase(object):
             )
             self.assertEqual(r.status_code, 302)  # Create account for new email and send link.
             self.assertEqual(new_email, UserDetails.objects.get(email=new_email).email)
+            self.assertEqual(datetime.now().date(),
+                             Application.objects.get(application_id=self.app_id).date_last_accessed.date())
 
     def TestValidateEmail(self):
         """Validate Email"""
@@ -211,7 +213,7 @@ class ApplicationTestBase(object):
 
     def TestSecurityQuestion(self):
         """Test """
-        self.TestAppEmail()
+        self.test_app_email()
         self.TestValidateEmail()
         r = self.client.post(reverse('Security-Question'), {'id': self.app_id,
                                                             'security_answer': UserDetails.objects.get(
@@ -478,7 +480,7 @@ class ApplicationTestBase(object):
     def TestAppOtherPeopleChildren(self):
         """Submit other children"""
         r = self.client.post(
-            reverse('Other-People-Children-Question-View'),
+            reverse('PITH-Children-Check-View'),
             {
                 'id': self.app_id,
                 'children_in_home': False,
@@ -505,7 +507,7 @@ class ApplicationTestBase(object):
 
         }
 
-        r = self.client.post(reverse('Other-People-Children-Details-View'), data)
+        r = self.client.post(reverse('PITH-Children-Details-View'), data)
 
         self.assertEqual(r.status_code, 302)
 
@@ -532,7 +534,7 @@ class ApplicationTestBase(object):
 
     def TestAppOtherPeopleSummary(self):
         """Submit Other People Summary"""
-        r = self.client.get(reverse('Other-People-Summary-View'), {'id': self.app_id})
+        r = self.client.get(reverse('PITH-Summary-View'), {'id': self.app_id})
         self.assertEqual(r.status_code, 200)
 
     def TestAppFirstReferenceName(self):

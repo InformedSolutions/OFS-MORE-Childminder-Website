@@ -78,6 +78,19 @@ personal_details_change_link_description_dict = collections.OrderedDict([('name'
 
 ###
 
+
+your_children_children_dict = collections.OrderedDict([('full_name', 'Name'),
+                            ('date_of_birth', 'Date of birth'),
+                            ('address', 'Address')])
+
+your_children_children_link_dict = collections.OrderedDict([('full_name', 'Your-Children-Details-View'),
+                            ('date_of_birth', 'Your-Children-Details-View'),
+                            ('address', 'Your-Children-Address-Manual-View')])
+
+
+###
+
+
 first_aid_name_dict = collections.OrderedDict([('first_aid_training_organisation', 'Training organisation'),
                                                ('title_of_training_course', 'Title of training course'),
                                                ('course_date', 'Date you completed course'),
@@ -135,9 +148,17 @@ other_child_name_dict = collections.OrderedDict([('full_name', 'Name'),
                                                  ('date_of_birth', 'Date of birth'),
                                                  ('relationship', 'Relationship')])
 
-other_child_link_dict = collections.OrderedDict([('full_name', 'Other-People-Children-Details-View'),
-                                                 ('date_of_birth', 'Other-People-Children-Details-View'),
-                                                 ('relationship', 'Other-People-Children-Details-View')])
+other_child_link_dict = collections.OrderedDict([('full_name', 'PITH-Children-Details-View'),
+                                                 ('date_of_birth', 'PITH-Children-Details-View'),
+                                                 ('relationship', 'PITH-Children-Details-View')])
+
+child_not_in_the_home_name_dict = collections.OrderedDict([('full_name', 'Name'),
+                                                 ('date_of_birth', 'Date of birth'),
+                                                 ('address', 'Address')])
+
+child_not_in_the_home_link_dict = collections.OrderedDict([('full_name', 'PITH-Children-Details-View'),
+                                                 ('date_of_birth', 'PITH-Children-Details-View'),
+                                                 ('address', 'PITH-Children-Details-View')])
 
 # The below dictionaries are for the two tables at the top of the other people summary page
 
@@ -146,7 +167,10 @@ other_adult_summary_name_dict = collections.OrderedDict(
 other_adult_summary_link_dict = collections.OrderedDict([('adults_in_home', 'PITH-Adult-Check-View')])
 
 other_child_summary_name_dict = collections.OrderedDict([('children_in_home', 'Do you live with any children?')])
-other_child_summary_link_dict = collections.OrderedDict([('children_in_home', 'Other-People-Children-Question-View')])
+other_child_summary_link_dict = collections.OrderedDict([('children_in_home', 'PITH-Children-Check-View')])
+
+other_child_not_in_the_home_summary_name_dict = collections.OrderedDict([('children_not_in_the_home', 'Do you have children under 16 who do not live with you?')])
+other_child_not_in_the_home_summary_link_dict = collections.OrderedDict([('children_not_in_the_home', 'PITH-Own-Children-Check-View')])
 
 ###
 
@@ -190,19 +214,22 @@ second_reference_link_dict = collections.OrderedDict([('full_name', 'References-
 submit_link_dict = collections.OrderedDict([('login_details', 'Contact-Email-View'),
                                             ('type_of_childcare', 'Type-Of-Childcare-Guidance-View'),
                                             ('personal_details', 'Personal-Details-Guidance-View'),
+                                            ('your_children', 'Your-Children-Guidance-View'),
                                             ('first_aid_training', 'First-Aid-Training-Guidance-View'),
                                             ('eyfs_training', 'Childcare-Training-Guidance-View'),
                                             ('criminal_record_check', 'DBS-Lived-Abroad-View'),
                                             ('health', 'Health-Intro-View'),
                                             ('references', 'References-Intro-View'),
-                                            ('people_in_home', 'Other-People-Guidance-View')])
+                                            ('people_in_home', 'PITH-Guidance-View')])
 
 back_link_dict = collections.OrderedDict([('login_details', 'Question-View'),
                                           ('type_of_childcare', 'Type-Of-Childcare-Guidance-View'),
                                           ('personal_details', 'Personal-Details-Location-Of-Care-View'),
+                                          ('your_children', 'Your-Children-Guidance-View'),
                                           ('first_aid_training', 'First-Aid-Training-Details-View'),
                                           ('eyfs_training', 'Childcare-Training-Details-View'),
                                           ('criminal_record_check', 'DBS-Check-DBS-Details-View'),
                                           ('health', 'Health-Booklet-View'),
                                           ('references', 'References-Second-Reference-Contact-Details-View'),
-                                          ('people_in_home', 'Other-People-Children-Question-View')])
+                                          ('people_in_home', 'PITH-Children-Check-View')])
+

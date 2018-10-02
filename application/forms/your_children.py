@@ -172,6 +172,11 @@ class YourChildrenLivingWithYouForm(ChildminderForms):
         self.fields['children_living_with_childminder_selection'].choices = select_options
         self.fields['children_living_with_childminder_selection'].initial = previous_selections
 
+        # Note that as this question is constructed dynamically, the application id is used as the primary key attribute
+        # for checking ARC comment presence
+        self.field_list = ['children_living_with_childminder_selection']
+        self.pk = self.application_id_local
+
     def clean_children_living_with_childminder_selection(self):
         """
         Validator method to ensure options selected are permissible.
