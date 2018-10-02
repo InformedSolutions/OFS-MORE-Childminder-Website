@@ -380,7 +380,8 @@ def declaration_summary(request, print_mode=False):
             'people_in_your_home_change': people_in_your_home_change,
             'print': print_mode,
             'children': children_table,
-            'children_living_with_childminder': ", ".join(children_living_with_childminder)
+            'children_living_with_childminder': ", ".join(children_living_with_childminder),
+            'own_children_not_in_home': application.own_children_not_in_home
         }
 
         variables = {**variables, **references_vars}

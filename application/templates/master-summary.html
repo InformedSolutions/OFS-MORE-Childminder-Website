@@ -477,7 +477,7 @@
         <td style="word-wrap: break-word" class=summary-column>
             Is this another childminder's home?
         </td>
-        {% if working_in_other_childminder_home %}
+        {% if working_in_other_childminder_home == True %}
         <td style="word-wrap: break-word" class=summary-column>
             Yes
         </td>
@@ -497,6 +497,7 @@
     {% endif %}
     </tbody>
 </table>
+{% if location_of_childcare == False %}
 <table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
@@ -677,6 +678,7 @@
     </tbody>
 </table>
 {% endfor %}
+{% endif %}
 <table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
@@ -847,6 +849,7 @@
     {% endfor %}
     </tbody>
 </table>
+{% if working_in_other_childminder_home == False %}
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
     <colgroup>
         <col class="summary-column">
@@ -1107,6 +1110,7 @@
     </table>
     {% endfor %}
 {% endif %}
+{% if own_children == False %}
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
     <colgroup>
         <col class="summary-column">
@@ -1253,6 +1257,8 @@
     </tbody>
 </table>
 {% endfor %}
+{% endif %}
+{% endif %}
 {% if childcare_type_zero_to_five %}
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
     <colgroup>
