@@ -395,14 +395,14 @@ def other_people_summary(request):
         adult_table = collections.OrderedDict({
             'table_object': Table([application_id_local]),
             'fields': {'adults_in_home': adults_in_home},
-            'title': 'Adults in your home',
+            'title': 'Adults in the home',
             'error_summary_title': 'There was a problem'
         })
 
         child_table = collections.OrderedDict({
             'table_object': Table([application_id_local]),
             'fields': {'children_in_home': children_in_home},
-            'title': 'Children in your home',
+            'title': 'Children in the home',
             'error_summary_title': 'There was a problem'
         })
 
