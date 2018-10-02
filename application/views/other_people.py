@@ -275,7 +275,6 @@ def other_people_summary(request):
 
         return child_table
 
-
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
@@ -429,6 +428,8 @@ def other_people_summary(request):
         sending_emails = application.adults_in_home is True and any(
                 [adult.email_resent_timestamp is None for adult in adults_list])
 
+        num_children_not_in_home = len(Child.objects.filter(application_id=application_id_local))
+
         variables = {
             'page_title': 'Check your answers: people in your home',
             'form': form,
@@ -437,7 +438,8 @@ def other_people_summary(request):
             'turning_16': application.children_turning_16,
             'people_in_home_status': application.people_in_home_status,
             'display_buttons_list': display_buttons_list,
-            'sending_emails': sending_emails
+            'sending_emails': sending_emails,
+            'num_children_not_in_home': num_children_not_in_home
         }
         variables = submit_link_setter(variables, table_list, 'people_in_home', application_id_local)
 
@@ -450,6 +452,9 @@ def other_people_summary(request):
         # If reaching the summary page for the first time
         if application.people_in_home_status == 'IN_PROGRESS' or application.people_in_home_status == 'WAITING':
             adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
+            if any(adult.health_check_status == 'To do' for adult in adults_list):
+                status.update(application_id_local, 'people_in_home_status', 'WAITING')
+
             if application.adults_in_home is True and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):
                 status.update(application_id_local, 'people_in_home_status', 'WAITING')
@@ -460,7 +465,6 @@ def other_people_summary(request):
                 return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
             else:
                 return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
-
         else:
             return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
 

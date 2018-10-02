@@ -12,5 +12,11 @@ def list_index(value, arg):
     return value[index]
 
 @register.filter(name='len')
-def list_index(value):
+def len(value):
     return len(value)
+
+@register.filter(name='in')
+def in_list(value, arg):
+    arg = arg.split(',')
+    print(arg)
+    return value in arg
