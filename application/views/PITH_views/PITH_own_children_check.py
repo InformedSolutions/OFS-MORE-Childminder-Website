@@ -1,10 +1,11 @@
 from django.http import HttpResponseRedirect
 
-from application.business_logic import get_application
+from application.business_logic import get_application, update_application
 from application.forms.PITH_forms.PITH_base_forms.PITH_own_children_check_form import PITHOwnChildrenCheckForm
 from application.models import AdultInHome, Child
-from application.utils import get_id, build_url
+from application.utils import get_id
 from application.views.PITH_views.base_views.PITH_radio_view import PITHRadioView
+
 
 class PITHOwnChildrenCheckView(PITHRadioView):
     template_name = 'PITH_templates/PITH_own_children_check.html'
@@ -31,6 +32,9 @@ class PITHOwnChildrenCheckView(PITHRadioView):
                 'remove': 0
             }
             context.update(adults_context)
+        else:
+            # Remove any existing children not in the home.
+            self.__clear_children_not_in_home(application_id)
 
         return HttpResponseRedirect(self.get_success_url(get=context))
 
@@ -46,3 +50,9 @@ class PITHOwnChildrenCheckView(PITHRadioView):
                 return no_yes_choice
             else:
                 return no_no_choice
+
+    def __clear_children_not_in_home(self, app_id):
+        children = Child.objects.filter(application_id=app_id)
+
+        for child in children:
+            child.delete()

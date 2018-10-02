@@ -32,14 +32,20 @@ class PITHChildrenCheckView(PITHRadioView):
                 'remove': 0
             }
             context.update(adults_context)
+        else:
+            # Remove any existing children details.
+            self.__clear_children(application_id)
 
         return HttpResponseRedirect(self.get_success_url(get=context))
 
     def get_choice_url(self, app_id):
         yes_choice, no_yes_choice, no_no_yes_choice, no_no_no_choice = self.success_url
         choice_bool = get_application(app_id, self.application_field_name)
-        care_in_home = ApplicantHomeAddress(app_id, 'childcare_address')
         adults = AdultInHome.objects.filter(application_id=app_id)
+
+        # Assert if the applicant's home address is the same as their childcare address
+        home_address = ApplicantHomeAddress.objects.get(application_id=app_id, current_address=True)
+        care_in_home = home_address.current_address and home_address.childcare_address
 
         if choice_bool:
             return yes_choice
@@ -51,3 +57,9 @@ class PITHChildrenCheckView(PITHRadioView):
                     return no_no_yes_choice
                 else:
                     return no_no_no_choice
+
+    def __clear_children(self, app_id):
+        children = ChildInHome.objects.filter(application_id=app_id)
+
+        for child in children:
+            child.delete()

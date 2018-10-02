@@ -6,7 +6,7 @@ from django.urls import reverse
 from application import status, address_helper
 from application.forms import ChildAddressForm, YourChildrenAddressLookupForm
 from application.models import Child, Application, ChildAddress, AdultInHome
-from application.utils import build_url
+from application.utils import build_url, get_id
 from application.views.your_children import __remove_arc_address_flag, __get_next_child_number_for_address_entry
 
 logger = logging.getLogger()
@@ -42,8 +42,8 @@ def __own_children_address_selection_get_handler(request, template, address_look
     :return: an HttpResponse object with the rendered children's address selection template
     """
 
-    application_id = request.GET["id"]
-    child = request.GET["child"]
+    application_id = get_id(request)
+    child = request.GET["children"]
     application = Application.get_id(app_id=application_id)
 
     child_record = Child.objects.get(application_id=application_id, child=child)
@@ -63,7 +63,7 @@ def __own_children_address_selection_get_handler(request, template, address_look
             'application_id': application_id,
             'postcode': postcode,
             'name': child_record.get_full_name(),
-            'child': child,
+            'children': child,
         }
 
         return render(request, template, variables)
@@ -78,7 +78,7 @@ def __own_children_address_selection_get_handler(request, template, address_look
         variables = {
             'form': form,
             'application_id': application_id,
-            'child': child,
+            'children': child,
         }
 
         return render(request, address_lookup_template, variables)
@@ -93,11 +93,11 @@ def __own_children_address_selection_post_handler(request, template, success_url
     (for other children), or a redirect to the task summary page.
     """
 
-    application_id = request.POST["id"]
-    child = request.POST["child"]
+    application_id = get_id(request)
+    child = request.GET["children"]
 
     logger.debug('Saving full address child address (acquired by postcode lookup) for application with id: '
-                 + str(application_id) + " and child number: " + str(child))
+                 + str(application_id) + " and children number: " + str(child))
 
     application = Application.get_id(app_id=application_id)
     child_record = Child.objects.get(application_id=application_id, child=str(child))
@@ -141,7 +141,7 @@ def __own_children_address_selection_post_handler(request, template, success_url
             return HttpResponseRedirect(build_url(redirect_url, get={'id': application_id}))
         # Recurse through use of querystring params
         return HttpResponseRedirect(
-            reverse(address_url) + '?id=' + application_id + '&child=' + str(next_child))
+            reverse(address_url) + '?id=' + application_id + '&children=' + str(next_child))
     else:
 
         form.error_summary_title = 'There was a problem finding your address'
@@ -154,7 +154,7 @@ def __own_children_address_selection_post_handler(request, template, success_url
             'postcode': postcode,
             'form': form,
             'application_id': application_id,
-            'child': child,
+            'children': child,
             'name': child_record.get_full_name(),
         }
 

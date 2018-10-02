@@ -2,6 +2,7 @@
 {% block page_title %}{{page_title}}{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
+{% load people_in_your_home %}
 
 {% block inner_content %}
 
@@ -72,7 +73,6 @@
         <!-- People in the Home task -- Health check status row -->
         {% if row.row_name == 'Health check status' and row.back_link == 'Other-People-Resend-Email-View' %}
         <td class="change-answer nowrap">
-            {% load people_in_your_home %}
             {% with table.loop_counter|subtract:"1" as index %}
             {% if display_buttons_list|list_index:index %}
 
@@ -87,7 +87,6 @@
         <!-- People in the Home task -- Email address row -->
         {% elif row.row_name == 'Email address' and row.back_link == 'PITH-Adult-Details-View' %}
         <td class="change-answer">
-            {% load people_in_your_home %}
             {% with table.loop_counter|subtract:"1" as index %}
             {% if display_buttons_list|list_index:index %}
 
@@ -98,6 +97,16 @@
 
             {% endif %}
             {% endwith %}
+        </td>
+
+        <!-- People in the Home task -- Child not in the home details rows -->
+        <!-- The address page expects a specific child number so table.other_people_numbers is overrode here -->
+        {% elif row.row_name|in:'Name,Date of birth' and row.back_link == 'PITH-Own-Children-Details-View' %}
+        <td class="change-answer">
+            <a href="{% url row.back_link %}?id={{application_id}}&children={{num_children_not_in_home}}&remove=0#id_{{row.data_name}}-group"
+               alt='Change {{ row.change_link_description|default:row.row_name }}'>
+                Change <span class="visuallyhidden">{{ row.change_link_description|default:row.row_name }}</span>
+            </a>
         </td>
 
         {% else %}

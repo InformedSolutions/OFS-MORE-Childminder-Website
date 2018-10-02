@@ -7,13 +7,12 @@ from django.views.generic import View
 
 from application.business_logic import (
     PITH_own_children_details_logic,
-    rearrange_children_in_home,
-    remove_child_in_home,
+    rearrange_children,
+    remove_child,
     reset_declaration,
 )
-from application.forms import OtherPeopleChildrenDetailsForm
 from application.forms.PITH_forms.PITH_own_children_details_form import PITHOwnChildrenDetailsForm
-from application.models import Application, ApplicantHomeAddress
+from application.models import Application, ApplicantHomeAddress, AdultInHome
 from application.utils import build_url
 
 
@@ -35,8 +34,8 @@ class PITHOwnChildrenDetailsView(View):
         if number_of_children == 1:
             remove_button = False    # Disable the remove person button
 
-        remove_child_in_home(application_id_local, remove_person)
-        rearrange_children_in_home(number_of_children, application_id_local)
+        remove_child(application_id_local, remove_person)
+        rearrange_children(number_of_children, application_id_local)
 
         form_list = [PITHOwnChildrenDetailsForm(id=application_id_local, child=i, prefix=i) for i in range(1, number_of_children + 1)]
 
@@ -44,7 +43,7 @@ class PITHOwnChildrenDetailsView(View):
             for index, form in enumerate(form_list):
                 if form.pk != '':  # If there are no children in the database yet, there will be no pk for the child.
                     form.error_summary_template_name = 'returned-error-summary.html'
-                    form.error_summary_title = "There was a problem (Child " + str(index + 1) + ")"
+                    form.error_summary_title = "There was a problem with Child {0}'s details".format(str(index + 1))
                     form.check_flag()
 
         variables = {
@@ -79,8 +78,7 @@ class PITHOwnChildrenDetailsView(View):
 
         for i in range(1, int(number_of_children) + 1):
             form = PITHOwnChildrenDetailsForm(request.POST, id=application_id_local, child=i, prefix=i)
-            # form.remove_flag()
-            form.error_summary_title = 'There was a problem with the details (Child ' + str(i) + ')'
+            form.error_summary_title = 'There was a problem with Child {0}\'s details'.format(str(i))
             form.remove_flag()
             form_list.append(form)
 
@@ -112,12 +110,11 @@ class PITHOwnChildrenDetailsView(View):
                     'people_in_home_status': application.people_in_home_status,
                 }
 
-                success_url = self.get_success_url(children_turning_16, application)
                 application.date_updated = current_date
                 application.save()
                 reset_declaration(application)
-                return HttpResponseRedirect(build_url(success_url, get={'id': application_id_local,
-                                                                        'child': 1}))
+                return HttpResponseRedirect(build_url('PITH-Own-Children-Postcode-View', get={'id': application_id_local,
+                                                                                              'children': 1}))
 
             # If there is an invalid form
             else:
@@ -162,11 +159,3 @@ class PITHOwnChildrenDetailsView(View):
                     'people_in_home_status': application.people_in_home_status
                 }
                 return render(request, 'PITH_templates/PITH_own_children_details.html', variables)
-
-    def get_success_url(self, children_turning_16, application):
-        if ApplicantHomeAddress.objects.get(application_id=application.pk).childcare_address:
-            success_url = 'PITH-Own-Children-Postcode-View'
-        else:
-            success_url = 'PITH-Summary-View'
-
-        return success_url

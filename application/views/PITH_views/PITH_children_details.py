@@ -12,7 +12,7 @@ from application.business_logic import (
     reset_declaration,
 )
 from application.forms import OtherPeopleChildrenDetailsForm
-from application.models import Application, ApplicantHomeAddress
+from application.models import Application, ApplicantHomeAddress, AdultInHome
 
 
 class PITHChildrenDetailsView(View):
@@ -41,7 +41,7 @@ class PITHChildrenDetailsView(View):
         if application.application_status == 'FURTHER_INFORMATION':
             for index, form in enumerate(form_list):
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem (Child " + str(index + 1) + ")"
+                form.error_summary_title = "There was a problem with Child {0}'s details".format(str(index + 1))
                 form.check_flag()
 
         variables = {
@@ -77,7 +77,7 @@ class PITHChildrenDetailsView(View):
         for i in range(1, int(number_of_children) + 1):
             form = OtherPeopleChildrenDetailsForm(request.POST, id=application_id_local, child=i, prefix=i)
             form.remove_flag()
-            form.error_summary_title = 'There was a problem with the details (Child ' + str(i) + ')'
+            form.error_summary_title = 'There was a problem with Child {0}\'s details'.format(str(i))
             form_list.append(form)
 
             if application.application_status == 'FURTHER_INFORMATION':
@@ -158,6 +158,7 @@ class PITHChildrenDetailsView(View):
                 }
                 return render(request, 'other-people-children-details.html', variables)
 
+
     def get_success_url(self, children_turning_16, application):
         """
         Function containing logic for determining success_url.
@@ -166,16 +167,24 @@ class PITHChildrenDetailsView(View):
         :param: application: application object for the applicant.
         :return: reversible string for redirect target page.
         """
+        adults = AdultInHome.objects.filter(application_id=application.pk)
+
         if children_turning_16:
             application.children_turning_16 = True
             success_url = 'PITH-Approaching-16-View'
         else:
             application.children_turning_16 = False
 
-            if ApplicantHomeAddress.objects.get(application_id=application.pk).childcare_address:
+            home_address = ApplicantHomeAddress.objects.get(application_id=application.pk, current_address=True)
+            childcare_address = ApplicantHomeAddress.objects.get(application_id=application.pk, childcare_address=True)
+
+            if home_address == childcare_address:
                 success_url = 'PITH-Own-Children-Check-View'
             else:
-                success_url = 'PITH-Summary-View'
+                if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+                    success_url = 'Task-List-View'
+                else:
+                    success_url = 'PITH-Summary-View'
 
         application.save()
 

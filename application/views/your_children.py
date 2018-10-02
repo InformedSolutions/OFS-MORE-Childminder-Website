@@ -10,7 +10,7 @@ from django.urls import reverse
 
 from ..forms import YourChildrenGuidanceForm, YourChildrenDetailsForm, YourChildrenLivingWithYouForm, ChildAddressForm, \
     YourChildrenSummaryForm, YourChildrenAddressLookupForm, YourChildManualAddressForm, ArcComments
-from ..models import Application, Child, ChildAddress
+from ..models import Application, Child, ChildAddress, ApplicantPersonalDetails, ApplicantHomeAddress
 from .. import status, address_helper
 from ..business_logic import remove_child, rearrange_children, your_children_details_logic, reset_declaration, \
     child_address_logic
@@ -20,6 +20,8 @@ from ..utils import get_non_db_field_arc_comment
 
 
 logger = logging.getLogger('')
+
+address_matches_childminder_text = 'Same as your own'
 
 #
 # Helper method for Your Children tasks
@@ -83,6 +85,7 @@ def __remove_arc_address_flag(child_address):
     """
     address_field_name = 'address'
     if ArcComments.objects.filter(table_pk=child_address.child_address_id, field_name=address_field_name).exists():
+        logger.debug('Removing ARC address comment for child address record: ' + str(child_address.child_address_id))
         arc_comment = ArcComments.objects.get(table_pk=child_address.child_address_id, field_name=address_field_name)
         arc_comment.flagged = False
         arc_comment.save()
@@ -155,7 +158,7 @@ def __create_child_table(child):
         child_fields = collections.OrderedDict([
             ('full_name', child.get_full_name()),
             ('date_of_birth', dob),
-            ('address', 'Same as your own')
+            ('address', address_matches_childminder_text)
         ])
 
     table = Table([child.pk])
@@ -166,7 +169,7 @@ def __create_child_table(child):
         'table_object': table,
         'fields': child_fields,
         'title': child.get_full_name(),
-        'error_summary_title': "There was a problem with your children's details (" + child.get_full_name() + ")"
+        'error_summary_title': "There was a problem with Child {0}'s details".format(child.get_full_name())
     })
 
     return child_table
@@ -566,6 +569,12 @@ def __your_children_living_with_you_post_handler(request):
     for child in children:
         child.lives_with_childminder = \
             str(child.child) in form.cleaned_data['children_living_with_childminder_selection']
+
+        # If post submission marks the child as residing with the childminder, delete any previously attributed
+        # address details for data cleanliness purposes. Likewise, remove any ARC comments
+        if child.lives_with_childminder:
+            __set_child_address_to_childminder_personal_address(application_id, child)
+
         child.save()
 
     if __get_children_not_living_with_childminder_count(application_id) > 0:
@@ -576,6 +585,36 @@ def __your_children_living_with_you_post_handler(request):
     else:
         return HttpResponseRedirect(reverse('Your-Children-Summary-View') + '?id=' +
                                     application_id)
+
+
+def __set_child_address_to_childminder_personal_address(application_id, child):
+    application = Application.objects.get(application_id=application_id)
+
+    child_address_record = ChildAddress(
+        application_id=application
+    )
+
+    if ChildAddress.objects.filter(application_id=application_id, child=child.child).exists():
+        child_address_record = ChildAddress.objects.get(application_id=application_id, child=child.child)
+
+        __remove_arc_address_flag(child_address_record)
+
+    # Set child address to the personal details of the applicant
+    applicant = ApplicantPersonalDetails.get_id(app_id=application_id)
+    applicant_personal_address = \
+        ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                         current_address=True)
+
+    child_address_record.child = child.child
+    child_address_record.street_line1 = applicant_personal_address.street_line1
+    child_address_record.street_line2 = applicant_personal_address.street_line2
+    child_address_record.town = applicant_personal_address.town
+    child_address_record.county = applicant_personal_address.county
+    child_address_record.country = applicant_personal_address.country
+    child_address_record.postcode = applicant_personal_address.postcode
+
+    child_address_record.save()
+
 
 
 def your_children_address_capture(request):
@@ -962,6 +1001,13 @@ def __your_children_summary_get_handler(request):
         child_table_list.append(child_table)
 
     child_table_list = create_tables(child_table_list, your_children_children_dict, your_children_children_link_dict)
+
+    # If child is noted as living with the childminder, update the change link such that it takes them to the question
+    # about which of their children live with them
+    for table in child_table_list:
+        for row in table.get_row_list():
+            if row.data_name == 'address' and row.value == address_matches_childminder_text:
+                row.back_link = 'Your-Children-Living-With-You-View'
 
     children_living_with_you_table = __create_children_living_with_you_table(application)
 

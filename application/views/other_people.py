@@ -42,7 +42,7 @@ from ..models import (AdultInHome,
                       ApplicantPersonalDetails,
                       Application,
                       ArcComments,
-                      ChildInHome, Child)
+                      ChildInHome, Child, ApplicantHomeAddress)
 from application.notify import send_email
 
 
@@ -87,7 +87,7 @@ def other_people_adult_details(request):
             form.check_flag()
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem (Person " + str(i) + ")"
+                form.error_summary_title = "There was a problem with Person {0}'s details".format(str(i))
                 is_review = True
             else:
                 is_review = False
@@ -142,11 +142,9 @@ def other_people_adult_details(request):
                 request.POST, id=application_id_local, adult=i, prefix=i, email_list=email_list)
             form.remove_flag()
             form_list.append(form)
-            form.error_summary_title = 'There was a problem with the details (Person ' + str(
-                i) + ')'
+            form.error_summary_title = "There was a problem with Person {0}'s details".format(str(i))
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem (Person " + str(i) + ")"
             if form.is_valid():
                 adult_record = other_people_adult_details_logic(
                     application_id_local, form, i)
@@ -213,6 +211,20 @@ def other_people_approaching_16(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered People in your home: approaching 16 template
     """
+
+    def get_success_url(app_id):
+        adults = AdultInHome.objects.filter(application_id=app_id)
+        home_address = ApplicantHomeAddress.objects.get(application_id=app_id, current_address=True)
+        childcare_address = ApplicantHomeAddress.objects.get(application_id=app_id, childcare_address=True)
+
+        if home_address == childcare_address:
+            return 'PITH-Own-Children-Check-View'
+        else:
+            if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+                return 'Task-List-View'
+            else:
+                return 'PITH-Summary-View'
+
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = OtherPeopleApproaching16Form()
@@ -226,6 +238,7 @@ def other_people_approaching_16(request):
             'people_in_home_status': application.people_in_home_status
         }
         return render(request, 'other-people-approaching-16.html', variables)
+
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = OtherPeopleApproaching16Form(request.POST)
@@ -239,7 +252,7 @@ def other_people_approaching_16(request):
                 'application_id': application_id_local,
                 'people_in_home_status': application.people_in_home_status
             }
-            return HttpResponseRedirect(reverse('PITH-Own-Children-Check-View') + '?id=' + application_id_local, variables)
+            return HttpResponseRedirect(reverse(get_success_url(application_id_local)) + '?id=' + application_id_local, variables)
         else:
             variables = {
                 'form': form,
@@ -255,6 +268,13 @@ def other_people_summary(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered People in your home: summary template
     """
+
+    def __create_child_not_in_the_home_table(child):
+        child_table = __create_child_table(child)
+        child_table['table_object'].other_people_numbers = '&children=' + str(child.child) + '&remove=0'
+
+        return child_table
+
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
@@ -321,7 +341,7 @@ def other_people_summary(request):
                 'table_object': table,
                 'fields': other_adult_fields,
                 'title': name,
-                'error_summary_title': ('There was a problem (' + name + ')')
+                'error_summary_title': ('There was a problem with {0}\'s details'.format(name))
             })
 
             adult_table_list.append(other_adult_table)
@@ -352,7 +372,7 @@ def other_people_summary(request):
                 'table_object': Table([child.pk]),
                 'fields': other_child_fields,
                 'title': name,
-                'error_summary_title': ('There was a problem (' + name + ')')
+                'error_summary_title': ('There was a problem with {0}\'s details'.format(name))
             })
 
             child_table_list.append(other_child_table)
@@ -364,7 +384,7 @@ def other_people_summary(request):
         child_table_list = create_tables(child_table_list, other_child_name_dict, other_child_link_dict)
 
         # Populating Children not in the Home:
-        children_not_in_the_home_table_list = [__create_child_table(child) for child in children_not_in_the_home_list]
+        children_not_in_the_home_table_list = [__create_child_not_in_the_home_table(child) for child in children_not_in_the_home_list]
         children_not_in_the_home_table = create_tables(children_not_in_the_home_table_list,
                                                        child_not_in_the_home_name_dict, child_not_in_the_home_link_dict)
 
@@ -397,7 +417,9 @@ def other_people_summary(request):
         child_table = create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
         not_child_table = create_tables([not_child_table], other_child_not_in_the_home_summary_name_dict, other_child_not_in_the_home_summary_link_dict)
 
-        table_list = adult_table + adult_table_list + child_table + child_table_list + not_child_table + children_not_in_the_home_table
+        table_list = adult_table + adult_table_list + child_table + child_table_list
+        if application.own_children_not_in_home is not None:
+            table_list += not_child_table + children_not_in_the_home_table
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
@@ -405,6 +427,8 @@ def other_people_summary(request):
 
         sending_emails = application.adults_in_home is True and any(
                 [adult.email_resent_timestamp is None for adult in adults_list])
+
+        num_children_not_in_home = len(Child.objects.filter(application_id=application_id_local))
 
         variables = {
             'page_title': 'Check your answers: people in your home',
@@ -414,7 +438,8 @@ def other_people_summary(request):
             'turning_16': application.children_turning_16,
             'people_in_home_status': application.people_in_home_status,
             'display_buttons_list': display_buttons_list,
-            'sending_emails': sending_emails
+            'sending_emails': sending_emails,
+            'num_children_not_in_home': num_children_not_in_home
         }
         variables = submit_link_setter(variables, table_list, 'people_in_home', application_id_local)
 
@@ -427,6 +452,9 @@ def other_people_summary(request):
         # If reaching the summary page for the first time
         if application.people_in_home_status == 'IN_PROGRESS' or application.people_in_home_status == 'WAITING':
             adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
+            if any(adult.health_check_status == 'To do' for adult in adults_list):
+                status.update(application_id_local, 'people_in_home_status', 'WAITING')
+
             if application.adults_in_home is True and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):
                 status.update(application_id_local, 'people_in_home_status', 'WAITING')
@@ -437,7 +465,6 @@ def other_people_summary(request):
                 return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
             else:
                 return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
-
         else:
             return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
 

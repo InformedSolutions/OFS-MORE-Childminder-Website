@@ -38,7 +38,7 @@ def __own_children_address_manual_get_handler(request, template):
     :return: Manual address entry page
     """
     application_id = get_id(request)
-    child = request.GET["child"]
+    child = request.GET["children"]
 
     logger.debug('Rendering manual child address capture page for application with id: '
                  + str(application_id) + " and child number: " + str(child))
@@ -54,7 +54,7 @@ def __own_children_address_manual_get_handler(request, template):
 
     variables = {
         'form': form,
-        'child': child,
+        'children': child,
         'name': child_record.get_full_name(),
         'application_id': application_id,
     }
@@ -71,7 +71,7 @@ def __own_children_address_manual_post_handler(request, template, success_url, a
     current_date = timezone.now()
 
     application_id = get_id(request)
-    child = request.GET["child"]
+    child = request.GET["children"]
 
     logger.debug('Saving manual child address details for application with id: '
                  + str(application_id) + " and child number: " + str(child))
@@ -110,7 +110,7 @@ def __own_children_address_manual_post_handler(request, template, success_url, a
             return HttpResponseRedirect(build_url(redirect_url, get={'id': application_id}))
 
         return HttpResponseRedirect(
-            build_url(address_url, get={'id': application_id, 'child': str(next_child)}))
+            build_url(address_url, get={'id': application_id, 'children': str(next_child)}))
     else:
         form.error_summary_title = 'There was a problem with your address'
         child_record = Child.objects.get(application_id=application_id, child=child)
@@ -120,7 +120,7 @@ def __own_children_address_manual_post_handler(request, template, success_url, a
             form.error_summary_title = 'There was a problem'
         variables = {
             'form': form,
-            'child': child,
+            'children': child,
             'name': child_record.get_full_name(),
             'application_id': application_id,
         }
