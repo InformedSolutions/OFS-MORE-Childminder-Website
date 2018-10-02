@@ -158,6 +158,7 @@ class PITHChildrenDetailsView(View):
                 }
                 return render(request, 'other-people-children-details.html', variables)
 
+
     def get_success_url(self, children_turning_16, application):
         """
         Function containing logic for determining success_url.

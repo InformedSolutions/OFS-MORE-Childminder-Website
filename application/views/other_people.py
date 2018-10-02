@@ -268,6 +268,14 @@ def other_people_summary(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered People in your home: summary template
     """
+
+    def __create_child_not_in_the_home_table(child):
+        child_table = __create_child_table(child)
+        child_table['table_object'].other_people_numbers = '&children=' + str(child.child) + '&remove=0'
+
+        return child_table
+
+
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
@@ -377,7 +385,7 @@ def other_people_summary(request):
         child_table_list = create_tables(child_table_list, other_child_name_dict, other_child_link_dict)
 
         # Populating Children not in the Home:
-        children_not_in_the_home_table_list = [__create_child_table(child) for child in children_not_in_the_home_list]
+        children_not_in_the_home_table_list = [__create_child_not_in_the_home_table(child) for child in children_not_in_the_home_list]
         children_not_in_the_home_table = create_tables(children_not_in_the_home_table_list,
                                                        child_not_in_the_home_name_dict, child_not_in_the_home_link_dict)
 
