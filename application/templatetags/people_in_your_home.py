@@ -12,7 +12,7 @@ def list_index(value, arg):
     return value[index]
 
 @register.filter(name='len')
-def len(value):
+def len_func(value):
     return len(value)
 
 @register.filter(name='in')

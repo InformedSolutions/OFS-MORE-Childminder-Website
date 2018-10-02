@@ -90,8 +90,7 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
             label='Do they have an Ofsted DBS check?',
             choices=self.get_options(),
             widget=ConditionalPostInlineRadioSelect,
-            required=True,
-            error_messages={'required': 'Please say if this person has an Ofsted DBS check'})
+            required=False)
 
     def get_dbs_field_data(self):
         dbs_certificate_number_widget = NumberInput()
@@ -99,7 +98,7 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
 
         return forms.IntegerField(label='DBS certificate number',
                                   help_text='12-digit number on their certificate',
-                                  required=True,
+                                  required=False,
                                   error_messages={'required': 'Please enter their DBS certificate number'},
                                   widget=dbs_certificate_number_widget)
 
@@ -108,7 +107,7 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
             label='Are they on the DBS update service?',
             choices=self.get_options(),
             widget=ConditionalPostInlineRadioSelect,
-            required=True,
+            required=False,
             error_messages={'required': 'Please say if this person is on the DBS update service'})
 
     def clean(self):
@@ -143,6 +142,8 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
                     self.clean_dbs(cleaned_dbs_field_no_update, self.dbs_field_no_update_name, application, cleaned_capita_field, cleaned_on_update_field)
                 else:
                     self.update_adult_in_home_fields(cleaned_capita_field, cleaned_on_update_field, '')
+        else:
+            self.add_error(self.capita_field_name[:-36], 'Please say if this person has an Ofsted DBS check')
 
         return self.cleaned_data
 
@@ -198,6 +199,6 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
         :return: None
         """
         super(PITHDBSCheckForm, self).check_flag()
-        if self.dbs_field_name in self.errors and self.initial[self.on_update_field_name]:
+        if self.dbs_field_name in self.errors and self.initial[self.capita_field_name]:
             error = self.errors.pop(self.dbs_field_name)
             self.add_error(self.dbs_field_no_update_name[:-36], error)  # index to remove uuid. add_error will append it
