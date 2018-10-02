@@ -109,12 +109,11 @@ class PITHOwnChildrenDetailsView(View):
                     'people_in_home_status': application.people_in_home_status,
                 }
 
-                success_url = self.get_success_url()
                 application.date_updated = current_date
                 application.save()
                 reset_declaration(application)
-                return HttpResponseRedirect(build_url(success_url, get={'id': application_id_local,
-                                                                        'child': 1}))
+                return HttpResponseRedirect(build_url('PITH-Own-Children-Postcode-View', get={'id': application_id_local,
+                                                                                              'children': 1}))
 
             # If there is an invalid form
             else:
@@ -159,6 +158,3 @@ class PITHOwnChildrenDetailsView(View):
                     'people_in_home_status': application.people_in_home_status
                 }
                 return render(request, 'PITH_templates/PITH_own_children_details.html', variables)
-
-    def get_success_url(self):
-        return 'PITH-Own-Children-Postcode-View'
