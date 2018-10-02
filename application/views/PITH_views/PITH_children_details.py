@@ -189,7 +189,6 @@ class PITHChildrenDetailsView(View):
                 else:
                     success_url = 'PITH-Summary-View'
 
-
         application.save()
 
         return success_url
