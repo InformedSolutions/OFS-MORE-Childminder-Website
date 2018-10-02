@@ -802,7 +802,7 @@ def references_summary(request):
         first_reference_table = {'table_object': Table([first_reference_record.pk]),
                                  'fields': first_reference_fields,
                                  'title': 'First reference',
-                                 'error_summary_title': "There was a problem (Reference 1)"}
+                                 'error_summary_title': "There was a problem with Reference 1's details"}
         first_reference_table = create_tables([first_reference_table], first_reference_name_dict,
                                               first_reference_link_dict)
 
@@ -819,7 +819,7 @@ def references_summary(request):
         second_reference_table = {'table_object': Table([second_reference_record.pk]),
                                   'fields': second_reference_fields,
                                   'title': 'Second reference',
-                                  'error_summary_title': "There was a problem (Reference 2)"}
+                                  'error_summary_title': "There was a problem with Reference 2's details"}
         second_reference_table = create_tables([second_reference_table], second_reference_name_dict,
                                                second_reference_link_dict)
         table_list = first_reference_table + second_reference_table

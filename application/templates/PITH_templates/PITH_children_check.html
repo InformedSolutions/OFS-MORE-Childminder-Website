@@ -10,13 +10,16 @@
 <div class="two-thirds">
     {{form.error_summary}}
 
-    This is a placeholder page and will redirect to the old version of this page regardless of answer.
-
     <form method="post" novalidate>
         <div class="form-group">
             <h1 class="form-title heading-large">
                 Children in the home
             </h1>
+
+            <p>We need to know about any children under 16 who live in the home.</p>
+
+            <p>Council social services will carry out checks on all of these children.</p>
+            
             {{ form.as_div }}
 
             {% csrf_token %}

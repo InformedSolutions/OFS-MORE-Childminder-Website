@@ -40,7 +40,7 @@ class ChildcareTrainingTestSuite(TestCase, ApplicationTestBase):
             magic_link_email_mock.return_value.status_code = 201
             magic_link_text_mock.return_value.status_code = 201
 
-            self.TestAppEmail()
+            self.test_app_email()
             self.TestValidateEmail()
             self.TestAppPhone()
             self.url_suffix = '?id=' + str(self.app_id)

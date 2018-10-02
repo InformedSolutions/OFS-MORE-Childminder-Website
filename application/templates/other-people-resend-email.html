@@ -33,7 +33,7 @@
             Resend health questions
         </h1>
         <p>{{name}}: {{email}}</p>
-        <p><a href="{% url 'Other-People-Summary-View' %}?id={{application_id}}">I want to change the email address</a></p>
+        <p><a href="{% url 'PITH-Summary-View' %}?id={{application_id}}">I want to change the email address</a></p>
         {{form.as_div}}
         {% csrf_token %}
         <input type="submit" class="button" name="resend_email" value="Resend health questions">
