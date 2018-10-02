@@ -79,11 +79,12 @@ class PITHOwnChildrenDetailsView(View):
         for i in range(1, int(number_of_children) + 1):
             form = PITHOwnChildrenDetailsForm(request.POST, id=application_id_local, child=i, prefix=i)
             form.error_summary_title = 'There was a problem with Child {0}\'s details'.format(str(i))
-            form.remove_flag()
-            form_list.append(form)
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
+                form.remove_flag()
+
+            form_list.append(form)
 
             if form.is_valid():
                 child_record = PITH_own_children_details_logic(application_id_local, form, i)
