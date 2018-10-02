@@ -41,7 +41,7 @@ def __own_children_address_capture_get_handler(request, template):
     """
 
     application_id = get_id(request)
-    child = request.GET["child"]
+    child = request.GET["children"]
 
     logger.debug('Rendering postcode lookup page to capture a child address for application with id: '
                  + str(application_id) + " and child number: " + str(child))
@@ -54,7 +54,7 @@ def __own_children_address_capture_get_handler(request, template):
         'form': form,
         'name': child_record.get_full_name(),
         'application_id': application_id,
-        'child': child,
+        'children': child,
     }
 
     return render(request, template, variables)
@@ -68,10 +68,10 @@ def __own_children_address_lookup_post_handler(request, template, success_url):
     """
 
     application_id = get_id(request)
-    child = request.GET["child"]
+    child = request.GET["children"]
 
     logger.debug('Fetching postcode lookup matches for child address details using application id: '
-                 + str(application_id) + " and child number: " + str(child))
+                 + str(application_id) + " and children number: " + str(child))
 
     form = ChildAddressForm(request.POST, id=application_id, child=child)
 
@@ -102,9 +102,9 @@ def __own_children_address_lookup_post_handler(request, template, success_url):
             status.update(application_id, 'people_in_home_status', 'IN_PROGRESS')
 
             return HttpResponseRedirect(build_url(success_url, get={'id': application_id,
-                                                                    'child': str(child)}))
+                                                                    'children': str(child)}))
         else:
-            form.error_summary_title = 'There was a problem with your postcode'
+            form.error_summary_title = 'There was a problem with the postcode'
 
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
@@ -116,7 +116,7 @@ def __own_children_address_lookup_post_handler(request, template, success_url):
                 'form': form,
                 'name': child_record.get_full_name(),
                 'application_id': application_id,
-                'child': child,
+                'children': child,
             }
 
             return render(request, template, variables)
