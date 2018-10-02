@@ -12,7 +12,7 @@ from application.business_logic import (
     reset_declaration,
 )
 from application.forms import OtherPeopleChildrenDetailsForm
-from application.models import Application, ApplicantHomeAddress
+from application.models import Application, ApplicantHomeAddress, AdultInHome
 
 
 class PITHChildrenDetailsView(View):
@@ -170,6 +170,8 @@ class PITHChildrenDetailsView(View):
         If no child is approaching 16 AND applicant IS providing care in own home, navigate to own children page.
         If no child is approaching 16 AND applicant NOT providing care in own home, navigate to summary page.
         """
+        adults = AdultInHome.objects.filter(application_id=application.pk)
+
         if children_turning_16:
             application.children_turning_16 = True
             success_url = 'PITH-Approaching-16-View'
@@ -182,7 +184,11 @@ class PITHChildrenDetailsView(View):
             if home_address == childcare_address:
                 success_url = 'PITH-Own-Children-Check-View'
             else:
-                success_url = 'PITH-Summary-View'
+                if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+                    success_url = 'Task-List-View'
+                else:
+                    success_url = 'PITH-Summary-View'
+
 
         application.save()
 

@@ -213,13 +213,17 @@ def other_people_approaching_16(request):
     """
 
     def get_success_url(app_id):
+        adults = AdultInHome.objects.filter(application_id=app_id)
         home_address = ApplicantHomeAddress.objects.get(application_id=app_id, current_address=True)
         childcare_address = ApplicantHomeAddress.objects.get(application_id=app_id, childcare_address=True)
 
         if home_address == childcare_address:
             return 'PITH-Own-Children-Check-View'
         else:
-            return 'PITH-Summary-View'
+            if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+                return 'Task-List-View'
+            else:
+                return 'PITH-Summary-View'
 
     if request.method == 'GET':
         application_id_local = request.GET["id"]
