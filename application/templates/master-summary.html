@@ -1110,6 +1110,7 @@
     </table>
     {% endfor %}
 {% endif %}
+{% if own_children == False %}
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
     <colgroup>
         <col class="summary-column">
@@ -1256,6 +1257,7 @@
     </tbody>
 </table>
 {% endfor %}
+{% endif %}
 {% endif %}
 {% if childcare_type_zero_to_five %}
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
