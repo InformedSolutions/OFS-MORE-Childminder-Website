@@ -1,20 +1,21 @@
 import collections
 
 from django import forms
-from django.utils.html import conditional_escape, format_html_join
 
 from govuk_forms.forms import GOVUKForm
 from govuk_forms import widgets as govuk_widgets
 from govuk_forms.widgets import NumberInput
 
-from application.forms import ChildminderForms, childminder_dbs_duplicates_household_member_check
+from application.forms import childminder_dbs_duplicates_household_member_check
+from application.forms.PITH_forms.PITH_base_forms.PITH_childminder_form_retrofit import PITHChildminderFormAdapter
+
 from application.models import Application
 
 from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
 from application.business_logic import update_adult_in_home
 
 
-class PITHDBSCheckForm(ChildminderForms):
+class PITHDBSCheckForm(PITHChildminderFormAdapter):
     """
     GOV.UK form for the People in the Home: Non generic form for the DBSCheckView.
     """
@@ -172,3 +173,31 @@ class PITHDBSCheckForm(ChildminderForms):
         update_adult_in_home(self.adult.pk, 'capita', capita_value)
         update_adult_in_home(self.adult.pk, 'on_update', on_update_value)
         update_adult_in_home(self.adult.pk, 'dbs_certificate_number', dbs_value)
+
+    def check_flag(self):
+        """
+        Custom check_flag method for the PITHDBSCheckForm.
+
+        This will:
+            - Implement the parent class check_flag method.
+            - Then see if the 'dbs_certificate_number' is flagged.
+            - If it is flagged AND on_update is True (that is to say, that the person in the home has a
+              non-capita/non-Ofsted DBS), then the flag is moved from the dbs_certificate_number field to the
+              'dbs_certificate_number_no_update' field.
+
+        This is required because:
+            - There is a single database table for the dbs_certificate_number in the database.
+            - The ARC flag is stored against a field with the name 'dbs_certificate_number', not against one named
+              'dbs_certificate_number_no_update'.
+            - So the parent class check_flag() method will add the flag against the 'dbs_certificate_number' field, even
+              if the person in the home has a non-catpita/non-Ofsted DBS.
+
+        Doing this here rather than in ARC means that ARC is consistent, whilst all bespoke PITH logic remains grouped
+        together.
+
+        :return: None
+        """
+        super(PITHDBSCheckForm, self).check_flag()
+        if self.dbs_field_name in self.errors and self.initial[self.on_update_field_name]:
+            error = self.errors.pop(self.dbs_field_name)
+            self.add_error(self.dbs_field_no_update_name[:-36], error)  # index to remove uuid. add_error will append it

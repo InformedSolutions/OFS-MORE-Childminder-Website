@@ -41,9 +41,10 @@ class PITHOwnChildrenDetailsView(View):
 
         if application.application_status == 'FURTHER_INFORMATION':
             for index, form in enumerate(form_list):
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem with Child {0}'s details".format(str(index + 1))
-                form.check_flag()
+                if form.pk != '':  # If there are no children in the database yet, there will be no pk for the child.
+                    form.error_summary_template_name = 'returned-error-summary.html'
+                    form.error_summary_title = "There was a problem with Child {0}'s details".format(str(index + 1))
+                    form.check_flag()
 
         variables = {
             'form_list': form_list,
@@ -77,8 +78,8 @@ class PITHOwnChildrenDetailsView(View):
 
         for i in range(1, int(number_of_children) + 1):
             form = PITHOwnChildrenDetailsForm(request.POST, id=application_id_local, child=i, prefix=i)
-            # form.remove_flag()
             form.error_summary_title = 'There was a problem with Child {0}\'s details'.format(str(i))
+            form.remove_flag()
             form_list.append(form)
 
             if application.application_status == 'FURTHER_INFORMATION':
