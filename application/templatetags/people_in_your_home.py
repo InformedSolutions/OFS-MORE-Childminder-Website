@@ -18,5 +18,4 @@ def len(value):
 @register.filter(name='in')
 def in_list(value, arg):
     arg = arg.split(',')
-    print(arg)
     return value in arg
