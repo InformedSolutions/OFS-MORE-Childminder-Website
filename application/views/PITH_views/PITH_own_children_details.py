@@ -42,7 +42,7 @@ class PITHOwnChildrenDetailsView(View):
         if application.application_status == 'FURTHER_INFORMATION':
             for index, form in enumerate(form_list):
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem (Child " + str(index + 1) + ")"
+                form.error_summary_title = "There was a problem with Child {0}'s details".format(str(index + 1))
                 form.check_flag()
 
         variables = {
@@ -78,7 +78,7 @@ class PITHOwnChildrenDetailsView(View):
         for i in range(1, int(number_of_children) + 1):
             form = PITHOwnChildrenDetailsForm(request.POST, id=application_id_local, child=i, prefix=i)
             # form.remove_flag()
-            form.error_summary_title = 'There was a problem with the details (Child ' + str(i) + ')'
+            form.error_summary_title = 'There was a problem with Child {0}\'s details'.format(str(i))
             form_list.append(form)
 
             if application.application_status == 'FURTHER_INFORMATION':
@@ -109,7 +109,7 @@ class PITHOwnChildrenDetailsView(View):
                     'people_in_home_status': application.people_in_home_status,
                 }
 
-                success_url = self.get_success_url(children_turning_16, application)
+                success_url = self.get_success_url(application)
                 application.date_updated = current_date
                 application.save()
                 reset_declaration(application)
@@ -160,8 +160,12 @@ class PITHOwnChildrenDetailsView(View):
                 }
                 return render(request, 'PITH_templates/PITH_own_children_details.html', variables)
 
-    def get_success_url(self, children_turning_16, application):
-        if ApplicantHomeAddress.objects.get(application_id=application.pk).childcare_address:
+    def get_success_url(self, application):
+
+        home_address = ApplicantHomeAddress.objects.get(application_id=application.pk, current_address=True)
+        childcare_address = ApplicantHomeAddress.objects.get(application_id=application.pk, childcare_address=True)
+
+        if home_address == childcare_address:
             success_url = 'PITH-Own-Children-Postcode-View'
         else:
             success_url = 'PITH-Summary-View'
