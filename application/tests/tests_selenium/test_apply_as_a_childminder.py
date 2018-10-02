@@ -1119,7 +1119,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
                              "//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
-        self.assertEqual("Check your answers: people in your home",
+        self.assertEqual("CCheck your answers: people in the home",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
                              "//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath(

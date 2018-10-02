@@ -431,7 +431,7 @@ def other_people_summary(request):
         num_children_not_in_home = len(Child.objects.filter(application_id=application_id_local))
 
         variables = {
-            'page_title': 'Check your answers: people in your home',
+            'page_title': 'Check your answers: people in the home',
             'form': form,
             'application_id': application_id_local,
             'table_list': table_list,
