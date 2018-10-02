@@ -199,6 +199,6 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
         :return: None
         """
         super(PITHDBSCheckForm, self).check_flag()
-        if self.dbs_field_name in self.errors and self.initial[self.capita_field_name]:
+        if self.dbs_field_name in self.errors and not self.initial[self.capita_field_name]:
             error = self.errors.pop(self.dbs_field_name)
             self.add_error(self.dbs_field_no_update_name[:-36], error)  # index to remove uuid. add_error will append it
