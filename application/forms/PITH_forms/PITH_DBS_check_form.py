@@ -138,7 +138,7 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
                 self.clean_dbs(cleaned_dbs_field, self.dbs_field_name, application, cleaned_capita_field, cleaned_on_update_field)
             else:
                 if cleaned_on_update_field is None:
-                    self.add_error(self.on_update_field_name, 'Please say if this person is on the DBS update service')
+                    self.add_error(self.on_update_field_name[:-36], 'Please say if this person is on the DBS update service')
                 elif cleaned_on_update_field:
                     self.clean_dbs(cleaned_dbs_field_no_update, self.dbs_field_no_update_name, application, cleaned_capita_field, cleaned_on_update_field)
                 else:
@@ -155,12 +155,12 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
 
     def clean_dbs(self, cleaned_dbs_value, field_name, application, cleaned_capita_value, cleaned_on_update_value):
         if cleaned_dbs_value is None:
-            self.add_error(field_name, 'Please enter their DBS certificate number')
+            self.add_error(field_name[:-36], 'Please enter their DBS certificate number')
         elif len(str(cleaned_dbs_value)) != 12:
-            self.add_error(field_name,
+            self.add_error(field_name[:-36],
                            'Check the certificate: the number should be 12 digits long')
         elif childminder_dbs_duplicates_household_member_check(application, cleaned_dbs_value, self.adult):
-            self.add_error(field_name, 'Please enter a different DBS number. '
+            self.add_error(field_name[:-36], 'Please enter a different DBS number. '
                                        'You entered this number for someone in your childcare location')
         else:
             # TODO Move this code to more appropriate place (e.g form_valid)
