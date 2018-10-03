@@ -1,4 +1,5 @@
 import logging
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
@@ -11,6 +12,7 @@ logger = logging.getLogger('')
 
 
 def PITHOwnChildrenPostcodeView(request):
+
     return __own_children_address_capture(request)
 
 
@@ -25,9 +27,15 @@ def __own_children_address_capture(request):
     success_url = 'PITH-Own-Children-Select-View'
 
     if request.method == 'GET':
+
+        logger.debug('Use GET handler')
+
         return __own_children_address_capture_get_handler(request,
                                                           template=template)
     if request.method == 'POST':
+
+        logger.debug('Use POST handler')
+
         return __own_children_address_lookup_post_handler(request,
                                                           template=template,
                                                           success_url=success_url)

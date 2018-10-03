@@ -51,7 +51,7 @@ class PITHAdultDetailsView(PITHRadioView):
         show_remove_button = not num_adults == 1
 
         email_list = self.get_email_list(num_adults)
-        log.debug('List of adult emails retrieved: ' + email_list)
+        log.debug('List of adult emails retrieved')
 
         form_list = [self.create_form_instance(application_id, index, email_list) for index in range(1, num_adults + 1)]
         log.debug('List of forms retrieved')
