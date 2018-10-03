@@ -7,6 +7,7 @@ from application.utils import get_id
 # Initiate logging
 log = logging.getLogger('')
 
+
 class PITHGuidanceView(PITHTemplateView):
 
     template_name = 'PITH_templates/PITH_guidance.html'
