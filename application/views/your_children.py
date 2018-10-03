@@ -216,6 +216,39 @@ def __add_arc_comments_to_child_tables(application_id, child_tables):
                         break
 
 
+def __set_child_address_to_childminder_personal_address(application_id, child):
+    """
+    Helper method for setting a child's address to the personal address of the applicant
+    :param application_id: the application id against which the child has been recorded
+    :param child: the child for which an address is to be amended
+    """
+    application = Application.objects.get(application_id=application_id)
+
+    child_address_record = ChildAddress(
+        application_id=application
+    )
+
+    if ChildAddress.objects.filter(application_id=application_id, child=child.child).exists():
+        child_address_record = ChildAddress.objects.get(application_id=application_id, child=child.child)
+
+        __remove_arc_address_flag(child_address_record)
+
+    # Set child address to the personal details of the applicant
+    applicant = ApplicantPersonalDetails.get_id(app_id=application_id)
+    applicant_personal_address = \
+        ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
+                                         current_address=True)
+
+    child_address_record.child = child.child
+    child_address_record.street_line1 = applicant_personal_address.street_line1
+    child_address_record.street_line2 = applicant_personal_address.street_line2
+    child_address_record.town = applicant_personal_address.town
+    child_address_record.county = applicant_personal_address.county
+    child_address_record.country = applicant_personal_address.country
+    child_address_record.postcode = applicant_personal_address.postcode
+
+    child_address_record.save()
+
 #
 # End helper methods
 #
@@ -585,36 +618,6 @@ def __your_children_living_with_you_post_handler(request):
     else:
         return HttpResponseRedirect(reverse('Your-Children-Summary-View') + '?id=' +
                                     application_id)
-
-
-def __set_child_address_to_childminder_personal_address(application_id, child):
-    application = Application.objects.get(application_id=application_id)
-
-    child_address_record = ChildAddress(
-        application_id=application
-    )
-
-    if ChildAddress.objects.filter(application_id=application_id, child=child.child).exists():
-        child_address_record = ChildAddress.objects.get(application_id=application_id, child=child.child)
-
-        __remove_arc_address_flag(child_address_record)
-
-    # Set child address to the personal details of the applicant
-    applicant = ApplicantPersonalDetails.get_id(app_id=application_id)
-    applicant_personal_address = \
-        ApplicantHomeAddress.objects.get(personal_detail_id=applicant,
-                                         current_address=True)
-
-    child_address_record.child = child.child
-    child_address_record.street_line1 = applicant_personal_address.street_line1
-    child_address_record.street_line2 = applicant_personal_address.street_line2
-    child_address_record.town = applicant_personal_address.town
-    child_address_record.county = applicant_personal_address.county
-    child_address_record.country = applicant_personal_address.country
-    child_address_record.postcode = applicant_personal_address.postcode
-
-    child_address_record.save()
-
 
 
 def your_children_address_capture(request):
