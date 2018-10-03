@@ -1,7 +1,6 @@
 from .PITH_DBS_check import *
 from .PITH_abroad_criminal import *
 from .PITH_adult_check import *
-from .PITH_adults_details import *
 from .PITH_apply import *
 from .PITH_children_check import *
 from .PITH_children_details import *

@@ -1,13 +1,13 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponseRedirect
-from django.views.generic.edit import FormView
+from django.views.generic import TemplateView
+from django.views.generic.base import TemplateResponseMixin
 
 from application.business_logic import update_application, get_application
-from application.forms import ChildminderForms
 from application.utils import build_url, get_id
 
 
-class PITHMultiFormView(FormView):
+class PITHMultiFormView(TemplateView, TemplateResponseMixin):
     """
     Class allowing for multiple form instances on the same page.
     Intended usage is for multiple instances of the same form_class to be used, but this is dependant on
@@ -97,6 +97,13 @@ class PITHMultiFormView(FormView):
             update_application(application_id, 'people_in_home_status', 'IN_PROGRESS')
 
         return HttpResponseRedirect(self.get_success_url())
+
+    def form_invalid(self, form):
+        """
+        If the form is invalid, re-render the context data with the
+        data-filled form and errors.
+        """
+        return self.render_to_response(self.get_context_data(form_list=form))
 
     def get_form_list(self) -> list:
         """
