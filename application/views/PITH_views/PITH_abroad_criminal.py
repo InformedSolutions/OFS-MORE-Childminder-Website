@@ -4,8 +4,8 @@ from django.http import HttpResponseRedirect
 
 from application.business_logic import get_childcare_register_type
 from application.models import AdultInHome
-from application.views.PITH_views.base_views.PITH_template_view import PITHTemplateView
 from application.utils import build_url, get_id
+from application.views.PITH_views.base_views.PITH_template_view import PITHTemplateView
 
 # Initiate logging
 log = logging.getLogger('')
