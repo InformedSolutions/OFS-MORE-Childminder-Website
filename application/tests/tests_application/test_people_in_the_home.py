@@ -81,3 +81,42 @@ class PeopleInTheHomeTestSuite(TestCase):
 
     def test_post_to_MOD_checks_page_redirects_to_dbs_checks_page(self):
         pass
+
+    def test_can_render_dbs_checks_page(self):
+        pass
+
+    def test_dbs_checks_page_renders_with_one_form_per_adult(self):
+        pass
+
+    def test_any_adults_on_dbs_update_service_redirects_to_post_dbs_page(self):
+        pass
+
+    def test_no_adults_on_dbs_update_service_and_any_adults_without_dbs_redirects_to_apply_for_dbs_page(self):
+        pass
+
+    def test_no_adults_on_dbs_update_service_and_no_adults_without_dbs_redirects_to_children_question_page(self):
+        pass
+
+    def test_can_render_post_dbs_page(self):
+        pass
+
+    def test_post_dbs_page_renders_with_all_adults_on_dbs_update_service(self):
+        pass
+
+    def test_post_request_to_post_dbs_page_redirects_to_apply_for_dbs_page_if_any_adults_without_dbs(self):
+        pass
+
+    def test_post_request_to_post_dbs_page_redirects_to_childcare_question_page_if_no_adults_without_dbs(self):
+        pass
+
+    def test_can_render_apply_for_dbs_page(self):
+        pass
+
+    def test_apply_for_dbs_page_renders_with_all_adults_needing_dbs(self):
+        pass
+
+    def test_any_adults_without_dbs_updates_db_to_reflect_this(self):
+        pass
+
+    def test_post_request_to_apply_for_dbs_page_redirects_to_children_question_page(self):
+        pass
