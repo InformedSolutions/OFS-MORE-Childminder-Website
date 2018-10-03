@@ -1,13 +1,21 @@
+from django.views.generic.edit import FormView
+
 from application.business_logic import (get_adult_in_home,
                                         update_adult_in_home,
                                         get_application,
                                         update_application)
 from application.utils import build_url, get_id
-from django.views.generic.edit import FormView
 
 
 class PITHRadioView(FormView):
+    """
+    Class intended to display a single radio button form that is linked to either an AdultInHome or Application model
+     instance.
+    """
+    # Expecting two success_urls corresponding to choosing 'Yes' and 'No' respectively.
     success_url = (None, None)
+
+    # Set PITH_field_name OR application_field_name, but not both.
     PITH_field_name = None
     application_field_name = None
 
@@ -25,7 +33,7 @@ class PITHRadioView(FormView):
 
         return initial
 
-    def get_success_url(self, get=None):
+    def get_success_url(self, get : dict = None) -> str:
         application_id = get_id(self.request)
 
         redirect_url = self.get_choice_url(application_id)
@@ -76,7 +84,13 @@ class PITHRadioView(FormView):
 
         return super().form_valid(form)
 
-    def update_db(self, app_id):
+    def update_db(self, app_id: str) -> None:
+        """
+        Separated function to handle database updates.
+        :param app_id: Applicant's id
+        :return: None/Void
+        """
+
         # Update the task status to 'IN_PROGRESS' in all cases
         update_application(app_id, 'people_in_home_status', 'IN_PROGRESS')
 
@@ -98,6 +112,12 @@ class PITHRadioView(FormView):
             raise ValueError('PITH_field_name and application_field_name cannot both be None')
 
     def get_choice_url(self, app_id):
+        """
+        Returns a url name to be redirected to, e.g 'PITH-Guidance-View'
+        :param self: class instance
+        :param app_id: Applicant's id
+        :return: String
+        """
         yes_choice, no_choice = self.success_url
 
         active_model, active_field_name = self.get_active_field()

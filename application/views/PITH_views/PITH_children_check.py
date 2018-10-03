@@ -1,10 +1,10 @@
 from django.http import HttpResponseRedirect
 
 from application.business_logic import get_application
-from application.models import AdultInHome, ApplicantHomeAddress, ChildInHome
-from application.utils import get_id, build_url
-from application.views.PITH_views.base_views.PITH_radio_view import PITHRadioView
 from application.forms.PITH_forms.PITH_children_check_form import PITHChildrenCheckForm
+from application.models import AdultInHome, ApplicantHomeAddress, ChildInHome
+from application.utils import get_id
+from application.views.PITH_views.base_views.PITH_radio_view import PITHRadioView
 
 
 class PITHChildrenCheckView(PITHRadioView):

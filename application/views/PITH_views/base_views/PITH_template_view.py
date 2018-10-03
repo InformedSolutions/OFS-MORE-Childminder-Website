@@ -1,14 +1,15 @@
 from django.http import HttpResponseRedirect
+from django.views.generic import TemplateView
 
 from application.utils import build_url, get_id
 
-from django.views.generic import TemplateView
-
 
 class PITHTemplateView(TemplateView):
+    """
+    Class intended to handle repeated functionality when implementing a TemplateView within the PITH task.
+    """
     template_name = None
     success_url = None
-    condition = None
 
     def get_context_data(self, **kwargs):
         application_id = get_id(self.request)

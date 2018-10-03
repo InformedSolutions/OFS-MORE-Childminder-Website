@@ -1,6 +1,7 @@
-from application.views.PITH_views.base_views.PITH_template_view import PITHTemplateView
 from application.business_logic import get_application, update_application
 from application.utils import get_id
+from application.views.PITH_views.base_views.PITH_template_view import PITHTemplateView
+
 
 class PITHGuidanceView(PITHTemplateView):
     template_name = 'PITH_templates/PITH_guidance.html'

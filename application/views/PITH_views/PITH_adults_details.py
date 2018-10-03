@@ -1,10 +1,9 @@
 from django.http import HttpResponseRedirect
 
+from application.business_logic import remove_adult, rearrange_adults, get_application
+from application.forms.PITH_forms.PITH_adult_details_form import PITHAdultDetailsForm
 from application.utils import get_id
 from application.views.PITH_views.base_views.PITH_radio_view import PITHRadioView
-from application.forms.PITH_forms.PITH_adult_details_form import PITHAdultDetailsForm
-
-from application.business_logic import remove_adult, rearrange_adults, get_application
 
 
 class PITHAdultDetailsView(PITHRadioView):
@@ -72,7 +71,6 @@ class PITHAdultDetailsView(PITHRadioView):
         return ['' for index in range(1, num_adults + 1)]
 
     def form_valid(self, form):
-
         context = {
             'id': get_id(self.request),
             'adults': 0,
@@ -80,6 +78,3 @@ class PITHAdultDetailsView(PITHRadioView):
         }
 
         return HttpResponseRedirect(self.get_success_url(get=context))
-
-
-

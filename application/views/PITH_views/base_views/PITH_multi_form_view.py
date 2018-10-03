@@ -1,18 +1,29 @@
 from django.core.exceptions import ImproperlyConfigured
 from django.http import HttpResponseRedirect
-from django.views.generic import TemplateView
-from django.views.generic.base import TemplateResponseMixin
+from django.views.generic.edit import FormView
 
-from application.utils import build_url, get_id
 from application.business_logic import update_application, get_application
+from application.forms import ChildminderForms
+from application.utils import build_url, get_id
 
-class PITHMultiRadioView(TemplateView, TemplateResponseMixin):
+
+class PITHMultiFormView(FormView):
+    """
+    Class allowing for multiple form instances on the same page.
+    Intended usage is for multiple instances of the same form_class to be used, but this is dependant on
+     your implementation of get_form_list.
+    """
     template_name = None
     form_class = None
     success_url = None
     field_name = None
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, **kwargs) -> dict:
+        """
+        Method to get context data for the view.
+        :param kwargs: Base context dictionary.
+        :return:
+        """
         if 'form_list' not in kwargs:
             kwargs['form_list'] = self.get_form_list()
 
@@ -25,9 +36,11 @@ class PITHMultiRadioView(TemplateView, TemplateResponseMixin):
 
         return super().get_context_data(**kwargs)
 
-    def get_form_kwargs(self, kwargs):
+    def get_form_kwargs(self, kwargs: dict) -> dict:
         """
         Returns the keyword arguments for instantiating the form.
+        :param kwargs: Base form_kwargs dictionary.
+        :return: Dictionary containing kwargs to be passed into form instantiation.
         """
         kwargs.update({
             'initial': self.get_initial()
@@ -41,7 +54,7 @@ class PITHMultiRadioView(TemplateView, TemplateResponseMixin):
 
         return kwargs
 
-    def get_success_url(self, get=None):
+    def get_success_url(self, get: dict = None) -> str:
         """
         This view redirects to three potential phases.
         This method is overridden to return those specific three cases.
@@ -85,21 +98,28 @@ class PITHMultiRadioView(TemplateView, TemplateResponseMixin):
 
         return HttpResponseRedirect(self.get_success_url())
 
-    def form_invalid(self, form):
+    def get_form_list(self) -> list:
         """
-        If the form is invalid, re-render the context data with the
-        data-filled form and errors.
+        A method intended to return a list of forms to instantiate.
+        Specifically, intended to return a list containing instances of the same form_class.
+        :return: List of ChildminderForms subclass instances.
         """
-        return self.render_to_response(self.get_context_data(form_list=form))
-
-    def get_form_list(self):
         raise ImproperlyConfigured(
             "No form_list to get, please implement get_form_list")
 
-    def get_initial(self):
+    def get_initial(self) -> dict:
+        """
+        A method intended to return initial form data.
+        :return: Dict in format form_field_name: initial_value.
+        """
         raise ImproperlyConfigured(
             "No initial data to get, please implement get_initial")
 
-    def get_choice_url(self, app_id):
+    def get_choice_url(self, app_id) -> str:
+        """
+        A method intended to return the name of a url (e.g 'PITH-Guidance-View'), for use in get_success_url.
+        :param app_id: Applicant's id
+        :return: String
+        """
         raise ImproperlyConfigured(
             "No URL to redirect to, please implement get_choice_url")

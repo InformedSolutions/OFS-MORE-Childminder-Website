@@ -19,6 +19,7 @@ class PITHChildrenDetailsView(View):
     """
     Class containing the methods responsible for handling requests to the 'Children-In-The-Home-Details' page.
     """
+
     def get(self, request):
         application_id_local = request.GET["id"]
         application = Application.objects.get(pk=application_id_local)
@@ -28,15 +29,16 @@ class PITHChildrenDetailsView(View):
         remove_button = True
 
         if number_of_children == 0:  # If there are no children in the database
-            number_of_children = 1   # Set the number of children to 1 to initialise one instance of the form
+            number_of_children = 1  # Set the number of children to 1 to initialise one instance of the form
 
         if number_of_children == 1:
-            remove_button = False    # Disable the remove person button
+            remove_button = False  # Disable the remove person button
 
         remove_child_in_home(application_id_local, remove_person)
         rearrange_children_in_home(number_of_children, application_id_local)
 
-        form_list = [OtherPeopleChildrenDetailsForm(id=application_id_local, child=i, prefix=i) for i in range(1, number_of_children + 1)]
+        form_list = [OtherPeopleChildrenDetailsForm(id=application_id_local, child=i, prefix=i) for i in
+                     range(1, number_of_children + 1)]
 
         if application.application_status == 'FURTHER_INFORMATION':
             for index, form in enumerate(form_list):
@@ -65,13 +67,13 @@ class PITHChildrenDetailsView(View):
         remove_button = True
 
         if number_of_children == 0:  # If there are no children in the database
-            number_of_children = 1   # Set the number of children to 1 to initialise one instance of the form
+            number_of_children = 1  # Set the number of children to 1 to initialise one instance of the form
 
         if number_of_children == 1:
             remove_button = False  # Disable the remove person button
 
-        form_list   = []
-        forms_valid = True           # Bool indicating whether or not all the forms are valid
+        form_list = []
+        forms_valid = True  # Bool indicating whether or not all the forms are valid
         children_turning_16 = False  # Bool indicating whether or not all any children are turning 16
 
         for i in range(1, int(number_of_children) + 1):
@@ -93,7 +95,8 @@ class PITHChildrenDetailsView(View):
                 applicant_dob = date(birth_year, birth_month, birth_day)
                 today = date.today()
 
-                age = today.year - applicant_dob.year - ((today.month, today.day) < (applicant_dob.month, applicant_dob.day))
+                age = today.year - applicant_dob.year - (
+                            (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
                 if 15 <= age < 16:
                     children_turning_16 = True
 
@@ -157,7 +160,6 @@ class PITHChildrenDetailsView(View):
                     'people_in_home_status': application.people_in_home_status
                 }
                 return render(request, 'other-people-children-details.html', variables)
-
 
     def get_success_url(self, children_turning_16, application):
         """

@@ -1,10 +1,10 @@
-from application.utils import get_id
-from application.models import AdultInHome
-from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMultiRadioView
 from application.forms.PITH_forms.PITH_DBS_check_form import PITHDBSCheckForm
+from application.models import AdultInHome
+from application.utils import get_id
+from application.views.PITH_views.base_views.PITH_multi_form_view import PITHMultiFormView
 
 
-class PITHDBSCheckView(PITHMultiRadioView):
+class PITHDBSCheckView(PITHMultiFormView):
     template_name = 'PITH_templates/PITH_DBS_check.html'
     form_class = PITHDBSCheckForm
     success_url = ('PITH-Post-View', 'PITH-Apply-View', 'PITH-Children-Check-View')
@@ -13,9 +13,6 @@ class PITHDBSCheckView(PITHMultiRadioView):
     on_update_field = 'on_update'
 
     def get_form_kwargs(self, adult=None):
-        """
-        Returns the keyword arguments for instantiating the form.
-        """
         application_id = get_id(self.request)
 
         context = {
@@ -29,6 +26,10 @@ class PITHDBSCheckView(PITHMultiRadioView):
         return super().get_form_kwargs(context)
 
     def get_form_list(self):
+        """
+        Returns a sorted list of PITHDBSCheckForms.
+        :return: List[PITHDBSCheckForms]
+        """
         application_id = get_id(self.request)
 
         adults = AdultInHome.objects.filter(application_id=application_id)

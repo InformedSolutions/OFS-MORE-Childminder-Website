@@ -1,13 +1,11 @@
-from django.http import HttpResponseRedirect
-
-from application.utils import build_url, get_id
-from application.models import AdultInHome
-from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMultiRadioView
-from application.forms.PITH_forms.PITH_lived_abroad_form import PITHLivedAbroadForm
 from application.business_logic import get_childcare_register_type
+from application.forms.PITH_forms.PITH_lived_abroad_form import PITHLivedAbroadForm
+from application.models import AdultInHome
+from application.utils import get_id
+from application.views.PITH_views.base_views.PITH_multi_form_view import PITHMultiFormView
 
 
-class PITHLivedAbroadView(PITHMultiRadioView):
+class PITHLivedAbroadView(PITHMultiFormView):
     template_name = 'PITH_templates/PITH_lived_abroad.html'
     form_class = PITHLivedAbroadForm
     success_url = ('PITH-Abroad-Criminal-View', 'PITH-Military-View', 'PITH-DBS-Check-View')
@@ -22,23 +20,10 @@ class PITHLivedAbroadView(PITHMultiRadioView):
         context = {
             'id': application_id,
             'PITH_field_name': self.PITH_field_name,
-            'adult': adult}
+            'adult': adult
+        }
 
         return super().get_form_kwargs(context)
-
-    def get_success_url(self, get=None):
-        """
-        This view redirects to three potential phases.
-        This method is overridden to return those specific three cases.
-        :param get:
-        :return:
-        """
-        application_id = get_id(self.request)
-
-        if not get:
-            return build_url(self.get_choice_url(application_id), get={'id': application_id})
-        else:
-            return build_url(self.get_choice_url(application_id), get=get)
 
     def form_valid(self, form):
         """
@@ -49,7 +34,7 @@ class PITHLivedAbroadView(PITHMultiRadioView):
         adults = AdultInHome.objects.filter(application_id=application_id)
 
         for adult in adults:
-            lived_abroad_bool = self.request.POST.get(self.PITH_field_name+str(adult.pk))
+            lived_abroad_bool = self.request.POST.get(self.PITH_field_name + str(adult.pk))
 
             setattr(adult, self.PITH_field_name, lived_abroad_bool)
             adult.save()
@@ -57,11 +42,19 @@ class PITHLivedAbroadView(PITHMultiRadioView):
         return super().form_valid(form)
 
     def get_form_list(self):
+        """
+        Returns a list of forms to be used within this view.
+        :return:
+        """
         application_id = get_id(self.request)
 
         adults = AdultInHome.objects.filter(application_id=application_id)
-        form_list = [self.form_class(**self.get_form_kwargs(adult=adult)) for adult in adults]
-        sorted_form_list = sorted(form_list, key=lambda form: form.adult.adult)
+
+        form_list = [self.form_class(**self.get_form_kwargs(adult=adult))
+                     for adult in adults]
+
+        sorted_form_list = \
+            sorted(form_list, key=lambda form: form.adult.adult)
 
         return sorted_form_list
 
@@ -70,7 +63,7 @@ class PITHLivedAbroadView(PITHMultiRadioView):
 
         adults = AdultInHome.objects.filter(application_id=application_id)
 
-        initial_context = {self.PITH_field_name+str(adult.pk): adult.lived_abroad
+        initial_context = {self.PITH_field_name + str(adult.pk): adult.lived_abroad
                            for adult in adults}
 
         return initial_context

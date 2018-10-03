@@ -1,7 +1,8 @@
-from application.models import AdultInHome
-from application.views.PITH_views.base_views.PITH_template_view import PITHTemplateView
-from application.utils import build_url, get_id
 from django.http import HttpResponseRedirect
+
+from application.models import AdultInHome
+from application.utils import build_url, get_id
+from application.views.PITH_views.base_views.PITH_template_view import PITHTemplateView
 
 
 class PITHPostView(PITHTemplateView):
