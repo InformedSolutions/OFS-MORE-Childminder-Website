@@ -78,7 +78,7 @@ class PITHAdultDetailsView(PITHRadioView):
                               prefix=adult_index,
                               email_list=email_list)
         new_form.check_flag()
-        log.debug('Form instance created for adult ' + adult_index)
+        log.debug('Form instance created for adult ' + str(adult_index))
 
         return new_form
 

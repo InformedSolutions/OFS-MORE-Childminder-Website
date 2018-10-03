@@ -61,4 +61,4 @@ class PITHAdultCheckView(PITHRadioView):
         for adult in adults:
 
             adult.delete()
-            log.debug('Adult ' + adult.pk + ' deleted')
+            log.debug('Adult ' + str(adult.pk) + ' deleted')

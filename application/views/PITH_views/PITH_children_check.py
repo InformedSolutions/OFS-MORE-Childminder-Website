@@ -100,4 +100,4 @@ class PITHChildrenCheckView(PITHRadioView):
         for child in children:
 
             child.delete()
-            log.debug('Removing child ' + child.pk)
+            log.debug('Removing child ' + str(child.pk))
