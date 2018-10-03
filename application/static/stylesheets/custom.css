@@ -338,6 +338,7 @@ div.error-summary ul.error-summary-list {
 
 .task-in-progress {
   background-color: #0B0C0C;
+  color: #FFFFFF;
 }
 
 .task-to-do {
