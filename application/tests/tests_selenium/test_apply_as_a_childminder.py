@@ -714,7 +714,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.complete_review()
         self.selenium_task_executor.complete_declaration()
-        self.selenium_task_executor.complete_publish_your_details()
 
         # Card number must be 5454... due to this being a Worldpay API test value
         test_cvc = ''.join(str(random.randint(0, 9)) for _ in range(3))
@@ -954,7 +953,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.complete_review()
         self.selenium_task_executor.complete_declaration()
-        self.selenium_task_executor.complete_publish_your_details()
 
         # Card number must be 5454... due to this being a Worldpay API test value
         test_cvc = ''.join(str(random.randint(0, 9)) for _ in range(3))

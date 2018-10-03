@@ -716,16 +716,6 @@ class SeleniumTaskExecutor:
         driver.find_element_by_id("id_declaration_confirmation").click()
         driver.find_element_by_xpath("//input[@value='Continue']").click()
 
-
-    def complete_publish_your_details(self):
-        """
-        Selenium steps for completing the declaration page
-        """
-        driver = self.get_driver()
-
-        driver.find_element_by_id("id_publish_details").click()
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
-
     def select_test_address(self):
         """
         Reusable method for selecting a test address
