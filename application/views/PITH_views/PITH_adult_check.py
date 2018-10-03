@@ -50,7 +50,7 @@ class PITHAdultCheckView(PITHRadioView):
 
             self.__clear_adults(application_id)
 
-            log.debut('Adults in the home cleared down for application: ' + application_id)
+            log.debug('Adults in the home cleared down for application: ' + application_id)
 
         return HttpResponseRedirect(self.get_success_url(get=context))
 
