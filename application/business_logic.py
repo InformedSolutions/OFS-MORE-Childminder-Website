@@ -1053,6 +1053,7 @@ def show_resend_and_change_email(health_check_status, is_review=None):
     # is_review is no longer needed, kept for legacy purposes but defaults to None.
     return health_check_status != 'Done'
 
+
 def update_criminal_record_check(app_id, field_obj, status):
     """
     Updates the CriminalRecordCheck field with the given status.
@@ -1096,7 +1097,12 @@ def get_criminal_record_check(app_id, field_obj):
         raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
 
-def get_childcare_register_type(app_id):
+def get_childcare_register_type(app_id : str) -> tuple:
+    """
+    Returns information about the type of childcare register the applicant is applying for.
+    :param app_id: Applicant's id
+    :return: Tuple in format (Identifier : str, Cost : int)
+    """
     childcare_record = ChildcareType.objects.get(application_id=app_id)
 
     if (childcare_record.zero_to_five is True) \
@@ -1140,6 +1146,7 @@ def get_childcare_register_type(app_id):
             & (childcare_record.eight_plus is True):
         cost = 103
         return 'CR-voluntary', cost
+
 
 def get_adult_in_home(app_id, field_obj):
     """
