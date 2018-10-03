@@ -1,8 +1,8 @@
 import logging
 
-from application.views.PITH_views.base_views.PITH_template_view import PITHTemplateView
 from application.business_logic import get_application, update_application
 from application.utils import get_id
+from application.views.PITH_views.base_views.PITH_template_view import PITHTemplateView
 
 # Initiate logging
 log = logging.getLogger('')
@@ -14,6 +14,7 @@ class PITHGuidanceView(PITHTemplateView):
     success_url = 'PITH-Adult-Check-View'
 
     def post(self, request, *args, **kwargs):
+
         application_id = get_id(request)
 
         # Update task status if flagged or completed (people_in_home_status)

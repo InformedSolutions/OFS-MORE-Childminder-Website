@@ -1,10 +1,16 @@
-from application.utils import get_id
+import logging
+
 from application.models import AdultInHome
-from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMultiRadioView
 from application.forms.PITH_forms.PITH_DBS_check_form import PITHDBSCheckForm
+from application.utils import get_id
+from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMultiRadioView
+
+# Initiate logging
+log = logging.getLogger('')
 
 
 class PITHDBSCheckView(PITHMultiRadioView):
+
     template_name = 'PITH_templates/PITH_DBS_check.html'
     form_class = PITHDBSCheckForm
     success_url = ('PITH-Post-View', 'PITH-Apply-View', 'PITH-Children-Check-View')
@@ -26,28 +32,34 @@ class PITHDBSCheckView(PITHMultiRadioView):
             'on_update_field': self.on_update_field
         }
 
+        log.debug('Return keyword arguments to instantiate the form')
+
         return super().get_form_kwargs(context)
 
     def get_form_list(self):
+
         application_id = get_id(self.request)
 
         adults = AdultInHome.objects.filter(application_id=application_id)
 
-        form_list = [self.form_class(**self.get_form_kwargs(adult=adult))
-                     for adult in adults]
+        form_list = [self.form_class(**self.get_form_kwargs(adult=adult)) for adult in adults]
 
-        sorted_form_list = \
-            sorted(form_list, key=lambda form: form.adult.adult)
+        sorted_form_list = sorted(form_list, key=lambda form: form.adult.adult)
+
+        log.debug('Sorted form list generated')
 
         return sorted_form_list
 
     def get_initial(self):
+
         application_id = get_id(self.request)
 
         adults = AdultInHome.objects.filter(application_id=application_id)
 
         initial_context = {}
+
         for adult in adults:
+
             initial_context.update({
                 self.capita_field + str(adult.pk): adult.capita,
                 self.dbs_field + str(adult.pk): adult.dbs_certificate_number,
@@ -55,17 +67,32 @@ class PITHDBSCheckView(PITHMultiRadioView):
                 self.dbs_field + "_no_update" + str(adult.pk): adult.dbs_certificate_number
             })
 
+        log.debug('Initialising field data')
+
         return initial_context
 
     def get_choice_url(self, app_id):
+
         adults = AdultInHome.objects.filter(application_id=app_id)
 
         yes_choice, no_yes_choice, no_no_choice = self.success_url
 
         if any(adult.on_update for adult in adults):
+
+            log.debug('There are adults on the DBS check update service')
+
             return yes_choice
+
         else:
+
             if any(not adult.capita and not adult.on_update for adult in adults):
+
+                log.debug('There are neither adults on the DBS check update service nor with an Ofsted DBS check')
+
                 return no_yes_choice
+
             else:
+
+                log.debug('There are either adults on the DBS check update service or with an Ofsted DBS check')
+
                 return no_no_choice
