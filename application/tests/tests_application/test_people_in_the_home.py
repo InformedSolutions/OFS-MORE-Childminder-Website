@@ -55,14 +55,29 @@ class PeopleInTheHomeTestSuite(TestCase):
     def test_can_render_abroad_criminal_record_checks_page(self):
         pass
 
-    def test_lived_abroad_page_renders_with_all_adults_who_lived_abroad(self):
+    def test_abroad_criminal_record_checks_page_renders_with_all_adults_who_lived_abroad(self):
         pass
 
-    def test_post_request_to_lived_abroad_page_redirects_to_dbs_check_if_childcare_register_only_applicant(self):
+    def test_post_request_to_abroad_criminal_record_checks_page_redirects_to_dbs_check_if_childcare_register_only_applicant(self):
         pass
 
-    def test_post_request_to_lived_abroad_page_redirects_to_military_base_page_if_not_childcare_register_only_applicant(self):
+    def test_post_request_to_abroad_criminal_record_checks_page_redirects_to_military_base_page_if_not_childcare_register_only_applicant(self):
         pass
 
     def test_can_render_military_base_page(self):
+        pass
+
+    def test_no_for_all_adults_military_base_redirects_to_dbs_checks_page(self):
+        pass
+
+    def test_yes_for_any_adults_military_base_redirects_to_MOD_checks_page(self):
+        pass
+
+    def test_can_render_MOD_checks_page(self):
+        pass
+
+    def test_MOD_checks_page_renders_with_all_adults_who_lived_on_a_military_base(self):
+        pass
+
+    def test_post_to_MOD_checks_page_redirects_to_dbs_checks_page(self):
         pass
