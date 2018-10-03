@@ -33,15 +33,13 @@ class PITHTestCase(ViewsTest):
     def createAdultInHome(self, lived_abroad=True, military_base=True, capita=True, on_update=None, dbs_certificate_number='123412341234'):
 
         adult_id = '421a5a45-48ae-48c0-8dac-3ae7e654bdf4'
-        first_name = models.CharField(max_length=100, blank=True)
-        middle_names = models.CharField(max_length=100, blank=True)
-        last_name = models.CharField(max_length=100, blank=True)
-        birth_day = models.IntegerField(blank=True)
-        birth_month = models.IntegerField(blank=True)
-        birth_year = models.IntegerField(blank=True)
-        relationship = models.CharField(max_length=100, blank=True)
+        first_name = 'Timmy'
+        last_name = 'Tester'
+        birth_day = '31'
+        birth_month = '03'
+        birth_year = '1980'
+        relationship = 'Friend'
         email = 'Test@Test.com'
-        dbs_certificate_number = models.CharField(max_length=50, blank=True)
 
         self.adult_in_home = AdultInHome.objects.create(adult_id=adult_id,
                                                         adult=1,
@@ -59,6 +57,8 @@ class PITHTestCase(ViewsTest):
                                                         on_update=on_update,
                                                         dbs_certificate_number=dbs_certificate_number,
                                                         )
+
+        return self.adult_in_home
 
     # TEST TEMPLATES
 
@@ -168,3 +168,25 @@ class PITHLivedAbroadTests(PITHTestCase):
             'adults_in_home': False
         }
         super().post_success_url(url, data)
+
+
+class PITHDBSChecksView(PITHTestCase):
+    view = PITH_views.PITHDBSCheckView
+    url_name = 'PITH-DBS-Check-View'
+    success_url = ('PITH-Post-View', 'PITH-Apply-View', 'PITH-Children-Check-View')
+
+    @tag('PITH', 'http')
+    def test_url_resolves_to_page(self):
+        super().url_resolves_to_page()
+
+    @tag('PITH', 'http')
+    def test_redirect_on_yes_to_update_service(self):
+        url = self.success_url[0]
+
+        adult = super().createAdultInHome(capita=None, on_update=True, dbs_certificate_number='123456654321')
+
+        data = {
+            'id': self.application_id,
+            ''
+        }
+
