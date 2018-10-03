@@ -1,16 +1,18 @@
 import logging
 
+from django.http import HttpResponseRedirect
+
 from application.business_logic import get_childcare_register_type
+from application.models import AdultInHome
 from application.views.PITH_views.base_views.PITH_template_view import PITHTemplateView
 from application.utils import build_url, get_id
-from application.models import AdultInHome
-from django.http import HttpResponseRedirect
 
 # Initiate logging
 log = logging.getLogger('')
 
 
 class PITHAbroadCriminalView(PITHTemplateView):
+
     template_name = 'PITH_templates/PITH_abroad_criminal.html'
     success_url = ('PITH-DBS-Check-View', 'PITH-Military-View')
 
@@ -21,7 +23,9 @@ class PITHAbroadCriminalView(PITHTemplateView):
         adults = AdultInHome.objects.filter(application_id=application_id)
         lived_abroad_adults = [adult for adult in adults if adult.lived_abroad]
         log.debug('Generated list of adults in the home that have lived abroad:')
+
         for adult in lived_abroad_adults:
+
             log.debug(adult)
 
         context = {
