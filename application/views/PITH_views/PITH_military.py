@@ -7,7 +7,6 @@ from application.models import AdultInHome
 from application.utils import build_url, get_id
 from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMultiRadioView
 
-
 # Initiate logging
 log = logging.getLogger('')
 
