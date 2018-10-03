@@ -1,12 +1,19 @@
+import logging
+
 from django.http import HttpResponseRedirect
 
-from application.utils import build_url, get_id
-from application.models import AdultInHome
-from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMultiRadioView
 from application.forms.PITH_forms.PITH_military_form import PITHMilitaryForm
+from application.models import AdultInHome
+from application.utils import build_url, get_id
+from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMultiRadioView
+
+
+# Initiate logging
+log = logging.getLogger('')
 
 
 class PITHMilitaryView(PITHMultiRadioView):
+
     template_name = 'PITH_templates/PITH_military.html'
     form_class = PITHMilitaryForm
     success_url = ('PITH-Ministry-View', 'PITH-DBS-Check-View')
@@ -24,6 +31,8 @@ class PITHMilitaryView(PITHMultiRadioView):
             'adult': adult
         }
 
+        log.debug('Return keyword arguments to instantiate the form')
+
         return super().get_form_kwargs(context)
 
     def get_success_url(self, get=None):
@@ -36,19 +45,25 @@ class PITHMilitaryView(PITHMultiRadioView):
         application_id = get_id(self.request)
 
         if not get:
+
             return build_url(self.get_choice_url(application_id), get={'id': application_id})
+
         else:
+
             return build_url(self.get_choice_url(application_id), get=get)
 
     def form_valid(self, form):
         """
         If the form is valid, redirect to the supplied URL.
         """
+        log.debug('Checking if form is valid')
+
         application_id = get_id(self.request)
 
         adults = AdultInHome.objects.filter(application_id=application_id)
 
         for adult in adults:
+
             military_base_bool = self.request.POST.get(self.PITH_field_name+str(adult.pk))
             setattr(adult, self.PITH_field_name, military_base_bool)
             adult.save()
@@ -56,19 +71,21 @@ class PITHMilitaryView(PITHMultiRadioView):
         return super().form_valid(form)
 
     def get_form_list(self):
+
         application_id = get_id(self.request)
 
         adults = AdultInHome.objects.filter(application_id=application_id)
 
-        form_list = [self.form_class(**self.get_form_kwargs(adult=adult))
-                     for adult in adults]
+        form_list = [self.form_class(**self.get_form_kwargs(adult=adult)) for adult in adults]
 
-        sorted_form_list = \
-            sorted(form_list, key=lambda form: form.adult.adult)
+        sorted_form_list = sorted(form_list, key=lambda form: form.adult.adult)
+
+        log.debug('Retrieving sorted form list')
 
         return sorted_form_list
 
     def get_initial(self):
+
         application_id = get_id(self.request)
 
         adults = AdultInHome.objects.filter(application_id=application_id)
@@ -76,9 +93,12 @@ class PITHMilitaryView(PITHMultiRadioView):
         initial_context = {self.PITH_field_name+str(adult.pk): adult.military_base
                            for adult in adults}
 
+        log.debug('Form field data initialised')
+
         return initial_context
 
     def get_choice_url(self, app_id):
+
         adults = AdultInHome.objects.filter(application_id=app_id)
         yes_choice, no_choice = self.success_url
 
