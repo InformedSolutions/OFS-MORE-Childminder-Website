@@ -22,6 +22,6 @@ class PITHGuidanceView(PITHTemplateView):
         if people_in_home_status == 'NOT_STARTED':
             # Update the task status to 'IN_PROGRESS' from 'FLAGGED'
             update_application(application_id, 'people_in_home_status', 'IN_PROGRESS')
-            log.debug('People in the home task status set to IN_PROGRESS')
+            log.debug('People in the home task status set to IN_PROGRESS for application ' + application_id)
 
         return super().post(request, *args, **kwargs)

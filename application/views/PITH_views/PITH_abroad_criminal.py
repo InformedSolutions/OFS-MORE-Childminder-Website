@@ -11,7 +11,6 @@ log = logging.getLogger('')
 
 
 class PITHAbroadCriminalView(PITHTemplateView):
-
     template_name = 'PITH_templates/PITH_abroad_criminal.html'
     success_url = ('PITH-DBS-Check-View', 'PITH-Military-View')
 
@@ -21,7 +20,9 @@ class PITHAbroadCriminalView(PITHTemplateView):
 
         adults = AdultInHome.objects.filter(application_id=application_id)
         lived_abroad_adults = [adult for adult in adults if adult.lived_abroad]
-        log.debug('Generated list of adults in the home that have lived abroad')
+        log.debug('Generated list of adults in the home that have lived abroad:')
+        for adult in lived_abroad_adults:
+            log.debug(adult)
 
         context = {
             'adult_list': lived_abroad_adults
@@ -38,12 +39,13 @@ class PITHAbroadCriminalView(PITHTemplateView):
         if self.check_childcare_register_only(application_id):
 
             redirect_url = build_url(yes_url, get={'id': application_id})
-            log.debug('Generated redirect URL for when the adult lived abroad')
+            log.debug('Generated redirect URL for when the adult lived abroad for application: ' + application_id)
 
         else:
 
             redirect_url = build_url(no_url, get={'id': application_id})
-            log.debug('Generated redirect URL for when the adult has not lived abroad')
+            log.debug(
+                'Generated redirect URL for when the adult has not lived abroad for application: ' + application_id)
 
         return HttpResponseRedirect(redirect_url)
 
@@ -51,6 +53,6 @@ class PITHAbroadCriminalView(PITHTemplateView):
     def check_childcare_register_only(app_id):
 
         childcare_register_status, childcare_register_cost = get_childcare_register_type(app_id)
-        log.debug('Childcare ')
+        log.debug('Childcare register checked for application: ' + app_id)
 
         return 'CR' in childcare_register_status and 'EYR' not in childcare_register_status
