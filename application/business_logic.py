@@ -761,6 +761,7 @@ def other_people_children_details_logic(application_id_local, form, child):
         child_record.relationship = relationship
     return child_record
 
+
 def PITH_own_children_details_logic(application_id_local, form, child):
     """
     A subset mirror function of the above 'other_people_children_details_logic' function.
@@ -789,6 +790,7 @@ def PITH_own_children_details_logic(application_id_local, form, child):
                              birth_month=birth_month,
                              birth_year=birth_year,
                              application_id=this_application,
+                             lives_with_childminder=False,
                              child=child)
     # If the user previously entered information for this task
     elif Child.objects.filter(application_id=this_application, child=child).count() > 0:
