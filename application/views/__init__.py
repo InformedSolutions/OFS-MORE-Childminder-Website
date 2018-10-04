@@ -21,3 +21,4 @@ from .print_handler import *
 from .cancel_application import *
 from .login import *
 from .help_and_contact import *
+from .PITH_views import *
