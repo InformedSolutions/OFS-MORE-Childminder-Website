@@ -168,3 +168,42 @@ class PeopleInTheHomeTestSuite(TestCase):
 
     def test_post_request_to_children_turning_16_redirects_task_list_if_not_providing_care_in_own_home_and_adults_without_dbs(self):
         pass
+
+    def test_can_render_own_children_page(self):
+        pass
+
+    def test_yes_to_own_children_redirects_to_own_children_details_page(self):
+        pass
+
+    def test_no_to_own_children_page_redirects_to_task_list_if_adults_without_dbs(self):
+        pass
+
+    def test_no_to_own_children_page_redirects_to_summary_page_if_no_adults_without_dbs(self):
+        pass
+
+    def test_can_render_own_children_details_page(self):
+        pass
+
+    def test_can_add_one_child_not_in_the_home(self):
+        pass
+
+    def test_can_add_two_children_not_in_the_home(self):
+        pass
+
+    def test_post_to_own_children_details_page_redirects_to_own_children_address_page(self):
+        pass
+
+    def test_can_render_own_children_address_page(self):
+        pass
+
+    def test_post_to_own_children_address_page_redirects_to_task_list_if_no_further_children_not_in_home_and_adults_without_dbs(self):
+        pass
+
+    def test_post_to_own_children_address_page_redirects_to_summary_page_if_no_further_children_not_in_home_and_no_adults_without_dbs(self):
+        pass
+
+    def test_post_to_own_children_address_page_redirects_to_own_children_address_page_if_further_children_not_in_home(self):
+        pass
+
+    def test_can_render_summary_page(self):
+        pass
