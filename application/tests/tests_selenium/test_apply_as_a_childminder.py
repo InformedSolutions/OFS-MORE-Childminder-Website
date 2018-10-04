@@ -656,7 +656,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.complete_review()
         self.selenium_task_executor.complete_declaration()
-        self.selenium_task_executor.complete_publish_your_details()
 
         # Card number must be 5454... due to this being a Worldpay API test value
         test_cvc = ''.join(str(random.randint(0, 9)) for _ in range(3))
@@ -843,7 +842,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.complete_review()
         self.selenium_task_executor.complete_declaration()
-        self.selenium_task_executor.complete_publish_your_details()
 
         # Card number must be 5454... due to this being a Worldpay API test value
         test_cvc = ''.join(str(random.randint(0, 9)) for _ in range(3))
@@ -1008,7 +1006,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
                              "//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
-        self.assertEqual("Check your answers: people in your home",
+        self.assertEqual("Check your answers: people in the home",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
                              "//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath(

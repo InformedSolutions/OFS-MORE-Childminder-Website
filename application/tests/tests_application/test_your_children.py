@@ -479,6 +479,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
     @tag('http')
     def test_if_all_children_living_with_childminder_redirected_to_summary(self):
+        self.TestAppPersonalDetailsHomeAddress()
         self.__submit_test_children_details()
 
         response = self.client.post(
@@ -511,6 +512,7 @@ class YourChildrenTests(TestCase, ApplicationTestBase):
 
     @tag('http')
     def test_asked_for_second_child_address_if_living_with_first_children(self):
+        self.TestAppPersonalDetailsHomeAddress()
         self.__submit_test_children_details()
 
         response = self.client.post(

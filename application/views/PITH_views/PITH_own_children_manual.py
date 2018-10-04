@@ -14,17 +14,26 @@ logger = logging.getLogger()
 
 
 def PITHOwnChildrenManualView(request):
+
     return __own_children_address_manual(request)
 
 
 def __own_children_address_manual(request):
+
     template = 'PITH_templates/PITH_own_children_manual.html'
     success_url = ('Task-List-View', 'PITH-Summary-View')
     address_url = 'PITH-Own-Children-Postcode-View'
 
     if request.method == 'GET':
+
+        logger.debug('Use GET handler')
+
         return __own_children_address_manual_get_handler(request, template=template)
+
     if request.method == 'POST':
+
+        logger.debug('User POST handler')
+
         return __own_children_address_manual_post_handler(request,
                                                           template=template,
                                                           success_url=success_url,
@@ -38,7 +47,7 @@ def __own_children_address_manual_get_handler(request, template):
     :return: Manual address entry page
     """
     application_id = get_id(request)
-    child = request.GET["child"]
+    child = request.GET["children"]
 
     logger.debug('Rendering manual child address capture page for application with id: '
                  + str(application_id) + " and child number: " + str(child))
@@ -49,12 +58,15 @@ def __own_children_address_manual_get_handler(request, template):
     form.check_flag()
 
     if application.application_status == 'FURTHER_INFORMATION':
+
         form.error_summary_template_name = 'returned-error-summary.html'
         form.error_summary_title = 'There was a problem'
 
+        logging.debug('Set returned error summary template')
+
     variables = {
         'form': form,
-        'child': child,
+        'children': child,
         'name': child_record.get_full_name(),
         'application_id': application_id,
     }
@@ -71,7 +83,7 @@ def __own_children_address_manual_post_handler(request, template, success_url, a
     current_date = timezone.now()
 
     application_id = get_id(request)
-    child = request.GET["child"]
+    child = request.GET["children"]
 
     logger.debug('Saving manual child address details for application with id: '
                  + str(application_id) + " and child number: " + str(child))
@@ -83,45 +95,77 @@ def __own_children_address_manual_post_handler(request, template, success_url, a
 
     if form.is_valid():
 
+        logger.debug('Form is valid')
+
         child_address_record = child_address_logic(application_id, child, form)
         child_address_record.save()
         application = Application.objects.get(pk=application_id)
         application.date_updated = current_date
         application.save()
 
+        logger.debug('Updating database with child address for application: ' + application_id)
+
         status.update(application_id, 'people_in_home_status', 'IN_PROGRESS')
+
+        logger.debug('Set task status to IN_PROGRESS')
 
         reset_declaration(application)
 
+        logger.debug('Reset declaration')
+
         __remove_arc_address_flag(child_address_record)
+
+        logger.debug('Removed ARC address flag for child address record')
 
         # Recurse through querystring params
         next_child = __get_next_child_number_for_address_entry(application_id, int(child))
 
+        logger.debug('Retrieve number for next child')
+
         if next_child is None:
+
+            logger.debug('If there is a next child')
+
             invalid_adults_url, valid_adults_url = success_url
             adults = AdultInHome.objects.filter(application_id=application_id)
 
             if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+
+                logger.debug('Generate URL for adults with invalid DBS')
+
                 redirect_url = invalid_adults_url
+
             else:
+
+                logger.debug('Generate URL for adults with valid DBS')
+
                 redirect_url = valid_adults_url
 
             return HttpResponseRedirect(build_url(redirect_url, get={'id': application_id}))
 
-        return HttpResponseRedirect(
-            build_url(address_url, get={'id': application_id, 'child': str(next_child)}))
+        logger.debug('If there is no next child')
+
+        return HttpResponseRedirect(build_url(address_url, get={'id': application_id, 'children': str(next_child)}))
+
     else:
+
+        logger.debug('Form is invalid')
+
         form.error_summary_title = 'There was a problem with your address'
         child_record = Child.objects.get(application_id=application_id, child=child)
 
         if application.application_status == 'FURTHER_INFORMATION':
+
             form.error_summary_template_name = 'returned-error-summary.html'
             form.error_summary_title = 'There was a problem'
+
+            logger.debug('Set up returned error summary')
+
         variables = {
             'form': form,
-            'child': child,
+            'children': child,
             'name': child_record.get_full_name(),
             'application_id': application_id,
         }
+
         return render(request, template, variables)

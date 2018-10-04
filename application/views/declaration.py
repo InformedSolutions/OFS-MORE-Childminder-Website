@@ -1,6 +1,8 @@
 from django.urls import reverse
 from django.utils import timezone
 import calendar
+import collections
+import datetime
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -13,12 +15,14 @@ from application import views
 from .. import status
 from ..forms import (DeclarationIntroForm,
                      DeclarationForm,
-                     DeclarationSummaryForm, PublishingYourDetailsForm)
+                     DeclarationSummaryForm)
 from ..models import (AdultInHome,
                       ApplicantHomeAddress,
                       ApplicantName,
                       ApplicantPersonalDetails,
                       Application,
+                      Child,
+                      ChildAddress,
                       ChildInHome,
                       ChildcareType,
                       CriminalRecordCheck,
@@ -86,12 +90,24 @@ def declaration_summary(request, print_mode=False):
             childcare_town = ''
             childcare_county = ''
             childcare_postcode = ''
-        first_aid_record = FirstAidTraining.objects.get(
-            application_id=application_id_local)
-        dbs_record = CriminalRecordCheck.objects.get(
-            application_id=application_id_local)
 
-        childcare_training_table = views.ChildcareTrainingSummaryView.get_context_data(application_id_local)['table_list'][0]
+        first_aid_record = FirstAidTraining.objects.get(application_id=application_id_local)
+
+        # Format first aid training dates
+        if first_aid_record.course_day < 10:
+            first_aid_course_day = '0' + str(first_aid_record.course_day)
+        else:
+            first_aid_course_day = str(first_aid_record.course_day)
+
+        if first_aid_record.course_month < 10:
+            first_aid_course_month = '0' + str(first_aid_record.course_month)
+        else:
+            first_aid_course_month = str(first_aid_record.course_month)
+
+        dbs_record = CriminalRecordCheck.objects.get(application_id=application_id_local)
+
+        childcare_training_table = \
+            views.ChildcareTrainingSummaryView.get_context_data(application_id_local)['table_list'][0]
         criminal_record_check_context = views.DBSSummaryView.get_context_data_static(application_id_local)
 
         if childcare_record.zero_to_five:
@@ -133,10 +149,10 @@ def declaration_summary(request, print_mode=False):
             references_vars = {}
 
         # Retrieve lists of adults and children, ordered by adult/child number for iteration by the HTML
-        adults_list = AdultInHome.objects.filter(
-            application_id=application_id_local).order_by('adult')
-        children_list = ChildInHome.objects.filter(
-            application_id=application_id_local).order_by('child')
+        adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
+        children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
+        children_not_in_the_home_list = Child.objects.filter(application_id=application_id_local,
+                                                             lives_with_childminder=False).order_by('child')
         # Generate lists of data for adults in your home, to be iteratively displayed on the summary page
         # The HTML will then parse through each list simultaneously, to display the correct data for each adult
         adult_name_list = []
@@ -155,9 +171,20 @@ def declaration_summary(request, print_mode=False):
                 name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
             elif adult.middle_names == '':
                 name = adult.first_name + ' ' + adult.last_name
+
+            if adult.birth_day < 10:
+                adult_birth_day = '0' + str(adult.birth_day)
+            else:
+                adult_birth_day = str(adult.birth_day)
+
+            if adult.birth_month < 10:
+                adult_birth_month = '0' + str(adult.birth_month)
+            else:
+                adult_birth_month = str(adult.birth_month)
+
             adult_name_list.append(name)
-            adult_birth_day_list.append(adult.birth_day)
-            adult_birth_month_list.append(adult.birth_month)
+            adult_birth_day_list.append(adult_birth_day)
+            adult_birth_month_list.append(adult_birth_month)
             adult_birth_year_list.append(adult.birth_year)
             adult_relationship_list.append(adult.relationship)
             adult_dbs_list.append(adult.dbs_certificate_number)
@@ -166,8 +193,8 @@ def declaration_summary(request, print_mode=False):
         # Zip the appended lists together for the HTML to simultaneously parse
         adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
                           adult_relationship_list, adult_dbs_list, adult_health_check_status_list, adult_email_list)
-        # Generate lists of data for adults in your home, to be iteratively displayed on the summary page
-        # The HTML will then parse through each list simultaneously, to display the correct data for each adult
+        # Generate lists of data for children in your home, to be iteratively displayed on the summary page
+        # The HTML will then parse through each list simultaneously, to display the correct data for each child
         child_name_list = []
         child_birth_day_list = []
         child_birth_month_list = []
@@ -181,19 +208,101 @@ def declaration_summary(request, print_mode=False):
             elif child.middle_names == '':
                 name = child.first_name + ' ' + child.last_name
             child_name_list.append(name)
-            child_birth_day_list.append(child.birth_day)
-            child_birth_month_list.append(child.birth_month)
+            if child.birth_day < 10:
+                child_birth_day = '0' + str(child.birth_day)
+            else:
+                child_birth_day = str(child.birth_day)
+            if child.birth_month < 10:
+                child_birth_month = '0' + str(child.birth_day)
+            else:
+                child_birth_month = str(child.birth_day)
+            child_birth_day_list.append(child_birth_day)
+            child_birth_month_list.append(child_birth_month)
             child_birth_year_list.append(child.birth_year)
             child_relationship_list.append(child.relationship)
         # Zip the appended lists together for the HTML to simultaneously parse
         child_lists = zip(child_name_list, child_birth_day_list, child_birth_month_list, child_birth_year_list,
                           child_relationship_list)
+        # Generate lists of data for children not in your home, to be iteratively displayed on the summary page
+        # The HTML will then parse through each list simultaneously, to display the correct data for each child
+        child_not_in_home_id_list = []
+        child_not_in_home_name_list = []
+        child_not_in_home_birth_day_list = []
+        child_not_in_home_birth_month_list = []
+        child_not_in_home_birth_year_list = []
+        child_not_in_home_street_line1_list = []
+        child_not_in_home_street_line2_list = []
+        child_not_in_home_town_list = []
+        child_not_in_home_county_list = []
+        child_not_in_home_postcode_list = []
+        child_not_in_home_country_list = []
+        for child in children_not_in_the_home_list:
+            # For each child, append the correct attribute (e.g. name, relationship) to the relevant list
+            child_not_in_home_id = child.child
+            child_not_in_home_id_list.append(child_not_in_home_id)
+            # Concatenate the child's name for display, displaying any middle names if present
+            if child.middle_names != '':
+                name = child.first_name + ' ' + child.middle_names + ' ' + child.last_name
+            elif child.middle_names == '':
+                name = child.first_name + ' ' + child.last_name
+            child_not_in_home_name_list.append(name)
+            if child.birth_day < 10:
+                child_birth_day = '0' + str(child.birth_day)
+            else:
+                child_birth_day = str(child.birth_day)
+            if child.birth_month < 10:
+                child_birth_month = '0' + str(child.birth_day)
+            else:
+                child_birth_month = str(child.birth_day)
+            child_not_in_home_birth_day_list.append(child_birth_day)
+            child_not_in_home_birth_month_list.append(child_birth_month)
+            child_not_in_home_birth_year_list.append(child.birth_year)
+            child_not_in_home_address = ChildAddress.objects.get(application_id=application_id_local, child=child.child)
+            child_not_in_home_street_line1_list.append(child_not_in_home_address.street_line1)
+            child_not_in_home_street_line2_list.append(child_not_in_home_address.street_line2)
+            child_not_in_home_town_list.append(child_not_in_home_address.town)
+            child_not_in_home_county_list.append(child_not_in_home_address.county)
+            child_not_in_home_postcode_list.append(child_not_in_home_address.postcode)
+            child_not_in_home_country_list.append(child_not_in_home_address.country)
+        # Zip the appended lists together for the HTML to simultaneously parse
+        child_not_in_home_lists = zip(child_not_in_home_id_list, child_not_in_home_name_list,
+                                      child_not_in_home_birth_day_list, child_not_in_home_birth_month_list,
+                                      child_not_in_home_birth_year_list, child_not_in_home_street_line1_list,
+                                      child_not_in_home_street_line2_list, child_not_in_home_town_list,
+                                      child_not_in_home_county_list, child_not_in_home_postcode_list,
+                                      child_not_in_home_country_list)
+
+        # Retrieve children living with childminder information
+        children_table = []
+        children_living_with_childminder = []
+        children = Child.objects.filter(application_id=application_id_local).order_by('child')
+        for child in children:
+
+            dob = datetime.date(child.birth_year, child.birth_month, child.birth_day)
+
+            # If the child does not live with the childminder, append their full address for display on the summary page
+            full_address = None
+
+            if not child.lives_with_childminder:
+                full_address = ChildAddress.objects.get(application_id=application_id_local, child=child.child)
+
+            child_details = collections.OrderedDict([
+                ('child_number', child.child),
+                ('full_name', child.get_full_name()),
+                ('dob', dob),
+                ('lives_with_childminder', child.lives_with_childminder),
+                ('full_address', full_address),
+            ])
+            children_table.append(child_details)
+
+            if child.lives_with_childminder:
+                children_living_with_childminder.append(child.get_full_name())
 
         # For returned applications, display change links only if task has been returned
         if application.application_status == 'FURTHER_INFORMATION':
             arc_flagged_statuses = get_arc_flagged(application)
 
-            sign_in_details_change,\
+            sign_in_details_change, \
             type_of_childcare_change, \
             personal_details_change, \
             first_aid_training_change, \
@@ -248,8 +357,8 @@ def declaration_summary(request, print_mode=False):
             'personal_details_change': personal_details_change,
             'first_aid_training_organisation': first_aid_record.training_organisation,
             'first_aid_training_course': first_aid_record.course_title,
-            'first_aid_certificate_day': first_aid_record.course_day,
-            'first_aid_certificate_month': first_aid_record.course_month,
+            'first_aid_certificate_day': first_aid_course_day,
+            'first_aid_certificate_month': first_aid_course_month,
             'first_aid_certificate_year': first_aid_record.course_year,
             'first_aid_training_change': first_aid_training_change,
             'criminal_record_check_context': criminal_record_check_context,
@@ -261,13 +370,18 @@ def declaration_summary(request, print_mode=False):
             'references_change': references_change,
             'adults_in_home': application.adults_in_home,
             'children_in_home': application.children_in_home,
+            'children_not_in_home': application.own_children_not_in_home,
             'number_of_adults': adults_list.count(),
             'number_of_children': children_list.count(),
             'adult_lists': adult_lists,
             'child_lists': child_lists,
+            'child_not_in_home_lists': child_not_in_home_lists,
             'turning_16': application.children_turning_16,
             'people_in_your_home_change': people_in_your_home_change,
-            'print': print_mode
+            'print': print_mode,
+            'children': children_table,
+            'children_living_with_childminder': ", ".join(children_living_with_childminder),
+            'own_children_not_in_home': application.own_children_not_in_home
         }
 
         variables = {**variables, **references_vars}
@@ -426,7 +540,7 @@ def declaration_declaration(request):
 
             clear_arc_flagged_statuses(application_id_local)
 
-            return HttpResponseRedirect(reverse('Publishing-Your-Details-View') + '?id=' + application_id_local)
+            return HttpResponseRedirect(reverse('Payment-Details-View') + '?id=' + application_id_local)
 
         else:
             childcare_type = ChildcareType.objects.get(application_id=application_id_local)
@@ -436,30 +550,6 @@ def declaration_declaration(request):
                 'registers': not childcare_type.zero_to_five
             }
             return render(request, 'declaration-declaration.html', variables)
-
-
-def publishing_your_details(request):
-    if request.method == 'GET':
-        application_id_local = request.GET["id"]
-        form = PublishingYourDetailsForm(id=application_id_local)
-        variables = {
-            'application_id': application_id_local,
-            'form': form
-        }
-        return render(request, 'publishing-your-details.html', variables)
-
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        # extract form data
-        form = PublishingYourDetailsForm(request.POST, id=application_id_local)
-        if form.is_valid():
-            publish_details = not form.cleaned_data.get('publish_details')
-
-            # save down form data
-            application = Application.objects.get(application_id=application_id_local)
-            application.publish_details = publish_details
-            application.save()
-            return HttpResponseRedirect(reverse('Payment-Details-View') + '?id=' + application_id_local)
 
 
 def generate_list_of_updated_tasks(application_id):

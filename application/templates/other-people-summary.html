@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Check your answers: people in your home{% endblock %}
+{% block page_title %}Check your answers: people in the home{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -7,7 +7,7 @@
 
     {% include "back-button.html" %}
 <div class="two-thirds">
-    <h1 class="form-title heading-large">Check your answers: people in your home</h1>
+    <h1 class="form-title heading-large">Check your answers: people in the home</h1>
     <table class="check-your-answers">
         <colgroup>
             <col class="summary-column">
@@ -26,7 +26,7 @@
         <tbody>
         <tr>
             <td>
-                Do you live with anyone who is 16 or over?
+                Does anyone aged 16 or over live or work in the home?
             </td>
             {% if adults_in_home is True %}
             <td style="word-wrap: break-word" class=summary-column>

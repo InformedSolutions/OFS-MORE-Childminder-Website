@@ -20,7 +20,7 @@
         </h1>
         <h2 class="form-title heading-small">Postcode</h2>
         <p>{{postcode}}
-            <a href="{% url 'PITH-Own-Children-Postcode-View' %}?id={{application_id}}&child={{child}}">
+            <a href="{% url 'PITH-Own-Children-Postcode-View' %}?id={{application_id}}&children={{children}}">
                 Change
             </a>
         </p>
@@ -29,14 +29,14 @@
     {{form.as_div}}
     {% csrf_token %}
 
-    <a href="{% url 'PITH-Own-Children-Manual-View' %}?id={{application_id}}&child={{child}}" name="manual"
+    <a href="{% url 'PITH-Own-Children-Manual-View' %}?id={{application_id}}&children={{children}}" name="manual"
        id="manual">
         I cannot find the address in the list
     </a>
 
     <input type="submit" class="button button-submit" value="Save and continue">
     <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-    <input type="hidden" id="child" name="child" value="{{child}}"/>
+    <input type="hidden" id="child" name="child" value="{{children}}"/>
 
     </div>
 </form>

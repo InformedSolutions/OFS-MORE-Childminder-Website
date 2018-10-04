@@ -69,7 +69,6 @@ class Application(models.Model):
     application_reference = models.CharField(blank=True, null=True, max_length=9,
                                              validators=[RegexValidator(r'(\w{2})([0-9]{7})')])
     ofsted_visit_email_sent = models.DateTimeField(blank=True, null=True)
-    publish_details = models.NullBooleanField(blank=True, null=True, default=None)
     working_in_other_childminder_home = models.NullBooleanField(blank=True, null=True, default=None)
     own_children = models.NullBooleanField(blank=True, null=True, default=None)
     own_children_not_in_home = models.NullBooleanField(blank=True, null=True, default=None)
