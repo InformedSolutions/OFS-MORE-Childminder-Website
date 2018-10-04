@@ -207,3 +207,42 @@ class PeopleInTheHomeTestSuite(TestCase):
 
     def test_can_render_summary_page(self):
         pass
+
+    def test_all_change_links_in_summary_resolve_to_a_page(self):
+        pass
+
+    def test_post_to_summary_page_redirects_to_email_confirmation_if_adults_in_home(self):
+        pass
+
+    def test_post_to_summary_page_sends_email_to_each_adult_in_home(self):
+        pass
+
+    def test_post_to_summary_redirects_to_task_list_with_done_status_if_no_adults_in_home(self):
+        pass
+
+    def test_post_to_summary_redirects_to_task_list_with_waiting_status_if_adults_health_check_not_done(self):
+        pass
+
+    def test_can_render_email_confirmation_page(self):
+        pass
+
+    def test_post_to_email_confirmation_page_redirects_to_task_list_with_waiting_status(self):
+        pass
+
+    def test_can_render_resend_email_page(self):
+        pass
+
+    def test_post_to_resend_email_page_redirects_to_resend_email_confirmation_page(self):
+        pass
+
+    def test_post_to_resend_email_page_resends_email_to_specified_adult_only(self):
+        pass
+
+    def test_can_render_resend_email_confirmation_page(self):
+        pass
+
+    def test_post_to_resend_email_confirmation_page_redirects_to_task_list_with_waiting_status(self):
+        pass
+
+    def test_resend_health_questions_link_disappears_once_adult_completes_health_check(self):
+        pass
