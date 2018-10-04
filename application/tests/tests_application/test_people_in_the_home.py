@@ -120,3 +120,51 @@ class PeopleInTheHomeTestSuite(TestCase):
 
     def test_post_request_to_apply_for_dbs_page_redirects_to_children_question_page(self):
         pass
+
+    def test_can_render_children_question_page(self):
+        pass
+
+    def test_yes_to_children_in_the_home_redirects_to_children_details_page(self):
+        pass
+
+    def test_no_to_children_in_the_home_redirects_to_summary_page_if_not_providing_care_in_own_home_and_no_adults_without_dbs(self):
+        pass
+
+    def test_no_to_children_in_the_home_redirects_to_own_children_page_if_providing_care_in_own_home(self):
+        pass
+
+    def test_no_to_children_in_the_home_redirects_to_task_list_if_not_providing_care_in_own_home_and_adults_without_dbs(self):
+        pass
+
+    def test_can_add_one_child_in_home(self):
+        pass
+
+    def test_can_add_two_children_in_the_home(self):
+        pass
+
+    def test_post_to_children_details_redirects_to_approaching_16_page_if_any_children_in_home_approaching_16(self):
+        pass
+
+    def test_post_to_children_details_redirects_to_summary_page_if_not_children_approaching_16_and_not_providing_care_in_own_home_and_no_adults_without_dbs(self):
+        pass
+
+    def test_post_to_children_details_redirects_to_own_children_page_if_not_children_approaching_16_and_providing_care_in_own_home(self):
+        pass
+
+    def test_post_to_children_details_redirects_to_task_list_if_not_children_approaching_16_and_not_providing_care_in_own_home_and_adults_without_dbs(self):
+        pass
+
+    def test_can_render_children_turning_16_page(self):
+        pass
+
+    def test_children_turning_16_page_renders_with_children_turning_16(self):
+        pass
+
+    def test_post_request_to_children_turning_16_redirects_to_summary_page_if_not_providing_care_in_own_home_and_no_adults_without_dbs(self):
+        pass
+
+    def test_post_request_to_children_turning_16_redirects_to_own_children_page_if_providing_care_in_own_home(self):
+        pass
+
+    def test_post_request_to_children_turning_16_redirects_task_list_if_not_providing_care_in_own_home_and_adults_without_dbs(self):
+        pass
