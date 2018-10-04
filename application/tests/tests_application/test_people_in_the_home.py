@@ -6,7 +6,7 @@ from django.test import modify_settings, TestCase
             'application.middleware.CustomAuthenticationHandler'
         ]
     })
-class PeopleInTheHomeTestSuite(TestCase):
+class PeopleInTheHomeFunctionalTests(TestCase):
     def test_can_render_guidance_page(self):
         pass
 
@@ -246,3 +246,7 @@ class PeopleInTheHomeTestSuite(TestCase):
 
     def test_resend_health_questions_link_disappears_once_adult_completes_health_check(self):
         pass
+
+
+class PeopleInTheHomeFormsTests(TestCase):
+    pass
