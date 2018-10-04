@@ -306,14 +306,14 @@ class PeopleInTheHomeFunctionalTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.resolver_match.func.__name__, views.PITHOwnChildrenPostcodeView.__name__)
 
-    def test_post_to_own_children_address_page_redirects_to_task_list_if_no_further_children_not_in_home_and_adults_without_dbs(self):
-        self.skipTest('NotImplemented')
-
-    def test_post_to_own_children_address_page_redirects_to_summary_page_if_no_further_children_not_in_home_and_no_adults_without_dbs(self):
-        self.skipTest('NotImplemented')
-
-    def test_post_to_own_children_address_page_redirects_to_own_children_address_page_if_further_children_not_in_home(self):
-        self.skipTest('NotImplemented')
+    # def test_post_to_own_children_address_page_redirects_to_task_list_if_no_further_children_not_in_home_and_adults_without_dbs(self):
+    #     self.skipTest('NotImplemented')
+    #
+    # def test_post_to_own_children_address_page_redirects_to_summary_page_if_no_further_children_not_in_home_and_no_adults_without_dbs(self):
+    #     self.skipTest('NotImplemented')
+    #
+    # def test_post_to_own_children_address_page_redirects_to_own_children_address_page_if_further_children_not_in_home(self):
+    #     self.skipTest('NotImplemented')
 
     def test_can_render_summary_page(self):
         self.skipTest('NotImplemented')
