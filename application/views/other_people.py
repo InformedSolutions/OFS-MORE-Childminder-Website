@@ -564,7 +564,7 @@ def other_people_resend_email(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         adults = request.GET["adult"]
-        adult_number = int(adults) - 2
+        adult_number = int(adults)
         form = OtherPeopleResendEmailForm()
         form.check_flag()
         # Generate variables for display on email resend page
