@@ -49,10 +49,10 @@ class CustomAuthenticationHandler(object):
         application_id = None
 
         if request.method == 'GET' and 'id' in request.GET:
-            application_id = request.GET.get('id')
+            application_id = request.GET['id']
 
         if request.method == 'POST' and 'id' in request.POST:
-            application_id = request.POST.get('id')
+            application_id = request.POST['id']
 
         # If an application id is present fetch application from store
         if application_id is not None:
@@ -134,14 +134,26 @@ def globalise_authentication_flag(request):
 
 def register_as_childminder_link_location(request):
     """
-    Middleware function to decider the loaction of the link in the govuk_template page header dependant
+    Middleware function to decide the location of the link in the govuk_template page header dependent
     on application status
     """
-    application_id = request.GET.get('id')
-    if application_id is not None:
-        application = Application.objects.get(pk=application_id)
 
-        if application.application_status not in ['ARC_REVIEW', 'CYGNUM_REVIEW', 'SUBMITTED']:
-            return {'task_list_link': True}
+    if request.method == 'GET' and 'id' in request.GET:
+        application_id = request.GET['id']
+
+        if application_id is not None:
+
+            application = Application.objects.get(pk=application_id)
+
+            if application.application_status not in ['ARC_REVIEW', 'CYGNUM_REVIEW', 'SUBMITTED']:
+
+                login_details_status = application.login_details_status
+                childcare_type_status = application.childcare_type_status
+                personal_details_status = application.personal_details_status
+
+                if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' and personal_details_status == 'COMPLETED':
+
+                    return {'task_list_link': True,
+                            'id': application_id}
 
     return {'task_list_link': False}
