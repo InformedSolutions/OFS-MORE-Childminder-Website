@@ -107,7 +107,8 @@ def __own_children_address_lookup_post_handler(request, template, success_url):
                 child_address_record.postcode = postcode
                 child_address_record.save()
 
-            status.update(application_id, 'people_in_home_status', 'IN_PROGRESS')
+            if Application.get_id(app_id=application_id).people_in_home_status not in ['COMPLETED', 'WAITING']:
+                status.update(application_id, 'people_in_home_status', 'IN_PROGRESS')
 
             return HttpResponseRedirect(build_url(success_url, get={'id': application_id,
                                                                     'children': str(child)}))

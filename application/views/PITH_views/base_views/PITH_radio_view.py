@@ -77,8 +77,12 @@ class PITHRadioView(FormView):
         return super().form_valid(form)
 
     def update_db(self, app_id):
-        # Update the task status to 'IN_PROGRESS' in all cases
-        update_application(app_id, 'people_in_home_status', 'IN_PROGRESS')
+        # Update the task status to 'IN_PROGRESS' if task status not 'DONE', 'FLAGGED' or 'WAITING'.
+        application_id = get_id(self.request)
+        people_in_home_status = get_application(application_id, 'people_in_home_status')
+
+        if people_in_home_status not in ['COMPLETED', 'WAITING']:
+            update_application(app_id, 'people_in_home_status', 'IN_PROGRESS')
 
         active_model, active_field_name = self.get_active_field()
 

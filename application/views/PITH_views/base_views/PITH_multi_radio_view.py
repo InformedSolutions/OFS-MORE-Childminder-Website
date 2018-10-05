@@ -79,8 +79,7 @@ class PITHMultiRadioView(TemplateView, TemplateResponseMixin):
         # Update task status if flagged or completed (people_in_home_status)
         people_in_home_status = get_application(application_id, 'people_in_home_status')
 
-        if people_in_home_status in ['FLAGGED', 'COMPLETED']:
-            # Update the task status to 'IN_PROGRESS' from 'FLAGGED'
+        if people_in_home_status not in ['COMPLETED', 'WAITING']:
             update_application(application_id, 'people_in_home_status', 'IN_PROGRESS')
 
         return HttpResponseRedirect(self.get_success_url())

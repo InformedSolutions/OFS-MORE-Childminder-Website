@@ -103,11 +103,10 @@ def __own_children_address_manual_post_handler(request, template, success_url, a
         application.date_updated = current_date
         application.save()
 
-        logger.debug('Updating database with child address for application: ' + application_id)
-
-        status.update(application_id, 'people_in_home_status', 'IN_PROGRESS')
-
-        logger.debug('Set task status to IN_PROGRESS')
+        if application.people_in_home_status not in ['COMPLETED', 'WAITING']:
+            logger.debug('Updating database with child address for application: ' + application_id)
+            status.update(application_id, 'people_in_home_status', 'IN_PROGRESS')
+            logger.debug('Set task status to IN_PROGRESS')
 
         reset_declaration(application)
 

@@ -132,9 +132,8 @@ def __own_children_address_selection_post_handler(request, template, success_url
         child_address_record.country = 'United Kingdom'
         child_address_record.save()
 
-        if Application.get_id(app_id=application_id).your_children_status != 'COMPLETED':
-
-            status.update(application_id, 'your_children_status', 'IN_PROGRESS')
+        if Application.get_id(app_id=application_id).people_in_home_status not in ['COMPLETED', 'WAITING']:
+            status.update(application_id, 'people_in_home_status', 'IN_PROGRESS')
 
         # At this point, if an address was previously flagged by ARC, the comment can be safely removed
         __remove_arc_address_flag(child_address_record)
