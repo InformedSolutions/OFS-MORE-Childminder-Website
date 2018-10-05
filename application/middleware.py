@@ -151,7 +151,7 @@ def register_as_childminder_link_location(request):
                 childcare_type_status = application.childcare_type_status
                 personal_details_status = application.personal_details_status
 
-                if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' and personal_details_status == 'COMPLETED':
+                if login_details_status in ['FLAGGED', 'COMPLETED'] and childcare_type_status in ['FLAGGED', 'COMPLETED'] and personal_details_status in ['FLAGGED', 'COMPLETED']:
 
                     return {'task_list_link': True,
                             'id': application_id}
