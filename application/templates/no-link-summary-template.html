@@ -15,7 +15,6 @@
 </h1>
     
 <p>You can change these details later.</p>
-
 {% for table in table_list %}
 <table class="check-your-answers">
     <colgroup>
@@ -23,11 +22,7 @@
         <col class="summary-column">
     </colgroup>
     <thead>
-    <th colspan="2">
-            <h2 class="heading-medium">
-                {{ table.title }}
-            </h2>
-    </th>
+        <th colspan="2"></th>
     </thead>
     <tbody>
     {% for row in table.row_list %}
