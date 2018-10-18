@@ -23,8 +23,8 @@ class DeclarationForm(ChildminderForms):
     auto_replace_widgets = True
 
     declaration_confirmation = forms.BooleanField(label='I confirm', required=True,
-                                        error_messages={
-                                            'required': 'You must confirm everything on this page to continue'})
+                                                  error_messages={
+                                                      'required': 'You must confirm everything on this page to continue'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -52,8 +52,9 @@ class PublishingYourDetailsForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
-     publish_details = forms.BooleanField(label='I do not want my details published', required=False)
-     def __init__(self, *args, **kwargs):
+    publish_details = forms.BooleanField(label='I do not want my details published', required=False)
+
+    def __init__(self, *args, **kwargs):
         """
         Method to configure the initialisation of the Declaration: declaration form
         :param args: arguments passed to the form
