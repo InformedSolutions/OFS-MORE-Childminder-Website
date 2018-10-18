@@ -15,7 +15,8 @@ from application import views
 from .. import status
 from ..forms import (DeclarationIntroForm,
                      DeclarationForm,
-                     DeclarationSummaryForm)
+                     DeclarationSummaryForm,
+                     PublishingYourDetailsForm)
 from ..models import (AdultInHome,
                       ApplicantHomeAddress,
                       ApplicantName,
@@ -540,7 +541,7 @@ def declaration_declaration(request):
 
             clear_arc_flagged_statuses(application_id_local)
 
-            return HttpResponseRedirect(reverse('Payment-Details-View') + '?id=' + application_id_local)
+            return HttpResponseRedirect(reverse('Publishing-Your-Details-View') + '?id=' + application_id_local)
 
         else:
             childcare_type = ChildcareType.objects.get(application_id=application_id_local)
@@ -550,6 +551,28 @@ def declaration_declaration(request):
                 'registers': not childcare_type.zero_to_five
             }
             return render(request, 'declaration-declaration.html', variables)
+
+
+def publishing_your_details(request):
+    if request.method == 'GET':
+        application_id_local = request.GET["id"]
+        form = PublishingYourDetailsForm(id=application_id_local)
+        variables = {
+            'application_id': application_id_local,
+            'form': form
+        }
+        return render(request, 'publishing-your-details.html', variables)
+    if request.method == 'POST':
+        application_id_local = request.POST["id"]
+        # extract form data
+        form = PublishingYourDetailsForm(request.POST, id=application_id_local)
+        if form.is_valid():
+            publish_details = not form.cleaned_data.get('publish_details')
+            # save down form data
+            application = Application.objects.get(application_id=application_id_local)
+            application.publish_details = publish_details
+            application.save()
+            return HttpResponseRedirect(reverse('Payment-Details-View') + '?id=' + application_id_local)
 
 
 def generate_list_of_updated_tasks(application_id):

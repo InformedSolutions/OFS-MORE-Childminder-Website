@@ -180,6 +180,7 @@ urlpatterns = [
     url(r'^people/email-resent/', views.other_people_resend_confirmation, name='Other-People-Resend-Confirmation-View'),
     url(r'^declaration/', views.declaration_intro, name='Declaration-Intro-View'),
     url(r'^your-declaration/', views.declaration_declaration, name='Declaration-Declaration-View'),
+    url(r'^publishing-your-details/', views.publishing_your_details, name='Publishing-Your-Details-View'),
     url(r'^check-answers/', views.declaration_summary, name='Declaration-Summary-View'),
     url(r'^payment/details/', views.card_payment_details, name='Payment-Details-View'),
     url(r'^application-saved/', views.application_saved, name='Application-Saved-View'),
