@@ -20,17 +20,44 @@ def qset_to_formatted_string(qset):
 
 
 class ThankYou(BaseTemplateView):
-    template_name = 'other_people_health_check/thank_you.html'
+    #template_name = 'other_people_health_check/thank_you.html'
+    #template_name = ''
+    #template_name = self.getStatus()
     success_url_name = 'Health-Check-Thank-You'
 
+    def getStatus(self,application_id):
+
+        #self.template_name = 'other_people_health_check/thank_you.html'
+
+        dbs_qset = AdultInHome.objects.filter(application_id=application_id, capita=False, on_update=True) |\
+                   AdultInHome.objects.filter(application_id=application_id, capita=True)
+        crc_qset = AdultInHome.objects.filter(application_id=application_id, lived_abroad=True)
+        print(dbs_qset)
+        print(crc_qset)
+        if len(dbs_qset)>0:
+            if len(crc_qset)>0:
+                self.template_name = 'other_people_health_check/thank_you_dbs_abroad.html'
+                #TEMPLATE NAME IS BOTH
+            else:
+                self.template_name = 'other_people_health_check/thank_you_dbs.html'
+                #TEMPLATE NAME IS JUST DBS
+        elif len(crc_qset)>0:
+            self.template_name = 'other_people_health_check/thank_you_abroad.html'
+            #TEMPLATE NAME IS JUST CRC
+        else:
+            self.template_name = 'other_people_health_check/thank_you_neither.html'
+            #TEMPLATE NAME IS NEITHER
+
     def get(self, request, *args, **kwargs):
-        response = super().get(request=self.request)
         adult_id = self.request.GET.get('person_id')
         adult_record = AdultInHome.objects.get(pk=adult_id)
-        application_id = adult_record.application_id_id
         adult_name = ' '.join([adult_record.first_name, (adult_record.middle_names or ''), adult_record.last_name])
+        application_id = adult_record.application_id_id
         application = Application.objects.get(application_id=application_id)
         user_details = UserDetails.objects.get(application_id=application_id)
+        self.getStatus(application_id)
+
+        response = super().get(request=self.request)
 
         try:
             applicant = ApplicantName.objects.get(application_id=application_id)
