@@ -52,7 +52,7 @@ class PublishingYourDetailsForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
-    publish_details = forms.BooleanField(label='I do not want my details published', required=False)
+    publish_details = forms.BooleanField(label='I do not want these details published', required=False)
 
     def __init__(self, *args, **kwargs):
         """

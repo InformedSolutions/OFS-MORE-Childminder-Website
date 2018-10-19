@@ -10,13 +10,13 @@
     <h1 class="form-title heading-large">
         Publishing your details
     </h1>
-    <p>After you are registered, Ofsted will publish your name and contact details on our website.</p>
-    <p>This helps parents find you.</p>
+    <p>After you're registered, Ofsted will publish your name, address and phone number on <a href="https://reports.ofsted.gov.uk/" target="_blank">our inspection reports website</a>.</p>
+    <p>This means parents can find you using your name and address.</p>
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         {{form.as_div}}
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>
-        <input type="submit" class="button" value="Continue"/>
+        <input type="submit" class="button" value="Continue to payment"/>
     </form>
 </div>
 </div>
