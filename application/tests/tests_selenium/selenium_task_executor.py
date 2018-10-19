@@ -723,7 +723,7 @@ class SeleniumTaskExecutor:
         driver = self.get_driver()
         driver.find_element_by_id("id_publish_details").click()
 
-        driver.find_element_by_xpath("//input[@value='Continue']").click()
+        driver.find_element_by_xpath("//input[@value='Continue to payment']").click()
 
     def select_test_address(self):
         """
