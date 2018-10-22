@@ -5,6 +5,7 @@ from application.status import update
 from application.views import create_account_magic_link
 from application.views.other_people_health_check.BaseViews import BaseTemplateView
 from childminder import settings
+from django.shortcuts import render
 
 
 def qset_to_formatted_string(qset):
@@ -20,20 +21,17 @@ def qset_to_formatted_string(qset):
 
 
 class ThankYou(BaseTemplateView):
-    #template_name = 'other_people_health_check/thank_you.html'
-    #template_name = ''
-    #template_name = self.getStatus()
+
     success_url_name = 'Health-Check-Thank-You'
 
     def getStatus(self,application_id):
 
         #self.template_name = 'other_people_health_check/thank_you.html'
 
-        dbs_qset = AdultInHome.objects.filter(application_id=application_id, capita=False, on_update=True) |\
-                   AdultInHome.objects.filter(application_id=application_id, capita=True)
+        #dbs_qset = AdultInHome.objects.filter(application_id=application_id, capita=False, on_update=True) |\
+                  # AdultInHome.objects.filter(application_id=application_id, capita=True)
+        dbs_qset = AdultInHome.objects.filter(application_id=application_id, capita=False, on_update=True)
         crc_qset = AdultInHome.objects.filter(application_id=application_id, lived_abroad=True)
-        print(dbs_qset)
-        print(crc_qset)
         if len(dbs_qset)>0:
             if len(crc_qset)>0:
                 self.template_name = 'other_people_health_check/thank_you_dbs_abroad.html'
@@ -55,17 +53,18 @@ class ThankYou(BaseTemplateView):
         application_id = adult_record.application_id_id
         application = Application.objects.get(application_id=application_id)
         user_details = UserDetails.objects.get(application_id=application_id)
-        self.getStatus(application_id)
-
-        response = super().get(request=self.request)
 
         try:
             applicant = ApplicantName.objects.get(application_id=application_id)
+            firstname = ' '.join([applicant.first_name, applicant.middle_names, applicant.last_name])
 
-            firstname = applicant.first_name
         except:
             firstname = 'Applicant'
 
+        # Initialises the correct template to load depending on whether the household member has a non-capita DBS check or lived abroad
+        self.getStatus(application_id)
+
+        response = super().get(request=self.request)
         if adult_record.health_check_status == 'To do' or adult_record.health_check_status == 'Started':
             template_id = '8f5713f5-4437-479e-9fcc-262d0306f58c'
             email = user_details.email
@@ -74,7 +73,6 @@ class ThankYou(BaseTemplateView):
                                "firstName": firstname,
                                "Household Member Name": adult_name}
             r = send_email(email, personalisation, template_id)
-            print(link)
             # Delete ARC comment if it exists after recompleting the household member health check
             if ArcComments.objects.filter(table_pk=application_id, field_name='health_check_status').count() > 0:
                 arc_comment = ArcComments.objects.get(table_pk=application_id, field_name='health_check_status')
@@ -101,6 +99,7 @@ class ThankYou(BaseTemplateView):
                     CustomAuthenticationHandler.destroy_session(response)
                     return response
 
+
             dbs_qset = AdultInHome.objects.filter(application_id=application_id, capita=False, on_update=True)
             crc_qset = AdultInHome.objects.filter(application_id=application_id, lived_abroad=True)
 
@@ -110,12 +109,16 @@ class ThankYou(BaseTemplateView):
                                "firstName": firstname,
                                "ApplicantName": firstname
                                }
-
+            #Personalisation parameters for the household member
+            adult_personalisation={"firstName": adult_record.first_name + ' ' + adult_record.last_name,
+                                   "ApplicantName": firstname}
             if len(dbs_qset) > 0 and len(crc_qset) == 0:
                 dbs_names_string = qset_to_formatted_string(dbs_qset)
                 personalisation["dbs_names"] = dbs_names_string
                 template_id = '9aa3a240-0a00-44bc-ac49-88125eb7c749'
                 r = send_email(email, personalisation, template_id)
+                adult_template_id = '2e9c097c-9e75-4198-9b5d-bab4b710e903'
+                r = send_email(adult_record.email, adult_personalisation, adult_template_id)
                 print(link)
 
             elif len(crc_qset) > 0 and len(dbs_qset) == 0:
@@ -123,6 +126,8 @@ class ThankYou(BaseTemplateView):
                 personalisation["crc_names"] = crc_names_string
                 template_id = '07438eef-d88b-48fe-9812-2bc9e09dbae6'
                 r = send_email(email, personalisation, template_id)
+                adult_template_id = 'b598fceb-8c3d-46c3-a2fd-7f1568fa7b14'
+                r = send_email(adult_record.email, adult_personalisation, adult_template_id)
                 print(link)
 
             elif len(dbs_qset) > 0 and len(crc_qset) > 0:
@@ -132,6 +137,8 @@ class ThankYou(BaseTemplateView):
                 personalisation["crc_names"] = crc_names_string
                 template_id = '5d5db808-2c83-41f6-adba-eda1b24c5714'
                 r = send_email(email, personalisation, template_id)
+                adult_template_id = '0df95124-4b08-4ed7-9881-70c4f0352767'
+                r = send_email(adult_record.email, adult_personalisation, adult_template_id)
                 print(link)
 
             else:
@@ -144,5 +151,10 @@ class ThankYou(BaseTemplateView):
         adult_record.validated = True
         adult_record.save()
 
+        context = {
+            'firstname': firstname,
+        }
+
+        response = render(request, self.template_name, context)
         CustomAuthenticationHandler.destroy_session(response)
         return response

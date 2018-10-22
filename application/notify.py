@@ -15,7 +15,7 @@ from django.conf import settings
 from .business_logic import convert_mobile_to_notify_standard
 
 
-def send_email(email, personalisation, template_id):
+def send_email(email: object, personalisation: object, template_id: object) -> object:
     """
     Method to send an email using the Notify Gateway API
     :param email: string containing the e-mail address to send the e-mail to
