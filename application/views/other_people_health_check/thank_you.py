@@ -26,10 +26,6 @@ class ThankYou(BaseTemplateView):
 
     def getStatus(self,application_id):
 
-        #self.template_name = 'other_people_health_check/thank_you.html'
-
-        #dbs_qset = AdultInHome.objects.filter(application_id=application_id, capita=False, on_update=True) |\
-                  # AdultInHome.objects.filter(application_id=application_id, capita=True)
         dbs_qset = AdultInHome.objects.filter(application_id=application_id, capita=False, on_update=True)
         crc_qset = AdultInHome.objects.filter(application_id=application_id, lived_abroad=True)
         if len(dbs_qset)>0:
@@ -56,7 +52,7 @@ class ThankYou(BaseTemplateView):
 
         try:
             applicant = ApplicantName.objects.get(application_id=application_id)
-            firstname = ' '.join([applicant.first_name, applicant.middle_names, applicant.last_name])
+            firstname = ' '.join([applicant.first_name])
 
         except:
             firstname = 'Applicant'
