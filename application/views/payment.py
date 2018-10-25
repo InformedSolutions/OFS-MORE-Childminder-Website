@@ -2,10 +2,9 @@ from django.shortcuts import render
 from timeline_logger.models import TimelineLog
 
 from application.business_logic import get_childcare_register_type
-from ..models import (Application, ApplicantName, UserDetails, CriminalRecordCheck)
-from .. import status
-
 from application.notify import send_email
+from .. import status
+from ..models import (Application, ApplicantName, UserDetails, CriminalRecordCheck)
 
 
 def payment_confirmation(request):
@@ -51,6 +50,7 @@ def payment_confirmation(request):
 
     return render(request, template, variables)
 
+
 def get_template(crc, app_id, application, cost):
     lived_abroad = crc.lived_abroad
     capita = crc.capita
@@ -65,7 +65,7 @@ def get_template(crc, app_id, application, cost):
     reference_number = application.application_reference
     first_name = applicant_name.first_name
     email = user_details.email
-    cost = str(35)
+    cost = str(cost)
 
     personalisation = {'ref': reference_number,
                        'firstName': first_name,
@@ -106,4 +106,3 @@ def send_payment_email(email, personalisation, template_id, application):
     """
     if application.application_status == 'DRAFTING':
         send_email(email, personalisation, template_id)
-        
