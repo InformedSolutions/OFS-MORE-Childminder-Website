@@ -52,10 +52,10 @@ class ThankYou(BaseTemplateView):
 
         try:
             applicant = ApplicantName.objects.get(application_id=application_id)
-            firstname = ' '.join([applicant.first_name])
+            applicantName = ' '.join([applicant.first_name, (applicant.middle_names or ''), applicant.last_name])
 
         except:
-            firstname = 'Applicant'
+            applicantName = 'Applicant'
 
         # Initialises the correct template to load depending on whether the household member has a non-capita DBS check or lived abroad
         self.getStatus(application_id)
@@ -66,7 +66,7 @@ class ThankYou(BaseTemplateView):
             email = user_details.email
             link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + create_account_magic_link(user_details)
             personalisation = {"link": link,
-                               "firstName": firstname,
+                               "ApplicantName": applicantName,
                                "Household Member Name": adult_name}
             r = send_email(email, personalisation, template_id)
             # Delete ARC comment if it exists after recompleting the household member health check
@@ -101,13 +101,13 @@ class ThankYou(BaseTemplateView):
 
             email = user_details.email
             link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + create_account_magic_link(user_details)
+            applicant = ApplicantName.objects.get(application_id=application_id)
             personalisation = {"link": link,
-                               "firstName": firstname,
-                               "ApplicantName": firstname
+                               "firstName": applicant.first_name,
                                }
             #Personalisation parameters for the household member
-            adult_personalisation={"firstName": adult_record.first_name + ' ' + adult_record.last_name,
-                                   "ApplicantName": firstname}
+            adult_personalisation={"firstName": adult_record.first_name,
+                                   "ApplicantName": applicantName}
             if len(dbs_qset) > 0 and len(crc_qset) == 0:
                 dbs_names_string = qset_to_formatted_string(dbs_qset)
                 personalisation["dbs_names"] = dbs_names_string
@@ -148,7 +148,7 @@ class ThankYou(BaseTemplateView):
         adult_record.save()
 
         context = {
-            'firstname': firstname,
+            'ApplicantName': applicantName,
         }
 
         response = render(request, self.template_name, context)
