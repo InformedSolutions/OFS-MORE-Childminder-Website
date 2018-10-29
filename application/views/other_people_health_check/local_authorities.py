@@ -23,14 +23,10 @@ class LocalAuthorities(BaseFormView):
         :return: a dictionary mapping form field names, to values of the correct type
         """
         initial = super().get_initial()
-
-        try:
-            person_id = self.request.GET['person_id']
-            person_record = AdultInHome.objects.get(pk=person_id)
-            initial['known_to_council'] = person_record.current_treatment
-            initial['children_details'] = person_record.children_details
-        except ObjectDoesNotExist:
-            pass
+        person_id = self.request.GET['person_id']
+        person_record = AdultInHome.objects.get(pk=person_id)
+        initial['known_to_council'] = person_record.known_to_council
+        initial['children_details'] = person_record.children_details
 
         return initial
 

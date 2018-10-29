@@ -13,8 +13,6 @@ class Summary(BaseTemplateView):
         context['person_id'] = self.request.GET.get('person_id')
         person_object = AdultInHome.objects.get(pk=self.request.GET.get('person_id'))
         context['localauthorities_url'] = build_url('Health-Check-Local-Authorities', get={'person_id': context['person_id']})
-        #context['declaration_url'] = build_url('Health-Check-Declaration', get={'person_id': context['person_id']})
-
         context['current_treatment_set'] = HealthCheckCurrent.objects.filter(person_id=self.request.GET.get('person_id'))
         context['serious_illness_set'] = HealthCheckSerious.objects.filter(person_id=person_object)
         context['hospital_admission_set'] = HealthCheckHospital.objects.filter(person_id=person_object)
