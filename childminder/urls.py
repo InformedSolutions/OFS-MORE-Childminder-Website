@@ -12,7 +12,7 @@ from django.views.generic import TemplateView
 
 from application import views, utils
 from application.views import security_question, magic_link, feedback, your_children
-from application.views.other_people_health_check import health_check_login, dob_auth, current_treatment, guidance, \
+from application.views.other_people_health_check import health_check_login, dob_auth, current_treatment, local_authorities, guidance, \
     declaration, serious_illness, hospital_admission, summary, thank_you
 from application.views import PITH_views
 
@@ -158,6 +158,8 @@ urlpatterns = [
     url(r'^health-check/current-treatment', current_treatment.CurrentTreatment.as_view(), name='Health-Check-Current'),
     url(r'^health-check/serious-illness$', serious_illness.SeriousIllnessStartView.as_view(),
         name='Health-Check-Serious-Start'),
+    url(r'^health-check/local-authorities$', local_authorities.LocalAuthorities.as_view(),
+        name='Health-Check-Local-Authorities'),
     url(r'^health-check/more-serious-illness', serious_illness.MoreSeriousIllnessesView.as_view(),
         name='Health-Check-Serious-More'),
     url(r'^health-check/serious-illness/edit', serious_illness.SeriousIllnessEditView.as_view(),
