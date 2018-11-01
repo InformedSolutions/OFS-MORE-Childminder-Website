@@ -148,17 +148,12 @@ class MoreSeriousIllnessesView(BaseFormView):
         :return: redirect to appropriate url
         """
         clean = form.cleaned_data
-        adult_record = AdultInHome.objects.get(pk=self.request.GET.get('person_id'))
-        existing_records = HealthCheckHospital.objects.filter(person_id=adult_record)
         decision = clean['more_illnesses']
 
         if decision == 'True':
             self.success_url = 'Health-Check-Serious'
         else:
-            if existing_records.exists():
-                self.success_url = 'Health-Check-Summary'
-            else:
-                self.success_url = 'Health-Check-Hospital-Start'
+            self.success_url = 'Health-Check-Hospital-Start'
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -168,7 +163,7 @@ class SeriousIllnessEditView(BaseFormView):
     """
     template_name = 'other_people_health_check/serious_illness.html'
     form_class = SeriousIllness
-    success_url = 'Health-Check-Summary'
+    success_url = 'Health-Check-Hospital-Start'
 
     def get_initial(self):
         """

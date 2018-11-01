@@ -2,8 +2,8 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
 from application.forms.other_person_health_check import dob_auth
-from application.models import AdultInHome
 from application.views.other_people_health_check.BaseViews import BaseFormView
+from ...models import Application, AdultInHome
 
 
 class DobAuthView(BaseFormView):
@@ -12,7 +12,6 @@ class DobAuthView(BaseFormView):
     """
     template_name = 'other_people_health_check/dob_auth.html'
     form_class = dob_auth.DateOfBirthAuthentication
-    success_url = 'Health-Check-Guidance'
     times_wrong = 0
 
     def post(self, request=None):
@@ -21,6 +20,14 @@ class DobAuthView(BaseFormView):
         :param request:
         :return:
         """
+        adult_id = self.request.GET.get('person_id')
+        adult_record = AdultInHome.objects.get(pk=adult_id)
+
+        if adult_record.health_check_status == 'COMPLETED' or adult_record.health_check_status == 'FURTHER_INFORMATION':
+            self.success_url = 'Health-Check-Summary'
+        else:
+            self.success_url = 'Health-Check-Guidance'
+
         self.times_wrong = int(self.request.POST.get('times_wrong'))
         response = super().post(request=self.request)
 
@@ -63,4 +70,3 @@ class DobAuthView(BaseFormView):
         response = super().form_invalid(form)
 
         return response
-
