@@ -2,7 +2,10 @@ from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 
 from application.forms.other_person_health_check import dob_auth
+<<<<<<< HEAD
 from application.utils import get_id
+=======
+>>>>>>> develop
 from application.views.other_people_health_check.BaseViews import BaseFormView
 from ...models import Application, AdultInHome
 
@@ -32,6 +35,7 @@ class DobAuthView(BaseFormView):
             self.success_url = 'Health-Check-Summary'
         else:
             self.success_url_name = 'Health-Check-Guidance'
+
             self.success_url = 'Health-Check-Guidance'
 
         self.times_wrong = int(self.request.POST.get('times_wrong'))
