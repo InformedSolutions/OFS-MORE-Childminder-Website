@@ -14,6 +14,7 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.views.decorators.cache import never_cache
 
+from application.business_logic import get_childcare_register_type
 from ..application_reference_generator import *
 from .. import payment_service
 from ..forms import PaymentDetailsForm
@@ -46,12 +47,14 @@ def card_payment_get_handler(request):
     application = Application.objects.get(pk=app_id)
     paid = application.application_reference
     prior_payment_record_exists = Payment.objects.filter(application_id=application).exists()
+    childcare_register_type, childcare_register_cost = get_childcare_register_type(app_id)
 
     if not prior_payment_record_exists:
         form = PaymentDetailsForm()
         variables = {
             'form': form,
-            'application_id': app_id
+            'application_id': app_id,
+            'cost': childcare_register_cost,
         }
 
         return render(request, 'payment-details.html', variables)
@@ -63,7 +66,8 @@ def card_payment_get_handler(request):
     if payment_record.payment_authorised:
         variables = {
             'application_id': app_id,
-            'order_code': paid
+            'order_code': paid,
+            'cost': childcare_register_cost,
         }
         return render(request, 'paid.html', variables)
 
@@ -71,7 +75,8 @@ def card_payment_get_handler(request):
     form = PaymentDetailsForm()
     variables = {
         'form': form,
-        'application_id': app_id
+        'application_id': app_id,
+        'cost': childcare_register_cost,
     }
 
     return render(request, 'payment-details.html', variables)
