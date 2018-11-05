@@ -26,7 +26,7 @@ class DobAuthView(BaseFormView):
         application = Application.objects.get(application_id=application_id)
 
         # Both success_url_name and success_url required due to conflicting methods
-        if application.people_in_home_arc_flagged:
+        if application.people_in_home_arc_flagged or adult_record.health_check_status == 'COMPLETED':
             self.success_url_name = 'Health-Check-Summary'
             self.success_url = 'Health-Check-Summary'
         else:
