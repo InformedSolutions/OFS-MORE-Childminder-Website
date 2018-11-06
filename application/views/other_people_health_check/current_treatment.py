@@ -27,9 +27,10 @@ class CurrentTreatment(BaseFormView):
         try:
             person_id = self.request.GET['person_id']
             person_record = AdultInHome.objects.get(pk=person_id)
-            current_illness_record = HealthCheckCurrent.objects.get(person_id=person_id)
             initial['currently_ill'] = person_record.current_treatment
-            initial['illness_details'] = current_illness_record.description
+            if initial['currently_ill']:
+                current_illness_record = HealthCheckCurrent.objects.get(person_id=person_id)
+                initial['illness_details'] = current_illness_record.description
         # If there has yet to be an entry for the model associated with the form, then no population necessary
         except ObjectDoesNotExist:
             pass
