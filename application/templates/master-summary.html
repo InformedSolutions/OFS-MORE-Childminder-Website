@@ -1131,11 +1131,11 @@
         <td style="word-wrap: break-word" class=summary-column>
             Do you have children of your own under 16 who do not live with you?
         </td>
-        {% if children_not_in_home is True %}
+        {% if children_not_in_home %}
         <td style="word-wrap: break-word" class=summary-column>
             Yes
         </td>
-        {% elif children_not_in_home is False %}
+        {% else %}
         <td style="word-wrap: break-word" class=summary-column>
             No
         </td>
