@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Local authorities{% endblock %}
+{% block page_title %}Your children{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 {% block proposition_menu %}
@@ -12,7 +12,7 @@
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     {% csrf_token %}
     <div class = "form-group">
-        <h1 class="form-title heading-large">Local authorities</h1>
+        <h1 class="form-title heading-large">Your children</h1>
         {{ form }}
         <input type="submit" class="button" value="Continue">
     </div>
