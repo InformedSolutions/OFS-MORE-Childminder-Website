@@ -169,8 +169,8 @@ other_adult_summary_link_dict = collections.OrderedDict([('adults_in_home', 'PIT
 other_child_summary_name_dict = collections.OrderedDict([('children_in_home', 'Do children under 16 live in the home?')])
 other_child_summary_link_dict = collections.OrderedDict([('children_in_home', 'PITH-Children-Check-View')])
 
-other_child_not_in_the_home_summary_name_dict = collections.OrderedDict([('children_not_in_the_home', 'Do you have children under 16 who do not live with you?')])
-other_child_not_in_the_home_summary_link_dict = collections.OrderedDict([('children_not_in_the_home', 'PITH-Own-Children-Check-View')])
+other_child_not_in_the_home_summary_name_dict = collections.OrderedDict([('own_children_not_in_the_home', 'Do you have children under 16 who do not live with you?')])
+other_child_not_in_the_home_summary_link_dict = collections.OrderedDict([('own_children_not_in_the_home', 'PITH-Own-Children-Check-View')])
 
 ###
 
