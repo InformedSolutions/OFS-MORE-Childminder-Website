@@ -51,7 +51,7 @@ def payment_confirmation(request):
     return render(request, template, variables)
 
 
-def get_template(crc, app_id, application, cost):
+def get_template(crc, app_id, application, cost, cr_type):
     lived_abroad = crc.lived_abroad
     capita = crc.capita
     if capita:
@@ -66,25 +66,30 @@ def get_template(crc, app_id, application, cost):
     first_name = applicant_name.first_name
     email = user_details.email
     cost = str(cost)
+    early_years_register = 'EYR' in cr_type
 
     personalisation = {'ref': reference_number,
                        'firstName': first_name,
                        'cost': cost}
 
     if (capita and not cautions_convictions) and lived_abroad:
-        send_payment_email(email, personalisation, '36720ba3-165e-40cd-a6d2-320daa9d6e4a', application)
+        email_template = '36720ba3-165e-40cd-a6d2-320daa9d6e4a' if early_years_register else 'ac595e14-1245-43e0-975d-139c8bdf98f9'
+        send_payment_email(email, personalisation, email_template, application)
         return 'payment-confirmation-lived-abroad.html'
 
     elif (not capita or cautions_convictions) and lived_abroad:
-        send_payment_email(email, personalisation, 'c82b8ffd-f67c-4019-a724-d57ab559f08e', application)
+        email_template = 'c82b8ffd-f67c-4019-a724-d57ab559f08e' if early_years_register else 'ae74eec5-edbe-4b27-b4eb-992ba607d94e'
+        send_payment_email(email, personalisation, email_template, application)
         return 'payment-confirmation-health-dbs.html'
 
     elif (not capita or cautions_convictions) and not lived_abroad:
-        send_payment_email(email, personalisation, '02c01f75-1f9d-428f-a862-4effac03ebd3', application)
+        email_template = '02c01f75-1f9d-428f-a862-4effac03ebd3' if early_years_register else '49a9e468-4517-4437-9db9-24b8d913d44e'
+        send_payment_email(email, personalisation, email_template, application)
         return 'payment-confirmation-dbs-only.html'
 
     elif not lived_abroad and not cautions_convictions:
-        send_payment_email(email, personalisation, '8ca4eb7c-f4c9-417a-85e6-f4c10672f41a', application)
+        email_template = '8ca4eb7c-f4c9-417a-85e6-f4c10672f41a' if early_years_register else '275bac26-d625-4dbd-8f91-a0cc32c700d1'
+        send_payment_email(email, personalisation, email_template, application)
         return 'payment-confirmation-no-documents.html'
 
     else:
