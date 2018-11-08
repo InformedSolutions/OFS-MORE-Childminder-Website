@@ -45,12 +45,17 @@
     <br>
 
     <h2 class="heading-medium no-print">Post your documents</h2>
+
+    {% if is_early_years_register %}
     <p>We need your:</p>
 
     <ul class="list list-bullet">
         <li>original DBS certificate (not a photocopy)</li>
         <li>completed health declaration booklet</li>
     </ul>
+    {% else %}
+    <p>We need your original DBS certificate (not a photocopy)</p>
+    {% endif %}
 
     <p>Post them to:</p>
         <p style="margin-left: 40px;">
