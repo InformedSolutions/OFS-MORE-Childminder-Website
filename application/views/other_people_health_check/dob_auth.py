@@ -22,10 +22,16 @@ class DobAuthView(BaseFormView):
         """
         adult_id = self.request.GET.get('person_id')
         adult_record = AdultInHome.objects.get(pk=adult_id)
+        application_id = adult_record.application_id_id
+        application = Application.objects.get(application_id=application_id)
 
-        if adult_record.health_check_status == 'COMPLETED' or adult_record.health_check_status == 'FURTHER_INFORMATION':
+        # Both success_url_name and success_url required due to conflicting methods
+        if application.people_in_home_arc_flagged or adult_record.health_check_status == 'COMPLETED':
+            self.success_url_name = 'Health-Check-Summary'
             self.success_url = 'Health-Check-Summary'
         else:
+            self.success_url_name = 'Health-Check-Guidance'
+
             self.success_url = 'Health-Check-Guidance'
 
         self.times_wrong = int(self.request.POST.get('times_wrong'))
@@ -40,7 +46,6 @@ class DobAuthView(BaseFormView):
         :return:
         """
         context = super().get_context_data()
-
         context['times_wrong'] = self.times_wrong
 
         return context

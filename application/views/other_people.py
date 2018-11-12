@@ -408,7 +408,7 @@ def other_people_summary(request):
 
         not_child_table = collections.OrderedDict({
             'table_object': Table([application_id_local]),
-            'fields': {'children_not_in_the_home': children_not_in_home},
+            'fields': {'own_children_not_in_the_home': children_not_in_home},
             'title': 'Children not in the home',
             'error_summary_title': 'There was a problem'
         })
