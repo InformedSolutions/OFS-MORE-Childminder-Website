@@ -13,7 +13,6 @@ from ...models import (ApplicantHomeAddress,
                        ApplicantPersonalDetails,
                        Application,
                        ChildcareType,
-                       CriminalRecordCheck,
                        UserDetails)
 
 
