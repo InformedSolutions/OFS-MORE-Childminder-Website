@@ -27,7 +27,7 @@ def payment_confirmation(request):
     childcare_register_type, childcare_register_cost = get_childcare_register_type(application_id_local)
 
     template, is_early_years_register = get_template(criminal_record_check, application_id_local, local_app,
-                                                     childcare_register_cost)
+                                                     childcare_register_cost, childcare_register_type)
 
     local_app.application_status = 'SUBMITTED'
     local_app.save()
