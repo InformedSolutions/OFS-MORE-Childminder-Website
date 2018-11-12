@@ -1,4 +1,6 @@
-from django.shortcuts import render
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect
+from django.urls import reverse
 from requests import request
 from application.forms import YourLocationForm
 
@@ -16,17 +18,17 @@ def your_location(request):
         return render(request, 'your-location.html', varaibles)
 
     if request.method == 'POST':
-        form = YourLocationForm()
+        form = YourLocationForm(request.POST)
 
         if form.is_valid():
 
-            if form.cleaned_data['your_location']:
+            if form.cleaned_data['your_location'] == 'True':
 
-                # Redirect to BETA service for london New-Email
+                return HttpResponseRedirect(reverse('Account-Selection'))
 
             else:
+                return redirect("https://online.ofsted.gov.uk/onlineofsted/Ofsted_Online.ofml")
 
-                # Redirect to existing service
         else:
             # Form is not valid, return page
             varaibles ={

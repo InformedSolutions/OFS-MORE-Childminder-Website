@@ -17,6 +17,7 @@
         <h1 class="form-title heading-large">
             Your location
         </h1>
+        {% csrf_token %}
         {{form.as_div}}
         <input type="submit" class="button" value="Continue" alt='Continue'>
     </div>

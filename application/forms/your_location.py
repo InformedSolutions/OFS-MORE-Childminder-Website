@@ -21,3 +21,4 @@ class YourLocationForm(ChildminderForms):
     your_location = forms.ChoiceField(label='Please say if you live in Greater London', choices=options,
                                       widget=RadioSelect, required=True,
                                       error_messages={'required': 'Please say if you live in Greater London'})
+
