@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import render
 from timeline_logger.models import TimelineLog
 
@@ -5,6 +7,8 @@ from application.business_logic import get_childcare_register_type
 from application.notify import send_email
 from .. import status
 from ..models import (Application, ApplicantName, UserDetails, CriminalRecordCheck)
+
+log = logging.getLogger()
 
 
 def payment_confirmation(request):
@@ -75,18 +79,38 @@ def get_template(crc, app_id, application, cost, cr_type):
                        'cost': cost}
 
     if (capita and not cautions_convictions) and lived_abroad:
+        if early_years_register:
+            log.debug('Attempting send of email "Confirmation with HDB - lived abroad only email"')
+        else:
+            log.debug('Attempting send of email "Confirmation - lived abroad only"')
+
         email_template = '36720ba3-165e-40cd-a6d2-320daa9d6e4a' if early_years_register else 'ac595e14-1245-43e0-975d-139c8bdf98f9'
         view_template = 'payment-confirmation-lived-abroad.html'
 
     elif (not capita or cautions_convictions) and lived_abroad:
+        if early_years_register:
+            log.debug('Attempting send of email "Confirmation with HDB - DBS & lived abroad"')
+        else:
+            log.debug('Attempting send of email "Confirmation - DBS & lived abroad"')
+
         email_template = 'c82b8ffd-f67c-4019-a724-d57ab559f08e' if early_years_register else 'ae74eec5-edbe-4b27-b4eb-992ba607d94e'
         view_template = 'payment-confirmation-health-dbs.html'
 
     elif (not capita or cautions_convictions) and not lived_abroad:
+        if early_years_register:
+            log.debug('Attempting send of email "Confirmation with HDB - DBS only"')
+        else:
+            log.debug('Attempting send of email "Confirmation - DBS only"')
+
         email_template = '02c01f75-1f9d-428f-a862-4effac03ebd3' if early_years_register else '49a9e468-4517-4437-9db9-24b8d913d44e'
         view_template = 'payment-confirmation-dbs-only.html'
 
     elif not lived_abroad and not cautions_convictions:
+        if early_years_register:
+            log.debug('Attempting send of email "Confirmation with HDB - no docs to send"')
+        else:
+            log.debug('Attempting send of email "Confirmation - no docs to send"')
+
         email_template = '8ca4eb7c-f4c9-417a-85e6-f4c10672f41a' if early_years_register else '275bac26-d625-4dbd-8f91-a0cc32c700d1'
         view_template = 'payment-confirmation-no-documents.html'
 
