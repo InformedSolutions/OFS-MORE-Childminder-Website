@@ -78,13 +78,16 @@ def get_template(crc, app_id, application, cost, cr_type):
                        'firstName': first_name,
                        'cost': cost}
 
+    log.debug(
+        'Attempting to send a payment confirmation email with early_years_register: {0}; cr_type: {1}; cost: {2}; capita: {3}; cautions_convictions: {4}; lived_abroad: {5}'.format(
+            early_years_register, cr_type, cost, capita, cautions_convictions, lived_abroad))
     if (capita and not cautions_convictions) and lived_abroad:
         if early_years_register:
             log.debug('Attempting send of email "Confirmation with HDB - lived abroad only email"')
         else:
             log.debug('Attempting send of email "Confirmation - lived abroad only"')
 
-        email_template = '36720ba3-165e-40cd-a6d2-320daa9d6e4a' if early_years_register else 'ac595e14-1245-43e0-975d-139c8bdf98f9'
+        email_template = '36720ba3-165e-40cd-a6d2-320daa9d6e4a' if early_years_register else 'f5a2998c-7322-4e32-8a85-72741bfec4a5'
         view_template = 'payment-confirmation-lived-abroad.html'
 
     elif (not capita or cautions_convictions) and lived_abroad:
@@ -93,7 +96,7 @@ def get_template(crc, app_id, application, cost, cr_type):
         else:
             log.debug('Attempting send of email "Confirmation - DBS & lived abroad"')
 
-        email_template = 'c82b8ffd-f67c-4019-a724-d57ab559f08e' if early_years_register else 'ae74eec5-edbe-4b27-b4eb-992ba607d94e'
+        email_template = 'c82b8ffd-f67c-4019-a724-d57ab559f08e' if early_years_register else '94190a2d-d1c7-46c6-8144-da38141aa027'
         view_template = 'payment-confirmation-health-dbs.html'
 
     elif (not capita or cautions_convictions) and not lived_abroad:
@@ -102,7 +105,7 @@ def get_template(crc, app_id, application, cost, cr_type):
         else:
             log.debug('Attempting send of email "Confirmation - DBS only"')
 
-        email_template = '02c01f75-1f9d-428f-a862-4effac03ebd3' if early_years_register else '49a9e468-4517-4437-9db9-24b8d913d44e'
+        email_template = '02c01f75-1f9d-428f-a862-4effac03ebd3' if early_years_register else '294f2710-c507-4d30-ae64-b5451c59a45c'
         view_template = 'payment-confirmation-dbs-only.html'
 
     elif not lived_abroad and not cautions_convictions:
@@ -111,7 +114,7 @@ def get_template(crc, app_id, application, cost, cr_type):
         else:
             log.debug('Attempting send of email "Confirmation - no docs to send"')
 
-        email_template = '8ca4eb7c-f4c9-417a-85e6-f4c10672f41a' if early_years_register else '275bac26-d625-4dbd-8f91-a0cc32c700d1'
+        email_template = '8ca4eb7c-f4c9-417a-85e6-f4c10672f41a' if early_years_register else '75325ea2-c9b4-408c-9d89-c16ebbd7bd32'
         view_template = 'payment-confirmation-no-documents.html'
 
     else:
