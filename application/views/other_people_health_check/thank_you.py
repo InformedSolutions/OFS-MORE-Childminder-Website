@@ -147,7 +147,7 @@ class ThankYou(BaseTemplateView):
 
         adult_record.validated = True
         adult_record.save()
-        self.send_survery_email(adult_record, reference_number)
+        self.send_survey_email(adult_record, reference_number)
 
         context = {
             'ApplicantName': applicantName,
@@ -157,15 +157,15 @@ class ThankYou(BaseTemplateView):
         CustomAuthenticationHandler.destroy_session(response)
         return response
 
-    def send_survery_email(self, adult_record, reference_number):
+    def send_survey_email(self, adult_record, reference_number):
 
-        survery_template_id = '4f850789-b9c9-4192-adfa-fe66883c5872'
+        survey_template_id = '4f850789-b9c9-4192-adfa-fe66883c5872'
         email = adult_record.email
 
-        survery_personalisation={
+        survey_personalisation={
             'first_name': adult_record.first_name,
             'ref': reference_number,
         }
 
-        send_email(email, survery_personalisation, survery_template_id)
+        send_email(email, survey_personalisation, survey_template_id)
 
