@@ -156,7 +156,7 @@ class ThankYou(BaseTemplateView):
         response = render(request, self.template_name, context)
         CustomAuthenticationHandler.destroy_session(response)
         return response
-    
+
     def send_survery_email(self, adult_record, reference_number):
 
         survery_template_id = '4f850789-b9c9-4192-adfa-fe66883c5872'
