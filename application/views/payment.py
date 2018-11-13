@@ -122,6 +122,8 @@ def get_template(crc, app_id, application, cost, cr_type):
         capita as {2} """.format(lived_abroad, cautions_convictions, capita))
 
     send_payment_email(email, personalisation, email_template, application)
+    send_survery_email(email, personalisation, application)
+
     return view_template, early_years_register
 
 
@@ -136,3 +138,17 @@ def send_payment_email(email, personalisation, template_id, application):
     """
     if application.application_status == 'DRAFTING':
         send_email(email, personalisation, template_id)
+
+
+def send_survery_email(email, personalisation, application):
+    """
+    Sends an email if
+    :param email: Applicant's email string
+    :param personalisation: Applicant's details dictionary, presumed firstName and ref
+    :param application: Application model instance
+    :return: Void
+    """
+    survery_template_id = '90580388-f10d-440a-b900-4d5f948112a5'
+
+    if application.application_status == 'DRAFTING':
+        send_email(email, personalisation, survery_template_id)
