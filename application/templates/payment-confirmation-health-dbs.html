@@ -48,12 +48,17 @@
     <p>There may be delays if we do not receive the following documents right away.</p>
 
     <h2 class="heading-small no-print">Post your DBS certificate and health declaration booklet</h2>
+
+    {% if is_early_years_register %}
     <p>We need your:</p>
 
     <ul class="list list-bullet">
         <li>original DBS certificate (not a photocopy)</li>
         <li>completed health declaration booklet</li>
     </ul>
+    {% else %}
+    <p>We need your original DBS certificate (not a photocopy)</p>
+    {% endif %}
 
     <p>Post them to:</p>
         <p style="margin-left: 40px;">
