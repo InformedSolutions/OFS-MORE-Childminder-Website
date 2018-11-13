@@ -144,10 +144,10 @@ class ThankYou(BaseTemplateView):
                 print(link)
 
             update(application_id, 'people_in_home_status', 'COMPLETED')
-            self.send_survery_email(adult_record, reference_number)
 
         adult_record.validated = True
         adult_record.save()
+        self.send_survery_email(adult_record, reference_number)
 
         context = {
             'ApplicantName': applicantName,
