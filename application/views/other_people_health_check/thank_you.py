@@ -48,6 +48,7 @@ class ThankYou(BaseTemplateView):
         adult_name = ' '.join([adult_record.first_name, (adult_record.middle_names or ''), adult_record.last_name])
         application_id = adult_record.application_id_id
         application = Application.objects.get(application_id=application_id)
+        reference_number = application.application_reference
         user_details = UserDetails.objects.get(application_id=application_id)
 
         try:
@@ -143,6 +144,7 @@ class ThankYou(BaseTemplateView):
                 print(link)
 
             update(application_id, 'people_in_home_status', 'COMPLETED')
+            self.send_survery_email(adult_record, reference_number)
 
         adult_record.validated = True
         adult_record.save()
@@ -154,3 +156,16 @@ class ThankYou(BaseTemplateView):
         response = render(request, self.template_name, context)
         CustomAuthenticationHandler.destroy_session(response)
         return response
+    
+    def send_survery_email(self, adult_record, reference_number):
+
+        survery_template_id = '4f850789-b9c9-4192-adfa-fe66883c5872'
+        email = adult_record.email
+
+        survery_personalisation={
+            'first_name': adult_record.first_name,
+            'ref': reference_number,
+        }
+
+        send_email(email, survery_personalisation, survery_template_id)
+
