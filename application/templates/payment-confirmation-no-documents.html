@@ -48,7 +48,6 @@
     <h2 class="heading-medium no-print">
         Post your health declaration booklet
     </h2>
-    {% endif %}
 
     <p>We need your completed health declaration booklet.</p>
     <p>Post it to:</p>
@@ -67,6 +66,10 @@
     </p>
 
     <p>There may be delays if we do not receive it right away.</p>
+
+    {% else %}
+    <p>You do not need to do anything else for now.</p>
+    {% endif %}
 
     <h2 class="heading-medium">
         Contact us
