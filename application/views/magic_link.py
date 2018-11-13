@@ -61,12 +61,13 @@ def magic_link_resubmission_confirmation_email(email, application_reference, fir
         'Your sign in details',
         'Type of childcare',
         'Your personal details',
+        'Your children',
         'First aid training',
         'Criminal record (DBS) check',
         'Early years training',
         'Health declaration booklet',
         'People in your home',
-        'References'
+        'References',
     ]
 
     for task in all_tasks:
@@ -75,7 +76,7 @@ def magic_link_resubmission_confirmation_email(email, application_reference, fir
     # Remove parentheses from 'Criminal record (DBS) check' - Notify cannot format such variables.
     personalisation['Criminal record DBS check'] = personalisation.pop('Criminal record (DBS) check')
 
-    template_id = '6431f727-c49e-4f17-964e-b5595a83e958'
+    template_id = '3f8b41d2-62b5-42ea-a64d-61ad661fcc15'
 
     send_email(email, personalisation, template_id)
 
