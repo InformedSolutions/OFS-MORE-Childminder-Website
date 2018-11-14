@@ -61,10 +61,10 @@ class ApplicationTestBase(object):
             r = self.client.post(
                 reverse('Existing-Email'),
                 {
-                    'email_address': self.email
+                    'id': self.app_id
                 }
             )
-            self.assertEqual(r.status_code, 302)
+            self.assertEqual(r.status_code, 200)
             self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
             self.assertEqual(datetime.now().date(),
                              Application.objects.get(application_id=self.app_id).date_last_accessed.date())
@@ -73,14 +73,13 @@ class ApplicationTestBase(object):
             r = self.client.post(
                 reverse('Existing-Email'),
                 {
-                    'email_address': new_email
+                    'id': self.app_id
                 }
             )
-            self.assertEqual(r.status_code, 302)  # Create account for new email and send link.
+            self.assertEqual(r.status_code, 200)  # Create account for new email and send link.
             self.assertEqual(new_email, UserDetails.objects.get(email=new_email).email)
             self.assertEqual(datetime.now().date(),
                              Application.objects.get(application_id=self.app_id).date_last_accessed.date())
-        # raise self.skipTest('Email record does not exist and causes failures currently')
 
     def TestValidateEmail(self):
         """Validate Email"""
