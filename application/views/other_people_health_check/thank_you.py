@@ -168,5 +168,3 @@ class ThankYou(BaseTemplateView):
         }
 
         send_email(email, survey_personalisation, survey_template_id)
-        print('sent email')
-
