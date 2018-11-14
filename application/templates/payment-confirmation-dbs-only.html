@@ -14,27 +14,27 @@
             <br>
             <br>
             <strong class="heading-medium">{{order_code}}</strong>
-            </p>
-        </div>
-        <h2 class="heading-medium">
-            Payment summary
-        </h2>
-        <div class="form-group">
-            <table class="check-your-answers">
-                <thead>
-                <tr>
-                    <th></th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>Application fee</td>
-                    <td>&#163;{{cost}}.00</td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
+        </p>
+    </div>
+    <h2 class="heading-medium">
+        Payment summary
+    </h2>
+    <div class="form-group">
+        <table class="check-your-answers">
+            <thead>
+            <tr>
+                <th></th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Application fee</td>
+                <td>&#163;{{cost}}.00</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
 
     <h2 class="heading-medium no-print">
         Your application details
@@ -53,24 +53,26 @@
         <li>original DBS certificate (not a photocopy)</li>
         <li>completed health declaration booklet</li>
     </ul>
-    {% else %}
-    <p>We need your original DBS certificate (not a photocopy)</p>
-    {% endif %}
 
     <p>Post them to:</p>
-        <p style="margin-left: 40px;">
-            Applications team
-            <br>
-            Ofsted
-            <br>
-            Piccadilly Gate
-            <br>
-            Store Street
-            <br>
-            Manchester
-            <br>
-            M1 2WD
-        </p>
+    {% else %}
+    <p>We need your original DBS certificate (not a photocopy)</p>
+    <p>Post it to:</p>
+    {% endif %}
+
+    <p style="margin-left: 40px;">
+        Applications team
+        <br>
+        Ofsted
+        <br>
+        Piccadilly Gate
+        <br>
+        Store Street
+        <br>
+        Manchester
+        <br>
+        M1 2WD
+    </p>
     <p>There may be delays if we do not receive them right away.</p>
 
     <h2 class="heading-medium">
