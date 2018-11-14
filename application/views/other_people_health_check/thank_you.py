@@ -48,7 +48,6 @@ class ThankYou(BaseTemplateView):
         adult_name = ' '.join([adult_record.first_name, (adult_record.middle_names or ''), adult_record.last_name])
         application_id = adult_record.application_id_id
         application = Application.objects.get(application_id=application_id)
-        reference_number = application.application_reference
         user_details = UserDetails.objects.get(application_id=application_id)
 
         try:
