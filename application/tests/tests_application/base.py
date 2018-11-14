@@ -43,7 +43,7 @@ class ApplicationTestBase(object):
                     'email_address': self.email
                 }
             )
-            self.assertEqual(r.status_code, 302)
+            self.assertEqual(r.status_code, 200)
             self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
 
     def TestReturnToApp(self):
