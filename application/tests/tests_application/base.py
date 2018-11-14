@@ -27,7 +27,6 @@ class ApplicationTestBase(object):
 
     def test_app_email(self):
         """Submit email"""
-
         with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
                 mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
                 mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
@@ -81,6 +80,7 @@ class ApplicationTestBase(object):
             self.assertEqual(new_email, UserDetails.objects.get(email=new_email).email)
             self.assertEqual(datetime.now().date(),
                              Application.objects.get(application_id=self.app_id).date_last_accessed.date())
+        # raise self.skipTest('Email record does not exist and causes failures currently')
 
     def TestValidateEmail(self):
         """Validate Email"""
