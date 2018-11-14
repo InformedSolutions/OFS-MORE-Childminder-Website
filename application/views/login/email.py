@@ -35,7 +35,9 @@ class NewUserSignInView(View):
                 send_magic_link(email)  # acc created here so conditional must be made before then.
                 return login_email_link_sent(request, app_id)
             else:
-                acc, app_id = create_new_app()  # Create new account here such that send_magic_link sends correct email.
+                acc = create_new_app()  # Create new account here such that send_magic_link sends correct email.
+                app_id = str(acc.application_id_id)
+                acc = UserDetails.objects.get(application_id=app_id)
                 acc.email = email
                 acc.save()
                 send_magic_link(email)
@@ -280,5 +282,5 @@ def create_new_app():
         extra_data={'user_type': 'applicant', 'action': 'created by', 'entity': 'application'}
     )
 
-    return user, application.application_id
+    return user
 
