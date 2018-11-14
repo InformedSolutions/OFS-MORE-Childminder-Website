@@ -48,7 +48,6 @@ class ThankYou(BaseTemplateView):
         adult_name = ' '.join([adult_record.first_name, (adult_record.middle_names or ''), adult_record.last_name])
         application_id = adult_record.application_id_id
         application = Application.objects.get(application_id=application_id)
-        reference_number = application.application_reference
         user_details = UserDetails.objects.get(application_id=application_id)
 
         try:
@@ -147,7 +146,8 @@ class ThankYou(BaseTemplateView):
 
         adult_record.validated = True
         adult_record.save()
-        self.send_survey_email(adult_record, reference_number)
+        self.send_survey_email(adult_record)
+
 
         context = {
             'ApplicantName': applicantName,
@@ -157,15 +157,13 @@ class ThankYou(BaseTemplateView):
         CustomAuthenticationHandler.destroy_session(response)
         return response
 
-    def send_survey_email(self, adult_record, reference_number):
+    def send_survey_email(self, adult_record):
 
         survey_template_id = '4f850789-b9c9-4192-adfa-fe66883c5872'
         email = adult_record.email
 
         survey_personalisation={
             'first_name': adult_record.first_name,
-            'ref': reference_number,
         }
 
         send_email(email, survey_personalisation, survey_template_id)
-
