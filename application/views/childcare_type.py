@@ -101,9 +101,20 @@ def type_of_childcare_age_groups(request):
 
             # Create or update Childcare_Type record
             childcare_type_record = childcare_type_logic(app_id, form)
+
+            # Add if logic to check if the user has changed selection resulting in a change to childcare training
+            # if they have, reset the task status of the chidlcare training task
+
+            if ChildcareType.objects.filter(application_id=app_id).count() > 0:
+                existing_record = ChildcareType.objects.get(application_id=app_id)
+
+                if existing_record.zero_to_five != childcare_type_record.zero_to_five or \
+                   existing_record.eight_plus != childcare_type_record.eight_plus:
+                    application.childcare_training_status = 'NOT_STARTED'
+
             childcare_type_record.save()
-            application.date_updated = current_date
             application.save()
+            application.date_updated = current_date
             reset_declaration(application)
 
             return HttpResponseRedirect(reverse('Type-Of-Childcare-Register-View') + '?id=' + app_id)
