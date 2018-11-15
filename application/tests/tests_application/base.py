@@ -47,42 +47,41 @@ class ApplicationTestBase(object):
             self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
 
     def TestReturnToApp(self):
-        # """Tests the submission of an existing email and a new email from the ."""
-        #
-        # with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
-        #         mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
-        #         mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
-        #     notify_connection_test_mock.return_value.status_code = 201
-        #     magic_link_email_mock.return_value.status_code = 201
-        #     magic_link_text_mock.return_value.status_code = 201
-        #
-        #     self.email = 'test-address@informed.com'
-        #     new_email = 'cheese.omelette@gmail.com'
-        #
-        #     r = self.client.post(
-        #         reverse('Existing-Email'),
-        #         {
-        #             # 'id': self.app_id,
-        #             'email': self.email,
-        #         }
-        #     )
-        #     self.assertEqual(r.status_code, 200)
-        #     self.assertEqual(self.email, UserDetails.objects.get(application_id=self.app_id).email)
-        #     self.assertEqual(datetime.now().date(),
-        #                      Application.objects.get(application_id=self.app_id).date_last_accessed.date())
-        #
-        #     self.assertEqual(False, UserDetails.objects.filter(email=new_email).exists())
-        #     r = self.client.post(
-        #         reverse('Existing-Email'),
-        #         {
-        #             'email': new_email,
-        #         }
-        #     )
-        #     self.assertEqual(r.status_code, 200)  # Create account for new email and send link.
-        #     self.assertEqual(new_email, UserDetails.objects.get(email=new_email).email)
-        #     self.assertEqual(datetime.now().date(),
-        #                      Application.objects.get(application_id=self.app_id).date_last_accessed.date())
-        self.skipTest
+        """Tests the submission of an existing email and a new email from the ."""
+
+        with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
+                mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
+                mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
+            notify_connection_test_mock.return_value.status_code = 201
+            magic_link_email_mock.return_value.status_code = 201
+            magic_link_text_mock.return_value.status_code = 201
+
+            self.email = 'test-address@informed.com'
+            new_email = 'cheese.omelette@gmail.com'
+
+            r = self.client.post(
+                reverse('Existing-Email'),
+                {
+                    # 'id': self.app_id,
+                    'email_address': self.email,
+                }
+            )
+            self.assertEqual(r.status_code, 200)
+            self.assertEqual(self.email, UserDetails.objects.get(application_id=self.app_id).email)
+            self.assertEqual(datetime.now().date(),
+                             Application.objects.get(application_id=self.app_id).date_last_accessed.date())
+
+            # self.assertEqual(False, UserDetails.objects.filter(email=new_email).exists())
+            r = self.client.post(
+                reverse('Existing-Email'),
+                {
+                    'email_address': new_email,
+                }
+            )
+            self.assertEqual(r.status_code, 200)  # Create account for new email and send link.
+            self.assertEqual(new_email, UserDetails.objects.get(email=new_email).email)
+            self.assertEqual(datetime.now().date(),
+                             Application.objects.get(application_id=self.app_id).date_last_accessed.date())
 
     def TestValidateEmail(self):
         """Validate Email"""
@@ -663,11 +662,11 @@ class ApplicationTestBase(object):
     def TestAppPaymentCreditDetails(self):
         """Submit Credit Card details"""
         application = Application.objects.get(application_id=self.app_id)
-        ChildcareType.objects.create(application_id=application,
-                                     zero_to_five=True,
-                                     five_to_eight=True,
-                                     eight_plus=True,
-                                     overnight_care=True)
+        # ChildcareType.objects.create(application_id=application,
+        #                              zero_to_five=True,
+        #                              five_to_eight=True,
+        #                              eight_plus=True,
+        #                              overnight_care=True)
 
         with mock.patch('application.payment_service.make_payment') as post_payment_mock:
             test_payment_response = {
