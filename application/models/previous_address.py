@@ -32,7 +32,7 @@ class PreviousAddress(models.Model):
     town = models.CharField(max_length=100, blank=True)
     county = models.CharField(max_length=100, blank=True)
     country = models.CharField(max_length=100, blank=True)
-    postcode = models.CharField(max_length=8, blank=True)
+    postcode = models.CharField(max_length=100, blank=True)
 
     class Meta:
         db_table = 'PREVIOUS_ADDRESS'
