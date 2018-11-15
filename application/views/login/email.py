@@ -41,7 +41,7 @@ class NewUserSignInView(View):
                 acc.email = email
                 acc.save()
                 send_magic_link(email)
-                return login_email_link_sent(request, app_id)
+            return login_email_link_sent(request, app_id)
 
         return render(request, 'contact-email.html', {'form': form})
 
@@ -60,9 +60,17 @@ class ExistingUserSignInView(View):
                 return HttpResponseRedirect(reverse('Service-Down'))
 
             email = form.cleaned_data['email_address']
-            app_id = str(UserDetails.objects.get(email=email).application_id.application_id)
-
-            send_magic_link(email)
+            if UserDetails.objects.filter(email=email).exists():
+                app_id = str(UserDetails.objects.get(email=email).application_id.application_id)
+                send_magic_link(email)  # acc created here so conditional must be made before then.
+                return login_email_link_sent(request, app_id)
+            else:
+                acc = create_new_app()  # Create new account here such that send_magic_link sends correct email.
+                app_id = str(acc.application_id_id)
+                acc = UserDetails.objects.get(application_id=app_id)
+                acc.email = email
+                acc.save()
+                send_magic_link(email)
             return login_email_link_sent(request, app_id)
 
         return render(request, 'existing-application.html', {'form': form})
@@ -283,4 +291,3 @@ def create_new_app():
     )
 
     return user
-

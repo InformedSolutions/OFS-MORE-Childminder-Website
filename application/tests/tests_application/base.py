@@ -65,7 +65,7 @@ class ApplicationTestBase(object):
                 }
             )
             self.assertEqual(r.status_code, 200)
-            self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
+            self.assertEqual(self.email, UserDetails.objects.get(application_id=self.app_id).email)
             self.assertEqual(datetime.now().date(),
                              Application.objects.get(application_id=self.app_id).date_last_accessed.date())
 
