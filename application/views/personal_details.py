@@ -30,6 +30,7 @@ from ..forms import (PersonalDetailsChildcareAddressForm,
                      PersonalDetailsWorkingInOtherChildminderHomeForm)
 from ..models import (ApplicantHomeAddress,
                       ApplicantName,
+                      ArcComments,
                       ApplicantPersonalDetails,
                       Application,
                       Arc)
@@ -1174,7 +1175,10 @@ def personal_details_summary(request):
 
         tables = [name_dob_dict, address_dict]
 
-        if not location_of_childcare:
+        own_children_arc = ArcComments.objects.get(table_pk=app_id, field_name='own_children')
+
+        # If the own_children task if flagged, or if the answer is changed, add the table
+        if own_children_arc.flagged or not location_of_childcare or application.own_children:
             tables.append(own_children_dict)
 
         # Set change link for childcare address according to whether the childcare address is the same as the home
