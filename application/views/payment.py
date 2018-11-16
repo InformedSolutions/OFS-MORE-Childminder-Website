@@ -46,7 +46,7 @@ def payment_confirmation(request):
     )
 
     variables = {
-        'application_id': application_id_local,
+        'id': application_id_local,
         'order_code': request.GET["orderCode"],
         'conviction': conviction,
         'health_status': Application.objects.get(application_id=application_id_local).health_status,
