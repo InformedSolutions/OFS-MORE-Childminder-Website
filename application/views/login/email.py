@@ -238,7 +238,6 @@ def update_magic_link(email, app_id):
     if UserDetails.objects.filter(application_id=app_id).exists():
         acc = UserDetails.objects.get(application_id=app_id)
         link = create_account_magic_link(account=acc)
-        existing_email = acc.email
 
         try:
             first_name = ApplicantName.objects.get(application_id=app_id).first_name
@@ -247,8 +246,6 @@ def update_magic_link(email, app_id):
 
         full_link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link
 
-        if email != existing_email:
-            full_link + '?change=True'
         magic_link.magic_link_update_email(email, first_name, full_link)
 
 
