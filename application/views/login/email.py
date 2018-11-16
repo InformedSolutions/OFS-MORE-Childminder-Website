@@ -84,7 +84,7 @@ class UpdateEmailView(View):
         app_id = request.GET["id"]
         application = Application.objects.get(pk=app_id)
         form = ContactEmailForm(id=app_id)
-        form.field_list = ['email_sent_address']
+        form.field_list = ['email_address']
         form.pk = UserDetails.objects.get(application_id=application).login_id
         form.check_flag()
 
