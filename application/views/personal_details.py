@@ -1175,14 +1175,9 @@ def personal_details_summary(request):
 
         tables = [name_dob_dict, address_dict]
 
-        if not location_of_childcare or application.own_children:
+        own_children_arc_exists = ArcComments.objects.filter(table_pk=app_id, field_name='own_children').exists()
+        if not location_of_childcare or application.own_children or own_children_arc_exists:
             tables.append(own_children_dict)
-            child_table = True
-
-        if application.application_status == "FURTHER_INFORMATION" and not child_table:
-            own_children_arc = ArcComments.objects.get(table_pk=app_id, field_name='own_children')
-            if own_children_arc.flagged:
-                tables.append(own_children_dict)
 
         # Set change link for childcare address according to whether the childcare address is the same as the home
         # address
