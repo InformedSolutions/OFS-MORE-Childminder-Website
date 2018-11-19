@@ -90,12 +90,14 @@ def card_payment_post_handler(request):
     """
     app_id = request.POST["id"]
     form = PaymentDetailsForm(request.POST)
+    childcare_register_type, childcare_register_cost = get_childcare_register_type(app_id)
 
     # If form is erroneous due to an invalid form, simply return form to user as an early return
     if not form.is_valid():
         variables = {
             'form': form,
-            'application_id': app_id
+            'application_id': app_id,
+            'cost': childcare_register_cost
         }
         return render(request, 'payment-details.html', variables)
 
