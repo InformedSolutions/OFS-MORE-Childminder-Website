@@ -519,6 +519,7 @@ def declaration_declaration(request):
                 criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
                 variables = {
                     'application_id': application_id_local,
+                    'id': application_id_local,
                     'order_code': application.application_reference,
                     'conviction': criminal_record_check.cautions_convictions,
                     'health_status': Application.objects.get(application_id=application_id_local).health_status,
