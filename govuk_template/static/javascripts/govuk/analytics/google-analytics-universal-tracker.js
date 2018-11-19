@@ -11,7 +11,7 @@
     }
 
     function anonymizeIp () {
-      // https://developers.google.com/analytics/devguides/collection/analyticsjs/advanced#anonymizeip
+      // https://developers.google.com/analytics/devguides/collection/analyticsjs/ip-anonymization
       sendToGa('set', 'anonymizeIp', true)
     }
 
