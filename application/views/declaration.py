@@ -252,9 +252,9 @@ def declaration_summary(request, print_mode=False):
             else:
                 child_birth_day = str(child.birth_day)
             if child.birth_month < 10:
-                child_birth_month = '0' + str(child.birth_day)
+                child_birth_month = '0' + str(child.birth_month)
             else:
-                child_birth_month = str(child.birth_day)
+                child_birth_month = str(child.birth_month)
             child_not_in_home_birth_day_list.append(child_birth_day)
             child_not_in_home_birth_month_list.append(child_birth_month)
             child_not_in_home_birth_year_list.append(child.birth_year)
