@@ -275,7 +275,7 @@ def task_list(request):
     context = show_hide_tasks(context, application)
 
     unfinished_tasks = [task for task in context['tasks'] if task['status'] in
-                        ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]
+                        ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING'] and not task['hidden']]
 
     if len(unfinished_tasks) < 1:
         context['all_complete'] = True
