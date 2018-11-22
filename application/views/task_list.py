@@ -271,8 +271,8 @@ def task_list(request):
     # Show/hide Your children and People in your home tasks
     context = show_hide_tasks(context, application)
 
-    unfinished_tasks = [task for task in context['tasks'] if not task['hidden'] and task['status'] in
-                        ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]
+    unfinished_tasks = [task for task in context['tasks'] if not task['hidden'] and 
+                        task['status'] in ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]
 
     if len(unfinished_tasks) < 1:
         context['all_complete'] = True

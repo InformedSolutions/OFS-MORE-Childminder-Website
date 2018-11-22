@@ -1,0 +1,10 @@
+export POSTGRES_DB=ofs
+export POSTGRES_USER=ofs
+export POSTGRES_PASSWORD=ofs
+export POSTGRES_HOST=127.0.0.1
+export POSTGRES_PORT=5432
+export APP_PAYMENT_URL=http://127.0.0.1:8001/payment-gateway
+export APP_ADDRESSING_URL=http://127.0.0.1:8002/addressing-service
+export APP_NOTIFY_URL=http://127.0.0.1:8003/notify-gateway
+export VISA_VALIDATION=False
+export EXECUTING_AS_TEST=True
