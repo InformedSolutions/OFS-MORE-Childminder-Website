@@ -8,14 +8,12 @@ Handler for returning a list of tasks to be completed by a user when applying, c
 based on whether they have previously completed the task or not.
 """
 
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
-from django.http import HttpResponseRedirect
 from django.views.decorators.cache import never_cache
 
-from ..models import (ApplicantName, ApplicantPersonalDetails, Application, ChildcareType, Arc,
-                      ApplicantHomeAddress)
-
+from ..models import (ApplicantPersonalDetails, Application, ChildcareType, ApplicantHomeAddress)
 # noinspection PyTypeChecker
 from ..utils import can_cancel
 
@@ -58,7 +56,6 @@ def task_list(request):
     """
 
     if request.method == 'GET':
-
         application_id = request.GET["id"]
 
     application = Application.objects.get(pk=application_id)
@@ -274,7 +271,7 @@ def task_list(request):
     # Show/hide Your children and People in your home tasks
     context = show_hide_tasks(context, application)
 
-    unfinished_tasks = [task for task in context['tasks'] if task['status'] in
+    unfinished_tasks = [task for task in context['tasks'] if not task['hidden'] and task['status'] in
                         ['IN_PROGRESS', 'NOT_STARTED', 'FLAGGED', 'WAITING']]
 
     if len(unfinished_tasks) < 1:
