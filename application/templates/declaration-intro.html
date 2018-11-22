@@ -13,11 +13,8 @@
         Declaration
     </h1>
     <p>You need to confirm that the information you have given us is correct.</p>
-    <p>We need to share your information with other organisations for:</p>
-    <ul class="list-bullet">
-        <li>background checks</li>
-        <li class="text-before-button">legal reasons, for instance if there are concerns around protecting children.</li>
-    </ul>
+    <p>You also need to follow the rules around caring for children and keeping them safe.</p>
+    <p>Read the <a href="{% url 'Registration-Rules' %}">registration rules</a>.</p>
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
         {{form.as_div}}
         {% csrf_token %}

@@ -10,6 +10,7 @@ class UserDetails(models.Model):
     login_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id', default=uuid4)
     email = models.CharField(max_length=100, blank=True)
+    change_email = models.CharField(max_length=100, blank=True, null=True)
     mobile_number = models.CharField(max_length=20, blank=True)
     add_phone_number = models.CharField(max_length=20, blank=True)
     email_expiry_date = models.IntegerField(blank=True, null=True)

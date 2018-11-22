@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Contacted adults in your home{% endblock %}
+{% block page_title %}Contacted adults in the home{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 {% block inner_content %}
@@ -11,10 +11,10 @@
     <!-- Content -->
     <div class="form-group">
         <h1 class="form-title heading-large">
-            Contacted adults in your home
+            Contacted adults in the home
         </h1>
-        <p>We have emailed all adults in your home.</p>
-        <p>We will let you know when each adult has answered their health questions.</p>
+        <p>We have emailed all adults in the home.</p>
+        <p>We'll let you know when each adult has answered their health questions.</p>
         {{form.as_div}}
         {% csrf_token %}
         <input type="submit" class="button" value="Continue">

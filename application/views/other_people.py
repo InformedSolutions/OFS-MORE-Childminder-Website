@@ -9,7 +9,7 @@ import pytz
 from django.utils import timezone
 
 import calendar
-from datetime import date, datetime, timedelta
+from datetime import datetime
 
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
@@ -17,27 +17,24 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
 from application.utils import build_url
+from application.views.your_children import __create_child_table
 from .. import status
 from ..table_util import create_tables, Table, submit_link_setter
 from ..summary_page_data import other_adult_link_dict, other_adult_name_dict, other_child_link_dict, \
     other_child_name_dict, other_adult_summary_link_dict, other_adult_summary_name_dict, \
-    other_child_summary_name_dict, other_child_summary_link_dict
+    other_child_summary_name_dict, other_child_summary_link_dict, child_not_in_the_home_link_dict, \
+    child_not_in_the_home_name_dict, other_child_not_in_the_home_summary_name_dict, \
+    other_child_not_in_the_home_summary_link_dict
 from ..business_logic import (health_check_email_resend_logic,
                               other_people_adult_details_logic,
-                              other_people_children_details_logic,
                               rearrange_adults,
-                              rearrange_children,
                               remove_adult,
-                              remove_child,
-                              reset_declaration)
-from ..forms import (OtherPeopleAdultDBSForm,
+                              reset_declaration,
+                              show_resend_and_change_email)
+from ..forms import (
                      OtherPeopleAdultDetailsForm,
-                     OtherPeopleAdultQuestionForm,
                      OtherPeopleApproaching16Form,
-                     OtherPeopleChildrenDetailsForm,
-                     OtherPeopleChildrenQuestionForm,
                      OtherPeopleEmailConfirmationForm,
-                     OtherPeopleGuidanceForm,
                      OtherPeopleResendEmailForm,
                      OtherPeopleSummaryForm)
 from ..models import (AdultInHome,
@@ -45,118 +42,11 @@ from ..models import (AdultInHome,
                       ApplicantPersonalDetails,
                       Application,
                       ArcComments,
-                      ChildInHome)
+                      ChildInHome, Child, ApplicantHomeAddress)
 from application.notify import send_email
 
 
 logger = logging.getLogger()
-
-def other_people_guidance(request):
-    """
-    Method returning the template for the People in your home: guidance page (for a given application)
-    and navigating to the People in your home: adult question page when successfully completed
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered People in your home: guidance template
-    """
-    if request.method == 'GET':
-        application_id_local = request.GET["id"]
-        form = OtherPeopleGuidanceForm()
-        form.check_flag()
-        application = Application.objects.get(pk=application_id_local)
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'people_in_home_status': application.people_in_home_status
-        }
-        return render(request, 'other-people-guidance.html', variables)
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = OtherPeopleGuidanceForm(request.POST)
-        form.remove_flag()
-        application = Application.objects.get(pk=application_id_local)
-        if form.is_valid():
-            if application.people_in_home_status != 'COMPLETED':
-                if application.people_in_home_status != 'WAITING':
-                    status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
-            return HttpResponseRedirect(reverse('Other-People-Adult-Question-View') + '?id=' + application_id_local)
-        else:
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'other-people-guidance.html', variables)
-
-
-def other_people_adult_question(request):
-    """
-    Method returning the template for the People in your home: adult question page (for a given application) and
-    navigating to the People in your home: adult details or People in your home: children details page when
-    successfully completed
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered People in your home: adult question template
-    """
-    current_date = timezone.now()
-    if request.method == 'GET':
-        application_id_local = request.GET["id"]
-        form = OtherPeopleAdultQuestionForm(id=application_id_local)
-        form.check_flag()
-        application = Application.objects.get(pk=application_id_local)
-
-        if application.application_status == 'FURTHER_INFORMATION':
-            form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = 'There was a problem'
-
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'people_in_home_status': application.people_in_home_status
-        }
-        return render(request, 'other-people-adult-question.html', variables)
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-
-        # Reset status to in progress as question can change status of overall task
-        status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
-        application = Application.objects.get(pk=application_id_local)
-
-        form = OtherPeopleAdultQuestionForm(request.POST, id=application_id_local)
-        form.remove_flag()
-        number_of_adults = AdultInHome.objects.filter(application_id=application_id_local).count()
-        if form.is_valid():
-            adults_in_home = form.cleaned_data.get('adults_in_home')
-            application.adults_in_home = adults_in_home
-            application.save()
-            application.date_updated = current_date
-            application.save()
-            reset_declaration(application)
-            # If adults live in your home, navigate to adult details page
-            if adults_in_home == 'True':
-                return HttpResponseRedirect(
-                    reverse('Other-People-Adult-Details-View') + '?id=' + application_id_local + '&adults=' + str(
-                        number_of_adults) + '&remove=0')
-            # If adults do not live in your home, navigate to children question page
-            elif adults_in_home == 'False':
-                # Delete any existing adults
-                adults = AdultInHome.objects.filter(
-                    application_id=application_id_local)
-                for adult in adults:
-                    adult.delete()
-                application.date_updated = current_date
-                application.save()
-                reset_declaration(application)
-                return HttpResponseRedirect(
-                    reverse('Other-People-Children-Question-View') + '?id=' + application_id_local)
-        else:
-
-            if application.application_status == 'FURTHER_INFORMATION':
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = 'There was a problem'
-
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'other-people-adult-question.html', variables)
 
 
 def other_people_adult_details(request):
@@ -193,10 +83,24 @@ def other_people_adult_details(request):
         for i in range(1, number_of_adults + 1):
             form = OtherPeopleAdultDetailsForm(
                 id=application_id_local, adult=i, prefix=i, email_list=email_list)
+
             form.check_flag()
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem (Person " + str(i) + ")"
+                form.error_summary_title = "There was a problem with Person {0}'s details".format(str(i))
+                is_review = True
+            else:
+                is_review = False
+
+            # Disable email_address field if it cannot be changed.
+            if AdultInHome.objects.filter(application_id=application_id_local, adult=i).exists():
+                adult_record = AdultInHome.objects.get(application_id=application_id_local, adult=i)
+                adult_health_check_status = adult_record.health_check_status
+                if not show_resend_and_change_email(adult_health_check_status, is_review):
+                    form.fields['email_address'].disabled = True
+                else:
+                    form.fields['email_address'].disabled = False
+
             form_list.append(form)
 
         variables = {
@@ -210,6 +114,7 @@ def other_people_adult_details(request):
         }
         status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
         return render(request, 'other-people-adult-details.html', variables)
+
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         number_of_adults = request.POST["adults"]
@@ -229,17 +134,17 @@ def other_people_adult_details(request):
         form_list = []
         # List to allow for the validation of each form
         valid_list = []
+
         email_list = [value for key, value in request.POST.items() if 'email_address' in key.lower()]
         for i in range(1, int(number_of_adults) + 1):
+
             form = OtherPeopleAdultDetailsForm(
                 request.POST, id=application_id_local, adult=i, prefix=i, email_list=email_list)
             form.remove_flag()
             form_list.append(form)
-            form.error_summary_title = 'There was a problem with the details (Person ' + str(
-                i) + ')'
+            form.error_summary_title = "There was a problem with Person {0}'s details".format(str(i))
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem (Person " + str(i) + ")"
             if form.is_valid():
                 adult_record = other_people_adult_details_logic(
                     application_id_local, form, i)
@@ -257,7 +162,7 @@ def other_people_adult_details(request):
                     'application_id': application_id_local,
                     'people_in_home_status': application.people_in_home_status
                 }
-                return HttpResponseRedirect(reverse('Other-People-Adult-DBS-View') + '?id=' + application_id_local +
+                return HttpResponseRedirect(reverse('PITH-Lived-Abroad-View') + '?id=' + application_id_local +
                                             '&adults=' + number_of_adults, variables)
             # If there is an invalid form
             elif False in valid_list:
@@ -282,7 +187,7 @@ def other_people_adult_details(request):
                 add_adult_string = str(add_adult)
                 # Reset task status to IN_PROGRESS if adults are updated
                 status.update(application_id_local, 'people_in_home_status', 'IN_PROGRESS')
-                return HttpResponseRedirect(reverse('Other-People-Adult-Details-View') + '?id=' +
+                return HttpResponseRedirect(reverse('PITH-Adult-Details-View') + '?id=' +
                                             application_id_local + '&adults=' + add_adult_string + '&remove=0#person' + add_adult_string,
                                             variables)
             # If there is an invalid form
@@ -299,333 +204,6 @@ def other_people_adult_details(request):
                 return render(request, 'other-people-adult-details.html', variables)
 
 
-def other_people_adult_dbs(request):
-    """
-    Method returning the template for the People in your home: adult DBS page (for a given application) and
-    navigating to the People in your home: adult permission page when successfully completed
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered People in your home: adult DBS template
-    """
-    current_date = timezone.now()
-    if request.method == 'GET':
-        application_id_local = request.GET["id"]
-        number_of_adults = int(request.GET["adults"])
-        application = Application.objects.get(pk=application_id_local)
-        # Generate a list of forms to iterate through in the HTML
-        form_list = []
-        for i in range(1, number_of_adults + 1):
-            adult = AdultInHome.objects.get(
-                application_id=application_id_local, adult=i)
-            if adult.middle_names == '':
-                name = adult.first_name + ' ' + adult.last_name
-            elif adult.middle_names != '':
-                name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
-            form = OtherPeopleAdultDBSForm(
-                id=application_id_local, adult=i, prefix=i, name=name)
-            form.check_flag()
-            if application.application_status == 'FURTHER_INFORMATION':
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem (Person " + str(i) + ")"
-            form_list.append(form)
-        variables = {
-            'form_list': form_list,
-            'application_id': application_id_local,
-            'number_of_adults': number_of_adults,
-            'add_adult': number_of_adults + 1,
-            'people_in_home_status': application.people_in_home_status
-        }
-        return render(request, 'other-people-adult-dbs.html', variables)
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        number_of_adults = request.POST["adults"]
-        application = Application.objects.get(pk=application_id_local)
-        # Generate a list of forms to iterate through in the HTML
-        form_list = []
-        # List to allow for the validation of each form
-        valid_list = []
-        for i in range(1, int(number_of_adults) + 1):
-            adult = AdultInHome.objects.get(
-                application_id=application_id_local, adult=i)
-
-            # Reset DBS number per post request such that it is cleansed per submission
-            adult.dbs_certificate_number = ''
-
-            # Generate name to pass to form, for display in HTML
-            if adult.middle_names == '':
-                name = adult.first_name + ' ' + adult.last_name
-            elif adult.middle_names != '':
-                name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
-            form = OtherPeopleAdultDBSForm(
-                request.POST, id=application_id_local, adult=i, prefix=i, name=name)
-
-            form_list.append(form)
-            form.error_summary_title = 'There was a problem with the DBS details (Person ' + str(
-                i) + ')'
-            if application.application_status == 'FURTHER_INFORMATION':
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem (Person " + str(i) + ")"
-            if form.is_valid():
-                adult_record = AdultInHome.objects.get(
-                    application_id=application_id_local, adult=i)
-                adult_record.dbs_certificate_number = form.cleaned_data.get(
-                    'dbs_certificate_number')
-                form.remove_flag()
-                adult_record.save()
-                application.date_updated = current_date
-                application.save()
-                reset_declaration(application)
-                valid_list.append(True)
-            else:
-                valid_list.append(False)
-        # If all forms are valid
-        if False not in valid_list:
-            variables = {
-                'application_id': application_id_local,
-                'people_in_home_status': application.people_in_home_status
-            }
-            return HttpResponseRedirect(reverse('Other-People-Children-Question-View') + '?id=' +
-                                        application_id_local + '&adults=' + number_of_adults, variables)
-        # If there is an invalid form
-        elif False in valid_list:
-            variables = {
-                'form_list': form_list,
-                'application_id': application_id_local,
-                'number_of_adults': number_of_adults,
-                'add_adult': int(number_of_adults) + 1,
-                'people_in_home_status': application.people_in_home_status
-            }
-            return render(request, 'other-people-adult-dbs.html', variables)
-
-
-def other_people_children_question(request):
-    """
-    Method returning the template for the People in your home: children question page (for a given application) and
-    navigating to the People in your home: children details page or summary page when successfully completed
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered People in your home: children question template
-    """
-    current_date = timezone.now()
-    if request.method == 'GET':
-        application_id_local = request.GET["id"]
-        form = OtherPeopleChildrenQuestionForm(id=application_id_local)
-        form.check_flag()
-        application = Application.objects.get(pk=application_id_local)
-        number_of_adults = AdultInHome.objects.filter(
-            application_id=application_id_local).count()
-        adults_in_home = application.adults_in_home
-        if application.application_status == 'FURTHER_INFORMATION':
-            form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = "There was a problem"
-        variables = {
-            'form': form,
-            'application_id': application_id_local,
-            'number_of_adults': number_of_adults,
-            'adults_in_home': adults_in_home,
-            'people_in_home_status': application.people_in_home_status
-        }
-        return render(request, 'other-people-children-question.html', variables)
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        form = OtherPeopleChildrenQuestionForm(
-            request.POST, id=application_id_local)
-        application = Application.objects.get(pk=application_id_local)
-        form.remove_flag()
-        number_of_children = ChildInHome.objects.filter(
-            application_id=application_id_local).count()
-        if form.is_valid():
-            children_in_home = form.cleaned_data.get('children_in_home')
-            application.children_in_home = children_in_home
-            application.children_turning_16 = False
-            application.save()
-            application.date_updated = current_date
-            application.save()
-            reset_declaration(application)
-            if children_in_home == 'True':
-                return HttpResponseRedirect(
-                    reverse('Other-People-Children-Details-View') + '?id=' + application_id_local + '&children=' + str(
-                        number_of_children) + '&remove=0')
-            elif children_in_home == 'False':
-                # Delete any existing children from database
-                children = ChildInHome.objects.filter(
-                    application_id=application_id_local)
-                for child in children:
-                    child.delete()
-                reset_declaration(application)
-                return HttpResponseRedirect(reverse('Other-People-Summary-View') + '?id=' + application_id_local)
-        else:
-            if application.application_status == 'FURTHER_INFORMATION':
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem"
-            variables = {
-                'form': form,
-                'application_id': application_id_local
-            }
-            return render(request, 'other-people-children-question.html', variables)
-
-
-def other_people_children_details(request):
-    """
-    Method returning the template for the People in your home: children details page (for a given application) and
-    navigating to the People in your home: approaching 16 page when successfully completed
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered People in your home: children details template
-    """
-    current_date = timezone.now()
-    if request.method == 'GET':
-        application_id_local = request.GET["id"]
-        number_of_children = int(request.GET["children"])
-        remove_person = int(request.GET["remove"])
-        remove_button = True
-        # If there are no adults in the database
-        if number_of_children == 0:
-            # Set the number of children to 1 to initialise one instance of the form
-            number_of_children = 1
-            # Disable the remove person button
-            remove_button = False
-        # If there is only one child in the database
-        if number_of_children == 1:
-            # Disable the remove person button
-            remove_button = False
-        application = Application.objects.get(pk=application_id_local)
-        remove_child(application_id_local, remove_person)
-        rearrange_children(number_of_children, application_id_local)
-        # Generate a list of forms to iterate through in the HTML
-        form_list = []
-        for i in range(1, number_of_children + 1):
-            form = OtherPeopleChildrenDetailsForm(
-                id=application_id_local, child=i, prefix=i)
-            if application.application_status == 'FURTHER_INFORMATION':
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem (Child " + str(i) + ")"
-            form_list.append(form)
-            form.check_flag()
-        variables = {
-            'form_list': form_list,
-            'application_id': application_id_local,
-            'number_of_children': number_of_children,
-            'add_child': number_of_children + 1,
-            'remove_button': remove_button,
-            'remove_child': number_of_children - 1,
-            'people_in_home_status': application.people_in_home_status
-        }
-        return render(request, 'other-people-children-details.html', variables)
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        number_of_children = request.POST["children"]
-        remove_button = True
-        # If there are no adults in the database
-        if number_of_children == 0:
-            # Set the number of children to 1 to initialise one instance of the form
-            number_of_children = 1
-            # Disable the remove person button
-            remove_button = False
-        # If there is only one child in the database
-        if number_of_children == 1:
-            # Disable the remove person button
-            remove_button = False
-        application = Application.objects.get(pk=application_id_local)
-        # Generate a list of forms to iterate through in the HTML
-        form_list = []
-        # List to allow for the validation of each form
-        valid_list = []
-        # List to allow for the age verification of each form
-        age_list = []
-        for i in range(1, int(number_of_children) + 1):
-            form = OtherPeopleChildrenDetailsForm(
-                request.POST, id=application_id_local, child=i, prefix=i)
-            form.remove_flag()
-            form_list.append(form)
-            form.error_summary_title = 'There was a problem with the details (Child ' + str(i) + ')'
-            if application.application_status == 'FURTHER_INFORMATION':
-                form.error_summary_template_name = 'returned-error-summary.html'
-                form.error_summary_title = "There was a problem (Person " + str(i) + ")"
-            if form.is_valid():
-                child_record = other_people_children_details_logic(
-                    application_id_local, form, i)
-                child_record.save()
-                reset_declaration(application)
-                valid_list.append(True)
-                # Calculate child's age
-                birth_day = form.cleaned_data.get('date_of_birth')[0]
-                birth_month = form.cleaned_data.get('date_of_birth')[1]
-                birth_year = form.cleaned_data.get('date_of_birth')[2]
-                applicant_dob = date(birth_year, birth_month, birth_day)
-                today = date.today()
-                age = today.year - applicant_dob.year - (
-                        (today.month, today.day) < (applicant_dob.month, applicant_dob.day))
-                if 15 <= age < 16:
-                    age_list.append(True)
-                elif age < 15:
-                    age_list.append(False)
-            else:
-                valid_list.append(False)
-        if 'submit' in request.POST:
-            # If all forms are valid
-            if False not in valid_list:
-                variables = {
-                    'application_id': application_id_local,
-                    'people_in_home_status': application.people_in_home_status,
-                }
-                # If a child is approaching 16, navigate to approaching 16 page
-                if True in age_list:
-                    application.children_turning_16 = True
-                    application.date_updated = current_date
-                    application.save()
-                    reset_declaration(application)
-                    return HttpResponseRedirect(
-                        reverse('Other-People-Approaching-16-View') + '?id=' + application_id_local, variables)
-                # If no child is approaching 16, navigate to summary page
-                elif True not in age_list:
-                    application.children_turning_16 = False
-                    application.date_updated = current_date
-                    application.save()
-                    reset_declaration(application)
-                    return HttpResponseRedirect(reverse('Other-People-Summary-View') + '?id=' + application_id_local,
-                                                variables)
-            # If there is an invalid form
-            elif False in valid_list:
-                variables = {
-                    'form_list': form_list,
-                    'application_id': application_id_local,
-                    'number_of_children': number_of_children,
-                    'add_child': int(number_of_children) + 1,
-                    'remove_child': int(number_of_children) - 1,
-                    'remove_button': remove_button,
-                    'people_in_home_status': application.people_in_home_status
-                }
-                return render(request, 'other-people-children-details.html', variables)
-        if 'add_child' in request.POST:
-            # If all forms are valid
-            if False not in valid_list:
-                # If a child is approaching 16, navigate to approaching 16 page
-                if True in age_list:
-                    application.children_turning_16 = True
-                    application.date_updated = current_date
-                    application.save()
-                    reset_declaration(application)
-                variables = {
-                    'application_id': application_id_local,
-                    'people_in_home_status': application.people_in_home_status
-                }
-                add_child = int(number_of_children) + 1
-                add_child_string = str(add_child)
-                return HttpResponseRedirect(reverse('Other-People-Children-Details-View') + '?id=' +
-                                            application_id_local + '&children=' + add_child_string + '&remove=0#person' + add_child_string,
-                                            variables)
-            # If there is an invalid form
-            elif False in valid_list:
-                variables = {
-                    'form_list': form_list,
-                    'application_id': application_id_local,
-                    'number_of_children': number_of_children,
-                    'add_child': int(number_of_children) + 1,
-                    'remove_child': int(number_of_children) - 1,
-                    'remove_button': remove_button,
-                    'people_in_home_status': application.people_in_home_status
-                }
-                return render(request, 'other-people-children-details.html', variables)
-
-
 def other_people_approaching_16(request):
     """
     Method returning the template for the People in your home: approaching 16 page (for a given application)
@@ -633,6 +211,20 @@ def other_people_approaching_16(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered People in your home: approaching 16 template
     """
+
+    def get_success_url(app_id):
+        adults = AdultInHome.objects.filter(application_id=app_id)
+        home_address = ApplicantHomeAddress.objects.get(application_id=app_id, current_address=True)
+        childcare_address = ApplicantHomeAddress.objects.get(application_id=app_id, childcare_address=True)
+
+        if home_address == childcare_address:
+            return 'PITH-Own-Children-Check-View'
+        else:
+            if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+                return 'Task-List-View'
+            else:
+                return 'PITH-Summary-View'
+
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         form = OtherPeopleApproaching16Form()
@@ -646,6 +238,7 @@ def other_people_approaching_16(request):
             'people_in_home_status': application.people_in_home_status
         }
         return render(request, 'other-people-approaching-16.html', variables)
+
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         form = OtherPeopleApproaching16Form(request.POST)
@@ -659,7 +252,7 @@ def other_people_approaching_16(request):
                 'application_id': application_id_local,
                 'people_in_home_status': application.people_in_home_status
             }
-            return HttpResponseRedirect(reverse('Other-People-Summary-View') + '?id=' + application_id_local, variables)
+            return HttpResponseRedirect(reverse(get_success_url(application_id_local)) + '?id=' + application_id_local, variables)
         else:
             variables = {
                 'form': form,
@@ -675,19 +268,39 @@ def other_people_summary(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered People in your home: summary template
     """
+
+    def __create_child_not_in_the_home_table(child):
+        child_table = __create_child_table(child)
+        child_table['table_object'].other_people_numbers = '&children=' + str(child.child) + '&remove=0'
+
+        return child_table
+
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
         children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
+        children_not_in_the_home_list = Child.objects.filter(application_id=application_id_local).order_by('child')
         form = OtherPeopleSummaryForm()
         application = Application.objects.get(pk=application_id_local)
         adult_table_list = []
         adult_health_check_status_list = []
+        display_buttons_list = []
 
         for index, adult in enumerate(adults_list):
 
             name = ' '.join([adult.first_name, (adult.middle_names or ''), adult.last_name])
             birth_date = ' '.join([str(adult.birth_day), calendar.month_name[adult.birth_month], str(adult.birth_year)])
+
+            # Add display_buttons for each adult
+            is_review = application.application_status == 'FURTHER_INFORMATION'
+
+            try:
+                adult_health_check_status = adult.health_check_status
+            except KeyError:
+                adult_health_check_status = ''
+
+            display_buttons = show_resend_and_change_email(adult_health_check_status, is_review)
+            display_buttons_list.append(display_buttons)
 
             if application.people_in_home_status == 'IN_PROGRESS' and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):
@@ -711,9 +324,6 @@ def other_people_summary(request):
                     ('dbs_certificate_number', adult.dbs_certificate_number),
                 ])
 
-            if adult.health_check_status == 'To do':
-                status.update(application_id_local, 'people_in_home_status', 'WAITING')
-
             # If adult health check status is not complete, add to health check status list
             if adult.health_check_status != 'Done':
                 adult_health_check_status_list.append('To do')
@@ -731,7 +341,7 @@ def other_people_summary(request):
                 'table_object': table,
                 'fields': other_adult_fields,
                 'title': name,
-                'error_summary_title': ('There was a problem (' + name + ')')
+                'error_summary_title': ('There was a problem with {0}\'s details'.format(name))
             })
 
             adult_table_list.append(other_adult_table)
@@ -744,6 +354,7 @@ def other_people_summary(request):
 
         for table in adult_table_list:
             table['other_people_numbers'] = back_link_addition
+
         adult_table_list = create_tables(adult_table_list, other_adult_name_dict, other_adult_link_dict)
 
         child_table_list = []
@@ -761,7 +372,7 @@ def other_people_summary(request):
                 'table_object': Table([child.pk]),
                 'fields': other_child_fields,
                 'title': name,
-                'error_summary_title': ('There was a problem (' + name + ')')
+                'error_summary_title': ('There was a problem with {0}\'s details'.format(name))
             })
 
             child_table_list.append(other_child_table)
@@ -770,48 +381,65 @@ def other_people_summary(request):
 
         for table in child_table_list:
             table['other_people_numbers'] = back_link_addition
-        child_table_list = create_tables(child_table_list, other_child_name_dict, other_child_link_dict, )
+        child_table_list = create_tables(child_table_list, other_child_name_dict, other_child_link_dict)
 
-        if not adult_table_list:
-            adults_in_home = False
-        else:
-            adults_in_home = True
+        # Populating Children not in the Home:
+        children_not_in_the_home_table_list = [__create_child_not_in_the_home_table(child) for child in children_not_in_the_home_list]
+        children_not_in_the_home_table = create_tables(children_not_in_the_home_table_list,
+                                                       child_not_in_the_home_name_dict, child_not_in_the_home_link_dict)
 
-        if not child_table_list:
-            children_in_home = False
-        else:
-            children_in_home = True
+        adults_in_home = bool(adult_table_list)
+        children_in_home = bool(child_table_list)
+        children_not_in_home = bool(children_not_in_the_home_table_list)
 
         adult_table = collections.OrderedDict({
             'table_object': Table([application_id_local]),
             'fields': {'adults_in_home': adults_in_home},
-            'title': 'Adults in your home',
+            'title': 'Adults in the home',
             'error_summary_title': 'There was a problem'
         })
 
         child_table = collections.OrderedDict({
             'table_object': Table([application_id_local]),
             'fields': {'children_in_home': children_in_home},
-            'title': 'Children in your home',
+            'title': 'Children in the home',
+            'error_summary_title': 'There was a problem'
+        })
+
+        not_child_table = collections.OrderedDict({
+            'table_object': Table([application_id_local]),
+            'fields': {'own_children_not_in_the_home': children_not_in_home},
+            'title': 'Children not in the home',
             'error_summary_title': 'There was a problem'
         })
 
         adult_table = create_tables([adult_table], other_adult_summary_name_dict, other_adult_summary_link_dict)
         child_table = create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
+        not_child_table = create_tables([not_child_table], other_child_not_in_the_home_summary_name_dict, other_child_not_in_the_home_summary_link_dict)
 
-        table_list = adult_table + child_table + adult_table_list + child_table_list
+        table_list = adult_table + adult_table_list + child_table + child_table_list
+        if application.own_children_not_in_home is not None:
+            table_list += not_child_table + children_not_in_the_home_table
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
             form.error_summary_title = "There was a problem"
 
+        sending_emails = application.adults_in_home is True and any(
+                [adult.email_resent_timestamp is None for adult in adults_list])
+
+        num_children_not_in_home = len(Child.objects.filter(application_id=application_id_local))
+
         variables = {
-            'page_title': 'Check your answers: people in your home',
+            'page_title': 'Check your answers: people in the home',
             'form': form,
             'application_id': application_id_local,
             'table_list': table_list,
             'turning_16': application.children_turning_16,
             'people_in_home_status': application.people_in_home_status,
+            'display_buttons_list': display_buttons_list,
+            'sending_emails': sending_emails,
+            'num_children_not_in_home': num_children_not_in_home
         }
         variables = submit_link_setter(variables, table_list, 'people_in_home', application_id_local)
 
@@ -824,8 +452,12 @@ def other_people_summary(request):
         # If reaching the summary page for the first time
         if application.people_in_home_status == 'IN_PROGRESS' or application.people_in_home_status == 'WAITING':
             adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
+            if any(adult.health_check_status == 'To do' for adult in adults_list):
+                status.update(application_id_local, 'people_in_home_status', 'WAITING')
+
             if application.adults_in_home is True and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):
+                status.update(application_id_local, 'people_in_home_status', 'WAITING')
                 return HttpResponseRedirect(
                     reverse('Other-People-Email-Confirmation-View') + '?id=' + application_id_local)
             elif application.adults_in_home is False:
@@ -833,7 +465,6 @@ def other_people_summary(request):
                 return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
             else:
                 return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
-
         else:
             return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
 
@@ -933,7 +564,7 @@ def other_people_resend_email(request):
     if request.method == 'GET':
         application_id_local = request.GET["id"]
         adults = request.GET["adult"]
-        adult_number = int(adults) - 2
+        adult_number = int(adults)
         form = OtherPeopleResendEmailForm()
         form.check_flag()
         # Generate variables for display on email resend page
@@ -975,7 +606,7 @@ def other_people_resend_email(request):
             if adult_record.health_check_status == 'Started':
                 variables['error_summary_title'] = "There was a problem with " \
                                                    + name + "'s answers to the health questions"
-                variables['arc_comment'] = ArcComments.objects.get(table_pk=adult_record.pk).comment
+                variables['arc_comment'] = ArcComments.objects.get(table_pk=adult_record.pk, field_name='health_check_status').comment
 
             return render(request, 'other-people-resend-email.html', variables)
 
@@ -1012,9 +643,13 @@ def other_people_resend_email(request):
                 else:
                     template_id = '5bbf3677-49e9-47d0-acf2-55a9a03d8242'
                 email = adult_record.email
-                # Generate unique link for the household member to access their health check page
-                adult_record.token = ''.join([random.choice(string.digits[1:]) for n in range(7)])
-                adult_record.validated = False
+
+                # If the previous adult_record was completed and resent:
+                if adult_record.validated:
+                    # Generate unique link for the household member to access their health check page
+                    adult_record.token = ''.join([random.choice(string.digits[1:]) for n in range(7)])
+                    adult_record.validated = False
+
                 base_url = settings.PUBLIC_APPLICATION_URL.replace('/childminder', '')
                 personalisation = {"link": base_url + reverse('Health-Check-Authentication',
                                                               kwargs={'id': adult_record.token}),
@@ -1036,7 +671,7 @@ def other_people_resend_email(request):
                 # If health check has been flagged, remove flag once email resent; else, pass.
                 # form.remove_flag won't work because form is simply a 'Continue' button - it has no fields.
                 try:
-                    adult_arc_comment = ArcComments.objects.get(table_pk=adult_record.pk)
+                    adult_arc_comment = ArcComments.objects.get(table_pk=adult_record.pk, field_name='health_check_status')
                     if adult_arc_comment.flagged:
                         adult_arc_comment.flagged = False
                         adult_arc_comment.save()

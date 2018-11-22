@@ -1,7 +1,8 @@
 """
-A base class for reusable test steps across applicaiton unit tests
+A base class for reusable test steps across application unit tests
 """
 import json
+import uuid
 from datetime import datetime
 from unittest import mock
 
@@ -17,7 +18,6 @@ from ...models import (ApplicantHomeAddress,
 
 
 class ApplicationTestBase(object):
-
     client = Client()
     app_id = None
 
@@ -26,60 +26,85 @@ class ApplicationTestBase(object):
         r = self.client.post(reverse('Account-Selection'), {'acc_selection': 'new'})
         self.assertEqual(r.status_code, 302)
 
-    def TestAppEmail(self):
+    def test_app_email(self):
         """Submit email"""
+        with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
+                mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
+                mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
+            notify_connection_test_mock.return_value.status_code = 201
+            magic_link_email_mock.return_value.status_code = 201
+            magic_link_text_mock.return_value.status_code = 201
 
-        self.email = 'test-address@informed.com'
+            self.email = 'test-address@informed.com'
 
-        r = self.client.post(
-            reverse('New-Email'),
-            {
-                'email_address': self.email
-            }
-        )
-        self.assertEqual(r.status_code, 302)
-        self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
+            r = self.client.post(
+                reverse('New-Email'),
+                {
+                    'email_address': self.email
+                }
+            )
+            self.assertEqual(r.status_code, 200)
+            self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
 
     def TestReturnToApp(self):
-        """Tests returning to application for both a new and existing email."""
+        """Tests the submission of an existing email and a new email from the ."""
 
-        self.email = 'omelette.du.fromage@gmail.com'
-        new_email = 'cheese.omelette@gmail.com'
+        with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
+                mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
+                mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
+            notify_connection_test_mock.return_value.status_code = 201
+            magic_link_email_mock.return_value.status_code = 201
+            magic_link_text_mock.return_value.status_code = 201
 
-        r = self.client.post(
-            reverse('Existing-Email'),
-            {
-                'email_address': self.email
-            }
-        )
-        self.assertEqual(r.status_code, 302)
-        self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
+            self.email = 'test-address@informed.com'
+            new_email = 'cheese.omelette@gmail.com'
 
-        self.assertEqual(False, UserDetails.objects.filter(email=new_email).exists())
-        r = self.client.post(
-            reverse('Existing-Email'),
-            {
-                'email_address': new_email
-            }
-        )
-        self.assertEqual(r.status_code, 302)  # Create account for new email and send link.
-        self.assertEqual(new_email, UserDetails.objects.get(email=new_email).email)
+            r = self.client.post(
+                reverse('Existing-Email'),
+                {
+                    # 'id': self.app_id,
+                    'email_address': self.email,
+                }
+            )
+            self.assertEqual(r.status_code, 200)
+            self.assertEqual(self.email, UserDetails.objects.get(application_id=self.app_id).email)
+            self.assertEqual(datetime.now().date(),
+                             Application.objects.get(application_id=self.app_id).date_last_accessed.date())
+
+            # self.assertEqual(False, UserDetails.objects.filter(email=new_email).exists())
+            r = self.client.post(
+                reverse('Existing-Email'),
+                {
+                    'email_address': new_email,
+                }
+            )
+            self.assertEqual(r.status_code, 200)  # Create account for new email and send link.
+            self.assertEqual(new_email, UserDetails.objects.get(email=new_email).email)
+            self.assertEqual(datetime.now().date(),
+                             Application.objects.get(application_id=self.app_id).date_last_accessed.date())
 
     def TestValidateEmail(self):
         """Validate Email"""
 
-        acc = UserDetails.objects.get(email=self.email)
-        self.app_id = acc.application_id.pk
-        r = self.client.get(
-            '/childminder/validate/' + str(acc.magic_link_email), follow=True
-        )
+        with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
+                mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
+                mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
+            notify_connection_test_mock.return_value.status_code = 201
+            magic_link_email_mock.return_value.status_code = 201
+            magic_link_text_mock.return_value.status_code = 201
 
-        self.assertEqual(r.status_code, 200)
-        self.assertTrue(
-            Application.objects.get(
-                pk=self.app_id
-            ).application_status == "DRAFTING"
-        )
+            acc = UserDetails.objects.get(email=self.email)
+            self.app_id = acc.application_id.pk
+            r = self.client.get(
+                '/childminder/validate/' + str(acc.magic_link_email), follow=True
+            )
+
+            self.assertEqual(r.status_code, 200)
+            self.assertTrue(
+                Application.objects.get(
+                    pk=self.app_id
+                ).application_status == "DRAFTING"
+            )
 
     def TestAppPhone(self):
         """Submit phone"""
@@ -188,7 +213,7 @@ class ApplicationTestBase(object):
 
     def TestSecurityQuestion(self):
         """Test """
-        self.TestAppEmail()
+        self.test_app_email()
         self.TestValidateEmail()
         r = self.client.post(reverse('Security-Question'), {'id': self.app_id,
                                                             'security_answer': UserDetails.objects.get(
@@ -274,11 +299,11 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-    def TestAppPersonalDetailsSummaryView(self):
-        """Personal details summary"""
-        self.client.get(reverse('Personal-Details-Summary-View'), {'id': self.app_id})
-        self.assertEqual(
-            Application.objects.get(pk=self.app_id).personal_details_status, "COMPLETED")
+    # def TestAppPersonalDetailsSummaryView(self):
+    #     """Personal details summary"""
+    #     self.client.post(reverse('Personal-Details-Summary-View'), {'id': self.app_id})
+    #     self.assertEqual(
+    #         Application.objects.get(pk=self.app_id).personal_details_status, "COMPLETED")
 
     def TestAppFirstAidStart(self):
         """Start First Aid"""
@@ -329,8 +354,38 @@ class ApplicationTestBase(object):
 
     def TestAppCriminalRecordCheckDetails(self):
         """Submit CRC details"""
+        r = self.client.get(
+            reverse('DBS-Lived-Abroad-View'),
+            {
+                'id': self.app_id
+            }
+        )
         r = self.client.post(
-            reverse('DBS-Check-DBS-Details-View'),
+            reverse('DBS-Lived-Abroad-View'),
+            {
+                'id': self.app_id,
+                'lived_abroad': True
+            }
+        )
+        self.assertEqual(r.status_code, 302)
+        r = self.client.post(
+            reverse('DBS-Military-View'),
+            {
+                'id': self.app_id,
+                'military_base': True
+            }
+        )
+        self.assertEqual(r.status_code, 302)
+        r = self.client.post(
+            reverse('DBS-Type-View'),
+            {
+                'id': self.app_id,
+                'capita': True
+            }
+        )
+        self.assertEqual(r.status_code, 302)
+        r = self.client.post(
+            reverse('DBS-Check-Capita-View'),
             {
                 'id': self.app_id,
                 'dbs_certificate_number': '123456789012',
@@ -339,10 +394,19 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
+        # crc = CriminalRecordCheck.objects.create(application_id=application)
+        # crc.lived_abroad = True
+        # crc.military = False
+        # crc.capita = True
+        # crc.on_update = None
+        # crc.dbs_certificate_number = '123456789012'
+        # crc.cautions_convictions = False
+        # crc.save()
+
     def TestAppOtherPeopleAdults(self):
         """Submit other people"""
         r = self.client.post(
-            reverse('Other-People-Adult-Question-View'),
+            reverse('PITH-Adult-Check-View'),
             {
                 'id': self.app_id,
                 'adults_in_home': False,
@@ -367,7 +431,7 @@ class ApplicationTestBase(object):
 
         }
 
-        r = self.client.post(reverse('Other-People-Adult-Details-View'), data)
+        r = self.client.post(reverse('PITH-Adult-Details-View'), data)
 
         self.assertEqual(r.status_code, 302)
 
@@ -416,7 +480,7 @@ class ApplicationTestBase(object):
     def TestAppOtherPeopleChildren(self):
         """Submit other children"""
         r = self.client.post(
-            reverse('Other-People-Children-Question-View'),
+            reverse('PITH-Children-Check-View'),
             {
                 'id': self.app_id,
                 'children_in_home': False,
@@ -443,7 +507,7 @@ class ApplicationTestBase(object):
 
         }
 
-        r = self.client.post(reverse('Other-People-Children-Details-View'), data)
+        r = self.client.post(reverse('PITH-Children-Details-View'), data)
 
         self.assertEqual(r.status_code, 302)
 
@@ -470,7 +534,7 @@ class ApplicationTestBase(object):
 
     def TestAppOtherPeopleSummary(self):
         """Submit Other People Summary"""
-        r = self.client.get(reverse('Other-People-Summary-View'), {'id': self.app_id})
+        r = self.client.get(reverse('PITH-Summary-View'), {'id': self.app_id})
         self.assertEqual(r.status_code, 200)
 
     def TestAppFirstReferenceName(self):
@@ -580,23 +644,29 @@ class ApplicationTestBase(object):
     def TestAppDeclaration(self):
         """Send Declaration"""
 
+        application = Application.objects.get(application_id=self.app_id)
+        # ChildcareType.objects.create(application_id=application,
+        #                              zero_to_five=True,
+        #                              five_to_eight=True,
+        #                              eight_plus=True,
+        #                              overnight_care=True)
         r = self.client.post(
             reverse('Declaration-Declaration-View'),
             {
                 'id': self.app_id,
-                'background_check_declare': 'on',
-                'inspect_home_declare': 'on',
-                'interview_declare': 'on',
-                'change_declare': 'on',
-                'share_info_declare': 'on',
-                'information_correct_declare': 'on',
-                'suitable_declare': 'on',
+                'declaration_confirmation': 'on',
             }
         )
         self.assertEqual(r.status_code, 302)
 
     def TestAppPaymentCreditDetails(self):
         """Submit Credit Card details"""
+        application = Application.objects.get(application_id=self.app_id)
+        # ChildcareType.objects.create(application_id=application,
+        #                              zero_to_five=True,
+        #                              five_to_eight=True,
+        #                              eight_plus=True,
+        #                              overnight_care=True)
 
         with mock.patch('application.payment_service.make_payment') as post_payment_mock:
             test_payment_response = {
@@ -641,7 +711,7 @@ class ApplicationTestBase(object):
         flagged_fields_to_check = (
             "childcare_type_arc_flagged",
             "criminal_record_check_arc_flagged",
-            "eyfs_training_arc_flagged",
+            "childcare_training_arc_flagged",
             "first_aid_training_arc_flagged",
             "health_arc_flagged",
             "login_details_arc_flagged",
@@ -659,11 +729,7 @@ class ApplicationTestBase(object):
             reverse('Declaration-Declaration-View'),
             {
                 'id': self.app_id,
-                'share_info_declare': True,
-                'suitable_declare': True,
-                'information_correct_declare': True,
-                'change_declare': True,
-                'display_contact_details_on_web': True
+                'declaration_confirmation': True
             }
         )
 

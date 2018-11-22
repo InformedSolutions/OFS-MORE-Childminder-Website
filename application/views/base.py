@@ -62,6 +62,7 @@ def awaiting_review(request):
     variables = {
         'resubmitted': resubmitted,
         'application_id': application_id_local,
+        'id': application_id_local,
         'application_reference': application.application_reference
     }
     return render(request, 'awaiting-review.html', variables)
@@ -77,6 +78,7 @@ def application_accepted(request):
     application = Application.objects.get(application_id=application_id_local)
     variables = {
         'application_id': application_id_local,
+        'id': application_id_local,
         'application_reference': application.application_reference
     }
     return render(request, 'application-accepted.html', variables)

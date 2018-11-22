@@ -1,0 +1,30 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Criminal record checks{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<div class="two-thirds">
+<form method="post" novalidate>
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Criminal record checks
+        </h1>
+        <p>You need to have a UK criminal record (DBS) check.</p>
+        You also need other checks if you have:
+            <ul style="list-style-type: disc; padding-left: 50px;">
+                <li>lived abroad in the last 5 years</li>
+                <li>lived or worked on a British military base abroad in the last 5 years</li>
+            </ul>
+
+        <p>This is to make sure that you're suitable to care for children.</p>
+
+        <input type="submit" class="button" value="Continue">
+        {% csrf_token %}
+    </div>
+</form>
+</div>
+
+{% endblock %}

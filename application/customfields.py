@@ -146,7 +146,7 @@ class YearField(forms.IntegerField):
         """
         value = self.to_python(value)
         if len(str(value)) > 2:
-            raise forms.ValidationError('Check the expiry date or use a new card')
+            raise forms.ValidationError('Please enter the last 2 digits of the year')
         if isinstance(value, int) and value < 100:
                 value += self.century
 

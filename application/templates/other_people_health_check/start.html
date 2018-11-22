@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Health check: adults in home{% endblock %}
+{% block page_title %}Health questions: adults in home{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 {% block proposition_menu %}
@@ -7,13 +7,25 @@
 {% block inner_content %}
 
 <div class="two-thirds">
-<h1 class="form-title heading-large">Ofsted checks on adults in the home</h1>
+<h1 class="form-title heading-large">Health questions for adults in the home</h1>
 <p>{{ name }} has given us your name as part of an Ofsted childminder application.</p>
-<p>We need to ask all adults in the home about their health. This is to make sure the home is safe for children.</p>
-<p>This should take no longer than 10 minutes.</p>
+<p>We need to ask all adults in the home about their health to make sure the home is safe for children.</p>
+<p>If you do not feel confident filling in forms online, you can:</p>
+
+<ul class="list list-bullet">
+    <li>
+        ask the applicant, a friend or family for help
+    </li>
+    <li>
+        call Ofsted on 0300 123 1231 or ask someone else to call for you
+    </li>
+    <li>
+        email <a href="mailto:enquiries@ofsted.gov.uk">enquiries@ofsted.gov.uk</a>
+    </li>
+</ul>
+
 <a href="{{ dob_url }}" class="button">Continue</a>
 </div>
-
 
 
 {% endblock %}

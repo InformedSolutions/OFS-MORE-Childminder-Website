@@ -36,7 +36,7 @@ def try_except_method(func):
         try:
             func(*args, **kwargs)
         except Exception as e:
-            capture_screenshot(func)
+            # capture_screenshot(func)
             raise e
 
     return func_wrapper
@@ -89,13 +89,17 @@ class ApplyAsAChildminder(LiveServerTestCase):
         If the HEADLESS_CHROME value in Environment variables is set to true then it will launch chrome headless
         browser, else it will launch firefox.
         """
-
         if os.environ.get('HEADLESS_CHROME') == 'True':
-            path_to_chromedriver = '/usr/lib/chromium-browser/chromedriver'
+            # To install chromedriver on an ubuntu machine:
+            # https://tecadmin.net/setup-selenium-chromedriver-on-ubuntu/
+            # For the latest version:
+            # https://github.com/joyzoursky/docker-python-chromedriver/blob/master/py3/py3.6-selenium/Dockerfile
+            path_to_chromedriver = os.popen("which chromedriver").read().rstrip()
             chrome_options = Options()
             chrome_options.add_argument("--headless")
             chrome_options.add_argument("--disable-gpu")
             self.selenium_driver = webdriver.Chrome(path_to_chromedriver, chrome_options=chrome_options)
+
         else:
             self.selenium_driver = webdriver.Firefox()
         self.selenium_driver.maximize_window()
@@ -120,7 +124,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
             self.selenium_driver.maximize_window()
 
     @try_except_method
-    def test_directed_to_local_authority_if_not_eyfs_register(self):
+    def test_directed_to_compulsory_childcare_register_if_5_to_7(self):
         """
         Tests that a user is directed toward guidance advising them to contact their local authority if
         the ages of children they are minding does not
@@ -145,9 +149,39 @@ class ApplyAsAChildminder(LiveServerTestCase):
         WebDriverWait(self.selenium_task_executor.get_driver(), 10).until(
             expected_conditions.title_contains("Childcare Register"))
 
-        self.assertEqual("Childcare Register",
+        self.assertEqual("Childcare Register (compulsory part)",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
-                             "//html/body/main/div[2]/form/div/h1").text)
+                             '//*[@id="content"]/div[2]/h1').text)
+
+    @try_except_method
+    def test_directed_to_voluntary_childcare_register_if_eight_plus(self):
+        """
+        Tests that a user is directed toward guidance advising them to contact their local authority if
+        the ages of children they are minding does not
+        """
+        self.selenium_task_executor.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+
+        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+
+        # Guidance page
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
+
+        # Choose 5 to 7 year olds option
+        self.selenium_task_executor.get_driver().find_element_by_id("id_type_of_childcare_2").click()
+
+        # Confirm selection
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
+
+        WebDriverWait(self.selenium_task_executor.get_driver(), 10).until(
+            expected_conditions.title_contains("Childcare Register"))
+
+        self.assertEqual("Childcare Register (voluntary part)",
+                         self.selenium_task_executor.get_driver().find_element_by_xpath(
+                             '//*[@id="content"]/div[2]/h1').text)
 
     @try_except_method
     def test_shown_eyfs_only_guidance(self):
@@ -299,67 +333,9 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertEqual("Your name",
                          self.selenium_task_executor.get_driver().title)
 
-    @try_except_method
-    def test_can_return_to_task_list_from_help_and_costs_when_authenticated(self):
-        """
-        Test to make sure the correct guidance page gets shown when only minding children of all ages
-        """
-        self.selenium_task_executor.navigate_to_base_url()
-
-        test_email = faker.email()
-        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
-        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
-
-        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number,
-                                                                test_alt_phone_number)
-
-        # Guidance page
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
-
-        # Choose 0-5 year olds option
-        self.selenium_task_executor.get_driver().find_element_by_id("id_type_of_childcare_0").click()
-
-        # Confirm selection
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
-
-        # Guidance page
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
-
-        # Overnight care page
-        self.selenium_task_executor.get_driver().find_element_by_id("id_overnight_care_0").click()
-
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
-
-        # Confirmation page
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
-
-        # Below DOB means they are an adult so do not fire validation triggers
-        self.selenium_task_executor.complete_personal_details(
-            faker.first_name(), faker.first_name(), faker.last_name_female(),
-            random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            True
-        )
-
-        # Costs page
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='proposition-links']/li[1]/a").click()
-
-        # Go back to task list
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//html/body/main/div[2]/a").click()
-
-        self.assertEqual("Register as a childminder",
-                         self.selenium_task_executor.get_driver().title)
-
-        # Help page
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//*[@id='proposition-links']/li[2]/a").click()
-
-        # Go back to task list
-        self.selenium_task_executor.get_driver().find_element_by_link_text("Return to application").click()
-
-        self.assertEqual("Register as a childminder",
-                         self.selenium_task_executor.get_driver().title)
 
     @try_except_method
-    def test_can_complete_personal_details_task_when_location_of_care_is_same_as_home_address(self):
+    def test_complete_personal_details_task_when_location_of_care_is_same_as_home_address(self):
         """
         Test to make sure a user can choose Yes to the question Is this where you will be looking after the children?
         """
@@ -376,7 +352,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            True
+            True, False, False
         )
 
         # Check task status set to done
@@ -387,9 +363,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='personal_details']/td/a/strong").text)
 
-    @tag('smoke_test')
     @try_except_method
-    def test_cannot_complete_personal_details_task_when_location_of_care_is_not_same_as_home_address(self):
+    def test_complete_personal_details_task_when_location_of_care_is_not_same_as_home_address(self):
         """
         Test to make sure a user cannot complete an application if they choose No to the question Is this where you
         will be looking after the children?
@@ -407,11 +382,130 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            False
+            False, False, False
         )
 
-        # Check Can't user service page is shown
-        self.assertEqual("Can't use service", self.selenium_task_executor.get_driver().title)
+        # Check task status set to done
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='account_details']/td/a/strong").text)
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='children']/td/a/strong").text)
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='personal_details']/td/a/strong").text)
+
+    @try_except_method
+    def test_display_your_children_task(self):
+        """
+        Test to make sure the Your children task is displayed when the applicant says they have own children in their
+        home
+        """
+        self.selenium_task_executor.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+
+        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+        self.selenium_task_executor.complete_type_of_childcare(True, False, False, True)
+
+        # Below DOB means they are an adult so do not fire validation triggers
+        self.selenium_task_executor.complete_personal_details(
+            faker.first_name(), faker.first_name(), faker.last_name_female(),
+            random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
+            False, True, False
+        )
+
+        # Check your children task displays
+        self.assertEqual("To do", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='your_children']/td/a/strong").text)
+
+    @try_except_method
+    def test_hide_your_children_task(self):
+        """
+        Test to make sure the Your children task is hidden when the applicant says they don't have own children in their
+        home
+        """
+        self.selenium_task_executor.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+
+        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+        self.selenium_task_executor.complete_type_of_childcare(True, False, False, True)
+
+        # Below DOB means they are an adult so do not fire validation triggers
+        self.selenium_task_executor.complete_personal_details(
+            faker.first_name(), faker.first_name(), faker.last_name_female(),
+            random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
+            False, False, False
+        )
+
+        # Check Your children task displays
+        try:
+            # Fail test if Your children task displays
+            self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='your_children']/td/a/strong")
+            self.assertEqual(True, False)
+        except:
+            # Pass test if Your children task does not display
+            self.assertEqual(True, True)
+
+    @try_except_method
+    def test_display_people_in_home_task(self):
+        """
+        Test to make sure the People in your home task is displayed when the applicant says they don't work in another
+        childminder's home
+        """
+        self.selenium_task_executor.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+
+        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+        self.selenium_task_executor.complete_type_of_childcare(True, False, False, True)
+
+        # Below DOB means they are an adult so do not fire validation triggers
+        self.selenium_task_executor.complete_personal_details(
+            faker.first_name(), faker.first_name(), faker.last_name_female(),
+            random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
+            False, False, False
+        )
+
+        # Check People in your home task displays
+        self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//tr[@id='other_people']/td/a/strong").text)
+
+    @try_except_method
+    def test_hide_people_in_your_home_task(self):
+        """
+        Test to make sure the People in your home task is hidden when the applicant says they work in another
+        childminder's home
+        """
+        self.selenium_task_executor.navigate_to_base_url()
+
+        test_email = faker.email()
+        test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+        test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
+
+        self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
+        self.selenium_task_executor.complete_type_of_childcare(True, False, False, True)
+
+        # Below DOB means they are an adult so do not fire validation triggers
+        self.selenium_task_executor.complete_personal_details(
+            faker.first_name(), faker.first_name(), faker.last_name_female(),
+            random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
+            False, False, True
+        )
+
+        # Check People in your home task displays
+        try:
+            # Fail test if People in your home task displays
+            self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/strong")
+            self.assertEqual(True, False)
+        except:
+            # Pass test if People in your home task does not display
+            self.assertEqual(True, True)
 
     @try_except_method
     def test_can_complete_dbs_task_without_cautions_or_convictions(self):
@@ -527,31 +621,28 @@ class ApplyAsAChildminder(LiveServerTestCase):
         submit_button = self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']")
         self.selenium_task_executor.get_driver().execute_script("arguments[0].click();", submit_button)
 
-        # Task summary confirmation
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").send_keys(Keys.RETURN)
-
         # Email confirmation page
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").send_keys(Keys.RETURN)
 
         # Resend health check e-mail 3 times
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
-        self.selenium_task_executor.get_driver().find_element_by_link_text("Resend email").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend email']").click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text("Resend health questions").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend health questions']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
-        self.selenium_task_executor.get_driver().find_element_by_link_text("Resend email").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend email']").click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text("Resend health questions").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend health questions']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
-        self.selenium_task_executor.get_driver().find_element_by_link_text("Resend email").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend email']").click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text("Resend health questions").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend health questions']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
-        self.selenium_task_executor.get_driver().find_element_by_link_text("Resend email").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend email']").click()
+        self.selenium_task_executor.get_driver().find_element_by_link_text("Resend health questions").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend health questions']").click()
 
         self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
 
@@ -565,6 +656,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.complete_review()
         self.selenium_task_executor.complete_declaration()
+        self.selenium_task_executor.complete_publish_your_details()
 
         # Card number must be 5454... due to this being a Worldpay API test value
         test_cvc = ''.join(str(random.randint(0, 9)) for _ in range(3))
@@ -605,50 +697,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_link_text('Register as a childminder').click()
         self.assertEqual("Register as a childminder", self.selenium_task_executor.get_driver().title)
 
-    @tag('smoke_test')
-    @try_except_method
-    def test_can_access_costs_without_authenticating(self):
-        """
-        Tests the costs page can be accessed without logging in.
-        """
-        self.selenium_task_executor.navigate_to_base_url()
-        self.selenium_task_executor.get_driver().find_element_by_link_text('Costs').click()
-        self.assertEqual("Costs of becoming a childminder", self.selenium_task_executor.get_driver().title)
-
-    @try_except_method
-    def test_can_access_costs_when_authenticated(self):
-        """
-        Tests the costs page can be accessed when logged in.
-        """
-        self.create_standard_eyfs_application()
-        self.selenium_task_executor.get_driver().find_element_by_link_text('Costs').click()
-        self.assertEqual("Costs of becoming a childminder", self.selenium_task_executor.get_driver().title)
-
-    @try_except_method
-    def test_costs_not_shown_if_further_information_required(self):
-        """
-        Tests that the costs link is not shown if an application has been returned to the applicant
-        """
-        # Load fixtures to populate a test application
-        call_command("loaddata", "test_returned_application.json", verbosity=0)
-
-        # Note that this email address is loaded from fixture
-        self.selenium_task_executor.sign_back_in('test@informed.com')
-
-        # Test that costs link is not shown in header
-        with self.assertRaises(NoSuchElementException):
-            self.selenium_task_executor.get_driver().find_element_by_link_text('Costs')
-
-        # Test that costs link is not shown above task list
-        with self.assertRaises(NoSuchElementException):
-            self.selenium_task_executor.get_driver().find_element_by_link_text('more about costs')
-
-        # Test that the grayed out class is present (for unflagged tasks which are disabled)
-        self.assertTrue(self.selenium_task_executor.get_driver().find_element_by_class_name('grayed-out'))
-
-        # Test that the task-disabled class is present (for unflagged tasks which are disabled)
-        self.assertTrue(self.selenium_task_executor.get_driver().find_element_by_class_name('task-disabled'))
-
     @try_except_method
     def test_updated_tasks_are_listed_in_confirmation_page(self):
         """
@@ -670,12 +718,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='review']/td/a/span").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
-        self.selenium_task_executor.get_driver().find_element_by_id("id_share_info_declare").click()
-        self.selenium_task_executor.get_driver().find_element_by_id("id_display_contact_details_on_web").click()
-        self.selenium_task_executor.get_driver().find_element_by_id("id_suitable_declare").click()
-        self.selenium_task_executor.get_driver().find_element_by_id("id_information_correct_declare").click()
-        self.selenium_task_executor.get_driver().find_element_by_id("id_change_declare").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm']").click()
+        self.selenium_task_executor.get_driver().find_element_by_id("id_declaration_confirmation").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
         WebDriverWait(self.selenium_task_executor.get_driver(), 10).until(
             expected_conditions.title_contains("Payment confirmed"))
@@ -701,15 +745,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.create_standard_eyfs_application()
         self.selenium_task_executor.get_driver().find_element_by_link_text('Help and contacts').click()
         self.assertEqual("Help and contacts", self.selenium_task_executor.get_driver().title)
-
-    @try_except_method
-    def test_can_access_costs(self):
-        """
-        Tests that the costs page can be reached
-        """
-        self.create_standard_eyfs_application()
-        self.selenium_task_executor.get_driver().find_element_by_link_text("Costs").click()
-        self.assertEqual("Costs of becoming a childminder", self.selenium_task_executor.get_driver().title)
 
     @try_except_method
     def test_can_begin_returning_user_sign_in_process(self):
@@ -743,7 +778,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            True
+            True, False, False
         )
 
         # Check task status marked as Done
@@ -808,6 +843,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.complete_review()
         self.selenium_task_executor.complete_declaration()
+        self.selenium_task_executor.complete_publish_your_details()
 
         # Card number must be 5454... due to this being a Worldpay API test value
         test_cvc = ''.join(str(random.randint(0, 9)) for _ in range(3))
@@ -834,7 +870,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            True
+            True, False, False
         )
 
         # Check task status set to done
@@ -861,7 +897,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            True
+            True, False, False
         )
 
         # Check task status set to done
@@ -927,8 +963,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.create_standard_eyfs_application()
 
         self.selenium_task_executor.get_driver().find_element_by_link_text("Cancel application").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Cancel application']").click()
-        self.assertEqual("Application cancelled", self.selenium_task_executor.get_driver().title)
+        self.selenium_task_executor.get_driver().find_element_by_xpath('/html/body/main/div[2]/form/div/input[2]').click()
+        self.assertEqual("Application Cancelled", self.selenium_task_executor.get_driver().title)
 
     @try_except_method
     def test_can_save_and_exit(self):
@@ -950,7 +986,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
                          self.selenium_task_executor.get_driver().find_element_by_xpath("//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='personal_details']/td/a/span").click()
-        self.assertEqual("Check your answers: your personal details",
+        self.assertEqual("Check your answers: personal details",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
                              "//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
@@ -972,7 +1008,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
                              "//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
-        self.assertEqual("Check your answers: people in your home",
+        self.assertEqual("Check your answers: people in the home",
                          self.selenium_task_executor.get_driver().find_element_by_xpath(
                              "//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath(
@@ -1158,7 +1194,9 @@ class ApplyAsAChildminder(LiveServerTestCase):
                                                               dob_day="1",
                                                               dob_month="1",
                                                               dob_year="1985",
-                                                              is_location_of_care=True)
+                                                              is_location_of_care=True,
+                                                              own_children=False,
+                                                              working_in_other_childminder_home=False)
         self.selenium_task_executor.get_driver().find_element_by_link_text('Sign out').click()
         self.selenium_task_executor.navigate_to_SMS_validation_page(test_email)
 
@@ -1314,7 +1352,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            True
+            True, False, False
         )
 
         # Check task status set to done
@@ -1601,7 +1639,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.complete_personal_details(
             faker.first_name(), faker.first_name(), faker.last_name_female(),
             random.randint(1, 28), random.randint(1, 12), random.randint(1950, 1990),
-            True
+            True, False, False
         )
 
         # Check task status set to done

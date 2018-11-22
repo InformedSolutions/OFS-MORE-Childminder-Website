@@ -183,9 +183,11 @@ class PersonalDetailsLocationOfCareForm(ChildminderForms):
         ('True', 'Yes'),
         ('False', 'No')
     )
-    childcare_location = forms.ChoiceField(label='Is this where you will be looking after the children?', choices=options,
-                                         widget=InlineRadioSelect, required=True,
-                                         error_messages={'required': 'Please answer yes or no'})
+    childcare_location = forms.ChoiceField(label='Is this where you will be looking after the children?',
+                                           choices=options,
+                                           widget=InlineRadioSelect, required=True,
+                                           error_messages={
+                                               'required': "Please say if this is where you'll be looking after the children"})
 
     def __init__(self, *args, **kwargs):
         """

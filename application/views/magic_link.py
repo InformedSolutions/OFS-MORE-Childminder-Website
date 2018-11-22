@@ -16,6 +16,7 @@ from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils import timezone
 from django.views import View
 
 from application import login_redirect_helper
@@ -39,7 +40,6 @@ def magic_link_confirmation_email(email, link_id):
     # If executing login function in test mode set env variable for later retrieval by test code
     if settings.EXECUTING_AS_TEST == 'True':
         os.environ['EMAIL_VALIDATION_URL'] = link_id
-    else:
         print(link_id)
 
     personalisation = {"link": link_id}
@@ -61,12 +61,13 @@ def magic_link_resubmission_confirmation_email(email, application_reference, fir
         'Your sign in details',
         'Type of childcare',
         'Your personal details',
+        'Your children',
         'First aid training',
         'Criminal record (DBS) check',
         'Early years training',
         'Health declaration booklet',
         'People in your home',
-        'References'
+        'References',
     ]
 
     for task in all_tasks:
@@ -75,7 +76,7 @@ def magic_link_resubmission_confirmation_email(email, application_reference, fir
     # Remove parentheses from 'Criminal record (DBS) check' - Notify cannot format such variables.
     personalisation['Criminal record DBS check'] = personalisation.pop('Criminal record (DBS) check')
 
-    template_id = '6431f727-c49e-4f17-964e-b5595a83e958'
+    template_id = '3f8b41d2-62b5-42ea-a64d-61ad661fcc15'
 
     send_email(email, personalisation, template_id)
 
@@ -91,7 +92,6 @@ def magic_link_update_email(email, first_name, link_id):
     # If executing login function in test mode set env variable for later retrieval by test code
     if settings.EXECUTING_AS_TEST == 'True':
         os.environ['EMAIL_VALIDATION_URL'] = link_id
-    else:
         print(link_id)
 
     personalisation = {"link": link_id,
@@ -112,7 +112,6 @@ def magic_link_non_existent_email(email, link_id):
     # If executing login function in test mode set env variable for later retrieval by test code
     if settings.EXECUTING_AS_TEST == 'True':
         os.environ['EMAIL_VALIDATION_URL'] = link_id
-    else:
         print(link_id)
 
     personalisation = {"link": link_id}
@@ -147,7 +146,6 @@ def generate_random(digits, type):
         r = ''.join([random.choice(string.digits[1:]) for n in range(digits)])
         if settings.EXECUTING_AS_TEST == 'True':
             os.environ['SMS_VALIDATION_CODE'] = r
-        else:
             print(r)
     elif type == 'link':
         r = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(digits)])
@@ -182,6 +180,7 @@ def validate_magic_link(request, id):
         acc = UserDetails.objects.get(magic_link_email=id)
         app_id = acc.application_id.pk
         exp = acc.email_expiry_date
+        application = Application.objects.get(application_id=app_id)
         if not has_expired(exp) and len(id) > 0:
             acc.email_expiry_date = 0
             if 'email' in request.GET:
@@ -189,6 +188,9 @@ def validate_magic_link(request, id):
                 acc.save()
                 response = HttpResponseRedirect(reverse('Task-List-View') + '?id=' + str(app_id))
                 CustomAuthenticationHandler.create_session(response, acc.email)
+                # Update date last accessed when successfully logged in
+                application.date_last_accessed = timezone.now()
+                application.save()
                 return response
             if len(acc.mobile_number) == 0:
                 acc.save()
@@ -196,6 +198,9 @@ def validate_magic_link(request, id):
                 CustomAuthenticationHandler.create_session(response, acc.email)
                 acc.email_expiry_date = 0
                 acc.save()
+                # Update date last accessed when successfully logged in
+                application.date_last_accessed = timezone.now()
+                application.save()
                 return response
 
             phone = acc.mobile_number
@@ -228,7 +233,7 @@ class SMSValidationView(View):
         if has_expired(acc.sms_resend_attempts_expiry_date):
             acc.sms_resend_attempts_expiry_date = 0
 
-        if request.META.get('HTTP_REFERER') is not None:  # If they have come from email valdiation link, this is None.
+        if request.META.get('HTTP_REFERER') is not None:  # If they have come from email validation link, this is None.
             code_resent = True
         else:
             code_resent = False
@@ -265,6 +270,10 @@ class SMSValidationView(View):
                     # Set SMS code to expired after a one time successful login
                     acc.sms_expiry_date = int(time.time()) - ((settings.EMAIL_EXPIRY + 1) * 60 * 60)
                     acc.save()
+
+                    # Update date last accessed when successfully logged in
+                    application.date_last_accessed = timezone.now()
+                    application.save()
 
                     # Forward back onto application
                     return response

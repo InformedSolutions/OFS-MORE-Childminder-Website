@@ -49,10 +49,10 @@ class CustomAuthenticationHandler(object):
         application_id = None
 
         if request.method == 'GET' and 'id' in request.GET:
-            application_id = request.GET.get('id')
+            application_id = request.GET['id']
 
         if request.method == 'POST' and 'id' in request.POST:
-            application_id = request.POST.get('id')
+            application_id = request.POST['id']
 
         # If an application id is present fetch application from store
         if application_id is not None:
@@ -124,34 +124,6 @@ def globalise_server_name(request):
         return {'SERVER_LABEL': None}
 
 
-def hide_costs_link(request):
-    """
-    Middleware function for hiding the navigation menus costs link depending on an application's status
-    """
-    application_id = request.GET.get('id')
-
-    # If an application id is not quoted in the request
-    if application_id is None or len(application_id) == 0:
-        return {'HIDE_COSTS': False}
-
-    # Test whether application is in further information status
-    application_with_further_information_required = Application.objects.filter(
-        pk=application_id, application_status='FURTHER_INFORMATION'
-    ).count()
-
-    # If so, hide costs link (see gov uk template for test logic)
-    if application_with_further_information_required > 0:
-        return {
-            'id': application_id,
-            'HIDE_COSTS': True,
-        }
-    else:
-        return {
-            'id': application_id,
-            'HIDE_COSTS': False,
-        }
-
-
 def globalise_authentication_flag(request):
     """
     Middleware function to expose a flag to all templates to determine whether a user is authenticated.
@@ -162,14 +134,26 @@ def globalise_authentication_flag(request):
 
 def register_as_childminder_link_location(request):
     """
-    Middleware function to decider the loaction of the link in the govuk_template page header dependant
+    Middleware function to decide the location of the link in the govuk_template page header dependent
     on application status
     """
-    application_id = request.GET.get('id')
-    if application_id is not None:
-        application = Application.objects.get(pk=application_id)
 
-        if application.application_status not in ['ARC_REVIEW', 'CYGNUM_REVIEW', 'SUBMITTED']:
-            return {'task_list_link': True}
+    if request.method == 'GET' and 'id' in request.GET:
+        application_id = request.GET['id']
+
+        if application_id is not None:
+
+            application = Application.objects.get(pk=application_id)
+
+            if application.application_status not in ['ARC_REVIEW', 'CYGNUM_REVIEW', 'SUBMITTED']:
+
+                login_details_status = application.login_details_status
+                childcare_type_status = application.childcare_type_status
+                personal_details_status = application.personal_details_status
+
+                if login_details_status in ['FLAGGED', 'COMPLETED'] and childcare_type_status in ['FLAGGED', 'COMPLETED'] and personal_details_status in ['FLAGGED', 'COMPLETED']:
+
+                    return {'task_list_link': True,
+                            'id': application_id}
 
     return {'task_list_link': False}

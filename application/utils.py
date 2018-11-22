@@ -8,14 +8,19 @@ import json
 from urllib.parse import urlencode
 
 import requests
+import logging
 from django.conf import settings
-from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.utils.http import urlencode
 from django.core.urlresolvers import reverse
 
-from .models import Application, Reference, CriminalRecordCheck, EYFS, HealthDeclarationBooklet, ChildInHome, \
-    ChildcareType, FirstAidTraining, ApplicantPersonalDetails, ApplicantName, ApplicantHomeAddress, AdultInHome
+from .models import Application, Reference, CriminalRecordCheck, ChildcareTraining, HealthDeclarationBooklet, \
+    ChildInHome, \
+    ChildcareType, FirstAidTraining, ApplicantPersonalDetails, ApplicantName, ApplicantHomeAddress, AdultInHome, \
+    ArcComments
+
+
+logger = logging.getLogger('')
 
 
 def get_app_task_models(app_id):
@@ -28,7 +33,7 @@ def get_app_task_models(app_id):
     if app_id:
 
         models = [
-            Application, Reference, CriminalRecordCheck, EYFS, HealthDeclarationBooklet, ChildInHome,
+            Application, Reference, CriminalRecordCheck, ChildcareTraining, HealthDeclarationBooklet, ChildInHome,
             ChildcareType, FirstAidTraining, ApplicantPersonalDetails, ApplicantName, ApplicantHomeAddress,
             AdultInHome
         ]
@@ -196,3 +201,26 @@ def get_duplicate_list_entry_indexes(list):
     duplicate_index = get_first_duplicate_index(list)
     item = list[duplicate_index]
     return [i for i, x in enumerate(list) if x == item]
+
+
+def get_id(request):
+    if request.GET.get('id'):
+        return request.GET.get('id')
+    elif request.POST.get('id'):
+        return request.POST.get('id')
+    else:
+        raise ValueError("Couldn't retrieve id from request")
+
+
+def get_non_db_field_arc_comment(application_id, field_name):
+    logger.debug('Fetching non db field arc comment for application with id: '
+                 + str(application_id))
+    table_name = 'DYNAMIC_VALUE'
+    prior_dynamic_comment_exists = \
+        ArcComments.objects.filter(table_name=table_name, field_name=field_name, table_pk=application_id, flagged=True).exists()
+
+    if prior_dynamic_comment_exists:
+        arc_comment_container = ArcComments.objects.get(table_name=table_name, field_name=field_name, table_pk=application_id)
+        return arc_comment_container.comment
+    else:
+        return ''

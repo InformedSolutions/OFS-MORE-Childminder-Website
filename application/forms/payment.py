@@ -73,22 +73,6 @@ class PaymentDetailsForm(ChildminderForms):
                 raise forms.ValidationError('Please check the number on your card')
         return card_number
 
-    def clean_expiry_date(self):
-        """
-        Expiry date validation
-        :return: expiry date
-        """
-        expiry_date = self.cleaned_data['expiry_date']
-        year = expiry_date[0]
-        month = expiry_date[1]
-        today_month = date.today().month
-        today_year = date.today().year
-        expiry_date_object = date(year, month, 1)
-        today_date = date(today_year, today_month, 1)
-        date_difference = expiry_date_object - today_date
-        if date_difference.days < 0:
-            raise forms.ValidationError('Check the expiry date or use a new card')
-
     def clean_cardholders_name(self):
         """
         Cardholder's name validation

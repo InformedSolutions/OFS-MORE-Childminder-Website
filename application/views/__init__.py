@@ -11,14 +11,13 @@ from .personal_details import *
 from .card_payment_details import *
 from .dbs import *
 from .declaration import *
-from .eyfs import *
+from .childcare_training import *
 from .first_aid import *
 from .health import *
 from .other_people import *
 from .payment import *
 from .references import *
 from .print_handler import *
-from .costs import *
 from .cancel_application import *
 from .login import *
 from .help_and_contact import *

@@ -81,10 +81,35 @@ class SeriousIllnessView(BaseFormView):
         Method to save a serious illness record should the form be valid
         :return: redirect to appropriate success url.
         """
+        person_id = self.request.GET.get('person_id')
+        person_record = AdultInHome.objects.get(pk=person_id)
+        record = len(HealthCheckSerious.objects.filter(person_id=person_record))
         illness_record = self._get_clean(form)
-        illness_record.save()
 
-        return super().form_valid(form)
+        if record == 0:
+            illness_record.save()
+            return super().form_valid(form)
+        else:
+            record = HealthCheckSerious.objects.get(person_id=person_record)
+            if self.illness_is_not_duplicate(record, illness_record):
+                    illness_record.save()
+
+            return super().form_valid(form)
+
+    @staticmethod
+    def illness_is_not_duplicate(record, illness_record):
+        """
+        Helper method to determine if the newly entered record is a duplicate of an existing record
+        :param record: The adult's serious illness record
+        :param illness_record: The record that has just been passed into the form
+        :return: Boolean True or False
+        """
+        if illness_record.start_date != record.start_date or \
+            illness_record.end_date != record.end_date or \
+            illness_record.description != record.description:
+            return True
+        else:
+            return False
 
     def get_form_kwargs(self):
         """
@@ -148,17 +173,12 @@ class MoreSeriousIllnessesView(BaseFormView):
         :return: redirect to appropriate url
         """
         clean = form.cleaned_data
-        adult_record = AdultInHome.objects.get(pk=self.request.GET.get('person_id'))
-        existing_records = HealthCheckHospital.objects.filter(person_id=adult_record)
         decision = clean['more_illnesses']
 
         if decision == 'True':
             self.success_url = 'Health-Check-Serious'
         else:
-            if existing_records.exists():
-                self.success_url = 'Health-Check-Summary'
-            else:
-                self.success_url = 'Health-Check-Hospital-Start'
+            self.success_url = 'Health-Check-Hospital-Start'
         return HttpResponseRedirect(self.get_success_url())
 
 
@@ -168,7 +188,7 @@ class SeriousIllnessEditView(BaseFormView):
     """
     template_name = 'other_people_health_check/serious_illness.html'
     form_class = SeriousIllness
-    success_url = 'Health-Check-Summary'
+    success_url = 'Health-Check-Hospital-Start'
 
     def get_initial(self):
         """

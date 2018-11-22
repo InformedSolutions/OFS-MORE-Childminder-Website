@@ -1,0 +1,47 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Your child's address{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<!-- Initialise error summary for page -->
+<div class="two-thirds">
+{{form.error_summary}}
+</div>
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="two-thirds">
+        <h1 class="form-title heading-large">
+            Select {{ name }}'s address
+        </h1>
+        <h2 class="form-title heading-small">Postcode</h2>
+        <p>{{postcode}}
+            <a href="{% url 'PITH-Own-Children-Postcode-View' %}?id={{application_id}}&children={{children}}">
+                Change
+            </a>
+        </p>
+
+
+    {{form.as_div}}
+    {% csrf_token %}
+
+    <a href="{% url 'PITH-Own-Children-Manual-View' %}?id={{application_id}}&children={{children}}" name="manual"
+       id="manual">
+        I cannot find the address in the list
+    </a>
+
+    <input type="submit" class="button button-submit" value="Save and continue">
+    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    <input type="hidden" id="child" name="child" value="{{children}}"/>
+
+    </div>
+</form>
+<br>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}

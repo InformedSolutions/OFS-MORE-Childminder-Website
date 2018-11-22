@@ -23,12 +23,9 @@ def validate_magic_link(request, id):
     """
     try:
         person = AdultInHome.objects.get(token=id)
+        application = Application.objects.get(pk=person.application_id.pk)
 
         if person.validated is not True:
-            # As they've now used their link, set to true
-            person.validated = True
-            person.save()
-            application = Application.objects.get(pk=person.application_id.pk)
             try:
                 applicant_name = ApplicantName.objects.get(application_id=application.pk)
                 name = ' '.join([applicant_name.first_name, applicant_name.middle_names, applicant_name.last_name])

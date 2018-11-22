@@ -6,7 +6,6 @@ import collections
 
 from django.utils import timezone
 
-from ..business_logic import eligible_to_apply_based_on_childcare_ages
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
@@ -14,7 +13,7 @@ from django.core.urlresolvers import reverse
 from ..summary_page_data import childcare_type_name_dict, childcare_type_link_dict, childcare_type_change_link_description_dict
 from ..table_util import Table, create_tables, submit_link_setter
 from .. import status
-from ..business_logic import reset_declaration, childcare_type_logic
+from ..business_logic import reset_declaration, childcare_type_logic, get_childcare_register_type
 from ..forms import TypeOfChildcareGuidanceForm, TypeOfChildcareAgeGroupsForm, TypeOfChildcareRegisterForm, \
     TypeOfChildcareOvernightCareForm
 from ..models import Application, ChildcareType
@@ -102,6 +101,15 @@ def type_of_childcare_age_groups(request):
 
             # Create or update Childcare_Type record
             childcare_type_record = childcare_type_logic(app_id, form)
+
+            # Check to see if the type of childcare training has been changed
+            if ChildcareType.objects.filter(application_id=app_id).count() > 0:
+                existing_record = ChildcareType.objects.get(application_id=app_id)
+
+                if existing_record.zero_to_five != childcare_type_record.zero_to_five or \
+                   existing_record.eight_plus != childcare_type_record.eight_plus:
+                    application.childcare_training_status = 'NOT_STARTED'
+
             childcare_type_record.save()
             application.date_updated = current_date
             application.save()
@@ -143,30 +151,22 @@ def type_of_childcare_register(request):
             'login_details_status': application.login_details_status,
         }
 
-        childcare_record = ChildcareType.objects.get(application_id=app_id)
+        childcare_register_type, childcare_register_cost = get_childcare_register_type(app_id)
 
-        if (childcare_record.zero_to_five is True) \
-                & (childcare_record.five_to_eight is True) \
-                & (childcare_record.eight_plus is True):
+        if childcare_register_type == 'EYR-CR-both':
             return render(request, 'childcare-register-EYR-CR-both.html', variables)
-
-        elif (childcare_record.zero_to_five is True) \
-                & (childcare_record.five_to_eight is True) \
-                & (childcare_record.eight_plus is False):
+        elif childcare_register_type == 'EYR-CR-compulsory':
             return render(request, 'childcare-register-EYR-CR-compulsory.html', variables)
-
-        elif (childcare_record.zero_to_five is True) \
-                & (childcare_record.five_to_eight is False) \
-                & (childcare_record.eight_plus is True):
+        elif childcare_register_type == 'EYR-CR-voluntary':
             return render(request, 'childcare-register-EYR-CR-voluntary.html', variables)
-
-        elif (childcare_record.zero_to_five is True) \
-                & (childcare_record.five_to_eight is False) \
-                & (childcare_record.eight_plus is False):
+        elif childcare_register_type == 'EYR':
             return render(request, 'childcare-register-EYR.html', variables)
-
-        elif not eligible_to_apply_based_on_childcare_ages(childcare_record):
-            return HttpResponseRedirect(reverse('Local-Authority-View') + '?id=' + app_id)
+        elif childcare_register_type == 'CR-compulsory':
+            return render(request, 'childcare-register-CR-compulsory.html', variables)
+        elif childcare_register_type == 'CR-both':
+            return render(request, 'childcare-register-CR-both.html', variables)
+        elif childcare_register_type == 'CR-voluntary':
+            return render(request, 'childcare-register-CR-voluntary.html', variables)
 
     if request.method == 'POST':
 

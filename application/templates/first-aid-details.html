@@ -12,9 +12,17 @@
 <h1 class="form-title heading-large">
     First aid training details
 </h1>
-<p>We need to check that you can keep children safe.</p>
-<p>Please give details of your paediatric first aid training course.</p>
 
+{% if register == 'childcare_register_only' %}
+    <p>Please give details of your first aid training.</p>
+{% elif register == 'early_years_register' %}
+    <p>Please give details of your paediatric first aid training course.</p>
+{% endif %}
+
+<p>This is to check that you know how to give first aid treatments.</p>
+
+
+{% if register == 'early_years_register' %}
 <details role="group">
     <summary role="button" aria-controls="details-content-0" aria-expanded="false">
         <span class="summary">Where can I get training?<span class="visuallyhidden">Click to expand</span></span>
@@ -27,6 +35,8 @@
         <p><a href="https://www.gov.uk/find-local-council" target="_blank">Ask your council</a> for details of courses in your area.</p>
     </div>
 </details>
+{% endif %}
+
 </div>
 <div class="form-group top-padded">
     <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>

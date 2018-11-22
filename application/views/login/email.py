@@ -31,14 +31,17 @@ class NewUserSignInView(View):
             email = form.cleaned_data['email_address']
 
             if UserDetails.objects.filter(email=email).exists():
+                app_id = str(UserDetails.objects.get(email=email).application_id.application_id)
                 send_magic_link(email)  # acc created here so conditional must be made before then.
-                return HttpResponseRedirect(reverse('Existing-Email-Sent') + '?email=' + email)
+                return login_email_link_sent(request, app_id)
             else:
                 acc = create_new_app()  # Create new account here such that send_magic_link sends correct email.
+                app_id = str(acc.application_id_id)
+                acc = UserDetails.objects.get(application_id=app_id)
                 acc.email = email
                 acc.save()
                 send_magic_link(email)
-                return HttpResponseRedirect(reverse('New-Email-Sent') + '?email=' + email)
+            return login_email_link_sent(request, app_id)
 
         return render(request, 'contact-email.html', {'form': form})
 
@@ -57,8 +60,18 @@ class ExistingUserSignInView(View):
                 return HttpResponseRedirect(reverse('Service-Down'))
 
             email = form.cleaned_data['email_address']
-            send_magic_link(email)
-            return HttpResponseRedirect(reverse('Existing-Email-Sent') + '?email=' + email)
+            if UserDetails.objects.filter(email=email).exists():
+                app_id = str(UserDetails.objects.get(email=email).application_id.application_id)
+                send_magic_link(email)  # acc created here so conditional must be made before then.
+                return login_email_link_sent(request, app_id)
+            else:
+                acc = create_new_app()  # Create new account here such that send_magic_link sends correct email.
+                app_id = str(acc.application_id_id)
+                acc = UserDetails.objects.get(application_id=app_id)
+                acc.email = email
+                acc.save()
+                send_magic_link(email)
+            return login_email_link_sent(request, app_id)
 
         return render(request, 'existing-application.html', {'form': form})
 
@@ -94,20 +107,26 @@ class UpdateEmailView(View):
             email = form.cleaned_data['email_address']
 
             if acc.email == email:
+                # Update date last accessed when successfully logged in
+                application.date_last_accessed = timezone.now()
+                application.save()
                 return HttpResponseRedirect(reverse('Contact-Summary-View') + '?id=' + app_id)
 
             elif UserDetails.objects.filter(email=email).exists():
                 if settings.DEBUG:
-                    print ("You will not see an email validation link printed because an account already exists with that email.")
-                return HttpResponseRedirect(reverse('Update-Email-Sent') + '?email=' + email)
+                    print("You will not see an email validation link printed because an account"
+                          " already exists with that email.")
+                    return login_email_link_sent(request, app_id)
 
             else:
-                # Send an email to the new email adddress, with the account's ID in the link.
+                # Send an email to the new email address, with the account's ID in the link.
+                acc.change_email = email
+                acc.save()
                 update_magic_link(email, app_id)
-                redirect_url = build_url('Update-Email-Sent', get={'email': email, 'id': app_id})
+                redirect_url = build_url('Update-Email-Sent', get={'id': app_id})
                 return HttpResponseRedirect(redirect_url)
-        else:
 
+        else:
             return self.render_update_email_template(request, form=form, application=application)
 
     def render_update_email_template(self, request, form, application):
@@ -125,17 +144,17 @@ class UpdateEmailView(View):
         return render(request, 'update-email.html', variables)
 
 
-def login_email_link_sent(request):
+def login_email_link_sent(request, app_id):
     """
     Check email page
     :param request: Http request
     :return: Http response
     """
-    email = request.GET['email']
-    resend_url = "/childminder/email-resent/?email=" + email
+    resend_url = "/childminder/email-resent/?id=" + app_id
+    acc = UserDetails.objects.get(application_id=app_id)
 
     variables = {
-        'email': email,
+        'email': acc.email,
         'resend_url': resend_url,
         'change_email': False
     }
@@ -149,12 +168,12 @@ def login_email_link_resent(request):
     :param request: Http request
     :return: Http response
     """
-    email = request.GET['email']
+    app_id = request.GET['id']
+    acc = UserDetails.objects.get(application_id=app_id)
+    if len(acc.email) > 0:
+            send_magic_link(acc.email)  # Resend magic link
 
-    if len(email) > 0:
-            send_magic_link(email)  # Resend magic link
-
-    return render(request, 'resend-email.html', context={'email': email})
+    return render(request, 'resend-email.html', context={'id': app_id})
 
 
 def update_email_link_sent(request):
@@ -162,11 +181,11 @@ def update_email_link_sent(request):
     :param request:
     :return:
     """
-    email = request.GET['email']
-    id = request.GET.get('id')
+    app_id = request.GET.get('id')
+    acc = UserDetails.objects.get(application_id=app_id)
+    email = acc.change_email
 
-    # Build url with app_id so that update_email_link_resent may use it, if 'resend email' clicked.
-    resend_url = build_url('Update-Email-Resent', get={'email': email, 'id': id})
+    resend_url = build_url('Update-Email-Resent', get={'id': app_id})
 
     variables = {
         'email': email,
@@ -181,11 +200,12 @@ def update_email_link_resent(request):
     :param request:
     :return:
     """
-    email = request.GET['email']
-    id = request.GET['id']
-    update_magic_link(email=email, app_id=id)
+    app_id = request.GET.get('id')
+    acc = UserDetails.objects.get(application_id=app_id)
+    email = acc.change_email
+    update_magic_link(email=email, app_id=app_id)
 
-    return render(request, 'resend-email.html', context={'email': email})
+    return render(request, 'resend-email.html', context={'id': app_id})
 
 
 def send_magic_link(email):
@@ -224,7 +244,8 @@ def update_magic_link(email, app_id):
         except ObjectDoesNotExist:
             first_name = 'applicant'
 
-        full_link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link + '?email=' + email
+        full_link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + link
+
         magic_link.magic_link_update_email(email, first_name, full_link)
 
 
@@ -246,7 +267,7 @@ def create_new_app():
         personal_details_status='NOT_STARTED',
         childcare_type_status='NOT_STARTED',
         first_aid_training_status='NOT_STARTED',
-        eyfs_training_status='NOT_STARTED',
+        childcare_training_status='NOT_STARTED',
         criminal_record_check_status='NOT_STARTED',
         health_status='NOT_STARTED',
         references_status='NOT_STARTED',
@@ -263,8 +284,7 @@ def create_new_app():
         content_object=application,
         user=None,
         template='timeline_logger/application_action.txt',
-        extra_data={'user_type': 'applicant', 'action': 'created', 'entity': 'application'}
+        extra_data={'user_type': 'applicant', 'action': 'created by', 'entity': 'application'}
     )
 
     return user
-

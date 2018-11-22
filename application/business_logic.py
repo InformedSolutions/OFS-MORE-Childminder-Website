@@ -18,11 +18,11 @@ from .models import (AdultInHome,
                      ChildcareType,
                      ChildInHome,
                      CriminalRecordCheck,
-                     EYFS,
+                     ChildcareTraining,
                      FirstAidTraining,
                      HealthDeclarationBooklet,
                      Reference,
-                     UserDetails)
+                     UserDetails, Child, ChildAddress)
 
 from .utils import unique_values, get_first_duplicate_index, return_last_duplicate_index, \
     get_duplicate_list_entry_indexes
@@ -50,6 +50,19 @@ def childcare_type_logic(application_id_local, form):
         childcare_type_record.five_to_eight = five_to_eight_status
         childcare_type_record.eight_plus = eight_plus_status
     return childcare_type_record
+
+
+def childcare_register_type(application_id):
+    """
+    Function to determine the childcare register to which the applicant is applying.
+    :param application_id: app_id of the applicant for which the check is being made.
+    :return: a string containing the register to which the applicant is applying.
+    """
+    childcare_type_record = ChildcareType.objects.get(application_id=application_id)
+    if not childcare_type_record.zero_to_five:
+        return 'childcare_register_only'
+    else:
+        return 'early_years_register'
 
 
 def login_contact_logic(application_id_local, form):
@@ -221,6 +234,30 @@ def personal_home_address_logic(app_id, form):
     return home_address_record
 
 
+def child_address_logic(app_id, child, form):
+    """
+    Business logic to create or update a child address record with address details
+    :param app_id: A string object containing the current application ID
+    :param child: A numerical identifier for the child
+    :param form: A form object containing the data to be stored
+    :return: an ChildAddress object to be saved
+    """
+    application = Application.objects.get(application_id=app_id)
+    child_address = ChildAddress(application_id=application)
+
+    if ChildAddress.objects.filter(application_id=app_id, child=child).exists():
+        child_address = ChildAddress.objects.get(application_id=app_id, child=child)
+
+    child_address.child = int(child)
+    child_address.street_line1 = form.cleaned_data.get('street_line1')
+    child_address.street_line2 = form.cleaned_data.get('street_line2')
+    child_address.town = form.cleaned_data.get('town')
+    child_address.county = form.cleaned_data.get('county')
+    child_address.postcode = form.cleaned_data.get('postcode')
+
+    return child_address
+
+
 def personal_location_of_care_logic(application_id_local, form):
     """
     Business logic to update an Applicant_Home_Address record with home address details
@@ -329,7 +366,7 @@ def first_aid_logic(application_id_local, form):
 
 def eyfs_details_logic(application_id_local, form):
     """
-    Business logic to create or update an EYFS record
+    Business logic to create or update an EYFS record for someone applying to the Early Years register.
     :param application_id_local: A string object containing the current application ID
     :param form: A form object containing the data to be stored
     :return: an EYFS object to be saved
@@ -340,16 +377,60 @@ def eyfs_details_logic(application_id_local, form):
     eyfs_course_date_month = form.cleaned_data.get('eyfs_course_date').month
     eyfs_course_date_year = form.cleaned_data.get('eyfs_course_date').year
     # If the user entered information for this task for the first time
-    if EYFS.objects.filter(application_id=application_id_local).count() == 0:
-        eyfs_record = EYFS(eyfs_course_name=eyfs_course_name, eyfs_course_date_day=eyfs_course_date_day, eyfs_course_date_month=eyfs_course_date_month, eyfs_course_date_year=eyfs_course_date_year, application_id=this_application)
+    if ChildcareTraining.objects.filter(application_id=application_id_local).count() == 0:
+        eyfs_record = ChildcareTraining(eyfs_course_name=eyfs_course_name, eyfs_course_date_day=eyfs_course_date_day, eyfs_course_date_month=eyfs_course_date_month, eyfs_course_date_year=eyfs_course_date_year, application_id=this_application)
     # If the user previously entered information for this task
-    elif EYFS.objects.filter(application_id=application_id_local).count() > 0:
-        eyfs_record = EYFS.objects.get(application_id=application_id_local)
+    elif ChildcareTraining.objects.filter(application_id=application_id_local).count() > 0:
+        eyfs_record = ChildcareTraining.objects.get(application_id=application_id_local)
         eyfs_record.eyfs_course_name = eyfs_course_name
         eyfs_record.eyfs_course_date_day = eyfs_course_date_day
         eyfs_record.eyfs_course_date_month = eyfs_course_date_month
         eyfs_record.eyfs_course_date_year = eyfs_course_date_year
     return eyfs_record
+
+
+def training_for_childcare_register_logic(application_id_local, form):
+    """
+    Business logic to create or update an EYFS record for someone applying to the childcare register only.
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: an EYFS object to be saved
+    """
+    childcare_training = form.cleaned_data['childcare_training']
+
+    options = (
+        'eyfs_training',
+        'common_core_training',
+        'no_training',
+    )
+
+    if ChildcareTraining.objects.filter(application_id=application_id_local).count() == 0:
+        application_record        = Application.objects.get(application_id=application_id_local)
+        childcare_training_record = ChildcareTraining.objects.create(application_id=application_record)
+    else:
+        childcare_training_record = ChildcareTraining.objects.get(application_id=application_id_local)
+
+    for option in options:
+        if option in childcare_training:
+            setattr(childcare_training_record, option, True)
+        else:
+            setattr(childcare_training_record, option, False)
+
+    return childcare_training_record
+
+
+def childcare_training_course_logic(application_id_local, form):
+    """
+
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: a call to the function required to update the model with the information provided.
+    """
+    childcare_type = childcare_register_type(application_id_local)
+    if childcare_type == 'childcare_register_only':
+        return training_for_childcare_register_logic(application_id_local, form)
+    else:
+        return eyfs_details_logic(application_id_local, form)
 
 
 def dbs_check_logic(application_id_local, form):
@@ -475,6 +556,41 @@ def health_check_logic(application_id_local, form):
     return hdb_record
 
 
+def your_children_details_logic(application_id_local, form, child):
+    """
+    Business logic to create or update an ChildInHome record
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :param child: child number (integer)
+    :return: an ChildInHome object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    first_name = form.cleaned_data.get('first_name')
+    middle_names = form.cleaned_data.get('middle_names')
+    last_name = form.cleaned_data.get('last_name')
+    birth_day = form.cleaned_data.get('date_of_birth')[0]
+    birth_month = form.cleaned_data.get('date_of_birth')[1]
+    birth_year = form.cleaned_data.get('date_of_birth')[2]
+    # If the user entered information for this task for the first time
+    if Child.objects.filter(application_id=this_application, child=child).exists():
+
+        child_record = Child.objects.get(application_id=this_application, child=child)
+        child_record.first_name = first_name
+        child_record.middle_names = middle_names
+        child_record.last_name = last_name
+        child_record.birth_day = birth_day
+        child_record.birth_month = birth_month
+        child_record.birth_year = birth_year
+
+
+    # If the user previously entered information for this task
+    else:
+        child_record = Child(first_name=first_name, middle_names=middle_names, last_name=last_name,
+                                   birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
+                                   application_id=this_application, child=child)
+
+    return child_record
+
 def other_people_adult_details_logic(application_id_local, form, adult):
     """
     Business logic to create or update an AdultInHome record
@@ -565,13 +681,36 @@ def remove_child(application_id_local, remove_person):
     Method to remove a child from the database
     :param application_id_local: current application ID
     :param remove_person: child to remove (integer)
+    """
+    if Child.objects.filter(application_id=application_id_local, child=remove_person).exists() is True:
+        Child.objects.get(application_id=application_id_local, child=remove_person).delete()
+
+
+def rearrange_children(number_of_children, application_id_local):
+    """
+    Method to rearrange numbers assigned to children
+    :param number_of_children: number of children in database (integer)
+    :param application_id_local: current application ID
+    """
+    children_records = Child.objects.filter(application_id=application_id_local).order_by('child')
+
+    for index, child_record in enumerate(children_records):
+        child_record.child = index + 1
+        child_record.save()
+
+
+def remove_child_in_home(application_id_local, remove_person):
+    """
+    Method to remove a child in home from the database
+    :param application_id_local: current application ID
+    :param remove_person: child to remove (integer)
     :return:
     """
     if ChildInHome.objects.filter(application_id=application_id_local, child=remove_person).exists() is True:
         ChildInHome.objects.get(application_id=application_id_local, child=remove_person).delete()
 
 
-def rearrange_children(number_of_children, application_id_local):
+def rearrange_children_in_home(number_of_children, application_id_local):
     """
     Method to rearrange numbers assigned to adults
     :param number_of_children: number of children in database (integer)
@@ -620,6 +759,49 @@ def other_people_children_details_logic(application_id_local, form, child):
         child_record.birth_month = birth_month
         child_record.birth_year = birth_year
         child_record.relationship = relationship
+    return child_record
+
+
+def PITH_own_children_details_logic(application_id_local, form, child):
+    """
+    A subset mirror function of the above 'other_people_children_details_logic' function.
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :param child: child number (integer)
+    :return: an ChildInHome object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    first_name = form.cleaned_data.get('first_name')
+    middle_names = form.cleaned_data.get('middle_names')
+    last_name = form.cleaned_data.get('last_name')
+    birth_day = form.cleaned_data.get('date_of_birth')[0]
+    birth_month = form.cleaned_data.get('date_of_birth')[1]
+    birth_year = form.cleaned_data.get('date_of_birth')[2]
+
+    if middle_names is None:
+        middle_names = ""
+
+    # If the user entered information for this task for the first time
+    if Child.objects.filter(application_id=this_application, child=child).count() == 0:
+        child_record = Child(first_name=first_name,
+                             middle_names=middle_names,
+                             last_name=last_name,
+                             birth_day=birth_day,
+                             birth_month=birth_month,
+                             birth_year=birth_year,
+                             application_id=this_application,
+                             lives_with_childminder=False,
+                             child=child)
+    # If the user previously entered information for this task
+    elif Child.objects.filter(application_id=this_application, child=child).count() > 0:
+        child_record = Child.objects.get(application_id=this_application,
+                                         child=child)
+        child_record.first_name = first_name
+        child_record.middle_names = middle_names
+        child_record.last_name = last_name
+        child_record.birth_day = birth_day
+        child_record.birth_month = birth_month
+        child_record.birth_year = birth_year
     return child_record
 
 
@@ -702,38 +884,11 @@ def health_check_email_resend_logic(adult_record):
         elif (datetime.now(pytz.utc) - adult_record.email_resent_timestamp) > timedelta(1):
             # Reset the email resent count
             adult_record.email_resent = 0
-            adult_record.validated = False
             adult_record.save()
 
             return False
     else:
         return False
-
-
-def eligible_to_apply_based_on_childcare_ages(childcare_record):
-    """
-    Helper function to check whether an applicant can apply based on the ages of children they
-    will be looking after
-    :param childcare_record: A ChildcareType instance detailing the ages of children being looked after
-    :return: a boolean indicator for whether or not
-    an applicant can apply using the service based on the ages of children they
-    will be looking after
-    """
-
-    if (childcare_record.zero_to_five is False) \
-            & (childcare_record.five_to_eight is True) \
-            & (childcare_record.eight_plus is False):
-        return False
-    elif (childcare_record.zero_to_five is False) \
-            & (childcare_record.five_to_eight is True) \
-            & (childcare_record.eight_plus is True):
-        return False
-    elif (childcare_record.zero_to_five is False) \
-            & (childcare_record.five_to_eight is False) \
-            & (childcare_record.eight_plus is True):
-        return False
-    else:
-        return True
 
 
 def dbs_matches_childminder_dbs(application, candidate_dbs_certificate_number):
@@ -796,29 +951,19 @@ def get_duplicate_household_member_dbs_indexes(other_people_dbs_form_data):
     return response
 
 
-def childminder_dbs_duplicates_household_member_check(application, candidate_dbs_certificate_number):
+def childminder_dbs_duplicates_household_member_check(application, candidate_dbs_certificate_number, adult_record=None):
     """
     Helper method to check whether a childminder DBS number duplicates an existing household member's
     :param candidate_dbs_certificate_number: the candidate DBS number to be assigned
     :return: True/False result
     """
-    dbs_numbers = list()
+    adults = AdultInHome.objects.filter(application_id=application.application_id)
+    if adult_record:
+        adults_dbs_list = [adult.dbs_certificate_number for adult in adults if not adult.pk == adult_record.pk]
+    else:
+        adults_dbs_list = [adult.dbs_certificate_number for adult in adults]
 
-    # Check how many additional adults feature in application form
-    additional_adults = AdultInHome.objects.filter(application_id=application.application_id)
-    count_of_additional_adults_in_home = AdultInHome.objects.filter(application_id=application.application_id).count()
-
-    # Iterate and push DBS numbers to comparison array
-    if count_of_additional_adults_in_home > 0:
-        for i in range(1, int(additional_adults.count()) + 1):
-            adult = AdultInHome.objects.get(
-                application_id=application.application_id, adult=i)
-            # filter out any empty values so as not to get a false match on duplicate index
-            if adult.dbs_certificate_number:
-                dbs_numbers.append(adult.dbs_certificate_number)
-
-    # Yield result of whether DBS number to the last entry in the list
-    return candidate_dbs_certificate_number in dbs_numbers
+    return candidate_dbs_certificate_number in adults_dbs_list
 
 
 def get_duplicate_dbs_index(application, candidate_dbs_certificate_number):
@@ -872,6 +1017,7 @@ def childminder_dbs_number_duplication_check(application, candidate_dbs_certific
 
     return response
 
+
 def convert_mobile_to_notify_standard(mobile):
 
     mobile_prefix_REGEX = "^(\+44|0044)[7][0-9]{9}$"
@@ -881,6 +1027,7 @@ def convert_mobile_to_notify_standard(mobile):
         return new_mobile
     else:
         return mobile
+
 
 def childminder_references_and_user_email_duplication_check(email1, email2):
     """
@@ -894,6 +1041,192 @@ def childminder_references_and_user_email_duplication_check(email1, email2):
         return True
     else:
         return False
+
+
+def show_resend_and_change_email(health_check_status, is_review=None):
+    """
+    Helper function to determine if the 'resend email' and 'change' email buttons should be visible inside the
+        People in the Home task.
+    :param health_check_status: Status of one adult's health check, a string equal to 'To do', 'Started' or 'Done'.
+    :param is_review: A boolean True if the application is in review mode, e.g 'FURTHER INFORMATION'
+    :return: A boolean True if the buttons should be displayed, False if the buttons should not be displayed.
+    """
+
+    # is_review is no longer needed, kept for legacy purposes but defaults to None.
+    return health_check_status != 'Done'
+
+def update_criminal_record_check(app_id, field_obj, status):
+    """
+    Updates the CriminalRecordCheck field with the given status.
+    :param app_id: applicant's application_id
+    :param field_obj: CriminalRecordCheck field or list of CriminalRecordCheck fields
+    :param status: Value to update entry/entries with
+    :return: Boolean True if successfully updated.
+    """
+    criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        for field in field_obj:
+            setattr(criminal_record_check_record, field, status)
+        criminal_record_check_record.save()
+
+    elif isinstance(field_obj, str):
+        setattr(criminal_record_check_record, field_obj, status)
+        criminal_record_check_record.save()
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+    return True
+
+
+def get_criminal_record_check(app_id, field_obj):
+    """
+    :param app_id: applicant's application_id
+    :param field_obj: CriminalRecordCheck field or list of CriminalRecordCheck fields
+    :return: Boolean True if successfully updated.
+    """
+    criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        return {field: getattr(criminal_record_check_record, field) for field in field_obj}
+
+    elif isinstance(field_obj, str):
+        return getattr(criminal_record_check_record, field_obj)
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+
+def get_childcare_register_type(app_id):
+    childcare_record = ChildcareType.objects.get(application_id=app_id)
+
+    if (childcare_record.zero_to_five is True) \
+            & (childcare_record.five_to_eight is True) \
+            & (childcare_record.eight_plus is True):
+        cost = 35
+        return 'EYR-CR-both', cost
+
+    elif (childcare_record.zero_to_five is True) \
+            & (childcare_record.five_to_eight is True) \
+            & (childcare_record.eight_plus is False):
+        cost = 35
+        return 'EYR-CR-compulsory', cost
+
+    elif (childcare_record.zero_to_five is True) \
+            & (childcare_record.five_to_eight is False) \
+            & (childcare_record.eight_plus is True):
+        cost = 35
+        return 'EYR-CR-voluntary', cost
+
+    elif (childcare_record.zero_to_five is True) \
+            & (childcare_record.five_to_eight is False) \
+            & (childcare_record.eight_plus is False):
+        cost = 35
+        return 'EYR', cost
+
+    elif (childcare_record.zero_to_five is False) \
+            & (childcare_record.five_to_eight is True) \
+            & (childcare_record.eight_plus is False):
+        cost = 103
+        return 'CR-compulsory', cost
+
+    elif (childcare_record.zero_to_five is False) \
+            & (childcare_record.five_to_eight is True) \
+            & (childcare_record.eight_plus is True):
+        cost = 103
+        return 'CR-both', cost
+
+    elif (childcare_record.zero_to_five is False) \
+            & (childcare_record.five_to_eight is False) \
+            & (childcare_record.eight_plus is True):
+        cost = 103
+        return 'CR-voluntary', cost
+
+def get_adult_in_home(app_id, field_obj):
+    """
+    :param app_id: applicant's application_id
+    :param field_obj: AdultInHome field or list of AdultInHome fields
+    :return: Boolean True if successfully updated.
+    """
+    adult_in_home_record = AdultInHome.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        return {field: getattr(adult_in_home_record, field) for field in field_obj}
+
+    elif isinstance(field_obj, str):
+        return getattr(adult_in_home_record, field_obj)
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+
+def update_adult_in_home(pk, field_obj, status):
+    """
+    Updates the AdultInHome field with the given status.
+    :param pk: AdultInHome primary key
+    :param field_obj: AdultInHome field or list of AdultInHome fields
+    :param status: Value to update entry/entries with
+    :return: Boolean True if successfully updated.
+    """
+    adult_in_home_record = AdultInHome.objects.get(pk=pk)
+
+    if isinstance(field_obj, list):
+        for field in field_obj:
+            setattr(adult_in_home_record, field, status)
+            adult_in_home_record.save()
+
+    elif isinstance(field_obj, str):
+        setattr(adult_in_home_record, field_obj, status)
+        adult_in_home_record.save()
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+    return True
+
+
+def get_application(app_id, field_obj):
+    """
+    :param app_id: applicant's application_id
+    :param field_obj: Application field or list of Application fields
+    :return: Boolean True if successfully updated.
+    """
+    application_record = Application.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        return {field: getattr(application_record, field) for field in field_obj}
+
+    elif isinstance(field_obj, str):
+        return getattr(application_record, field_obj)
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+
+def update_application(app_id, field_obj, status):
+    """
+    Updates the Application field with the given status.
+    :param app_id: applicant's application_id
+    :param field_obj: Application field or list of Application fields
+    :param status: Value to update entry/entries with
+    :return: Boolean True if successfully updated.
+    """
+    application_record = Application.objects.get(application_id=app_id)
+
+    if isinstance(field_obj, list):
+        for field in field_obj:
+            setattr(application_record, field, status)
+            application_record.save()
+
+    elif isinstance(field_obj, str):
+        setattr(application_record, field_obj, status)
+        application_record.save()
+
+    else:
+        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+
+    return True
 
 
 class UniqueDbsCheckResult:

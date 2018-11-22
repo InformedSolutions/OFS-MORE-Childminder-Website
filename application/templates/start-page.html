@@ -10,33 +10,35 @@
         <h1 class="heading-xlarge">
             Register as a childminder (England)
         </h1>
-        <p>Register as a childminder to look after children in your home.</p>
+        <p>Register with Ofsted to look after children in your home.</p>
 
         <h2 class="heading-medium">
             Before you start
         </h2>
-        <p>You will need the following:</p>
+        <p>You need the following:</p>
         <ul class="list list-bullet" style="margin-left: 30px;">
-            <li>criminal record (DBS) certificate</li>
-            <li>DBS certificates for anyone aged 16 or over in your home</li>
-            <li>training to understand the Early Years Foundation Stage (EYFS) standards</li>
-            <li>paediatric first aid certificate</li>
-            <li>health declaration booklet</li>
-            <li>2 references</li>
+            <li><a href="https://www.gov.uk/guidance/criminal-record-checks-for-childminders-and-childcare-workers" target="_blank">UK criminal record (DBS) certificate</a></li>
+            <li>DBS certificates for anyone aged 16 or over in the home dated</li>
+            <li>first aid training</li>
+            <li>childcare training</li>
+            <li><a href="https://www.gov.uk/government/publications/become-a-childcare-provider-health-declaration" target="_blank">health declaration booklet</a></li>
+            <li>contact details for 2 references</li>
         </ul>
+
+        <p>If you or adults in the home have lived abroad in the last 5 years, you need <a href="https://www.gov.uk/government/publications/criminal-records-checks-for-overseas-applicants" target="_blank">criminal record certificates from the embassies</a>.</p>
+
         <h2 class="heading-medium">
             How much it costs
         </h2>
         <p>It usually costs &#163;35 to register with Ofsted.</p>
-        <p>It costs the same to renew every year.</p>
-        <p>Find out about <a href="{% url 'Costs-View' %}" alt="Costs page">other costs</a>.</p>
+        <p>Find out about <a href="https://www.gov.uk/register-childminder-childcare-provider/registration-costs" target="_blank">other costs and renewal</a>.</p>
 
         <h2 class="heading-medium">
             How long it takes
         </h2>
         <p>It should take you 30 minutes to fill in this form.</p>
         <p class="text-before-button">It usually takes up to 12 weeks to register with Ofsted.</p>
-        <form action="{% url 'Account-Selection' %}" method="get">
+        <form action="{% url 'Your-Location' %}" method="get">
             <input type=submit class="button button-start" value="Sign in">
         </form>
     </div>

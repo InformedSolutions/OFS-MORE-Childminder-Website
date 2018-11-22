@@ -6,8 +6,6 @@ from uuid import UUID
 from django.urls import reverse
 
 from ...models import ChildcareType, Application
-from ...business_logic import eligible_to_apply_based_on_childcare_ages
-
 from django.test import Client
 
 
@@ -36,7 +34,7 @@ class TestChildcareTypeLogic(TestCase):
             personal_details_status='NOT_STARTED',
             childcare_type_status='NOT_STARTED',
             first_aid_training_status='NOT_STARTED',
-            eyfs_training_status='NOT_STARTED',
+            childcare_training_status='NOT_STARTED',
             criminal_record_check_status='NOT_STARTED',
             health_status='NOT_STARTED',
             references_status='NOT_STARTED',
@@ -63,82 +61,6 @@ class TestChildcareTypeLogic(TestCase):
 
     def test_logic_to_create_new_record(self):
         assert (ChildcareType.objects.filter(application_id=self.test_application_id).count() == 1)
-
-    # Helper utility tests
-
-    def test_eligible_to_apply_for_ages_zero_to_five_only(self):
-        """
-        Test to assert childminder can apply using service when looking after children aged zero to five only
-        """
-        self.test_childcare_record.zero_to_five = True
-        self.test_childcare_record.five_to_eight = False
-        self.test_childcare_record.eight_plus = False
-
-        eligibility_outcome = eligible_to_apply_based_on_childcare_ages(self.test_childcare_record)
-
-        self.assertTrue(eligibility_outcome)
-
-    def test_eligible_to_apply_for_ages_zero_to_five_and_five_to_eight(self):
-        """
-        Test to assert childminder can apply using service when looking after children aged zero to five
-        and between five and eight
-        """
-        self.test_childcare_record.zero_to_five = True
-        self.test_childcare_record.five_to_eight = True
-        self.test_childcare_record.eight_plus = False
-
-        eligibility_outcome = eligible_to_apply_based_on_childcare_ages(self.test_childcare_record)
-
-        self.assertTrue(eligibility_outcome)
-
-    def test_eligible_to_apply_for_all_ages(self):
-        """
-        Test to assert childminder can apply using service when looking after children of all ages
-        """
-        self.test_childcare_record.zero_to_five = True
-        self.test_childcare_record.five_to_eight = True
-        self.test_childcare_record.eight_plus = True
-
-        eligibility_outcome = eligible_to_apply_based_on_childcare_ages(self.test_childcare_record)
-
-        self.assertTrue(eligibility_outcome)
-
-    def test_ineligible_to_apply_for_ages_five_to_eight_only(self):
-        """
-        Test to assert childminder can apply using service when looking after children aged five to eight only
-        """
-        self.test_childcare_record.zero_to_five = False
-        self.test_childcare_record.five_to_eight = True
-        self.test_childcare_record.eight_plus = False
-
-        eligibility_outcome = eligible_to_apply_based_on_childcare_ages(self.test_childcare_record)
-
-        self.assertFalse(eligibility_outcome)
-
-    def test_ineligible_to_apply_for_ages_five_to_eight_and_above_only(self):
-        """
-        Test to assert childminder can apply using service when looking after children aged five to eight
-        and eight and above
-        """
-        self.test_childcare_record.zero_to_five = False
-        self.test_childcare_record.five_to_eight = True
-        self.test_childcare_record.eight_plus = True
-
-        eligibility_outcome = eligible_to_apply_based_on_childcare_ages(self.test_childcare_record)
-
-        self.assertFalse(eligibility_outcome)
-
-    def test_ineligible_to_apply_for_ages_eight_plus_only(self):
-        """
-        Test to assert childminder can apply using service when looking after children aged eight and above only
-        """
-        self.test_childcare_record.zero_to_five = False
-        self.test_childcare_record.five_to_eight = False
-        self.test_childcare_record.eight_plus = True
-
-        eligibility_outcome = eligible_to_apply_based_on_childcare_ages(self.test_childcare_record)
-
-        self.assertFalse(eligibility_outcome)
 
     # HTTP web tier tests
 
@@ -223,7 +145,7 @@ class TestChildcareTypeLogic(TestCase):
             'application.middleware.CustomAuthenticationHandler',
         ]
     })
-    def test_http_ineligible_to_apply_for_ages_five_to_eight_and_above_only(self):
+    def test_http_eligible_to_apply_for_ages_five_to_eight_and_above_only(self):
         """
         Test to assert childminder can not apply using service when looking after children aged five and above only
         """
@@ -237,7 +159,7 @@ class TestChildcareTypeLogic(TestCase):
             data,
             follow=True)
 
-        expected_redirect_url = reverse('CR-Cancel-Application') + '?id=' + self.test_application_id
+        expected_redirect_url = reverse('Type-Of-Childcare-Register-View') + '?id=' + self.test_application_id
 
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, expected_redirect_url)
@@ -247,7 +169,7 @@ class TestChildcareTypeLogic(TestCase):
             'application.middleware.CustomAuthenticationHandler',
         ]
     })
-    def test_http_ineligible_to_apply_for_ages_eight_and_above_only(self):
+    def test_http_eligible_to_apply_for_ages_eight_and_above_only(self):
         """
         Test to assert childminder can not apply using service when looking after children aged eight and above only
         """
@@ -261,36 +183,12 @@ class TestChildcareTypeLogic(TestCase):
             data,
             follow=True)
 
-        expected_redirect_url = reverse('CR-Cancel-Application') + '?id=' + self.test_application_id
+        expected_redirect_url = reverse('Type-Of-Childcare-Register-View') + '?id=' + self.test_application_id
 
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, expected_redirect_url)
 
     # Routing checks for accessing other parts of application
-
-    @modify_settings(MIDDLEWARE={
-        'remove': [
-            'application.middleware.CustomAuthenticationHandler',
-        ]
-    })
-    def test_http_redirected_to_cancellation_page_when_attempting_to_return_to_task_list(self):
-        """
-        Test to assert that a user cannot return to the task list if they are ineligible to apply
-        based on the age of children they are looking after
-        """
-        self.test_childcare_record.zero_to_five = False
-        self.test_childcare_record.five_to_eight = False
-        self.test_childcare_record.eight_plus = True
-        self.test_childcare_record.save()
-
-        response = self.client.get(
-            reverse('Task-List-View') + '?id=' + self.test_application_id,
-            follow=True)
-
-        expected_redirect_url = reverse('CR-Cancel-Application') + '?id=' + self.test_application_id
-
-        self.assertEqual(response.status_code, 200)
-        self.assertRedirects(response, expected_redirect_url)
 
     @modify_settings(MIDDLEWARE={
         'remove': [
@@ -318,29 +216,3 @@ class TestChildcareTypeLogic(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, expected_redirect_url)
-
-    @modify_settings(MIDDLEWARE={
-        'remove': [
-            'application.middleware.CustomAuthenticationHandler',
-        ]
-    })
-    def test_http_can_access_task_list_if_eligible_based_on_childcare_ages_and_personal_details_complete(self):
-        """
-        Test to assert a user can continue to access the task list if they are eligible to apply
-        based on the age of children they will be looking after once they have completed
-        the personal details task.
-        """
-        self.test_childcare_record.zero_to_five = True
-        self.test_childcare_record.five_to_eight = False
-        self.test_childcare_record.eight_plus = False
-        self.test_childcare_record.save()
-
-        self.test_application.personal_details_status = 'COMPLETE'
-        self.test_application.save()
-
-        response = self.client.get(
-            reverse('Task-List-View') + '?id=' + self.test_application_id)
-
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Fill in the sections below to apply.')
-
