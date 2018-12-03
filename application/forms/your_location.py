@@ -14,7 +14,7 @@ class YourLocationForm(ChildminderForms):
     error_summary_title = 'There was a problem'
 
     options = (
-        ('True', 'Yes - apply with our new GOV.UK pilot service'),
+        ('True', 'Yes - register as a childminder with our new GOV.UK pilot service'),
         ('False', 'No - apply with Ofsted Online')
     )
 
