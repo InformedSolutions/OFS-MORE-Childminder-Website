@@ -146,8 +146,10 @@ class ThankYou(BaseTemplateView):
 
         adult_record.validated = True
         adult_record.save()
-        self.send_survey_email(adult_record)
 
+        # email will not be sent if the health check if flagged
+        if not application.health_arc_flagged:
+            self.send_survey_email(adult_record)
 
         context = {
             'ApplicantName': applicantName,
@@ -157,7 +159,8 @@ class ThankYou(BaseTemplateView):
         CustomAuthenticationHandler.destroy_session(response)
         return response
 
-    def send_survey_email(self, adult_record):
+    @staticmethod
+    def send_survey_email(adult_record):
 
         survey_template_id = '4f850789-b9c9-4192-adfa-fe66883c5872'
         email = adult_record.email
