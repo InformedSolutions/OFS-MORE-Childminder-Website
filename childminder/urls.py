@@ -91,7 +91,7 @@ urlpatterns = [
     url(r'^criminal-record/your-details/$', views.DBSCheckCapitaView.as_view(), name='DBS-Check-Capita-View'),
     url(r'^criminal-record/DBS-details/$', views.DBSCheckNoCapitaView.as_view(), name='DBS-Check-No-Capita-View'),
     url(r'^criminal-record/update/$', views.DBSUpdateView.as_view(), name='DBS-Update-View'),
-    url(r'^criminal-record/Ofsted-check/$', views.DBSGetView.as_view(), name='DBS-Get-View'),
+    url(r'^criminal-record/sign-up-update/$', views.DBSGetView.as_view(), name='DBS-Get-View'),
     url(r'^criminal-record/post-certificate/', views.DBSPostView.as_view(), name='DBS-Post-View'),
     url(r'^criminal-record/check-answers/', views.DBSSummaryView.as_view(), name='DBS-Summary-View'),
 
@@ -110,7 +110,7 @@ urlpatterns = [
     url(r'^people/adults-MoD-checks/$', PITH_views.PITHMinistryView.as_view(), name='PITH-Ministry-View'),
     url(r'^people/adult-dbs-checks/$', PITH_views.PITHDBSCheckView.as_view(), name='PITH-DBS-Check-View'),
     url(r'^people/post-certificate/$', PITH_views.PITHPostView.as_view(), name='PITH-Post-View'),
-    url(r'^people/adults-apply/$', PITH_views.PITHApplyView.as_view(), name='PITH-Apply-View'),
+    url(r'^people/sign-up-update/$', PITH_views.PITHApplyView.as_view(), name='PITH-Apply-View'),
 
     # Children
     url(r'^people/children/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
