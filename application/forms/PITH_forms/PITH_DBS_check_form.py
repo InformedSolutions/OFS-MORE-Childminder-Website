@@ -87,7 +87,7 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
 
     def get_capita_field_data(self):
         return forms.ChoiceField(
-            label='Do they have an Ofsted DBS check?',
+            label='Did they get the certificate from the Ofsted DBS application website in the last 3 months?',
             choices=self.get_options(),
             widget=ConditionalPostInlineRadioSelect,
             required=False)
