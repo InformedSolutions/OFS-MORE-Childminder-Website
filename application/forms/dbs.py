@@ -84,7 +84,7 @@ class DBSTypeForm(DBSRadioForm):
     error_summary_title = 'There was a problem with the type of DBS check'
 
     def get_choice_field_data(self):
-        return forms.ChoiceField(label='Do you have an Ofsted DBS Check?',
+        return forms.ChoiceField(label='Did you get your certificate from the Ofsted DBS application website in the last 3 months?',
                                  choices=self.get_options(),
                                  widget=InlineRadioSelect,
                                  required=True,
