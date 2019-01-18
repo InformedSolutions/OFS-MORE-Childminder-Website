@@ -223,7 +223,7 @@ class DBSSummaryView(DBSTemplateView):
             },
             {
                 'field': 'capita',
-                'title': 'Did you get a DBS certificate from the Ofsted DBS application website in the last 3 months??',
+                'title': 'Did you get a DBS certificate from the Ofsted DBS application website in the last 3 months?',
                 'url': 'DBS-Type-View',
                 'alt_text': 'Change answer to getting your DBS certificate from the Ofsted DBS application website in the last 3 months?'
             },
