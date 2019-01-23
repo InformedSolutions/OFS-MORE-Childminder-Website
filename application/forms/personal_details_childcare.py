@@ -9,7 +9,7 @@ from application.forms_helper import full_stop_stripper
 from application.models import (ApplicantHomeAddress,
                                 ApplicantPersonalDetails,
                                 Application)
-
+from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
 
 class PersonalDetailsChildcareAddressForm(ChildminderForms):
     """
@@ -214,15 +214,22 @@ class PersonalDetailsOwnChildrenForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    reveal_conditionally = {'own_children': {'True': 'reasons_known_to_social_services'}}
 
     options = (
         ('True', 'Yes'),
         ('False', 'No')
     )
-    own_children = forms.ChoiceField(label="Do you have children of your own under 16?", choices=options,
-                                     widget=InlineRadioSelect, required=True,
-                                     error_messages={
-                                         'required': "Please say if you have children of your own under 16"})
+
+
+
+    own_children = forms.ChoiceField(label="Are you known to council social services in regards to your own children?", choices=options,
+                                     widget=ConditionalPostInlineRadioSelect, required=True,
+                                     error_messages={'required': "Please say if you are known to council social services in regards to your own children"})
+
+    reasons_known_to_social_services = forms.CharField(label="Tell us why",
+                                    widget=forms.Textarea, required=True,
+                                    error_messages={'required': "You must tell us why"})
 
     def __init__(self, *args, **kwargs):
         """
@@ -240,6 +247,16 @@ class PersonalDetailsOwnChildrenForm(ChildminderForms):
             self.field_list = ['own_children']
             self.pk = application.pk
 
+    def clean(self):
+        cleaned_data = super().clean()
+        own_children = cleaned_data.get('own_children')
+        reasons_known = cleaned_data.get('reasons_known_to_social_services')
+
+        if own_children == 'True':
+            if reasons_known is '':
+                self.add_error('reasons_known_to_social_services', 'You must tell us why')
+
+        return cleaned_data
 
 class PersonalDetailsSummaryForm(ChildminderForms):
     """
