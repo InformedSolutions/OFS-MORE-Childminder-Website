@@ -4,6 +4,8 @@ from .base import *
 
 DEBUG = True
 
+EXECUTING_AS_TEST = 'True'
+
 PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL', 'http://localhost:8000/childminder')
 
 ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL', 'http://localhost:8002/addressing-service')
