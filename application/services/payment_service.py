@@ -8,8 +8,8 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 import json
 import time
 from urllib.parse import quote
-from .models import CriminalRecordCheck
-from application.notify import send_email
+from ..models import CriminalRecordCheck
+from ..notify import send_email
 
 import requests
 
@@ -71,7 +71,8 @@ def created_formatted_payment_reference(application_reference):
     :param application_reference: a unique applicaiton reference
     :return: a formatted payment reference
     """
-    prefix = 'MORE'
+    prefix = settings.PAYMENT_REFERENCE_PREFIX
+    payment_urn_prefix = settings.PAYMENT_URN_PREFIX
     timestamp = time.strftime("%Y%m%d%H%M%S")
-    formatted_payment_reference = str(prefix + ':' + application_reference + ':' + timestamp)
+    formatted_payment_reference = str(prefix + ':' + payment_urn_prefix + application_reference + ':' + timestamp)
     return formatted_payment_reference

@@ -5,10 +5,12 @@ page when successfully completed
 """
 
 import datetime
+import logging
 import re
 import json
 import time
 
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
@@ -22,6 +24,8 @@ from ..models import Application, UserDetails, ApplicantPersonalDetails, Applica
 from ..payment_service import created_formatted_payment_reference
 
 logger = logging.getLogger(__name__)
+
+sqs_handler = SQSHandler(settings.PAYMENT_NOTIFICATIONS_QUEUE_NAME)
 
 
 @never_cache
@@ -104,7 +108,15 @@ def card_payment_post_handler(request):
     application = Application.objects.get(pk=app_id)
     childcare_type = ChildcareType.objects.get(application_id=app_id)
 
-    __assign_application_reference(application)
+    try:
+        __assign_application_reference(application)
+    except Exception as e:
+        logger.error('An error was incurred whilst attempting to fetch a new URN')
+        logger.error(str(e))
+
+        # In the event a URN could not be fetched yield error page to user as the payment reference
+        # cannot be generated without said URN
+        return __yield_general_processing_error_to_user(request, form, application.application_id)
 
     # Boolean flag for managing logic gates
     prior_payment_record_exists = Payment.objects.filter(application_id=application).exists()
@@ -236,7 +248,7 @@ def __assign_application_reference(application):
     if application.application_reference is None:
         logger.info('Generating application reference number '
                     'for application with id: ' + str(application.application_id))
-        application_reference = create_application_reference()
+        application_reference = noo_integration_service.create_application_reference()
         application.application_reference = application_reference
         application.save()
         return application_reference
@@ -260,7 +272,7 @@ def __create_payment_record(application):
                     'for application with id: ' + str(application.application_id))
 
         # Create formatted payment reference for finance reconciliation purposes
-        payment_reference = created_formatted_payment_reference(application.application_reference)
+        payment_reference = payment_service.created_formatted_payment_reference(application.application_reference)
 
         Payment.objects.create(
             application_id=application,
@@ -364,3 +376,30 @@ def __redirect_to_payment_confirmation(application):
         + '&orderCode=' + application.application_reference
     )
 
+
+def __build_message_body(application, amount):
+    """
+    Helper method to build an SQS request to be picked up by the Integration Adapter component
+    for relay to NOO
+    :param application: the application for which a payment request is to be generated
+    :param amount: the amount that the payment was for
+    :return: an SQS request that can be consumed up by the Integration Adapter component
+    """
+
+    application_reference = application.application_reference
+    applicant_name_obj = ApplicantName.objects.get(application_id=application)
+
+    if len(applicant_name_obj.middle_names):
+        applicant_name = applicant_name_obj.last_name + ',' + applicant_name_obj.first_name + " " + applicant_name_obj.middle_names
+    else:
+        applicant_name = applicant_name_obj.last_name + ',' + applicant_name_obj.first_name
+
+    payment_reference = Payment.objects.get(application_id=application).payment_reference
+
+    return {
+        "payment_action": "SC1",
+        "payment_ref": payment_reference,
+        "payment_amount": amount,
+        "urn": str(settings.PAYMENT_URN_PREFIX) + application_reference,
+        "setting_name": applicant_name
+    }
