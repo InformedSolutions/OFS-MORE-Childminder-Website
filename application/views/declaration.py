@@ -164,6 +164,9 @@ def declaration_summary(request, print_mode=False):
         adult_dbs_list = []
         adult_health_check_status_list = []
         adult_email_list = []
+        adult_lived_abroad_list = []
+        adult_military_base_list = []
+        adult_capita_dbs_list = []
         application = Application.objects.get(pk=application_id_local)
         for adult in adults_list:
             # For each adult, append the correct attribute (e.g. name, relationship) to the relevant list
@@ -191,9 +194,13 @@ def declaration_summary(request, print_mode=False):
             adult_dbs_list.append(adult.dbs_certificate_number)
             adult_health_check_status_list.append(adult.health_check_status)
             adult_email_list.append(adult.email)
+            adult_lived_abroad_list.append(adult.lived_abroad)
+            adult_military_base_list.append(adult.military_base)
+            adult_capita_dbs_list.append(adult.capita)
         # Zip the appended lists together for the HTML to simultaneously parse
         adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
-                          adult_relationship_list, adult_dbs_list, adult_health_check_status_list, adult_email_list)
+                          adult_relationship_list, adult_dbs_list, adult_health_check_status_list, adult_email_list,
+                          adult_lived_abroad_list, adult_capita_dbs_list, adult_military_base_list)
         # Generate lists of data for children in your home, to be iteratively displayed on the summary page
         # The HTML will then parse through each list simultaneously, to display the correct data for each child
         child_name_list = []
