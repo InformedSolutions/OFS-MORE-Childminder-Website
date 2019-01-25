@@ -141,50 +141,77 @@ class PeopleInTheHomeFunctionalTests(TestCase):
     def test_dbs_checks_page_renders_with_one_form_per_adult(self):
         self.skipTest('NotImplemented')
 
-    def test_any_adults_on_dbs_update_service_redirects_to_post_dbs_page(self):
+    # =========================================== #
+    # Tests to be updated in CCN3-2064 start here #
+    # =========================================== #
+
+    def test_search_made_against_capita_dbs_list_for_each_adult_dbs_if_basic_field_validation_passes(self):
         self.skipTest('NotImplemented')
 
-    def test_no_adults_on_dbs_update_service_and_any_adults_without_dbs_redirects_to_apply_for_dbs_page(self):
+    def test_any_adult_not_in_capita_list_redirects_to_type_of_check_page(self):
         self.skipTest('NotImplemented')
 
-    def test_no_adults_on_dbs_update_service_and_no_adults_without_dbs_redirects_to_children_question_page(self):
+    def test_any_adult_dbs_on_capita_list_but_does_not_match_date_of_birth_raises_form_error(self):
         self.skipTest('NotImplemented')
 
-    def test_can_render_post_dbs_page(self):
-        response = self.client.get(reverse('PITH-Post-View'),
-                                   data={
-                                       'id': self.app_id,
-                                   })
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.func.__name__, views.PITHPostView.__name__)
-
-    def test_post_dbs_page_renders_with_all_adults_on_dbs_update_service(self):
+    def test_any_adult_dbs_on_capita_list_with_matching_date_of_birth_but_not_issued_in_last_three_months_redirects_to_type_of_check_page(self):
         self.skipTest('NotImplemented')
 
-    def test_post_request_to_post_dbs_page_redirects_to_apply_for_dbs_page_if_any_adults_without_dbs(self):
+    def test_any_adult_dbs_on_capita_list_with_matching_date_of_birth_and_was_issued_in_last_three_months_but_contains_information_redirects_to_before_you_submit_page(self):
         self.skipTest('NotImplemented')
 
-    def test_post_request_to_post_dbs_page_redirects_to_childcare_question_page_if_no_adults_without_dbs(self):
+    def test_any_adult_dbs_on_capita_list_with_matching_date_of_birth_and_was_issued_in_last_three_months_and_does_not_contain_information_redirects_to_before_you_submit_page(self):
         self.skipTest('NotImplemented')
 
-    def test_can_render_apply_for_dbs_page(self):
-        response = self.client.get(reverse('PITH-Apply-View'),
-                                   data={
-                                       'id': self.app_id,
-                                   })
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.func.__name__, views.PITHApplyView.__name__)
-
-    def test_apply_for_dbs_page_renders_with_all_adults_needing_dbs(self):
+    def test_all_adults_on_capita_list_with_matching_date_of_birth_and_was_issued_in_last_three_months_redirects_to_children_question_page(self):
         self.skipTest('NotImplemented')
 
-    def test_any_adults_without_dbs_updates_db_to_reflect_this(self):
-        self.skipTest('NotImplemented')
+    
 
-    def test_post_request_to_apply_for_dbs_page_redirects_to_children_question_page(self):
-        self.skipTest('NotImplemented')
+    # def test_any_adults_on_dbs_update_service_redirects_to_post_dbs_page(self):
+    #     self.skipTest('NotImplemented')
+    #
+    # def test_no_adults_on_dbs_update_service_and_any_adults_without_dbs_redirects_to_apply_for_dbs_page(self):
+    #     self.skipTest('NotImplemented')
+    #
+    # def test_no_adults_on_dbs_update_service_and_no_adults_without_dbs_redirects_to_children_question_page(self):
+    #     self.skipTest('NotImplemented')
+    #
+    # def test_can_render_post_dbs_page(self):
+    #     response = self.client.get(reverse('PITH-Post-View'),
+    #                                data={
+    #                                    'id': self.app_id,
+    #                                })
+    #
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertEqual(response.resolver_match.func.__name__, views.PITHPostView.__name__)
+    #
+    # def test_post_dbs_page_renders_with_all_adults_on_dbs_update_service(self):
+    #     self.skipTest('NotImplemented')
+    #
+    # def test_post_request_to_post_dbs_page_redirects_to_apply_for_dbs_page_if_any_adults_without_dbs(self):
+    #     self.skipTest('NotImplemented')
+    #
+    # def test_post_request_to_post_dbs_page_redirects_to_childcare_question_page_if_no_adults_without_dbs(self):
+    #     self.skipTest('NotImplemented')
+    #
+    # def test_can_render_apply_for_dbs_page(self):
+    #     response = self.client.get(reverse('PITH-Apply-View'),
+    #                                data={
+    #                                    'id': self.app_id,
+    #                                })
+    #
+    #     self.assertEqual(response.status_code, 200)
+    #     self.assertEqual(response.resolver_match.func.__name__, views.PITHApplyView.__name__)
+    #
+    # def test_apply_for_dbs_page_renders_with_all_adults_needing_dbs(self):
+    #     self.skipTest('NotImplemented')
+    #
+    # def test_any_adults_without_dbs_updates_db_to_reflect_this(self):
+    #     self.skipTest('NotImplemented')
+    #
+    # def test_post_request_to_apply_for_dbs_page_redirects_to_children_question_page(self):
+    #     self.skipTest('NotImplemented')
 
     def test_can_render_children_question_page(self):
         response = self.client.get(reverse('PITH-Children-Check-View'),
