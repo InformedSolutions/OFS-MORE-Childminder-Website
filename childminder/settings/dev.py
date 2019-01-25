@@ -12,12 +12,10 @@ ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL', 'http://localhost:8002/add
 
 NOTIFY_URL = os.environ.get('APP_NOTIFY_URL', 'http://localhost:8003/notify-gateway')
 
-# Base URL of payment gateway
 PAYMENT_URL = os.environ.get('APP_PAYMENT_URL', 'http://localhost:8001/payment-gateway')
 
 INTERNAL_IPS = ["127.0.0.1", "localhost"]
 
-# Workdaround for docker
 INTERNAL_IPS += [socket.gethostbyname(socket.gethostname())[:-1] + '1']
 
 ALLOWED_HOSTS = ['*']
