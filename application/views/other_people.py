@@ -47,6 +47,7 @@ from application.notify import send_email
 
 
 logger = logging.getLogger()
+from application.models import (ChildcareType)
 
 
 def other_people_adult_details(request):
@@ -302,27 +303,62 @@ def other_people_summary(request):
             display_buttons = show_resend_and_change_email(adult_health_check_status, is_review)
             display_buttons_list.append(display_buttons)
 
-            if application.people_in_home_status == 'IN_PROGRESS' and any(
-                    [adult.email_resent_timestamp is None for adult in adults_list]):
+            childcare_record = ChildcareType.objects.get(
+                application_id=application_id_local)
 
-                other_adult_fields = collections.OrderedDict([
-                    ('full_name', name),
-                    ('date_of_birth', birth_date),
-                    ('relationship', adult.relationship),
-                    ('email', adult.email),
-                    ('dbs_certificate_number', adult.dbs_certificate_number),
-                ])
+            if childcare_record.zero_to_five is True:
+                if application.people_in_home_status == 'IN_PROGRESS' and any(
+                        [adult.email_resent_timestamp is None for adult in adults_list]):
 
+                    other_adult_fields = collections.OrderedDict([
+                        ('full_name', name),
+                        ('date_of_birth', birth_date),
+                        ('relationship', adult.relationship),
+                        ('email', adult.email),
+                        ('lived_abroad', adult.lived_abroad),
+                        ('military_base', adult.military_base),
+                        ('capita', adult.capita),
+                        ('dbs_certificate_number', adult.dbs_certificate_number),
+                    ])
+
+                else :
+                    other_adult_fields = collections.OrderedDict([
+                        ('health_check_status', adult.health_check_status),
+                        ('full_name', name),
+                        ('date_of_birth', birth_date),
+                        ('relationship', adult.relationship),
+                        ('email', adult.email),
+                        ('lived_abroad', adult.lived_abroad),
+                        ('military_base', adult.military_base),
+                        ('capita', adult.capita),
+                        ('dbs_certificate_number', adult.dbs_certificate_number),
+                    ])
             else:
+                if application.people_in_home_status == 'IN_PROGRESS' and any(
+                        [adult.email_resent_timestamp is None for adult in adults_list]):
 
-                other_adult_fields = collections.OrderedDict([
-                    ('health_check_status', adult.health_check_status),
-                    ('full_name', name),
-                    ('date_of_birth', birth_date),
-                    ('relationship', adult.relationship),
-                    ('email', adult.email),
-                    ('dbs_certificate_number', adult.dbs_certificate_number),
-                ])
+                    other_adult_fields = collections.OrderedDict([
+                        ('full_name', name),
+                        ('date_of_birth', birth_date),
+                        ('relationship', adult.relationship),
+                        ('email', adult.email),
+                        ('lived_abroad', adult.lived_abroad),
+                        ('capita', adult.capita),
+                        ('dbs_certificate_number', adult.dbs_certificate_number),
+                    ])
+
+                else:
+
+                    other_adult_fields = collections.OrderedDict([
+                        ('health_check_status', adult.health_check_status),
+                        ('full_name', name),
+                        ('date_of_birth', birth_date),
+                        ('relationship', adult.relationship),
+                        ('email', adult.email),
+                        ('lived_abroad', adult.lived_abroad),
+                        ('capita', adult.capita),
+                        ('dbs_certificate_number', adult.dbs_certificate_number),
+                    ])
 
             # If adult health check status is not complete, add to health check status list
             if adult.health_check_status != 'Done':

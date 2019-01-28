@@ -908,7 +908,7 @@
     </tr>
     </tbody>
 </table>
-{% for name, day, month, year, relationship, dbs_certificate_number, health_check_status, email in adult_lists %}
+{% for name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, lived_abroad, capita, military_base in adult_lists %}
 <table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
@@ -995,6 +995,77 @@
             <a href="{% url 'PITH-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Change the adult's email">
                 Change <span class="visuallyhidden">the adult's email</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Have they lived outside of the UK in the last 5 years?
+        </td>
+        {% if lived_abroad is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif lived_abroad is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Lived-Abroad-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Change whether the adult has lived outside of the UK in the last 5 years">
+                Change <span class="visuallyhidden">whether the adult has lived outside of the UK in the last 5 years</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% if childcare_type_zero_to_five is True %}
+    <tr>
+        <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Have they lived or worked on a British military base outside of the UK in the last 5 years?
+        </td>
+        {% if military_base is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif military_base is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Military-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Change whether the adult has lived or worked on a British military base outside of the UK in the last 5 years">
+                Change <span class="visuallyhidden">whether the adult has lived or worked on a British military base outside of the UK in the last 5 years</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+    <tr>
+        <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Did they get the certificate from the Ofsted DBS application website in the last 3 months?
+        </td>
+        {% if capita is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif capita is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-DBS-Check-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Change if the adult did get the certificate from the Ofsted DBS application website in the last 3 months">
+                Change <span class="visuallyhidden">if the adult did get the certificate from the Ofsted DBS application website in the last 3 months</span>
             </a>
             {% endif %}
         </td>
