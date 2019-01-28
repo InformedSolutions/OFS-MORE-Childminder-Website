@@ -169,6 +169,24 @@ class PeopleInTheHomeFunctionalTests(TestCase):
     def test_can_render_type_of_check_page(self):
         self.skipTest('functionalityNotImplemented')
 
+    def test_type_of_check_page_renders_with_one_form_per_adult_whose_dbs_number_not_on_the_capita_dbs_list(self):
+        self.skipTest('functionalityNotImplemented')
+
+    def test_type_of_check_page_renders_with_one_form_per_adult_whose_dbs_number_is_on_the_capita_dbs_list_but_was_not_issued_in_last_three_months(self):
+        self.skipTest('functionalityNotImplemented')
+
+    def test_any_adult_not_on_capita_list_and_does_not_have_enhanced_check_redirects_to_before_you_submit_page(self):
+        self.skipTest('functionalityNotImplemented')
+
+    def test_any_adult_not_on_capita_list_and_has_an_enhanced_check_and_is_on_the_dbs_update_service_redirects_to_before_you_submit_page(self):
+        self.skipTest('functionalityNotImplemented')
+
+    def test_any_adults_not_on_capita_list_and_has_an_enhances_check_and_is_not_on_the_dbs_update_service_redirects_to_before_you_submit_page(self):
+        self.skipTest('functionalityNotImplemented')
+
+    def test_no_selection_made_keeps_applicant_on_the_same_page(self):
+        self.skipTest('functionalityNotImplemented')
+
     def test_can_render_before_you_submit_page(self):
         self.skipTest('functionalityNotImplemented')
 
