@@ -223,9 +223,9 @@ class DBSSummaryView(DBSTemplateView):
             },
             {
                 'field': 'capita',
-                'title': 'Do you have an Ofsted DBS Check?',
+                'title': 'Did you get a DBS certificate from the Ofsted DBS application website in the last 3 months?',
                 'url': 'DBS-Type-View',
-                'alt_text': 'Change answer to having an Ofsted DBS Check'
+                'alt_text': 'Change answer to getting your DBS certificate from the Ofsted DBS application website in the last 3 months?'
             },
             {
                 'field': 'on_update',
