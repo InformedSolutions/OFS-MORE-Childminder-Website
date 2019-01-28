@@ -190,6 +190,27 @@ class PeopleInTheHomeFunctionalTests(TestCase):
     def test_can_render_before_you_submit_page(self):
         self.skipTest('functionalityNotImplemented')
 
+    def test_any_adult_not_on_capita_list_and_does_not_have_enhanced_check_appears_under_apply_for_dbs_check_list(self):
+        self.skipTest('functionalityNotImplemented')
+
+    def test_any_adult_not_on_capita_list_and_has_enhanced_check_and_is_not_on_the_dbs_update_service_appears_under_sign_up_to_update_service_list(self):
+        self.skipTest('functionalityNotImplemented')
+
+    def test_any_adult_not_on_capita_list_and_has_enhanced_check_and_is_on_the_dbs_update_service_appears_under_update_service_check_list(self):
+        self.skipTest('functionalityNotImplemented')
+
+    def test_any_adult_on_the_capita_list_and_has_not_been_issued_in_the_last_3_months_and_is_on_the_update_service_appears_under_dbs_check_list(self):
+        self.skipTest('functionalityNotImplemented')
+
+    def test_any_adult_on_the_capita_list_and_has_not_been_issued_in_the_last_3_months_and_is_not_on_the_update_service_appears_under_sign_up_to_update_service_list(self):
+        self.skipTest('functionalityNotImplemented')
+
+    def test_any_adult_on_the_capita_list_and_has_been_issued_in_the_last_3_months_and_does_contain_information_does_not_appear_in_any_list(self):
+        self.skipTest('functionalityNotImplemented')
+
+    def test_any_adult_on_the_capita_list_and_has_been_issued_in_the_last_3_months_and_does_not_contain_information_does_not_appear_in_any_list(self):
+        self.skipTest('functionalityNotImplemented')
+
     def test_can_render_children_question_page(self):
         response = self.client.get(reverse('PITH-Children-Check-View'),
                                    data={
