@@ -1,8 +1,12 @@
+import json
 import uuid
+from unittest import mock
+from unittest.mock import Mock
 
 from django.test import modify_settings
 
 from application.models import ChildcareType, Payment, ApplicantPersonalDetails, ApplicantName
+
 from .view_parent import *
 
 
@@ -125,21 +129,32 @@ class PaymentTest(ViewsTest):
         )
 
         try:
-            response = c.post(reverse('Payment-Details-View') + '?id=' + str(app_id),
-                {
-                    'id': app_id,
-                    'card_type': 'visa',
-                    'card_number': '5454545454545454',
-                    'expiry_date_0': 1,
-                    'expiry_date_1': 19,
-                    'cardholders_name': 'Mr Example Cardholder',
-                    'card_security_code': 123,
-                })
-            payment_obj = Payment.objects.get(application_id=app_id)
-            self.assertTrue(payment_obj.payment_submitted)
-            self.assertTrue(payment_obj.payment_authorised)
+            with mock.patch('requests.get') as request_get_mock:
+                test_urn_response = {
+                    "URN": 123456789
+                }
 
-            self.assertEqual(response.status_code, 302)
+                request_get_mock.return_value.status_code = 201
+                request_get_mock.return_value.text = json.dumps(test_urn_response)
+                request_get_mock.return_value.json = Mock(
+                    return_value=test_urn_response
+                )
+
+                response = c.post(reverse('Payment-Details-View') + '?id=' + str(app_id),
+                    {
+                        'id': app_id,
+                        'card_type': 'visa',
+                        'card_number': '5454545454545454',
+                        'expiry_date_0': 1,
+                        'expiry_date_1': 19,
+                        'cardholders_name': 'Mr Example Cardholder',
+                        'card_security_code': 123,
+                    })
+                payment_obj = Payment.objects.get(application_id=app_id)
+                self.assertTrue(payment_obj.payment_submitted)
+                self.assertTrue(payment_obj.payment_authorised)
+
+                self.assertEqual(response.status_code, 302)
             
         except Exception as e:
             self.fail(e)

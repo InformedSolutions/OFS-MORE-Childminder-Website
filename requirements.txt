@@ -18,3 +18,4 @@ pydotplus==2.0.2
 pylint==2.2.2
 pylint-django==2.0.5
 coverage==4.5.2
+boto3==1.7.66

@@ -16,12 +16,12 @@ from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.views.decorators.cache import never_cache
 
-from application.business_logic import get_childcare_register_type
-from ..application_reference_generator import *
-from .. import payment_service
+from ..services import payment_service, noo_integration_service
 from ..forms import PaymentDetailsForm
 from ..models import Application, UserDetails, ApplicantPersonalDetails, ApplicantName, Payment, ChildcareType
-from ..payment_service import created_formatted_payment_reference
+from ..messaging.sqs_handler import SQSHandler
+
+from ..business_logic import get_childcare_register_type
 
 logger = logging.getLogger(__name__)
 

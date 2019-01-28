@@ -68,7 +68,7 @@ def check_payment(payment_reference):
 def created_formatted_payment_reference(application_reference):
     """
     Function for formatting a payment reference to be issued to the payment provider
-    :param application_reference: a unique applicaiton reference
+    :param application_reference: a unique application reference
     :return: a formatted payment reference
     """
     prefix = settings.PAYMENT_REFERENCE_PREFIX

@@ -1,7 +1,6 @@
 """
 Utility functions for generating a new unique application reference number
 """
-import json
 
 import requests
 from django.conf import settings
