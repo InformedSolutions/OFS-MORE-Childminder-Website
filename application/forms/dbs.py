@@ -86,12 +86,12 @@ class DBSTypeForm(DBSRadioForm):
     show_enhanced=None
     choice_field_name = 'enhanced'
     update_field_name = 'update'
-    update_field_data = forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare? ',
+    update_field_data = forms.ChoiceField(label='Are you on the DBS update service?',
                                  choices=(('True', 'Yes'),('False', 'No')),
                                  widget=InlineRadioSelect,
                                  required=False,
                                  error_messages={
-                                     'required': 'Please say if you have an enhanced check for home-based childcare'})
+                                     'required': 'Please say if you are on the dbs update service'})
 
     error_summary_title = 'There was a problem with the type of DBS check'
     conditionally_revealed = collections.OrderedDict([])
@@ -104,13 +104,7 @@ class DBSTypeForm(DBSRadioForm):
         """
         self.application_id = kwargs.pop('id')
         self.dbs_field_name = kwargs.pop('dbs_field_name')
-        self.show_cautions_convictions = kwargs.pop('show_cautions_convictions')
         super(ChildminderForms, self).__init__(*args, **kwargs)
-
-        if self.show_enhanced is None:
-            raise AttributeError('show_enhanced cannot be None, it has not been inherited.')
-        elif self.show_enhanced:
-            self.fields[self.choice_field_name] = self.get_choice_field_data()
 
         self.field_list = [*self.fields]
 
@@ -121,6 +115,11 @@ class DBSTypeForm(DBSRadioForm):
                 self.show_enhanced=False
             else:
                 self.show_enhanced=True
+
+        if self.show_enhanced is None:
+            raise AttributeError('show_enhanced cannot be None, it has not been inherited.')
+        elif self.show_enhanced:
+            self.fields[self.choice_field_name] = self.get_choice_field_data()
 
     def get_choice_field_data(self):
         return forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare?',
