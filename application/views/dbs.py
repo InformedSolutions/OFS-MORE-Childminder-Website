@@ -5,6 +5,9 @@ from django.http import HttpResponseRedirect
 from .. import status
 from ..business_logic import (get_criminal_record_check,
                               update_criminal_record_check)
+
+import requests
+from django import forms
 from ..forms import (DBSLivedAbroadForm,
                      DBSMilitaryForm,
                      DBSTypeForm,
@@ -16,10 +19,11 @@ from ..models import (Application,
 
 from ..utils import build_url, get_id
 from ..table_util import Table, Row
-
+from datetime import datetime, timedelta
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
-
+from ..dbs import read
+from ..business_logic import date_issued_within_three_months
 
 class DBSTemplateView(TemplateView):
     template_name = None
@@ -44,7 +48,7 @@ class DBSGuidanceView(DBSTemplateView):
 
 class DBSGuidanceSecondView(DBSTemplateView):
     template_name = 'dbs-guidance-second.html'
-    success_url = 'DBS-Type-View'
+    success_url = 'DBS-Check-Capita-View'
 
 
 class DBSGoodConductView(DBSTemplateView):
@@ -383,10 +387,10 @@ class DBSLivedAbroadView(DBSRadioView):
 
 
 class DBSCheckDetailsView(DBSRadioView):
-    dbs_field_name = 'cautions_convictions'
-    show_cautions_convictions = None
+   dbs_field_name = 'cautions_convictions'
+   show_cautions_convictions = None
 
-    def form_valid(self, form):
+   def form_valid(self, form):
         application_id = get_id(self.request)
         update_string = self.request.POST.get('dbs_certificate_number')
 
@@ -394,7 +398,7 @@ class DBSCheckDetailsView(DBSRadioView):
 
         return super().form_valid(form)
 
-    def get_initial(self):
+   def get_initial(self):
         application_id = get_id(self.request)
         initial = super().get_initial()
         dbs_certificate_number_field = get_criminal_record_check(application_id, 'dbs_certificate_number')
@@ -402,18 +406,47 @@ class DBSCheckDetailsView(DBSRadioView):
 
         return initial
 
-    def get_form_kwargs(self):
+   def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['show_cautions_convictions'] = self.show_cautions_convictions
         return kwargs
 
 
+
 class DBSCheckCapitaView(DBSCheckDetailsView):
     template_name = 'dbs-check-capita.html'
     form_class = DBSCheckCapitaForm
-    success_url = ('DBS-Post-View', 'DBS-Summary-View')
+    success_url = ('DBS-Post-View', 'DBS-Summary-View','DBS-Check-Type')
     nullify_field_list = ['on_update']
-    show_cautions_convictions = True
+    show_cautions_convictions = False
+    r=None
+
+
+    def get_success_url(self):
+        capita_info, capita_no_info, no_capita= self.success_url
+        dbs_certificate_number= self.request.POST.get('dbs_certificate_number')
+        application_id = get_id(self.request)
+        self.r=read(dbs_certificate_number)
+        try:
+            record=self.r.record
+            issue_date = datetime.strptime(record['date_of_issue'], "%Y-%m-%d")
+            info = record['certificate_information']
+            successfully_updated = update_criminal_record_check(application_id, 'capita', True)
+            if date_issued_within_three_months(issue_date):
+                if (info != '') or (info!=None):
+                    redirect_url=capita_info
+                else:
+                    redirect_url=capita_no_info
+            else:
+                redirect_url=no_capita
+        except AttributeError:
+            successfully_updated = update_criminal_record_check(application_id, 'capita', False)
+            redirect_url=no_capita
+
+        application_id = get_id(self.request)
+        return build_url(redirect_url, get={'id': application_id})
+
+
 
 
 class DBSCheckNoCapitaView(DBSCheckDetailsView):

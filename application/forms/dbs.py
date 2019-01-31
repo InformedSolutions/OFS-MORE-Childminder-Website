@@ -6,7 +6,9 @@ from ..forms.childminder import ChildminderForms
 from ..forms_helper import full_stop_stripper
 from ..models import CriminalRecordCheck, Application
 
-from ..business_logic import childminder_dbs_number_duplication_check, childminder_dbs_duplicates_household_member_check
+from ..business_logic import childminder_dbs_number_duplication_check, childminder_dbs_duplicates_household_member_check, dbs_date_of_birth_no_match
+from ..dbs import read
+import collections
 
 
 class DBSRadioForm(ChildminderForms):
@@ -33,6 +35,7 @@ class DBSRadioForm(ChildminderForms):
 
         self.fields[self.dbs_field_name] = self.get_choice_field_data()
         self.field_list = [*self.fields]
+
 
         if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
             CRC_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
@@ -81,7 +84,9 @@ class DBSTypeForm(DBSRadioForm):
     GOV.UK form for the Criminal record check: type page
     """
     choice_field_name = 'capita'
+    enhanced_field_name = 'enhance'
     error_summary_title = 'There was a problem with the type of DBS check'
+    conditionally_revealed = collections.OrderedDict([])
 
     def get_choice_field_data(self):
         return forms.ChoiceField(label='Did you get your certificate from the Ofsted DBS application website in the last 3 months?',
@@ -91,6 +96,19 @@ class DBSTypeForm(DBSRadioForm):
                                  error_messages={
                                      'required': 'Please say if you have an Ofsted DBS check'})
 
+    def get_enhanced_field_data(self):
+        return forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare?',
+                                 choices=self.get_options(),
+                                 widget=InlineRadioSelect,
+                                 required=True,
+                                 error_messages={
+                                     'required': 'Please say if you have an enhanced check for home-based childcare'})
+
+    def get_reveal_conditionally(self):
+        return collections.OrderedDict([
+            (self.enhanced_field_name, {True: self.update_field_name})
+        ])
+
 class DBSUpdateForm(DBSRadioForm):
     """
     GOV.UK form for the Criminal record check: update page
@@ -98,14 +116,13 @@ class DBSUpdateForm(DBSRadioForm):
     choice_field_name = 'on_update'
     error_summary_title = 'There was a problem with the type of DBS check'
 
-    def get_choice_field_data(self):
+    def get_update_field_data(self):
         return forms.ChoiceField(label='Are you on the DBS update service?',
                                  choices=self.get_options(),
                                  widget=InlineRadioSelect,
                                  required=True,
                                  error_messages={
                                      'required': 'Please say if you are on the DBS update service'})
-
 
 class DBSCheckDetailsForm(DBSRadioForm):
     """
@@ -161,6 +178,11 @@ class DBSCheckDetailsForm(DBSRadioForm):
         if childminder_dbs_duplicates_household_member_check(application, dbs_certificate_number):
             raise forms.ValidationError('Please enter a different DBS number. '
                                         'You entered this number for someone in your childcare location')
+        r = read(dbs_certificate_number)
+        if dbs_date_of_birth_no_match(application, dbs_certificate_number, r):
+            raise forms.ValidationError(
+                'Birth date does not match the date given on the \'Your date of birth\' page: '
+                'Check your DBS certificate. The number you entered does not match your number held by DBS.')
 
         return dbs_certificate_number
 
