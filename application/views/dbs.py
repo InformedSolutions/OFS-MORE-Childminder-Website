@@ -17,9 +17,11 @@ from ..forms import (DBSLivedAbroadForm,
 from ..models import (Application,
                       CriminalRecordCheck)
 
+import requests
+
 from ..utils import build_url, get_id
 from ..table_util import Table, Row
-from datetime import datetime, timedelta
+from datetime import datetime
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
 from ..dbs import read
@@ -416,7 +418,7 @@ class DBSCheckDetailsView(DBSRadioView):
 class DBSCheckCapitaView(DBSCheckDetailsView):
     template_name = 'dbs-check-capita.html'
     form_class = DBSCheckCapitaForm
-    success_url = ('DBS-Post-View', 'DBS-Summary-View','DBS-Check-Type')
+    success_url = ('DBS-Post-View', 'DBS-Summary-View','DBS-Type-View')
     nullify_field_list = ['on_update']
     show_cautions_convictions = False
     r=None

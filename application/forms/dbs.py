@@ -83,31 +83,54 @@ class DBSTypeForm(DBSRadioForm):
     """
     GOV.UK form for the Criminal record check: type page
     """
-    choice_field_name = 'capita'
-    enhanced_field_name = 'enhance'
+    show_enhanced=None
+    choice_field_name = 'enhanced'
+    update_field_name = 'update'
+    update_field_data = forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare? ',
+                                 choices=(('True', 'Yes'),('False', 'No')),
+                                 widget=InlineRadioSelect,
+                                 required=False,
+                                 error_messages={
+                                     'required': 'Please say if you have an enhanced check for home-based childcare'})
+
     error_summary_title = 'There was a problem with the type of DBS check'
     conditionally_revealed = collections.OrderedDict([])
 
-    def get_choice_field_data(self):
-        return forms.ChoiceField(label='Did you get your certificate from the Ofsted DBS application website in the last 3 months?',
-                                 choices=self.get_options(),
-                                 widget=InlineRadioSelect,
-                                 required=True,
-                                 error_messages={
-                                     'required': 'Please say if you have an Ofsted DBS check'})
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your criminal record (DBS) check: details form
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id = kwargs.pop('id')
+        self.dbs_field_name = kwargs.pop('dbs_field_name')
+        self.show_cautions_convictions = kwargs.pop('show_cautions_convictions')
+        super(ChildminderForms, self).__init__(*args, **kwargs)
 
-    def get_enhanced_field_data(self):
+        if self.show_enhanced is None:
+            raise AttributeError('show_enhanced cannot be None, it has not been inherited.')
+        elif self.show_enhanced:
+            self.fields[self.choice_field_name] = self.get_choice_field_data()
+
+        self.field_list = [*self.fields]
+
+        if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
+            CRC_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
+            self.pk = CRC_record.pk
+            if CRC_record.capita:
+                self.show_enhanced=False
+            else:
+                self.show_enhanced=True
+
+    def get_choice_field_data(self):
         return forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare?',
-                                 choices=self.get_options(),
+                                 choices=self.get_options,
                                  widget=InlineRadioSelect,
                                  required=True,
                                  error_messages={
                                      'required': 'Please say if you have an enhanced check for home-based childcare'})
 
-    def get_reveal_conditionally(self):
-        return collections.OrderedDict([
-            (self.enhanced_field_name, {True: self.update_field_name})
-        ])
+
 
 class DBSUpdateForm(DBSRadioForm):
     """
@@ -116,13 +139,13 @@ class DBSUpdateForm(DBSRadioForm):
     choice_field_name = 'on_update'
     error_summary_title = 'There was a problem with the type of DBS check'
 
-    def get_update_field_data(self):
-        return forms.ChoiceField(label='Are you on the DBS update service?',
+    def get_choice_field_data(self):
+        return forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare? ',
                                  choices=self.get_options(),
                                  widget=InlineRadioSelect,
                                  required=True,
                                  error_messages={
-                                     'required': 'Please say if you are on the DBS update service'})
+                                     'required': 'Please say if you have an enhanced check for home-based childcare'})
 
 class DBSCheckDetailsForm(DBSRadioForm):
     """
