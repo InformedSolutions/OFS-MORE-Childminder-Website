@@ -602,8 +602,6 @@ def generate_list_of_updated_tasks(application_id):
         updated_list.append('Type of childcare')
     if application.personal_details_arc_flagged is True:
         updated_list.append('Your personal details')
-    if application.your_children_arc_flagged is True:
-        updated_list.append('Your children')
     if application.first_aid_training_arc_flagged is True:
         updated_list.append('First aid training')
     if application.criminal_record_check_arc_flagged is True:
