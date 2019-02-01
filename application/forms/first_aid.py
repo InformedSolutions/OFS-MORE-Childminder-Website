@@ -2,6 +2,7 @@ from datetime import date
 
 from django import forms
 
+from application.business_logic import childcare_register_type
 from application.customfields import CustomSplitDateFieldDOB
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
@@ -56,6 +57,10 @@ class FirstAidTrainingDetailsForm(ChildminderForms):
             self.fields['course_date'].initial = [course_day, course_month, course_year]
             self.pk = first_aid_record.first_aid_id
             self.field_list = ['first_aid_training_organisation', 'title_of_training_course', 'course_date']
+
+        if childcare_register_type(self.application_id_local) == 'early_years_register':
+            self.fields['title_of_training_course'].help_text = 'Your application will be returned if it is not a paediatric course'
+
 
     def clean_first_aid_training_organisation(self):
         """
