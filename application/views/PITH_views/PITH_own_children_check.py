@@ -15,7 +15,7 @@ log = logging.getLogger('')
 class PITHOwnChildrenCheckView(PITHRadioView):
     template_name = 'PITH_templates/PITH_own_children_check.html'
     form_class = PITHOwnChildrenCheckForm
-    success_url = ('PITH-Own-Children-Details-View', 'Task-List-View', 'PITH-Summary-View')
+    success_url = ('PITH-Summary-View', 'Task-List-View', 'PITH-Summary-View')
     application_field_name = 'own_children_not_in_home'
 
     def form_valid(self, form):

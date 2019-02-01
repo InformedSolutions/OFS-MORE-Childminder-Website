@@ -1031,7 +1031,7 @@ def personal_details_own_children(request):
                 application.reasons_known_to_social_services = reasons_known_to_social_services
             elif own_children == 'False':
                 application.own_children = False
-                application.reasons_known_to_social_services = ' '
+                application.reasons_known_to_social_services = ''
             application.save()
 
             # Set Your children task status to Completed when the applicant has no own children

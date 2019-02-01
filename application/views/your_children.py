@@ -580,8 +580,8 @@ def __your_children_living_with_you_post_handler(request):
     if __get_children_not_living_with_childminder_count(application_id) > 0:
         child_number = __get_first_child_number_for_address_entry(application_id)
 
-        return HttpResponseRedirect(reverse('Your-Children-Address-View') + '?id=' +
-                                    application_id + '&child=' + str(child_number))
+        return HttpResponseRedirect(reverse('Your-Children-Summary-View') + '?id=' +
+                                    application_id)
     else:
         return HttpResponseRedirect(reverse('Your-Children-Summary-View') + '?id=' +
                                     application_id)
