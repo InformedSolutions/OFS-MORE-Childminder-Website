@@ -998,8 +998,13 @@ def get_duplicate_dbs_index(application, candidate_dbs_certificate_number):
     return get_first_duplicate_index(dbs_numbers)
 
 
-def dbs_date_of_birth_no_match(application, candidate_dbs_certificate_number, response):
-    # TODO: comment
+def dbs_date_of_birth_no_match(application, response):
+    """
+        Helper method for gathering the duplicate index
+        :param application: the application to be tested against
+        :param response: the record response from the dbs api
+        :return: a boolean to represent if there is no match between the applicant dob and the dbs dob
+        """
     applicant_details = ApplicantPersonalDetails.objects.get(application_id=application.application_id)
     applicant_dob=datetime(applicant_details.birth_year, applicant_details.birth_month, applicant_details.birth_day)
     try:
@@ -1013,6 +1018,11 @@ def dbs_date_of_birth_no_match(application, candidate_dbs_certificate_number, re
 
 
 def date_issued_within_three_months(date_issued):
+    """
+            Helper method for gathering the duplicate index
+            :param date_issued: the issue date of the dbs
+            :return: a boolean to represent if there the dbs was issued within three months of today
+            """
     now = datetime.today()
     if now - timedelta(3*365/12) <= date_issued:
         return True
