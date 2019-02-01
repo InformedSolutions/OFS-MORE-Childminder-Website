@@ -36,7 +36,6 @@ class DBSRadioForm(ChildminderForms):
         self.fields[self.dbs_field_name] = self.get_choice_field_data()
         self.field_list = [*self.fields]
 
-
         if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
             CRC_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
             self.pk = CRC_record.pk
@@ -79,47 +78,14 @@ class DBSMilitaryForm(DBSRadioForm):
                                  required=True,
                                  error_messages={'required': 'Please say if you have lived in a British military base outside of the UK in the last 5 years'})
 
+
 class DBSTypeForm(DBSRadioForm):
     """
     GOV.UK form for the Criminal record check: type page
     """
-    show_enhanced=None
-    choice_field_name = 'enhanced'
-    update_field_name = 'update'
-    update_field_data = forms.ChoiceField(label='Are you on the DBS update service?',
-                                 choices=(('True', 'Yes'),('False', 'No')),
-                                 widget=InlineRadioSelect,
-                                 required=False,
-                                 error_messages={
-                                     'required': 'Please say if you are on the dbs update service'})
-
+    choice_field_name = 'enhanced_check'
     error_summary_title = 'There was a problem with the type of DBS check'
-    conditionally_revealed = collections.OrderedDict([])
 
-    def __init__(self, *args, **kwargs):
-        """
-        Method to configure the initialisation of the Your criminal record (DBS) check: details form
-        :param args: arguments passed to the form
-        :param kwargs: keyword arguments passed to the form, e.g. application ID
-        """
-        self.application_id = kwargs.pop('id')
-        self.dbs_field_name = kwargs.pop('dbs_field_name')
-        super(ChildminderForms, self).__init__(*args, **kwargs)
-
-        self.field_list = [*self.fields]
-
-        if CriminalRecordCheck.objects.filter(application_id=self.application_id).exists():
-            CRC_record = CriminalRecordCheck.objects.get(application_id=self.application_id)
-            self.pk = CRC_record.pk
-            if CRC_record.capita:
-                self.show_enhanced=False
-            else:
-                self.show_enhanced=True
-
-        if self.show_enhanced is None:
-            raise AttributeError('show_enhanced cannot be None, it has not been inherited.')
-        elif self.show_enhanced:
-            self.fields[self.choice_field_name] = self.get_choice_field_data()
 
     def get_choice_field_data(self):
         return forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare?',
@@ -131,6 +97,7 @@ class DBSTypeForm(DBSRadioForm):
 
 
 
+
 class DBSUpdateForm(DBSRadioForm):
     """
     GOV.UK form for the Criminal record check: update page
@@ -139,12 +106,12 @@ class DBSUpdateForm(DBSRadioForm):
     error_summary_title = 'There was a problem with the type of DBS check'
 
     def get_choice_field_data(self):
-        return forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare? ',
+        return forms.ChoiceField(label='Are you on the DBS update service? ',
                                  choices=self.get_options(),
                                  widget=InlineRadioSelect,
                                  required=True,
                                  error_messages={
-                                     'required': 'Please say if you have an enhanced check for home-based childcare'})
+                                     'required': 'Please say if you are on the DBS update service'})
 
 class DBSCheckDetailsForm(DBSRadioForm):
     """

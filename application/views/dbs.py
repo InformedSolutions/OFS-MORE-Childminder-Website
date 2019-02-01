@@ -91,6 +91,7 @@ class DBSRadioView(FormView):
     dbs_field_name = None
     nullify_field_list = []
     show_cautions_convictions = None
+    capita = None
 
     def get_initial(self):
         application_id = get_id(self.request)
@@ -324,7 +325,7 @@ class DBSSummaryView(DBSTemplateView):
 class DBSUpdateView(DBSRadioView):
     template_name = 'dbs-update.html'
     form_class = DBSUpdateForm
-    success_url = ('DBS-Check-No-Capita-View', 'DBS-Get-View')
+    success_url = ('DBS-Post-View', 'DBS-Get-View')
     dbs_field_name = 'on_update'
     nullify_field_list = ['cautions_convictions']
 
@@ -333,7 +334,8 @@ class DBSTypeView(DBSRadioView):
     template_name = 'dbs-type.html'
     form_class = DBSTypeForm
     success_url = ('DBS-Check-Capita-View', 'DBS-Update-View')
-    dbs_field_name = 'capita'
+    dbs_field_name = 'enhanced_check'
+
     nullify_field_list = []
 
     def form_valid(self, form):
@@ -343,15 +345,9 @@ class DBSTypeView(DBSRadioView):
         initial_bool = form.initial[self.dbs_field_name]
         update_bool = form.cleaned_data[self.dbs_field_name] == 'True'
 
+
         # If the 'Type of DBS check' is changed then clear the user's dbs_certificate_number
         # Also check that the application is not in review as this can lead to blank fields being submitted.
-        if update_bool != initial_bool:
-
-            # dbs_certificate_number is NOT reset on capita change.
-            # successfully_updated = update_criminal_record_check(application_id, 'dbs_certificate_number', '')
-
-            # cautions_convictions is reset on capita change.
-            successfully_updated = update_criminal_record_check(application_id, 'cautions_convictions', None)
 
         return super().form_valid(form)
 
@@ -418,14 +414,14 @@ class DBSCheckDetailsView(DBSRadioView):
 class DBSCheckCapitaView(DBSCheckDetailsView):
     template_name = 'dbs-check-capita.html'
     form_class = DBSCheckCapitaForm
-    success_url = ('DBS-Post-View', 'DBS-Summary-View','DBS-Type-View')
+    success_url = ('DBS-Post-View', 'DBS-Summary-View','DBS-Update-View','DBS-Check-Type')
     nullify_field_list = ['on_update']
     show_cautions_convictions = False
     r=None
 
 
     def get_success_url(self):
-        capita_info, capita_no_info, no_capita= self.success_url
+        capita_info, capita_no_info, capita_old, no_capita= self.success_url
         dbs_certificate_number= self.request.POST.get('dbs_certificate_number')
         application_id = get_id(self.request)
         self.r=read(dbs_certificate_number)
@@ -440,7 +436,7 @@ class DBSCheckCapitaView(DBSCheckDetailsView):
                 else:
                     redirect_url=capita_no_info
             else:
-                redirect_url=no_capita
+                redirect_url=capita_old
         except AttributeError:
             successfully_updated = update_criminal_record_check(application_id, 'capita', False)
             redirect_url=no_capita
