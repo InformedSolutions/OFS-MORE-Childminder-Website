@@ -15,7 +15,7 @@ log = logging.getLogger('')
 class PITHOwnChildrenCheckView(PITHRadioView):
     template_name = 'PITH_templates/PITH_own_children_check.html'
     form_class = PITHOwnChildrenCheckForm
-    success_url = ('PITH-Summary-View', 'Task-List-View', 'PITH-Summary-View')
+    success_url = ('PITH-Summary-View', 'PITH-Summary-View', 'Task-List-View', 'Task-List-View')
     application_field_name = 'own_children_not_in_home'
 
     def form_valid(self, form):
@@ -59,29 +59,37 @@ class PITHOwnChildrenCheckView(PITHRadioView):
 
     def get_choice_url(self, app_id):
 
-        yes_choice, no_yes_choice, no_no_choice = self.success_url
+        yes_choice, no_yes_choice, yes_no_choice, no_no_choice = self.success_url
         choice_bool = get_application(app_id, self.application_field_name)
         adults = AdultInHome.objects.filter(application_id=app_id)
 
+
         if choice_bool:
 
-            log.debug('There are own children not living in the home')
+            log.debug('Known to social service in regards to children and valid DBS')
 
             return yes_choice
 
         else:
 
-            if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+            if len(adults) != 0 and not choice_bool and any(adult.capita and adult.on_update for adult in adults):
 
                 log.debug(
-                    'There are own children not living in the home and adults with neither an Ofsted DBS check nor a number on the DBS update service')
+                    'Not known to social service in regards to children and at least 1 invalid DBS')
 
                 return no_yes_choice
+
+            if len(adults) != 0 and choice_bool and any(not adult.capita and not adult.on_update for adult in adults):
+
+                log.debug(
+                    'Known to social service in regards to children and invalid DBS')
+
+                return yes_no_choice
 
             else:
 
                 log.debug(
-                    'There are own children not living in the home and adults with either an Ofsted DBS check or a number on the DBS update service')
+                    'Not known to social service in regards to children and invalid DBS')
 
                 return no_no_choice
 
