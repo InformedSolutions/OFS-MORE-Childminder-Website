@@ -998,7 +998,7 @@ def get_duplicate_dbs_index(application, candidate_dbs_certificate_number):
     return get_first_duplicate_index(dbs_numbers)
 
 
-def dbs_date_of_birth_no_match(application, response):
+def dbs_date_of_birth_no_match(application, record):
     """
         Helper method for gathering the duplicate index
         :param application: the application to be tested against
@@ -1008,7 +1008,7 @@ def dbs_date_of_birth_no_match(application, response):
     applicant_details = ApplicantPersonalDetails.objects.get(application_id=application.application_id)
     applicant_dob=datetime(applicant_details.birth_year, applicant_details.birth_month, applicant_details.birth_day)
     try:
-        dbs_dob=datetime.strptime(response.record['date_of_birth'], "%Y-%m-%d")
+        dbs_dob=datetime.strptime(record['date_of_birth'], "%Y-%m-%d")
         if applicant_dob == dbs_dob:
             return False
         else:

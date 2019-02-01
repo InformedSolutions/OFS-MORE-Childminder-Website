@@ -7,6 +7,8 @@ from django.http import HttpResponse
 
 from ...models import Application, CriminalRecordCheck, ApplicantPersonalDetails
 from ...dbs import create, read
+from ...business_logic import dbs_date_of_birth_no_match, date_issued_within_three_months
+import datetime
 
 
 @modify_settings(MIDDLEWARE={
@@ -480,7 +482,29 @@ class DBSCheckCapitaView(DBSRadioViewTests):
         crc_record.delete()
         pd.delete()
 
-    
+
+    def test_capita_correct_date_of_birth(self):
+        application = Application.objects.get(application_id=self.application_id)
+        pd = ApplicantPersonalDetails.objects.create(application_id=application, birth_day=1, birth_month=2,
+                                                     birth_year=1994)
+        dbs_response = {'certificate_number': 123456789101, 'date_of_issue':'2019-01-01', 'date_of_birth':'1994-02-01', 'certificate_information':'info'}
+        result = dbs_date_of_birth_no_match(application, dbs_response)
+        self.assertEqual(result, False)
+
+        pd.delete()
+
+    def test_capita_incorrect_date_of_birth(self):
+        application = Application.objects.get(application_id=self.application_id)
+        pd = ApplicantPersonalDetails.objects.create(application_id=application, birth_day=1, birth_month=2,
+                                                     birth_year=1994)
+        dbs_response = {'certificate_number': 123456789101, 'date_of_issue':'2019-01-01', 'date_of_birth':'1930-07-01', 'certificate_information':'info'}
+        result = dbs_date_of_birth_no_match(application, dbs_response)
+        self.assertEqual(result, True)
+
+    def test_date_not_issued_within_three_months(self):
+        date_issued=datetime.datetime(2000,1,1)
+        result = date_issued_within_three_months(date_issued)
+        self.assertEqual(result, False)
 
 
 class DBSCheckNoCapitaView(DBSTemplateViewTestCase):

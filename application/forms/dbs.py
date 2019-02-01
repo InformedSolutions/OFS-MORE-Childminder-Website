@@ -168,11 +168,13 @@ class DBSCheckDetailsForm(DBSRadioForm):
             raise forms.ValidationError('Please enter a different DBS number. '
                                         'You entered this number for someone in your childcare location')
         r = read(dbs_certificate_number)
-        if dbs_date_of_birth_no_match(application, r):
-            raise forms.ValidationError(
-                'Birth date does not match the date given on the \'Your date of birth\' page: '
-                'Check your DBS certificate. The number you entered does not match your number held by DBS.')
-
+        try:
+            if dbs_date_of_birth_no_match(application, r.record):
+                raise forms.ValidationError(
+                    'Birth date does not match the date given on the \'Your date of birth\' page: '
+                    'Check your DBS certificate. The number you entered does not match your number held by DBS.')
+        except AttributeError:
+            pass
         return dbs_certificate_number
 
 
