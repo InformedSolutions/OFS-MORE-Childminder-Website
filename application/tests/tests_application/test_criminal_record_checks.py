@@ -5,7 +5,8 @@ from django.urls import reverse
 from unittest.mock import patch
 from django.http import HttpResponse
 
-from ...models import Application, CriminalRecordCheck
+from ...models import Application, CriminalRecordCheck, ApplicantPersonalDetails
+from ...dbs import create, read
 
 
 @modify_settings(MIDDLEWARE={
@@ -90,7 +91,25 @@ class DBSGuidanceSecondViewTests(DBSTemplateViewTestCase):
     def setUp(self):
         super().setUp()
         self.view_url_name = 'DBS-Guidance-Second-View'
-        self.correct_url = 'DBS-Type-View'
+        self.correct_url = 'DBS-Check-Capita-View'
+
+    @tag('http')
+    def test_post_request_to_guidance_page_redirects_to_criminal_details_page(self):
+        # Build env
+        self.view_url_name = 'DBS-Guidance-Second-View'
+        criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
+        application = Application.objects.get(application_id=self.application_id)
+        crc_record = CriminalRecordCheck.objects.create(application_id=application,
+                                                        criminal_record_id=criminal_record_check_id)
+        response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id)
+        print('Returned a {0} response'.format(response.status_code))
+        self.assertEqual(response.status_code, 302)
+        correct_url = reverse(self.correct_url) + '?id=' + self.application_id
+        print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
+        self.assertEqual(response.url, correct_url)
+
+        # Tear down env
+        crc_record.delete()
 
 
 class DBSGetViewTests(DBSTemplateViewTestCase):
@@ -440,6 +459,29 @@ class DBSCheckCapitaView(DBSRadioViewTests):
     def test_form_cautions_convictions_validation(self):
         raise self.skipTest('Not Yet Implemented')
 
+    def test_no_capita_redirect(self):
+        # Build env
+        self.correct_url='DBS-Check-Type'
+        criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
+        application = Application.objects.get(application_id=self.application_id)
+        crc_record = CriminalRecordCheck.objects.create(application_id=application,
+                                                        criminal_record_id=criminal_record_check_id)
+        pd = ApplicantPersonalDetails.objects.create(application_id=application, birth_day=1, birth_month=2, birth_year=1994)
+
+        response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id,
+                                    data={'dbs_certificate_number':'111111111111'})
+        print('Returned a {0} response'.format(response.status_code))
+        self.assertEqual(response.status_code, 302)
+        correct_url = reverse(self.correct_url) + '?id=' + self.application_id
+        print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
+        self.assertEqual(response.url, correct_url)
+
+        # Tear down env
+        crc_record.delete()
+        pd.delete()
+
+    
+
 
 class DBSCheckNoCapitaView(DBSTemplateViewTestCase):
     def setUp(self):
@@ -497,3 +539,5 @@ class DBSSummaryViewTests(DBSTemplateViewTestCase):
             crc_record.delete()
         else:
             raise self.skipTest('view_url_name or correct_url not set')
+        
+        
