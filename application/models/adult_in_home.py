@@ -18,7 +18,10 @@ class AdultInHome(models.Model):
     birth_day = models.IntegerField(blank=True)
     birth_month = models.IntegerField(blank=True)
     birth_year = models.IntegerField(blank=True)
+
     relationship = models.CharField(max_length=100, blank=True)
+    cygnum_relationship_to_childminder = models.CharField(max_length=100, blank=True)
+
     email = models.CharField(max_length=100, blank=True, null=True)
     dbs_certificate_number = models.CharField(max_length=50, blank=True)
     token = models.CharField(max_length=100, blank=True, null=True)
