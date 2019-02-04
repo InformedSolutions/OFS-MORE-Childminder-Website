@@ -13,6 +13,7 @@ from application.models import Application
 
 from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
 from application.business_logic import update_adult_in_home
+from application.business_logic import dbs_matches_childminder_dbs
 
 
 class PITHDBSCheckForm(PITHChildminderFormAdapter):
@@ -160,9 +161,12 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
         elif len(str(cleaned_dbs_value)) != 12:
             self.add_error(field_name[:-36],
                            'Check the certificate: the number should be 12 digits long')
+        elif dbs_matches_childminder_dbs(application, cleaned_dbs_value):
+            self.add_error(field_name[:-36], 'Please enter a different DBS number. '
+                                             'You entered this number for someone in your childcare location')
         elif childminder_dbs_duplicates_household_member_check(application, cleaned_dbs_value, self.adult):
             self.add_error(field_name[:-36], 'Please enter a different DBS number. '
-                                       'You entered this number for someone in your childcare location')
+                                             'You entered this number for someone in your childcare location')
         else:
             # TODO Move this code to more appropriate place (e.g form_valid)
             if '_no_update' in field_name:
