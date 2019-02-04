@@ -66,31 +66,31 @@ class PITHOwnChildrenCheckView(PITHRadioView):
 
         if choice_bool:
 
-            if len(adults) != 0 and all(adult.capita or adult.on_update for adult in adults):
-                log.debug('Known to social service in regards to children and valid DBS')
+            if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+                log.debug('Known to social service in regards to children and invalid DBS')
 
-                return valid_DBS
+                return invalid_DBS
 
             else:
                 log.debug(
-                    'Known to social service in regards to children and invalid DBS')
+                    'Known to social service in regards to children and valid DBS')
 
-                return invalid_DBS
+                return valid_DBS
 
         else:
 
-            if len(adults) != 0 and all(adult.capita or adult.on_update for adult in adults):
+            if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
 
                 log.debug(
-                    'Not known to social service in regards to children and all valid DBS')
+                    'Not known to social service in regards to children and all invalid DBS')
 
-                return valid_DBS
+                return invalid_DBS
 
             else:
                 log.debug(
-                    'Known to social service in regards to children and invalid DBS')
+                    'Known to social service in regards to children and valid DBS')
 
-                return invalid_DBS
+                return valid_DBS
 
     def __clear_children_not_in_home(self, app_id):
 
