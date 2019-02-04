@@ -86,6 +86,11 @@ class DBSUpdateCheckView(DBSTemplateView):
     success_url = 'DBS-Post-View'
 
 
+class DBSApplyNewView(DBSTemplateView):
+    template_name = 'dbs-apply-new.html'
+    success_url = 'Task-List-View'
+
+
 class DBSRadioView(FormView):
     success_url = (None, None)
     dbs_field_name = None
