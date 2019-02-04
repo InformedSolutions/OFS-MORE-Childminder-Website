@@ -95,10 +95,6 @@ class OtherPeopleTest(ViewsTest):
         except:
             self.assertEqual(0, 0)
 
-    def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/people/check-answers/')
-        self.assertEqual(found.func, other_people_summary)
-
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
