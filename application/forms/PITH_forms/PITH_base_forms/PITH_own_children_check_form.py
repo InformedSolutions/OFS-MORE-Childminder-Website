@@ -16,11 +16,11 @@ class PITHOwnChildrenCheckForm(PITHRadioForm):
             error_messages={
                 'required': 'Please say if you are known to council social services in regards to your own children'})
 
-    reveal_conditionally = {'own_children_not_in_home': {'True': 'reasons_known_to_social_services'}}
+    reveal_conditionally = {'own_children_not_in_home': {'True': 'reasons_known_to_social_services_pith'}}
 
     def __init__(self, *args, **kwargs):
 
-        self.base_fields['reasons_known_to_social_services'] = forms.CharField(
+        self.base_fields['reasons_known_to_social_services_pith'] = forms.CharField(
             label='Tell us why',
             widget=forms.Textarea,
             required=True,

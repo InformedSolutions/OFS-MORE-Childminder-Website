@@ -1068,7 +1068,7 @@
     <tr>
         <th colspan="{% if print_class %}2{% else %}3{% endif %}">
             <div class="heading-medium">
-                Your children
+                Your own children
             </div>
         </th>
     </tr>
@@ -1076,7 +1076,8 @@
     <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Are you known to council social services in regards to your own children?
+            Known to council social services in regards to your own children?
+
 
         </td>
         {% if children_not_in_home %}
@@ -1109,7 +1110,7 @@
             {% if people_in_your_home_change %}
             <a href="{% url 'PITH-Own-Children-Check-View' %}?id={{application_id}}"
                alt='Change answer on living with children'>
-                Change <span class="visuallyhidden">why you are known to council social services in regards to your own children</span>
+                Change <span class="visuallyhidden">Change why you are known to council social services in regards to your own children</span>
             </a>
             {% endif %}
         </td>

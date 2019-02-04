@@ -195,8 +195,10 @@ other_adult_summary_link_dict = collections.OrderedDict([('adults_in_home', 'PIT
 other_child_summary_name_dict = collections.OrderedDict([('children_in_home', 'Do children under 16 live in the home?')])
 other_child_summary_link_dict = collections.OrderedDict([('children_in_home', 'PITH-Children-Check-View')])
 
-other_child_not_in_the_home_summary_name_dict = collections.OrderedDict([('own_children_not_in_the_home', 'Do you have children under 16 who do not live with you?')])
-other_child_not_in_the_home_summary_link_dict = collections.OrderedDict([('own_children_not_in_the_home', 'PITH-Own-Children-Check-View')])
+other_child_not_in_the_home_summary_name_dict = collections.OrderedDict([('own_children_not_in_home', 'Are you known to council social services in regards to your own children?'),
+                                                                         ('reasons_known_to_social_services_pith', 'Tell us why')])
+other_child_not_in_the_home_summary_link_dict = collections.OrderedDict([('own_children_not_in_home', 'PITH-Own-Children-Check-View'),
+                                                                         ('reasons_known_to_social_services_pith', 'PITH-Own-Children-Check-View')])
 
 ###
 
@@ -240,7 +242,6 @@ second_reference_link_dict = collections.OrderedDict([('full_name', 'References-
 submit_link_dict = collections.OrderedDict([('login_details', 'Contact-Email-View'),
                                             ('type_of_childcare', 'Type-Of-Childcare-Guidance-View'),
                                             ('personal_details', 'Personal-Details-Guidance-View'),
-                                            ('your_children', 'Your-Children-Guidance-View'),
                                             ('first_aid_training', 'First-Aid-Training-Guidance-View'),
                                             ('eyfs_training', 'Childcare-Training-Guidance-View'),
                                             ('criminal_record_check', 'DBS-Lived-Abroad-View'),
@@ -251,7 +252,6 @@ submit_link_dict = collections.OrderedDict([('login_details', 'Contact-Email-Vie
 back_link_dict = collections.OrderedDict([('login_details', 'Question-View'),
                                           ('type_of_childcare', 'Type-Of-Childcare-Guidance-View'),
                                           ('personal_details', 'Personal-Details-Location-Of-Care-View'),
-                                          ('your_children', 'Your-Children-Guidance-View'),
                                           ('first_aid_training', 'First-Aid-Training-Details-View'),
                                           ('eyfs_training', 'Childcare-Training-Details-View'),
                                           ('criminal_record_check', 'DBS-Check-DBS-Details-View'),
