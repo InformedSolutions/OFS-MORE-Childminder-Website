@@ -1068,7 +1068,7 @@
     <tr>
         <th colspan="{% if print_class %}2{% else %}3{% endif %}">
             <div class="heading-medium">
-                Children not in the home
+                Your children
             </div>
         </th>
     </tr>
@@ -1076,7 +1076,8 @@
     <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Do you have children of your own under 16 who do not live with you?
+            Are you known to council social services in regards to your own children?
+
         </td>
         {% if children_not_in_home %}
         <td style="word-wrap: break-word" class=summary-column>
@@ -1091,11 +1092,29 @@
             {% if people_in_your_home_change %}
             <a href="{% url 'PITH-Own-Children-Check-View' %}?id={{application_id}}"
                alt='Change answer on living with children'>
-                Change <span class="visuallyhidden">answer on living with children</span>
+                Change <span class="visuallyhidden">answer on whether known to social services in regards to your own children</span>
             </a>
             {% endif %}
         </td>
     </tr>
+    {% if own_children_not_in_home %}
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Tell us why
+        <td style="word-wrap: break-word" class=summary-column>
+            {{ reasons_known_to_social_services }}
+        </td>
+
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Own-Children-Check-View' %}?id={{application_id}}"
+               alt='Change answer on living with children'>
+                Change <span class="visuallyhidden">answer on reasons known to social services in regards to your own children</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
     </tbody>
 </table>
 {% for child, name, day, month, year, child_address_street_line1, child_address_street_line2, child_address_town, child_address_county, child_address_postcode, child_address_country in child_not_in_home_lists %}
