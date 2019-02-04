@@ -1,13 +1,15 @@
 import uuid
+from datetime import datetime
 
 from django.http import HttpResponseRedirect
+from django.views.generic import TemplateView
+from django.views.generic.edit import FormView
 
 from .. import status
+from ..business_logic import date_issued_within_three_months
 from ..business_logic import (get_criminal_record_check,
                               update_criminal_record_check)
-
-import requests
-from django import forms
+from ..dbs import read
 from ..forms import (DBSLivedAbroadForm,
                      DBSMilitaryForm,
                      DBSTypeForm,
@@ -16,16 +18,9 @@ from ..forms import (DBSLivedAbroadForm,
                      DBSUpdateForm)
 from ..models import (Application,
                       CriminalRecordCheck)
-
-import requests
-
-from ..utils import build_url, get_id
 from ..table_util import Table, Row
-from datetime import datetime
-from django.views.generic.edit import FormView
-from django.views.generic import TemplateView
-from ..dbs import read
-from ..business_logic import date_issued_within_three_months
+from ..utils import build_url, get_id
+
 
 class DBSTemplateView(TemplateView):
     template_name = None
@@ -84,6 +79,11 @@ class DBSMinistryOfDefenceView(DBSTemplateView):
 class DBSPostView(DBSTemplateView):
     template_name = 'dbs-post.html'
     success_url = 'DBS-Summary-View'
+
+
+class DBSUpdateCheckView(DBSTemplateView):
+    template_name = 'dbs-update-check.html'
+    success_url = 'DBS-Post-View'
 
 
 class DBSRadioView(FormView):
@@ -205,7 +205,8 @@ class DBSSummaryView(DBSTemplateView):
         elif not capita_status:
             return 'DBS-Check-No-Capita-View'
         else:
-            raise ValueError('capita_status should be either True or False by this point, but it is {0}'.format(capita_status))
+            raise ValueError(
+                'capita_status should be either True or False by this point, but it is {0}'.format(capita_status))
 
     @staticmethod
     def get_rows_to_generate(app_id):
@@ -284,8 +285,8 @@ class DBSSummaryView(DBSTemplateView):
         rows_to_gen_list = DBSSummaryView.get_rows_to_generate(app_id)
         rows_to_gen_tuple = tuple(rows_to_gen_list)
 
-        #Initialize rows initially as their rows_to_generate value IN ORDER.
-        lived_abroad_row,\
+        # Initialize rows initially as their rows_to_generate value IN ORDER.
+        lived_abroad_row, \
         military_base_row, \
         capita_row, \
         on_update_row, \
@@ -316,7 +317,6 @@ class DBSSummaryView(DBSTemplateView):
 
         return criminal_record_check_summary_table
 
-
     @staticmethod
     def get_context_data_static(app_id):
         return DBSSummaryView.get_table_object(app_id)
@@ -344,7 +344,6 @@ class DBSTypeView(DBSRadioView):
 
         initial_bool = form.initial[self.dbs_field_name]
         update_bool = form.cleaned_data[self.dbs_field_name] == 'True'
-
 
         # If the 'Type of DBS check' is changed then clear the user's dbs_certificate_number
         # Also check that the application is not in review as this can lead to blank fields being submitted.
@@ -385,10 +384,10 @@ class DBSLivedAbroadView(DBSRadioView):
 
 
 class DBSCheckDetailsView(DBSRadioView):
-   dbs_field_name = 'cautions_convictions'
-   show_cautions_convictions = None
+    dbs_field_name = 'cautions_convictions'
+    show_cautions_convictions = None
 
-   def form_valid(self, form):
+    def form_valid(self, form):
         application_id = get_id(self.request)
         update_string = self.request.POST.get('dbs_certificate_number')
 
@@ -396,7 +395,7 @@ class DBSCheckDetailsView(DBSRadioView):
 
         return super().form_valid(form)
 
-   def get_initial(self):
+    def get_initial(self):
         application_id = get_id(self.request)
         initial = super().get_initial()
         dbs_certificate_number_field = get_criminal_record_check(application_id, 'dbs_certificate_number')
@@ -404,47 +403,43 @@ class DBSCheckDetailsView(DBSRadioView):
 
         return initial
 
-   def get_form_kwargs(self):
+    def get_form_kwargs(self):
         kwargs = super().get_form_kwargs()
         kwargs['show_cautions_convictions'] = self.show_cautions_convictions
         return kwargs
 
 
-
 class DBSCheckCapitaView(DBSCheckDetailsView):
     template_name = 'dbs-check-capita.html'
     form_class = DBSCheckCapitaForm
-    success_url = ('DBS-Post-View', 'DBS-Summary-View','DBS-Update-View','DBS-Check-Type')
+    success_url = ('DBS-Post-View', 'DBS-Summary-View', 'DBS-Update-View', 'DBS-Check-Type')
     nullify_field_list = ['on_update']
     show_cautions_convictions = False
-    r=None
-
+    r = None
 
     def get_success_url(self):
-        capita_info, capita_no_info, capita_old, no_capita= self.success_url
-        dbs_certificate_number= self.request.POST.get('dbs_certificate_number')
+        capita_info, capita_no_info, capita_old, no_capita = self.success_url
+        dbs_certificate_number = self.request.POST.get('dbs_certificate_number')
         application_id = get_id(self.request)
-        self.r=read(dbs_certificate_number)
+        self.r = read(dbs_certificate_number)
         try:
-            record=self.r.record
+            record = self.r.record
             issue_date = datetime.strptime(record['date_of_issue'], "%Y-%m-%d")
             info = record['certificate_information']
             successfully_updated = update_criminal_record_check(application_id, 'capita', True)
             if date_issued_within_three_months(issue_date):
-                if (info != '') or (info!=None):
-                    redirect_url=capita_info
+                if (info != '') or (info != None):
+                    redirect_url = capita_info
                 else:
-                    redirect_url=capita_no_info
+                    redirect_url = capita_no_info
             else:
-                redirect_url=capita_old
+                redirect_url = capita_old
         except AttributeError:
             successfully_updated = update_criminal_record_check(application_id, 'capita', False)
-            redirect_url=no_capita
+            redirect_url = no_capita
 
         application_id = get_id(self.request)
         return build_url(redirect_url, get={'id': application_id})
-
-
 
 
 class DBSCheckNoCapitaView(DBSCheckDetailsView):

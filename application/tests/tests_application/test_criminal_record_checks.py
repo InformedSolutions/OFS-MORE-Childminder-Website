@@ -1,21 +1,20 @@
-from django.core.exceptions import ValidationError
-from django.test import TestCase, Client, modify_settings, tag
-from .base import ApplicationTestBase
-from django.urls import reverse
-from unittest.mock import patch
-from django.http import HttpResponse
-
-from ...models import Application, CriminalRecordCheck, ApplicantPersonalDetails
-from ...dbs import create, read
-from ...business_logic import dbs_date_of_birth_no_match, date_issued_within_three_months
 import datetime
+from unittest.mock import patch
+
+from django.core.exceptions import ValidationError
+from django.http import HttpResponse
+from django.test import TestCase, Client, modify_settings, tag
+from django.urls import reverse
+
+from ...business_logic import dbs_date_of_birth_no_match, date_issued_within_three_months
+from ...models import Application, CriminalRecordCheck, ApplicantPersonalDetails
 
 
 @modify_settings(MIDDLEWARE={
-        'remove': [
-            'application.middleware.CustomAuthenticationHandler'
-        ]
-    })
+    'remove': [
+        'application.middleware.CustomAuthenticationHandler'
+    ]
+})
 class NoMiddlewareTestCase(TestCase):
     pass
 
@@ -32,11 +31,10 @@ class DBSTemplateViewTestCase(NoMiddlewareTestCase):
 
         Application.objects.create(application_id=self.application_id)
 
-
     @tag('http')
     def test_view_rendered_on_get(self):
         if self.view_url_name is not None:
-            response = self.client.get(reverse(self.view_url_name)+'?id='+self.application_id)
+            response = self.client.get(reverse(self.view_url_name) + '?id=' + self.application_id)
             print('Returned a {0} response'.format(response.status_code))
             self.assertTrue(response.status_code == 200)
         else:
@@ -45,7 +43,7 @@ class DBSTemplateViewTestCase(NoMiddlewareTestCase):
     @tag('http')
     def test_redirect_on_post(self):
         if self.view_url_name is not None:
-            response = self.client.post(reverse(self.view_url_name)+'?id='+self.application_id)
+            response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id)
             print('Returned a {0} response'.format(response.status_code))
             self.assertTrue(response.status_code == 302)
         else:
@@ -54,12 +52,13 @@ class DBSTemplateViewTestCase(NoMiddlewareTestCase):
     @tag('http')
     def test_redirect_to_correct_url(self):
         if self.view_url_name is not None and self.correct_url is not None:
-            correct_url = reverse(self.correct_url)+'?id='+self.application_id
-            response = self.client.post(reverse(self.view_url_name)+'?id='+self.application_id)
+            correct_url = reverse(self.correct_url) + '?id=' + self.application_id
+            response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id)
             print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
             self.assertTrue(response.url == correct_url)
         else:
             raise self.skipTest('view_url_name or correct_url not set')
+
 
 class DBSGoodConductViewTests(DBSTemplateViewTestCase):
     def setUp(self):
@@ -128,6 +127,13 @@ class DBSPostViewTests(DBSTemplateViewTestCase):
         self.correct_url = 'DBS-Summary-View'
 
 
+class DBSUpdateCheckView(DBSTemplateViewTestCase):
+    def setUp(self):
+        super().setUp()
+        self.view_url_name = 'DBS-Update-Check-View'
+        self.correct_url = 'DBS-Post-View'
+
+
 class DBSRadioViewTests(NoMiddlewareTestCase):
     def setUp(self):
         self.dbs_views_path = 'application.views.dbs'
@@ -150,11 +156,11 @@ class DBSRadioViewTests(NoMiddlewareTestCase):
             crc_record = CriminalRecordCheck.objects.create(application_id=application,
                                                             criminal_record_id=criminal_record_check_id)
 
-            response = self.client.get(reverse(self.view_url_name)+'?id='+self.application_id)
+            response = self.client.get(reverse(self.view_url_name) + '?id=' + self.application_id)
             print('Returned a {0} response'.format(response.status_code))
             self.assertTrue(response.status_code == 200)
 
-            #Tear down env
+            # Tear down env
             crc_record.delete()
         else:
             raise self.skipTest('view_url_name not set')
@@ -192,7 +198,7 @@ class DBSRadioViewTests(NoMiddlewareTestCase):
             crc_record = CriminalRecordCheck.objects.create(application_id=application,
                                                             criminal_record_id=criminal_record_check_id)
 
-            response = self.client.post(reverse(self.view_url_name)+'?id='+self.application_id)
+            response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id)
             print('Returned a {0} response'.format(response.status_code))
             self.assertTrue(response.status_code == 200)
 
@@ -246,7 +252,7 @@ class DBSRadioViewTests(NoMiddlewareTestCase):
     @tag('http')
     def test_redirect_on_form_valid(self):
         if all(var is not None for var in [self.view_url_name]):
-            #Build env
+            # Build env
             criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
             application = Application.objects.get(application_id=self.application_id)
             crc_record = CriminalRecordCheck.objects.create(application_id=application,
@@ -257,7 +263,7 @@ class DBSRadioViewTests(NoMiddlewareTestCase):
 
             self.assertTrue(response.status_code == 302)
 
-            #Tear down env
+            # Tear down env
             crc_record.delete()
         else:
             raise self.skipTest('view_url_name not set')
@@ -296,7 +302,7 @@ class DBSRadioViewTests(NoMiddlewareTestCase):
 
             yes_redirect, no_redirect = self.correct_url
 
-            correct_url = reverse(yes_redirect)+'?id='+self.application_id
+            correct_url = reverse(yes_redirect) + '?id=' + self.application_id
             print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
             self.assertTrue(response.url == correct_url)
 
@@ -341,7 +347,7 @@ class DBSRadioViewTests(NoMiddlewareTestCase):
 
             yes_redirect, no_redirect = self.correct_url
 
-            correct_url = reverse(no_redirect)+'?id='+self.application_id
+            correct_url = reverse(no_redirect) + '?id=' + self.application_id
             print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
             self.assertTrue(response.url == correct_url)
 
@@ -349,6 +355,7 @@ class DBSRadioViewTests(NoMiddlewareTestCase):
             crc_record.delete()
         else:
             raise self.skipTest('view_url_name or correct_url not set')
+
 
 class DBSLivedAbroadViewTests(DBSRadioViewTests):
     def setUp(self):
@@ -374,16 +381,17 @@ class DBSLivedAbroadViewTests(DBSRadioViewTests):
             application.criminal_record_check_status = 'IN_PROGRESS'
             application.save()
 
-            response = self.client.get(reverse(self.view_url_name)+'?id='+self.application_id)
+            response = self.client.get(reverse(self.view_url_name) + '?id=' + self.application_id)
             print('Returned a {0} response'.format(response.status_code))
             self.assertTrue(response.status_code == 200)
 
-            #Tear down env
+            # Tear down env
             application.criminal_record_check_status = previous_criminal_record_check_status
             application.save()
             crc_record.delete()
         else:
             raise self.skipTest('view_url_name not set')
+
 
 class DBSMilitaryViewTests(DBSRadioViewTests):
     def setUp(self):
@@ -397,6 +405,7 @@ class DBSMilitaryViewTests(DBSRadioViewTests):
         self.view_url_name = 'DBS-Military-View'
         self.correct_url = ('DBS-Ministry-Of-Defence-View', 'DBS-Guidance-Second-View')
 
+
 class DBSTypeViewTests(DBSRadioViewTests):
     def setUp(self):
         super().setUp()
@@ -409,6 +418,7 @@ class DBSTypeViewTests(DBSRadioViewTests):
         self.view_url_name = 'DBS-Type-View'
         self.correct_url = ('DBS-Check-Capita-View', 'DBS-Update-View')
 
+
 class DBSUpdateViewTests(DBSRadioViewTests):
     def setUp(self):
         super().setUp()
@@ -420,6 +430,7 @@ class DBSUpdateViewTests(DBSRadioViewTests):
         self.form = form
         self.view_url_name = 'DBS-Update-View'
         self.correct_url = ('DBS-Check-No-Capita-View', 'DBS-Get-View')
+
 
 class DBSCheckCapitaView(DBSRadioViewTests):
     def setUp(self):
@@ -463,15 +474,16 @@ class DBSCheckCapitaView(DBSRadioViewTests):
 
     def test_no_capita_redirect(self):
         # Build env
-        self.correct_url='DBS-Check-Type'
+        self.correct_url = 'DBS-Check-Type'
         criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
         application = Application.objects.get(application_id=self.application_id)
         crc_record = CriminalRecordCheck.objects.create(application_id=application,
                                                         criminal_record_id=criminal_record_check_id)
-        pd = ApplicantPersonalDetails.objects.create(application_id=application, birth_day=1, birth_month=2, birth_year=1994)
+        pd = ApplicantPersonalDetails.objects.create(application_id=application, birth_day=1, birth_month=2,
+                                                     birth_year=1994)
 
         response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id,
-                                    data={'dbs_certificate_number':'111111111111'})
+                                    data={'dbs_certificate_number': '111111111111'})
         print('Returned a {0} response'.format(response.status_code))
         self.assertEqual(response.status_code, 302)
         correct_url = reverse(self.correct_url) + '?id=' + self.application_id
@@ -482,12 +494,12 @@ class DBSCheckCapitaView(DBSRadioViewTests):
         crc_record.delete()
         pd.delete()
 
-
     def test_capita_correct_date_of_birth(self):
         application = Application.objects.get(application_id=self.application_id)
         pd = ApplicantPersonalDetails.objects.create(application_id=application, birth_day=1, birth_month=2,
                                                      birth_year=1994)
-        dbs_response = {'certificate_number': 123456789101, 'date_of_issue':'2019-01-01', 'date_of_birth':'1994-02-01', 'certificate_information':'info'}
+        dbs_response = {'certificate_number': 123456789101, 'date_of_issue': '2019-01-01',
+                        'date_of_birth': '1994-02-01', 'certificate_information': 'info'}
         result = dbs_date_of_birth_no_match(application, dbs_response)
         self.assertEqual(result, False)
 
@@ -497,12 +509,13 @@ class DBSCheckCapitaView(DBSRadioViewTests):
         application = Application.objects.get(application_id=self.application_id)
         pd = ApplicantPersonalDetails.objects.create(application_id=application, birth_day=1, birth_month=2,
                                                      birth_year=1994)
-        dbs_response = {'certificate_number': 123456789101, 'date_of_issue':'2019-01-01', 'date_of_birth':'1930-07-01', 'certificate_information':'info'}
+        dbs_response = {'certificate_number': 123456789101, 'date_of_issue': '2019-01-01',
+                        'date_of_birth': '1930-07-01', 'certificate_information': 'info'}
         result = dbs_date_of_birth_no_match(application, dbs_response)
         self.assertEqual(result, True)
 
     def test_date_not_issued_within_three_months(self):
-        date_issued=datetime.datetime(2000,1,1)
+        date_issued = datetime.datetime(2000, 1, 1)
         result = date_issued_within_three_months(date_issued)
         self.assertEqual(result, False)
 
@@ -540,6 +553,7 @@ class DBSCheckNoCapitaView(DBSTemplateViewTestCase):
     def test_redirect_to_correct_url(self):
         raise self.skipTest('Not Yet Implemented')
 
+
 class DBSSummaryViewTests(DBSTemplateViewTestCase):
     def setUp(self):
         super().setUp()
@@ -563,5 +577,3 @@ class DBSSummaryViewTests(DBSTemplateViewTestCase):
             crc_record.delete()
         else:
             raise self.skipTest('view_url_name or correct_url not set')
-        
-        

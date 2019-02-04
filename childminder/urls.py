@@ -93,6 +93,7 @@ urlpatterns = [
     url(r'^criminal-record/DBS-update/$', views.DBSUpdateView.as_view(), name='DBS-Update-View'),
     url(r'^criminal-record/DBS-check-type/', views.DBSTypeView.as_view(), name='DBS-Check-Type'),
     url(r'^criminal-record/sign-up-update/$', views.DBSGetView.as_view(), name='DBS-Get-View'),
+    url(r'^criminal-record/DBS-update-check/$', views.DBSUpdateCheckView.as_view(), name='DBS-Update-Check-View'),
     url(r'^criminal-record/post-certificate/', views.DBSPostView.as_view(), name='DBS-Post-View'),
     url(r'^criminal-record/check-answers/', views.DBSSummaryView.as_view(), name='DBS-Summary-View'),
 

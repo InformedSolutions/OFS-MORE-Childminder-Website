@@ -1,0 +1,28 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}DBS Update Check{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+    {{form.error_summary}}
+
+    <form method="post" novalidate>
+        <h1 class="form-title heading-large">
+            DBS Update check
+        </h1>
+        <p>We'll check that you are on the Update Service after you submit.</p>
+        <p>Your application will be returned if you are not signed up to it.</p>
+
+        {% csrf_token %}
+        <input type="submit" class="button" value="Continue">
+    </form>
+</div>
+
+<br>
+{% include 'return-to-list.html' %}
+
+{% endblock %}
