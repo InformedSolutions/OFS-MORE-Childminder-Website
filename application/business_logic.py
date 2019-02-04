@@ -5,10 +5,10 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 """
 
-import pytz
 import re
+from datetime import datetime, timedelta
 
-from datetime import date, datetime, timedelta
+import pytz
 
 from .models import (AdultInHome,
                      ApplicantHomeAddress,
@@ -23,9 +23,7 @@ from .models import (AdultInHome,
                      HealthDeclarationBooklet,
                      Reference,
                      UserDetails, Child, ChildAddress)
-
-from .utils import unique_values, get_first_duplicate_index, return_last_duplicate_index, \
-    get_duplicate_list_entry_indexes
+from .utils import unique_values, get_first_duplicate_index, get_duplicate_list_entry_indexes
 
 
 def childcare_type_logic(application_id_local, form):
@@ -378,7 +376,9 @@ def eyfs_details_logic(application_id_local, form):
     eyfs_course_date_year = form.cleaned_data.get('eyfs_course_date').year
     # If the user entered information for this task for the first time
     if ChildcareTraining.objects.filter(application_id=application_id_local).count() == 0:
-        eyfs_record = ChildcareTraining(eyfs_course_name=eyfs_course_name, eyfs_course_date_day=eyfs_course_date_day, eyfs_course_date_month=eyfs_course_date_month, eyfs_course_date_year=eyfs_course_date_year, application_id=this_application)
+        eyfs_record = ChildcareTraining(eyfs_course_name=eyfs_course_name, eyfs_course_date_day=eyfs_course_date_day,
+                                        eyfs_course_date_month=eyfs_course_date_month,
+                                        eyfs_course_date_year=eyfs_course_date_year, application_id=this_application)
     # If the user previously entered information for this task
     elif ChildcareTraining.objects.filter(application_id=application_id_local).count() > 0:
         eyfs_record = ChildcareTraining.objects.get(application_id=application_id_local)
@@ -405,7 +405,7 @@ def training_for_childcare_register_logic(application_id_local, form):
     )
 
     if ChildcareTraining.objects.filter(application_id=application_id_local).count() == 0:
-        application_record        = Application.objects.get(application_id=application_id_local)
+        application_record = Application.objects.get(application_id=application_id_local)
         childcare_training_record = ChildcareTraining.objects.create(application_id=application_record)
     else:
         childcare_training_record = ChildcareTraining.objects.get(application_id=application_id_local)
@@ -586,10 +586,11 @@ def your_children_details_logic(application_id_local, form, child):
     # If the user previously entered information for this task
     else:
         child_record = Child(first_name=first_name, middle_names=middle_names, last_name=last_name,
-                                   birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
-                                   application_id=this_application, child=child)
+                             birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
+                             application_id=this_application, child=child)
 
     return child_record
+
 
 def other_people_adult_details_logic(application_id_local, form, adult):
     """
@@ -660,7 +661,7 @@ def rearrange_adults(number_of_adults, application_id_local):
     :return:
     """
     application = Application.objects.get(pk=application_id_local)
-    
+
     for i in range(1, number_of_adults + 1):
         # If there is a gap in the sequence of adult numbers
         if AdultInHome.objects.filter(application_id=application_id_local, adult=i).count() == 0:
@@ -864,7 +865,7 @@ def health_check_email_resend_logic(adult_record):
     :return: Boolean: True if email cannot be sent, False if email can be sent.
     """
 
-    #If email_resent_timestamp is None then the email has never been resent.
+    # If email_resent_timestamp is None then the email has never been resent.
     if adult_record.email_resent_timestamp is not None:
 
         # If the last e-mail was sent within the last 24 hours
@@ -1019,11 +1020,10 @@ def childminder_dbs_number_duplication_check(application, candidate_dbs_certific
 
 
 def convert_mobile_to_notify_standard(mobile):
-
     mobile_prefix_REGEX = "^(\+44|0044)[7][0-9]{9}$"
 
     if mobile != "" and mobile is not None and re.match(mobile_prefix_REGEX, mobile):
-        new_mobile = "07" + mobile[len(mobile)-9:]
+        new_mobile = "07" + mobile[len(mobile) - 9:]
         return new_mobile
     else:
         return mobile
@@ -1036,7 +1036,7 @@ def childminder_references_and_user_email_duplication_check(email1, email2):
     :param email2: another email to be compared.
     :return: A boolean True if emails are different or False if emails are the same.
     """
-    
+
     if email1 != email2:
         return True
     else:
@@ -1054,6 +1054,7 @@ def show_resend_and_change_email(health_check_status, is_review=None):
 
     # is_review is no longer needed, kept for legacy purposes but defaults to None.
     return health_check_status != 'Done'
+
 
 def update_criminal_record_check(app_id, field_obj, status):
     """
@@ -1075,7 +1076,8 @@ def update_criminal_record_check(app_id, field_obj, status):
         criminal_record_check_record.save()
 
     else:
-        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+        raise TypeError(
+            '{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
     return True
 
@@ -1095,7 +1097,8 @@ def get_criminal_record_check(app_id, field_obj):
         return getattr(criminal_record_check_record, field_obj)
 
     else:
-        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+        raise TypeError(
+            '{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
 
 def get_childcare_register_type(app_id):
@@ -1143,6 +1146,7 @@ def get_childcare_register_type(app_id):
         cost = 103
         return 'CR-voluntary', cost
 
+
 def get_adult_in_home(app_id, field_obj):
     """
     :param app_id: applicant's application_id
@@ -1158,7 +1162,8 @@ def get_adult_in_home(app_id, field_obj):
         return getattr(adult_in_home_record, field_obj)
 
     else:
-        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+        raise TypeError(
+            '{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
 
 def update_adult_in_home(pk, field_obj, status):
@@ -1181,9 +1186,14 @@ def update_adult_in_home(pk, field_obj, status):
         adult_in_home_record.save()
 
     else:
-        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+        raise TypeError(
+            '{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
     return True
+
+
+def get_application_object(app_id):
+    return Application.objects.get(application_id=app_id)
 
 
 def get_application(app_id, field_obj):
@@ -1201,7 +1211,8 @@ def get_application(app_id, field_obj):
         return getattr(application_record, field_obj)
 
     else:
-        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+        raise TypeError(
+            '{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
 
 def update_application(app_id, field_obj, status):
@@ -1224,7 +1235,8 @@ def update_application(app_id, field_obj, status):
         application_record.save()
 
     else:
-        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+        raise TypeError(
+            '{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
     return True
 
