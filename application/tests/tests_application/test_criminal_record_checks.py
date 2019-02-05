@@ -304,7 +304,7 @@ class DBSRadioViewTests(NoMiddlewareTestCase):
 
             correct_url = reverse(yes_redirect) + '?id=' + self.application_id
             print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
-            self.assertTrue(response.url == correct_url)
+            self.assertEqual(response.url, correct_url)
 
             # Tear down env
             crc_record.delete()
@@ -474,7 +474,7 @@ class DBSCheckCapitaView(DBSRadioViewTests):
 
     def test_no_capita_redirect(self):
         # Build env
-        self.correct_url = 'DBS-Check-Type'
+        self.correct_url = 'DBS-Check-Type-View'
         criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
         application = Application.objects.get(application_id=self.application_id)
         crc_record = CriminalRecordCheck.objects.create(application_id=application,

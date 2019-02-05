@@ -2,7 +2,6 @@
 A base class for reusable test steps across application unit tests
 """
 import json
-import uuid
 from datetime import datetime
 from unittest import mock
 
