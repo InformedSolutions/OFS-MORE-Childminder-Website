@@ -103,12 +103,13 @@ class DBSUpdateForm(DBSRadioForm):
     error_summary_title = 'There was a problem with the type of DBS check'
 
     def get_choice_field_data(self):
-        return forms.ChoiceField(label='Are you on the DBS update service?',
-                                 choices=self.get_options(),
-                                 widget=InlineRadioSelect,
-                                 required=True,
-                                 error_messages={
-                                     'required': 'Please say if you are on the DBS update service'})
+        return forms.ChoiceField(
+            label='Are you on the DBS update service?',
+            choices=self.get_options(),
+            widget=InlineRadioSelect,
+            required=True,
+            error_messages={
+                'required': 'Please say if you are on the DBS update service'})
 
 
 class DBSCheckDetailsForm(DBSRadioForm):
