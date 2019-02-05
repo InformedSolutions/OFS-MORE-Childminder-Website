@@ -766,7 +766,7 @@
     </tr>
     </tbody>
 </table>
-{% for name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, lived_abroad, capita, military_base in adult_lists %}
+{% for name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, lived_abroad, capita, military_base, known_to_council, reasons_known_to_council in adult_lists %}
 <table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
@@ -944,6 +944,30 @@
             {% endif %}
         </td>
     </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Known to council social services in regards to their own children?
+        </td>
+        {% if known_to_council is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif known_to_council is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+    </tr>
+    {% if known_to_council is True %}
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Tell us why
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{reasons_known_to_council_health_check}}
+        </td>
+    </tr>
+    {% endif %}
     </tbody>
 </table>
 {% endfor %}
@@ -1098,7 +1122,7 @@
             {% endif %}
         </td>
     </tr>
-    {% if own_children_not_in_home %}
+    {% if known_to_social_services_pith %}
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
             Tell us why

@@ -155,6 +155,8 @@ other_adult_name_dict = collections.OrderedDict([('health_check_status', 'Health
                                                  ('capita',
                                                   'Did they get the certificate from the Ofsted DBS application website in the last 3 months?'),
                                                  ('dbs_certificate_number', 'DBS certificate number'),
+                                                 ('known_to_council', 'Known to council social services in regards to their own children?'),
+                                                 ('reasons_known_to_council_health_check', 'Tell us why'),
                                                  ('permission', 'Permission for checks')
                                                  ])
 
@@ -167,6 +169,8 @@ other_adult_link_dict = collections.OrderedDict([('health_check_status', 'Other-
                                                 ('military_base', 'PITH-Military-View'),
                                                 ('capita', 'PITH-DBS-Check-View'),
                                                 ('dbs_certificate_number', 'PITH-DBS-Check-View'),
+                                                ('known_to_council', None),
+                                                ('reasons_known_to_council_health_check', None),
                                                 ('permission', 'Other-People-Adult-Permission-View'),
                                                  ])
 
@@ -197,9 +201,9 @@ other_adult_summary_link_dict = collections.OrderedDict([('adults_in_home', 'PIT
 other_child_summary_name_dict = collections.OrderedDict([('children_in_home', 'Do children under 16 live in the home?')])
 other_child_summary_link_dict = collections.OrderedDict([('children_in_home', 'PITH-Children-Check-View')])
 
-other_child_not_in_the_home_summary_name_dict = collections.OrderedDict([('own_children_not_in_home', 'Are you known to council social services in regards to your own children?'),
+other_child_not_in_the_home_summary_name_dict = collections.OrderedDict([('known_to_social_services_pith', 'Are you known to council social services in regards to your own children?'),
                                                                          ('reasons_known_to_social_services_pith', 'Tell us why')])
-other_child_not_in_the_home_summary_link_dict = collections.OrderedDict([('own_children_not_in_home', 'PITH-Own-Children-Check-View'),
+other_child_not_in_the_home_summary_link_dict = collections.OrderedDict([('known_to_social_services_pith', 'PITH-Own-Children-Check-View'),
                                                                          ('reasons_known_to_social_services_pith', 'PITH-Own-Children-Check-View')])
 
 ###

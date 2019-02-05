@@ -36,13 +36,12 @@ class PITHCheckYourAnswersView(PITHTemplateView):
         # Header tables
         adults_header_table = self.get_adults_header_table(application_id, adults_list)
         children_header_table = self.get_children_header_table(application_id, children_list)
-        children_not_in_home_header_table = self.get_children_not_in_home_header_table(application_id,
-                                                                                       children_not_in_home_list)
+        children_not_in_home_header_table = self.get_children_not_in_home_header_table(application_id, application)
 
         # Data tables
         adults_table = self.get_adults_table(application_id, application, adults_list)
         children_table = self.get_children_table(application_id, children_list)
-        children_not_in_home_table = self.get_children_not_in_home_table(application_id, children_not_in_home_list)
+        # children_not_in_home_table = self.get_children_not_in_home_table(application_id, children_not_in_home_list)
 
         # Form
         form = PITHCheckYourAnswersForm()
@@ -53,13 +52,18 @@ class PITHCheckYourAnswersView(PITHTemplateView):
 
         # Update application status
         # Set People in home status to Done if all adult health check statuses have been completed
-        if all(adult for adult in adults_list if adult.health_check_status == 'Done'):
+        adult_health_checks_complete = True
+        for adult in adults_list:
+            if adult.health_check_status != 'Done':
+                adult_health_checks_complete = False
+
+        if adult_health_checks_complete:
             status.update(application_id, 'people_in_home_status', 'COMPLETED')
 
         # Create Table List
         table_list = adults_header_table + adults_table + children_header_table + children_table
-        if application.own_children_not_in_home is not None:
-            table_list += children_not_in_home_header_table + children_not_in_home_table
+        if application.known_to_social_services_pith is not None:
+            table_list += children_not_in_home_header_table
 
         context = {
             'page_title': 'Check your answers: people in the home',
@@ -105,9 +109,9 @@ class PITHCheckYourAnswersView(PITHTemplateView):
         Business logic function
         :return: A tuple of list objects containing adults, children and children_not_in_home records.
         """
-        adults_list = AdultInHome.objects.filter(application_id=app_id).order_by('adult')
-        children_list = ChildInHome.objects.filter(application_id=app_id).order_by('child')
-        children_not_in_home_list = Child.objects.filter(application_id=app_id).order_by('child')
+        adults_list = list(AdultInHome.objects.filter(application_id=app_id).order_by('adult'))
+        children_list = list(ChildInHome.objects.filter(application_id=app_id).order_by('child'))
+        children_not_in_home_list = list(Child.objects.filter(application_id=app_id).order_by('child'))
 
         return adults_list, children_list, children_not_in_home_list
 
@@ -134,15 +138,25 @@ class PITHCheckYourAnswersView(PITHTemplateView):
         }
         return create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
 
-    def get_children_not_in_home_header_table(self, app_id, children_not_in_home_list):
-        children_not_in_home = bool(children_not_in_home_list)
+    def get_children_not_in_home_header_table(self, app_id, application):
+        known_to_social_services_pith = application.known_to_social_services_pith
+        reasons_known_to_social_services_pith = application.reasons_known_to_social_services_pith
 
-        not_child_table = {
-            'table_object': Table([app_id]),
-            'fields': {'own_children_not_in_the_home': children_not_in_home},
-            'title': 'Children not in the home',
-            'error_summary_title': 'There was a problem'
-        }
+        if known_to_social_services_pith is True:
+            not_child_table = {
+                'table_object': Table([app_id]),
+                'fields': {'known_to_social_services_pith': known_to_social_services_pith,
+                           'reasons_known_to_social_services_pith': reasons_known_to_social_services_pith},
+                'title': 'Your own children',
+                'error_summary_title': 'There was a problem'
+            }
+        else:
+            not_child_table = {
+                'table_object': Table([app_id]),
+                'fields': {'known_to_social_services_pith': known_to_social_services_pith},
+                'title': 'Your own children',
+                'error_summary_title': 'There was a problem'
+            }
         return create_tables([not_child_table], other_child_not_in_the_home_summary_name_dict,
                              other_child_not_in_the_home_summary_link_dict)
 
@@ -163,11 +177,16 @@ class PITHCheckYourAnswersView(PITHTemplateView):
                 ('lived_abroad', adult.lived_abroad),
                 ('capita', adult.capita),
                 ('dbs_certificate_number', adult.dbs_certificate_number),
+                # ('known_to_council', adult.known_to_council)
             ]
 
             if childcare_record.zero_to_five is True:
                 # Append military_base
                 base_adult_fields += [('military_base', adult.military_base)]
+
+            #  if adult.known_to_council is True:
+            #     # Append reasons_known_to_council
+            #    base_adult_fields += [('reasons_known_to_council', adult.reasons_known_to_council)]
 
             if application.people_in_home_status == 'IN_PROGRESS' and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):

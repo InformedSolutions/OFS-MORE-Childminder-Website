@@ -221,8 +221,6 @@ class PersonalDetailsOwnChildrenForm(ChildminderForms):
         ('False', 'No')
     )
 
-
-
     own_children = forms.ChoiceField(label="Are you known to council social services in regards to your own children?", choices=options,
                                      widget=ConditionalPostInlineRadioSelect, required=True,
                                      error_messages={'required': "Please say if you are known to council social services in regards to your own children"})
@@ -244,6 +242,7 @@ class PersonalDetailsOwnChildrenForm(ChildminderForms):
         if Application.objects.filter(application_id=self.application_id_local).count() > 0:
             application = Application.objects.get(application_id=self.application_id_local)
             self.fields['own_children'].initial = application.own_children
+            self.fields['reasons_known_to_social_services'].initial = application.reasons_known_to_social_services
             self.field_list = ['own_children']
             self.pk = application.pk
 
