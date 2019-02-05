@@ -155,7 +155,8 @@ other_adult_name_dict = collections.OrderedDict([('health_check_status', 'Health
                                                  ('capita',
                                                   'Did they get the certificate from the Ofsted DBS application website in the last 3 months?'),
                                                  ('dbs_certificate_number', 'DBS certificate number'),
-                                                 ('permission', 'Permission for checks')])
+                                                 ('permission', 'Permission for checks')
+                                                 ])
 
 other_adult_link_dict = collections.OrderedDict([('health_check_status', 'Other-People-Resend-Email-View'),
                                                 ('full_name', 'PITH-Adult-Details-View'),
@@ -166,7 +167,8 @@ other_adult_link_dict = collections.OrderedDict([('health_check_status', 'Other-
                                                 ('military_base', 'PITH-Military-View'),
                                                 ('capita', 'PITH-DBS-Check-View'),
                                                 ('dbs_certificate_number', 'PITH-DBS-Check-View'),
-                                                ('permission', 'Other-People-Adult-Permission-View')])
+                                                ('permission', 'Other-People-Adult-Permission-View'),
+                                                 ])
 
 ###
 
