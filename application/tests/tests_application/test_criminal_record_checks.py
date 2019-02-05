@@ -1,4 +1,5 @@
 import datetime
+from unittest import mock
 from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
@@ -472,33 +473,39 @@ class DBSCheckCapitaView(DBSRadioViewTests):
     def test_form_cautions_convictions_validation(self):
         raise self.skipTest('Not Yet Implemented')
 
-    @patch('application.dbs.read')
-    def test_no_capita_redirect(self, mock_read):
+    @tag('http')
+    def test_no_capita_redirect(self):
+        from application.forms import dbs as form_dbs
+        from application.views import dbs as view_dbs
+
         http_response = HttpResponse()
         http_response.status_code = 404
-        mock_read.return_value = http_response
 
+        with mock.patch.object(form_dbs, 'read') as mock_form_read:
+            with mock.patch.object(view_dbs, 'read') as mock_view_read:
+                mock_form_read.return_value = http_response
+                mock_view_read.return_value = http_response
 
-        # Build env
-        self.correct_url = 'DBS-Check-Type-View'
-        criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
-        application = Application.objects.get(application_id=self.application_id)
-        crc_record = CriminalRecordCheck.objects.create(application_id=application,
-                                                        criminal_record_id=criminal_record_check_id)
-        pd = ApplicantPersonalDetails.objects.create(application_id=application, birth_day=1, birth_month=2,
-                                                     birth_year=1994)
+                # Build env
+                self.correct_url = 'DBS-Check-Type-View'
+                criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
+                application = Application.objects.get(application_id=self.application_id)
+                crc_record = CriminalRecordCheck.objects.create(application_id=application,
+                                                                criminal_record_id=criminal_record_check_id)
+                pd = ApplicantPersonalDetails.objects.create(application_id=application, birth_day=1, birth_month=2,
+                                                             birth_year=1994)
 
-        response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id,
-                                    data={'dbs_certificate_number': '111111111111'})
-        print('Returned a {0} response'.format(response.status_code))
-        self.assertEqual(response.status_code, 302)
-        correct_url = reverse(self.correct_url) + '?id=' + self.application_id
-        print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
-        self.assertEqual(response.url, correct_url)
+                response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id,
+                                            data={'dbs_certificate_number': '111111111111'})
+                print('Returned a {0} response'.format(response.status_code))
+                self.assertEqual(response.status_code, 302)
+                correct_url = reverse(self.correct_url) + '?id=' + self.application_id
+                print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
+                self.assertEqual(response.url, correct_url)
 
-        # Tear down env
-        crc_record.delete()
-        pd.delete()
+                # Tear down env
+                crc_record.delete()
+                pd.delete()
 
     def test_capita_correct_date_of_birth(self):
         application = Application.objects.get(application_id=self.application_id)
