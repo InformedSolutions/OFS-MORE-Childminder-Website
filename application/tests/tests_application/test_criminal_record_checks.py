@@ -472,7 +472,13 @@ class DBSCheckCapitaView(DBSRadioViewTests):
     def test_form_cautions_convictions_validation(self):
         raise self.skipTest('Not Yet Implemented')
 
-    def test_no_capita_redirect(self):
+    @patch('application.dbs.read')
+    def test_no_capita_redirect(self, mock_read):
+        http_response = HttpResponse()
+        http_response.status_code = 404
+        mock_read.return_value = http_response
+
+
         # Build env
         self.correct_url = 'DBS-Check-Type-View'
         criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
