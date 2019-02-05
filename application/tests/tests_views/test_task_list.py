@@ -245,3 +245,56 @@ class TaskListTest(ViewsTest):
         context = show_hide_tasks(context, application)
         self.assertEqual(True, context['tasks'][0]['hidden'])
         self.assertEqual(False, context['tasks'][1]['hidden'])
+
+    def test_your_children_section_removal(self):
+        test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+
+        #self.assertContains(task_list, 'Your Children', status_code=200, msg_prefix='', html=True)
+
+        application = models.Application.objects.create(
+            application_id=(UUID(test_application_id)),
+            application_type='CHILDMINDER',
+            application_status='DRAFTING',
+            cygnum_urn='',
+            login_details_status='COMPLETED',
+            personal_details_status='COMPLETED',
+            childcare_type_status='COMPLETED',
+            first_aid_training_status='COMPLETED',
+            childcare_training_status='COMPLETED',
+            your_children_status='COMPLETED',
+            criminal_record_check_status='COMPLETED',
+            health_status='COMPLETED',
+            references_status='COMPLETED',
+            people_in_home_status='COMPLETED',
+            declarations_status='IN_PROGRESS',
+            date_created=datetime.datetime.today(),
+            date_updated=datetime.datetime.today(),
+            date_accepted=None,
+            own_children=False,
+            working_in_other_childminder_home=False
+        )
+
+        personal_details = ApplicantPersonalDetails.objects.create(
+            application_id=application
+        )
+
+        ApplicantHomeAddress.objects.create(
+            application_id=application,
+            personal_detail_id=personal_details,
+            childcare_address=True,
+            move_in_month=1,
+            move_in_year=2017,
+            current_address=True
+        )
+
+        context = {
+            'tasks': [
+                {
+                    'name': 'your_children',
+                    'hidden': True
+                }
+            ]
+        }
+
+        context = show_hide_tasks(context, application)
+        self.assertEqual(False, context['tasks'][0]['hidden'])
