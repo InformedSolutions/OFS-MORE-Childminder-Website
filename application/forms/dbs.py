@@ -1,7 +1,8 @@
 from django import forms
 from govuk_forms.widgets import InlineRadioSelect, NumberInput
 
-from ..business_logic import childminder_dbs_duplicates_household_member_check
+from ..business_logic import childminder_dbs_duplicates_household_member_check, dbs_date_of_birth_no_match
+from ..dbs import read
 from ..forms.childminder import ChildminderForms
 from ..models import CriminalRecordCheck, Application
 
@@ -82,17 +83,16 @@ class DBSTypeForm(DBSRadioForm):
     """
     GOV.UK form for the Criminal record check: type page
     """
-    choice_field_name = 'capita'
+    choice_field_name = 'enhanced_check'
     error_summary_title = 'There was a problem with the type of DBS check'
 
     def get_choice_field_data(self):
-        return forms.ChoiceField(
-            label='Did you get your certificate from the Ofsted DBS application website in the last 3 months?',
-            choices=self.get_options(),
-            widget=InlineRadioSelect,
-            required=True,
-            error_messages={
-                'required': 'Please say if you have an Ofsted DBS check'})
+        return forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare?',
+                                 choices=self.get_options,
+                                 widget=InlineRadioSelect,
+                                 required=True,
+                                 error_messages={
+                                     'required': 'Please say if you have an enhanced check for home-based childcare'})
 
 
 class DBSUpdateForm(DBSRadioForm):
@@ -167,7 +167,14 @@ class DBSCheckDetailsForm(DBSRadioForm):
         if childminder_dbs_duplicates_household_member_check(application, dbs_certificate_number):
             raise forms.ValidationError('Please enter a different DBS number. '
                                         'You entered this number for someone in your childcare location')
-
+        r = read(dbs_certificate_number)
+        try:
+            if dbs_date_of_birth_no_match(application, r.record):
+                raise forms.ValidationError(
+                    'Birth date does not match the date given on the \'Your date of birth\' page: '
+                    'Check your DBS certificate. The number you entered does not match your number held by DBS.')
+        except AttributeError:
+            pass
         return dbs_certificate_number
 
 
