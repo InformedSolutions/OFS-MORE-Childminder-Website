@@ -14,6 +14,7 @@ class CriminalRecordCheck(models.Model):
     lived_abroad = models.NullBooleanField(blank=True)
     military_base = models.NullBooleanField(blank=True)
     capita = models.NullBooleanField(blank=True)
+    enhanced_check = models.NullBooleanField(blank=True)
     on_update = models.NullBooleanField(blank=True)
 
     @property

@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Your criminal record (DBS) check details{% endblock %}
+{% block page_title %}DBS Update Check{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -12,12 +12,13 @@
 
     <form method="post" novalidate>
         <h1 class="form-title heading-large">
-            Your criminal record (DBS) check details
+            DBS Update check
         </h1>
-        <p>We need this to check if you have criminal convictions or cautions.</p>
-        {{form.as_div}}
+        <p>We'll check that you are on the Update Service after you submit.</p>
+        <p>Your application will be returned if you are not signed up to it.</p>
+
         {% csrf_token %}
-        <input type="submit" class="button" value="Save and continue">
+        <input type="submit" class="button" value="Continue">
     </form>
 </div>
 
