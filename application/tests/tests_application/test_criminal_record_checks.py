@@ -416,7 +416,7 @@ class DBSTypeViewTests(DBSRadioViewTests):
         self.view = view
         self.form = form
         self.view_url_name = 'DBS-Type-View'
-        self.correct_url = ('DBS-Check-Capita-View', 'DBS-Update-View')
+        self.correct_url = ('DBS-Update-Check-View', 'DBS-Apply-New-View')
 
 
 class DBSUpdateViewTests(DBSRadioViewTests):
@@ -429,7 +429,7 @@ class DBSUpdateViewTests(DBSRadioViewTests):
         self.view = view
         self.form = form
         self.view_url_name = 'DBS-Update-View'
-        self.correct_url = ('DBS-Check-No-Capita-View', 'DBS-Get-View')
+        self.correct_url = ('DBS-Post-View', 'DBS-Get-View')
 
 
 class DBSCheckCapitaView(DBSRadioViewTests):

@@ -376,19 +376,24 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
         r = self.client.post(
-            reverse('DBS-Type-View'),
+            reverse('DBS-Check-Type-View'),
             {
                 'id': self.app_id,
-                'capita': True
+                'enhanced_check': True
             }
         )
         self.assertEqual(r.status_code, 302)
         r = self.client.post(
-            reverse('DBS-Check-Capita-View'),
+            reverse('DBS-Update-Check-View'),
             {
-                'id': self.app_id,
-                'dbs_certificate_number': '123456789012',
-                'cautions_convictions': False
+                'id': self.app_id
+            }
+        )
+        self.assertEqual(r.status_code, 302)
+        r = self.client.post(
+            reverse('DBS-Post-View'),
+            {
+                'id': self.app_id
             }
         )
         self.assertEqual(r.status_code, 302)
