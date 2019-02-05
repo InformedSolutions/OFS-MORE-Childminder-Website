@@ -1,12 +1,9 @@
 from django import forms
 from govuk_forms.widgets import InlineRadioSelect, NumberInput
-from django.core.validators import RegexValidator
 
+from ..business_logic import childminder_dbs_duplicates_household_member_check
 from ..forms.childminder import ChildminderForms
-from ..forms_helper import full_stop_stripper
 from ..models import CriminalRecordCheck, Application
-
-from ..business_logic import childminder_dbs_number_duplication_check, childminder_dbs_duplicates_household_member_check
 
 
 class DBSRadioForm(ChildminderForms):
@@ -56,11 +53,13 @@ class DBSLivedAbroadForm(DBSRadioForm):
     choice_field_name = 'lived_abroad'
 
     def get_choice_field_data(self):
-        return forms.ChoiceField(label='Have you lived outside of the UK in the last 5 years?',
-                                 choices=self.get_options(),
-                                 widget=InlineRadioSelect,
-                                 required=True,
-                                 error_messages={'required': 'Please say if you have lived outside of the UK in the last 5 years'})
+        return forms.ChoiceField(
+            label='Have you lived outside of the UK in the last 5 years?',
+            choices=self.get_options(),
+            widget=InlineRadioSelect,
+            required=True,
+            error_messages={
+                'required': 'Please say if you have lived outside of the UK in the last 5 years'})
 
 
 class DBSMilitaryForm(DBSRadioForm):
@@ -70,11 +69,14 @@ class DBSMilitaryForm(DBSRadioForm):
     choice_field_name = 'military_base'
 
     def get_choice_field_data(self):
-        return forms.ChoiceField(label='Have you lived or worked on a British military base outside of the UK in the last 5 years?',
-                                 choices=self.get_options(),
-                                 widget=InlineRadioSelect,
-                                 required=True,
-                                 error_messages={'required': 'Please say if you have lived in a British military base outside of the UK in the last 5 years'})
+        return forms.ChoiceField(
+            label='Have you lived or worked on a British military base outside of the UK in the last 5 years?',
+            choices=self.get_options(),
+            widget=InlineRadioSelect,
+            required=True,
+            error_messages={
+                'required': 'Please say if you have lived in a British military base outside of the UK in the last 5 years'})
+
 
 class DBSTypeForm(DBSRadioForm):
     """
@@ -84,12 +86,14 @@ class DBSTypeForm(DBSRadioForm):
     error_summary_title = 'There was a problem with the type of DBS check'
 
     def get_choice_field_data(self):
-        return forms.ChoiceField(label='Did you get your certificate from the Ofsted DBS application website in the last 3 months?',
-                                 choices=self.get_options(),
-                                 widget=InlineRadioSelect,
-                                 required=True,
-                                 error_messages={
-                                     'required': 'Please say if you have an Ofsted DBS check'})
+        return forms.ChoiceField(
+            label='Did you get your certificate from the Ofsted DBS application website in the last 3 months?',
+            choices=self.get_options(),
+            widget=InlineRadioSelect,
+            required=True,
+            error_messages={
+                'required': 'Please say if you have an Ofsted DBS check'})
+
 
 class DBSUpdateForm(DBSRadioForm):
     """
@@ -99,12 +103,13 @@ class DBSUpdateForm(DBSRadioForm):
     error_summary_title = 'There was a problem with the type of DBS check'
 
     def get_choice_field_data(self):
-        return forms.ChoiceField(label='Are you on the DBS update service?',
-                                 choices=self.get_options(),
-                                 widget=InlineRadioSelect,
-                                 required=True,
-                                 error_messages={
-                                     'required': 'Please say if you are on the DBS update service'})
+        return forms.ChoiceField(
+            label='Are you on the DBS update service?',
+            choices=self.get_options(),
+            widget=InlineRadioSelect,
+            required=True,
+            error_messages={
+                'required': 'Please say if you are on the DBS update service'})
 
 
 class DBSCheckDetailsForm(DBSRadioForm):
@@ -115,11 +120,12 @@ class DBSCheckDetailsForm(DBSRadioForm):
     dbs_certificate_number_widget = NumberInput()
     dbs_certificate_number_widget.input_classes = 'form-control form-control-1-4'
 
-    dbs_certificate_number = forms.IntegerField(label='DBS certificate number',
-                                                help_text='12-digit number on your certificate',
-                                                required=True,
-                                                error_messages={'required': 'Please enter the DBS certificate number'},
-                                                widget=dbs_certificate_number_widget)
+    dbs_certificate_number = forms.IntegerField(
+        label='DBS certificate number',
+        help_text='12-digit number on your certificate',
+        required=True,
+        error_messages={'required': 'Please enter the DBS certificate number'},
+        widget=dbs_certificate_number_widget)
     choice_field_name = 'cautions_convictions'
 
     def __init__(self, *args, **kwargs):
@@ -169,14 +175,17 @@ class DBSCheckCapitaForm(DBSCheckDetailsForm):
     """
     GOV.UK form for the Criminal record check: Capita page
     """
+
     def get_choice_field_data(self):
-        return forms.ChoiceField(label='Do you have any criminal cautions or convictions?',
-                                 help_text='Include any information recorded on your certificate',
-                                 choices=self.get_options(),
-                                 widget=InlineRadioSelect,
-                                 required=True,
-                                 error_messages={
-                                     'required': 'Please say if you have any cautions or convictions'})
+        return forms.ChoiceField(
+            label='Do you have any criminal cautions or convictions?',
+            help_text='Include any information recorded on your certificate',
+            choices=self.get_options(),
+            widget=InlineRadioSelect,
+            required=True,
+            error_messages={
+                'required': 'Please say if you have any cautions or convictions'})
+
 
 class DBSCheckNoCapitaForm(DBSCheckDetailsForm):
     """

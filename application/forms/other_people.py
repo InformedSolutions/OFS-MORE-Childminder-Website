@@ -4,17 +4,17 @@ from datetime import date
 
 from django import forms
 from django.conf import settings
-from govuk_forms.widgets import InlineRadioSelect, NumberInput
+from govuk_forms.widgets import InlineRadioSelect
 
+from ..business_logic import show_resend_and_change_email
 from ..customfields import CustomSplitDateFieldDOB
 from ..forms.childminder import ChildminderForms
 from ..forms_helper import full_stop_stripper
 from ..models import (AdultInHome,
-                                Application,
-                                ChildInHome,
-                                UserDetails)
+                      Application,
+                      ChildInHome,
+                      UserDetails)
 from ..utils import date_formatter
-from ..business_logic import show_resend_and_change_email
 
 logger = logging.getLogger()
 
@@ -49,7 +49,8 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
                                    required=True,
                                    error_messages={'required': "Please say how the person is related to you"})
     email_address = forms.CharField(label='Email address',
-                                    help_text='We need to email them simple questions about their health', required=False)
+                                    help_text='We need to email them simple questions about their health',
+                                    required=False)
 
     def __init__(self, *args, **kwargs):
         """
@@ -311,15 +312,6 @@ class OtherPeopleApproaching16Form(ChildminderForms):
 class OtherPeopleNumberOfChildrenForm(ChildminderForms):
     """
     GOV.UK form for the People in your home: number of children page
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
-    auto_replace_widgets = True
-
-
-class OtherPeopleSummaryForm(ChildminderForms):
-    """
-    GOV.UK form for the People in your home: summary page
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
