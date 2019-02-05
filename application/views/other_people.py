@@ -1,30 +1,20 @@
-import collections
+import logging
 import logging
 import os
 import random
 import string
-
-import pytz
-
-from django.utils import timezone
-
-import calendar
 from datetime import datetime
 
+import pytz
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
+from django.utils import timezone
 
+from application.notify import send_email
 from application.utils import build_url
-from application.views.your_children import __create_child_table
 from .. import status
-from ..table_util import create_tables, Table, submit_link_setter
-from ..summary_page_data import other_adult_link_dict, other_adult_name_dict, other_child_link_dict, \
-    other_child_name_dict, other_adult_summary_link_dict, other_adult_summary_name_dict, \
-    other_child_summary_name_dict, other_child_summary_link_dict, child_not_in_the_home_link_dict, \
-    child_not_in_the_home_name_dict, other_child_not_in_the_home_summary_name_dict, \
-    other_child_not_in_the_home_summary_link_dict
 from ..business_logic import (health_check_email_resend_logic,
                               other_people_adult_details_logic,
                               rearrange_adults,
@@ -32,22 +22,18 @@ from ..business_logic import (health_check_email_resend_logic,
                               reset_declaration,
                               show_resend_and_change_email)
 from ..forms import (
-                     OtherPeopleAdultDetailsForm,
-                     OtherPeopleApproaching16Form,
-                     OtherPeopleEmailConfirmationForm,
-                     OtherPeopleResendEmailForm,
-                     OtherPeopleSummaryForm)
+    OtherPeopleAdultDetailsForm,
+    OtherPeopleApproaching16Form,
+    OtherPeopleEmailConfirmationForm,
+    OtherPeopleResendEmailForm)
 from ..models import (AdultInHome,
                       ApplicantName,
                       ApplicantPersonalDetails,
                       Application,
                       ArcComments,
-                      ChildInHome, Child, ApplicantHomeAddress)
-from application.notify import send_email
-
+                      ChildInHome, ApplicantHomeAddress)
 
 logger = logging.getLogger()
-from application.models import (ChildcareType)
 
 
 def other_people_adult_details(request):
@@ -253,256 +239,14 @@ def other_people_approaching_16(request):
                 'application_id': application_id_local,
                 'people_in_home_status': application.people_in_home_status
             }
-            return HttpResponseRedirect(reverse(get_success_url(application_id_local)) + '?id=' + application_id_local, variables)
+            return HttpResponseRedirect(reverse(get_success_url(application_id_local)) + '?id=' + application_id_local,
+                                        variables)
         else:
             variables = {
                 'form': form,
                 'application_id': application_id_local
             }
             return render(request, 'other-people-approaching-16.html', variables)
-
-
-def other_people_summary(request):
-    """
-    Method returning the template for the People in your home: summary page (for a given application)
-    displaying entered data for this task and navigating to the task list when successfully completed
-    :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered People in your home: summary template
-    """
-
-    def __create_child_not_in_the_home_table(child):
-        child_table = __create_child_table(child)
-        child_table['table_object'].other_people_numbers = '&children=' + str(child.child) + '&remove=0'
-
-        return child_table
-
-    if request.method == 'GET':
-        application_id_local = request.GET["id"]
-        adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
-        children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
-        children_not_in_the_home_list = Child.objects.filter(application_id=application_id_local).order_by('child')
-        form = OtherPeopleSummaryForm()
-        application = Application.objects.get(pk=application_id_local)
-        adult_table_list = []
-        adult_health_check_status_list = []
-        display_buttons_list = []
-
-        for index, adult in enumerate(adults_list):
-
-            name = ' '.join([adult.first_name, (adult.middle_names or ''), adult.last_name])
-            birth_date = ' '.join([str(adult.birth_day), calendar.month_name[adult.birth_month], str(adult.birth_year)])
-
-            # Add display_buttons for each adult
-            is_review = application.application_status == 'FURTHER_INFORMATION'
-
-            try:
-                adult_health_check_status = adult.health_check_status
-            except KeyError:
-                adult_health_check_status = ''
-
-            display_buttons = show_resend_and_change_email(adult_health_check_status, is_review)
-            display_buttons_list.append(display_buttons)
-
-            childcare_record = ChildcareType.objects.get(
-                application_id=application_id_local)
-
-            if childcare_record.zero_to_five is True:
-                if application.people_in_home_status == 'IN_PROGRESS' and any(
-                        [adult.email_resent_timestamp is None for adult in adults_list]):
-
-                    other_adult_fields = collections.OrderedDict([
-                        ('full_name', name),
-                        ('date_of_birth', birth_date),
-                        ('relationship', adult.relationship),
-                        ('email', adult.email),
-                        ('lived_abroad', adult.lived_abroad),
-                        ('military_base', adult.military_base),
-                        ('capita', adult.capita),
-                        ('dbs_certificate_number', adult.dbs_certificate_number),
-                    ])
-
-                else :
-                    other_adult_fields = collections.OrderedDict([
-                        ('health_check_status', adult.health_check_status),
-                        ('full_name', name),
-                        ('date_of_birth', birth_date),
-                        ('relationship', adult.relationship),
-                        ('email', adult.email),
-                        ('lived_abroad', adult.lived_abroad),
-                        ('military_base', adult.military_base),
-                        ('capita', adult.capita),
-                        ('dbs_certificate_number', adult.dbs_certificate_number),
-                    ])
-            else:
-                if application.people_in_home_status == 'IN_PROGRESS' and any(
-                        [adult.email_resent_timestamp is None for adult in adults_list]):
-
-                    other_adult_fields = collections.OrderedDict([
-                        ('full_name', name),
-                        ('date_of_birth', birth_date),
-                        ('relationship', adult.relationship),
-                        ('email', adult.email),
-                        ('lived_abroad', adult.lived_abroad),
-                        ('capita', adult.capita),
-                        ('dbs_certificate_number', adult.dbs_certificate_number),
-                    ])
-
-                else:
-
-                    other_adult_fields = collections.OrderedDict([
-                        ('health_check_status', adult.health_check_status),
-                        ('full_name', name),
-                        ('date_of_birth', birth_date),
-                        ('relationship', adult.relationship),
-                        ('email', adult.email),
-                        ('lived_abroad', adult.lived_abroad),
-                        ('capita', adult.capita),
-                        ('dbs_certificate_number', adult.dbs_certificate_number),
-                    ])
-
-            # If adult health check status is not complete, add to health check status list
-            if adult.health_check_status != 'Done':
-                adult_health_check_status_list.append('To do')
-
-            # If the adult health check status is marked as flagged, set the email resend limit to 0
-            if adult.health_check_status == 'Started':
-                adult.email_resent = 0
-                adult.save()
-
-            # Counter for table object to correctly set link in generic-error-summary template for flagged health check.
-            table = Table([adult.pk])
-            table.loop_counter = index + 1
-
-            other_adult_table = collections.OrderedDict({
-                'table_object': table,
-                'fields': other_adult_fields,
-                'title': name,
-                'error_summary_title': ('There was a problem with {0}\'s details'.format(name))
-            })
-
-            adult_table_list.append(other_adult_table)
-
-        # Set People in home status to Done if all adult health check statuses have been completed
-        if len(adult_health_check_status_list) == 0:
-            status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
-
-        back_link_addition = '&adults=' + str((len(adult_table_list))) + '&remove=0'
-
-        for table in adult_table_list:
-            table['other_people_numbers'] = back_link_addition
-
-        adult_table_list = create_tables(adult_table_list, other_adult_name_dict, other_adult_link_dict)
-
-        child_table_list = []
-        for child in children_list:
-            name = ' '.join([child.first_name, (child.middle_names or ''), child.last_name])
-
-            other_child_fields = collections.OrderedDict([
-                ('full_name', name),
-                ('date_of_birth', ' '.join([str(child.birth_day), calendar.month_name[child.birth_month],
-                                            str(child.birth_year)])),
-                ('relationship', child.relationship)
-            ])
-
-            other_child_table = collections.OrderedDict({
-                'table_object': Table([child.pk]),
-                'fields': other_child_fields,
-                'title': name,
-                'error_summary_title': ('There was a problem with {0}\'s details'.format(name))
-            })
-
-            child_table_list.append(other_child_table)
-
-        back_link_addition = '&children=' + str(len(child_table_list)) + '&remove=0'
-
-        for table in child_table_list:
-            table['other_people_numbers'] = back_link_addition
-        child_table_list = create_tables(child_table_list, other_child_name_dict, other_child_link_dict)
-
-        # Populating Children not in the Home:
-        children_not_in_the_home_table_list = [__create_child_not_in_the_home_table(child) for child in children_not_in_the_home_list]
-        children_not_in_the_home_table = create_tables(children_not_in_the_home_table_list,
-                                                       child_not_in_the_home_name_dict, child_not_in_the_home_link_dict)
-
-        adults_in_home = bool(adult_table_list)
-        children_in_home = bool(child_table_list)
-        children_not_in_home = bool(children_not_in_the_home_table_list)
-
-        adult_table = collections.OrderedDict({
-            'table_object': Table([application_id_local]),
-            'fields': {'adults_in_home': adults_in_home},
-            'title': 'Adults in the home',
-            'error_summary_title': 'There was a problem'
-        })
-
-        child_table = collections.OrderedDict({
-            'table_object': Table([application_id_local]),
-            'fields': {'children_in_home': children_in_home},
-            'title': 'Children in the home',
-            'error_summary_title': 'There was a problem'
-        })
-
-        not_child_table = collections.OrderedDict({
-            'table_object': Table([application_id_local]),
-            'fields': {'own_children_not_in_home': children_not_in_home},
-            'title': 'Your children',
-            'error_summary_title': 'There was a problem'
-        })
-
-        adult_table = create_tables([adult_table], other_adult_summary_name_dict, other_adult_summary_link_dict)
-        child_table = create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
-        not_child_table = create_tables([not_child_table], other_child_not_in_the_home_summary_name_dict, other_child_not_in_the_home_summary_link_dict)
-
-        table_list = adult_table + adult_table_list + child_table + child_table_list
-        if application.own_children_not_in_home is not None:
-            table_list += not_child_table + children_not_in_the_home_table
-
-        if application.application_status == 'FURTHER_INFORMATION':
-            form.error_summary_template_name = 'returned-error-summary.html'
-            form.error_summary_title = "There was a problem"
-
-        sending_emails = application.adults_in_home is True and any(
-                [adult.email_resent_timestamp is None for adult in adults_list])
-
-        num_children_not_in_home = len(Child.objects.filter(application_id=application_id_local))
-
-        variables = {
-            'page_title': 'Check your answers: people in the home',
-            'form': form,
-            'application_id': application_id_local,
-            'table_list': table_list,
-            'turning_16': application.children_turning_16,
-            'people_in_home_status': application.people_in_home_status,
-            'display_buttons_list': display_buttons_list,
-            'sending_emails': sending_emails,
-            'num_children_not_in_home': num_children_not_in_home
-        }
-        variables = submit_link_setter(variables, table_list, 'people_in_home', application_id_local)
-
-        return render(request, 'generic-summary-template.html', variables)
-
-    if request.method == 'POST':
-        application_id_local = request.POST["id"]
-        application = Application.objects.get(application_id=application_id_local)
-
-        # If reaching the summary page for the first time
-        if application.people_in_home_status == 'IN_PROGRESS' or application.people_in_home_status == 'WAITING':
-            adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
-            if any(adult.health_check_status == 'To do' for adult in adults_list):
-                status.update(application_id_local, 'people_in_home_status', 'WAITING')
-
-            if application.adults_in_home is True and any(
-                    [adult.email_resent_timestamp is None for adult in adults_list]):
-                status.update(application_id_local, 'people_in_home_status', 'WAITING')
-                return HttpResponseRedirect(
-                    reverse('Other-People-Email-Confirmation-View') + '?id=' + application_id_local)
-            elif application.adults_in_home is False:
-                status.update(application_id_local, 'people_in_home_status', 'COMPLETED')
-                return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
-            else:
-                return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
-        else:
-            return HttpResponseRedirect(reverse('Task-List-View') + '?id=' + application_id_local)
 
 
 def other_people_email_confirmation(request):
@@ -642,7 +386,8 @@ def other_people_resend_email(request):
             if adult_record.health_check_status == 'Started':
                 variables['error_summary_title'] = "There was a problem with " \
                                                    + name + "'s answers to the health questions"
-                variables['arc_comment'] = ArcComments.objects.get(table_pk=adult_record.pk, field_name='health_check_status').comment
+                variables['arc_comment'] = ArcComments.objects.get(table_pk=adult_record.pk,
+                                                                   field_name='health_check_status').comment
 
             return render(request, 'other-people-resend-email.html', variables)
 
@@ -707,7 +452,8 @@ def other_people_resend_email(request):
                 # If health check has been flagged, remove flag once email resent; else, pass.
                 # form.remove_flag won't work because form is simply a 'Continue' button - it has no fields.
                 try:
-                    adult_arc_comment = ArcComments.objects.get(table_pk=adult_record.pk, field_name='health_check_status')
+                    adult_arc_comment = ArcComments.objects.get(table_pk=adult_record.pk,
+                                                                field_name='health_check_status')
                     if adult_arc_comment.flagged:
                         adult_arc_comment.flagged = False
                         adult_arc_comment.save()
