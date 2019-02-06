@@ -6,7 +6,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 
 from application.forms.PITH_forms.PITH_check_your_answers_form import PITHCheckYourAnswersForm
-from application.models import AdultInHome, Application, ChildInHome, Child, ChildcareType
+from application.models import AdultInHome, Application, ChildInHome, Child, ChildcareType, ApplicantHomeAddress
 from application.summary_page_data import other_child_name_dict, \
     other_child_link_dict, other_adult_summary_name_dict, other_adult_summary_link_dict, other_child_summary_name_dict, \
     other_child_summary_link_dict, other_child_not_in_the_home_summary_name_dict, \
@@ -139,26 +139,30 @@ class PITHCheckYourAnswersView(PITHTemplateView):
         return create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
 
     def get_children_not_in_home_header_table(self, app_id, application):
-        known_to_social_services_pith = application.known_to_social_services_pith
-        reasons_known_to_social_services_pith = application.reasons_known_to_social_services_pith
+        if ApplicantHomeAddress.childcare_address == 'Same as home address':
+            known_to_social_services_pith = application.known_to_social_services_pith
+            reasons_known_to_social_services_pith = application.reasons_known_to_social_services_pith
 
-        if known_to_social_services_pith is True:
-            not_child_table = {
-                'table_object': Table([app_id]),
-                'fields': {'known_to_social_services_pith': known_to_social_services_pith,
-                           'reasons_known_to_social_services_pith': reasons_known_to_social_services_pith},
-                'title': 'Your own children',
-                'error_summary_title': 'There was a problem'
-            }
+
+            if known_to_social_services_pith is True:
+                not_child_table = {
+                    'table_object': Table([app_id]),
+                    'fields': {'known_to_social_services_pith': known_to_social_services_pith,
+                               'reasons_known_to_social_services_pith': reasons_known_to_social_services_pith},
+                    'title': 'Your own children',
+                    'error_summary_title': 'There was a problem'
+                }
+            else:
+                not_child_table = {
+                    'table_object': Table([app_id]),
+                    'fields': {'known_to_social_services_pith': known_to_social_services_pith},
+                    'title': 'Your own children',
+                    'error_summary_title': 'There was a problem'
+                }
+            return create_tables([not_child_table], other_child_not_in_the_home_summary_name_dict,
+                                 other_child_not_in_the_home_summary_link_dict)
         else:
-            not_child_table = {
-                'table_object': Table([app_id]),
-                'fields': {'known_to_social_services_pith': known_to_social_services_pith},
-                'title': 'Your own children',
-                'error_summary_title': 'There was a problem'
-            }
-        return create_tables([not_child_table], other_child_not_in_the_home_summary_name_dict,
-                             other_child_not_in_the_home_summary_link_dict)
+            pass
 
     def get_adults_table(self, app_id, application, adults_list):
         # TODO: Move me to a Business Logic Function
