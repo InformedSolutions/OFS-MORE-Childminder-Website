@@ -6,7 +6,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 
 from application.forms.PITH_forms.PITH_check_your_answers_form import PITHCheckYourAnswersForm
-from application.models import AdultInHome, Application, ChildInHome, Child, ChildcareType
+from application.models import AdultInHome, Application, ChildInHome, Child, ChildcareType, ApplicantHomeAddress, \
+    ApplicantPersonalDetails
 from application.summary_page_data import other_child_name_dict, \
     other_child_link_dict, other_adult_summary_name_dict, other_adult_summary_link_dict, other_child_summary_name_dict, \
     other_child_summary_link_dict, other_child_not_in_the_home_summary_name_dict, \
@@ -30,6 +31,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
     def get_context_data(self, **kwargs):
         application_id = get_id(self.request)
         application = get_application_object(application_id)
+        personal_detail_id = ApplicantPersonalDetails.get_id(app_id=application_id)
 
         adults_list, children_list, children_not_in_home_list = self.get_lists(application_id)
 
@@ -62,7 +64,10 @@ class PITHCheckYourAnswersView(PITHTemplateView):
 
         # Create Table List
         table_list = adults_header_table + adults_table + children_header_table + children_table
-        if application.known_to_social_services_pith is not None:
+        applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                         current_address=True)
+        location_of_childcare = applicant_home_address_record.childcare_address
+        if location_of_childcare is True:
             table_list += children_not_in_home_header_table
 
         context = {
@@ -143,20 +148,21 @@ class PITHCheckYourAnswersView(PITHTemplateView):
         reasons_known_to_social_services_pith = application.reasons_known_to_social_services_pith
 
         if known_to_social_services_pith is True:
-            not_child_table = {
-                'table_object': Table([app_id]),
-                'fields': {'known_to_social_services_pith': known_to_social_services_pith,
-                           'reasons_known_to_social_services_pith': reasons_known_to_social_services_pith},
-                'title': 'Your own children',
-                'error_summary_title': 'There was a problem'
-            }
+            fields = collections.OrderedDict([
+                ('known_to_social_services_pith', known_to_social_services_pith),
+                ('reasons_known_to_social_services_pith', reasons_known_to_social_services_pith)
+            ])
         else:
-            not_child_table = {
-                'table_object': Table([app_id]),
-                'fields': {'known_to_social_services_pith': known_to_social_services_pith},
-                'title': 'Your own children',
-                'error_summary_title': 'There was a problem'
-            }
+            fields = collections.OrderedDict([
+                ('known_to_social_services_pith', known_to_social_services_pith),
+            ])
+
+        not_child_table = {
+            'table_object': Table([app_id]),
+            'fields': fields,
+            'title': 'Your own children',
+            'error_summary_title': 'There was a problem'
+        }
         return create_tables([not_child_table], other_child_not_in_the_home_summary_name_dict,
                              other_child_not_in_the_home_summary_link_dict)
 
@@ -177,16 +183,16 @@ class PITHCheckYourAnswersView(PITHTemplateView):
                 ('lived_abroad', adult.lived_abroad),
                 ('capita', adult.capita),
                 ('dbs_certificate_number', adult.dbs_certificate_number),
-                # ('known_to_council', adult.known_to_council)
+                ('known_to_council', adult.known_to_council)
             ]
 
             if childcare_record.zero_to_five is True:
                 # Append military_base
                 base_adult_fields += [('military_base', adult.military_base)]
 
-            #  if adult.known_to_council is True:
-            #     # Append reasons_known_to_council
-            #    base_adult_fields += [('reasons_known_to_council', adult.reasons_known_to_council)]
+            if adult.known_to_council is True:
+            # Append reasons_known_to_council
+               base_adult_fields += [('reasons_known_to_council_health_check', adult.reasons_known_to_council_health_check)]
 
             if application.people_in_home_status == 'IN_PROGRESS' and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):

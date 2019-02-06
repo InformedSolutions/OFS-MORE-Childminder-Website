@@ -169,8 +169,8 @@ other_adult_link_dict = collections.OrderedDict([('health_check_status', 'Other-
                                                 ('military_base', 'PITH-Military-View'),
                                                 ('capita', 'PITH-DBS-Check-View'),
                                                 ('dbs_certificate_number', 'PITH-DBS-Check-View'),
-                                                ('known_to_council', None),
-                                                ('reasons_known_to_council_health_check', None),
+                                                ('known_to_council', 'PITH-Adult-Details-View'),
+                                                ('reasons_known_to_council_health_check', 'PITH-Adult-Details-View'),
                                                 ('permission', 'Other-People-Adult-Permission-View'),
                                                  ])
 
