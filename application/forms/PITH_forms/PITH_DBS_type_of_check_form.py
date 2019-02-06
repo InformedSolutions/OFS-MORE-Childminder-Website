@@ -9,10 +9,9 @@ from application.forms.PITH_forms.PITH_base_forms.PITH_childminder_form_retrofit
 from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
 
 
-
-class PITHTypeOfCheckForm(PITHChildminderFormAdapter):
+class PITHDBSTypeOfCheckForm(PITHChildminderFormAdapter):
     """
-    GOV.UK form for the People in the Home: Non generic form for the TypeOfCheckView
+    GOV.UK form for the People in the Home: Non generic form for the PITHDBSTypeOfCheckView
     """
     field_label_classes = 'form-label-bold'
     error_summary_title = 'There was a problem on this page'
@@ -44,7 +43,7 @@ class PITHTypeOfCheckForm(PITHChildminderFormAdapter):
         # This is to prevent Python3.5 errors when not preserving order in which items are added to a dictionary.
         #
         # Thus we use the code in that __init__() and super back to the __init__() of forms.Form, using
-        # super(GOVUKForm, self).__init__(*args, **kwargs), not super(PITHDBSCheckForm, self).__init__(*args, **kwargs)
+        # super(GOVUKForm, self).__init__(*args, **kwargs), not super(PITHDBSTypeOfCheckForm, self).__init__(*args, **kwargs)
 
         kwargs.setdefault('label_suffix', '')
         super(GOVUKForm, self).__init__(*args, **kwargs)

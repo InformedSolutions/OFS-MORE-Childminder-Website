@@ -4,7 +4,7 @@ from datetime import datetime
 from application import dbs
 from application.business_logic import date_issued_within_three_months, update_adult_in_home
 from application.models import AdultInHome
-from application.forms.PITH_forms.PITH_type_of_check_form import PITHTypeOfCheckForm
+from application.forms.PITH_forms.PITH_DBS_type_of_check_form import PITHDBSTypeOfCheckForm
 from application.utils import get_id
 from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMultiRadioView
 
@@ -12,11 +12,11 @@ from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMu
 log = logging.getLogger('')
 
 
-class PITHTypeOfCheckView(PITHMultiRadioView):
+class PITHDBSTypeOfCheckView(PITHMultiRadioView):
 
-    template_name = 'PITH_templates/PITH_type_of_check.html'
-    form_class = PITHTypeOfCheckForm
-    success_url = 'PITH-Summary-View'
+    template_name = 'PITH_templates/PITH_DBS_type_of_check.html'
+    form_class = PITHDBSTypeOfCheckForm
+    success_url = 'PITH-DBS-Post-Or-Apply-View'
 
     capita_field = 'capita'
     on_update_field = 'on_update'
@@ -93,7 +93,7 @@ class PITHTypeOfCheckView(PITHMultiRadioView):
             capita_val = form.cleaned_data[form.capita_field_name] == 'True' \
                 if form.cleaned_data.get(form.capita_field_name, None) else None
             on_update_val = form.cleaned_data[form.on_update_field_name] == 'True' \
-                if form.cleaned_data.get(form.capita_field_name, None) else None
+                if form.cleaned_data.get(form.on_update_field_name, None) else None
 
             self.update_adult_in_home_fields(form.adult.pk, capita_val, on_update_val)
 

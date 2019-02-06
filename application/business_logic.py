@@ -1000,6 +1000,38 @@ def get_duplicate_dbs_index(application, candidate_dbs_certificate_number):
     return get_first_duplicate_index(dbs_numbers)
 
 
+def dbs_date_of_birth_no_match(application, candidate_dbs_certificate_number, response):
+
+    app_details = ApplicantPersonalDetails.objects.get(application_id=application.application_id)
+
+    record = getattr(response, 'record', None)
+    if record is None:
+        return False
+
+    return not _dbs_dob_matches(record, app_details.birth_year, app_details.birth_month, app_details.birth_day)
+
+
+def dbs_pith_date_of_birth_no_match(adult, response):
+
+    record = getattr(response, 'record', None)
+    if record is None:
+        return False
+
+    return not _dbs_dob_matches(record, adult.birth_year, adult.birth_month, adult.birth_day)
+
+
+def _dbs_dob_matches(dbs_record, year, month, day):
+    return datetime(year, month, day) == datetime.strptime(dbs_record['date_of_birth'], '%Y-%m-%d')
+
+
+def date_issued_within_three_months(date_issued):
+    now = datetime.today()
+    if now - timedelta(3*365/12) <= date_issued:
+        return True
+    else:
+        return False
+
+
 def childminder_dbs_number_duplication_check(application, candidate_dbs_certificate_number):
     """
     Helper function to determine whether any DBS numbers listed in the application are not unique

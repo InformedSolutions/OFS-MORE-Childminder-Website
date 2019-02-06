@@ -152,6 +152,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
 
         adults_table_list = []
         for index, adult in enumerate(adults_list):
+
             name = ' '.join([adult.first_name, (adult.middle_names or ''), adult.last_name])
             birth_date = ' '.join([str(adult.birth_day), calendar.month_name[adult.birth_month], str(adult.birth_year)])
 
@@ -161,13 +162,18 @@ class PITHCheckYourAnswersView(PITHTemplateView):
                 ('relationship', adult.relationship),
                 ('email', adult.email),
                 ('lived_abroad', adult.lived_abroad),
-                ('capita', adult.capita),
                 ('dbs_certificate_number', adult.dbs_certificate_number),
             ]
 
+            if adult.capita is not None:
+                base_adult_fields.append(('capita', adult.capita))
+
+            if adult.on_update is not None:
+                base_adult_fields.append(('on_update', adult.on_update))
+
             if childcare_record.zero_to_five is True:
                 # Append military_base
-                base_adult_fields += [('military_base', adult.military_base)]
+                base_adult_fields.append(('military_base', adult.military_base))
 
             if application.people_in_home_status == 'IN_PROGRESS' and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):

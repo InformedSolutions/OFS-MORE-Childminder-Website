@@ -108,9 +108,9 @@ urlpatterns = [
     url(r'^people/adults-checks-abroad/$', PITH_views.PITHAbroadCriminalView.as_view(), name='PITH-Abroad-Criminal-View'),
     url(r'^people/adults-military-bases/$', PITH_views.PITHMilitaryView.as_view(), name='PITH-Military-View'),
     url(r'^people/adults-MoD-checks/$', PITH_views.PITHMinistryView.as_view(), name='PITH-Ministry-View'),
-    url(r'^people/adult-dbs-checks/$', PITH_views.PITHDBSCheckView.as_view(), name='PITH-DBS-Check-View'),
-    url(r'^people/post-certificate/$', PITH_views.PITHPostView.as_view(), name='PITH-Post-View'),
-    url(r'^people/sign-up-update/$', PITH_views.PITHApplyView.as_view(), name='PITH-Apply-View'),
+    url(r'^people/adults-dbs-checks/$', PITH_views.PITHDBSCheckView.as_view(), name='PITH-DBS-Check-View'),
+    url(r'^people/adults-dbs-check-types/$', PITH_views.PITHDBSTypeOfCheckView.as_view(), name='PITH-DBS-Type-Of-Check-View'),
+    url(r'^people/adults-before-you-submit/$', PITH_views.PITHDBSPostOrApplyView.as_view(), name='PITH-DBS-Post-Or-Apply-View'),
 
     # Children
     url(r'^people/children/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
@@ -125,6 +125,7 @@ urlpatterns = [
         name='PITH-Own-Children-Select-View'),
     url(r'^people/enter-children-address/$', PITH_views.PITHOwnChildrenManualView,
         name='PITH-Own-Children-Manual-View'),
+
     url(r'^people/check-answers/$', PITH_views.PITHCheckYourAnswersView.as_view(), name='PITH-Summary-View'),
 
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),

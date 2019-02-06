@@ -1,0 +1,87 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Before you submit{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<div class="two-thirds">
+    {{form.error_summary}}
+
+    <form method="post" novalidate>
+        <div class="form-group">
+
+            <h1 class="form-title heading-large">
+                Before you submit
+            </h1>
+
+            {% if adult_dbs_list_apply_for_new %}
+                <h2 class="heading-medium">
+                    Apply for new DBS check
+                </h2>
+
+                <p>The following adults do not have an enhanced home-based check:</p>
+
+                <p>
+                    <ul style="list-style-type: disc; padding-left: 50px;">
+                        {% for adult in adult_dbs_list_apply_for_new %}
+                            <li>{{adult.get_full_name}}</li>
+                        {% endfor %}
+                    </ul>
+                </p>
+
+                <p>They need to apply for a new check using the
+                    <a href=" http://ofsteddbsapplication.co.uk/step-one.aspx" target="_blank">
+                        Ofstead DBS application website.</a></p>
+            {% endif %}
+
+            {%if adult_dbs_list_update_service_sign_up %}
+                <h2 class="heading-medium">
+                    Sign up to the Update Service
+                </h2>
+
+                <p>The following adults need to sign up to the
+                    <a href="https://secure.crbonline.gov.uk/crsc/apply?execution=e1s1" target="_blank">
+                        DBS update service</a>:</p>
+
+                <p>
+                    <ul style="list-style-type: disc; padding-left: 50px;">
+                        {% for adult in adult_dbs_list_update_service_sign_up %}
+                            <li>{{adult.get_full_name}}</li>
+                        {% endfor %}
+                    </ul>
+                <p>
+
+                <p>If they cannot do that, they must apply for a new check through the
+                    <a href=" http://ofsteddbsapplication.co.uk/step-one.aspx" target="_blank">
+                        Ofstead DBS application website.</a></p>
+            {% endif %}
+
+            {% if adult_dbs_list_update_service_check %}
+                <h2 class="heading-medium">
+                    DBS Update check
+                </h2>
+
+                <p>We'll check that the following adults are on the update service after you submit:</p>
+
+                <p>
+                    <ul style="list-style-type: disc; padding-left: 50px;">
+                        {% for adult in adult_dbs_list_update_service_check %}
+                            <li>{{adult.get_full_name}}</li>
+                        {% endfor %}
+                    </ul>
+                </p>
+
+                <p>Your application will be returned if they are not signed up to it.</p>
+            {% endif %}
+
+            {% csrf_token %}
+            <input type="submit" class="button" value="Continue">
+        </div>
+    </form>
+</div>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}

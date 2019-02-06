@@ -1,20 +1,12 @@
 from django.core.exceptions import ValidationError
-from django.test import TestCase, Client, modify_settings, tag
+from django.test import TestCase, Client, tag
 from .base import ApplicationTestBase
 from django.urls import reverse
 from unittest.mock import patch
 from django.http import HttpResponse
 
 from ...models import Application, CriminalRecordCheck
-
-
-@modify_settings(MIDDLEWARE={
-        'remove': [
-            'application.middleware.CustomAuthenticationHandler'
-        ]
-    })
-class NoMiddlewareTestCase(TestCase):
-    pass
+from ..testutils import NoMiddlewareTestCase
 
 
 class DBSTemplateViewTestCase(NoMiddlewareTestCase):
@@ -57,6 +49,7 @@ class DBSTemplateViewTestCase(NoMiddlewareTestCase):
             self.assertTrue(response.url == correct_url)
         else:
             raise self.skipTest('view_url_name or correct_url not set')
+
 
 class DBSGoodConductViewTests(DBSTemplateViewTestCase):
     def setUp(self):

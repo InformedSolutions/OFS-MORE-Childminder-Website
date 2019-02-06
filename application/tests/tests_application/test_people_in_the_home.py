@@ -1,16 +1,12 @@
-from django.test import modify_settings, TestCase
+from django.test import TestCase
 from django.urls import reverse
 
 from application import models
 from application import views
+from ..testutils import NoMiddlewareTestCase
 
 
-@modify_settings(MIDDLEWARE={
-        'remove': [
-            'application.middleware.CustomAuthenticationHandler'
-        ]
-    })
-class PeopleInTheHomeFunctionalTests(TestCase):
+class PeopleInTheHomeFunctionalTests(NoMiddlewareTestCase):
     @classmethod
     def setUpClass(cls):
         super(PeopleInTheHomeFunctionalTests, cls).setUpClass()
@@ -167,7 +163,13 @@ class PeopleInTheHomeFunctionalTests(TestCase):
         self.skipTest('functionalityNotImplemented')
 
     def test_can_render_type_of_check_page(self):
-        self.skipTest('functionalityNotImplemented')
+        response = self.client.get(reverse('PITH-Ministry-View'),
+                                   data={
+                                       'id': self.app_id,
+                                   })
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.resolver_match.func.__name__, views.PITHMinistryView.__name__)
 
     def test_type_of_check_page_renders_with_one_form_per_adult_whose_dbs_number_not_on_the_capita_dbs_list(self):
         self.skipTest('functionalityNotImplemented')
