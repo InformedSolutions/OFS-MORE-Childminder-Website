@@ -28,8 +28,8 @@ class AdultInHome(models.Model):
     validated = models.BooleanField(default=False)
     current_treatment = models.NullBooleanField(null=True)
     serious_illness = models.NullBooleanField(null=True)
-    known_to_council=models.NullBooleanField(null=True)
-    children_details=models.TextField(default='', null=True)
+    known_to_council = models.NullBooleanField(null=True)
+    reasons_known_to_council_health_check = models.TextField(default='', null=True)
     hospital_admission = models.NullBooleanField(null=True)
     health_check_status = models.CharField(max_length=50, default='To do')
     email_resent = models.IntegerField(default=0)
@@ -63,7 +63,7 @@ class AdultInHome(models.Model):
             'relationship',
             'email',
             'dbs_certificate_number',
-            'health_check_status'
+            'health_check_status',
         )
 
     @classmethod

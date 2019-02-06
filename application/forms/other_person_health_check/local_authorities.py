@@ -13,7 +13,7 @@ class LocalAuthorities(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     error_summary_title = 'There was a problem on this page'
     auto_replace_widgets = True
-    reveal_conditionally = {'known_to_council': {True: 'children_details'}}
+    reveal_conditionally = {'known_to_council': {True: 'reasons_known_to_council_health_check'}}
 
 
     choices = (
@@ -22,20 +22,20 @@ class LocalAuthorities(ChildminderForms):
     )
 
     known_to_council = forms.ChoiceField(choices=choices, widget=ConditionalPostInlineRadioSelect, required=True,
-                                      label='Are you known to your council in regards to your own children?',
-                                      error_messages={'required': 'Please answer yes or no'})
+                                      label='Are you known to council social services in regards to your own children?',
+                                      error_messages={'required': 'Please say if you are known to council social services in regards to your own children'})
 
-    children_details = forms.CharField(label='Enter the names, birth dates and addresses of your children',
+    reasons_known_to_council_health_check = forms.CharField(label='Tell us why',
                                       widget=forms.Textarea(), required=True,
-                                      error_messages={'required': 'Please give the names, birth dates and addresses of your children'})
+                                      error_messages={'required': 'You must tell us why'})
 
     def clean(self):
         cleaned_data = super().clean()
         known_to_council = cleaned_data.get('known_to_council')
-        children_details = cleaned_data.get('children_details')
+        reasons_known_to_council_health_check = cleaned_data.get('reasons_known_to_council_health_check')
 
         if known_to_council == 'True':
-            if children_details is '':
-                self.add_error('children_details', 'Please give the names, birth dates and addresses of your children')
+            if reasons_known_to_council_health_check is '':
+                self.add_error('reasons_known_to_council_health_check', 'Are you known to council social services in regards to your own children?')
 
         return cleaned_data

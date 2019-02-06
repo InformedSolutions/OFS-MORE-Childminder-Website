@@ -40,6 +40,9 @@ ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL')
 # Base URL of integration adapter for interfacing with NOO
 INTEGRATION_ADAPTER_URL = os.environ.get('APP_INTEGRATION_ADAPTER')
 
+# Base URL of the DBS check API
+DBS_URL = os.environ.get('APP_DBS_URL')
+
 PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
 
 EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
