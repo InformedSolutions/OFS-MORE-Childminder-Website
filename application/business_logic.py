@@ -963,7 +963,6 @@ def childminder_dbs_duplicates_household_member_check(application, candidate_dbs
         adults_dbs_list = [adult.dbs_certificate_number for adult in adults if not adult.pk == adult_record.pk]
     else:
         adults_dbs_list = [adult.dbs_certificate_number for adult in adults]
-
     return candidate_dbs_certificate_number in adults_dbs_list
 
 
@@ -1000,20 +999,22 @@ def get_duplicate_dbs_index(application, candidate_dbs_certificate_number):
     return get_first_duplicate_index(dbs_numbers)
 
 
-def dbs_date_of_birth_no_match(application, candidate_dbs_certificate_number, response):
-
-    app_details = ApplicantPersonalDetails.objects.get(application_id=application.application_id)
-
-    record = getattr(response, 'record', None)
+def dbs_date_of_birth_no_match(application, record):
+    """
+    :param application: the application to be tested against
+    :param record: the record from the dbs api
+    :return: a boolean to represent if there is no match between the applicant dob and the dbs dob
+    """
     if record is None:
         return False
+
+    app_details = ApplicantPersonalDetails.objects.get(application_id=application.application_id)
 
     return not _dbs_dob_matches(record, app_details.birth_year, app_details.birth_month, app_details.birth_day)
 
 
-def dbs_pith_date_of_birth_no_match(adult, response):
+def dbs_pith_date_of_birth_no_match(adult, record):
 
-    record = getattr(response, 'record', None)
     if record is None:
         return False
 
@@ -1025,8 +1026,12 @@ def _dbs_dob_matches(dbs_record, year, month, day):
 
 
 def date_issued_within_three_months(date_issued):
+    """
+    :param date_issued: the issue date of the dbs
+    :return: a boolean to represent if there the dbs was issued within three months of today
+    """
     now = datetime.today()
-    if now - timedelta(3*365/12) <= date_issued:
+    if now - timedelta(3 * 365 / 12) <= date_issued:
         return True
     else:
         return False
