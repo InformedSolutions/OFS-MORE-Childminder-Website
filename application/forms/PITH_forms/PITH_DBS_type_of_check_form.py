@@ -119,36 +119,3 @@ class PITHDBSTypeOfCheckForm(PITHChildminderFormAdapter):
             ])
         else:
             return collections.OrderedDict()
-
-    # TODO
-    # def check_flag(self):
-    #     """
-    #     Custom check_flag method for the PITHTypeOfCheckForm.
-    #
-    #     This will:
-    #         - Implement the parent class check_flag method.
-    #         - Then see if the 'dbs_certificate_number' is flagged.
-    #         - If it is flagged AND on_update is True (that is to say, that the person in the home has a
-    #           non-capita/non-Ofsted DBS), then the flag is moved from the dbs_certificate_number field to the
-    #           'dbs_certificate_number_no_update' field.
-    #
-    #     This is required because:
-    #         - There is a single database table for the dbs_certificate_number in the database.
-    #         - The ARC flag is stored against a field with the name 'dbs_certificate_number', not against one named
-    #           'dbs_certificate_number_no_update'.
-    #         - So the parent class check_flag() method will add the flag against the 'dbs_certificate_number' field, even
-    #           if the person in the home has a non-catpita/non-Ofsted DBS.
-    #
-    #     Doing this here rather than in ARC means that ARC is consistent, whilst all bespoke PITH logic remains grouped
-    #     together.
-    #
-    #     :return: None
-    #     """
-    #
-    #     super(PITHTypeOfCheckForm, self).check_flag()
-    #     if self.initial[self.capita_field_name] is not None and\
-    #             self.dbs_field_name in self.errors and\
-    #             not self.initial[self.capita_field_name]:
-    #         error = self.errors.pop(self.dbs_field_name)
-    #         self.add_error(self.dbs_field_no_update_name[:-36], error)  # index to remove uuid. add_error will append it
-    #

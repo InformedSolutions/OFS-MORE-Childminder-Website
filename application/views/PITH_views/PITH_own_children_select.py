@@ -9,6 +9,7 @@ from application.forms import ChildAddressForm, YourChildrenAddressLookupForm
 from application.models import Child, Application, ChildAddress, AdultInHome
 from application.utils import build_url, get_id
 from application.views.your_children import __remove_arc_address_flag, __get_next_child_number_for_address_entry
+from application.business_logic import awaiting_pith_dbs_action_from_user, find_dbs_status
 
 logger = logging.getLogger()
 
@@ -143,9 +144,11 @@ def __own_children_address_selection_post_handler(request, template, success_url
         if next_child is None:
 
             invalid_adults_url, valid_adults_url = success_url
-            adults = AdultInHome.objects.filter(application_id=application_id)
 
-            if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+            # Does user still need to take action wrt PITH DBS checks?
+            if awaiting_pith_dbs_action_from_user(
+                    find_dbs_status(adult.dbs_certificate_number, adult, adult.capita, adult.on_update)
+                    for adult in AdultInHome.objects.filter(application_id=application_id)):
 
                 redirect_url = invalid_adults_url
 

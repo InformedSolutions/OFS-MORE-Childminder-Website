@@ -15,7 +15,7 @@ from application.forms.PITH_forms.PITH_base_forms.PITH_childminder_form_retrofit
 from application.models import Application
 
 from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
-from application.business_logic import dbs_matches_childminder_dbs, dbs_pith_date_of_birth_no_match
+from application.business_logic import dbs_matches_childminder_dbs, find_dbs_status, DBSStatus
 
 
 log = logging.getLogger(__name__)
@@ -36,7 +36,9 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
         self.adult = kwargs.pop('adult')
         self.dbs_field = kwargs.pop('dbs_field')
         self.pk = self.adult.pk
-        self.dbs_record = None
+
+        # stores the status of the dbs number after looking it up as part of validation
+        self.dbs_status = None
 
         self.dbs_field_name = self.dbs_field + str(self.adult.pk)
 
@@ -47,12 +49,6 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
         super().__init__(*args, **kwargs)
 
         self.field_list = [*self.fields]
-
-    def get_options(self):
-        return (
-            (True, 'Yes'),
-            (False, 'No')
-        )
 
     def get_dbs_field_data(self):
         dbs_certificate_number_widget = NumberInput()
@@ -83,9 +79,10 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
         # if dbs number looks ok, fetch dbs record for further checking
         if len(self.errors.get(self.dbs_field_name, ())) == 0:
 
-            dbs_record_response = dbs.read(cleaned_dbs_field)
+            # store status for use by view, after validation
+            self.dbs_status = find_dbs_status(cleaned_dbs_field, self.adult)
 
-            if dbs_pith_date_of_birth_no_match(self.adult, dbs_record_response):
+            if self.dbs_status == DBSStatus.DOB_MISMATCH:
                 self.add_error(self.dbs_field, 'Check your DBS certificate. '
                                                'The number you entered does not match your number held by DBS')
 

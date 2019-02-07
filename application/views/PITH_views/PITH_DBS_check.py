@@ -7,7 +7,7 @@ from application.models import AdultInHome
 from application.forms.PITH_forms.PITH_DBS_check_form import PITHDBSCheckForm
 from application.utils import get_id
 from application.views.PITH_views.base_views.PITH_multi_form_view import PITHMultiFormView
-from application.business_logic import update_adult_in_home, date_issued_within_three_months
+from application.business_logic import update_adult_in_home, DBSStatus
 
 # Initiate logging
 log = logging.getLogger('')
@@ -73,14 +73,9 @@ class PITHDBSCheckView(PITHMultiFormView):
 
         ok_url, need_info_url = self.success_url
 
-        # anyone not on capita list?
-        if any(form.dbs_record is None for form in form_list):
+        if any(form.dbs_status in (DBSStatus.NEED_ASK_IF_CAPITA, DBSStatus.NEED_ASK_IF_ON_UPDATE)
+               for form in form_list):
             url = need_info_url
-        # any dbs not recent enough?
-        elif any(not date_issued_within_three_months(datetime.strptime(form.dbs_record['date_of_issue'], "%Y-%m-%d"))
-                 for form in form_list):
-            url = need_info_url
-        # should all be ok
         else:
             url = ok_url
 

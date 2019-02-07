@@ -148,8 +148,8 @@ other_adult_link_dict = collections.OrderedDict([('health_check_status', 'Other-
                                                 ('lived_abroad', 'PITH-Lived-Abroad-View'),
                                                 ('military_base', 'PITH-Military-View'),
                                                 ('dbs_certificate_number', 'PITH-DBS-Check-View'),
-                                                ('capita', 'PITH-DBS-Type-Of-Check-View'),
-                                                ('on_update', 'PITH-DBS-Type-Of-Check-View'),
+                                                ('capita', 'PITH-DBS-Check-View'),
+                                                ('on_update', 'PITH-DBS-Check-View'),
                                                 ('permission', 'Other-People-Adult-Permission-View')])
 
 ###

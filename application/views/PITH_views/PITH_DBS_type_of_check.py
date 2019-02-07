@@ -2,7 +2,7 @@ import logging
 
 from datetime import datetime
 from application import dbs
-from application.business_logic import date_issued_within_three_months, update_adult_in_home
+from application.business_logic import update_adult_in_home, find_dbs_status, DBSStatus
 from application.models import AdultInHome
 from application.forms.PITH_forms.PITH_DBS_type_of_check_form import PITHDBSTypeOfCheckForm
 from application.utils import get_id
@@ -51,8 +51,10 @@ class PITHDBSTypeOfCheckView(PITHMultiRadioView):
 
         adult_tuples = self.get_adults_needing_info(application_id)
 
-        form_list = [self.form_class(**self.get_form_kwargs(adult=adult, ask_if_capita=not found))
-                     for adult, found in adult_tuples]
+        form_list = [self.form_class(**self.get_form_kwargs(
+                        adult=adult,
+                        ask_if_capita=dbs_status == DBSStatus.NEED_ASK_IF_CAPITA))
+                     for adult, dbs_status in adult_tuples]
 
         sorted_form_list = sorted(form_list, key=lambda form: form.adult.adult)
 
@@ -104,8 +106,7 @@ class PITHDBSTypeOfCheckView(PITHMultiRadioView):
         Finds the list of adults in the home for this application for whom we need more
             info about their dbs number
         :param application_id:
-        :return: list of 2-tuples each containing the adult model and a bool to indicate
-            whether they were on the capita list
+        :return: list of 2-tuples each containing the adult model and their DBSStatus
         """
 
         if self.adults_needing_info is not None:
@@ -114,17 +115,10 @@ class PITHDBSTypeOfCheckView(PITHMultiRadioView):
         filtered = []
         for adult in AdultInHome.objects.filter(application_id=application_id):
 
-            # fetch dbs record
-            dbs_record_response = dbs.read(adult.dbs_certificate_number)
-            dbs_record = getattr(dbs_record_response, 'record', None)
-            record_found = dbs_record is not None
+            dbs_status = find_dbs_status(adult.dbs_certificate_number, adult)
 
-            if record_found:
-                issue_date = datetime.strptime(dbs_record['date_of_issue'], "%Y-%m-%d")
-                if date_issued_within_three_months(issue_date):
-                    continue
-
-            filtered.append((adult, record_found))
+            if dbs_status in (DBSStatus.NEED_ASK_IF_CAPITA, DBSStatus.NEED_ASK_IF_ON_UPDATE):
+                filtered.append((adult, dbs_status))
 
         self.adults_needing_info = filtered
         return filtered

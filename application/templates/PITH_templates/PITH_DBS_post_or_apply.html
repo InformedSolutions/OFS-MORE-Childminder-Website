@@ -16,7 +16,7 @@
                 Before you submit
             </h1>
 
-            {% if adult_dbs_list_apply_for_new %}
+            {% if need_apply_for_new_list %}
                 <h2 class="heading-medium">
                     Apply for new DBS check
                 </h2>
@@ -25,7 +25,7 @@
 
                 <p>
                     <ul style="list-style-type: disc; padding-left: 50px;">
-                        {% for adult in adult_dbs_list_apply_for_new %}
+                        {% for adult in need_apply_for_new_list %}
                             <li>{{adult.get_full_name}}</li>
                         {% endfor %}
                     </ul>
@@ -36,7 +36,7 @@
                         Ofstead DBS application website.</a></p>
             {% endif %}
 
-            {%if adult_dbs_list_update_service_sign_up %}
+            {%if need_update_service_sign_up_list %}
                 <h2 class="heading-medium">
                     Sign up to the Update Service
                 </h2>
@@ -47,7 +47,7 @@
 
                 <p>
                     <ul style="list-style-type: disc; padding-left: 50px;">
-                        {% for adult in adult_dbs_list_update_service_sign_up %}
+                        {% for adult in need_update_service_sign_up_list %}
                             <li>{{adult.get_full_name}}</li>
                         {% endfor %}
                     </ul>
@@ -58,7 +58,7 @@
                         Ofstead DBS application website.</a></p>
             {% endif %}
 
-            {% if adult_dbs_list_update_service_check %}
+            {% if need_update_service_check_list %}
                 <h2 class="heading-medium">
                     DBS Update check
                 </h2>
@@ -67,7 +67,7 @@
 
                 <p>
                     <ul style="list-style-type: disc; padding-left: 50px;">
-                        {% for adult in adult_dbs_list_update_service_check %}
+                        {% for adult in need_update_service_check_list %}
                             <li>{{adult.get_full_name}}</li>
                         {% endfor %}
                     </ul>

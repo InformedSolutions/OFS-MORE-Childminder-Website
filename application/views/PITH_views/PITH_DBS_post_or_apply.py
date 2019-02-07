@@ -1,5 +1,4 @@
 import logging
-import enum
 
 from datetime import datetime
 from collections import defaultdict
@@ -7,19 +6,11 @@ from collections import defaultdict
 from application.models import AdultInHome
 from application.utils import get_id
 from application.views.PITH_views.base_views.PITH_template_view import PITHTemplateView
-from application import dbs
-from application.business_logic import date_issued_within_three_months
+from application.business_logic import find_dbs_status, DBSStatus
 
 
 # Initiate logging
 log = logging.getLogger('')
-
-
-class DBSRequirement(enum.Enum):
-
-    APPLY_FOR_NEW = 0
-    UPDATE_SERVICE_SIGN_UP = 1
-    UPDATE_SERVICE_CHECK = 2
 
 
 class PITHDBSPostOrApplyView(PITHTemplateView):
@@ -38,9 +29,9 @@ class PITHDBSPostOrApplyView(PITHTemplateView):
 
         adult_lists = defaultdict(list)
 
-        for adult, dbs_req in self.get_adults_requiring_dbs_action(application_id):
+        for adult, dbs_status in self.get_adults_requiring_dbs_action(application_id):
 
-            adult_lists['adult_dbs_list_{}'.format(dbs_req.name.lower())].append(adult)
+            adult_lists['{}_list'.format(dbs_status.name.lower())].append(adult)
 
         kwargs.update(adult_lists)
 
@@ -51,8 +42,7 @@ class PITHDBSPostOrApplyView(PITHTemplateView):
         Gets the list of adults in the home associated with this application that need to
         take further action to complete their DBS check
         :param application_id:
-        :return: List of 2-tuples containing the adult model and a DBSRequirement enum
-            describing the action required regarding their DBS
+        :return: List of 2-tuples containing the adult model and their DBSStatus
         """
 
         if self.adults_requiring_dbs_action is not None:
@@ -62,25 +52,12 @@ class PITHDBSPostOrApplyView(PITHTemplateView):
         filtered = []
         for adult in adults:
 
-            # fetch dbs record
-            dbs_record = getattr(dbs.read(adult.dbs_certificate_number), 'record', None)
+            dbs_status = find_dbs_status(adult.dbs_certificate_number, adult, adult.capita, adult.on_update)
 
-            # No dbs at all
-            if dbs_record is None and not adult.capita:
-                filtered.append((adult, DBSRequirement.APPLY_FOR_NEW))
-
-            # requires updating
-            elif (dbs_record is None and adult.capita) \
-                    or (dbs_record is not None and not self.dbs_last_three_months(dbs_record)):
-
-                if adult.on_update:
-                    filtered.append((adult, DBSRequirement.UPDATE_SERVICE_CHECK))
-                else:
-                    filtered.append((adult, DBSRequirement.UPDATE_SERVICE_SIGN_UP))
+            if dbs_status in (DBSStatus.NEED_APPLY_FOR_NEW,
+                              DBSStatus.NEED_UPDATE_SERVICE_SIGN_UP,
+                              DBSStatus.NEED_UPDATE_SERVICE_CHECK):
+                filtered.append((adult, dbs_status))
 
         self.adults_requiring_dbs_action = filtered
         return filtered
-
-    def dbs_last_three_months(self, dbs_record):
-        issue_datetime = datetime.strptime(dbs_record['date_of_issue'], '%Y-%m-%d')
-        return date_issued_within_three_months(issue_datetime)
