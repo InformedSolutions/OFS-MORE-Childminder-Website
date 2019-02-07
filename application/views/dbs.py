@@ -234,12 +234,6 @@ class DBSSummaryView(DBSTemplateView):
                 'url': 'DBS-Military-View',
                 'alt_text': 'Change answer to living or working on a military base outside of the UK in the last 5 years'
             },
-            # {
-            #     'field': 'capita',
-            #     'title': 'Did you get a DBS certificate from the Ofsted DBS application website in the last 3 months?',
-            #     'url': 'DBS-Type-View',
-            #     'alt_text': 'Change answer to getting your DBS certificate from the Ofsted DBS application website in the last 3 months?'
-            # },
             {
                 'field': 'dbs_certificate_number',
                 'title': 'DBS certificate number',

@@ -1024,11 +1024,14 @@ def personal_details_own_children(request):
 
             # Update Application record
             own_children = form.cleaned_data.get('own_children')
+            reasons_known_to_social_services = form.cleaned_data.get('reasons_known_to_social_services')
 
             if own_children == 'True':
                 application.own_children = True
+                application.reasons_known_to_social_services = reasons_known_to_social_services
             elif own_children == 'False':
                 application.own_children = False
+                application.reasons_known_to_social_services = ''
             application.save()
 
             # Set Your children task status to Completed when the applicant has no own children
@@ -1122,10 +1125,14 @@ def personal_details_summary(request):
         else:
             working_in_other_childminder_home = 'No'
 
+
         if application.own_children:
             own_children = 'Yes'
+            reasons_known_to_social_services = application.reasons_known_to_social_services
         else:
             own_children = 'No'
+            reasons_known_to_social_services = ' '
+
 
         name_dob_table_dict = collections.OrderedDict([
             ('name', ' '.join([first_name, (middle_names or ''), last_name])),
@@ -1146,9 +1153,16 @@ def personal_details_summary(request):
                 ('working_in_other_childminder_home', working_in_other_childminder_home)
             ])
 
-        own_children_table_dict = collections.OrderedDict([
-            ('own_children', own_children)
-        ])
+        if own_children is 'Yes':
+            own_children_table_dict = collections.OrderedDict([
+                ('own_children', own_children),
+                ('reasons_known_to_social_services', reasons_known_to_social_services)
+            ])
+        else:
+            own_children_table_dict = collections.OrderedDict([
+                ('own_children', own_children)
+
+            ])
 
         name_dob_dict = collections.OrderedDict({
             'table_object': Table([personal_detail_id.pk, applicant_name_record.pk]),
@@ -1173,11 +1187,13 @@ def personal_details_summary(request):
             'error_summary_title': 'There was a problem'
         })
 
+
         tables = [name_dob_dict, address_dict]
 
         own_children_arc_exists = ArcComments.objects.filter(table_pk=app_id, field_name='own_children').exists()
         if not location_of_childcare or application.own_children or own_children_arc_exists:
             tables.append(own_children_dict)
+
 
         # Set change link for childcare address according to whether the childcare address is the same as the home
         # address

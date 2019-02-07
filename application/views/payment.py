@@ -5,6 +5,7 @@ from timeline_logger.models import TimelineLog
 
 from application.business_logic import get_childcare_register_type
 from application.notify import send_email
+from application.utils import get_id
 from .. import status
 from ..models import (Application, ApplicantName, UserDetails, CriminalRecordCheck)
 
@@ -17,7 +18,7 @@ def payment_confirmation(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered Payment confirmation template
     """
-    application_id_local = request.GET['id']
+    application_id_local = get_id(request)
     try:
         criminal_record_check = CriminalRecordCheck.objects.get(application_id=application_id_local)
         conviction = CriminalRecordCheck.objects.get(application_id=application_id_local).cautions_convictions

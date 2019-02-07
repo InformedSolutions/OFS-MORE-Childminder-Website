@@ -169,6 +169,8 @@ def declaration_summary(request, print_mode=False):
         adult_military_base_list = []
         adult_capita_dbs_list = []
         adult_on_update_dbs_list = []
+        adult_known_to_council_list = []
+        adult_reasons_known_to_council_list = []
         application = Application.objects.get(pk=application_id_local)
         for adult in adults_list:
 
@@ -205,11 +207,13 @@ def declaration_summary(request, print_mode=False):
             # adult either has an up-to-date capita dbs cert or is on update service
             adult_capita_dbs_list.append(dbs_status in (DBSStatus.OK, DBSStatus.NEED_UPDATE_SERVICE_CHECK))          # \
             adult_on_update_dbs_list.append(dbs_status == DBSStatus.NEED_UPDATE_SERVICE_CHECK)
+            adult_known_to_council_list.append(adult.known_to_council)
+            adult_reasons_known_to_council_list.append(adult.reasons_known_to_council_health_check)
         # Zip the appended lists together for the HTML to simultaneously parse
         adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
                           adult_relationship_list, adult_dbs_list, adult_health_check_status_list, adult_email_list,
                           adult_lived_abroad_list, adult_capita_dbs_list, adult_on_update_dbs_list,
-                          adult_military_base_list)
+                          adult_military_base_list, adult_known_to_council_list, adult_reasons_known_to_council_list)
         # Generate lists of data for children in your home, to be iteratively displayed on the summary page
         # The HTML will then parse through each list simultaneously, to display the correct data for each child
         child_name_list = []
@@ -371,6 +375,7 @@ def declaration_summary(request, print_mode=False):
             'location_of_childcare': applicant_home_address_record.childcare_address,
             'working_in_other_childminder_home': application.working_in_other_childminder_home,
             'own_children': application.own_children,
+            'reasons_known_to_social_services': application.reasons_known_to_social_services,
             'personal_details_change': personal_details_change,
             'first_aid_training_organisation': first_aid_record.training_organisation,
             'first_aid_training_course': first_aid_record.course_title,
@@ -387,7 +392,7 @@ def declaration_summary(request, print_mode=False):
             'references_change': references_change,
             'adults_in_home': application.adults_in_home,
             'children_in_home': application.children_in_home,
-            'children_not_in_home': application.own_children_not_in_home,
+            'children_not_in_home': application.known_to_social_services_pith,
             'number_of_adults': adults_list.count(),
             'number_of_children': children_list.count(),
             'adult_lists': adult_lists,
@@ -398,7 +403,8 @@ def declaration_summary(request, print_mode=False):
             'print': print_mode,
             'children': children_table,
             'children_living_with_childminder': ", ".join(children_living_with_childminder),
-            'own_children_not_in_home': application.own_children_not_in_home
+            'known_to_social_services_pith': application.known_to_social_services_pith,
+            'reasons_known_to_social_services_pith': application.reasons_known_to_social_services_pith
         }
 
         variables = {**variables, **references_vars}
@@ -610,8 +616,6 @@ def generate_list_of_updated_tasks(application_id):
         updated_list.append('Type of childcare')
     if application.personal_details_arc_flagged is True:
         updated_list.append('Your personal details')
-    if application.your_children_arc_flagged is True:
-        updated_list.append('Your children')
     if application.first_aid_training_arc_flagged is True:
         updated_list.append('First aid training')
     if application.criminal_record_check_arc_flagged is True:
