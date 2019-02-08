@@ -76,6 +76,7 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
 
         self.clean_dbs(cleaned_dbs_field, self.dbs_field, application)
 
+        log.debug(self.errors.get(self.dbs_field_name, ()))
         # if dbs number looks ok, fetch dbs record for further checking
         if len(self.errors.get(self.dbs_field_name, ())) == 0:
 
@@ -97,8 +98,6 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
         elif dbs_matches_childminder_dbs(application, cleaned_dbs_value):
             self.add_error(field_name, 'Please enter a different DBS number. '
                                        'You entered this number for someone in your childcare location')
-        elif childminder_dbs_duplicates_household_member_check(application, cleaned_dbs_value, self.adult):
-            self.add_error(field_name, 'Please enter a different DBS number. '
-                                       'You entered this number for someone in your childcare location')
+        # check for duplicate dbs numbers amongst adults in home is done in the view's validate_form_list function
 
 

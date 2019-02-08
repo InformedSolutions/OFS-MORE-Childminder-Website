@@ -3,3 +3,4 @@ pydotplus
 pylint
 pylint-django
 coverage
+lxml

@@ -1,5 +1,5 @@
 import logging
-from datetime import datetime
+import collections
 
 from django.http import HttpResponseRedirect
 
@@ -50,6 +50,22 @@ class PITHDBSCheckView(PITHMultiFormView):
         log.debug('Sorted form list generated')
 
         return sorted_form_list
+
+    def validate_form_list(self, form_list):
+        if not super().validate_form_list(form_list):
+            return False
+        # validation of individual forms is done in the form objects themselves. This extra step checks the forms
+        # against each other to check that the dbs numbers are unique
+        dbs_counts = collections.defaultdict(int)
+        for form in form_list:
+            dbs_counts[form.cleaned_data[form.dbs_field_name]] += 1
+        valid = True
+        for form in form_list:
+            if dbs_counts[form.cleaned_data[form.dbs_field_name]] > 1:
+                form.add_error(form.dbs_field, 'Please enter a different DBS number. '
+                                               'You entered this number for someone in your childcare location')
+                valid = False
+        return valid
 
     def get_initial(self):
 

@@ -51,10 +51,19 @@ class PITHMultiFormView(TemplateView, TemplateResponseMixin):
         for form in form_list:
             form.remove_flag()
 
-        if all(form.is_valid() for form in form_list):
+        if self.validate_form_list(form_list):
             return self.form_valid(form_list)
         else:
             return self.form_invalid(form_list)
+
+    def validate_form_list(self, form_list):
+        """
+        Called to determine if the whole form list is valid. Can be overridden to, for example, validate forms against
+        each other and add errors to forms if necessary
+        :param form_list:
+        :return: True if all forms are valid
+        """
+        return all(form.is_valid() for form in form_list)
 
     def form_valid(self, form_list):
         """
