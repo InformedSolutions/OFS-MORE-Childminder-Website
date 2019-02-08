@@ -2,19 +2,12 @@ import collections
 import logging
 
 from django import forms
-
-from govuk_forms.forms import GOVUKForm
-from govuk_forms import widgets as govuk_widgets
 from govuk_forms.widgets import NumberInput
 
-from application import dbs
-
-from application.forms import childminder_dbs_duplicates_household_member_check
 from application.forms.PITH_forms.PITH_base_forms.PITH_childminder_form_retrofit import PITHChildminderFormAdapter
 
 from application.models import Application
 
-from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
 from application.business_logic import dbs_matches_childminder_dbs, find_dbs_status, DBSStatus
 
 

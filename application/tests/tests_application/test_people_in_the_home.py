@@ -7,6 +7,7 @@ from django.urls import reverse
 from application import dbs
 from application import models
 from application import views
+from application.views import PITH_views
 from application.tests import testutils
 
 
@@ -27,7 +28,7 @@ class PITHGuidancePageFunctionalTests(PITHFunctionalTestCase):
                                    })
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHGuidanceView)
+        testutils.assertView(response, PITH_views.PITHGuidanceView)
 
     def test_post_request_to_guidance_page_redirects_to_adults_in_home_page(self):
         self.skipTest('testNotImplemented')
@@ -74,7 +75,7 @@ class PITHAdultDetailsFunctionalTests(PITHFunctionalTestCase):
                                    })
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHLivedAbroadView)
+        testutils.assertView(response, PITH_views.PITHLivedAbroadView)
 
     def test_lived_abroad_page_renders_with_one_form_per_adult(self):
         self.skipTest('testNotImplemented')
@@ -95,7 +96,7 @@ class PITHAdultDetailsFunctionalTests(PITHFunctionalTestCase):
                                    })
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHAbroadCriminalView)
+        testutils.assertView(response, PITH_views.PITHAbroadCriminalView)
 
     def test_abroad_criminal_record_checks_page_renders_with_all_adults_who_lived_abroad(self):
         self.skipTest('testNotImplemented')
@@ -113,7 +114,7 @@ class PITHAdultDetailsFunctionalTests(PITHFunctionalTestCase):
                                    })
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHMilitaryView)
+        testutils.assertView(response, PITH_views.PITHMilitaryView)
 
     def test_no_for_all_adults_military_base_redirects_to_dbs_checks_page(self):
         self.skipTest('testNotImplemented')
@@ -128,7 +129,7 @@ class PITHAdultDetailsFunctionalTests(PITHFunctionalTestCase):
                                    })
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHMinistryView)
+        testutils.assertView(response, PITH_views.PITHMinistryView)
 
     def test_MOD_checks_page_renders_with_all_adults_who_lived_on_a_military_base(self):
         self.skipTest('testNotImplemented')
@@ -196,7 +197,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
         response = self.client.get(reverse('PITH-DBS-Check-View'), data={'id': self.app_id})
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHDBSCheckView)
+        testutils.assertView(response, PITH_views.PITHDBSCheckView)
 
     def test_dbs_checks_page_renders_with_one_form_per_adult(self, dbs_read):
 
@@ -221,7 +222,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
         })
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHDBSCheckView)
+        testutils.assertView(response, PITH_views.PITHDBSCheckView)
         testutils.assertXPath(response, ("//input[@type='number' and @name='dbs_certificate_number{}']"
                                          "/preceding-sibling::*[@class='error-message']").format(adult1.pk))
 
@@ -237,7 +238,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
         })
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHDBSCheckView)
+        testutils.assertView(response, PITH_views.PITHDBSCheckView)
         testutils.assertXPath(response, ("//input[@type='number' and @name='dbs_certificate_number{}']"
                                          "/preceding-sibling::*[@class='error-message']").format(adult2.pk))
 
@@ -253,7 +254,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
         })
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHDBSCheckView)
+        testutils.assertView(response, PITH_views.PITHDBSCheckView)
         testutils.assertXPath(response, ("//input[@type='number' and @name='dbs_certificate_number{}']"
                                          "/preceding-sibling::*[@class='error-message']").format(adult1.pk))
 
@@ -269,7 +270,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
         })
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHDBSCheckView)
+        testutils.assertView(response, PITH_views.PITHDBSCheckView)
         testutils.assertXPath(response, ("//input[@type='number' and @name='dbs_certificate_number{}']"
                                          "/preceding-sibling::*[@class='error-message']").format(adult1.pk))
 
@@ -313,7 +314,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
         })
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHDBSCheckView)
+        testutils.assertView(response, PITH_views.PITHDBSCheckView)
         testutils.assertXPath(response, ("//input[@type='number' and @name='dbs_certificate_number{}']"
                                          "/preceding-sibling::*[@class='error-message']").format(adult1.pk))
 
@@ -355,7 +356,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
         response = self.client.get(reverse('PITH-DBS-Type-Of-Check-View'), data={'id': self.app_id})
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHDBSTypeOfCheckView)
+        testutils.assertView(response, PITH_views.PITHDBSTypeOfCheckView)
 
     def test_type_of_check_page_renders_with_one_form_per_adult_whose_dbs_number_not_on_the_capita_dbs_list(
             self, dbs_read):
@@ -367,7 +368,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
         response = self.client.get(reverse('PITH-DBS-Type-Of-Check-View'), data={'id': self.app_id})
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHDBSTypeOfCheckView)
+        testutils.assertView(response, PITH_views.PITHDBSTypeOfCheckView)
         # we SHOULDN'T find this one
         testutils.assertNotXPath(response, "//input[@type='radio' and (@name='capita{id}' or @name='on_update{id}')]"
                                            .format(id=adult1.pk))
@@ -387,7 +388,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
         response = self.client.get(reverse('PITH-DBS-Type-Of-Check-View'), data={'id': self.app_id})
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHDBSTypeOfCheckView)
+        testutils.assertView(response, PITH_views.PITHDBSTypeOfCheckView)
         # we SHOULDN'T find this one
         testutils.assertNotXPath(response, "//input[@type='radio' and (@name='capita{id}' or @name='on_update{id}')]"
                                            .format(id=adult1.pk))
@@ -408,7 +409,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
         })
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHDBSTypeOfCheckView)
+        testutils.assertView(response, PITH_views.PITHDBSTypeOfCheckView)
         testutils.assertXPath(response, ("//input[@type='radio' and @name='capita{}']/parent::*"
                                          "/preceding-sibling::*[@class='error-message']").format(adult2.pk))
 
@@ -425,7 +426,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
         })
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHDBSTypeOfCheckView)
+        testutils.assertView(response, PITH_views.PITHDBSTypeOfCheckView)
         testutils.assertXPath(response, ("//input[@type='radio' and @name='on_update{}']/parent::*"
                                          "/preceding-sibling::*[@class='error-message']").format(adult2.pk))
 
@@ -441,7 +442,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
         })
 
         self.assertEqual(response.status_code, 200)
-        testutils.assertView(response, views.PITHDBSTypeOfCheckView)
+        testutils.assertView(response, PITH_views.PITHDBSTypeOfCheckView)
         testutils.assertXPath(response, ("//input[@type='radio' and @name='on_update{}']/parent::*"
                                          "/preceding-sibling::*[@class='error-message']").format(adult2.pk))
 
@@ -498,7 +499,7 @@ class PITHChildrenInHomeDetailsFunctionalTests(PITHFunctionalTestCase):
                                    })
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.func.__name__, views.PITHChildrenCheckView.__name__)
+        testutils.assertView(response, PITH_views.PITHChildrenCheckView)
 
     def test_yes_to_children_in_the_home_redirects_to_children_details_page(self):
         self.skipTest('testNotImplemented')
@@ -521,7 +522,7 @@ class PITHChildrenInHomeDetailsFunctionalTests(PITHFunctionalTestCase):
                                    })
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.func.__name__, views.PITHChildrenDetailsView.__name__)
+        testutils.assertView(response, PITH_views.PITHChildrenDetailsView)
 
     def test_can_add_one_child_in_home(self):
         self.skipTest('testNotImplemented')
@@ -548,7 +549,7 @@ class PITHChildrenInHomeDetailsFunctionalTests(PITHFunctionalTestCase):
                                    })
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.func.__name__, views.other_people_approaching_16.__name__)
+        testutils.assertView(response, views.other_people_approaching_16)
 
     def test_children_turning_16_page_renders_with_children_turning_16(self):
         self.skipTest('testNotImplemented')
@@ -572,7 +573,7 @@ class PITHOwnChildrenDetailsFunctionalTests(PITHFunctionalTestCase):
                                    })
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.func.__name__, views.PITHOwnChildrenCheckView.__name__)
+        testutils.assertView(response, PITH_views.PITHOwnChildrenCheckView)
 
     def test_yes_to_own_children_redirects_to_own_children_details_page(self):
         self.skipTest('testNotImplemented')
@@ -592,7 +593,7 @@ class PITHOwnChildrenDetailsFunctionalTests(PITHFunctionalTestCase):
                                    })
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.resolver_match.func.__name__, views.PITHOwnChildrenDetailsView.__name__)
+        testutils.assertView(response, PITH_views.PITHOwnChildrenDetailsView)
 
     def test_can_add_one_child_not_in_the_home(self):
         self.skipTest('testNotImplemented')
@@ -613,7 +614,7 @@ class PITHOwnChildrenDetailsFunctionalTests(PITHFunctionalTestCase):
         #                            })
         #
         # self.assertEqual(response.status_code, 200)
-        # self.assertEqual(response.resolver_match.func.__name__, views.PITHOwnChildrenPostcodeView.__name__)
+        # testutils.assertView(response, PITH_views.PITHOwnChildrenPostcodeView)
 
     # def test_post_to_own_children_address_page_redirects_to_task_list_if_no_further_children_not_in_home_and_adults_without_dbs(self):
     #     self.skipTest('NotImplemented')
