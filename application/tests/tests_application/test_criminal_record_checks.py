@@ -3,21 +3,13 @@ from unittest import mock
 from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
-from django.http import HttpResponse
-from django.test import TestCase, Client, modify_settings, tag
+from django.test import Client, tag
 from django.urls import reverse
+from django.http import HttpResponse
 
-from ...business_logic import dbs_date_of_birth_no_match, date_issued_within_three_months
 from ...models import Application, CriminalRecordCheck, ApplicantPersonalDetails
-
-
-@modify_settings(MIDDLEWARE={
-    'remove': [
-        'application.middleware.CustomAuthenticationHandler'
-    ]
-})
-class NoMiddlewareTestCase(TestCase):
-    pass
+from ..testutils import NoMiddlewareTestCase
+from application.business_logic import dbs_date_of_birth_no_match, date_issued_within_three_months
 
 
 class DBSTemplateViewTestCase(NoMiddlewareTestCase):

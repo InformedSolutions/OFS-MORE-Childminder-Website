@@ -12,6 +12,8 @@ from application.business_logic import (
     rearrange_children_in_home,
     remove_child_in_home,
     reset_declaration,
+    find_dbs_status,
+    awaiting_pith_dbs_action_from_user,
 )
 from application.forms import OtherPeopleChildrenDetailsForm
 from application.models import Application, ApplicantHomeAddress, AdultInHome
@@ -24,6 +26,11 @@ class PITHChildrenDetailsView(View):
     """
     Class containing the methods responsible for handling requests to the 'Children-In-The-Home-Details' page.
     """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # for caching info obtained from dbs lookup, for this request
+        self.is_awaiting_user_pith_dbs_action = None
 
     def get(self, request):
 
@@ -222,8 +229,6 @@ class PITHChildrenDetailsView(View):
         :param: application: application object for the applicant.
         :return: reversible string for redirect target page.
         """
-        adults = AdultInHome.objects.filter(application_id=application.pk)
-
         if children_turning_16:
 
             log.debug('There are children turning 16')
@@ -248,7 +253,8 @@ class PITHChildrenDetailsView(View):
 
                 log.debug('Applicant does not care in own home')
 
-                if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+                # Does user still need to take action wrt PITH DBS checks?
+                if self.get_awaiting_user_pith_dbs_action(application.pk):
 
                     log.debug('There are adults without a DBS check')
 
@@ -263,3 +269,16 @@ class PITHChildrenDetailsView(View):
         application.save()
 
         return success_url
+
+    def get_awaiting_user_pith_dbs_action(self, application_id):
+
+        if self.is_awaiting_user_pith_dbs_action is not None:
+            return self.is_awaiting_user_pith_dbs_action
+
+        result = awaiting_pith_dbs_action_from_user(
+            find_dbs_status(adult.dbs_certificate_number, adult, adult.capita, adult.on_update)
+            for adult in AdultInHome.objects.filter(application_id=application_id))
+
+        self.is_awaiting_user_pith_dbs_action = result
+        return result
+

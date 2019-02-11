@@ -766,7 +766,7 @@
     </tr>
     </tbody>
 </table>
-{% for name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, lived_abroad, capita, military_base, known_to_council, reasons_known_to_council_health_check in adult_lists %}
+{% for name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, lived_abroad, capita, on_update, military_base, known_to_council, reasons_known_to_council_health_check in adult_lists %}
 <table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
@@ -906,29 +906,6 @@
     </tr>
     {% endif %}
     <tr>
-        <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Did they get the certificate from the Ofsted DBS application website in the last 3 months?
-        </td>
-        {% if capita is True %}
-        <td style="word-wrap: break-word" class=summary-column>
-            Yes
-        </td>
-        {% elif capita is False %}
-        <td style="word-wrap: break-word" class=summary-column>
-            No
-        </td>
-        {% endif %}
-        <td class="change-answer {{ print_class }}">
-            {% if people_in_your_home_change %}
-            <a href="{% url 'PITH-DBS-Check-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
-               alt="Change if the adult did get the certificate from the Ofsted DBS application website in the last 3 months">
-                Change <span class="visuallyhidden">if the adult did get the certificate from the Ofsted DBS application website in the last 3 months</span>
-            </a>
-            {% endif %}
-        </td>
-    </tr>
-    <tr>
         <td style="word-wrap: break-word" class=summary-column>
             DBS certificate number
         </td>
@@ -940,6 +917,50 @@
             <a href="{% url 'PITH-DBS-Check-View' %}?id={{application_id}}&adults={{number_of_adults}}"
                alt="Change the adult's DBS certificate number">
                 Change <span class="visuallyhidden">the adult's DBS certificate number</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Enhanced DBS check for home-based childcare?
+        </td>
+        {% if capita %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% else %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-DBS-Check-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Change if the adult has an enhanced DBS check for home-based childcare">
+                Change <span class="visuallyhidden">if the adult has an enhanced DBS check for home-based childcare</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class="summary-column">
+            Are they on the update service?
+        </td>
+        {% if on_update %}
+        <td style="word-wrap: break-word" class="summary-column">
+            Yes
+        </td>
+        {% else %}
+        <td style="word-wrap: break-word" class="summary-column">
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-DBS-Check-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Change if the adult is on the update service">
+                Change <span class="visuallyhidden">if the adult is on the update service</span>
             </a>
             {% endif %}
         </td>

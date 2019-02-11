@@ -246,6 +246,12 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
         self.assertTrue(Application.objects.filter(application_id=self.app_id).exists())
         self.assertEqual(Application.objects.get(application_id=self.app_id).application_status, "SUBMITTED")
 
+    def test_invalid_email_error(self):
+        """
+        Test that application throwing expected error message for invalid email format
+        """
+        self.assertEqual(self.TestAppInvalidEmail(), "There was a problem with your email")
+
     def test_new_application_submit_log(self):
         """
         Check logging trigger right after application was drafted/started

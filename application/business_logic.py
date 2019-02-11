@@ -6,6 +6,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 """
 
 import re
+import enum
 from datetime import datetime, timedelta
 
 import pytz
@@ -24,6 +25,7 @@ from .models import (AdultInHome,
                      Reference,
                      UserDetails, Child, ChildAddress)
 from .utils import unique_values, get_first_duplicate_index, get_duplicate_list_entry_indexes
+from . import dbs
 
 
 def childcare_type_logic(application_id_local, form):
@@ -999,31 +1001,93 @@ def get_duplicate_dbs_index(application, candidate_dbs_certificate_number):
     return get_first_duplicate_index(dbs_numbers)
 
 
+class DBSStatus(enum.Enum):
+
+    OK = 0
+    DOB_MISMATCH = 1
+    NEED_ASK_IF_CAPITA = 2
+    NEED_ASK_IF_ON_UPDATE = 3
+    NEED_APPLY_FOR_NEW = 4
+    NEED_UPDATE_SERVICE_SIGN_UP = 5
+    NEED_UPDATE_SERVICE_CHECK = 6
+
+
+def find_dbs_status(dbs_number, obj_with_dob, capita=None, on_update=None):
+    """
+    Determines the next action to be taken for the given DBS check, if any
+
+    :param dbs_number: The DBS certificate number given
+    :param obj_with_dob: An object with birth_year, birth_month and birth_day attributes
+    :param capita: (optional) User's response to being asked whether they have a Capita (enhanced) DBS certificate
+    :param on_update: (optional) User's response to being asked whether they signed up to the DBS update service
+    :return: DBSStatus
+    """
+
+    dbs_record = getattr(dbs.read(dbs_number), 'record', None)
+
+    if dbs_record is not None:
+
+        if not _dbs_dob_matches(dbs_record, obj_with_dob.birth_year, obj_with_dob.birth_month, obj_with_dob.birth_day):
+            return DBSStatus.DOB_MISMATCH
+
+        elif date_issued_within_three_months(datetime.strptime(dbs_record['date_of_issue'], '%Y-%m-%d')):
+            return DBSStatus.OK
+
+        elif on_update is None:
+            return DBSStatus.NEED_ASK_IF_ON_UPDATE
+
+        elif on_update:
+            return DBSStatus.NEED_UPDATE_SERVICE_CHECK
+
+        else:
+            return DBSStatus.NEED_UPDATE_SERVICE_SIGN_UP
+
+    else:
+
+        if capita is None:
+            return DBSStatus.NEED_ASK_IF_CAPITA
+
+        elif not capita:
+            return DBSStatus.NEED_APPLY_FOR_NEW
+
+        elif on_update is None:
+            return DBSStatus.NEED_ASK_IF_ON_UPDATE
+
+        elif on_update:
+            return DBSStatus.NEED_UPDATE_SERVICE_CHECK
+
+        else:
+            return DBSStatus.NEED_UPDATE_SERVICE_SIGN_UP
+
+
+def awaiting_pith_dbs_action_from_user(dbs_statuses):
+    return any(status in (DBSStatus.NEED_APPLY_FOR_NEW, DBSStatus.NEED_UPDATE_SERVICE_SIGN_UP)
+               for status in dbs_statuses)
+
+
 def dbs_date_of_birth_no_match(application, record):
     """
-        Helper method for gathering the duplicate index
-        :param application: the application to be tested against
-        :param response: the record response from the dbs api
-        :return: a boolean to represent if there is no match between the applicant dob and the dbs dob
-        """
-    applicant_details = ApplicantPersonalDetails.objects.get(application_id=application.application_id)
-    applicant_dob = datetime(applicant_details.birth_year, applicant_details.birth_month, applicant_details.birth_day)
-    try:
-        dbs_dob = datetime.strptime(record['date_of_birth'], "%Y-%m-%d")
-        if applicant_dob == dbs_dob:
-            return False
-        else:
-            return True
-    except AttributeError:
+    :param application: the application to be tested against
+    :param record: the record from the dbs api
+    :return: a boolean to represent if there is no match between the applicant dob and the dbs dob
+    """
+    if record is None:
         return False
+
+    app_details = ApplicantPersonalDetails.objects.get(application_id=application.application_id)
+
+    return not _dbs_dob_matches(record, app_details.birth_year, app_details.birth_month, app_details.birth_day)
+
+
+def _dbs_dob_matches(dbs_record, year, month, day):
+    return datetime(year, month, day) == datetime.strptime(dbs_record['date_of_birth'], '%Y-%m-%d')
 
 
 def date_issued_within_three_months(date_issued):
     """
-            Helper method for gathering the duplicate index
-            :param date_issued: the issue date of the dbs
-            :return: a boolean to represent if there the dbs was issued within three months of today
-            """
+    :param date_issued: the issue date of the dbs
+    :return: a boolean to represent if there the dbs was issued within three months of today
+    """
     now = datetime.today()
     if now - timedelta(3 * 365 / 12) <= date_issued:
         return True
@@ -1231,7 +1295,7 @@ def get_application(app_id, field_obj):
     """
     :param app_id: applicant's application_id
     :param field_obj: Application field or list of Application fields
-    :return: Boolean True if successfully updated.
+    :return:
     """
     application_record = Application.objects.get(application_id=app_id)
 
