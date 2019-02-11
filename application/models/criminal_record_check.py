@@ -16,6 +16,8 @@ class CriminalRecordCheck(models.Model):
     capita = models.NullBooleanField(blank=True)
     enhanced_check = models.NullBooleanField(blank=True)
     on_update = models.NullBooleanField(blank=True)
+    certificate_information = models.TextField(blank=True)
+    within_three_months = models.NullBooleanField(blank=True)
 
     @property
     def timelog_fields(self):

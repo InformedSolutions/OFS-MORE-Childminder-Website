@@ -423,21 +423,24 @@ class DBSCheckCapitaView(DBSCheckDetailsView):
             record = self.r.record
             issue_date = datetime.strptime(record['date_of_issue'], "%Y-%m-%d")
             info = record['certificate_information']
-            successfully_updated = update_criminal_record_check(application_id, 'capita', True)
+            successfully_updated_capita = update_criminal_record_check(application_id, 'capita', True)
             if date_issued_within_three_months(issue_date):
+                successfully_updated_three = update_criminal_record_check(application_id, 'within_three_months', True)
                 if (info != '') or (info != None):
+                    successfully_updated_info = update_criminal_record_check(application_id, 'certificate_information',
+                                                                             info)
                     redirect_url = capita_info
                 else:
                     redirect_url = capita_no_info
             else:
+                successfully_updated_three = update_criminal_record_check(application_id, 'within_three_months', False)
                 redirect_url = capita_old
         except AttributeError:
-            successfully_updated = update_criminal_record_check(application_id, 'capita', False)
+            successfully_updated_capita = update_criminal_record_check(application_id, 'capita', False)
             redirect_url = no_capita
 
         application_id = get_id(self.request)
         return build_url(redirect_url, get={'id': application_id})
-
 
 class DBSCheckNoCapitaView(DBSCheckDetailsView):
     template_name = 'dbs-check-capita.html'
