@@ -5,6 +5,7 @@ from ..business_logic import childminder_dbs_duplicates_household_member_check, 
 from ..dbs import read
 from ..forms.childminder import ChildminderForms
 from ..models import CriminalRecordCheck, Application
+from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
 
 
 class DBSRadioForm(ChildminderForms):
@@ -85,7 +86,7 @@ class DBSTypeForm(DBSRadioForm):
     """
     choice_field_name = 'enhanced_check'
     error_summary_title = 'There was a problem with the type of DBS check'
-    reveal_conditionally = {'dbs_field_name': {True: 'on_update'}}
+    reveal_conditionally = {'enhanced_check': {True: 'on_update'}}
     choices = (
         (True, 'Yes'),
         (False, 'No')
@@ -94,15 +95,15 @@ class DBSTypeForm(DBSRadioForm):
     on_update = forms.ChoiceField(
             label='Are you on the DBS update service?',
             choices=choices,
-            widget=InlineRadioSelect,
-            required=False,
+            widget=ConditionalPostInlineRadioSelect,
+            required=True,
             error_messages={
                 'required': 'Please say if you are on the DBS update service'})
 
     def get_choice_field_data(self):
         return forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare?',
                                        choices=self.choices,
-                                       widget=InlineRadioSelect,
+                                       widget=ConditionalPostInlineRadioSelect,
                                        required=True,
                                        error_messages={
                                            'required': 'Please say if you have an enhanced check for home-based childcare'})
