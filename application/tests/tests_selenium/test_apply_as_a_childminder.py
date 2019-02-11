@@ -131,6 +131,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
+        self.selenium_task_executor.select_london_residency()
+
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
         test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -160,6 +162,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         the ages of children they are minding does not
         """
         self.selenium_task_executor.navigate_to_base_url()
+
+        self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -191,6 +195,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
+        self.selenium_task_executor.select_london_residency()
+
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
         test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -215,6 +221,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         to the age of five and between 5 and 7
         """
         self.selenium_task_executor.navigate_to_base_url()
+
+        self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -243,6 +251,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         Test to make sure the correct guidance page gets shown when only minding children of all ages
         """
         self.selenium_task_executor.navigate_to_base_url()
+
+        self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -274,6 +284,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         Test to ensure the Type of childcare and personal details tasks must be completed before accessing the task list
         """
         self.selenium_task_executor.navigate_to_base_url()
+
+        self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -341,6 +353,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
+        self.selenium_task_executor.select_london_residency()
+
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
         test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -370,6 +384,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         will be looking after the children?
         """
         self.selenium_task_executor.navigate_to_base_url()
+
+        self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -401,6 +417,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
+        self.selenium_task_executor.select_london_residency()
+
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
         test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -426,6 +444,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         home
         """
         self.selenium_task_executor.navigate_to_base_url()
+
+        self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -458,6 +478,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
+        self.selenium_task_executor.select_london_residency()
+
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
         test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -483,6 +505,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         childminder's home
         """
         self.selenium_task_executor.navigate_to_base_url()
+
+        self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -515,6 +539,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.create_standard_eyfs_application()
 
+        self.selenium_task_executor.select_london_residency()
+
         test_dbs = ''.join(str(random.randint(1, 9)) for _ in range(12))
         self.selenium_task_executor.complete_dbs_task(test_dbs, False)
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
@@ -541,6 +567,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         applicant_email = self.create_standard_eyfs_application()
 
+        self.selenium_task_executor.select_london_residency()
+
         self.selenium_task_executor.complete_people_in_your_home_task(
             False,
             None, None, None,
@@ -560,6 +588,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         'Does anyone aged 16 or over live or work in your home?' but No to the question 'Do you live with any children under 16?'
         """
         applicant_email = self.create_standard_eyfs_application()
+
+        self.selenium_task_executor.select_london_residency()
 
         self.selenium_task_executor.complete_people_in_your_home_task(
             True,
@@ -654,6 +684,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.complete_full_question_set()
 
+        self.selenium_task_executor.select_london_residency()
+
         self.selenium_task_executor.complete_review()
         self.selenium_task_executor.complete_declaration()
         self.selenium_task_executor.complete_publish_your_details()
@@ -671,6 +703,9 @@ class ApplyAsAChildminder(LiveServerTestCase):
         Tests that the sign-out link is not present if a user is not logged in
         """
         self.selenium_task_executor.navigate_to_base_url()
+
+        self.selenium_task_executor.select_london_residency()
+
         with self.assertRaises(NoSuchElementException):
             self.selenium_task_executor.get_driver().find_element_by_link_text('Sign out')
 
@@ -1417,6 +1452,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
     @try_except_method
     def test_user_can_use_resend_link_when_changing_email(self):
         self.create_standard_eyfs_application()
+        self.selenium_task_executor.select_london_residency()
+        
         new_email = "eva@walle.com"
 
         self.selenium_task_executor.get_driver().find_element_by_xpath(
@@ -1455,6 +1492,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         asked to enter their security question details.
         """
         test_email = self.create_standard_eyfs_application()
+        self.selenium_task_executor.select_london_residency()
+
         self.selenium_task_executor.get_driver().find_element_by_link_text('Sign out')
         self.selenium_task_executor.navigate_to_SMS_validation_page(test_email)
 
@@ -1525,44 +1564,13 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertEqual("Their email address cannot be the same as another person in your home",
                          driver.find_element_by_xpath("//div[@id='id_2-email_address-group']/span").text)
 
-
-    # @try_except_method
-    # def test_feedback_page(self):
-    #     """
-    #     Test to ensure that the applicant can successfully send feedback
-    #     """
-    #     self.selenium_task_executor.navigate_to_base_url()
-    #     test_email = faker.email()
-    #     test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
-    #     test_alt_phone_number = self.selenium_task_executor.generate_random_mobile_number()
-    #     self.selenium_task_executor.complete_your_login_details(test_email, test_phone_number, test_alt_phone_number)
-    #     self.selenium_task_executor.get_driver().find_element_by_id("feedback").click()
-    #     self.assertEqual("Feedback", self.selenium_task_executor.get_driver().title)
-    #     self.selenium_task_executor.get_driver().find_element_by_id("id_feedback").send_keys('Test feedback')
-    #     self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys(faker.email())
-    #     self.selenium_task_executor.get_driver().find_element_by_id("submit").click()
-    #     self.assertEqual("Type of childcare", self.selenium_task_executor.get_driver().title)
-    #     self.selenium_task_executor.get_driver().find_element_by_id("feedback").click()
-    #     characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-_'
-    #     random_string = ''
-    #     # Generates 1500-character random string
-    #     for i in range(0, 1500):
-    #         random_string += random.choice(characters)
-    #     self.selenium_task_executor.get_driver().find_element_by_id("id_feedback").send_keys(random_string)
-    #     self.selenium_task_executor.get_driver().find_element_by_id("submit").click()
-    #     self.assertIn("problem",
-    #                   self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
-    #     self.selenium_task_executor.get_driver().find_element_by_id("id_feedback").send_keys('Test feedback')
-    #     self.selenium_task_executor.get_driver().find_element_by_id("id_email_address").send_keys('Test')
-    #     self.selenium_task_executor.get_driver().find_element_by_id("submit").click()
-    #     self.assertIn("problem",
-    #                   self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary").text)
-
     def complete_full_question_set(self):
         """
         Helper method for completing all questions in an application
         """
         applicant_email = self.create_standard_eyfs_application()
+
+        self.selenium_task_executor.select_london_residency()
 
         # When completing first aid training task ensure that certification is within last 3 years
         self.selenium_task_executor.complete_first_aid_training(
