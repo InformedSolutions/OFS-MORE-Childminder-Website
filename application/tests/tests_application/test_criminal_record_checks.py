@@ -400,16 +400,145 @@ class DBSMilitaryViewTests(DBSRadioViewTests):
 
 
 class DBSTypeViewTests(DBSRadioViewTests):
+
     def setUp(self):
         super().setUp()
-
         from application.views import DBSTypeView as view
         from application.forms import DBSTypeForm as form
-
         self.view = view
         self.form = form
         self.view_url_name = 'DBS-Type-View'
-        self.correct_url = ('DBS-Update-Check-View', 'DBS-Apply-New-View')
+        self.no_redirect = 'DBS-Apply-New-View'
+        self.yes_yes_redirect = 'DBS-Update-Check-View'
+        self.yes_no_redirect = 'DBS-Get-View'
+
+    @tag('http')
+    def test_redirect_on_form_valid(self):
+        raise self.skipTest('testNotImplemented')
+
+    @tag('http')
+    def test_form_valid_callable(self):
+        raise self.skipTest('testNotImplemented')
+
+    @tag('http')
+    def test_radio_yes_yes_redirect_to_correct_url(self):
+        criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
+        application = Application.objects.get(application_id=self.application_id)
+        crc_record = CriminalRecordCheck.objects.create(application_id=application,
+                                                        criminal_record_id=criminal_record_check_id)
+
+        form_data = {self.form.choice_field_name: True, self.form.update_field_name: True}
+
+        response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id, form_data)
+
+        correct_url = reverse(self.yes_yes_redirect) + '?id=' + self.application_id
+        print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
+        self.assertTrue(response.url == correct_url)
+        # Tear down env
+        crc_record.delete()
+
+    @tag('http')
+    def test_radio_yes_no_redirect_to_correct_url(self):
+        criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
+        application = Application.objects.get(application_id=self.application_id)
+        crc_record = CriminalRecordCheck.objects.create(application_id=application,
+                                                        criminal_record_id=criminal_record_check_id)
+
+        form_data = {self.form.choice_field_name: True, self.form.update_field_name: False}
+
+        response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id, form_data)
+
+        correct_url = reverse(self.yes_no_redirect) + '?id=' + self.application_id
+        print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
+        self.assertTrue(response.url == correct_url)
+        # Tear down env
+        crc_record.delete()
+
+    @tag('http')
+    def test_radio_no_redirect(self):
+        # Build env
+        criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
+        application = Application.objects.get(application_id=self.application_id)
+        crc_record = CriminalRecordCheck.objects.create(application_id=application,
+                                                                criminal_record_id=criminal_record_check_id)
+        form_data = {self.form.choice_field_name: False}
+
+        response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id, form_data)
+
+        print('Returned a {0} response'.format(response.status_code))
+        self.assertTrue(response.status_code == 302)
+         # Tear down env
+        crc_record.delete()
+
+    @tag('http')
+    def test_radio_yes_no_redirect(self):
+        # Build env
+        criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
+        application = Application.objects.get(application_id=self.application_id)
+        crc_record = CriminalRecordCheck.objects.create(application_id=application,
+                                                        criminal_record_id=criminal_record_check_id)
+
+        form_data = {self.form.choice_field_name: True, self.form.update_field_name: False}
+
+        response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id, form_data)
+
+        print('Returned a {0} response'.format(response.status_code))
+        self.assertTrue(response.status_code == 302)
+        # Tear down env
+        crc_record.delete()
+
+    @tag('http')
+    def test_radio_yes_no_redirect(self):
+        # Build env
+        criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
+        application = Application.objects.get(application_id=self.application_id)
+        crc_record = CriminalRecordCheck.objects.create(application_id=application,
+                                                        criminal_record_id=criminal_record_check_id)
+
+        form_data = {self.form.choice_field_name: True, self.form.update_field_name: True}
+
+        response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id, form_data)
+
+        print('Returned a {0} response'.format(response.status_code))
+        self.assertTrue(response.status_code == 302)
+        # Tear down env
+        crc_record.delete()
+
+
+    @tag('http')
+    def test_radio_no_redirect_to_correct_url(self):
+        criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
+        application = Application.objects.get(application_id=self.application_id)
+        crc_record = CriminalRecordCheck.objects.create(application_id=application,
+                                                            criminal_record_id=criminal_record_check_id)
+        form_data = {self.form.choice_field_name: False}
+
+        response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id, form_data)
+
+        correct_url = reverse(self.no_redirect) + '?id=' + self.application_id
+        print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
+        self.assertTrue(response.url == correct_url)
+        # Tear down env
+        crc_record.delete()
+
+    @tag('http')
+    def test_radio_yes_redirect(self):
+
+        # Build env
+        criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
+        application = Application.objects.get(application_id=self.application_id)
+        crc_record = CriminalRecordCheck.objects.create(application_id=application,
+                                                                criminal_record_id=criminal_record_check_id)
+        form_data = {self.form.choice_field_name: True}
+
+        response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id, form_data)
+        print('Returned a {0} response'.format(response.status_code))
+        self.assertTrue(response.status_code == 200)
+        # Tear down env
+        crc_record.delete()
+
+
+
 
 
 class DBSUpdateViewTests(DBSRadioViewTests):
