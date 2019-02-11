@@ -330,7 +330,7 @@ class DBSUpdateView(DBSRadioView):
 class DBSTypeView(DBSRadioView):
     template_name = 'dbs-type.html'
     form_class = DBSTypeForm
-    success_url = ('DBS-Update-Check-View', 'DBS-Apply-New-View')
+    success_url = ('DBS-Apply-New-View', 'DBS-Get-View', 'DBS-Update-Check-View')
     dbs_field_name = 'enhanced_check'
 
     nullify_field_list = []
@@ -342,10 +342,27 @@ class DBSTypeView(DBSRadioView):
         initial_bool = form.initial[self.dbs_field_name]
         update_bool = form.cleaned_data[self.dbs_field_name] == 'True'
 
-        # If the 'Type of DBS check' is changed then clear the user's dbs_certificate_number
-        # Also check that the application is not in review as this can lead to blank fields being submitted.
+        if update_bool:
+            update_bool_update = self.request.POST.get('on_update') == 'True'
+            successfully_updated = update_criminal_record_check(application_id, 'on_update', update_bool_update)
+        else:
+            successfully_updated = update_criminal_record_check(application_id, 'on_update', None)
 
         return super().form_valid(form)
+
+    def get_success_url(self):
+        no_enhanced, enhanced_no_update, enhanced_on_update = self.success_url
+        app_id = get_id(self.request)
+        crc = criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=app_id)
+        if (crc.enhanced_check):
+            if (crc.on_update):
+                redirect_url= enhanced_on_update
+            elif (crc.enhanced_check != None):
+                redirect_url = enhanced_no_update
+        else:
+            redirect_url = no_enhanced
+        return build_url(redirect_url, get={'id': app_id})
+
 
 
 class DBSMilitaryView(DBSRadioView):

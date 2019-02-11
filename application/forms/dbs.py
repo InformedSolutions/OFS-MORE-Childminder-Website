@@ -85,6 +85,7 @@ class DBSTypeForm(DBSRadioForm):
     GOV.UK form for the Criminal record check: type page
     """
     choice_field_name = 'enhanced_check'
+    update_field_name = 'on_update'
     error_summary_title = 'There was a problem with the type of DBS check'
     reveal_conditionally = {'enhanced_check': {True: 'on_update'}}
     choices = (
@@ -99,6 +100,10 @@ class DBSTypeForm(DBSRadioForm):
             required=True,
             error_messages={
                 'required': 'Please say if you are on the DBS update service'})
+
+    def clean(self):
+        if(self.cleaned_data[self.update_field_name] is None) or (self.cleaned_data[self.update_field_name] == ''):
+            self.add_error(self.update_field_name, 'Please say if you are on the DBS update service')
 
     def get_choice_field_data(self):
         return forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare?',
