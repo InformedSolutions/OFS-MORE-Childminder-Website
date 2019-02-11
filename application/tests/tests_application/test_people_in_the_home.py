@@ -157,22 +157,30 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
         self.mock_dbs_responses = {}
 
     def make_adult(self, dbs_read_mock, dbs_number=None, dbs_saved_yet=True, record_found=True, correct_dob=True,
-                   issue_recent=True):
+                   issue_recent=True, dbs_info=None, capita_answer=None, on_update_answer=None, first_name=None,
+                   middle_names=None, last_name=None):
 
         application = models.Application.objects.get(pk=self.app_id)
-        adult = models.AdultInHome.objects.create(
-            application_id=application,
-            adult=1,
-            birth_day=30,
-            birth_month=10,
-            birth_year=1975,
-        )
+        kwargs = {
+            'application_id': application,
+            'adult': 1,
+            'birth_day': 30,
+            'birth_month': 10,
+            'birth_year': 1975,
+            'first_name': first_name or 'Jane',
+            'middle_names': middle_names or 'Samantha',
+            'last_name': last_name or 'Doe',
+        }
+        if dbs_number is not None and dbs_saved_yet:
+            kwargs['dbs_certificate_number'] = dbs_number
+        if capita_answer is not None:
+            kwargs['capita'] = capita_answer
+        if on_update_answer is not None:
+            kwargs['on_update'] = on_update_answer
+
+        adult = models.AdultInHome.objects.create(**kwargs)
 
         if dbs_number is not None:
-
-            if dbs_saved_yet:
-                adult.dbs_certificate_number = dbs_number
-                adult.save()
 
             mock_response = Mock()
 
@@ -183,7 +191,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
                     'certificate_number': dbs_number,
                     'date_of_issue': issue_date.strftime('%Y-%m-%d'),
                     'date_of_birth': '1975-10-30' if correct_dob else '1975-09-29',
-                    'certificate_information': '',
+                    'certificate_information': dbs_info if dbs_info is not None else 'Test',
                 }
                 self.mock_dbs_responses[dbs_number] = mock_response
 
@@ -448,46 +456,162 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
 
     def test_any_adult_not_on_capita_list_and_does_not_have_enhanced_check_redirects_to_before_you_submit_page(
             self, dbs_read):
-        self.skipTest('testNotImplemented')
+
+        adult1 = self.make_adult(dbs_read, dbs_number='123456789013')
+        adult2 = self.make_adult(dbs_read, dbs_number='123456790014', record_found=False)
+
+        response = self.client.post(reverse('PITH-DBS-Type-Of-Check-View'), data={
+            'id': self.app_id,
+            'capita{}'.format(adult2.pk): 'False',   # responded 'no' to has-enhanced
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('PITH-DBS-Post-Or-Apply-View') + '?id=' + self.app_id)
+
 
     def test_any_adult_not_on_capita_list_and_has_an_enhanced_check_and_is_on_the_dbs_update_service_redirects_to_before_you_submit_page(
             self, dbs_read):
-        self.skipTest('testNotImplemented')
 
-    def test_any_adults_not_on_capita_list_and_has_an_enhances_check_and_is_not_on_the_dbs_update_service_redirects_to_before_you_submit_page(
+        adult1 = self.make_adult(dbs_read, dbs_number='123456789013')
+        adult2 = self.make_adult(dbs_read, dbs_number='123456790014', record_found=False)
+
+        response = self.client.post(reverse('PITH-DBS-Type-Of-Check-View'), data={
+            'id': self.app_id,
+            'capita{}'.format(adult2.pk): 'True',
+            'on_update{}'.format(adult2.pk): 'True',  # responded 'yes' to on-update
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('PITH-DBS-Post-Or-Apply-View') + '?id=' + self.app_id)
+
+    def test_any_adults_not_on_capita_list_and_has_an_enhanced_check_and_is_not_on_the_dbs_update_service_redirects_to_before_you_submit_page(
             self, dbs_read):
-        self.skipTest('testNotImplemented')
+
+        adult1 = self.make_adult(dbs_read, dbs_number='123456789013')
+        adult2 = self.make_adult(dbs_read, dbs_number='123456790014', record_found=False)
+
+        response = self.client.post(reverse('PITH-DBS-Type-Of-Check-View'), data={
+            'id': self.app_id,
+            'capita{}'.format(adult2.pk): 'True',
+            'on_update{}'.format(adult2.pk): 'False',  # responded 'no' to on-update
+        })
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('PITH-DBS-Post-Or-Apply-View') + '?id=' + self.app_id)
 
     def test_can_render_before_you_submit_page(self, dbs_read):
-        self.skipTest('testNotImplemented')
+
+        adult1 = self.make_adult(dbs_read, dbs_number='123456789013')
+        adult2 = self.make_adult(dbs_read, dbs_number='123456789014', record_found=False, capita_answer=True,
+                                 on_update_answer=True)
+
+        response = self.client.get(reverse('PITH-DBS-Post-Or-Apply-View'), data={'id': self.app_id})
+
+        self.assertEqual(response.status_code, 200)
+        testutils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
 
     def test_any_adult_not_on_capita_list_and_does_not_have_enhanced_check_appears_under_apply_for_dbs_check_list(
             self, dbs_read):
-        self.skipTest('testNotImplemented')
+
+        adult1 = self.make_adult(dbs_read, dbs_number='123456789013')
+        adult2 = self.make_adult(dbs_read, dbs_number='123456789014', record_found=False, capita_answer=False,
+                                 first_name='Joe', middle_names='Alan', last_name='Bloggs')
+
+        response = self.client.get(reverse('PITH-DBS-Post-Or-Apply-View'), data={'id': self.app_id})
+
+        self.assertEqual(response.status_code, 200)
+        testutils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
+        testutils.assertXPath(response, "(//h2[normalize-space(text())='Apply for new DBS check']"
+                                            "/following-sibling::ul)[1]"
+                                        "/li[normalize-space(text())='Joe Alan Bloggs']")
 
     def test_any_adult_not_on_capita_list_and_has_enhanced_check_and_is_not_on_the_dbs_update_service_appears_under_sign_up_to_update_service_list(
             self, dbs_read):
-        self.skipTest('testNotImplemented')
+
+        adult1 = self.make_adult(dbs_read, dbs_number='123456789013')
+        adult2 = self.make_adult(dbs_read, dbs_number='123456789014', record_found=False, capita_answer=True,
+                                 on_update_answer=False, first_name='Joe', middle_names='Alan', last_name='Bloggs')
+
+        response = self.client.get(reverse('PITH-DBS-Post-Or-Apply-View'), data={'id': self.app_id})
+
+        self.assertEqual(response.status_code, 200)
+        testutils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
+        testutils.assertXPath(response, "(//h2[normalize-space(text())='Sign up to the Update Service']"
+                                        "/following-sibling::ul)[1]"
+                                        "/li[normalize-space(text())='Joe Alan Bloggs']")
 
     def test_any_adult_not_on_capita_list_and_has_enhanced_check_and_is_on_the_dbs_update_service_appears_under_update_service_check_list(
             self, dbs_read):
-        self.skipTest('testNotImplemented')
+
+        adult1 = self.make_adult(dbs_read, dbs_number='123456789013')
+        adult2 = self.make_adult(dbs_read, dbs_number='123456789014', record_found=False, capita_answer=True,
+                                 on_update_answer=True, first_name='Joe', middle_names='Alan', last_name='Bloggs')
+
+        response = self.client.get(reverse('PITH-DBS-Post-Or-Apply-View'), data={'id': self.app_id})
+
+        self.assertEqual(response.status_code, 200)
+        testutils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
+        testutils.assertXPath(response, "(//h2[normalize-space(text())='DBS Update check']"
+                                        "/following-sibling::ul)[1]"
+                                        "/li[normalize-space(text())='Joe Alan Bloggs']")
 
     def test_any_adult_on_the_capita_list_and_has_not_been_issued_in_the_last_3_months_and_is_on_the_update_service_appears_under_dbs_check_list(
             self, dbs_read):
-        self.skipTest('testNotImplemented')
+
+        adult1 = self.make_adult(dbs_read, dbs_number='123456789013')
+        adult2 = self.make_adult(dbs_read, dbs_number='123456789014', record_found=True, issue_recent=False,
+                                 on_update_answer=True, first_name='Joe', middle_names='Alan', last_name='Bloggs')
+
+        response = self.client.get(reverse('PITH-DBS-Post-Or-Apply-View'), data={'id': self.app_id})
+
+        self.assertEqual(response.status_code, 200)
+        testutils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
+        testutils.assertXPath(response, "(//h2[normalize-space(text())='DBS Update check']"
+                                        "/following-sibling::ul)[1]"
+                                        "/li[normalize-space(text())='Joe Alan Bloggs']")
 
     def test_any_adult_on_the_capita_list_and_has_not_been_issued_in_the_last_3_months_and_is_not_on_the_update_service_appears_under_sign_up_to_update_service_list(
             self, dbs_read):
-        self.skipTest('testNotImplemented')
+
+        adult1 = self.make_adult(dbs_read, dbs_number='123456789013')
+        adult2 = self.make_adult(dbs_read, dbs_number='123456789014', record_found=True, issue_recent=False,
+                                 on_update_answer=False, first_name='Joe', middle_names='Alan', last_name='Bloggs')
+
+        response = self.client.get(reverse('PITH-DBS-Post-Or-Apply-View'), data={'id': self.app_id})
+
+        self.assertEqual(response.status_code, 200)
+        testutils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
+        testutils.assertXPath(response, "(//h2[normalize-space(text())='Sign up to the Update Service']"
+                                        "/following-sibling::ul)[1]"
+                                        "/li[normalize-space(text())='Joe Alan Bloggs']")
 
     def test_any_adult_on_the_capita_list_and_has_been_issued_in_the_last_3_months_and_does_contain_information_does_not_appear_in_any_list(
             self, dbs_read):
-        self.skipTest('testNotImplemented')
+
+        adult1 = self.make_adult(dbs_read, dbs_number='123456789013', dbs_info='Test',
+                                 first_name='Joe', middle_names='Alan', last_name='Bloggs')
+        adult2 = self.make_adult(dbs_read, dbs_number='123456789014', record_found=False, issue_recent=False,
+                                 on_update_answer=False)
+
+        response = self.client.get(reverse('PITH-DBS-Post-Or-Apply-View'), data={'id': self.app_id})
+
+        self.assertEqual(response.status_code, 200)
+        testutils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
+        testutils.assertNotXPath(response, "//li[normalize-space(text())='Joe Alan Bloggs']")
 
     def test_any_adult_on_the_capita_list_and_has_been_issued_in_the_last_3_months_and_does_not_contain_information_does_not_appear_in_any_list(
             self, dbs_read):
-        self.skipTest('testNotImplemented')
+
+        adult1 = self.make_adult(dbs_read, dbs_number='123456789013', dbs_info='',
+                                 first_name='Joe', middle_names='Alan', last_name='Bloggs')
+        adult2 = self.make_adult(dbs_read, dbs_number='123456789014', record_found=False, issue_recent=False,
+                                 on_update_answer=False)
+
+        response = self.client.get(reverse('PITH-DBS-Post-Or-Apply-View'), data={'id': self.app_id})
+
+        self.assertEqual(response.status_code, 200)
+        testutils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
+        testutils.assertNotXPath(response, "//li[normalize-space(text())='Joe Alan Bloggs']")
 
 
 class PITHChildrenInHomeDetailsFunctionalTests(PITHFunctionalTestCase):
@@ -628,8 +752,32 @@ class PITHOwnChildrenDetailsFunctionalTests(PITHFunctionalTestCase):
 
 class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
 
+    def setUp(self):
+
+        application = models.Application.objects.get(pk=self.app_id)
+        # create applicant's additional info models
+        personal_details = models.ApplicantPersonalDetails.objects.create(
+            application_id=application,
+        )
+        home_address = models.ApplicantHomeAddress.objects.create(
+            application_id=application,
+            personal_detail_id=personal_details,
+            move_in_month=7, move_in_year=2005,
+            current_address=True,
+        )
+        childcare_type = models.ChildcareType.objects.create(
+            application_id=application,
+            zero_to_five=False,
+            five_to_eight=True,
+            eight_plus=True,
+        )
+
     def test_can_render_summary_page(self):
-        self.skipTest('testNotImplemented')
+
+        response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
+
+        self.assertEqual(response.status_code, 200)
+        testutils.assertView(response, PITH_views.PITHCheckYourAnswersView)
 
     def test_all_change_links_in_summary_resolve_to_a_page(self):
         self.skipTest('testNotImplemented')

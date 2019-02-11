@@ -65,11 +65,11 @@ def assertXPathCount(response, xpath, expected_quantity):
 
 def _do_xpath(response, xpath):
     tree = etree.fromstring(response.content, parser=etree.HTMLParser()).getroottree()
-    return tree.xpath(xpath)#, namespaces={None: 'http://www.w3.org/1999/xhtml'})
+    return tree.xpath(xpath)
 
 
 def assertView(response, expected_view_obj):
-    expected_name = expected_view_obj.__name__
+    expected_name = expected_view_obj if isinstance(expected_view_obj, str) else expected_view_obj.__name__
     actual_name = response.resolver_match.func.__name__
     if actual_name != expected_name:
         raise AssertionError('Expected view "{}", found view "{}"'.format(expected_name, actual_name))
