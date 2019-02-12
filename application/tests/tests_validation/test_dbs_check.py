@@ -1,8 +1,16 @@
+from unittest.mock import patch
+
+from django.http import HttpResponse
 from django.test import TestCase, modify_settings
-from application import models, views, forms
-from django.urls import reverse, resolve
+from django.urls import reverse
 from django.utils import timezone
 
+from application import models
+
+mock_response = HttpResponse()
+mock_response.status_code = 404
+
+MOCK_READ_RETURN_VALUE = mock_response
 
 @modify_settings(MIDDLEWARE={
     'remove': [
@@ -72,7 +80,9 @@ class TestDBSCheckValidation(TestCase):
         self.assertEqual(200, response.status_code)
         adult.delete()
 
-    def test_duplicate_dbs_applicant_adult2(self):
+    @patch('application.dbs.read')
+    def test_duplicate_dbs_applicant_adult2(self, mock_read):
+        mock_read.return_value = MOCK_READ_RETURN_VALUE
         app_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
 
         self.url_suffix = '?id=' + str(app_id)
