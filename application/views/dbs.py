@@ -356,13 +356,12 @@ class DBSTypeView(DBSRadioView):
         crc = criminal_record_check_record = CriminalRecordCheck.objects.get(application_id=app_id)
         if (crc.enhanced_check):
             if (crc.on_update):
-                redirect_url= enhanced_on_update
+                redirect_url = enhanced_on_update
             elif (crc.enhanced_check != None):
                 redirect_url = enhanced_no_update
         else:
             redirect_url = no_enhanced
         return build_url(redirect_url, get={'id': app_id})
-
 
 
 class DBSMilitaryView(DBSRadioView):
@@ -429,18 +428,20 @@ class DBSCheckCapitaView(DBSCheckDetailsView):
     success_url = ('DBS-Post-View', 'DBS-Summary-View', 'DBS-Update-View', 'DBS-Check-Type-View')
     nullify_field_list = ['on_update']
     show_cautions_convictions = False
-    r = None
 
     def get_success_url(self):
         capita_info, capita_no_info, capita_old, no_capita = self.success_url
         dbs_certificate_number = self.request.POST.get('dbs_certificate_number')
         application_id = get_id(self.request)
-        self.r = read(dbs_certificate_number)
-        try:
-            record = self.r.record
+
+        response = read(dbs_certificate_number)
+
+        if response.status_code == 200:
+            record = response.record
             issue_date = datetime.strptime(record['date_of_issue'], "%Y-%m-%d")
             info = record['certificate_information']
-            successfully_updated_capita = update_criminal_record_check(application_id, 'capita', True)
+
+            successfully_updated = update_criminal_record_check(application_id, 'capita', True)
             if date_issued_within_three_months(issue_date):
                 successfully_updated_three = update_criminal_record_check(application_id, 'within_three_months', True)
                 if (info != '') or (info != None):
@@ -452,12 +453,12 @@ class DBSCheckCapitaView(DBSCheckDetailsView):
             else:
                 successfully_updated_three = update_criminal_record_check(application_id, 'within_three_months', False)
                 redirect_url = capita_old
-        except AttributeError:
-            successfully_updated_capita = update_criminal_record_check(application_id, 'capita', False)
+        else:
             redirect_url = no_capita
+            # TODO: Currently just redirecting as if not a valid dbs number if DBS API is inaccessible.
 
-        application_id = get_id(self.request)
         return build_url(redirect_url, get={'id': application_id})
+
 
 class DBSCheckNoCapitaView(DBSCheckDetailsView):
     template_name = 'dbs-check-capita.html'
