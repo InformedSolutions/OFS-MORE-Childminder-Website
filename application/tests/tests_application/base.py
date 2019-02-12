@@ -43,6 +43,7 @@ class ApplicationTestBase(object):
                 }
             )
             self.assertEqual(r.status_code, 200)
+            x = UserDetails.objects.get(email=self.email).email
             self.assertEqual(self.email, UserDetails.objects.get(email=self.email).email)
 
     def TestAppInvalidEmail(self):
@@ -393,9 +394,11 @@ class ApplicationTestBase(object):
             reverse('DBS-Check-Type-View'),
             {
                 'id': self.app_id,
-                'enhanced_check': True
+                'enhanced_check': True,
+                'on_update': False
             }
         )
+
         self.assertEqual(r.status_code, 302)
         r = self.client.post(
             reverse('DBS-Update-Check-View'),
