@@ -21,6 +21,8 @@ from ..models import (Application,
 from ..table_util import Table, Row
 from ..utils import build_url, get_id
 
+NO_ADDITIONAL_CERTIFICATE_INFORMATION = ['Certificate contains no information']
+
 
 class DBSTemplateView(TemplateView):
     template_name = None
@@ -452,10 +454,11 @@ class DBSCheckNoCapitaView(DBSCheckDetailsView):
 
             if date_issued_within_three_months(issue_date):
                 update_criminal_record_check(application_id, 'within_three_months', True)
-                if (info != '') or (info != None):
+                if not info in NO_ADDITIONAL_CERTIFICATE_INFORMATION:
                     update_criminal_record_check(application_id, 'certificate_information', info)
                     redirect_url = capita_info
                 else:
+                    update_criminal_record_check(application_id, 'certificate_information', None)
                     redirect_url = capita_no_info
             else:
                 update_criminal_record_check(application_id, 'within_three_months', False)
