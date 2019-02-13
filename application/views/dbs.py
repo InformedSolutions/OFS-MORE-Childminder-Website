@@ -222,31 +222,31 @@ class DBSSummaryView(DBSTemplateView):
                 'field': 'lived_abroad',
                 'title': 'Have you lived outside of the UK in the last 5 years?',
                 'url': 'DBS-Lived-Abroad-View',
-                'alt_text': 'Change answer to living outside of the UK in the last 5 years'
+                'alt_text': 'answer to living outside of the UK in the last 5 years'
             },
             {
                 'field': 'military_base',
                 'title': 'Have you lived or worked on a British military base outside of the UK in the last 5 years?',
                 'url': 'DBS-Military-View',
-                'alt_text': 'Change answer to living or working on a military base outside of the UK in the last 5 years'
+                'alt_text': 'answer to living or working on a military base outside of the UK in the last 5 years'
             },
             {
                 'field': 'dbs_certificate_number',
                 'title': 'DBS certificate number',
                 'url': DBSSummaryView.get_certificate_number_url(app_id),
-                'alt_text': 'Change answer to DBS certificate number'
+                'alt_text': 'answer to DBS certificate number'
             },
             {
                 'field': 'enhanced_check',
                 'title': 'Is it an enhanced DBS check for home-based childcare?',
                 'url': 'DBS-Check-Type-View',
-                'alt_text': 'Change answer to is it an enhanced DBS check for home-based childcare?'
+                'alt_text': 'answer to DBS being enhanced and home-based?'
             },
             {
                 'field': 'on_update',
                 'title': 'Are you on the DBS update service?',
                 'url': 'DBS-Update-View',
-                'alt_text': 'Change answer to being on the DBS update service'
+                'alt_text': 'answer to DBS being on the Update Service'
             }
         ]
         return rows_to_generate
