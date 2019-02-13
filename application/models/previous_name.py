@@ -25,12 +25,12 @@ class PreviousName(models.Model):
     person_id = models.UUIDField(blank=True)
 
     # Type discriminator
-    other_person_type = models.CharField(choices=previous_name_types, max_length=50, blank=True)
+    other_person_type = models.CharField(choices=previous_name_types, max_length=200, blank=True)
 
     # Actual name fields
-    first_name = models.CharField(max_length=100, blank=True)
-    middle_names = models.CharField(max_length=100, blank=True)
-    last_name = models.CharField(max_length=100, blank=True)
+    first_name = models.CharField(max_length=200, blank=True)
+    middle_names = models.CharField(max_length=200, blank=True)
+    last_name = models.CharField(max_length=200, blank=True)
 
     @property
     def person(self):
