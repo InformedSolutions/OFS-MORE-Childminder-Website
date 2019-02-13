@@ -88,7 +88,6 @@ urlpatterns = [
     url(r'^criminal-record/MOD-checks/$', views.DBSMinistryOfDefenceView.as_view(),
         name='DBS-Ministry-Of-Defence-View'),
     url(r'^criminal-record/UK/$', views.DBSGuidanceSecondView.as_view(), name='DBS-Guidance-Second-View'),
-    url(r'^criminal-record/your-details/$', views.DBSCheckCapitaView.as_view(), name='DBS-Check-Capita-View'),
     url(r'^criminal-record/DBS-details/$', views.DBSCheckNoCapitaView.as_view(), name='DBS-Check-No-Capita-View'),
     url(r'^criminal-record/DBS-update/$', views.DBSUpdateView.as_view(), name='DBS-Update-View'),
     url(r'^criminal-record/apply-new/$', views.DBSApplyNewView.as_view(), name='DBS-Apply-New-View'),

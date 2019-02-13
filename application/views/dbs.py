@@ -45,7 +45,7 @@ class DBSGuidanceView(DBSTemplateView):
 
 class DBSGuidanceSecondView(DBSTemplateView):
     template_name = 'dbs-guidance-second.html'
-    success_url = 'DBS-Check-Capita-View'
+    success_url = 'DBS-Check-No-Capita-View'
 
 
 class DBSGoodConductView(DBSTemplateView):
@@ -204,14 +204,8 @@ class DBSSummaryView(DBSTemplateView):
         :param app_id: applicant's application id
         :return: Void
         """
-        capita_status = get_criminal_record_check(app_id, 'capita')
-        if capita_status:
-            return 'DBS-Check-Capita-View'
-        elif not capita_status:
-            return 'DBS-Check-No-Capita-View'
-        else:
-            raise ValueError(
-                'capita_status should be either True or False by this point, but it is {0}'.format(capita_status))
+        # Kept for legacy reasons, but now logic simply returns one view.
+        return 'DBS-Check-No-Capita-View'
 
     @staticmethod
     def get_rows_to_generate(app_id):
@@ -238,13 +232,13 @@ class DBSSummaryView(DBSTemplateView):
                 'field': 'dbs_certificate_number',
                 'title': 'DBS certificate number',
                 'url': DBSSummaryView.get_certificate_number_url(app_id),
-                'alt_text': 'Change DBS certificate number'
+                'alt_text': 'Change answer to DBS certificate number'
             },
             {
                 'field': 'enhanced_check',
                 'title': 'Is it an enhanced DBS check for home-based childcare?',
                 'url': 'DBS-Check-Type-View',
-                'alt_text': 'Change answer on cautions or convictions?'
+                'alt_text': 'Change answer to is it an enhanced DBS check for home-based childcare?'
             },
             {
                 'field': 'on_update',
@@ -423,10 +417,19 @@ class DBSCheckDetailsView(DBSRadioView):
 
 
 class DBSCheckCapitaView(DBSCheckDetailsView):
+    # Currently Unused View
     template_name = 'dbs-check-capita.html'
     form_class = DBSCheckCapitaForm
     success_url = ('DBS-Post-View', 'DBS-Summary-View', 'DBS-Update-View', 'DBS-Check-Type-View')
-    nullify_field_list = ['on_update']
+    nullify_field_list = []
+    show_cautions_convictions = False
+
+
+class DBSCheckNoCapitaView(DBSCheckDetailsView):
+    template_name = 'dbs-check-capita.html'
+    form_class = DBSCheckNoCapitaForm
+    success_url = ('DBS-Post-View', 'DBS-Summary-View', 'DBS-Update-View', 'DBS-Check-Type-View')
+    nullify_field_list = []
     show_cautions_convictions = False
 
     def get_success_url(self):
@@ -441,32 +444,29 @@ class DBSCheckCapitaView(DBSCheckDetailsView):
             issue_date = datetime.strptime(record['date_of_issue'], "%Y-%m-%d")
             info = record['certificate_information']
 
-            successfully_updated = update_criminal_record_check(application_id, 'capita', True)
+            update_criminal_record_check(application_id, 'capita', True)
+
+            # Nullify fields on the capita = False route
+            update_criminal_record_check(application_id, 'enhanced_check', None)
+            update_criminal_record_check(application_id, 'on_update', None)
+
             if date_issued_within_three_months(issue_date):
-                successfully_updated_three = update_criminal_record_check(application_id, 'within_three_months', True)
+                update_criminal_record_check(application_id, 'within_three_months', True)
                 if (info != '') or (info != None):
-                    successfully_updated_info = update_criminal_record_check(application_id, 'certificate_information',
-                                                                             info)
+                    update_criminal_record_check(application_id, 'certificate_information', info)
                     redirect_url = capita_info
                 else:
                     redirect_url = capita_no_info
             else:
-                successfully_updated_three = update_criminal_record_check(application_id, 'within_three_months', False)
+                update_criminal_record_check(application_id, 'within_three_months', False)
                 redirect_url = capita_old
         else:
+            update_criminal_record_check(application_id, 'capita', False)
             redirect_url = no_capita
+
+            # Nullify fields on the capita = True route
+            update_criminal_record_check(application_id, 'within_three_months', None)
+
             # TODO: Currently just redirecting as if not a valid dbs number if DBS API is inaccessible.
 
         return build_url(redirect_url, get={'id': application_id})
-
-
-class DBSCheckNoCapitaView(DBSCheckDetailsView):
-    template_name = 'dbs-check-capita.html'
-    form_class = DBSCheckNoCapitaForm
-    success_url = 'DBS-Post-View'
-    nullify_field_list = ['cautions_convictions']
-    show_cautions_convictions = False
-
-    def get_success_url(self):
-        application_id = get_id(self.request)
-        return build_url(self.success_url, get={'id': application_id})

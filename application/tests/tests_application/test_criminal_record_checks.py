@@ -3,13 +3,13 @@ from unittest import mock
 from unittest.mock import patch
 
 from django.core.exceptions import ValidationError
+from django.http import HttpResponse
 from django.test import Client, tag
 from django.urls import reverse
-from django.http import HttpResponse
 
-from ...models import Application, CriminalRecordCheck, ApplicantPersonalDetails
-from ..testutils import NoMiddlewareTestCase
 from application.business_logic import dbs_date_of_birth_no_match, date_issued_within_three_months
+from ..testutils import NoMiddlewareTestCase
+from ...models import Application, CriminalRecordCheck, ApplicantPersonalDetails
 
 
 class DBSTemplateViewTestCase(NoMiddlewareTestCase):
@@ -85,7 +85,7 @@ class DBSGuidanceSecondViewTests(DBSTemplateViewTestCase):
     def setUp(self):
         super().setUp()
         self.view_url_name = 'DBS-Guidance-Second-View'
-        self.correct_url = 'DBS-Check-Capita-View'
+        self.correct_url = 'DBS-Check-No-Capita-View'
 
     @tag('http')
     def test_post_request_to_guidance_page_redirects_to_criminal_details_page(self):
@@ -460,14 +460,14 @@ class DBSTypeViewTests(DBSRadioViewTests):
         criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
         application = Application.objects.get(application_id=self.application_id)
         crc_record = CriminalRecordCheck.objects.create(application_id=application,
-                                                                criminal_record_id=criminal_record_check_id)
+                                                        criminal_record_id=criminal_record_check_id)
         form_data = {self.form.choice_field_name: False}
 
         response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id, form_data)
 
         print('Returned a {0} response'.format(response.status_code))
         self.assertTrue(response.status_code == 302)
-         # Tear down env
+        # Tear down env
         crc_record.delete()
 
     @tag('http')
@@ -504,13 +504,12 @@ class DBSTypeViewTests(DBSRadioViewTests):
         # Tear down env
         crc_record.delete()
 
-
     @tag('http')
     def test_radio_no_redirect_to_correct_url(self):
         criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
         application = Application.objects.get(application_id=self.application_id)
         crc_record = CriminalRecordCheck.objects.create(application_id=application,
-                                                            criminal_record_id=criminal_record_check_id)
+                                                        criminal_record_id=criminal_record_check_id)
         form_data = {self.form.choice_field_name: False}
 
         response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id, form_data)
@@ -523,12 +522,11 @@ class DBSTypeViewTests(DBSRadioViewTests):
 
     @tag('http')
     def test_radio_yes_redirect(self):
-
         # Build env
         criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
         application = Application.objects.get(application_id=self.application_id)
         crc_record = CriminalRecordCheck.objects.create(application_id=application,
-                                                                criminal_record_id=criminal_record_check_id)
+                                                        criminal_record_id=criminal_record_check_id)
         form_data = {self.form.choice_field_name: True}
 
         response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id, form_data)
@@ -536,9 +534,6 @@ class DBSTypeViewTests(DBSRadioViewTests):
         self.assertTrue(response.status_code == 200)
         # Tear down env
         crc_record.delete()
-
-
-
 
 
 class DBSUpdateViewTests(DBSRadioViewTests):
@@ -554,44 +549,37 @@ class DBSUpdateViewTests(DBSRadioViewTests):
         self.correct_url = ('DBS-Post-View', 'DBS-Get-View')
 
 
-class DBSCheckCapitaView(DBSRadioViewTests):
+class DBSCheckNoCapitaView(DBSTemplateViewTestCase):
     def setUp(self):
+
         super().setUp()
-
-        from application.views import DBSCheckCapitaView as view
-        from application.forms import DBSCheckCapitaForm as form
-
-        self.view = view
-        self.form = form
-        self.view_url_name = 'DBS-Check-Capita-View'
-        self.correct_url = ('DBS-Post-View', 'DBS-Summary-View')
+        self.view_url_name = 'DBS-Check-No-Capita-View'
+        self.correct_url = 'DBS-Post-View'
 
     @tag('http')
-    def test_form_valid_callable(self):
+    def test_view_rendered_on_get(self):
+        if all(var is not None for var in [self.view_url_name, self.correct_url]):
+            # Build env
+            criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
+            application = Application.objects.get(application_id=self.application_id)
+            crc_record = CriminalRecordCheck.objects.create(application_id=application,
+                                                            criminal_record_id=criminal_record_check_id)
+
+            response = self.client.get(reverse(self.view_url_name) + '?id=' + self.application_id)
+            print('Returned a {0} response'.format(response.status_code))
+            self.assertTrue(response.status_code == 200)
+
+            # Tear down env
+            crc_record.delete()
+        else:
+            raise self.skipTest('view_url_name or correct_url not set')
+
+    @tag('http')
+    def test_redirect_on_post(self):
         raise self.skipTest('Not Yet Implemented')
 
     @tag('http')
-    def test_radio_no_redirect(self):
-        raise self.skipTest('Not Yet Implemented')
-
-    @tag('http')
-    def test_radio_no_redirect_to_correct_url(self):
-        raise self.skipTest('Not Yet Implemented')
-
-    @tag('http')
-    def test_radio_yes_redirect(self):
-        raise self.skipTest('Not Yet Implemented')
-
-    @tag('http')
-    def test_radio_yes_redirect_to_correct_url(self):
-        raise self.skipTest('Not Yet Implemented')
-
-    @tag('http')
-    def test_redirect_on_form_valid(self):
-        raise self.skipTest('Not Yet Implemented')
-
-    @tag('http')
-    def test_form_cautions_convictions_validation(self):
+    def test_redirect_to_correct_url(self):
         raise self.skipTest('Not Yet Implemented')
 
     @tag('http')
@@ -652,40 +640,6 @@ class DBSCheckCapitaView(DBSRadioViewTests):
         date_issued = datetime.datetime(2000, 1, 1)
         result = date_issued_within_three_months(date_issued)
         self.assertEqual(result, False)
-
-
-class DBSCheckNoCapitaView(DBSTemplateViewTestCase):
-    def setUp(self):
-
-        super().setUp()
-        self.view_url_name = 'DBS-Check-No-Capita-View'
-        self.correct_url = 'DBS-Post-View'
-
-    @tag('http')
-    def test_view_rendered_on_get(self):
-        if all(var is not None for var in [self.view_url_name, self.correct_url]):
-            # Build env
-            criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
-            application = Application.objects.get(application_id=self.application_id)
-            crc_record = CriminalRecordCheck.objects.create(application_id=application,
-                                                            criminal_record_id=criminal_record_check_id)
-
-            response = self.client.get(reverse(self.view_url_name) + '?id=' + self.application_id)
-            print('Returned a {0} response'.format(response.status_code))
-            self.assertTrue(response.status_code == 200)
-
-            # Tear down env
-            crc_record.delete()
-        else:
-            raise self.skipTest('view_url_name or correct_url not set')
-
-    @tag('http')
-    def test_redirect_on_post(self):
-        raise self.skipTest('Not Yet Implemented')
-
-    @tag('http')
-    def test_redirect_to_correct_url(self):
-        raise self.skipTest('Not Yet Implemented')
 
 
 class DBSSummaryViewTests(DBSTemplateViewTestCase):
