@@ -86,7 +86,7 @@ class DBSTypeForm(DBSRadioForm):
     """
     choice_field_name = 'enhanced_check'
     update_field_name = 'on_update'
-    error_summary_title = 'There was a problem with the type of DBS check'
+    error_summary_title = 'There was a problem on this page'
     reveal_conditionally = {'enhanced_check': {True: 'on_update'}}
     choices = (
         (True, 'Yes'),
@@ -129,7 +129,7 @@ class DBSUpdateForm(DBSRadioForm):
     GOV.UK form for the Criminal record check: update page
     """
     choice_field_name = 'on_update'
-    error_summary_title = 'There was a problem with the type of DBS check'
+    error_summary_title = 'There was a problem on this page'
 
     def get_choice_field_data(self):
         return forms.ChoiceField(
