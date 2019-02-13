@@ -458,7 +458,7 @@ class DBSCheckNoCapitaView(DBSCheckDetailsView):
                     update_criminal_record_check(application_id, 'certificate_information', info)
                     redirect_url = capita_info
                 else:
-                    update_criminal_record_check(application_id, 'certificate_information', None)
+                    update_criminal_record_check(application_id, 'certificate_information', info)
                     redirect_url = capita_no_info
             else:
                 update_criminal_record_check(application_id, 'within_three_months', False)
