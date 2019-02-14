@@ -5,12 +5,14 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 """
 
-import re
 import enum
+import re
 from datetime import datetime, timedelta
 
 import pytz
+from dateutil.relativedelta import relativedelta
 
+from . import dbs
 from .models import (AdultInHome,
                      ApplicantHomeAddress,
                      ApplicantName,
@@ -25,7 +27,6 @@ from .models import (AdultInHome,
                      Reference,
                      UserDetails, Child, ChildAddress)
 from .utils import unique_values, get_first_duplicate_index, get_duplicate_list_entry_indexes
-from . import dbs
 
 
 def childcare_type_logic(application_id_local, form):
@@ -1089,7 +1090,7 @@ def date_issued_within_three_months(date_issued):
     :return: a boolean to represent if there the dbs was issued within three months of today
     """
     now = datetime.today()
-    if now - timedelta(3 * 365 / 12) <= date_issued:
+    if now - relativedelta(months=3) <= date_issued:
         return True
     else:
         return False
