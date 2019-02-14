@@ -28,3 +28,4 @@ from .nanny_application import *
 from .child_address import *
 from .childbase import *
 from .child import *
+from .capita_dbs_file import CapitaDBSFile
