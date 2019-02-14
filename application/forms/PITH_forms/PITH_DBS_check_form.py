@@ -4,12 +4,9 @@ import logging
 from django import forms
 from govuk_forms.widgets import NumberInput
 
-from application.forms.PITH_forms.PITH_base_forms.PITH_childminder_form_retrofit import PITHChildminderFormAdapter
-
-from application.models import Application
-
 from application.business_logic import dbs_matches_childminder_dbs, find_dbs_status, DBSStatus
-
+from application.forms.PITH_forms.PITH_base_forms.PITH_childminder_form_retrofit import PITHChildminderFormAdapter
+from application.models import Application
 
 log = logging.getLogger(__name__)
 
@@ -62,8 +59,8 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
         """
         super().clean()
 
-        cleaned_dbs_field = self.data[self.dbs_field_name]\
-            if self.data[self.dbs_field_name] != ""\
+        cleaned_dbs_field = self.data[self.dbs_field_name] \
+            if self.data[self.dbs_field_name] != "" \
             else None
         application = Application.objects.get(application_id=self.application_id)
 
@@ -77,8 +74,11 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
             self.dbs_status = find_dbs_status(cleaned_dbs_field, self.adult)
 
             if self.dbs_status == DBSStatus.DOB_MISMATCH:
-                self.add_error(self.dbs_field, 'Check your DBS certificate. '
-                                               'The number you entered does not match your number held by DBS')
+                self.add_error(self.dbs_field,
+                               """
+                               Birth date does not match the date given on the 'Your date of birth' page: 
+                               Check your DBS certificate. The number you entered does not match your number held by DBS.
+                               """)
 
         return self.cleaned_data
 
@@ -92,5 +92,3 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
             self.add_error(field_name, 'Please enter a different DBS number. '
                                        'You entered this number for someone in your childcare location')
         # check for duplicate dbs numbers amongst adults in home is done in the view's validate_form_list function
-
-
