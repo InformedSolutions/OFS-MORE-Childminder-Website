@@ -62,6 +62,8 @@ def payment_confirmation(request):
 def get_template(crc, app_id, application, cost, cr_type):
     lived_abroad = crc.lived_abroad
     capita = crc.capita
+    certificate_information = crc.certificate_information
+    on_update = crc.on_update
     if capita:
         cautions_convictions = crc.cautions_convictions
     else:
@@ -92,7 +94,7 @@ def get_template(crc, app_id, application, cost, cr_type):
         email_template = '36720ba3-165e-40cd-a6d2-320daa9d6e4a' if early_years_register else 'f5a2998c-7322-4e32-8a85-72741bfec4a5'
         view_template = 'payment-confirmation-lived-abroad.html'
 
-    elif (not capita or cautions_convictions) and lived_abroad:
+    elif ((capita and certificate_information) or on_update) and lived_abroad:
         if early_years_register:
             log.debug('Attempting send of email "Confirmation with HDB - DBS & lived abroad"')
         else:
@@ -101,7 +103,7 @@ def get_template(crc, app_id, application, cost, cr_type):
         email_template = 'c82b8ffd-f67c-4019-a724-d57ab559f08e' if early_years_register else '94190a2d-d1c7-46c6-8144-da38141aa027'
         view_template = 'payment-confirmation-health-dbs.html'
 
-    elif (not capita or cautions_convictions) and not lived_abroad:
+    elif ((capita and certificate_information) or on_update) and not lived_abroad:
         if early_years_register:
             log.debug('Attempting send of email "Confirmation with HDB - DBS only"')
         else:
@@ -112,7 +114,7 @@ def get_template(crc, app_id, application, cost, cr_type):
 
     elif not lived_abroad and not cautions_convictions:
         if early_years_register:
-            log.debug('Attempting send of email "Confirmation with HDB - no docs to send"')
+            log.debug('Attempting send of email "Confirmation with HDB only"')
         else:
             log.debug('Attempting send of email "Confirmation - no docs to send"')
 
