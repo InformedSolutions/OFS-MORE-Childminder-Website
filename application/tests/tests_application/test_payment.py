@@ -1312,4 +1312,3 @@ class PaymentTests(TestCase, ApplicationTestBase):
                                                'f5a2998c-7322-4e32-8a85-72741bfec4a5')
             crc.delete()
 
-
