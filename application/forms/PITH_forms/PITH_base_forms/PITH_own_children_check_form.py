@@ -6,6 +6,7 @@ from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlin
 class PITHOwnChildrenCheckForm(ChildminderForms):
     choice_field_name = 'children_in_home'
     auto_replace_widgets = True
+    field_label_classes = 'form-label-bold'
 
     options = (
         ('True', 'Yes'),
@@ -15,7 +16,7 @@ class PITHOwnChildrenCheckForm(ChildminderForms):
     reveal_conditionally = {'known_to_social_services_pith': {'True': 'reasons_known_to_social_services_pith'}}
 
     known_to_social_services_pith = forms.ChoiceField(
-        label='Are you known to council social services in regards to your own children?',
+        label="Are you known to council social services in regards to your own children?",
         choices=options,
         widget=ConditionalPostInlineRadioSelect,
         required=True,
@@ -23,7 +24,7 @@ class PITHOwnChildrenCheckForm(ChildminderForms):
             'required': 'Please say if you are known to council social services in regards to your own children'})
 
     reasons_known_to_social_services_pith = forms.CharField(
-        label='Tell us why',
+        label="Tell us why",
         widget=forms.Textarea,
         required=True,
         error_messages={
