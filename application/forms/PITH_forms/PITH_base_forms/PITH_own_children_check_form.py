@@ -18,14 +18,14 @@ class PITHOwnChildrenCheckForm(ChildminderForms):
         label='Are you known to council social services in regards to your own children?',
         choices=options,
         widget=ConditionalPostInlineRadioSelect,
-        required=False,
+        required=True,
         error_messages={
             'required': 'Please say if you are known to council social services in regards to your own children'})
 
     reasons_known_to_social_services_pith = forms.CharField(
         label='Tell us why',
         widget=forms.Textarea,
-        required=False,
+        required=True,
         error_messages={
             'required': 'You must tell us why'})
 
@@ -36,8 +36,11 @@ class PITHOwnChildrenCheckForm(ChildminderForms):
         self.field_list = [*self.fields]
 
     def clean_reasons_known_to_social_services_pith(self):
-        if self.cleaned_data['known_to_social_services_pith'] == 'True' \
-                and self.cleaned_data['reasons_known_to_social_services_pith'] ==  '':
-            raise forms.ValidationError('You must tell us why')
+        cleaned_data = super().clean()
+        known_to_social_services_pith = cleaned_data.get('known_to_social_services_pith')
+        reasons_known_to_social_services_pith = cleaned_data.get('reasons_known_to_social_services_pith')
+        if known_to_social_services_pith == 'True':
+            if reasons_known_to_social_services_pith is '':
+                self.add_error('reasons_known_to_social_services_pith', 'You must tell us why')
 
-        return self.cleaned_data['reasons_known_to_social_services_pith']
+        return cleaned_data
