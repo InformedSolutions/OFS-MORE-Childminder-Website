@@ -167,15 +167,12 @@ def declaration_summary(request, print_mode=False):
         adult_email_list = []
         adult_lived_abroad_list = []
         adult_military_base_list = []
-        adult_capita_dbs_list = []
-        adult_on_update_dbs_list = []
+        adult_enhanced_check_list = []
+        adult_on_update_list = []
         adult_known_to_council_list = []
         adult_reasons_known_to_council_list = []
         application = Application.objects.get(pk=application_id_local)
         for adult in adults_list:
-
-            # Obtain status of DBS check
-            dbs_status = find_dbs_status(adult.dbs_certificate_number, adult, adult.capita, adult.on_update)
 
             # For each adult, append the correct attribute (e.g. name, relationship) to the relevant list
             # Concatenate the adult's name for display, displaying any middle names if present
@@ -205,14 +202,14 @@ def declaration_summary(request, print_mode=False):
             adult_lived_abroad_list.append(adult.lived_abroad)
             adult_military_base_list.append(adult.military_base)
             # adult either has an up-to-date capita dbs cert or is on update service
-            adult_capita_dbs_list.append(dbs_status in (DBSStatus.OK, DBSStatus.NEED_UPDATE_SERVICE_CHECK))          # \
-            adult_on_update_dbs_list.append(dbs_status == DBSStatus.NEED_UPDATE_SERVICE_CHECK)
+            adult_enhanced_check_list.append(adult.capita or adult.enhanced_check)
+            adult_on_update_list.append(adult.on_update)
             adult_known_to_council_list.append(adult.known_to_council)
             adult_reasons_known_to_council_list.append(adult.reasons_known_to_council_health_check)
         # Zip the appended lists together for the HTML to simultaneously parse
         adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
                           adult_relationship_list, adult_dbs_list, adult_health_check_status_list, adult_email_list,
-                          adult_lived_abroad_list, adult_capita_dbs_list, adult_on_update_dbs_list,
+                          adult_lived_abroad_list, adult_enhanced_check_list, adult_on_update_list,
                           adult_military_base_list, adult_known_to_council_list, adult_reasons_known_to_council_list)
         # Generate lists of data for children in your home, to be iteratively displayed on the summary page
         # The HTML will then parse through each list simultaneously, to display the correct data for each child

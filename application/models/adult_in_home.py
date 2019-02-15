@@ -33,8 +33,11 @@ class AdultInHome(models.Model):
     email_resent_timestamp = models.DateTimeField(null=True, blank=True)
     lived_abroad = models.NullBooleanField(blank=True)
     military_base = models.NullBooleanField(blank=True)
-    capita = models.NullBooleanField(blank=True)
-    on_update = models.NullBooleanField(blank=True)
+    capita = models.NullBooleanField(blank=True)                # dbs was found on capita list?
+    enhanced_check = models.NullBooleanField(blank=True)        # stated they have a capita dbs?
+    on_update = models.NullBooleanField(blank=True)             # stated they are signed up to dbs update service?
+    certificate_information = models.TextField(blank=True)      # information from dbs certificate
+    within_three_months = models.NullBooleanField(blank=True)   # dbs was issued within three months of lookup?
 
     @property
     def timelog_fields(self):

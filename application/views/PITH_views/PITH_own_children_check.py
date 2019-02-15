@@ -46,11 +46,6 @@ class PITHOwnChildrenCheckView(PITHRadioView):
         else:
             return render(request, self.template_name, context={'form': form_submission})
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # for caching info obtained from dbs lookup
-        self.is_awaiting_user_pith_dbs_action = None
-
     def form_valid(self, form):
         log.debug('Checking if form is valid')
 
@@ -116,12 +111,8 @@ class PITHOwnChildrenCheckView(PITHRadioView):
 
     def get_awaiting_user_pith_dbs_action(self, application_id):
 
-        if self.is_awaiting_user_pith_dbs_action is not None:
-            return self.is_awaiting_user_pith_dbs_action
-
         result = awaiting_pith_dbs_action_from_user(
-            find_dbs_status(adult.dbs_certificate_number, adult, adult.capita, adult.on_update)
+            find_dbs_status(adult, adult)
             for adult in AdultInHome.objects.filter(application_id=application_id))
 
-        self.is_awaiting_user_pith_dbs_action = result
         return result

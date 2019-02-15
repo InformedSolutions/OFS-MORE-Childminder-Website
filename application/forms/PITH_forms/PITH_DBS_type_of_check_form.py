@@ -21,19 +21,19 @@ class PITHDBSTypeOfCheckForm(PITHChildminderFormAdapter):
     def __init__(self, *args, **kwargs):
         self.application_id = kwargs.pop('id')
         self.adult = kwargs.pop('adult')
-        self.ask_if_capita = kwargs.pop('ask_if_capita')
-        self.capita_field = kwargs.pop('capita_field')
+        self.ask_if_enhanced_check = kwargs.pop('ask_if_enhanced_check')
+        self.enhanced_check_field = kwargs.pop('enhanced_check_field')
         self.on_update_field = kwargs.pop('on_update_field')
         self.pk = self.adult.pk
 
-        self.capita_field_name = self.capita_field + str(self.adult.pk)
+        self.enhanced_check_field_name = self.enhanced_check_field + str(self.adult.pk)
         self.on_update_field_name = self.on_update_field + str(self.adult.pk)
 
         self.base_fields = collections.OrderedDict([
             (self.on_update_field_name, self.get_on_update_field_data()),
         ])
-        if self.ask_if_capita:
-            self.base_fields[self.capita_field_name] = self.get_capita_field_data()
+        if self.ask_if_enhanced_check:
+            self.base_fields[self.enhanced_check_field_name] = self.get_enhanced_check_field_data()
 
         self.reveal_conditionally = self.get_reveal_conditionally()
 
@@ -76,7 +76,7 @@ class PITHDBSTypeOfCheckForm(PITHChildminderFormAdapter):
             (False, 'No')
         )
 
-    def get_capita_field_data(self):
+    def get_enhanced_check_field_data(self):
         return forms.ChoiceField(
             label='Do they have an enhanced DBS check for home-based childcare?',
             choices=self.get_options(),
@@ -93,29 +93,29 @@ class PITHDBSTypeOfCheckForm(PITHChildminderFormAdapter):
     def clean(self):
         super().clean()
 
-        cleaned_capita_field = self.cleaned_data[self.capita_field_name] == 'True'\
-            if self.cleaned_data.get(self.capita_field_name)\
+        cleaned_enhanced_check_field = self.cleaned_data[self.enhanced_check_field_name] == 'True'\
+            if self.cleaned_data.get(self.enhanced_check_field_name)\
             else None
         cleaned_on_update_field = self.cleaned_data[self.on_update_field_name] == 'True'\
             if self.cleaned_data[self.on_update_field_name] != ""\
             else None
 
-        if self.ask_if_capita and cleaned_capita_field is None:
-            self.add_error(self.capita_field,
+        if self.ask_if_enhanced_check and cleaned_enhanced_check_field is None:
+            self.add_error(self.enhanced_check_field,
                            'Please say if they have an enhanced check for home-based childcare')
 
-        capita_yes = cleaned_capita_field is not None and cleaned_capita_field
+        enhanced_yes = cleaned_enhanced_check_field is not None and cleaned_enhanced_check_field
 
-        if (capita_yes or not self.ask_if_capita) and cleaned_on_update_field is None:
+        if (enhanced_yes or not self.ask_if_enhanced_check) and cleaned_on_update_field is None:
             self.add_error(self.on_update_field,
                            'Please say if they are on the DBS update service')
 
         return self.cleaned_data
 
     def get_reveal_conditionally(self):
-        if self.ask_if_capita:
+        if self.ask_if_enhanced_check:
             return collections.OrderedDict([
-                (self.capita_field_name, {True: self.on_update_field_name})
+                (self.enhanced_check_field_name, {True: self.on_update_field_name})
             ])
         else:
             return collections.OrderedDict()

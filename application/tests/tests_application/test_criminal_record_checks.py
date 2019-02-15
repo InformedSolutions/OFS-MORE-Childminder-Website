@@ -8,7 +8,7 @@ from django.test import Client, tag
 from django.urls import reverse
 
 from application.business_logic import dbs_date_of_birth_no_match, date_issued_within_three_months
-from ..testutils import NoMiddlewareTestCase
+from ..utils import NoMiddlewareTestCase
 from ...models import Application, CriminalRecordCheck, ApplicantPersonalDetails
 
 

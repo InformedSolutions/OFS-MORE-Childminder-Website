@@ -73,3 +73,50 @@ def assertView(response, expected_view_obj):
     actual_name = response.resolver_match.func.__name__
     if actual_name != expected_name:
         raise AssertionError('Expected view "{}", found view "{}"'.format(expected_name, actual_name))
+
+
+def assertSummaryField(response, label, value, heading=None):
+    """Raises assertion error if given field is not found on the page with the specified value
+
+    :param response: the http response to check
+    :param label: the expected text of the field label
+    :param value: the expected text of the field value
+    :param heading: (optional) the expected text of the heading the field is found under"""
+
+    if heading is not None:
+        assertXPath(response, _heading_xpath(heading))
+
+    assertXPath(response, _field_xpath(label, heading))
+    assertXPathValue(response, _field_value_xpath(label, heading), value)
+
+
+def assertNotSummaryField(response, label, heading=None):
+    """Raises assertion error if given field IS found on the page
+
+    :param response: the http response to check
+    :param label: the (un)expected text of the field label
+    :param heading: (optional) the (un)expected text of the heading the field is (not) found under"""
+
+    if heading is not None:
+        assertXPath(response, _heading_xpath(heading))
+
+    assertNotXPath(response, _field_xpath(label, heading))
+
+
+def _heading_xpath(heading):
+    return "//*[normalize-space(text())=\"{}\"]".format(heading)
+
+
+def _field_xpath(label, heading=None):
+    xpath = ""
+    if heading is not None:
+        xpath += _heading_xpath(heading)
+        xpath += "/following::tbody[1]"
+    xpath += "//td[normalize-space(text())=\"{}\"]".format(label)
+    return xpath
+
+
+def _field_value_xpath(label, heading=None):
+    xpath = _field_xpath(label, heading)
+    xpath += "/following-sibling::td[1]/text()"
+    return 'normalize-space({})'.format(xpath)

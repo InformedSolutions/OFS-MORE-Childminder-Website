@@ -27,11 +27,6 @@ class PITHChildrenDetailsView(View):
     Class containing the methods responsible for handling requests to the 'Children-In-The-Home-Details' page.
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # for caching info obtained from dbs lookup, for this request
-        self.is_awaiting_user_pith_dbs_action = None
-
     def get(self, request):
 
         application_id_local = request.GET["id"]
@@ -272,13 +267,9 @@ class PITHChildrenDetailsView(View):
 
     def get_awaiting_user_pith_dbs_action(self, application_id):
 
-        if self.is_awaiting_user_pith_dbs_action is not None:
-            return self.is_awaiting_user_pith_dbs_action
-
         result = awaiting_pith_dbs_action_from_user(
-            find_dbs_status(adult.dbs_certificate_number, adult, adult.capita, adult.on_update)
+            find_dbs_status(adult, adult)
             for adult in AdultInHome.objects.filter(application_id=application_id))
 
-        self.is_awaiting_user_pith_dbs_action = result
         return result
 

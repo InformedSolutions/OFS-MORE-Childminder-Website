@@ -18,16 +18,10 @@ class PITHDBSTypeOfCheckView(PITHMultiRadioView):
     form_class = PITHDBSTypeOfCheckForm
     success_url = 'PITH-DBS-Post-Or-Apply-View'
 
-    capita_field = 'capita'
+    enhanced_check_field = 'enhanced_check'
     on_update_field = 'on_update'
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        # for caching result of dbs lookups for this request
-        self.adults_needing_info = None
-
-    def get_form_kwargs(self, adult=None, ask_if_capita=None):
+    def get_form_kwargs(self, adult=None, ask_if_enhanced_check=None):
         """
         Returns the keyword arguments for instantiating the form.
         """
@@ -36,8 +30,8 @@ class PITHDBSTypeOfCheckView(PITHMultiRadioView):
         context = {
             'id': application_id,
             'adult': adult,
-            'ask_if_capita': ask_if_capita,
-            'capita_field': self.capita_field,
+            'ask_if_enhanced_check': ask_if_enhanced_check,
+            'enhanced_check_field': self.enhanced_check_field,
             'on_update_field': self.on_update_field
         }
 
@@ -53,7 +47,7 @@ class PITHDBSTypeOfCheckView(PITHMultiRadioView):
 
         form_list = [self.form_class(**self.get_form_kwargs(
                         adult=adult,
-                        ask_if_capita=dbs_status == DBSStatus.NEED_ASK_IF_CAPITA))
+                        ask_if_enhanced_check=dbs_status == DBSStatus.NEED_ASK_IF_ENHANCED_CHECK))
                      for adult, dbs_status in adult_tuples]
 
         sorted_form_list = sorted(form_list, key=lambda form: form.adult.adult)
@@ -73,7 +67,7 @@ class PITHDBSTypeOfCheckView(PITHMultiRadioView):
         for adult, _ in adult_tuples:
 
             initial_context.update({
-                self.capita_field + str(adult.pk): adult.capita,
+                self.enhanced_check_field + str(adult.pk): adult.enhanced_check,
                 self.on_update_field + str(adult.pk): adult.on_update,
             })
 
@@ -92,12 +86,12 @@ class PITHDBSTypeOfCheckView(PITHMultiRadioView):
         # record to database
         for form in form_list:
 
-            capita_val = form.cleaned_data[form.capita_field_name] == 'True' \
-                if form.cleaned_data.get(form.capita_field_name, None) else None
+            enhanced_check_val = form.cleaned_data[form.enhanced_check_field_name] == 'True' \
+                if form.cleaned_data.get(form.enhanced_check_field_name, None) else None
             on_update_val = form.cleaned_data[form.on_update_field_name] == 'True' \
                 if form.cleaned_data.get(form.on_update_field_name, None) else None
 
-            self.update_adult_in_home_fields(form.adult.pk, capita_val, on_update_val)
+            self.update_adult_in_home_fields(form.adult.pk, enhanced_check_val, on_update_val)
 
         return redirect
 
@@ -109,20 +103,16 @@ class PITHDBSTypeOfCheckView(PITHMultiRadioView):
         :return: list of 2-tuples each containing the adult model and their DBSStatus
         """
 
-        if self.adults_needing_info is not None:
-            return self.adults_needing_info
-
         filtered = []
         for adult in AdultInHome.objects.filter(application_id=application_id):
 
-            dbs_status = find_dbs_status(adult.dbs_certificate_number, adult)
+            dbs_status = find_dbs_status(adult, adult)
 
-            if dbs_status in (DBSStatus.NEED_ASK_IF_CAPITA, DBSStatus.NEED_ASK_IF_ON_UPDATE):
+            if dbs_status in (DBSStatus.NEED_ASK_IF_ENHANCED_CHECK, DBSStatus.NEED_ASK_IF_ON_UPDATE):
                 filtered.append((adult, dbs_status))
 
-        self.adults_needing_info = filtered
         return filtered
 
-    def update_adult_in_home_fields(self, adult_id, capita_value, on_update_value):
-        update_adult_in_home(adult_id, 'capita', capita_value)
+    def update_adult_in_home_fields(self, adult_id, enhanced_check_value, on_update_value):
+        update_adult_in_home(adult_id, 'enhanced_check', enhanced_check_value)
         update_adult_in_home(adult_id, 'on_update', on_update_value)

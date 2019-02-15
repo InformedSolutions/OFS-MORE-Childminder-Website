@@ -147,7 +147,7 @@ def __own_children_address_selection_post_handler(request, template, success_url
 
             # Does user still need to take action wrt PITH DBS checks?
             if awaiting_pith_dbs_action_from_user(
-                    find_dbs_status(adult.dbs_certificate_number, adult, adult.capita, adult.on_update)
+                    find_dbs_status(adult, adult)
                     for adult in AdultInHome.objects.filter(application_id=application_id)):
 
                 redirect_url = invalid_adults_url

@@ -19,11 +19,6 @@ class PITHChildrenCheckView(PITHRadioView):
     success_url = ('PITH-Children-Details-View', 'PITH-Own-Children-Check-View', 'Task-List-View', 'PITH-Summary-View')
     application_field_name = 'children_in_home'
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # for caching info obtained from dbs lookup for this request
-        self.is_awaiting_user_pith_dbs_action = None
-
     def form_valid(self, form):
 
         application_id = get_id(self.request)
@@ -109,12 +104,8 @@ class PITHChildrenCheckView(PITHRadioView):
 
     def get_awaiting_user_pith_dbs_action(self, application_id):
 
-        if self.is_awaiting_user_pith_dbs_action is not None:
-            return self.is_awaiting_user_pith_dbs_action
-
         result = awaiting_pith_dbs_action_from_user(
-            find_dbs_status(adult.dbs_certificate_number, adult, adult.capita, adult.on_update)
+            find_dbs_status(adult, adult)
             for adult in AdultInHome.objects.filter(application_id=application_id))
 
-        self.is_awaiting_user_pith_dbs_action = result
         return result

@@ -27,9 +27,6 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
         self.dbs_field = kwargs.pop('dbs_field')
         self.pk = self.adult.pk
 
-        # stores the status of the dbs number after looking it up as part of validation
-        self.dbs_status = None
-
         self.dbs_field_name = self.dbs_field + str(self.adult.pk)
 
         self.base_fields = collections.OrderedDict([
@@ -70,10 +67,10 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
         # if dbs number looks ok, fetch dbs record for further checking
         if len(self.errors.get(self.dbs_field_name, ())) == 0:
 
-            # store status for use by view, after validation
-            self.dbs_status = find_dbs_status(cleaned_dbs_field, self.adult)
+            # find status will perform dbs lookup and store result
+            dbs_status = find_dbs_status(self.adult, self.adult, dbs_certificate_number=cleaned_dbs_field)
 
-            if self.dbs_status == DBSStatus.DOB_MISMATCH:
+            if dbs_status == DBSStatus.DOB_MISMATCH:
                 self.add_error(self.dbs_field,
                                """
                                Birth date does not match the date given on the 'Your date of birth' page: 
