@@ -154,8 +154,6 @@ other_adult_name_dict = collections.OrderedDict([
     ('dbs_certificate_number', 'DBS certificate number'),
     ('enhanced_check', 'Enhanced DBS check for home-based childcare?'),
     ('on_update', 'On the update service?'),
-    ('known_to_council', 'Known to council social services in regards to their own children?'),
-    ('reasons_known_to_council_health_check', 'Tell us why'),
     ('permission', 'Permission for checks')
 ])
 
@@ -170,8 +168,6 @@ other_adult_link_dict = collections.OrderedDict([
     ('dbs_certificate_number', 'PITH-DBS-Check-View'),
     ('enhanced_check', 'PITH-DBS-Check-View'),
     ('on_update', 'PITH-DBS-Check-View'),
-    ('known_to_council', 'PITH-Adult-Details-View'),
-    ('reasons_known_to_council_health_check', 'PITH-Adult-Details-View'),
     ('permission', 'Other-People-Adult-Permission-View'),
 ])
 
@@ -186,8 +182,6 @@ other_adult_link_description_dict = collections.OrderedDict([
     ('dbs_certificate_number', 'DBS certificate number'),
     ('enhanced_check', 'answer to DBS being enhanced and home-based'),
     ('on_update', 'answer to DBS being on the Update Service'),
-    ('known_to_council', 'known to council social services in regards to their own children?'),
-    ('reasons_known_to_council_health_check', 'tell us why'),
     ('permission', 'permission for checks')
 ])
 

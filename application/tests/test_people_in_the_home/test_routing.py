@@ -881,6 +881,23 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
         utils.assertSummaryField(response, 'On the update service?', 'Yes', heading='Joanne Bethanny Smith')
         utils.assertSummaryField(response, 'On the update service?', 'No', heading='Josef Charlie Thompson')
 
+    def test_doesnt_display_fields_relating_to_private_information_for_adults_in_home(self):
+
+        self.application.adults_in_home = True
+        self.application.save()
+
+        models.AdultInHome.objects.create(
+            application_id=self.application,
+            first_name='Joe', middle_names='Anthony', last_name='Bloggs',
+            birth_day=1, birth_month=5, birth_year=1984,
+            dbs_certificate_number='123456789012', capita=True,
+        )
+
+        response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
+
+        utils.assertNotSummaryField(response, 'Known to council social services in regards to their own children?',
+                                    heading='Joe Anthony Bloggs')
+
     def test_all_change_links_in_summary_resolve_to_a_page(self):
         self.skipTest('testNotImplemented')
 

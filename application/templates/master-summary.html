@@ -766,7 +766,7 @@
     </tr>
     </tbody>
 </table>
-{% for name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, lived_abroad, capita, on_update, military_base, known_to_council, reasons_known_to_council_health_check in adult_lists %}
+{% for name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, lived_abroad, enhanced_check, on_update, military_base in adult_lists %}
 <table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
@@ -814,7 +814,21 @@
             Date of birth
         </td>
         <td style="word-wrap: break-word" class=summary-column>
-            {{day}} {{month}} {{year}}
+            {{day}}
+            {% if month   == '01' %} Jan
+            {% elif month == '02' %} Feb
+            {% elif month == '03' %} Mar
+            {% elif month == '04' %} Apr
+            {% elif month == '05' %} May
+            {% elif month == '06' %} Jun
+            {% elif month == '07' %} Jul
+            {% elif month == '08' %} Aug
+            {% elif month == '09' %} Sep
+            {% elif month == '10' %} Oct
+            {% elif month == '11' %} Nov
+            {% elif month == '12' %} Dec
+            {% endif %}
+            {{year}}
         </td>
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
@@ -921,78 +935,42 @@
             {% endif %}
         </td>
     </tr>
+    {% if enhanced_check is not None %}
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
             Enhanced DBS check for home-based childcare?
         </td>
-        {% if capita %}
         <td style="word-wrap: break-word" class=summary-column>
-            Yes
+            {{ enhanced_check|yesno:"Yes,No" }}
         </td>
-        {% else %}
-        <td style="word-wrap: break-word" class=summary-column>
-            No
-        </td>
-        {% endif %}
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
             <a href="{% url 'PITH-DBS-Check-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
-               alt="Change if the adult has an enhanced DBS check for home-based childcare">
-                Change <span class="visuallyhidden">if the adult has an enhanced DBS check for home-based childcare</span>
+               alt="Change answer to DBS being enhanced and home-based">
+                Change <span class="visuallyhidden">answer to DBS being enhanced and home-based</span>
             </a>
             {% endif %}
         </td>
     </tr>
+    {% endif %}
+    {% if on_update is not None %}
     <tr>
         <td style="word-wrap: break-word" class="summary-column">
             Are they on the update service?
         </td>
-        {% if on_update %}
+
         <td style="word-wrap: break-word" class="summary-column">
-            Yes
+            {{ on_update|yesno:"Yes,No" }}
         </td>
-        {% else %}
-        <td style="word-wrap: break-word" class="summary-column">
-            No
-        </td>
-        {% endif %}
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
             <a href="{% url 'PITH-DBS-Check-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
-               alt="Change if the adult is on the update service">
-                Change <span class="visuallyhidden">if the adult is on the update service</span>
+               alt="Change answer to DBS being on the Update Service">
+                Change <span class="visuallyhidden">answer to DBS being on the Update Service</span>
             </a>
             {% endif %}
         </td>
     </tr>
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Known to council social services in regards to their own children?
-        </td>
-        {% if known_to_council is True %}
-        <td style="word-wrap: break-word" class=summary-column>
-            Yes
-        </td>
-        {% elif known_to_council is False %}
-        <td style="word-wrap: break-word" class=summary-column>
-            No
-        </td>
-        {% endif %}
-        <td class="change-answer {{ print_class }}">
-        </td>
-    </tr>
-    {% if known_to_council is True %}
-    <tr>
-        <td style="word-wrap: break-word" class=summary-column>
-            Tell us why
-        </td>
-        <td style="word-wrap: break-word" class=summary-column>
-            {{reasons_known_to_council_health_check}}
-        </td>
-        <td class="change-answer {{ print_class }}">
-    </td>
-    </tr>
-
     {% endif %}
     </tbody>
 </table>

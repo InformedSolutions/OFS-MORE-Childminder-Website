@@ -193,7 +193,6 @@ class PITHCheckYourAnswersView(PITHTemplateView):
 
             base_adult_fields += [
                 ('dbs_certificate_number', adult.dbs_certificate_number),
-                ('known_to_council', adult.known_to_council)
             ]
 
             if adult.enhanced_check is not None:
@@ -201,10 +200,6 @@ class PITHCheckYourAnswersView(PITHTemplateView):
 
             if adult.on_update is not None:
                 base_adult_fields.append(('on_update', adult.on_update))
-
-            if adult.known_to_council is True:
-                # Append reasons_known_to_council
-                base_adult_fields += [('reasons_known_to_council_health_check', adult.reasons_known_to_council_health_check)]
 
             if application.people_in_home_status == 'IN_PROGRESS' and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):
