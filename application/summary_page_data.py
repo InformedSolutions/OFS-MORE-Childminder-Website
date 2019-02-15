@@ -89,8 +89,8 @@ personal_details_change_link_description_dict = collections.OrderedDict([('name'
                                                       ('childcare_address', 'childcare address'),
                                                       ('working_in_other_childminder_home',
                                                        "childcare address as another childminder's home"),
-                                                      ('own_children', 'children of your own'),
-                                                      ('reasons_known_to_social_services', 'reasons known to social services known')
+                                                      ('own_children', 'answer to known to council social services in regards to your own children'),
+                                                      ('reasons_known_to_social_services', 'why you are known to council social services in regards to your own children')
                                                                          ])
 
 ###
