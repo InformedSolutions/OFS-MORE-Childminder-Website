@@ -240,7 +240,7 @@ class DBSSummaryView(DBSTemplateView):
                 'field': 'enhanced_check',
                 'title': 'Is it an enhanced DBS check for home-based childcare?',
                 'url': 'DBS-Check-Type-View',
-                'alt_text': 'answer to DBS being enhanced and home-based?'
+                'alt_text': 'answer to DBS being enhanced and home-based'
             },
             {
                 'field': 'on_update',

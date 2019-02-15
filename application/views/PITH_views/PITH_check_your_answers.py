@@ -14,7 +14,8 @@ from application.summary_page_data import (
     other_child_summary_name_dict, other_child_summary_link_dict,
     other_child_not_in_the_home_summary_name_dict, other_child_not_in_the_home_summary_link_dict,
     child_not_in_the_home_link_dict, child_not_in_the_home_name_dict,
-    other_adult_name_dict, other_adult_link_dict, other_adult_link_description_dict
+    other_adult_name_dict, other_adult_link_dict, other_adult_link_description_dict,
+    pith_own_children_change_link_description_dict
 )
 from application.table_util import create_tables, Table, submit_link_setter
 from application.views.PITH_views import PITHTemplateView, get_id
@@ -167,7 +168,8 @@ class PITHCheckYourAnswersView(PITHTemplateView):
             'error_summary_title': 'There was a problem'
         }
         return create_tables([not_child_table], other_child_not_in_the_home_summary_name_dict,
-                             other_child_not_in_the_home_summary_link_dict)
+                             other_child_not_in_the_home_summary_link_dict,
+                             pith_own_children_change_link_description_dict)
 
     def get_adults_table(self, app_id, application, adults_list):
         # TODO: Move me to a Business Logic Function
