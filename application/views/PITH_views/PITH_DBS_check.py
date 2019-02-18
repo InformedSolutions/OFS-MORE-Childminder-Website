@@ -7,7 +7,7 @@ from application.models import AdultInHome
 from application.forms.PITH_forms.PITH_DBS_check_form import PITHDBSCheckForm
 from application.utils import get_id
 from application.views.PITH_views.base_views.PITH_multi_form_view import PITHMultiFormView
-from application.business_logic import update_adult_in_home, DBSStatus
+from application.business_logic import update_adult_in_home, DBSStatus, find_dbs_status
 
 # Initiate logging
 log = logging.getLogger('')
@@ -89,7 +89,8 @@ class PITHDBSCheckView(PITHMultiFormView):
 
         ok_url, need_info_url = self.success_url
 
-        if any(form.dbs_status in (DBSStatus.NEED_ASK_IF_CAPITA, DBSStatus.NEED_ASK_IF_ON_UPDATE)
+        if any(find_dbs_status(form.adult, form.adult) in (
+                    DBSStatus.NEED_ASK_IF_ENHANCED_CHECK, DBSStatus.NEED_ASK_IF_ON_UPDATE)
                for form in form_list):
             url = need_info_url
         else:

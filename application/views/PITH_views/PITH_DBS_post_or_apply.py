@@ -18,11 +18,6 @@ class PITHDBSPostOrApplyView(PITHTemplateView):
     template_name = 'PITH_templates/PITH_DBS_post_or_apply.html'
     success_url = 'PITH-Children-Check-View'
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        # for caching info which is the result of dbs lookup
-        self.adults_requiring_dbs_action = None
-
     def get_context_data(self, **kwargs):
 
         application_id = get_id(self.request)
@@ -45,19 +40,15 @@ class PITHDBSPostOrApplyView(PITHTemplateView):
         :return: List of 2-tuples containing the adult model and their DBSStatus
         """
 
-        if self.adults_requiring_dbs_action is not None:
-            return self.adults_requiring_dbs_action
-
         adults = AdultInHome.objects.filter(application_id=application_id)
         filtered = []
         for adult in adults:
 
-            dbs_status = find_dbs_status(adult.dbs_certificate_number, adult, adult.capita, adult.on_update)
+            dbs_status = find_dbs_status(adult, adult)
 
             if dbs_status in (DBSStatus.NEED_APPLY_FOR_NEW,
                               DBSStatus.NEED_UPDATE_SERVICE_SIGN_UP,
                               DBSStatus.NEED_UPDATE_SERVICE_CHECK):
                 filtered.append((adult, dbs_status))
 
-        self.adults_requiring_dbs_action = filtered
         return filtered

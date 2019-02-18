@@ -8,11 +8,15 @@ from django.shortcuts import reverse
 from application.forms.PITH_forms.PITH_check_your_answers_form import PITHCheckYourAnswersForm
 from application.models import AdultInHome, Application, ChildInHome, Child, ChildcareType, ApplicantHomeAddress, \
     ApplicantPersonalDetails
-from application.summary_page_data import other_child_name_dict, \
-    other_child_link_dict, other_adult_summary_name_dict, other_adult_summary_link_dict, other_child_summary_name_dict, \
-    other_child_summary_link_dict, other_child_not_in_the_home_summary_name_dict,pith_own_children_change_link_description_dict, \
-    other_child_not_in_the_home_summary_link_dict, child_not_in_the_home_link_dict, child_not_in_the_home_name_dict, \
-    other_adult_name_dict, other_adult_link_dict
+from application.summary_page_data import (
+    other_child_name_dict, other_child_link_dict,
+    other_adult_summary_name_dict, other_adult_summary_link_dict,
+    other_child_summary_name_dict, other_child_summary_link_dict,
+    other_child_not_in_the_home_summary_name_dict, other_child_not_in_the_home_summary_link_dict,
+    child_not_in_the_home_link_dict, child_not_in_the_home_name_dict,
+    other_adult_name_dict, other_adult_link_dict, other_adult_link_description_dict,
+    pith_own_children_change_link_description_dict
+)
 from application.table_util import create_tables, Table, submit_link_setter
 from application.views.PITH_views import PITHTemplateView, get_id
 from .. import status
@@ -183,23 +187,21 @@ class PITHCheckYourAnswersView(PITHTemplateView):
                 ('relationship', adult.relationship),
                 ('email', adult.email),
                 ('lived_abroad', adult.lived_abroad),
-                ('dbs_certificate_number', adult.dbs_certificate_number),
-                ('known_to_council', adult.known_to_council)
             ]
-
-            if adult.capita is not None:
-                base_adult_fields.append(('capita', adult.capita))
-
-            if adult.on_update is not None:
-                base_adult_fields.append(('on_update', adult.on_update))
 
             if childcare_record.zero_to_five is True:
                 # Append military_base
                 base_adult_fields.append(('military_base', adult.military_base))
 
-            if adult.known_to_council is True:
-            # Append reasons_known_to_council
-               base_adult_fields += [('reasons_known_to_council_health_check', adult.reasons_known_to_council_health_check)]
+            base_adult_fields += [
+                ('dbs_certificate_number', adult.dbs_certificate_number),
+            ]
+
+            if adult.enhanced_check is not None:
+                base_adult_fields.append(('enhanced_check', adult.enhanced_check))
+
+            if adult.on_update is not None:
+                base_adult_fields.append(('on_update', adult.on_update))
 
             if application.people_in_home_status == 'IN_PROGRESS' and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):
@@ -232,7 +234,8 @@ class PITHCheckYourAnswersView(PITHTemplateView):
         for table in adults_table_list:
             table['other_people_numbers'] = back_link_addition
 
-        return create_tables(adults_table_list, other_adult_name_dict, other_adult_link_dict)
+        return create_tables(adults_table_list, other_adult_name_dict, other_adult_link_dict,
+                             other_adult_link_description_dict)
 
     def get_children_table(self, app_id, children_list):
         child_table_list = []
