@@ -283,7 +283,7 @@ def other_people_email_confirmation(request):
         # and send an e-mail
         for adult in adults:
             if adult.health_check_status != 'Done':
-                template_id = get_template(adult)
+                template_id = get_adult_template(adult)
                 adult.token = ''.join([random.choice(string.digits[1:]) for n in range(7)])
                 email = adult.email
                 base_url = settings.PUBLIC_APPLICATION_URL
@@ -343,9 +343,16 @@ def get_adult_template(adult):
     capita = adult.capita
     lived_abroad = adult.lived_abroad
     certificate_information = adult.certificate_information
+    on_update = adult.on_update
     template_id = ''
-    if capita and not lived_abroad:
+    if capita and not lived_abroad and certificate_information:
         template_id = '2e9c097c-9e75-4198-9b5d-bab4b710e903'
+    elif capita and lived_abroad and certificate_information:
+        template_id = '0df95124-4b08-4ed7-9881-70c4f0352767'
+    elif not capita and on_update and not lived_abroad:
+        template_id = '2e9c097c-9e75-4198-9b5d-bab4b710e903'
+    elif not capita and on_update and lived_abroad:
+        template_id = '0df95124-4b08-4ed7-9881-70c4f0352767'
     return template_id
 
 
