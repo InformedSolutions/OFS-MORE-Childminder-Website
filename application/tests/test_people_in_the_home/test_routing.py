@@ -10,6 +10,8 @@ from application import views
 from application.views import PITH_views
 from application.tests import utils
 
+from application.views import dbs as dbs_view
+
 
 @tag('http')
 class PITHFunctionalTestCase(utils.NoMiddlewareTestCase):
@@ -137,7 +139,6 @@ class PITHAdultDetailsFunctionalTests(PITHFunctionalTestCase):
 
     def test_post_to_MOD_checks_page_redirects_to_dbs_checks_page(self):
         self.skipTest('testNotImplemented')
-
 
 mock_dbs_read = Mock()
 
