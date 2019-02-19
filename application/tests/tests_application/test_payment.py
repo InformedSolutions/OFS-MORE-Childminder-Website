@@ -907,6 +907,7 @@ class PaymentTests(TestCase, ApplicationTestBase):
 
             send_email_mock.assert_called_with('test@informed.com', {'firstName': 'Test', 'cost': '103', 'ref': None},
                                                '94190a2d-d1c7-46c6-8144-da38141aa027')
+
             crc.delete()
 
     def test_email_template_HDB_only(self):
@@ -1176,4 +1177,139 @@ class PaymentTests(TestCase, ApplicationTestBase):
             send_email_mock.assert_called_with('test@informed.com', {'firstName': 'Test', 'cost': '103', 'ref': None},
                                                'f5a2998c-7322-4e32-8a85-72741bfec4a5')
             crc.delete()
+
+    def test_email_template_update_service_HDB_lived_abroad_only(self):
+        app_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+
+        self.url_suffix = '?id=' + str(app_id)
+
+        application = models.Application.objects.create(
+            application_id=app_id,
+            application_type='CHILDMINDER',
+            application_status='DRAFTING',
+            cygnum_urn='',
+            login_details_status='COMPLETED',
+            personal_details_status='COMPLETED',
+            childcare_type_status='COMPLETED',
+            first_aid_training_status='COMPLETED',
+            childcare_training_status='COMPLETED',
+            criminal_record_check_status='NOT_STARTED',
+            health_status='COMPLETED',
+            references_status='COMPLETED',
+            people_in_home_status='STARTED',
+            declarations_status='NOT_STARTED',
+            date_created=timezone.now(),
+            date_updated=timezone.now(),
+            date_accepted=None,
+        )
+
+        models.UserDetails.objects.create(
+            application_id=application,
+            email="test@informed.com"
+        )
+
+        pd_id = models.ApplicantPersonalDetails.objects.create(
+            application_id=application,
+        )
+
+        models.ApplicantName.objects.create(
+            application_id=application,
+            personal_detail_id=pd_id,
+            current_name=True,
+            first_name="Test",
+            last_name="Test"
+        )
+
+        models.ChildcareType.objects.create(
+            application_id=application,
+            zero_to_five=True,
+            five_to_eight=False,
+            eight_plus=False,
+            overnight_care=False,
+        )
+
+        crc = models.CriminalRecordCheck.objects.create(
+            application_id=application,
+            dbs_certificate_number='123456789012',
+            lived_abroad=True,
+            capita=False,
+            on_update=True,
+        )
+
+        childcare_register_type, childcare_register_cost = get_childcare_register_type(app_id)
+
+        with mock.patch.object(payment_views, 'send_email') as send_email_mock:
+            get_template(crc, app_id, application, childcare_register_cost, childcare_register_type)
+
+            send_email_mock.assert_called_with('test@informed.com', {'firstName': 'Test', 'cost': '35', 'ref': None},
+                                               '36720ba3-165e-40cd-a6d2-320daa9d6e4a')
+            crc.delete()
+
+    def test_email_template_update_service_lived_abroad_only(self):
+        app_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
+
+        self.url_suffix = '?id=' + str(app_id)
+
+        application = models.Application.objects.create(
+            application_id=app_id,
+            application_type='CHILDMINDER',
+            application_status='DRAFTING',
+            cygnum_urn='',
+            login_details_status='COMPLETED',
+            personal_details_status='COMPLETED',
+            childcare_type_status='COMPLETED',
+            first_aid_training_status='COMPLETED',
+            childcare_training_status='COMPLETED',
+            criminal_record_check_status='NOT_STARTED',
+            health_status='COMPLETED',
+            references_status='COMPLETED',
+            people_in_home_status='STARTED',
+            declarations_status='NOT_STARTED',
+            date_created=timezone.now(),
+            date_updated=timezone.now(),
+            date_accepted=None,
+        )
+
+        models.UserDetails.objects.create(
+            application_id=application,
+            email="test@informed.com"
+        )
+
+        pd_id = models.ApplicantPersonalDetails.objects.create(
+            application_id=application,
+        )
+
+        models.ApplicantName.objects.create(
+            application_id=application,
+            personal_detail_id=pd_id,
+            current_name=True,
+            first_name="Test",
+            last_name="Test"
+        )
+
+        models.ChildcareType.objects.create(
+            application_id=application,
+            zero_to_five=False,
+            five_to_eight=True,
+            eight_plus=False,
+            overnight_care=False,
+        )
+
+        crc = models.CriminalRecordCheck.objects.create(
+            application_id=application,
+            dbs_certificate_number='123456789012',
+            lived_abroad=True,
+            capita=False,
+            on_update=True,
+        )
+
+        childcare_register_type, childcare_register_cost = get_childcare_register_type(app_id)
+
+        with mock.patch.object(payment_views, 'send_email') as send_email_mock:
+            get_template(crc, app_id, application, childcare_register_cost, childcare_register_type)
+
+            send_email_mock.assert_called_with('test@informed.com', {'firstName': 'Test', 'cost': '103', 'ref': None},
+                                               'f5a2998c-7322-4e32-8a85-72741bfec4a5')
+            crc.delete()
+
 
