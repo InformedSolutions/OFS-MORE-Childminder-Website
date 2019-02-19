@@ -104,7 +104,8 @@ def assertNotSummaryField(response, label, heading=None):
 
 
 def _heading_xpath(heading):
-    return "//*[normalize-space(text())=\"{}\"]".format(heading)
+    return ("(//h1|//h2|//h3|//h4|//h5|//h6|//thead)"
+            "/descendant-or-self::*[normalize-space(text())=\"{}\"]").format(heading)
 
 
 def _field_xpath(label, heading=None):
