@@ -145,7 +145,7 @@ class DBSCheckDetailsForm(DBSRadioForm):
     """
     GOV.UK form for generic check details forms
     """
-    error_summary_title = 'There was a problem with your DBS details'
+    error_summary_title = 'There was a problem on this page'
     dbs_certificate_number_widget = NumberInput()
     dbs_certificate_number_widget.input_classes = 'form-control form-control-1-4'
 

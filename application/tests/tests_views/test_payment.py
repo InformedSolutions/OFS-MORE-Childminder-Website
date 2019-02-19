@@ -87,7 +87,7 @@ class PaymentTest(ViewsTest):
             c.get(reverse('Next-Steps-Interview') + '?id=')
             self.assertEqual(1, 0)
         except:
-            self.assertEqual(0, 0)
+            self.assertEqual(0, 0)l
 
     @modify_settings(MIDDLEWARE={
         'remove': [
@@ -136,7 +136,6 @@ class PaymentTest(ViewsTest):
                     'card_number': '5454545454545454',
                     'expiry_date_0': 1,
                     'expiry_date_1': short_year,
-                    'expiry_date_1': 21,
                     'cardholders_name': 'Mr Example Cardholder',
                     'card_security_code': 123,
                 })

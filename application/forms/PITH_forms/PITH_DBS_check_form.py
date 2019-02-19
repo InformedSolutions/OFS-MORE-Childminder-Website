@@ -16,7 +16,7 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
     GOV.UK form for the People in the Home: Non generic form for the DBSCheckView.
     """
     field_label_classes = 'form-label-bold'
-    error_summary_title = 'There was a problem with your DBS details'
+    error_summary_title = 'There was a problem on this page'
     error_summary_template_name = 'PITH_templates/PITH_error_summary.html'
     auto_replace_widgets = True
 
