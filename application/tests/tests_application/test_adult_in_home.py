@@ -2,8 +2,11 @@ from unittest import mock
 
 from django.core.management import call_command
 from django.test import TestCase
+
+from ...models import AdultInHome, Application
 from .base import ApplicationTestBase
 from django.urls import reverse
+from application.views.other_people_health_check import thank_you as thank_you_view
 
 
 class AdultInHomeTests(TestCase, ApplicationTestBase):
@@ -406,8 +409,8 @@ class AdultInHomeTests(TestCase, ApplicationTestBase):
             magic_link_text_mock.return_value.status_code = 201
 
             self.authenticate_client()
-            application = models.Application.objects.get(application_id="9c8e1285-84a0-439e-a824-42b94cf3d2c5")
-            adult2 = models.AdultInHome.objects.create(application_id=application,
+            application = Application.objects.get(application_id="9c8e1285-84a0-439e-a824-42b94cf3d2c5")
+            adult2 = AdultInHome.objects.create(application_id=application,
                                                        adult=2,
                                                        first_name = "test",
                                                        last_name = "test",
