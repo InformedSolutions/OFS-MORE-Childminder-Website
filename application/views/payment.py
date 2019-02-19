@@ -69,10 +69,6 @@ def get_template(crc, app_id, application, cost, cr_type):
         certificate_information_boolean = True
 
     on_update = crc.on_update
-    if capita:
-        cautions_convictions = crc.cautions_convictions
-    else:
-        cautions_convictions = False
 
     applicant_name = ApplicantName.objects.get(application_id=app_id)
     user_details = UserDetails.objects.get(application_id=app_id)

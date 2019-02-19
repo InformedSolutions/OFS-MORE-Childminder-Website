@@ -374,11 +374,21 @@ class ApplicationTestBase(object):
     def TestAppCriminalRecordCheckDetails(self):
         """Submit CRC details"""
         r = self.client.get(
+            reverse('DBS-Guidance-View'),
+            {
+                'id': self.app_id
+            }
+        )
+        self.assertEqual(r.status_code, 200)
+
+        r = self.client.get(
             reverse('DBS-Lived-Abroad-View'),
             {
                 'id': self.app_id
             }
         )
+        self.assertEqual(r.status_code, 200)
+
         r = self.client.post(
             reverse('DBS-Lived-Abroad-View'),
             {
@@ -387,6 +397,7 @@ class ApplicationTestBase(object):
             }
         )
         self.assertEqual(r.status_code, 302)
+
         r = self.client.post(
             reverse('DBS-Military-View'),
             {
@@ -396,30 +407,22 @@ class ApplicationTestBase(object):
         )
         self.assertEqual(r.status_code, 302)
 
-        # XXX: TODO: INSERT MESSAGE HERE
+        r = self.client.post(
+            reverse('DBS-Check-No-Capita-View'),
+            {
+                'id': self.app_id,
+                'dbs_certificate_number': '123456789101'
+            }
+        )
 
-        # with patch.object(view_dbs, 'read') as mock_view:
-        #     with patch.object(form_dbs, 'read') as mock_form:
-        #
-        #         mock_response = HttpResponse
-        #         mock_response.status_code = 404
-        #         mock_form.return_value = mock_response
-        #         mock_view.return_value = mock_response
-        #
-        #         r = self.client.post(
-        #             reverse('DBS-Check-No-Capita-View'),
-        #             {
-        #                 'id': self.app_id,
-        #                 'dbs_certificate_number': '123456789012',
-        #             }
-        #         )
+        self.assertEqual(r.status_code, 302)
 
         r = self.client.post(
             reverse('DBS-Check-Type-View'),
             {
                 'id': self.app_id,
                 'enhanced_check': True,
-                'on_update': False
+                'on_update': True
             }
         )
 
@@ -439,11 +442,11 @@ class ApplicationTestBase(object):
         )
 
         # XXX: TODO: INSERT MESSAGE HERE
-
-        crc = CriminalRecordCheck.objects.get(application_id=self.app_id)
-
-        crc.capita = False
-        crc.save()
+        #
+        # crc = CriminalRecordCheck.objects.get(application_id=self.app_id)
+        #
+        # crc.capita = False
+        # crc.save()
 
     def TestAppOtherPeopleAdults(self):
         """Submit other people"""
