@@ -154,7 +154,7 @@ def card_payment_post_handler(request):
             if parsed_payment_response.get('lastEvent') == "AUTHORISED":
 
                 # If payment response is immediately authorised, yield success page
-                return __handle_authorised_payment(application)
+                return __handle_authorised_payment(application, amount)
 
             if parsed_payment_response.get('lastEvent') == "REFUSED":
 
@@ -284,7 +284,7 @@ def __create_payment_record(application):
         return Payment.objects.get(application_id=application).payment_reference
 
 
-def __handle_authorised_payment(application):
+def __handle_authorised_payment(application, amount):
     """
     Private helper function for managing a rejected payment
     :param application: application associated with the payment attempting to be made
@@ -299,12 +299,10 @@ def __handle_authorised_payment(application):
     application.date_submitted = datetime.datetime.today()
     application.save()
 
-    # Dispatch payment confirmation email to user
-    login_record = UserDetails.objects.get(application_id=application)
-    personal_detail_id = ApplicantPersonalDetails.objects.get(
-        application_id=application.application_id).personal_detail_id
-    applicant_name_record = ApplicantName.objects.get(
-        personal_detail_id=personal_detail_id)
+    # Send ad-hoc payment to NOO
+    app_cost_float = float(amount / 100)
+    msg_body = __build_message_body(application, format(app_cost_float, '.4f'))
+    sqs_handler.send_message(msg_body)
 
     return __redirect_to_payment_confirmation(application)
 
