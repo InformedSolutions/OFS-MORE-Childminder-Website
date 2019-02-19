@@ -130,8 +130,8 @@ def get_template(crc, app_id, application, cost, cr_type):
         raise ValueError("""
         The following combination is not covered in if block: 
         lived_abroad as {0}, 
-        cautions_convictions as {1}, 
-        capita as {2} """.format(lived_abroad, cautions_convictions, capita))
+        certificate_information_boolean as {1}, 
+        capita as {2} """.format(lived_abroad, certificate_information_boolean, capita))
 
     send_payment_email(email, personalisation, email_template, application)
 

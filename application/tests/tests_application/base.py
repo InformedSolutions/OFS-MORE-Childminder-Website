@@ -4,16 +4,21 @@ A base class for reusable test steps across application unit tests
 import json
 from datetime import datetime
 from unittest import mock
+from unittest.mock import patch
 
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 from django.test import Client
 
+from application.views import DBSCheckNoCapitaView
 from ...models import (ApplicantHomeAddress,
                        ApplicantName,
                        ApplicantPersonalDetails,
                        Application,
                        ChildcareType,
-                       UserDetails)
+                       UserDetails, CriminalRecordCheck)
+from application.views import dbs as view_dbs
+from application.forms import dbs as form_dbs
 
 
 class ApplicationTestBase(object):
@@ -390,6 +395,25 @@ class ApplicationTestBase(object):
             }
         )
         self.assertEqual(r.status_code, 302)
+
+        # XXX: TODO: INSERT MESSAGE HERE
+
+        # with patch.object(view_dbs, 'read') as mock_view:
+        #     with patch.object(form_dbs, 'read') as mock_form:
+        #
+        #         mock_response = HttpResponse
+        #         mock_response.status_code = 404
+        #         mock_form.return_value = mock_response
+        #         mock_view.return_value = mock_response
+        #
+        #         r = self.client.post(
+        #             reverse('DBS-Check-No-Capita-View'),
+        #             {
+        #                 'id': self.app_id,
+        #                 'dbs_certificate_number': '123456789012',
+        #             }
+        #         )
+
         r = self.client.post(
             reverse('DBS-Check-Type-View'),
             {
@@ -413,16 +437,13 @@ class ApplicationTestBase(object):
                 'id': self.app_id
             }
         )
-        self.assertEqual(r.status_code, 302)
 
-        # crc = CriminalRecordCheck.objects.create(application_id=application)
-        # crc.lived_abroad = True
-        # crc.military = False
-        # crc.capita = True
-        # crc.on_update = None
-        # crc.dbs_certificate_number = '123456789012'
-        # crc.cautions_convictions = False
-        # crc.save()
+        # XXX: TODO: INSERT MESSAGE HERE
+
+        crc = CriminalRecordCheck.objects.get(application_id=self.app_id)
+
+        crc.capita = False
+        crc.save()
 
     def TestAppOtherPeopleAdults(self):
         """Submit other people"""
