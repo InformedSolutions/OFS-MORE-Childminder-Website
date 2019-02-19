@@ -87,7 +87,7 @@ class PaymentTest(ViewsTest):
             c.get(reverse('Next-Steps-Interview') + '?id=')
             self.assertEqual(1, 0)
         except:
-            self.assertEqual(0, 0)l
+            self.assertEqual(0, 0)
 
     @modify_settings(MIDDLEWARE={
         'remove': [
