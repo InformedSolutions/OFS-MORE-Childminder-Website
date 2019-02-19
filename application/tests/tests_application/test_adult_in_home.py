@@ -371,4 +371,80 @@ class AdultInHomeTests(TestCase, ApplicationTestBase):
             self.assertEqual(response.status_code, 200)
 
             # Check user is returned to details page
+
             self.assertEqual(response.resolver_match.view_name, 'Health-Check-Thank-You')
+
+
+    def test_confirmation_email_template_dbs_lived_abroad_one_adult(self):
+        with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
+                mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
+                mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
+            notify_connection_test_mock.return_value.status_code = 201
+            magic_link_email_mock.return_value.status_code = 201
+            magic_link_text_mock.return_value.status_code = 201
+
+            self.authenticate_client()
+
+            endpoint = reverse('Health-Check-Thank-You') + '?person_id=a82295f2-d3a1-4ccc-85f6-ac3acc028265'
+
+            with mock.patch.object(thank_you_view, 'send_email') as send_email_mock:
+                self.client.get(
+                    endpoint,
+                    follow=True
+                )
+
+                send_email_mock.assert_has_calls([
+            mock.call('T.kingsman@hotmail.com', {'firstName': 'Terry', 'ApplicantName': 'Helen Daniella Westwood'}, '0df95124-4b08-4ed7-9881-70c4f0352767'),
+            mock.call('T.kingsman@hotmail.com', {'first_name': 'Terry'}, '4f850789-b9c9-4192-adfa-fe66883c5872')])
+
+    def test_confirmation_email_template_dbs_only_two_adults(self):
+        with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
+                mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
+                mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
+            notify_connection_test_mock.return_value.status_code = 201
+            magic_link_email_mock.return_value.status_code = 201
+            magic_link_text_mock.return_value.status_code = 201
+
+            self.authenticate_client()
+            application = models.Application.objects.get(application_id="9c8e1285-84a0-439e-a824-42b94cf3d2c5")
+            adult2 = models.AdultInHome.objects.create(application_id=application,
+                                                       adult=2,
+                                                       first_name = "test",
+                                                       last_name = "test",
+                                                       adult_id = "b82295f2-d3a1-4ccc-85f6-ac3acc028265",
+                                                       birth_day =6,
+                                                       birth_month= 12,
+                                                       birth_year=1991,
+                                                       relationship= "Mother",
+                                                       email= "T.test@hotmail.com",
+                                                       capita = True,
+                                                       on_update =True,
+                                                       military_base= False,
+                                                       lived_abroad= False,
+                                                       dbs_certificate_number= "748290865289",
+                                                       within_three_months=False,
+                                                       health_check_status= "To do",
+                                                       current_treatment=False,
+                                                       serious_illness= False,
+                                                       hospital_admission= False,
+                                                        )
+
+            endpoint_adult2 = reverse('Health-Check-Thank-You') + '?person_id=b82295f2-d3a1-4ccc-85f6-ac3acc028265'
+            endpoint_adult1 = reverse('Health-Check-Thank-You') + '?person_id=a82295f2-d3a1-4ccc-85f6-ac3acc028265'
+            # finish health check for adult 1
+            self.client.get(
+                endpoint_adult1,
+                follow=True
+            )
+
+            with mock.patch.object(thank_you_view, 'send_email') as send_email_mock:
+                self.client.get(
+                    endpoint_adult2,
+                    follow=True
+                )
+
+                send_email_mock.assert_has_calls([
+            mock.call('T.test@hotmail.com', {'firstName': 'test', 'ApplicantName': 'Helen Daniella Westwood'}, '2e9c097c-9e75-4198-9b5d-bab4b710e903'),
+            mock.call('T.test@hotmail.com', {'first_name': 'test'}, '4f850789-b9c9-4192-adfa-fe66883c5872')])
+            adult2.delete()
+
