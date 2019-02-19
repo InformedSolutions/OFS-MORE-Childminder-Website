@@ -107,6 +107,7 @@ def card_payment_post_handler(request):
 
     application = Application.objects.get(pk=app_id)
     childcare_type = ChildcareType.objects.get(application_id=app_id)
+    amount = 3500 if childcare_type.zero_to_five else 10300
 
     try:
         __assign_application_reference(application)
@@ -134,7 +135,6 @@ def card_payment_post_handler(request):
         card_security_code = str(request.POST["card_security_code"])
         expiry_month = request.POST["expiry_date_0"]
         expiry_year = '20' + request.POST["expiry_date_1"]
-        amount = 3500 if childcare_type.zero_to_five else 10300
 
         # Invoke Payment Gateway API
         create_payment_response = payment_service.make_payment(
@@ -172,10 +172,10 @@ def card_payment_post_handler(request):
 
     # If above logic gates have not been triggered, this indicates a form re-submission whilst processing
     # was taking place
-    return resubmission_handler(request, payment_reference, form, application)
+    return resubmission_handler(request, payment_reference, form, application, amount)
 
 
-def resubmission_handler(request, payment_reference, form, application):
+def resubmission_handler(request, payment_reference, form, application, amount):
     """
     Handling logic for managing page re-submissions to avoid duplicate payments being created
     :param request: Inbound HTTP post request
@@ -201,7 +201,7 @@ def resubmission_handler(request, payment_reference, form, application):
     if parsed_payment_response.get('lastEvent') == "AUTHORISED":
         # If payment has been marked as a AUTHORISED by Worldpay then payment has been captured
         # meaning user can be safely progressed to confirmation page
-        return __handle_authorised_payment(application)
+        return __handle_authorised_payment(application, amount)
     if parsed_payment_response.get('lastEvent') == "REFUSED":
         # If payment has been marked as a REFUSED by Worldpay then payment has
         # been attempted but was not successful in which case a new order should be attempted.
