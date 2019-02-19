@@ -26,15 +26,7 @@ class ThankYou(BaseTemplateView):
 
     def getStatus(self,application_id):
 
-        NO_ADDITIONAL_CERTIFICATE_INFORMATION = 'Certificate contains no information'
-        dbs_qset_no_capita = AdultInHome.objects.filter(application_id=application_id, capita=False,
-                                                        enhanced_check=True, on_update=True)
-        dbs_qset_not_within_three_months = AdultInHome.objects.filter(application_id=application_id, capita=True,
-                                                                      within_three_months=False, on_update=True)
-        dbs_qset_certificate_information = AdultInHome.objects.filter(application_id=application_id, capita=True,
-                                                                      within_three_months=True).exclude(
-            certificate_information=NO_ADDITIONAL_CERTIFICATE_INFORMATION)
-        dbs_qset = dbs_qset_no_capita | dbs_qset_certificate_information | dbs_qset_not_within_three_months
+        dbs_qset = AdultInHome.objects.filter(application_id=application_id, capita=False, on_update=True)
         crc_qset = AdultInHome.objects.filter(application_id=application_id, lived_abroad=True)
         if len(dbs_qset)>0:
             if len(crc_qset)>0:
@@ -128,18 +120,24 @@ class ThankYou(BaseTemplateView):
                 personalisation["dbs_names"] = dbs_names_string
                 template_id = '9aa3a240-0a00-44bc-ac49-88125eb7c749'
                 r = send_email(email, personalisation, template_id)
-                adult_template_id = '2e9c097c-9e75-4198-9b5d-bab4b710e903'
-                r = send_email(adult_record.email, adult_personalisation, adult_template_id)
-                print(link)
+                if adult_record in dbs_qset:
+                    adult_template_id = '2e9c097c-9e75-4198-9b5d-bab4b710e903'
+                    r = send_email(adult_record.email, adult_personalisation, adult_template_id)
+                    print(link)
+                else:
+                    self.template_name = 'other_people_health_check/thank_you_neither.html'
+
 
             elif len(crc_qset) > 0 and len(dbs_qset) == 0:
                 crc_names_string = qset_to_formatted_string(crc_qset)
                 personalisation["crc_names"] = crc_names_string
                 template_id = '07438eef-d88b-48fe-9812-2bc9e09dbae6'
                 r = send_email(email, personalisation, template_id)
-                adult_template_id = 'b598fceb-8c3d-46c3-a2fd-7f1568fa7b14'
-                r = send_email(adult_record.email, adult_personalisation, adult_template_id)
-                print(link)
+                if adult_record in crc_qset:
+                    adult_template_id = 'b598fceb-8c3d-46c3-a2fd-7f1568fa7b14'
+                    r = send_email(adult_record.email, adult_personalisation, adult_template_id)
+                    print(link)
+
 
             elif len(dbs_qset) > 0 and len(crc_qset) > 0:
                 dbs_names_string = qset_to_formatted_string(dbs_qset)
@@ -148,9 +146,18 @@ class ThankYou(BaseTemplateView):
                 personalisation["crc_names"] = crc_names_string
                 template_id = '5d5db808-2c83-41f6-adba-eda1b24c5714'
                 r = send_email(email, personalisation, template_id)
-                adult_template_id = '0df95124-4b08-4ed7-9881-70c4f0352767'
-                r = send_email(adult_record.email, adult_personalisation, adult_template_id)
-                print(link)
+                if adult_record in crc_qset and adult in dbs_qset:
+                    adult_template_id = '0df95124-4b08-4ed7-9881-70c4f0352767'
+                    r = send_email(adult_record.email, adult_personalisation, adult_template_id)
+                    print(link)
+                elif adult_record in crc_qset and adult_record not in dbs_qset:
+                    adult_template_id = 'b598fceb-8c3d-46c3-a2fd-7f1568fa7b14'
+                    r = send_email(adult_record.email, adult_personalisation, adult_template_id)
+                    print(link)
+                elif adult_record in dbs_qset and adult_record not in crc_qset:
+                    adult_template_id = '2e9c097c-9e75-4198-9b5d-bab4b710e903'
+                    r = send_email(adult_record.email, adult_personalisation, adult_template_id)
+                    print(link)
 
             else:
                 template_id = '0acc42fa-9ba0-4c5e-8171-e49c08c22b67'
