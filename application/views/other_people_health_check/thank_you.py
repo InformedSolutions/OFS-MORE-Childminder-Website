@@ -26,7 +26,15 @@ class ThankYou(BaseTemplateView):
 
     def getStatus(self,application_id):
 
-        dbs_qset = AdultInHome.objects.filter(application_id=application_id, capita=False, on_update=True)
+        NO_ADDITIONAL_CERTIFICATE_INFORMATION = 'Certificate contains no information'
+        dbs_qset_no_capita = AdultInHome.objects.filter(application_id=application_id, capita=False,
+                                                        enhanced_check=True, on_update=True)
+        dbs_qset_not_within_three_months = AdultInHome.objects.filter(application_id=application_id, capita=True,
+                                                                      within_three_months=False, on_update=True)
+        dbs_qset_certificate_information = AdultInHome.objects.filter(application_id=application_id, capita=True,
+                                                                      within_three_months=True).exclude(
+            certificate_information=NO_ADDITIONAL_CERTIFICATE_INFORMATION)
+        dbs_qset = dbs_qset_no_capita | dbs_qset_certificate_information | dbs_qset_not_within_three_months
         crc_qset = AdultInHome.objects.filter(application_id=application_id, lived_abroad=True)
         if len(dbs_qset)>0:
             if len(crc_qset)>0:
@@ -95,12 +103,15 @@ class ThankYou(BaseTemplateView):
                     CustomAuthenticationHandler.destroy_session(response)
                     return response
 
-            NO_ADDITIONAL_CERTIFICATE_INFORMATION = ['Certificate contains no information']
+            #all dbs situations
+            NO_ADDITIONAL_CERTIFICATE_INFORMATION = 'Certificate contains no information'
             dbs_qset_no_capita = AdultInHome.objects.filter(application_id=application_id, capita=False, enhanced_check=True, on_update=True)
             dbs_qset_not_within_three_months = AdultInHome.objects.filter(application_id=application_id, capita=True, within_three_months = False, on_update=True)
-            dbs_qset_certificate_information = AdultInHome.objects.filter(application_id=application_id, capita=True, within_three_months = True)
+            dbs_qset_certificate_information = AdultInHome.objects.filter(application_id=application_id, capita=True,
+                                                                          within_three_months = True).exclude(certificate_information=NO_ADDITIONAL_CERTIFICATE_INFORMATION)
+            # combine the query sets for these situations
+            dbs_qset = dbs_qset_no_capita|dbs_qset_certificate_information|dbs_qset_not_within_three_months
             crc_qset = AdultInHome.objects.filter(application_id=application_id, lived_abroad=True)
-            #change this to cover new criteria
 
             email = user_details.email
             link = str(settings.PUBLIC_APPLICATION_URL) + '/validate/' + create_account_magic_link(user_details)
@@ -111,7 +122,7 @@ class ThankYou(BaseTemplateView):
             #Personalisation parameters for the household member
             adult_personalisation={"firstName": adult_record.first_name,
                                    "ApplicantName": applicantName}
-            #does this cover individual adult???
+
             if len(dbs_qset) > 0 and len(crc_qset) == 0:
                 dbs_names_string = qset_to_formatted_string(dbs_qset)
                 personalisation["dbs_names"] = dbs_names_string
