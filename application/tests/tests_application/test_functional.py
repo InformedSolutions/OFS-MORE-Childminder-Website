@@ -231,13 +231,13 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
             self.TestAppSecondReferenceContactDetails()
             self.TestReferencesSummary()
 
-            # self.TestAppDeclaration()
-            # self.TestAppArcFlaggedStatuses()
-            # self.TestAppPaymentCreditDetails()
-            # self.TestAppPaymentConfirmation()
-            # self.TestAppPaymentConfirmationWithHealthBookletNoConviction()
-            # self.TestAppPaymentConfirmationWithHealthBookletAndConviction()
-            # self.TestAppPaymentConfirmationWithNoHealthBookletNoConviction()
+            self.TestAppDeclaration()
+            self.TestAppArcFlaggedStatuses()
+            self.TestAppPaymentCreditDetails()
+            self.TestAppPaymentConfirmation()
+            self.TestAppPaymentConfirmationWithHealthBookletNoConviction()
+            self.TestAppPaymentConfirmationWithHealthBookletAndConviction()
+            self.TestAppPaymentConfirmationWithNoHealthBookletNoConviction()
 
     def test_application_submit(self):
         """
