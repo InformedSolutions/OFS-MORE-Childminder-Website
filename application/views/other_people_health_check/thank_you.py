@@ -142,7 +142,6 @@ class ThankYou(BaseTemplateView):
         DBS_LIVED_ABROAD_TEMPLATES = DBS_LIVED_ABROAD_TEMPLATE_ID, DBS_LIVED_ABROAD_TEMPLATE_NAME
         LIVED_ABROAD_ONLY_TEMPLATES = LIVED_ABROAD_ONLY_TEMPLATE_ID, LIVED_ABROAD_ONLY_TEMPLATE_NAME
         NEITHER_TEMPLATES = None, NEITHER_TEMPLATE_NAME
-        NO_ADDITIONAL_CERTIFICATE_INFORMATION = 'Certificate contains no information'
 
         if capita:
             if within_three_months:
@@ -217,7 +216,8 @@ class ThankYou(BaseTemplateView):
          if adult_template_id is not None:
              r = send_email(adult_record.email, adult_personalisation, adult_template_id)
          # assign template id
-         self.template_name = templates[1]
+         template_name = templates[1]
+         return template_name
 
     def send_applicant_email(self, application_id, personalisation, email):
         """
