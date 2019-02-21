@@ -7,6 +7,8 @@ from ...models import AdultInHome, Application
 from .base import ApplicationTestBase
 from django.urls import reverse
 from application.views.other_people_health_check import thank_you as thank_you_view
+from ...views.dbs import NO_ADDITIONAL_CERTIFICATE_INFORMATION
+from ...views.other_people_health_check.thank_you import ThankYou
 
 
 class AdultInHomeTests(TestCase, ApplicationTestBase):
@@ -378,76 +380,105 @@ class AdultInHomeTests(TestCase, ApplicationTestBase):
             self.assertEqual(response.resolver_match.view_name, 'Health-Check-Thank-You')
 
 
-    def test_confirmation_email_template_dbs_lived_abroad_one_adult(self):
-        with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
-                mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
-                mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
-            notify_connection_test_mock.return_value.status_code = 201
-            magic_link_email_mock.return_value.status_code = 201
-            magic_link_text_mock.return_value.status_code = 201
+    def test_confirmation_email_template_capita_information(self):
+        capita = True
+        certificate_information = 'information'
+        lived_abroad = False
+        within_three_months = True
+        on_update = None
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,on_update)
+        email_template = templates[0]
+        template = templates[1]
+        self.assertEqual(email_template, '2e9c097c-9e75-4198-9b5d-bab4b710e903')
+        self.assertEqual(template, 'other_people_health_check/thank_you_dbs.html')
 
-            self.authenticate_client()
+    def test_confirmation_email_template_capita_information_lived_abroad(self):
+        capita = True
+        certificate_information = 'information'
+        lived_abroad = True
+        within_three_months = True
+        on_update = None
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,on_update)
+        email_template = templates[0]
+        template = templates[1]
+        self.assertEqual(email_template, '0df95124-4b08-4ed7-9881-70c4f0352767')
+        self.assertEqual(template, 'other_people_health_check/thank_you_dbs_abroad.html')
 
-            endpoint = reverse('Health-Check-Thank-You') + '?person_id=a82295f2-d3a1-4ccc-85f6-ac3acc028265'
+    def test_confirmation_email_template_capita_on_update(self):
+        capita = True
+        certificate_information = 'information'
+        lived_abroad = False
+        within_three_months = False
+        on_update = True
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,on_update)
+        email_template = templates[0]
+        template = templates[1]
+        self.assertEqual(email_template, '2e9c097c-9e75-4198-9b5d-bab4b710e903')
+        self.assertEqual(template, 'other_people_health_check/thank_you_dbs.html')
 
-            with mock.patch.object(thank_you_view, 'send_email') as send_email_mock:
-                self.client.get(
-                    endpoint,
-                    follow=True
-                )
+    def test_confirmation_email_template_capita_on_update_lived_abroad(self):
+        capita = True
+        certificate_information = 'information'
+        lived_abroad = True
+        within_three_months = False
+        on_update = True
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,
+                                           on_update)
+        email_template = templates[0]
+        template = templates[1]
+        self.assertEqual(email_template, '0df95124-4b08-4ed7-9881-70c4f0352767')
+        self.assertEqual(template, 'other_people_health_check/thank_you_dbs_abroad.html')
 
-                send_email_mock.assert_has_calls([
-            mock.call('T.kingsman@hotmail.com', {'firstName': 'Terry', 'ApplicantName': 'Helen Daniella Westwood'}, '0df95124-4b08-4ed7-9881-70c4f0352767'),
-            mock.call('T.kingsman@hotmail.com', {'first_name': 'Terry'}, '4f850789-b9c9-4192-adfa-fe66883c5872')])
+    def test_confirmation_email_template_no_capita(self):
+        capita = True
+        certificate_information = None
+        lived_abroad = False
+        within_three_months = None
+        on_update = True
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,on_update)
+        email_template = templates[0]
+        template = templates[1]
+        self.assertEqual(email_template, '2e9c097c-9e75-4198-9b5d-bab4b710e903')
+        self.assertEqual(template, 'other_people_health_check/thank_you_dbs.html')
 
-    def test_confirmation_email_template_dbs_only_two_adults(self):
-        with mock.patch('application.views.magic_link.magic_link_confirmation_email') as magic_link_email_mock, \
-                mock.patch('application.views.magic_link.magic_link_text') as magic_link_text_mock, \
-                mock.patch('application.utils.test_notify_connection') as notify_connection_test_mock:
-            notify_connection_test_mock.return_value.status_code = 201
-            magic_link_email_mock.return_value.status_code = 201
-            magic_link_text_mock.return_value.status_code = 201
+    def test_confirmation_email_template_no_capita(self):
+        capita = False
+        certificate_information = None
+        lived_abroad = True
+        within_three_months = None
+        on_update = True
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,
+                                           on_update)
+        email_template = templates[0]
+        template = templates[1]
+        self.assertEqual(email_template, '0df95124-4b08-4ed7-9881-70c4f0352767')
+        self.assertEqual(template, 'other_people_health_check/thank_you_dbs_abroad.html')
 
-            self.authenticate_client()
-            application = Application.objects.get(application_id="9c8e1285-84a0-439e-a824-42b94cf3d2c5")
-            adult2 = AdultInHome.objects.create(application_id=application,
-                                                       adult=2,
-                                                       first_name = "test",
-                                                       last_name = "test",
-                                                       adult_id = "b82295f2-d3a1-4ccc-85f6-ac3acc028265",
-                                                       birth_day =6,
-                                                       birth_month= 12,
-                                                       birth_year=1991,
-                                                       relationship= "Mother",
-                                                       email= "T.test@hotmail.com",
-                                                       capita = True,
-                                                       on_update =True,
-                                                       military_base= False,
-                                                       lived_abroad= False,
-                                                       dbs_certificate_number= "748290865289",
-                                                       within_three_months=False,
-                                                       health_check_status= "To do",
-                                                       current_treatment=False,
-                                                       serious_illness= False,
-                                                       hospital_admission= False,
-                                                        )
+    def test_confirmation_email_template_capita_no_email(self):
+        capita = True
+        certificate_information = NO_ADDITIONAL_CERTIFICATE_INFORMATION[0]
+        lived_abroad = False
+        within_three_months = True
+        on_update = None
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,
+                                           on_update)
+        email_template = templates[0]
+        template = templates[1]
+        self.assertEqual(email_template, None)
+        self.assertEqual(template, 'other_people_health_check/thank_you_neither.html')
 
-            endpoint_adult2 = reverse('Health-Check-Thank-You') + '?person_id=b82295f2-d3a1-4ccc-85f6-ac3acc028265'
-            endpoint_adult1 = reverse('Health-Check-Thank-You') + '?person_id=a82295f2-d3a1-4ccc-85f6-ac3acc028265'
-            # finish health check for adult 1
-            self.client.get(
-                endpoint_adult1,
-                follow=True
-            )
 
-            with mock.patch.object(thank_you_view, 'send_email') as send_email_mock:
-                self.client.get(
-                    endpoint_adult2,
-                    follow=True
-                )
+    def test_confirmation_email_template_capita_lived_abroad(self):
+        capita = True
+        certificate_information = NO_ADDITIONAL_CERTIFICATE_INFORMATION[0]
+        lived_abroad = True
+        within_three_months = True
+        on_update = None
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,
+                                           on_update)
+        email_template = templates[0]
+        template = templates[1]
+        self.assertEqual(email_template, 'b598fceb-8c3d-46c3-a2fd-7f1568fa7b14')
+        self.assertEqual(template, 'other_people_health_check/thank_you_abroad.html')
 
-                send_email_mock.assert_has_calls([
-            mock.call('T.test@hotmail.com', {'firstName': 'test', 'ApplicantName': 'Helen Daniella Westwood'}, '2e9c097c-9e75-4198-9b5d-bab4b710e903'),
-            mock.call('T.test@hotmail.com', {'first_name': 'test'}, '4f850789-b9c9-4192-adfa-fe66883c5872')])
-            adult2.delete()
 
