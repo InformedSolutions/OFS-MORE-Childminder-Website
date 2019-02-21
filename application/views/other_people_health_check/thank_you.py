@@ -145,7 +145,7 @@ class ThankYou(BaseTemplateView):
 
         if capita:
             if within_three_months:
-                if certificate_information != NO_ADDITIONAL_CERTIFICATE_INFORMATION:
+                if certificate_information not in NO_ADDITIONAL_CERTIFICATE_INFORMATION:
                     if lived_abroad:
                         logger.debug(
                             'Attempting send of email "Household member completed - Confirmation - DBS & lived abroad"')
@@ -190,6 +190,9 @@ class ThankYou(BaseTemplateView):
                 The following combination is not covered in if block: 
                 on_update {0} """.format(on_update))
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        return context
 
     def get_template_names(self):
          """
@@ -216,8 +219,8 @@ class ThankYou(BaseTemplateView):
          if adult_template_id is not None:
              r = send_email(adult_record.email, adult_personalisation, adult_template_id)
          # assign template id
-         template_name = templates[1]
-         return template_name
+         self.template_name = templates[1]
+         return self.template_name
 
     def send_applicant_email(self, application_id, personalisation, email):
         """
