@@ -230,11 +230,14 @@ class ThankYou(BaseTemplateView):
         :param email: email address
         :return:
         """
+        #get list of adults who do not need to post dbs
         dbs_list = list(AdultInHome.objects.filter(application_id=application_id, capita=True,
                                                within_three_months=True,
                                                certificate_information=NO_ADDITIONAL_CERTIFICATE_INFORMATION))
         lived_abroad_list = list(AdultInHome.objects.filter(application_id=application_id, lived_abroad=True))
         adult_list = list(AdultInHome.objects.filter(application_id=application_id))
+        # get list of adults who need to post dbs
+        dbs_post_list = list(set(adult_list) - set(dbs_list))
         if any(dbs_list):
             if any(lived_abroad_list):
                 lived_abroad_names_string = get_name_formatted_string(lived_abroad_list)
@@ -250,7 +253,6 @@ class ThankYou(BaseTemplateView):
                 print(personalisation["link"])
         else:
             if any(lived_abroad_list):
-                dbs_post_list = list(set(adult_list) - set(dbs_list))
                 dbs_names_string = get_name_formatted_string(dbs_post_list)
                 lived_abroad_names_string = get_name_formatted_string(lived_abroad_list)
                 personalisation["dbs_names"] = dbs_names_string
@@ -260,7 +262,7 @@ class ThankYou(BaseTemplateView):
                 logger.debug('Attempting send of email "Confirm completion of all household member’s health checks DBS and CRC"')
                 print(personalisation["link"])
             else:
-                dbs_names_string = get_name_formatted_string(dbs_list)
+                dbs_names_string = get_name_formatted_string(dbs_post_list)
                 personalisation["dbs_names"] = dbs_names_string
                 template_id = '9aa3a240-0a00-44bc-ac49-88125eb7c749'
                 logger.debug('Attempting send of email "Confirm completion of all household member’s health checks DBS"')
