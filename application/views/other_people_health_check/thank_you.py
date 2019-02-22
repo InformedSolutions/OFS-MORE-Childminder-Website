@@ -233,7 +233,7 @@ class ThankYou(BaseTemplateView):
         #get list of adults who do not need to post dbs
         dbs_list = list(AdultInHome.objects.filter(application_id=application_id, capita=True,
                                                within_three_months=True,
-                                               certificate_information=NO_ADDITIONAL_CERTIFICATE_INFORMATION))
+                                               certificate_information=NO_ADDITIONAL_CERTIFICATE_INFORMATION[0]))
         lived_abroad_list = list(AdultInHome.objects.filter(application_id=application_id, lived_abroad=True))
         adult_list = list(AdultInHome.objects.filter(application_id=application_id))
         # get list of adults who need to post dbs
