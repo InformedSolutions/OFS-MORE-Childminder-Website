@@ -97,7 +97,7 @@ class PITHDBSTypeOfCheckView(PITHMultiRadioView):
 
     def get_adults_needing_info(self, application_id):
         """
-        Finds the list of adults in the home for this application for whom we need more
+        Finds the list of adults in the home for this application for whom we need (or did need) more
             info about their dbs number
         :param application_id:
         :return: list of 2-tuples each containing the adult model and their DBSStatus
@@ -105,6 +105,10 @@ class PITHDBSTypeOfCheckView(PITHMultiRadioView):
 
         filtered = []
         for adult in AdultInHome.objects.filter(application_id=application_id):
+
+            # pretend they haven't answered yet, in case user is returning to change their answers
+            adult.enhanced_check = None
+            adult.on_update = None
 
             dbs_status = find_dbs_status(adult, adult)
 
