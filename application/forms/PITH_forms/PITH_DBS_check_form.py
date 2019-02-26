@@ -73,7 +73,6 @@ class PITHDBSCheckForm(PITHChildminderFormAdapter):
             if dbs_status == DBSStatus.DOB_MISMATCH:
                 self.add_error(self.dbs_field,
                                """
-                               Birth date does not match the date given on the 'Your date of birth' page: 
                                Check your DBS certificate. The number you entered does not match your number held by DBS.
                                """)
 

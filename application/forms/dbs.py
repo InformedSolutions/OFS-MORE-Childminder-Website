@@ -1,11 +1,11 @@
 from django import forms
 from govuk_forms.widgets import InlineRadioSelect, NumberInput
 
+from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
 from ..business_logic import childminder_dbs_duplicates_household_member_check, dbs_date_of_birth_no_match
 from ..dbs import read
 from ..forms.childminder import ChildminderForms
 from ..models import CriminalRecordCheck, Application
-from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
 
 
 class DBSRadioForm(ChildminderForms):
@@ -94,12 +94,12 @@ class DBSTypeForm(DBSRadioForm):
     )
 
     on_update = forms.ChoiceField(
-            label='Are you on the DBS update service?',
-            choices=choices,
-            widget=ConditionalPostInlineRadioSelect,
-            required=False,
-            error_messages={
-                'required': 'Please say if you are on the DBS update service'})
+        label='Are you on the DBS update service?',
+        choices=choices,
+        widget=ConditionalPostInlineRadioSelect,
+        required=False,
+        error_messages={
+            'required': 'Please say if you are on the DBS update service'})
 
     def clean(self):
         try:
@@ -116,12 +116,11 @@ class DBSTypeForm(DBSRadioForm):
 
     def get_choice_field_data(self):
         return forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare?',
-                                       choices=self.choices,
-                                       widget=ConditionalPostInlineRadioSelect,
-                                       required=True,
-                                       error_messages={
-                                           'required': 'Please say if you have an enhanced check for home-based childcare'})
-
+                                 choices=self.choices,
+                                 widget=ConditionalPostInlineRadioSelect,
+                                 required=True,
+                                 error_messages={
+                                     'required': 'Please say if you have an enhanced check for home-based childcare'})
 
 
 class DBSUpdateForm(DBSRadioForm):
@@ -201,7 +200,6 @@ class DBSCheckDetailsForm(DBSRadioForm):
         if response.status_code == 200:
             if dbs_date_of_birth_no_match(application, response.record):
                 raise forms.ValidationError(
-                    'Birth date does not match the date given on the \'Your date of birth\' page: '
                     'Check your DBS certificate. The number you entered does not match your number held by DBS.')
 
         return dbs_certificate_number
