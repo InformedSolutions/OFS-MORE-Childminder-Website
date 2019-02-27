@@ -447,6 +447,7 @@ class DBSCheckNoCapitaView(DBSCheckDetailsView):
             info = record['certificate_information']
 
             update_criminal_record_check(application_id, 'capita', True)
+            update_criminal_record_check(application_id, 'certificate_information', info)
 
             # Nullify fields on the capita = False route
             update_criminal_record_check(application_id, 'enhanced_check', None)
@@ -455,10 +456,8 @@ class DBSCheckNoCapitaView(DBSCheckDetailsView):
             if date_issued_within_three_months(issue_date):
                 update_criminal_record_check(application_id, 'within_three_months', True)
                 if not info in NO_ADDITIONAL_CERTIFICATE_INFORMATION:
-                    update_criminal_record_check(application_id, 'certificate_information', info)
                     redirect_url = capita_info
                 else:
-                    update_criminal_record_check(application_id, 'certificate_information', info)
                     redirect_url = capita_no_info
             else:
                 update_criminal_record_check(application_id, 'within_three_months', False)
@@ -469,6 +468,7 @@ class DBSCheckNoCapitaView(DBSCheckDetailsView):
 
             # Nullify fields on the capita = True route
             update_criminal_record_check(application_id, 'within_three_months', None)
+            update_criminal_record_check(application_id, 'certificate_information', "")
 
             # TODO: Currently just redirecting as if not a valid dbs number if DBS API is inaccessible.
 

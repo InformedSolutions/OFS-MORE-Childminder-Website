@@ -10,6 +10,8 @@ from application import views
 from application.views import PITH_views
 from application.tests import utils
 
+from application.views import dbs as dbs_view
+
 
 @tag('http')
 class PITHFunctionalTestCase(utils.NoMiddlewareTestCase):
@@ -359,6 +361,42 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
                           .format(id=adult2.pk))
         utils.assertXPath(response, "//input[@type='radio' and (@name='enhanced_check{id}' or @name='on_update{id}')]"
                           .format(id=adult3.pk))
+
+    def test_type_of_check_page_renders_adult_forms_again_when_returning_to_change_answers(self):
+
+        adult1 = self.make_adult(dbs_number='123456789013', dbs_saved_yet=True, record_found=False,
+                                 enhanced_answer=True, on_update_answer=False)
+        adult2 = self.make_adult(dbs_number='123456789014', dbs_saved_yet=True, record_found=True, issue_recent=False,
+                                 on_update_answer=True)
+
+        response = self.client.get(reverse('PITH-DBS-Type-Of-Check-View'), data={'id': self.app_id})
+
+        self.assertEqual(response.status_code, 200)
+        utils.assertView(response, PITH_views.PITHDBSTypeOfCheckView)
+
+        utils.assertXPath(response, "//input[@type='radio' and @name='enhanced_check{id}']".format(id=adult1.pk))
+        utils.assertXPath(response, "//input[@type='radio' and @name='on_update{id}']".format(id=adult1.pk))
+        utils.assertNotXPath(response, "//input[@type='radio' and @name='enhanced_check{id}']".format(id=adult2.pk))
+        utils.assertXPath(response, "//input[@type='radio' and @name='on_update{id}']".format(id=adult2.pk))
+
+    def test_rendering_type_of_check_page_doesnt_remove_previous_answers_from_database(self):
+
+        adult1 = self.make_adult(dbs_number='123456789013', dbs_saved_yet=True, record_found=False,
+                                 enhanced_answer=True, on_update_answer=False)
+        adult2 = self.make_adult(dbs_number='123456789014', dbs_saved_yet=True, record_found=True, issue_recent=False,
+                                 on_update_answer=True)
+
+        response = self.client.get(reverse('PITH-DBS-Type-Of-Check-View'), data={'id': self.app_id})
+
+        self.assertEqual(response.status_code, 200)
+
+        refetched_adult1 = models.AdultInHome.objects.get(pk=adult1.pk)
+        self.assertEqual(True, refetched_adult1.enhanced_check)
+        self.assertEqual(False, refetched_adult1.on_update)
+
+        refetched_adult2 = models.AdultInHome.objects.get(pk=adult2.pk)
+        self.assertIsNone(refetched_adult2.enhanced_check)
+        self.assertEqual(True, refetched_adult2.on_update)
 
     def test_any_invalid_responses_on_type_of_check_page_returns_to_type_of_check_page(self):
 

@@ -4,16 +4,21 @@ A base class for reusable test steps across application unit tests
 import json
 from datetime import datetime
 from unittest import mock
+from unittest.mock import patch
 
 from django.core.urlresolvers import reverse
+from django.http import HttpResponse
 from django.test import Client
 
+from application.views import DBSCheckNoCapitaView
 from ...models import (ApplicantHomeAddress,
                        ApplicantName,
                        ApplicantPersonalDetails,
                        Application,
                        ChildcareType,
-                       UserDetails)
+                       UserDetails, CriminalRecordCheck)
+from application.views import dbs as view_dbs
+from application.forms import dbs as form_dbs
 
 
 class ApplicationTestBase(object):
@@ -369,11 +374,21 @@ class ApplicationTestBase(object):
     def TestAppCriminalRecordCheckDetails(self):
         """Submit CRC details"""
         r = self.client.get(
+            reverse('DBS-Guidance-View'),
+            {
+                'id': self.app_id
+            }
+        )
+        self.assertEqual(r.status_code, 200)
+
+        r = self.client.get(
             reverse('DBS-Lived-Abroad-View'),
             {
                 'id': self.app_id
             }
         )
+        self.assertEqual(r.status_code, 200)
+
         r = self.client.post(
             reverse('DBS-Lived-Abroad-View'),
             {
@@ -382,6 +397,7 @@ class ApplicationTestBase(object):
             }
         )
         self.assertEqual(r.status_code, 302)
+
         r = self.client.post(
             reverse('DBS-Military-View'),
             {
@@ -390,12 +406,23 @@ class ApplicationTestBase(object):
             }
         )
         self.assertEqual(r.status_code, 302)
+
+        r = self.client.post(
+            reverse('DBS-Check-No-Capita-View'),
+            {
+                'id': self.app_id,
+                'dbs_certificate_number': '123456789101'
+            }
+        )
+
+        self.assertEqual(r.status_code, 302)
+
         r = self.client.post(
             reverse('DBS-Check-Type-View'),
             {
                 'id': self.app_id,
                 'enhanced_check': True,
-                'on_update': False
+                'on_update': True
             }
         )
 
@@ -413,15 +440,12 @@ class ApplicationTestBase(object):
                 'id': self.app_id
             }
         )
-        self.assertEqual(r.status_code, 302)
 
-        # crc = CriminalRecordCheck.objects.create(application_id=application)
-        # crc.lived_abroad = True
-        # crc.military = False
-        # crc.capita = True
-        # crc.on_update = None
-        # crc.dbs_certificate_number = '123456789012'
-        # crc.cautions_convictions = False
+        # XXX: TODO: INSERT MESSAGE HERE
+        #
+        # crc = CriminalRecordCheck.objects.get(application_id=self.app_id)
+        #
+        # crc.capita = False
         # crc.save()
 
     def TestAppOtherPeopleAdults(self):

@@ -32,6 +32,12 @@ def show_hide_tasks(context, application):
 
             task['hidden'] = True
 
+        if task['name'] == 'other_people':
+            if application.working_in_other_childminder_home is True:
+                task['hidden'] = True
+            else:
+                task['hidden'] = False
+
     return context
 
 
