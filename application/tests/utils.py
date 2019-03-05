@@ -1,5 +1,8 @@
+import unittest
 from django.test import TestCase, modify_settings
 from lxml import etree
+
+from application import models
 
 
 @modify_settings(MIDDLEWARE={
@@ -121,3 +124,90 @@ def _field_value_xpath(label, heading=None):
     xpath = _field_xpath(label, heading)
     xpath += "/following-sibling::td[1]/text()"
     return 'normalize-space({})'.format(xpath)
+
+
+def patch_for_setUp(test_case, *args, **kwargs):
+    """
+    Performs a unittest.mock.patch such that it will remain in place for the duration of a single test in the given
+    TestCase before being undone. Suitable for invoking in a TestCase.setUp method.
+    :param test_case: The TestCase instance
+    :param args: positional arguments to pass to patch
+    :param kwargs: keyword arguments to pass to patch
+    :return: The result of the patch call, i.e. either a MagicMock or None
+    """
+    patcher = unittest.mock.patch(*args, **kwargs)
+    test_case.addCleanup(patcher.stop)
+    return patcher.start()
+
+
+def patch_object_for_setUp(test_case, *args, **kwargs):
+    """
+    Performs a unittest.mock.patch.object such that it will remain in place for the duration of a single test in the
+    given TestCase before being undone. Suitable for invoking in a TestCase.setUp method.
+    :param test_case: The TestCase instance
+    :param args: positional arguments to pass to patch.object
+    :param kwargs: keyword arguments to pass to patch.object
+    :return: The result of the patch.object call, i.e. either a MagicMock or None
+    """
+    patcher = unittest.mock.patch.object(*args, **kwargs)
+    test_case.addCleanup(patcher.stop)
+    return patcher.start()
+
+
+def make_test_application():
+    """
+    Create an arbitrary childminder application for tests that don't require any specific field values,
+    just that an application exists, or to use as a starting point before tweaking individual fields
+    """
+
+    application = models.Application.objects.create(
+    )
+    models.UserDetails.objects.create(
+        application_id=application
+    )
+    applicant_personal_details = models.ApplicantPersonalDetails.objects.create(
+        application_id=application
+    )
+    models.ApplicantName.objects.create(
+        application_id=application,
+        personal_detail_id=applicant_personal_details,
+        current_name=True,
+    )
+    models.ApplicantHomeAddress.objects.create(
+        application_id=application,
+        personal_detail_id=applicant_personal_details,
+        move_in_month=1, move_in_year=2001,
+        current_address=True,
+        childcare_address=True,
+    )
+    models.ChildcareType.objects.create(
+        application_id=application,
+        zero_to_five=True, five_to_eight=True, eight_plus=True,
+    )
+    models.AdultInHome.objects.create(
+        application_id=application,
+        birth_day=1, birth_month=2, birth_year=1983,
+        adult=1,
+    )
+    models.FirstAidTraining.objects.create(
+        application_id=application,
+        course_day=1, course_month=2, course_year=2015,
+    )
+    models.CriminalRecordCheck.objects.create(
+        application_id=application,
+        certificate_information='',
+    )
+    models.ChildcareTraining.objects.create(
+        application_id=application,
+    )
+    models.Reference.objects.create(
+        application_id=application,
+        reference=1,
+        years_known=1, months_known=11,
+    )
+    models.Reference.objects.create(
+        application_id=application,
+        reference=2,
+        years_known=2, months_known=10,
+    )
+    return application
