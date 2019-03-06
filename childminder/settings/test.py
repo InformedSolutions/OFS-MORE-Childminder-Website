@@ -18,43 +18,42 @@ INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + PROD_APPS + PROJECT_APPS
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.environ.get('POSTGRES_DB', 'postgres'),
-        'USER': os.environ.get('POSTGRES_USER', 'ofsted'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'OfstedB3ta'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'ofsted-postgres'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432')
+        'NAME': from_env('POSTGRES_DB', 'postgres'),
+        'USER': from_env('POSTGRES_USER', 'ofsted'),
+        'PASSWORD': from_env('POSTGRES_PASSWORD', 'OfstedB3ta'),
+        'HOST': from_env('POSTGRES_HOST', 'ofsted-postgres'),
+        'PORT': from_env('POSTGRES_PORT', '5432')
     }
 }
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('SECRET_KEY')
+SECRET_KEY = from_env('SECRET_KEY')
 
 # Automatic Django logging at the INFO level (i.e everything the comes to the console when ran locally)
 LOGGING = {
-  'version': 1,
-  'disable_existing_loggers': False,
-  'formatters': {
-    'console': {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
             # exact format is not important, this is the minimum information
             'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
         },
-        },
-  'handlers': {
-    'django.server': {
-        'level': 'INFO',
-        'class': 'logging.handlers.RotatingFileHandler',
-        'maxBytes': 1 * 1024 * 1024,
-        'filename': 'logs/output.log',
-        'formatter': 'console',
-        'maxBytes': 1 * 1024 * 1024,
-        'backupCount': 30
     },
-   },
-   'loggers': {
-     'django.server': {
-       'handlers': ['django.server'],
-         'level': 'INFO',
-           'propagate': True,
-      },
+    'handlers': {
+        'django.server': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'maxBytes': 1 * 1024 * 1024,
+            'filename': 'logs/output.log',
+            'formatter': 'console',
+            'backupCount': 30
+        },
+    },
+    'loggers': {
+        'django.server': {
+            'handlers': ['django.server'],
+            'level': 'INFO',
+            'propagate': True,
+        },
     },
 }

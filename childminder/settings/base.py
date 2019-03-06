@@ -12,8 +12,23 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 
+from django.core.exceptions import ImproperlyConfigured
+
+
+NO_DEFAULT = object()
+
+
+def from_env(name, default=NO_DEFAULT):
+    try:
+        return os.environ[name]
+    except KeyError as e:
+        if default is NO_DEFAULT:
+            raise ImproperlyConfigured('Missing environment variable with no default: {}'.format(name)) from e
+        return default
+
+
 # Server name for showing server that responded to request under load balancing conditions
-SERVER_LABEL = os.environ.get('SERVER_LABEL')
+SERVER_LABEL = from_env('SERVER_LABEL')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -23,32 +38,32 @@ SMS_EXPIRY = 24
 EMAIL_EXPIRY = 24
 
 # Visa Validation
-VISA_VALIDATION = os.environ.get('VISA_VALIDATION') == 'True'
+VISA_VALIDATION = from_env('VISA_VALIDATION') == 'True'
 
 # Base URL of notify gateway
-NOTIFY_URL = os.environ.get('APP_NOTIFY_URL')
+NOTIFY_URL = from_env('APP_NOTIFY_URL')
 
 # Base URL of payment gateway
-PAYMENT_URL = os.environ.get('APP_PAYMENT_URL')
+PAYMENT_URL = from_env('APP_PAYMENT_URL')
 
 # Base URL of addressing-service gateway
-ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL')
+ADDRESSING_URL = from_env('APP_ADDRESSING_URL')
 
 # Base URL of the DBS check API
-DBS_URL = os.environ.get('APP_DBS_URL')
+DBS_URL = from_env('APP_DBS_URL')
 
-PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL')
+PUBLIC_APPLICATION_URL = from_env('PUBLIC_APPLICATION_URL')
 
-EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
+EXECUTING_AS_TEST = from_env('EXECUTING_AS_TEST')
 
-FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'tester@informed.com')
+FEEDBACK_EMAIL = from_env('FEEDBACK_EMAIL', 'tester@informed.com')
 
 TEST_NOTIFY_CONNECTION = True
 
 APPLICATION_PREFIX = 'CM'
 
-PAYMENT_PROCESSING_ATTEMPTS = os.environ.get('PAYMENT_PROCESSING_ATTEMPTS', 10)
-PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS = os.environ.get('PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS', 10)
+PAYMENT_PROCESSING_ATTEMPTS = from_env('PAYMENT_PROCESSING_ATTEMPTS', 10)
+PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS = from_env('PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS', 10)
 
 PAYMENT_HTTP_REQUEST_TIMEOUT = 60
 
@@ -63,34 +78,34 @@ STATIC_URL = URL_PREFIX + '/static/'
 AUTHENTICATION_URL = URL_PREFIX + '/sign-in/'
 
 AUTHENTICATION_EXEMPT_URLS = (
-    r'^' + URL_PREFIX + '/$',
-    r'^' + URL_PREFIX + '/account/account/$',
-    r'^' + URL_PREFIX + '/account/email/$',
-    r'^' + URL_PREFIX + '/security-question/$',
-    r'^' + URL_PREFIX + '/email-sent/$',
-    r'^' + URL_PREFIX + '/validate/.*$',
-    r'^' + URL_PREFIX + '/code-resent/.*$',
-    r'^' + URL_PREFIX + '/security-code/.*$',
-    r'^' + URL_PREFIX + '/link-used/$',
-    r'^' + URL_PREFIX + '/link-expired/$',
-    r'^' + URL_PREFIX + '/new-code/.*$',
-    r'^' + URL_PREFIX + '/djga/+',
-    r'^' + URL_PREFIX + '/sign-in/',
-    r'^' + URL_PREFIX + '/sign-in/check-email/',
-    r'^' + URL_PREFIX + '/email-resent/',
-    r'^' + URL_PREFIX + '/sign-in/new-application/',
-    r'^' + URL_PREFIX + '/new-application/',
-    r'^' + URL_PREFIX + '/your-location/',
-    r'^' + URL_PREFIX + '/new-application/check-email/',
-    r'^' + URL_PREFIX + '/service-unavailable/',
-    r'^' + URL_PREFIX + '/help-contact/',
-    r'^' + URL_PREFIX + '/application-saved/$',
-    r'^' + URL_PREFIX + '/health-check/(?P<id>[\w-]+)/$',
-    r'^' + URL_PREFIX + '/feedback/',
-    r'^' + URL_PREFIX + '/feedback-submitted/',
-    r'^' + URL_PREFIX + '/documents-needed/',
-    r'^' + URL_PREFIX + '/home-ready/',
-    r'^' + URL_PREFIX + '/prepare-interview/'
+    '^' + URL_PREFIX + r'/$',
+    '^' + URL_PREFIX + r'/account/account/$',
+    '^' + URL_PREFIX + r'/account/email/$',
+    '^' + URL_PREFIX + r'/security-question/$',
+    '^' + URL_PREFIX + r'/email-sent/$',
+    '^' + URL_PREFIX + r'/validate/.*$',
+    '^' + URL_PREFIX + r'/code-resent/.*$',
+    '^' + URL_PREFIX + r'/security-code/.*$',
+    '^' + URL_PREFIX + r'/link-used/$',
+    '^' + URL_PREFIX + r'/link-expired/$',
+    '^' + URL_PREFIX + r'/new-code/.*$',
+    '^' + URL_PREFIX + r'/djga/+',
+    '^' + URL_PREFIX + r'/sign-in/',
+    '^' + URL_PREFIX + r'/sign-in/check-email/',
+    '^' + URL_PREFIX + r'/email-resent/',
+    '^' + URL_PREFIX + r'/sign-in/new-application/',
+    '^' + URL_PREFIX + r'/new-application/',
+    '^' + URL_PREFIX + r'/your-location/',
+    '^' + URL_PREFIX + r'/new-application/check-email/',
+    '^' + URL_PREFIX + r'/service-unavailable/',
+    '^' + URL_PREFIX + r'/help-contact/',
+    '^' + URL_PREFIX + r'/application-saved/$',
+    '^' + URL_PREFIX + r'/health-check/(?P<id>[\w-]+)/$',
+    '^' + URL_PREFIX + r'/feedback/',
+    '^' + URL_PREFIX + r'/feedback-submitted/',
+    '^' + URL_PREFIX + r'/documents-needed/',
+    '^' + URL_PREFIX + r'/home-ready/',
+    '^' + URL_PREFIX + r'/prepare-interview/'
 )
 
 BUILTIN_APPS = [
@@ -215,38 +230,38 @@ REGEX = {
 }
 
 LOGGING = {
-  'version': 1,
-  'disable_existing_loggers': False,
-  'formatters': {
-    'console': {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'console': {
             # exact format is not important, this is the minimum information
             'format': '%(asctime)s %(name)-12s %(levelname)-8s %(message)s',
         },
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.handlers.TimedRotatingFileHandler',
+            'filename': 'logs/output.log',
+            'formatter': 'console',
+            'when': 'midnight',
+            'backupCount': 10
         },
-  'handlers': {
-    'file': {
-        'level': 'DEBUG',
-        'class': 'logging.handlers.TimedRotatingFileHandler',
-        'filename': 'logs/output.log',
-        'formatter': 'console',
-        'when': 'midnight',
-        'backupCount': 10
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler'
+        },
     },
-    'console': {
-        'level': 'DEBUG',
-        'class': 'logging.StreamHandler'
-    },
-   },
-   'loggers': {
-     '': {
-       'handlers': ['file', 'console'],
-         'level': 'DEBUG',
-           'propagate': True,
-      },
-      'django.server': {
-       'handlers': ['file', 'console'],
-         'level': 'INFO',
-           'propagate': True,
-      },
+    'loggers': {
+        '': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'django.server': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
     },
 }
