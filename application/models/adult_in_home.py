@@ -25,16 +25,19 @@ class AdultInHome(models.Model):
     validated = models.BooleanField(default=False)
     current_treatment = models.NullBooleanField(null=True)
     serious_illness = models.NullBooleanField(null=True)
-    known_to_council=models.NullBooleanField(null=True)
-    children_details=models.TextField(default='', null=True)
+    known_to_council = models.NullBooleanField(null=True)
+    reasons_known_to_council_health_check = models.TextField(default='', null=True)
     hospital_admission = models.NullBooleanField(null=True)
     health_check_status = models.CharField(max_length=50, default='To do')
     email_resent = models.IntegerField(default=0)
     email_resent_timestamp = models.DateTimeField(null=True, blank=True)
     lived_abroad = models.NullBooleanField(blank=True)
     military_base = models.NullBooleanField(blank=True)
-    capita = models.NullBooleanField(blank=True)
-    on_update = models.NullBooleanField(blank=True)
+    capita = models.NullBooleanField(blank=True)                # dbs was found on capita list?
+    enhanced_check = models.NullBooleanField(blank=True)        # stated they have a capita dbs?
+    on_update = models.NullBooleanField(blank=True)             # stated they are signed up to dbs update service?
+    certificate_information = models.TextField(blank=True)      # information from dbs certificate
+    within_three_months = models.NullBooleanField(blank=True)   # dbs was issued within three months of lookup?
 
     @property
     def timelog_fields(self):
@@ -60,7 +63,7 @@ class AdultInHome(models.Model):
             'relationship',
             'email',
             'dbs_certificate_number',
-            'health_check_status'
+            'health_check_status',
         )
 
     @classmethod

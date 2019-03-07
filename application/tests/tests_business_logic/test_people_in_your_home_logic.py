@@ -9,6 +9,9 @@ from ...models import AdultInHome, Application, ChildInHome, UserDetails
 from ...business_logic import health_check_email_resend_logic
 
 
+# TODO: move to application.tests.test_people_in_the_home
+
+
 class TestPeopleInYourHomeLogic(TestCase):
 
     def test_logic_to_create_new_adult_record(self):

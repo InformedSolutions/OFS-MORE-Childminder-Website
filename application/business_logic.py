@@ -5,11 +5,14 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 """
 
-import pytz
+import enum
 import re
+from datetime import datetime, timedelta
 
-from datetime import date, datetime, timedelta
+import pytz
+from dateutil.relativedelta import relativedelta
 
+from . import dbs
 from .models import (AdultInHome,
                      ApplicantHomeAddress,
                      ApplicantName,
@@ -23,9 +26,7 @@ from .models import (AdultInHome,
                      HealthDeclarationBooklet,
                      Reference,
                      UserDetails, Child, ChildAddress)
-
-from .utils import unique_values, get_first_duplicate_index, return_last_duplicate_index, \
-    get_duplicate_list_entry_indexes
+from .utils import unique_values, get_first_duplicate_index, get_duplicate_list_entry_indexes
 
 
 def childcare_type_logic(application_id_local, form):
@@ -378,7 +379,9 @@ def eyfs_details_logic(application_id_local, form):
     eyfs_course_date_year = form.cleaned_data.get('eyfs_course_date').year
     # If the user entered information for this task for the first time
     if ChildcareTraining.objects.filter(application_id=application_id_local).count() == 0:
-        eyfs_record = ChildcareTraining(eyfs_course_name=eyfs_course_name, eyfs_course_date_day=eyfs_course_date_day, eyfs_course_date_month=eyfs_course_date_month, eyfs_course_date_year=eyfs_course_date_year, application_id=this_application)
+        eyfs_record = ChildcareTraining(eyfs_course_name=eyfs_course_name, eyfs_course_date_day=eyfs_course_date_day,
+                                        eyfs_course_date_month=eyfs_course_date_month,
+                                        eyfs_course_date_year=eyfs_course_date_year, application_id=this_application)
     # If the user previously entered information for this task
     elif ChildcareTraining.objects.filter(application_id=application_id_local).count() > 0:
         eyfs_record = ChildcareTraining.objects.get(application_id=application_id_local)
@@ -405,7 +408,7 @@ def training_for_childcare_register_logic(application_id_local, form):
     )
 
     if ChildcareTraining.objects.filter(application_id=application_id_local).count() == 0:
-        application_record        = Application.objects.get(application_id=application_id_local)
+        application_record = Application.objects.get(application_id=application_id_local)
         childcare_training_record = ChildcareTraining.objects.create(application_id=application_record)
     else:
         childcare_training_record = ChildcareTraining.objects.get(application_id=application_id_local)
@@ -586,10 +589,11 @@ def your_children_details_logic(application_id_local, form, child):
     # If the user previously entered information for this task
     else:
         child_record = Child(first_name=first_name, middle_names=middle_names, last_name=last_name,
-                                   birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
-                                   application_id=this_application, child=child)
+                             birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
+                             application_id=this_application, child=child)
 
     return child_record
+
 
 def other_people_adult_details_logic(application_id_local, form, adult):
     """
@@ -660,7 +664,7 @@ def rearrange_adults(number_of_adults, application_id_local):
     :return:
     """
     application = Application.objects.get(pk=application_id_local)
-    
+
     for i in range(1, number_of_adults + 1):
         # If there is a gap in the sequence of adult numbers
         if AdultInHome.objects.filter(application_id=application_id_local, adult=i).count() == 0:
@@ -864,7 +868,7 @@ def health_check_email_resend_logic(adult_record):
     :return: Boolean: True if email cannot be sent, False if email can be sent.
     """
 
-    #If email_resent_timestamp is None then the email has never been resent.
+    # If email_resent_timestamp is None then the email has never been resent.
     if adult_record.email_resent_timestamp is not None:
 
         # If the last e-mail was sent within the last 24 hours
@@ -962,7 +966,6 @@ def childminder_dbs_duplicates_household_member_check(application, candidate_dbs
         adults_dbs_list = [adult.dbs_certificate_number for adult in adults if not adult.pk == adult_record.pk]
     else:
         adults_dbs_list = [adult.dbs_certificate_number for adult in adults]
-
     return candidate_dbs_certificate_number in adults_dbs_list
 
 
@@ -999,6 +1002,126 @@ def get_duplicate_dbs_index(application, candidate_dbs_certificate_number):
     return get_first_duplicate_index(dbs_numbers)
 
 
+class DBSStatus(enum.Enum):
+
+    OK = 0
+    DOB_MISMATCH = 1
+    NEED_ASK_IF_ENHANCED_CHECK = 2
+    NEED_ASK_IF_ON_UPDATE = 3
+    NEED_APPLY_FOR_NEW = 4
+    NEED_UPDATE_SERVICE_SIGN_UP = 5
+    NEED_UPDATE_SERVICE_CHECK = 6
+    NEED_DBS_NUMBER = 7
+
+
+def find_dbs_status(dbs_model, dob_model, dbs_certificate_number=None):
+    """
+    Determines the next action to be taken for the given DBS check, by performing a lookup
+    via the DBS api if necessary. Lookup results are saved to the dbs_model object.
+
+    :param dbs_model: A model object with the following attributes:
+        * dbs_certificate_number
+        * capita - dbs was found on the capita list?
+        * within_three_months - dbs was issued within three months of checking list?
+        * certificate_information - info from dbs certificate
+        * enhanced_check - they've stated they have a capita dbs?
+        * on_update - they've stated they're on the dbs update service?
+    :param dob_model: A model object with the dbs-holder's birth_day, birth_month and birth_year attributes
+    :param dbs_certificate_number: (optional) If specified, a fresh dbs lookup is performed for this number
+    :return: DBSStatus
+    """
+
+    if dbs_certificate_number is not None:
+
+        # fetch dbs record
+        dbs_record = getattr(dbs.read(dbs_certificate_number), 'record', None)
+
+        if dbs_record is not None \
+                and not _dbs_dob_matches(dbs_record, dob_model.birth_year, dob_model.birth_month, dob_model.birth_day):
+            return DBSStatus.DOB_MISMATCH
+
+        dbs_model.dbs_certificate_number = dbs_certificate_number
+        dbs_model.capita = dbs_record is not None
+        if dbs_model.capita:
+            dbs_model.within_three_months = date_issued_within_three_months(
+                    datetime.strptime(dbs_record['date_of_issue'], '%Y-%m-%d'))
+            dbs_model.certificate_information = dbs_record['certificate_information']
+        else:
+            dbs_model.within_three_months = None
+            dbs_model.certificate_information = ''
+        dbs_model.enhanced_check = None
+        dbs_model.on_update = None
+        dbs_model.save()
+
+    if not dbs_model.dbs_certificate_number:
+        return DBSStatus.NEED_DBS_NUMBER
+
+    if dbs_model.capita:
+
+        if dbs_model.within_three_months:
+            return DBSStatus.OK
+
+        elif dbs_model.on_update is None:
+            return DBSStatus.NEED_ASK_IF_ON_UPDATE
+
+        elif dbs_model.on_update:
+            return DBSStatus.NEED_UPDATE_SERVICE_CHECK
+
+        else:
+            return DBSStatus.NEED_UPDATE_SERVICE_SIGN_UP
+    else:
+
+        if dbs_model.enhanced_check is None:
+            return DBSStatus.NEED_ASK_IF_ENHANCED_CHECK
+
+        elif not dbs_model.enhanced_check:
+            return DBSStatus.NEED_APPLY_FOR_NEW
+
+        elif dbs_model.on_update is None:
+            return DBSStatus.NEED_ASK_IF_ON_UPDATE
+
+        elif dbs_model.on_update:
+            return DBSStatus.NEED_UPDATE_SERVICE_CHECK
+
+        else:
+            return DBSStatus.NEED_UPDATE_SERVICE_SIGN_UP
+
+
+def awaiting_pith_dbs_action_from_user(dbs_statuses):
+    return any(status in (DBSStatus.NEED_APPLY_FOR_NEW, DBSStatus.NEED_UPDATE_SERVICE_SIGN_UP)
+               for status in dbs_statuses)
+
+
+def dbs_date_of_birth_no_match(application, record):
+    """
+    :param application: the application to be tested against
+    :param record: the record from the dbs api
+    :return: a boolean to represent if there is no match between the applicant dob and the dbs dob
+    """
+    if record is None:
+        return False
+
+    app_details = ApplicantPersonalDetails.objects.get(application_id=application.application_id)
+
+    return not _dbs_dob_matches(record, app_details.birth_year, app_details.birth_month, app_details.birth_day)
+
+
+def _dbs_dob_matches(dbs_record, year, month, day):
+    return datetime(year, month, day) == datetime.strptime(dbs_record['date_of_birth'], '%Y-%m-%d')
+
+
+def date_issued_within_three_months(date_issued):
+    """
+    :param date_issued: the issue date of the dbs
+    :return: a boolean to represent if there the dbs was issued within three months of today
+    """
+    now = datetime.today()
+    if now - relativedelta(months=3) <= date_issued:
+        return True
+    else:
+        return False
+
+
 def childminder_dbs_number_duplication_check(application, candidate_dbs_certificate_number):
     """
     Helper function to determine whether any DBS numbers listed in the application are not unique
@@ -1019,11 +1142,10 @@ def childminder_dbs_number_duplication_check(application, candidate_dbs_certific
 
 
 def convert_mobile_to_notify_standard(mobile):
-
     mobile_prefix_REGEX = "^(\+44|0044)[7][0-9]{9}$"
 
     if mobile != "" and mobile is not None and re.match(mobile_prefix_REGEX, mobile):
-        new_mobile = "07" + mobile[len(mobile)-9:]
+        new_mobile = "07" + mobile[len(mobile) - 9:]
         return new_mobile
     else:
         return mobile
@@ -1036,7 +1158,7 @@ def childminder_references_and_user_email_duplication_check(email1, email2):
     :param email2: another email to be compared.
     :return: A boolean True if emails are different or False if emails are the same.
     """
-    
+
     if email1 != email2:
         return True
     else:
@@ -1054,6 +1176,7 @@ def show_resend_and_change_email(health_check_status, is_review=None):
 
     # is_review is no longer needed, kept for legacy purposes but defaults to None.
     return health_check_status != 'Done'
+
 
 def update_criminal_record_check(app_id, field_obj, status):
     """
@@ -1075,7 +1198,8 @@ def update_criminal_record_check(app_id, field_obj, status):
         criminal_record_check_record.save()
 
     else:
-        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+        raise TypeError(
+            '{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
     return True
 
@@ -1095,7 +1219,8 @@ def get_criminal_record_check(app_id, field_obj):
         return getattr(criminal_record_check_record, field_obj)
 
     else:
-        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+        raise TypeError(
+            '{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
 
 def get_childcare_register_type(app_id):
@@ -1143,6 +1268,7 @@ def get_childcare_register_type(app_id):
         cost = 103
         return 'CR-voluntary', cost
 
+
 def get_adult_in_home(app_id, field_obj):
     """
     :param app_id: applicant's application_id
@@ -1158,7 +1284,8 @@ def get_adult_in_home(app_id, field_obj):
         return getattr(adult_in_home_record, field_obj)
 
     else:
-        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+        raise TypeError(
+            '{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
 
 def update_adult_in_home(pk, field_obj, status):
@@ -1181,16 +1308,21 @@ def update_adult_in_home(pk, field_obj, status):
         adult_in_home_record.save()
 
     else:
-        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+        raise TypeError(
+            '{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
     return True
+
+
+def get_application_object(app_id):
+    return Application.objects.get(application_id=app_id)
 
 
 def get_application(app_id, field_obj):
     """
     :param app_id: applicant's application_id
     :param field_obj: Application field or list of Application fields
-    :return: Boolean True if successfully updated.
+    :return:
     """
     application_record = Application.objects.get(application_id=app_id)
 
@@ -1201,7 +1333,8 @@ def get_application(app_id, field_obj):
         return getattr(application_record, field_obj)
 
     else:
-        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+        raise TypeError(
+            '{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
 
 def update_application(app_id, field_obj, status):
@@ -1224,7 +1357,8 @@ def update_application(app_id, field_obj, status):
         application_record.save()
 
     else:
-        raise TypeError('{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
+        raise TypeError(
+            '{0} is not a valid field_obj, must be string or list not {1}'.format(field_obj, type(field_obj)))
 
     return True
 

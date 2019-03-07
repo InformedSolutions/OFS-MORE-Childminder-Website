@@ -17,7 +17,7 @@ from application.views.other_people_health_check import health_check_login, dob_
 from application.views import PITH_views
 
 urlpatterns = [
-    url(r'^$', views.start_page, name='start-page.html'),
+    url(r'^$', views.start_page, name='Start-Page-View'),
     url(r'^task-list/', views.task_list, name='Task-List-View'),
     url(r'^childcare/type/', views.type_of_childcare_guidance, name='Type-Of-Childcare-Guidance-View'),
     url(r'^childcare/age-groups/', views.type_of_childcare_age_groups, name='Type-Of-Childcare-Age-Groups-View'),
@@ -88,10 +88,12 @@ urlpatterns = [
     url(r'^criminal-record/MOD-checks/$', views.DBSMinistryOfDefenceView.as_view(),
         name='DBS-Ministry-Of-Defence-View'),
     url(r'^criminal-record/UK/$', views.DBSGuidanceSecondView.as_view(), name='DBS-Guidance-Second-View'),
-    url(r'^criminal-record/your-details/$', views.DBSCheckCapitaView.as_view(), name='DBS-Check-Capita-View'),
     url(r'^criminal-record/DBS-details/$', views.DBSCheckNoCapitaView.as_view(), name='DBS-Check-No-Capita-View'),
-    url(r'^criminal-record/update/$', views.DBSUpdateView.as_view(), name='DBS-Update-View'),
+    url(r'^criminal-record/DBS-update/$', views.DBSUpdateView.as_view(), name='DBS-Update-View'),
+    url(r'^criminal-record/apply-new/$', views.DBSApplyNewView.as_view(), name='DBS-Apply-New-View'),
+    url(r'^criminal-record/DBS-check-type/', views.DBSTypeView.as_view(), name='DBS-Check-Type-View'),
     url(r'^criminal-record/sign-up-update/$', views.DBSGetView.as_view(), name='DBS-Get-View'),
+    url(r'^criminal-record/DBS-update-check/$', views.DBSUpdateCheckView.as_view(), name='DBS-Update-Check-View'),
     url(r'^criminal-record/post-certificate/', views.DBSPostView.as_view(), name='DBS-Post-View'),
     url(r'^criminal-record/check-answers/', views.DBSSummaryView.as_view(), name='DBS-Summary-View'),
 
@@ -108,9 +110,9 @@ urlpatterns = [
     url(r'^people/adults-checks-abroad/$', PITH_views.PITHAbroadCriminalView.as_view(), name='PITH-Abroad-Criminal-View'),
     url(r'^people/adults-military-bases/$', PITH_views.PITHMilitaryView.as_view(), name='PITH-Military-View'),
     url(r'^people/adults-MoD-checks/$', PITH_views.PITHMinistryView.as_view(), name='PITH-Ministry-View'),
-    url(r'^people/adult-dbs-checks/$', PITH_views.PITHDBSCheckView.as_view(), name='PITH-DBS-Check-View'),
-    url(r'^people/post-certificate/$', PITH_views.PITHPostView.as_view(), name='PITH-Post-View'),
-    url(r'^people/sign-up-update/$', PITH_views.PITHApplyView.as_view(), name='PITH-Apply-View'),
+    url(r'^people/adults-dbs-checks/$', PITH_views.PITHDBSCheckView.as_view(), name='PITH-DBS-Check-View'),
+    url(r'^people/adults-dbs-check-types/$', PITH_views.PITHDBSTypeOfCheckView.as_view(), name='PITH-DBS-Type-Of-Check-View'),
+    url(r'^people/adults-before-you-submit/$', PITH_views.PITHDBSPostOrApplyView.as_view(), name='PITH-DBS-Post-Or-Apply-View'),
 
     # Children
     url(r'^people/children/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
@@ -125,7 +127,8 @@ urlpatterns = [
         name='PITH-Own-Children-Select-View'),
     url(r'^people/enter-children-address/$', PITH_views.PITHOwnChildrenManualView,
         name='PITH-Own-Children-Manual-View'),
-    url(r'^people/check-answers/$', views.other_people_summary, name='PITH-Summary-View'),
+
+    url(r'^people/check-answers/$', PITH_views.PITHCheckYourAnswersView.as_view(), name='PITH-Summary-View'),
 
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),
     url(r'^health/booklet/', views.health_booklet, name='Health-Booklet-View'),
@@ -222,17 +225,6 @@ urlpatterns = [
     url(r'^childcare-location/cancel-application', views.cancel_application.cl_cancel_app, name='Service-Unavailable'),
     url(r'^feedback/', feedback.feedback, name='Feedback'),
     url(r'^feedback-submitted/', feedback.feedback_confirmation, name='Feedback-Confirmation'),
-
-    # =========================== #
-    # Your children urls #
-    # =========================== #
-    url(r'^your-children/$', your_children.your_children_guidance, name='Your-Children-Guidance-View'),
-    url(r'^your-children-details/$', your_children.your_children_details, name='Your-Children-Details-View'),
-    url(r'^your-children/living-with-you/$', your_children.your_children_living_with_you, name='Your-Children-Living-With-You-View'),
-    url(r'^your-children/addresses/$', your_children.your_children_address_capture, name='Your-Children-Address-View'),
-    url(r'^your-children/address-details/$', your_children.your_children_address_selection, name='Your-Children-Address-Select-View'),
-    url(r'^your-children/enter-address/$', your_children.your_children_address_manual, name='Your-Children-Address-Manual-View'),
-    url(r'^your-children/check-answers/$', your_children.your_children_summary, name='Your-Children-Summary-View'),
 ]
 
 if settings.DEBUG:

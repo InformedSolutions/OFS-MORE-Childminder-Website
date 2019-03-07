@@ -15,18 +15,19 @@
         <div class="form-group">
 
             <h1 class="form-title heading-large">
-                DBS checks on adults in the home
+                DBS checks
             </h1>
 
             <p>Each adult in the home must have a UK criminal record (DBS) check.</p>
 
-            <p>They can
+            <p>They can apply for a check from the
                 <a href="http://ofsteddbsapplication.co.uk/step-one.aspx" target="_blank">
-                    apply for an Ofsted DBS check.
+                    Ofsted DBS application website
                 </a>
+                .
             </p>
 
-            <p>Please enter their DBS certificate numbers.</p>
+            <p>We need the certificate number to check if they have criminal convictions or cautions.</p>
 
             {% for form in form_list %}
             {{ form.adult.get_full_name }}

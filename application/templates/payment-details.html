@@ -8,22 +8,25 @@
 {% include "back-button.html" %}
 
 <div class="two-thirds">
-{{form.error_summary}}
+    {{form.error_summary}}
 
-<h1 class="form-title heading-large">
-    Pay by debit or credit card
-</h1>
+    <h1 class="form-title heading-large">
+        Pay by debit or credit card
+    </h1>
 
-<p class="form-group">
-    <img src="{% static 'card-types.png' %}" alt="accepted card logos"
-         style="height: 40px;"/>
-</p>
+    <p class="form-group">
+        <img src="{% static 'card-types.png' %}" alt="accepted card logos"
+             style="height: 40px;"/>
+    </p>
 
-<p>We accept Visa, Maestro and MasterCard cards.</p>
+    <p>We accept Visa, Maestro and MasterCard cards.</p>
 
-<p>
-    You are paying <span class="bold-small">&#163;{{cost}}</span> to <span class="bold-small">apply to be a childminder</span>.
-</p>
+    <p>
+        You are paying <span class="bold-small">&#163;{{cost}}</span> to <span class="bold-small">apply to be a childminder</span>.
+    </p>
+
+    <p>This fee is not refundable.</p>
+
 </div>
 <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     {{form.as_div}}
@@ -32,7 +35,8 @@
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>
         <input type="submit" class="button" value="Pay and apply">
-        <a href="{% url 'Task-List-View' %}?id={{ id }}" class="button-secondary button-save-and-exit">Save and return</a>
+        <a href="{% url 'Task-List-View' %}?id={{ id }}" class="button-secondary button-save-and-exit">Save and
+            return</a>
     </div>
 </form>
 

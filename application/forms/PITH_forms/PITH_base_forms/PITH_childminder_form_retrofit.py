@@ -35,5 +35,8 @@ class PITHChildminderFormAdapter(ChildminderForms):
         """
         Override built-in method to manipulate the field name, that way errors are added to Form by check_flag correctly
         """
-        field += str(self.pk)
+        # might be called with the id already appended, or not. Don't append again if already there
+        suffix = str(self.pk)
+        if not field.endswith(suffix):
+            field += suffix
         return super(PITHChildminderFormAdapter, self).add_error(field, error)

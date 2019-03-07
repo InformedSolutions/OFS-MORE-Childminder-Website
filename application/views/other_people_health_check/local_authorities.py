@@ -26,7 +26,7 @@ class LocalAuthorities(BaseFormView):
         person_id = self.request.GET['person_id']
         person_record = AdultInHome.objects.get(pk=person_id)
         initial['known_to_council'] = person_record.known_to_council
-        initial['children_details'] = person_record.children_details
+        initial['reasons_known_to_council_health_check'] = person_record.reasons_known_to_council_health_check
 
         return initial
 
@@ -42,10 +42,10 @@ class LocalAuthorities(BaseFormView):
         person_record = AdultInHome.objects.get(pk=person_id)
         if cleaned_data['known_to_council'] == 'True':
             person_record.known_to_council = True
-            person_record.children_details = cleaned_data['children_details']
+            person_record.reasons_known_to_council_health_check = cleaned_data['reasons_known_to_council_health_check']
         else:
             person_record.known_to_council = False
-            person_record.children_details = ''
+            person_record.reasons_known_to_council_health_check = ''
 
         if person_record.known_to_council:
             logger.debug('Updating current childrens details for person id: ' + str(person_id))

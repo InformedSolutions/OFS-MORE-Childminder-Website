@@ -21,3 +21,5 @@ from .print_handler import *
 from .cancel_application import *
 from .login import *
 from .help_and_contact import *
+# This import breaks some unit tests (possible name collision?)
+#from .PITH_views import *

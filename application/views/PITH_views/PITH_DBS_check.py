@@ -1,22 +1,25 @@
 import logging
+import collections
+
+from django.http import HttpResponseRedirect
 
 from application.models import AdultInHome
 from application.forms.PITH_forms.PITH_DBS_check_form import PITHDBSCheckForm
 from application.utils import get_id
-from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMultiRadioView
+from application.views.PITH_views.base_views.PITH_multi_form_view import PITHMultiFormView
+from application.business_logic import update_adult_in_home, DBSStatus, find_dbs_status
 
 # Initiate logging
 log = logging.getLogger('')
 
 
-class PITHDBSCheckView(PITHMultiRadioView):
+class PITHDBSCheckView(PITHMultiFormView):
 
     template_name = 'PITH_templates/PITH_DBS_check.html'
     form_class = PITHDBSCheckForm
-    success_url = ('PITH-Post-View', 'PITH-Apply-View', 'PITH-Children-Check-View')
-    capita_field = 'capita'
+    success_url = ('PITH-Children-Check-View', 'PITH-DBS-Type-Of-Check-View')
+
     dbs_field = 'dbs_certificate_number'
-    on_update_field = 'on_update'
 
     def get_form_kwargs(self, adult=None):
         """
@@ -27,9 +30,7 @@ class PITHDBSCheckView(PITHMultiRadioView):
         context = {
             'id': application_id,
             'adult': adult,
-            'capita_field': self.capita_field,
             'dbs_field': self.dbs_field,
-            'on_update_field': self.on_update_field
         }
 
         log.debug('Return keyword arguments to instantiate the form')
@@ -50,6 +51,22 @@ class PITHDBSCheckView(PITHMultiRadioView):
 
         return sorted_form_list
 
+    def validate_form_list(self, form_list):
+        if not super().validate_form_list(form_list):
+            return False
+        # validation of individual forms is done in the form objects themselves. This extra step checks the forms
+        # against each other to check that the dbs numbers are unique
+        dbs_counts = collections.defaultdict(int)
+        for form in form_list:
+            dbs_counts[form.cleaned_data[form.dbs_field_name]] += 1
+        valid = True
+        for form in form_list:
+            if dbs_counts[form.cleaned_data[form.dbs_field_name]] > 1:
+                form.add_error(form.dbs_field, 'Please enter a different DBS number. '
+                                               'You entered this number for someone in your childcare location')
+                valid = False
+        return valid
+
     def get_initial(self):
 
         application_id = get_id(self.request)
@@ -61,38 +78,38 @@ class PITHDBSCheckView(PITHMultiRadioView):
         for adult in adults:
 
             initial_context.update({
-                self.capita_field + str(adult.pk): adult.capita,
                 self.dbs_field + str(adult.pk): adult.dbs_certificate_number,
-                self.on_update_field + str(adult.pk): adult.on_update,
-                self.dbs_field + "_no_update" + str(adult.pk): adult.dbs_certificate_number
             })
 
         log.debug('Initialising field data')
 
         return initial_context
 
-    def get_choice_url(self, app_id):
+    def get_success_url(self, form_list=[]):
 
-        adults = AdultInHome.objects.filter(application_id=app_id)
+        ok_url, need_info_url = self.success_url
 
-        yes_choice, no_yes_choice, no_no_choice = self.success_url
-
-        if any(adult.on_update for adult in adults):
-
-            log.debug('There are adults on the DBS check update service')
-
-            return yes_choice
-
+        if any(find_dbs_status(form.adult, form.adult) in (
+                    DBSStatus.NEED_ASK_IF_ENHANCED_CHECK, DBSStatus.NEED_ASK_IF_ON_UPDATE)
+               for form in form_list):
+            url = need_info_url
         else:
+            url = ok_url
 
-            if any(not adult.capita and not adult.on_update for adult in adults):
+        return super().get_success_url(url)
 
-                log.debug('There are neither adults on the DBS check update service nor with an Ofsted DBS check')
+    def form_valid(self, form_list):
 
-                return no_yes_choice
+        # ignore redirect from super
+        super().form_valid(form_list)
 
-            else:
+        # Save dbs numbers to database
+        for form in form_list:
+            dbs_number = form.data[form.dbs_field_name]
+            update_adult_in_home(form.pk, self.dbs_field, dbs_number)
 
-                log.debug('There are either adults on the DBS check update service or with an Ofsted DBS check')
+        # pass in form list to determine redirect url
+        return HttpResponseRedirect(self.get_success_url(form_list))
 
-                return no_no_choice
+
+

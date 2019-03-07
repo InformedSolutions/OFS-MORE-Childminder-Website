@@ -4,6 +4,7 @@ from django.test import modify_settings
 
 from application.models import ChildcareType, Payment, ApplicantPersonalDetails, ApplicantName
 from .view_parent import *
+from datetime import datetime, timedelta
 
 
 class PaymentTest(ViewsTest):
@@ -98,6 +99,9 @@ class PaymentTest(ViewsTest):
         Assert that payment can still be submitted if applicant not applying for Early Years.
         :return:
         """
+        next_year = datetime.today() + timedelta(days=366)
+        short_year = next_year.strftime('%y')
+
         c = Client()
         app_id = uuid.uuid4()
         application = Application.objects.create(
@@ -131,7 +135,7 @@ class PaymentTest(ViewsTest):
                     'card_type': 'visa',
                     'card_number': '5454545454545454',
                     'expiry_date_0': 1,
-                    'expiry_date_1': 19,
+                    'expiry_date_1': short_year,
                     'cardholders_name': 'Mr Example Cardholder',
                     'card_security_code': 123,
                 })

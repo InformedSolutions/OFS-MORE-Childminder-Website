@@ -1,5 +1,6 @@
 from .view_parent import *
 
+#TODO: Refactor these tests, some currently do nothing and are even overwritting themselves.
 
 class OtherPeopleTest(ViewsTest):
 
@@ -84,20 +85,16 @@ class OtherPeopleTest(ViewsTest):
             self.assertEqual(0, 0)
 
     def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/other-people/approaching-16/')
+        found = resolve(settings.URL_PREFIX + '/people/children-turning-16/')
         self.assertEqual(found.func, other_people_approaching_16)
 
     def test_page_not_displayed_without_id(self):
         c = Client()
         try:
-            c.get(settings.URL_PREFIX + '/other-people/approaching-16?id=')
+            c.get(settings.URL_PREFIX + '/people/children-turning-16?id=')
             self.assertEqual(1, 0)
         except:
             self.assertEqual(0, 0)
-
-    def test_url_resolves_to_page(self):
-        found = resolve(settings.URL_PREFIX + '/people/check-answers/')
-        self.assertEqual(found.func, other_people_summary)
 
     def test_page_not_displayed_without_id(self):
         c = Client()

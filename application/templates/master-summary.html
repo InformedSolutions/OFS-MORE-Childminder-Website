@@ -497,7 +497,7 @@
     {% endif %}
     </tbody>
 </table>
-{% if own_children == True %}
+{% if location_of_childcare == False %}
 <table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
@@ -516,7 +516,7 @@
     <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Do you have children of your own under 16?
+            Known to council social services?
         </td>
         {% if own_children == True %}
         <td style="word-wrap: break-word" class=summary-column>
@@ -530,155 +530,31 @@
         <td class="change-answer {{ print_class }}">
             {% if personal_details_change %}
             <a href="{% url 'Personal-Details-Your-Own-Children-View' %}?id={{application_id}}" alt="Change your answer on whether you have children of your own under 16">
-                Change <span class="visuallyhidden">your answer on whether you have children of your own under 16</span>
+                Change <span class="visuallyhidden">answer to known to council social services in regards to your own children</span>
             </a>
             {% endif %}
         </td>
     </tr>
-    </tbody>
-</table>
-<table class="check-your-answers">
-    <colgroup>
-        <col class="summary-column">
-        <col class="summary-column">
-        <col class="change-answer {{ print_class }}">
-    </colgroup>
-    <thead>
-    <tr>
-        <th colspan="{% if print_class %}2{% else %}3{% endif %}">
-            <div class="heading-medium">
-                Your children's addresses
-            </div>
-        </th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr>
+    {% if own_children == True %}
+        <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Which of your children live with you?
+            Tell us why
         </td>
-        <td style="word-wrap: break-word">
-                {{ children_living_with_childminder|default:"None" }}
+        <td style="word-wrap: break-word" class=summary-column>
+            {{reasons_known_to_social_services}}
         </td>
-        <td class="change-answer">
-            <a href="{% url 'Your-Children-Living-With-You-View' %}?id={{application_id}}" alt='Change which of your children live with you?'>
-                Change <span class="visuallyhidden">which of your children live with you?</span>
+        <td class="change-answer {{ print_class }}">
+            {% if personal_details_change %}
+            <a href="{% url 'Personal-Details-Your-Own-Children-View' %}?id={{application_id}}" alt="Change your answer on whether you have children of your own under 16">
+                Change <span class="visuallyhidden">why you are known to council social services in regards to your own children</span>
             </a>
+            {% endif %}
         </td>
     </tr>
+    {% endif %}
     </tbody>
 </table>
-{% for child in children %}
-<table class="check-your-answers" style="table-layout: fixed; width: 100%">
-    <colgroup>
-        <col class="td">
-        <col class="td">
-        <col class="change-answer">
-    </colgroup>
-    <thead>
-        <tr>
-            <th colspan="3">
-                <div class="heading-medium">
-                    {{ child.full_name }}
-                </div>
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-       <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                Name
-            </td>
-            <td style="word-wrap: break-word" class=summary-column>
-                {{ child.full_name }}
-            </td>
-            <td class="change-answer">
-                <a href="{% url 'Your-Children-Details-View' %}?id={{application_id}}" alt="Change name">
-                    Change <span class="visuallyhidden">full name for {{ child.full_name }}</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-                <td style="word-wrap: break-word" class=summary-column>
-                    Date of birth
-                </td>
-                <td style="word-wrap: break-word" class=summary-column>
-                    {{ child.dob |date:"d m Y" }}
-                </td>
-               <td class="change-answer">
-                <a href="{% url 'Your-Children-Details-View' %}?id={{application_id}}" alt="Change date of birth">
-                    Change <span class="visuallyhidden">date of birth for {{ child.full_name }}</span>
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td style="word-wrap: break-word" class=summary-column>
-                    Address
-                </td>
-
-                {% if child.lives_with_childminder %}
-                    <td style="word-wrap: break-word" class=summary-column>
-                        Same as your home address
-                    </td>
-                    <td class="change-answer">
-                        <a href="{% url 'Your-Children-Living-With-You-View' %}?id={{application_id}}" alt="Change address">
-                            Change <span class="visuallyhidden">address for {{ child.full_name }}</span>
-                        </a>
-                    </td>
-                {% else %}
-                    {% if child.full_address.street_line2 and child.full_address.county %}
-                        <td style="word-wrap: break-word">
-                            {{child.full_address.street_line1}}
-                            </br>
-                            {{child.full_address.street_line2}}
-                            </br>
-                            {{child.full_address.town}}
-                            </br>
-                            {{child.full_address.county}}
-                            </br>
-                            {{child.full_address.postcode}}
-                        </td>
-                        {% elif child.full_address.street_line2 and not child.full_address.county %}
-                        <td style="word-wrap: break-word">
-                            {{child.full_address.street_line1}}
-                            </br>
-                            {{child.full_address.street_line2}}
-                            </br>
-                            {{child.full_address.town}}
-                            </br>
-                            {{child.full_address.postcode}}
-                        </td>
-                        {% elif not child.full_address.street_line2 and child.full_address.county %}
-                        <td style="word-wrap: break-word">
-                            {{child.full_address.street_line1}}
-                            </br>
-                            {{child.full_address.town}}
-                            </br>
-                            {{child.full_address.county}}
-                            </br>
-                            {{child.full_address.postcode}}
-                        </td>
-                        {% elif not child.full_address.street_line2 and not child.full_address.county %}
-                        <td style="word-wrap: break-word">
-                            {{child.full_address.street_line1}}
-                            </br>
-                            {{child.full_address.town}}
-                            </br>
-                            {{child.full_address.postcode}}
-                        </td>
-                    {% endif %}
-                    <td class="change-answer">
-                        <a href="{% url 'Your-Children-Address-Manual-View' %}?id={{application_id}}&child={{child.child_number}}"
-                           alt='Change address'>
-                            Change <span class="visuallyhidden">your home address</span>
-                        </a>
-                    </td>
-                {% endif %}
-         </tr>
-    </tbody>
-</table>
-{% endfor %}
-{% endif %}
+    {% endif %}
 <table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
@@ -890,7 +766,7 @@
     </tr>
     </tbody>
 </table>
-{% for name, day, month, year, relationship, dbs_certificate_number, health_check_status, email in adult_lists %}
+{% for name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, lived_abroad, enhanced_check, on_update, military_base in adult_lists %}
 <table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
@@ -938,7 +814,21 @@
             Date of birth
         </td>
         <td style="word-wrap: break-word" class=summary-column>
-            {{day}} {{month}} {{year}}
+            {{day}}
+            {% if month   == '01' %} Jan
+            {% elif month == '02' %} Feb
+            {% elif month == '03' %} Mar
+            {% elif month == '04' %} Apr
+            {% elif month == '05' %} May
+            {% elif month == '06' %} Jun
+            {% elif month == '07' %} Jul
+            {% elif month == '08' %} Aug
+            {% elif month == '09' %} Sep
+            {% elif month == '10' %} Oct
+            {% elif month == '11' %} Nov
+            {% elif month == '12' %} Dec
+            {% endif %}
+            {{year}}
         </td>
         <td class="change-answer {{ print_class }}">
             {% if people_in_your_home_change %}
@@ -982,6 +872,54 @@
         </td>
     </tr>
     <tr>
+        <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Have they lived outside of the UK in the last 5 years?
+        </td>
+        {% if lived_abroad is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif lived_abroad is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Lived-Abroad-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Change whether the adult has lived outside of the UK in the last 5 years">
+                Change <span class="visuallyhidden">whether the adult has lived outside of the UK in the last 5 years</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% if childcare_type_zero_to_five is True %}
+    <tr>
+        <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Have they lived or worked on a British military base outside of the UK in the last 5 years?
+        </td>
+        {% if military_base is True %}
+        <td style="word-wrap: break-word" class=summary-column>
+            Yes
+        </td>
+        {% elif military_base is False %}
+        <td style="word-wrap: break-word" class=summary-column>
+            No
+        </td>
+        {% endif %}
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Military-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Change whether the adult has lived or worked on a British military base outside of the UK in the last 5 years">
+                Change <span class="visuallyhidden">whether the adult has lived or worked on a British military base outside of the UK in the last 5 years</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+    <tr>
         <td style="word-wrap: break-word" class=summary-column>
             DBS certificate number
         </td>
@@ -997,6 +935,43 @@
             {% endif %}
         </td>
     </tr>
+    {% if enhanced_check is not None %}
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Enhanced DBS check for home-based childcare?
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{ enhanced_check|yesno:"Yes,No" }}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-DBS-Check-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Change answer to DBS being enhanced and home-based">
+                Change <span class="visuallyhidden">answer to DBS being enhanced and home-based</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+    {% if on_update is not None %}
+    <tr>
+        <td style="word-wrap: break-word" class="summary-column">
+            Are they on the update service?
+        </td>
+
+        <td style="word-wrap: break-word" class="summary-column">
+            {{ on_update|yesno:"Yes,No" }}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-DBS-Check-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Change answer to DBS being on the Update Service">
+                Change <span class="visuallyhidden">answer to DBS being on the Update Service</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
     </tbody>
 </table>
 {% endfor %}
@@ -1110,7 +1085,7 @@
     </table>
     {% endfor %}
 {% endif %}
-{% if own_children == False %}
+{% if location_of_childcare == True %}
 <table class="check-your-answers" style="table-layout: fixed; width: 100%">
     <colgroup>
         <col class="summary-column">
@@ -1121,7 +1096,7 @@
     <tr>
         <th colspan="{% if print_class %}2{% else %}3{% endif %}">
             <div class="heading-medium">
-                Children not in the home
+                Your own children
             </div>
         </th>
     </tr>
@@ -1129,9 +1104,9 @@
     <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
-            Do you have children of your own under 16 who do not live with you?
+            Known to council social services in regards to your own children?
         </td>
-        {% if children_not_in_home %}
+        {% if known_to_social_services_pith %}
         <td style="word-wrap: break-word" class=summary-column>
             Yes
         </td>
@@ -1144,11 +1119,29 @@
             {% if people_in_your_home_change %}
             <a href="{% url 'PITH-Own-Children-Check-View' %}?id={{application_id}}"
                alt='Change answer on living with children'>
-                Change <span class="visuallyhidden">answer on living with children</span>
+                Change <span class="visuallyhidden">answer to known to council social services in regards to your own children</span>
             </a>
             {% endif %}
         </td>
     </tr>
+    {% if known_to_social_services_pith == True %}
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Tell us why
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{reasons_known_to_social_services_pith}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Own-Children-Check-View' %}?id={{application_id}}"
+               alt='Change answer on living with children'>
+                Change <span class="visuallyhidden">why you are known to council social services in regards to your own children</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
     </tbody>
 </table>
 {% for child, name, day, month, year, child_address_street_line1, child_address_street_line2, child_address_town, child_address_county, child_address_postcode, child_address_country in child_not_in_home_lists %}
