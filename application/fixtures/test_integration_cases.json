@@ -732,13 +732,6 @@
   }
 },
 {
-  "model": "application.applicationreference",
-  "pk": 1,
-  "fields": {
-    "reference": 1000000
-  }
-},
-{
   "model": "application.childinhome",
   "pk": "5344258f-bca1-478b-b4b6-cb65828631c4",
   "fields": {
