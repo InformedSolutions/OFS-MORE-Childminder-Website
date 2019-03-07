@@ -234,7 +234,7 @@ def resubmission_handler(request, payment_reference, form, application, amount):
             request.META['processing_attempts'] = 1
 
         # Retry processing of payment
-        return resubmission_handler(request, payment_reference, form, application)
+        return resubmission_handler(request, payment_reference, form, application, amount)
 
 
 def __assign_application_reference(application):
