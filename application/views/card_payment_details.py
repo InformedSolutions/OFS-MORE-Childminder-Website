@@ -18,7 +18,7 @@ from django.views.decorators.cache import never_cache
 
 from ..services import payment_service, noo_integration_service
 from ..forms import PaymentDetailsForm
-from ..models import Application, UserDetails, ApplicantPersonalDetails, ApplicantName, Payment, ChildcareType
+from ..models import Application, ApplicantName, Payment, ChildcareType
 from ..messaging.sqs_handler import SQSHandler
 
 from ..business_logic import get_childcare_register_type
