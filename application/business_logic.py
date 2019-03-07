@@ -5,11 +5,14 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 @author: Informed Solutions
 """
 
+import enum
 import re
 from datetime import datetime, timedelta
 
 import pytz
+from dateutil.relativedelta import relativedelta
 
+from . import dbs
 from .models import (AdultInHome,
                      ApplicantHomeAddress,
                      ApplicantName,
@@ -999,33 +1002,121 @@ def get_duplicate_dbs_index(application, candidate_dbs_certificate_number):
     return get_first_duplicate_index(dbs_numbers)
 
 
+class DBSStatus(enum.Enum):
+
+    OK = 0
+    DOB_MISMATCH = 1
+    NEED_ASK_IF_ENHANCED_CHECK = 2
+    NEED_ASK_IF_ON_UPDATE = 3
+    NEED_APPLY_FOR_NEW = 4
+    NEED_UPDATE_SERVICE_SIGN_UP = 5
+    NEED_UPDATE_SERVICE_CHECK = 6
+    NEED_DBS_NUMBER = 7
+
+
+def find_dbs_status(dbs_model, dob_model, dbs_certificate_number=None):
+    """
+    Determines the next action to be taken for the given DBS check, by performing a lookup
+    via the DBS api if necessary. Lookup results are saved to the dbs_model object.
+
+    :param dbs_model: A model object with the following attributes:
+        * dbs_certificate_number
+        * capita - dbs was found on the capita list?
+        * within_three_months - dbs was issued within three months of checking list?
+        * certificate_information - info from dbs certificate
+        * enhanced_check - they've stated they have a capita dbs?
+        * on_update - they've stated they're on the dbs update service?
+    :param dob_model: A model object with the dbs-holder's birth_day, birth_month and birth_year attributes
+    :param dbs_certificate_number: (optional) If specified, a fresh dbs lookup is performed for this number
+    :return: DBSStatus
+    """
+
+    if dbs_certificate_number is not None:
+
+        # fetch dbs record
+        dbs_record = getattr(dbs.read(dbs_certificate_number), 'record', None)
+
+        if dbs_record is not None \
+                and not _dbs_dob_matches(dbs_record, dob_model.birth_year, dob_model.birth_month, dob_model.birth_day):
+            return DBSStatus.DOB_MISMATCH
+
+        dbs_model.dbs_certificate_number = dbs_certificate_number
+        dbs_model.capita = dbs_record is not None
+        if dbs_model.capita:
+            dbs_model.within_three_months = date_issued_within_three_months(
+                    datetime.strptime(dbs_record['date_of_issue'], '%Y-%m-%d'))
+            dbs_model.certificate_information = dbs_record['certificate_information']
+        else:
+            dbs_model.within_three_months = None
+            dbs_model.certificate_information = ''
+        dbs_model.enhanced_check = None
+        dbs_model.on_update = None
+        dbs_model.save()
+
+    if not dbs_model.dbs_certificate_number:
+        return DBSStatus.NEED_DBS_NUMBER
+
+    if dbs_model.capita:
+
+        if dbs_model.within_three_months:
+            return DBSStatus.OK
+
+        elif dbs_model.on_update is None:
+            return DBSStatus.NEED_ASK_IF_ON_UPDATE
+
+        elif dbs_model.on_update:
+            return DBSStatus.NEED_UPDATE_SERVICE_CHECK
+
+        else:
+            return DBSStatus.NEED_UPDATE_SERVICE_SIGN_UP
+    else:
+
+        if dbs_model.enhanced_check is None:
+            return DBSStatus.NEED_ASK_IF_ENHANCED_CHECK
+
+        elif not dbs_model.enhanced_check:
+            return DBSStatus.NEED_APPLY_FOR_NEW
+
+        elif dbs_model.on_update is None:
+            return DBSStatus.NEED_ASK_IF_ON_UPDATE
+
+        elif dbs_model.on_update:
+            return DBSStatus.NEED_UPDATE_SERVICE_CHECK
+
+        else:
+            return DBSStatus.NEED_UPDATE_SERVICE_SIGN_UP
+
+
+def awaiting_pith_dbs_action_from_user(dbs_statuses):
+    return any(status in (DBSStatus.NEED_APPLY_FOR_NEW, DBSStatus.NEED_UPDATE_SERVICE_SIGN_UP)
+               for status in dbs_statuses)
+
+
 def dbs_date_of_birth_no_match(application, record):
     """
-        Helper method for gathering the duplicate index
-        :param application: the application to be tested against
-        :param response: the record response from the dbs api
-        :return: a boolean to represent if there is no match between the applicant dob and the dbs dob
-        """
-    applicant_details = ApplicantPersonalDetails.objects.get(application_id=application.application_id)
-    applicant_dob = datetime(applicant_details.birth_year, applicant_details.birth_month, applicant_details.birth_day)
-    try:
-        dbs_dob = datetime.strptime(record['date_of_birth'], "%Y-%m-%d")
-        if applicant_dob == dbs_dob:
-            return False
-        else:
-            return True
-    except AttributeError:
+    :param application: the application to be tested against
+    :param record: the record from the dbs api
+    :return: a boolean to represent if there is no match between the applicant dob and the dbs dob
+    """
+    if record is None:
         return False
+
+    app_details = ApplicantPersonalDetails.objects.get(application_id=application.application_id)
+
+    return not _dbs_dob_matches(record, app_details.birth_year, app_details.birth_month, app_details.birth_day)
+
+
+def _dbs_dob_matches(dbs_record, year, month, day):
+    return datetime(year, month, day) == datetime.strptime(dbs_record['date_of_birth'], '%Y-%m-%d')
 
 
 def date_issued_within_three_months(date_issued):
     """
-            Helper method for gathering the duplicate index
-            :param date_issued: the issue date of the dbs
-            :return: a boolean to represent if there the dbs was issued within three months of today
-            """
+    :param date_issued: the issue date of the dbs
+    :return: a boolean to represent if there the dbs was issued within three months of today
+    """
     now = datetime.today()
-    if now - timedelta(3 * 365 / 12) <= date_issued:
+    if now - relativedelta(months=3) <= date_issued:
         return True
     else:
         return False
@@ -1231,7 +1322,7 @@ def get_application(app_id, field_obj):
     """
     :param app_id: applicant's application_id
     :param field_obj: Application field or list of Application fields
-    :return: Boolean True if successfully updated.
+    :return:
     """
     application_record = Application.objects.get(application_id=app_id)
 

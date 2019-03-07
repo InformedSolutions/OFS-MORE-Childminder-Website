@@ -71,7 +71,7 @@
         </td>
 
         <!-- People in the Home task -- Health check status row -->
-        {% if row.row_name == 'Health check status' and row.back_link == 'Other-People-Resend-Email-View' %}
+        {% if row.row_name == 'Health questions status' and row.back_link == 'Other-People-Resend-Email-View' %}
         <td class="change-answer nowrap">
             {% with table.loop_counter|subtract:"1" as index %}
             {% if display_buttons_list|list_index:index %}
@@ -90,7 +90,7 @@
 
         </td>
         <!-- People in the Home task -- Email address row -->
-        {% elif row.row_name == 'Email address' and row.back_link == 'PITH-Adult-Details-View' %}
+        {% elif row.row_name == 'Email' and row.back_link == 'PITH-Adult-Details-View' %}
         <td class="change-answer">
             {% with table.loop_counter|subtract:"1" as index %}
             {% if display_buttons_list|list_index:index %}

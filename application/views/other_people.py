@@ -333,6 +333,7 @@ def other_people_email_confirmation(request):
             return render(request, 'other-people-email-confirmation.html', variables)
 
 
+
 def other_people_resend_email(request):
     """
     Method returning the template for the People in your home: resend email page (for a given application)

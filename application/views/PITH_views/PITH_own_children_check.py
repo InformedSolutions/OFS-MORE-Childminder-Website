@@ -3,7 +3,8 @@ import logging
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
-from application.business_logic import get_application, update_application
+from application.business_logic import get_application, update_application, awaiting_pith_dbs_action_from_user, \
+    find_dbs_status
 from application.forms.PITH_forms.PITH_base_forms.PITH_own_children_check_form import PITHOwnChildrenCheckForm
 from application.models import AdultInHome, Child
 from application.utils import get_id
@@ -62,11 +63,12 @@ class PITHOwnChildrenCheckView(PITHRadioView):
 
         valid_DBS, invalid_DBS = self.success_url
         choice_bool = get_application(app_id, self.application_known_field)
-        adults = AdultInHome.objects.filter(application_id=app_id)
 
         if choice_bool:
 
-            if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+            # Does user still need to take action wrt PITH DBS checks?
+            if self.get_awaiting_user_pith_dbs_action(app_id):
+
                 log.debug('Known to social service in regards to children and invalid DBS')
 
                 return invalid_DBS
@@ -79,7 +81,8 @@ class PITHOwnChildrenCheckView(PITHRadioView):
 
         else:
 
-            if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+            # Does user still need to take action wrt PITH DBS checks?
+            if self.get_awaiting_user_pith_dbs_action(app_id):
 
                 log.debug(
                     'Not known to social service in regards to children and all invalid DBS')
@@ -105,3 +108,11 @@ class PITHOwnChildrenCheckView(PITHRadioView):
 
         application_reasons_known = self.request.POST.get(self.application_reasons_known_field)
         update_application(app_id, self.application_reasons_known_field, application_reasons_known)
+
+    def get_awaiting_user_pith_dbs_action(self, application_id):
+
+        result = awaiting_pith_dbs_action_from_user(
+            find_dbs_status(adult, adult)
+            for adult in AdultInHome.objects.filter(application_id=application_id))
+
+        return result

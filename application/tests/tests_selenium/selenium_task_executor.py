@@ -68,12 +68,22 @@ class SeleniumTaskExecutor:
         driver = self.get_driver()
         driver.get(self.__base_url)
 
+    def select_london_residency(self):
+        """
+        Steps to state user resides in central London
+        """
+        driver = self.get_driver()
+        driver.find_element_by_id("id_your_location_0-label").click()
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+
+
     def register_email_address(self, email_address):
         """
         Selenium steps for registering an email address against an application
         """
         driver = self.get_driver()
         driver.find_element_by_xpath("//input[@value='Sign in']").click()
+        self.select_london_residency()
         driver.find_element_by_id("id_acc_selection_0-label").click()
         driver.find_element_by_xpath("//input[@value='Continue']").click()
 

@@ -2,7 +2,7 @@ import logging
 
 from django.http import HttpResponseRedirect
 
-from application.business_logic import get_application
+from application.business_logic import get_application, awaiting_pith_dbs_action_from_user, find_dbs_status
 from application.forms.PITH_forms.PITH_children_check_form import PITHChildrenCheckForm
 from application.models import AdultInHome, ApplicantHomeAddress, ChildInHome
 from application.utils import get_id, build_url
@@ -59,7 +59,6 @@ class PITHChildrenCheckView(PITHRadioView):
 
         yes_choice, no_yes_choice, no_no_yes_choice, no_no_no_choice = self.success_url
         choice_bool = get_application(app_id, self.application_field_name)
-        adults = AdultInHome.objects.filter(application_id=app_id)
 
         # Assert if the applicant's home address is the same as their childcare address
         home_address = ApplicantHomeAddress.objects.get(application_id=app_id, current_address=True)
@@ -81,7 +80,8 @@ class PITHChildrenCheckView(PITHRadioView):
 
             else:
 
-                if len(adults) != 0 and any(not adult.capita and not adult.on_update for adult in adults):
+                # Does user still need to take action wrt PITH DBS checks?
+                if self.get_awaiting_user_pith_dbs_action(app_id):
 
                     log.debug('Set caring at home address to false and adults in home for application: ' + app_id)
 
@@ -101,3 +101,11 @@ class PITHChildrenCheckView(PITHRadioView):
 
             child.delete()
             log.debug('Removing child ' + str(child.pk))
+
+    def get_awaiting_user_pith_dbs_action(self, application_id):
+
+        result = awaiting_pith_dbs_action_from_user(
+            find_dbs_status(adult, adult)
+            for adult in AdultInHome.objects.filter(application_id=application_id))
+
+        return result

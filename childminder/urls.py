@@ -17,7 +17,7 @@ from application.views.other_people_health_check import health_check_login, dob_
 from application.views import PITH_views
 
 urlpatterns = [
-    url(r'^$', views.start_page, name='start-page.html'),
+    url(r'^$', views.start_page, name='Start-Page-View'),
     url(r'^task-list/', views.task_list, name='Task-List-View'),
     url(r'^childcare/type/', views.type_of_childcare_guidance, name='Type-Of-Childcare-Guidance-View'),
     url(r'^childcare/age-groups/', views.type_of_childcare_age_groups, name='Type-Of-Childcare-Age-Groups-View'),
@@ -88,7 +88,6 @@ urlpatterns = [
     url(r'^criminal-record/MOD-checks/$', views.DBSMinistryOfDefenceView.as_view(),
         name='DBS-Ministry-Of-Defence-View'),
     url(r'^criminal-record/UK/$', views.DBSGuidanceSecondView.as_view(), name='DBS-Guidance-Second-View'),
-    url(r'^criminal-record/your-details/$', views.DBSCheckCapitaView.as_view(), name='DBS-Check-Capita-View'),
     url(r'^criminal-record/DBS-details/$', views.DBSCheckNoCapitaView.as_view(), name='DBS-Check-No-Capita-View'),
     url(r'^criminal-record/DBS-update/$', views.DBSUpdateView.as_view(), name='DBS-Update-View'),
     url(r'^criminal-record/apply-new/$', views.DBSApplyNewView.as_view(), name='DBS-Apply-New-View'),
@@ -111,9 +110,9 @@ urlpatterns = [
     url(r'^people/adults-checks-abroad/$', PITH_views.PITHAbroadCriminalView.as_view(), name='PITH-Abroad-Criminal-View'),
     url(r'^people/adults-military-bases/$', PITH_views.PITHMilitaryView.as_view(), name='PITH-Military-View'),
     url(r'^people/adults-MoD-checks/$', PITH_views.PITHMinistryView.as_view(), name='PITH-Ministry-View'),
-    url(r'^people/adult-dbs-checks/$', PITH_views.PITHDBSCheckView.as_view(), name='PITH-DBS-Check-View'),
-    url(r'^people/post-certificate/$', PITH_views.PITHPostView.as_view(), name='PITH-Post-View'),
-    url(r'^people/sign-up-update/$', PITH_views.PITHApplyView.as_view(), name='PITH-Apply-View'),
+    url(r'^people/adults-dbs-checks/$', PITH_views.PITHDBSCheckView.as_view(), name='PITH-DBS-Check-View'),
+    url(r'^people/adults-dbs-check-types/$', PITH_views.PITHDBSTypeOfCheckView.as_view(), name='PITH-DBS-Type-Of-Check-View'),
+    url(r'^people/adults-before-you-submit/$', PITH_views.PITHDBSPostOrApplyView.as_view(), name='PITH-DBS-Post-Or-Apply-View'),
 
     # Children
     url(r'^people/children/$', PITH_views.PITHChildrenCheckView.as_view(), name='PITH-Children-Check-View'),
@@ -128,6 +127,7 @@ urlpatterns = [
         name='PITH-Own-Children-Select-View'),
     url(r'^people/enter-children-address/$', PITH_views.PITHOwnChildrenManualView,
         name='PITH-Own-Children-Manual-View'),
+
     url(r'^people/check-answers/$', PITH_views.PITHCheckYourAnswersView.as_view(), name='PITH-Summary-View'),
 
     url(r'^health/$', views.health_intro, name='Health-Intro-View'),
