@@ -87,7 +87,7 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
 
     @mock.patch('application.messaging.SQSHandler.send_message')
     @mock.patch('application.services.noo_integration_service.create_application_reference')
-    @mock.patch('application.payment_service.make_payment')
+    @mock.patch('application.services.payment_service.make_payment')
     def test_submit_returns_to_payment_page_with_error_if_status_500_received(
             self, post_payment_mock, application_reference_mock, send_message_mock):
         """
@@ -130,8 +130,8 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
 
     @mock.patch('application.messaging.SQSHandler.send_message')
     @mock.patch('application.services.noo_integration_service.create_application_reference')
-    @mock.patch('application.payment_service.check_payment')
-    @mock.patch('application.payment_service.make_payment')
+    @mock.patch('application.services.payment_service.check_payment')
+    @mock.patch('application.services.payment_service.make_payment')
     def test_submit_returns_to_payment_page_with_error_if_status_404_received(
             self, post_payment_mock, check_payment_mock, application_reference_mock, send_message_mock):
         """
@@ -182,7 +182,7 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
 
     @mock.patch('application.messaging.SQSHandler.send_message')
     @mock.patch('application.services.noo_integration_service.create_application_reference')
-    @mock.patch('application.payment_service.make_payment')
+    @mock.patch('application.services.payment_service.make_payment')
     def test_submit_returns_to_payment_page_with_error_if_REFUSED_received(
             self, post_payment_mock, application_reference_mock, send_message_mock):
         """
@@ -227,7 +227,7 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
 
     @mock.patch('application.messaging.SQSHandler.send_message')
     @mock.patch('application.services.noo_integration_service.create_application_reference')
-    @mock.patch('application.payment_service.make_payment')
+    @mock.patch('application.services.payment_service.make_payment')
     def test_resubmit_doesnt_place_second_worldpay_order_and_original_payment_ref_is_retained(
             self, post_payment_mock, application_reference_mock, send_message_mock):
         """
@@ -299,7 +299,7 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
 
     @mock.patch('application.messaging.SQSHandler.send_message')
     @mock.patch('application.services.noo_integration_service.create_application_reference')
-    @mock.patch('application.payment_service.make_payment')
+    @mock.patch('application.services.payment_service.make_payment')
     def test_submit_lodges_payment_and_assigns_ref_and_redirects_to_confirmation_page_if_valid(
             self, post_payment_mock, application_reference_mock, send_message_mock):
         """
