@@ -3,7 +3,7 @@ from datetime import date
 from django import forms
 
 from application.business_logic import childcare_register_type
-from application.fields import CustomSplitDateFieldDOB
+from application.forms.fields import CustomSplitDateFieldDOB
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (FirstAidTraining)

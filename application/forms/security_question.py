@@ -1,6 +1,6 @@
 from django import forms
 
-from application.fields import CustomSplitDateFieldDOB
+from application.forms.fields import CustomSplitDateFieldDOB
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 

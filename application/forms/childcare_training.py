@@ -4,7 +4,7 @@ from django import forms
 
 from govuk_forms.widgets import CheckboxSelectMultiple
 
-from application.fields import CustomSplitDateField
+from application.forms.fields import CustomSplitDateField
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import ChildcareTraining

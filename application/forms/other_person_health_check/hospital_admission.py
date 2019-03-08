@@ -3,7 +3,7 @@ from datetime import date
 from django import forms
 from govuk_forms.widgets import InlineRadioSelect
 
-from application.fields import CustomSplitDateField
+from application.forms.fields import CustomSplitDateField
 from application.forms import ChildminderForms
 
 

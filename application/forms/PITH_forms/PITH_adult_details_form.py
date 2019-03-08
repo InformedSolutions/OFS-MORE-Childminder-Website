@@ -4,7 +4,7 @@ from datetime import date
 from django import forms
 from django.conf import settings
 
-from ...fields import CustomSplitDateFieldDOB
+from application.forms.fields import CustomSplitDateFieldDOB
 from application.forms.childminder import ChildminderForms
 from ...models import (AdultInHome, Application, UserDetails)
 from ...utils import date_formatter

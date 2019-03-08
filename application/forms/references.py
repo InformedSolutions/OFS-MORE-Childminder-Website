@@ -5,7 +5,7 @@ from dateutil.relativedelta import relativedelta
 from django import forms
 from django.conf import settings
 
-from application.fields import TimeKnownField
+from application.forms.fields import TimeKnownField
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (Reference, ApplicantPersonalDetails)

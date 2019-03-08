@@ -7,7 +7,7 @@ from django.conf import settings
 from govuk_forms.widgets import InlineRadioSelect
 
 from ..business_logic import show_resend_and_change_email
-from ..fields import CustomSplitDateFieldDOB
+from application.forms.fields import CustomSplitDateFieldDOB
 from ..forms.childminder import ChildminderForms
 from ..forms_helper import full_stop_stripper
 from ..models import (AdultInHome,
