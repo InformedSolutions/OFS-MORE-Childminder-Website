@@ -23,6 +23,7 @@ def cancel_app(request):
         delete_app(app_id)
         return HttpResponseRedirect(reverse('Cancel-Application-Confirmation'))
 
+
 def cancel_app_confirmation(request):
     """
     This is one of the cancel application confirmation pages
@@ -51,6 +52,7 @@ def cr_cancel_app(request):
         delete_app(app_id)
 
         return HttpResponseRedirect(reverse('CR-Cancel-Application-Confirmation'))
+
 
 def cl_cancel_app(request):
     """

@@ -26,7 +26,7 @@ class TaskStatusTest(ViewsTest):
             date_accepted=None,
             
         )
-        user = models.UserDetails.objects.create(
+        models.UserDetails.objects.create(
             application_id=application,
             login_id=(UUID(test_login_id)),
             email='',
@@ -81,7 +81,7 @@ class TaskStatusTest(ViewsTest):
             date_accepted=None,
             
         )
-        user = models.UserDetails.objects.create(
+        models.UserDetails.objects.create(
             application_id=application,
             login_id=(UUID(test_login_id)),
             email='',
@@ -135,7 +135,7 @@ class TaskStatusTest(ViewsTest):
             date_accepted=None,
             
         )
-        user = models.UserDetails.objects.create(
+        models.UserDetails.objects.create(
             application_id=application,
             login_id=(UUID(test_login_id)),
             email='',
@@ -190,7 +190,7 @@ class TaskStatusTest(ViewsTest):
             date_accepted=None,
             
         )
-        user = models.UserDetails.objects.create(
+        models.UserDetails.objects.create(
             application_id=application,
             login_id=(UUID(test_login_id)),
             email='',
@@ -242,7 +242,7 @@ class TaskStatusTest(ViewsTest):
             date_accepted=None,
             
         )
-        user = models.UserDetails.objects.create(
+        models.UserDetails.objects.create(
             application_id=application,
             login_id=(UUID(test_login_id)),
             email='',
@@ -294,7 +294,7 @@ class TaskStatusTest(ViewsTest):
             date_accepted=None,
             
         )
-        user = models.UserDetails.objects.create(
+        models.UserDetails.objects.create(
             application_id=application,
             login_id=(UUID(test_login_id)),
             email='',

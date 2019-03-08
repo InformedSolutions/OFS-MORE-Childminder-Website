@@ -1,7 +1,7 @@
 from django import forms
 from govuk_forms.widgets import InlineRadioSelect, NumberInput
 
-from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
+from application.widgets import ConditionalPostInlineRadioSelect
 from ..business_logic import childminder_dbs_duplicates_household_member_check, dbs_date_of_birth_no_match
 from ..dbs import read
 from ..forms.childminder import ChildminderForms
@@ -76,8 +76,8 @@ class DBSMilitaryForm(DBSRadioForm):
             choices=self.get_options(),
             widget=InlineRadioSelect,
             required=True,
-            error_messages={
-                'required': 'Please say if you have lived in a British military base outside of the UK in the last 5 years'})
+            error_messages={'required': 'Please say if you have lived in a British military base '
+                                        'outside of the UK in the last 5 years'})
 
 
 class DBSTypeForm(DBSRadioForm):
@@ -183,7 +183,8 @@ class DBSCheckDetailsForm(DBSRadioForm):
         DBS certificate number validation
         :return: integer
         """
-        # is_valid() call strips leading 0(s) required by DBS number. Use raw str input from user instead of cleaned_data.
+        # is_valid() call strips leading 0(s) required by DBS number.
+        # Use raw str input from user instead of cleaned_data.
         dbs_certificate_number = self.data['dbs_certificate_number']
         if len(str(dbs_certificate_number)) > 12:
             raise forms.ValidationError('The certificate number should be 12 digits long')
