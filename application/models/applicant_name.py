@@ -2,6 +2,7 @@ from uuid import uuid4
 from django.db import models
 from .applicant_personal_details import ApplicantPersonalDetails
 from .application import Application
+from datetime import date
 
 class ApplicantName(models.Model):
     """
@@ -16,6 +17,15 @@ class ApplicantName(models.Model):
     first_name = models.CharField(max_length=100, blank=True)
     middle_names = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
+
+    # Current name fields
+    start_day = models.IntegerField(blank=True, null=True)
+    start_month = models.IntegerField(blank=True, null=True)
+    start_year = models.IntegerField(blank=True, null=True)
+    end_day = models.IntegerField(blank=True, null=True)
+    end_month = models.IntegerField(blank=True, null=True)
+    end_year = models.IntegerField(blank=True, null=True)
+
 
     # TODO Might not work - need to test
     @classmethod
@@ -40,3 +50,23 @@ class ApplicantName(models.Model):
 
     class Meta:
         db_table = 'APPLICANT_NAME'
+
+    def get_start_date(self):
+        return date(self.start_year, self.start_month, self.start_day)
+    
+    def set_start_date(self, start_date):
+        self.start_year = start_date.year
+        self.start_month = start_date.month
+        
+    start_date = property(get_start_date, set_start_date)
+
+    def get_end_date(self):
+        return date(self.end_year, self.end_month, self.end_day)
+
+    def set_end_date(self, end_date):
+        self.end_year = end_date.year
+        self.end_month = end_date.month
+        
+    end_date = property(get_end_date, set_end_date)
+
+
