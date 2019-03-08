@@ -1,11 +1,11 @@
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from django import forms
 from django.conf import settings
 
-from application.customfields import TimeKnownField
+from application.fields import TimeKnownField
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (Reference, ApplicantPersonalDetails)
@@ -31,15 +31,27 @@ class FirstReferenceForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    first_name = forms.CharField(label='First name', required=True,
-                                 error_messages={'required': 'Please enter the first name of the referee'})
-    last_name = forms.CharField(label='Last name', required=True,
-                                error_messages={'required': 'Please enter the last name of the referee'})
-    relationship = forms.CharField(label='How do they know you?', help_text='For instance, friend or neighbour',
-                                   required=True,
-                                   error_messages={'required': 'Please tell us how the referee knows you'})
-    time_known = TimeKnownField(label='How long have they known you?', required=True,
-                                error_messages={'required': 'Please tell us how long you have known the referee'})
+    first_name = forms.CharField(
+        label='First name',
+        required=True,
+        error_messages={'required': 'Please enter the first name of the referee'}
+    )
+    last_name = forms.CharField(
+        label='Last name',
+        required=True,
+        error_messages={'required': 'Please enter the last name of the referee'}
+    )
+    relationship = forms.CharField(
+        label='How do they know you?',
+        help_text='For instance, friend or neighbour',
+        required=True,
+        error_messages={'required': 'Please tell us how the referee knows you'}
+    )
+    time_known = TimeKnownField(
+        label='How long have they known you?',
+        required=True,
+        error_messages={'required': 'Please tell us how long you have known the referee'}
+    )
 
     def __init__(self, *args, **kwargs):
         """

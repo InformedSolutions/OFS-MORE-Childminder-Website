@@ -11,6 +11,7 @@ from ..dbs import NO_ADDITIONAL_CERTIFICATE_INFORMATION
 
 logger = logging.getLogger()
 
+
 def get_name_formatted_string(adult_list):
     if len(adult_list) == 1:
         name_string = adult_list[0].get_full_name
@@ -26,7 +27,6 @@ def get_name_formatted_string(adult_list):
 class ThankYou(BaseTemplateView):
 
     success_url_name = 'Health-Check-Thank-You'
-
 
     def get(self, request, *args, **kwargs):
         adult_id = self.request.GET.get('person_id')

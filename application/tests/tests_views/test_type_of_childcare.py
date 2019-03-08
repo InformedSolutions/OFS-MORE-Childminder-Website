@@ -3,41 +3,29 @@ from .view_parent import *
 
 class TypeOfChildcareTest(ViewsTest):
 
-    def test_url_resolves_to_page(self):
+    def test_type_url_resolves_to_page(self):
         found = resolve(settings.URL_PREFIX + '/childcare/type/')
         self.assertEqual(found.func, type_of_childcare_guidance)
 
-    def test_page_not_displayed_without_id(self):
-        c = Client()
-        try:
-            c.get(settings.URL_PREFIX + '/childcare/type?id=')
-            self.assertEqual(1, 0)
-        except:
-            self.assertEqual(0, 0)
+    def test_type_page_not_displayed_without_id(self):
+        c = self.client
+        c.get(settings.URL_PREFIX + '/childcare/type?id=')
 
-    def test_url_resolves_to_page(self):
+    def test_ages_url_resolves_to_page(self):
         found = resolve(settings.URL_PREFIX + '/childcare/age-groups/')
         self.assertEqual(found.func, type_of_childcare_age_groups)
 
-    def test_page_not_displayed_without_id(self):
-        c = Client()
-        try:
-            c.get(settings.URL_PREFIX + '/childcare/age-groups?id=')
-            self.assertEqual(1, 0)
-        except:
-            self.assertEqual(0, 0)
+    def test_ages_page_not_displayed_without_id(self):
+        c = self.client
+        c.get(settings.URL_PREFIX + '/childcare/age-groups?id=')
 
-    def test_url_resolves_to_page(self):
+    def test_register_url_resolves_to_page(self):
         found = resolve(settings.URL_PREFIX + '/childcare/register/')
         self.assertEqual(found.func, type_of_childcare_register)
 
-    def test_page_not_displayed_without_id(self):
-        c = Client()
-        try:
-            c.get(settings.URL_PREFIX + '/childcare/register?id=')
-            self.assertEqual(1, 0)
-        except:
-            self.assertEqual(0, 0)
+    def test_register_page_not_displayed_without_id(self):
+        c = self.client
+        c.get(settings.URL_PREFIX + '/childcare/register?id=')
 
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
@@ -61,7 +49,7 @@ class TypeOfChildcareTest(ViewsTest):
             date_updated=datetime.datetime.today(),
             date_accepted=None,
         )
-        user = UserDetails.objects.create(
+        UserDetails.objects.create(
             application_id=test_app,
             login_id=(UUID(test_login_id)),
             email='',

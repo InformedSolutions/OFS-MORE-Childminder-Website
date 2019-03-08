@@ -3,7 +3,7 @@ from datetime import date
 from django import forms
 
 from application.business_logic import childcare_register_type
-from application.customfields import CustomSplitDateFieldDOB
+from application.fields import CustomSplitDateFieldDOB
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (FirstAidTraining)
@@ -27,13 +27,19 @@ class FirstAidTrainingDetailsForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    first_aid_training_organisation = forms.CharField(label='Training organisation', error_messages={
-        'required': 'Please enter the name of the training organisation'})
-    title_of_training_course = forms.CharField(label='Title of training course', error_messages={
-        'required': 'Please enter the title of the course'})
-    course_date = CustomSplitDateFieldDOB(label='Date you completed course', help_text='For example, 31 03 2016',
-                                          error_messages={
-                                              'required': 'Please enter the full date, including the day, month and year'})
+    first_aid_training_organisation = forms.CharField(
+        label='Training organisation',
+        error_messages={'required': 'Please enter the name of the training organisation'}
+    )
+    title_of_training_course = forms.CharField(
+        label='Title of training course',
+        error_messages={'required': 'Please enter the title of the course'}
+    )
+    course_date = CustomSplitDateFieldDOB(
+        label='Date you completed course',
+        help_text='For example, 31 03 2016',
+        error_messages={'required': 'Please enter the full date, including the day, month and year'}
+    )
 
     def __init__(self, *args, **kwargs):
         """

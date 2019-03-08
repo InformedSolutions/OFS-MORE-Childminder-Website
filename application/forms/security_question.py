@@ -1,6 +1,6 @@
 from django import forms
 
-from application.customfields import CustomSplitDateFieldDOB
+from application.fields import CustomSplitDateFieldDOB
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 
@@ -43,7 +43,12 @@ class SecurityDateForm(ChildminderForms):
     error_summary_title = 'There was a problem with your answer'
     auto_replace_widgets = True
 
-    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980' , required=True, error_messages={'required': 'Please give an answer'})
+    date_of_birth = CustomSplitDateFieldDOB(
+        label='Date of birth',
+        help_text='For example, 31 03 1980' ,
+        required=True,
+        error_messages={'required': 'Please give an answer'}
+    )
 
     def __init__(self, *args, **kwargs):
         """

@@ -9,7 +9,8 @@ from application.forms_helper import full_stop_stripper
 from application.models import (ApplicantHomeAddress,
                                 ApplicantPersonalDetails,
                                 Application)
-from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
+from application.widgets import ConditionalPostInlineRadioSelect
+
 
 class PersonalDetailsChildcareAddressForm(ChildminderForms):
     """
@@ -59,13 +60,26 @@ class PersonalDetailsChildcareAddressManualForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    street_line1 = forms.CharField(label='Address line 1',
-                                   error_messages={'required': 'Please enter the first line of your address'})
-    street_line2 = forms.CharField(label='Address line 2', required=False)
-    town = forms.CharField(label='Town or city',
-                           error_messages={'required': 'Please enter the name of the town or city'})
-    county = forms.CharField(label='County (optional)', required=False)
-    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode'})
+    street_line1 = forms.CharField(
+        label='Address line 1',
+        error_messages={'required': 'Please enter the first line of your address'}
+    )
+    street_line2 = forms.CharField(
+        label='Address line 2',
+        required=False
+    )
+    town = forms.CharField(
+        label='Town or city',
+        error_messages={'required': 'Please enter the name of the town or city'}
+    )
+    county = forms.CharField(
+        label='County (optional)',
+        required=False
+    )
+    postcode = forms.CharField(
+        label='Postcode',
+        error_messages={'required': 'Please enter your postcode'}
+    )
 
     def __init__(self, *args, **kwargs):
         """
@@ -185,10 +199,13 @@ class PersonalDetailsWorkingInOtherChildminderHomeForm(ChildminderForms):
         ('True', 'Yes'),
         ('False', 'No')
     )
-    working_in_other_childminder_home = forms.ChoiceField(label="Is this another childminder's home?", choices=options,
-                                                          widget=InlineRadioSelect, required=True,
-                                                          error_messages={
-                                                              'required': "Please say if you'll be working in another childminder's home"})
+    working_in_other_childminder_home = forms.ChoiceField(
+        label="Is this another childminder's home?",
+        choices=options,
+        widget=InlineRadioSelect,
+        required=True,
+        error_messages={'required': "Please say if you'll be working in another childminder's home"}
+    )
 
     def __init__(self, *args, **kwargs):
         """
@@ -221,13 +238,21 @@ class PersonalDetailsOwnChildrenForm(ChildminderForms):
         ('False', 'No')
     )
 
-    own_children = forms.ChoiceField(label="Are you known to council social services in regards to your own children?", choices=options,
-                                     widget=ConditionalPostInlineRadioSelect, required=True,
-                                     error_messages={'required': "Please say if you are known to council social services in regards to your own children"})
+    own_children = forms.ChoiceField(
+        label="Are you known to council social services in regards to your own children?",
+        choices=options,
+        widget=ConditionalPostInlineRadioSelect,
+        required=True,
+        error_messages={'required': "Please say if you are known to council social services "
+                                    "in regards to your own children"}
+    )
 
-    reasons_known_to_social_services = forms.CharField(label="Tell us why",
-                                    widget=forms.Textarea, required=True,
-                                    error_messages={'required': "You must tell us why"})
+    reasons_known_to_social_services = forms.CharField(
+        label="Tell us why",
+        widget=forms.Textarea,
+        required=True,
+        error_messages={'required': "You must tell us why"}
+    )
 
     def __init__(self, *args, **kwargs):
         """
@@ -256,6 +281,7 @@ class PersonalDetailsOwnChildrenForm(ChildminderForms):
                 self.add_error('reasons_known_to_social_services', 'You must tell us why')
 
         return cleaned_data
+
 
 class PersonalDetailsSummaryForm(ChildminderForms):
     """

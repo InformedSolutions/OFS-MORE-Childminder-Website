@@ -4,7 +4,7 @@ from datetime import date
 from django import forms
 from django.conf import settings
 
-from application.customfields import CustomSplitDateFieldDOB
+from application.fields import CustomSplitDateFieldDOB
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (ApplicantName,

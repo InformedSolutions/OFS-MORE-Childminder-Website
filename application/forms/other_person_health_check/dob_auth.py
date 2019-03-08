@@ -1,13 +1,9 @@
 from datetime import date
 
 from django import forms
-from django.core.exceptions import ObjectDoesNotExist
 
-from application.customfields import CustomSplitDateFieldDOB, CustomSplitDateField
+from application.fields import CustomSplitDateFieldDOB
 from application.forms.childminder import ChildminderForms
-from govuk_forms.fields import SplitDateField
-
-from application.models import AdultInHome
 
 
 class DateOfBirthAuthentication(ChildminderForms):
@@ -19,8 +15,11 @@ class DateOfBirthAuthentication(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    date_of_birth = CustomSplitDateFieldDOB(label='Date of birth', help_text='For example, 31 03 1980', error_messages={
-        'required': 'Please enter the full date, including the day, month and year'})
+    date_of_birth = CustomSplitDateFieldDOB(
+        label='Date of birth',
+        help_text='For example, 31 03 1980',
+        error_messages={'required': 'Please enter the full date, including the day, month and year'}
+    )
 
     def __init__(self, *args, **kwargs):
         """
