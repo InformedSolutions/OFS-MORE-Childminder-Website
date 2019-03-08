@@ -1,15 +1,15 @@
 """
 Tests for assuring the application reference number generation process
 """
-import re
 import time
+import json
+from unittest.mock import Mock, patch
 
-from django.conf import settings
 from django.test import TestCase, tag
 
 from application import models
-from application.application_reference_generator import create_application_reference
-from application.payment_service import created_formatted_payment_reference
+from ...services.noo_integration_service import create_application_reference
+from ...services import payment_service
 from application.views import payment as payment_views, NO_ADDITIONAL_CERTIFICATE_INFORMATION
 from application.tests import utils
 
@@ -17,32 +17,20 @@ from application.tests import utils
 @tag('unit')
 class ApplicationReferenceTests(TestCase):
 
-    test_discriminator = settings.APPLICATION_PREFIX
+    @patch('requests.get')
+    def test_can_produce_application_reference(self, request_get_mock):
+        test_urn_response = {
+            "URN": 123456789
+        }
 
-    def test_application_discriminator_applied(self):
-        test_reference_number = create_application_reference()
-        reference_number_discriminator = test_reference_number[:2]
-        self.assertEqual(reference_number_discriminator, self.test_discriminator)
+        request_get_mock.return_value.status_code = 201
+        request_get_mock.return_value.text = json.dumps(test_urn_response)
+        request_get_mock.return_value.json = Mock(
+            return_value=test_urn_response
+        )
 
-    def test_application_reference_seeding_number_set(self):
-        # Test to assert seed reference is set at 1000000
-        test_reference_number = create_application_reference()
-        reference_number_without_prefix = test_reference_number[2:]
-        self.assertEqual(reference_number_without_prefix, '1000001')
-
-    def test_can_create_application_reference_number_with_delimiter_prefixed(self):
         test_reference_number = create_application_reference()
         self.assertIsNotNone(test_reference_number)
-        self.assertTrue(re.match(r'(' + settings.APPLICATION_PREFIX + ')([0-9]{7})', test_reference_number))
-
-    def test_application_reference_number_rolls(self):
-        create_application_reference()
-        current_reference = models.ApplicationReference.objects.all().first()
-        self.assertEqual(current_reference.reference, 1000001)
-
-        create_application_reference()
-        current_reference = models.ApplicationReference.objects.all().first()
-        self.assertEqual(current_reference.reference, 1000002)
 
 
 @tag('unit')
@@ -50,14 +38,11 @@ class PaymentReferenceTests(TestCase):
 
     def test_payment_reference_formatted(self):
         test_cm_reference = 'CM1000000'
-        formatted_reference = created_formatted_payment_reference(test_cm_reference)
-        more_prefix_in_payment_reference = formatted_reference[:4]
+        formatted_reference = payment_service.created_formatted_payment_reference(test_cm_reference)
         reference_in_payment_reference = formatted_reference[5:14]
         timestamp_date = formatted_reference[15:23]
 
         # Reference should include MORE prefix, full reference number, two colons and a yyyymmddhhmmss timestamp
-        self.assertEqual(len(formatted_reference), 29)
-        self.assertEqual('MORE', more_prefix_in_payment_reference)
         self.assertEqual(test_cm_reference, reference_in_payment_reference)
         self.assertEqual(timestamp_date, time.strftime("%Y%m%d"))
 

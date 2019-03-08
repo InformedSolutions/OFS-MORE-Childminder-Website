@@ -85,12 +85,17 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
         self.application = utils.make_test_application()
         self.app_id = self.application.application_id
 
+    @mock.patch('application.messaging.SQSHandler.send_message')
+    @mock.patch('application.services.noo_integration_service.create_application_reference')
     @mock.patch('application.payment_service.make_payment')
-    def test_submit_returns_to_payment_page_with_error_if_status_500_received(self, post_payment_mock):
+    def test_submit_returns_to_payment_page_with_error_if_status_500_received(
+            self, post_payment_mock, application_reference_mock, send_message_mock):
         """
         Test that if a failure is encountered when attempting to first lodge a payment with Worldpay,
         an error gets returned to the user
         """
+        application_reference_mock.return_value = 'TESTURN'
+
         test_payment_response = {
           'message': 'Internal Server error',
           'error': 'Test error',
@@ -123,13 +128,16 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
                          'Your card has not been charged. '
                          'Please check your card details and try again.')
 
+    @mock.patch('application.messaging.SQSHandler.send_message')
+    @mock.patch('application.services.noo_integration_service.create_application_reference')
     @mock.patch('application.payment_service.check_payment')
     @mock.patch('application.payment_service.make_payment')
-    def test_submit_returns_to_payment_page_with_error_if_status_404_received(self, post_payment_mock,
-                                                                              check_payment_mock):
+    def test_submit_returns_to_payment_page_with_error_if_status_404_received(
+            self, post_payment_mock, check_payment_mock, application_reference_mock, send_message_mock):
         """
         Tests that if a payment cannot be reconciled once lodged, an error is raised to the user.
         """
+        application_reference_mock.return_value = 'TESTURN'
 
         test_payment_response = {
             "amount": 50000,
@@ -172,11 +180,15 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
                          'Your card has not been charged. '
                          'Please check your card details and try again.')
 
+    @mock.patch('application.messaging.SQSHandler.send_message')
+    @mock.patch('application.services.noo_integration_service.create_application_reference')
     @mock.patch('application.payment_service.make_payment')
-    def test_submit_returns_to_payment_page_with_error_if_REFUSED_received(self, post_payment_mock):
+    def test_submit_returns_to_payment_page_with_error_if_REFUSED_received(
+            self, post_payment_mock, application_reference_mock, send_message_mock):
         """
         Tests that if a payment has been refused by Worldpay an error is shown.
         """
+        application_reference_mock.return_value = 'TESTURN'
 
         test_payment_response = {
             "customerOrderCode": "TEST",
@@ -213,13 +225,17 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
                          'Your card has not been charged. '
                          'Please check your card details and try again.')
 
+    @mock.patch('application.messaging.SQSHandler.send_message')
+    @mock.patch('application.services.noo_integration_service.create_application_reference')
     @mock.patch('application.payment_service.make_payment')
-    def test_resubmit_doesnt_place_second_worldpay_order_and_original_payment_ref_is_retained(self, post_payment_mock):
+    def test_resubmit_doesnt_place_second_worldpay_order_and_original_payment_ref_is_retained(
+            self, post_payment_mock, application_reference_mock, send_message_mock):
         """
         Test to assert that if a payment is submitted for a second time
         it is not placed as a second Worldpay order and the original payment reference
         is retained
         """
+        application_reference_mock.return_value = 'TESTURN'
 
         test_payment_response = {
             "customerOrderCode": "TEST",
@@ -281,14 +297,18 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
                          'Your card has not been charged. '
                          'Please check your card details and try again.')
 
+    @mock.patch('application.messaging.SQSHandler.send_message')
+    @mock.patch('application.services.noo_integration_service.create_application_reference')
     @mock.patch('application.payment_service.make_payment')
-    def test_submit_lodges_payment_and_assigns_ref_and_redirects_to_confirmation_page_if_valid(self, post_payment_mock):
+    def test_submit_lodges_payment_and_assigns_ref_and_redirects_to_confirmation_page_if_valid(
+            self, post_payment_mock, application_reference_mock, send_message_mock):
         """
         Full test to ensure that when a payment is taken the following outcomes are met:
            1. Payment confirmation page is shown
            2. Application Reference number assigned
            3. Payment record is lodged
         """
+        application_reference_mock.return_value = 'TESTURN'
 
         test_payment_response = {
             "customerOrderCode": "TEST",
