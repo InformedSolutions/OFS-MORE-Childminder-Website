@@ -22,6 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 SMS_EXPIRY = 24
 EMAIL_EXPIRY = 24
 
+# Cost of making application
+APP_COST = 3500
+
 # Visa Validation
 VISA_VALIDATION = os.environ.get('VISA_VALIDATION') == 'True'
 
@@ -34,6 +37,9 @@ PAYMENT_URL = os.environ.get('APP_PAYMENT_URL')
 # Base URL of addressing-service gateway
 ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL')
 
+# Base URL of integration adapter for interfacing with NOO
+INTEGRATION_ADAPTER_URL = os.environ.get('APP_INTEGRATION_ADAPTER')
+
 # Base URL of the DBS check API
 DBS_URL = os.environ.get('APP_DBS_URL')
 
@@ -43,14 +49,28 @@ EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
 
 FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'tester@informed.com')
 
+
+# AWS SQS keys
+AWS_SQS_ACCESS_KEY_ID = os.environ.get('AWS_SQS_ACCESS_KEY_ID')
+AWS_SQS_SECRET_ACCESS_KEY = os.environ.get('AWS_SQS_SECRET_ACCESS_KEY')
+
+
 TEST_NOTIFY_CONNECTION = True
 
-APPLICATION_PREFIX = 'CM'
+# The prefix added before a URN for finance system reconciliation purposes
+PAYMENT_URN_PREFIX = 'EY'
+
+# The prefix used to distinguish Worldpay payment entries for MORE
+PAYMENT_REFERENCE_PREFIX = 'MO'
 
 PAYMENT_PROCESSING_ATTEMPTS = os.environ.get('PAYMENT_PROCESSING_ATTEMPTS', 10)
 PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS = os.environ.get('PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS', 10)
 
 PAYMENT_HTTP_REQUEST_TIMEOUT = 60
+
+SQS_QUEUE_PREFIX = os.environ.get('SQS_QUEUE_PREFIX', 'DEV')
+
+PAYMENT_NOTIFICATIONS_QUEUE_NAME = SQS_QUEUE_PREFIX + '_PAYMENT_NOTIFICATIONS'
 
 GOOGLE_ANALYTICS = {
 }
@@ -233,14 +253,14 @@ LOGGING = {
         'backupCount': 10
     },
     'console': {
-        'level': 'DEBUG',
+        'level': 'INFO',
         'class': 'logging.StreamHandler'
     },
    },
    'loggers': {
      '': {
        'handlers': ['file', 'console'],
-         'level': 'DEBUG',
+         'level': 'INFO',
            'propagate': True,
       },
       'django.server': {

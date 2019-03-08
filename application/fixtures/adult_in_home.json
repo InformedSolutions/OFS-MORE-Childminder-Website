@@ -227,13 +227,6 @@
       }
    },
    {
-      "model":"application.applicationreference",
-      "pk":1,
-      "fields":{
-         "reference":1000000
-      }
-   },
-   {
       "model":"application.childinhome",
       "pk":"c72aaef4-bcb2-43fe-957e-93816fd44c0a",
       "fields":{

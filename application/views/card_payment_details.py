@@ -5,23 +5,27 @@ page when successfully completed
 """
 
 import datetime
+import logging
 import re
 import json
 import time
 
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.core.urlresolvers import reverse
 from django.views.decorators.cache import never_cache
 
-from application.business_logic import get_childcare_register_type
-from ..application_reference_generator import *
-from .. import payment_service
+from ..services import payment_service, noo_integration_service
 from ..forms import PaymentDetailsForm
-from ..models import Application, UserDetails, ApplicantPersonalDetails, ApplicantName, Payment, ChildcareType
-from ..payment_service import created_formatted_payment_reference
+from ..models import Application, ApplicantName, Payment, ChildcareType
+from ..messaging.sqs_handler import SQSHandler
+
+from ..business_logic import get_childcare_register_type
 
 logger = logging.getLogger(__name__)
+
+sqs_handler = SQSHandler(settings.PAYMENT_NOTIFICATIONS_QUEUE_NAME)
 
 
 @never_cache
@@ -103,8 +107,17 @@ def card_payment_post_handler(request):
 
     application = Application.objects.get(pk=app_id)
     childcare_type = ChildcareType.objects.get(application_id=app_id)
+    amount = 3500 if childcare_type.zero_to_five else 10300
 
-    __assign_application_reference(application)
+    try:
+        __assign_application_reference(application)
+    except Exception as e:
+        logger.error('An error was incurred whilst attempting to fetch a new URN')
+        logger.error(str(e))
+
+        # In the event a URN could not be fetched yield error page to user as the payment reference
+        # cannot be generated without said URN
+        return __yield_general_processing_error_to_user(request, form, application.application_id)
 
     # Boolean flag for managing logic gates
     prior_payment_record_exists = Payment.objects.filter(application_id=application).exists()
@@ -122,7 +135,6 @@ def card_payment_post_handler(request):
         card_security_code = str(request.POST["card_security_code"])
         expiry_month = request.POST["expiry_date_0"]
         expiry_year = '20' + request.POST["expiry_date_1"]
-        amount = 3500 if childcare_type.zero_to_five else 10300
 
         # Invoke Payment Gateway API
         create_payment_response = payment_service.make_payment(
@@ -142,7 +154,7 @@ def card_payment_post_handler(request):
             if parsed_payment_response.get('lastEvent') == "AUTHORISED":
 
                 # If payment response is immediately authorised, yield success page
-                return __handle_authorised_payment(application)
+                return __handle_authorised_payment(application, amount)
 
             if parsed_payment_response.get('lastEvent') == "REFUSED":
 
@@ -160,10 +172,10 @@ def card_payment_post_handler(request):
 
     # If above logic gates have not been triggered, this indicates a form re-submission whilst processing
     # was taking place
-    return resubmission_handler(request, payment_reference, form, application)
+    return resubmission_handler(request, payment_reference, form, application, amount)
 
 
-def resubmission_handler(request, payment_reference, form, application):
+def resubmission_handler(request, payment_reference, form, application, amount):
     """
     Handling logic for managing page re-submissions to avoid duplicate payments being created
     :param request: Inbound HTTP post request
@@ -189,7 +201,7 @@ def resubmission_handler(request, payment_reference, form, application):
     if parsed_payment_response.get('lastEvent') == "AUTHORISED":
         # If payment has been marked as a AUTHORISED by Worldpay then payment has been captured
         # meaning user can be safely progressed to confirmation page
-        return __handle_authorised_payment(application)
+        return __handle_authorised_payment(application, amount)
     if parsed_payment_response.get('lastEvent') == "REFUSED":
         # If payment has been marked as a REFUSED by Worldpay then payment has
         # been attempted but was not successful in which case a new order should be attempted.
@@ -222,7 +234,7 @@ def resubmission_handler(request, payment_reference, form, application):
             request.META['processing_attempts'] = 1
 
         # Retry processing of payment
-        return resubmission_handler(request, payment_reference, form, application)
+        return resubmission_handler(request, payment_reference, form, application, amount)
 
 
 def __assign_application_reference(application):
@@ -236,7 +248,7 @@ def __assign_application_reference(application):
     if application.application_reference is None:
         logger.info('Generating application reference number '
                     'for application with id: ' + str(application.application_id))
-        application_reference = create_application_reference()
+        application_reference = noo_integration_service.create_application_reference()
         application.application_reference = application_reference
         application.save()
         return application_reference
@@ -260,7 +272,7 @@ def __create_payment_record(application):
                     'for application with id: ' + str(application.application_id))
 
         # Create formatted payment reference for finance reconciliation purposes
-        payment_reference = created_formatted_payment_reference(application.application_reference)
+        payment_reference = payment_service.created_formatted_payment_reference(application.application_reference)
 
         Payment.objects.create(
             application_id=application,
@@ -272,7 +284,7 @@ def __create_payment_record(application):
         return Payment.objects.get(application_id=application).payment_reference
 
 
-def __handle_authorised_payment(application):
+def __handle_authorised_payment(application, amount):
     """
     Private helper function for managing a rejected payment
     :param application: application associated with the payment attempting to be made
@@ -287,12 +299,10 @@ def __handle_authorised_payment(application):
     application.date_submitted = datetime.datetime.today()
     application.save()
 
-    # Dispatch payment confirmation email to user
-    login_record = UserDetails.objects.get(application_id=application)
-    personal_detail_id = ApplicantPersonalDetails.objects.get(
-        application_id=application.application_id).personal_detail_id
-    applicant_name_record = ApplicantName.objects.get(
-        personal_detail_id=personal_detail_id)
+    # Send ad-hoc payment to NOO
+    app_cost_float = float(amount / 100)
+    msg_body = __build_message_body(application, format(app_cost_float, '.4f'))
+    sqs_handler.send_message(msg_body)
 
     return __redirect_to_payment_confirmation(application)
 
@@ -364,3 +374,30 @@ def __redirect_to_payment_confirmation(application):
         + '&orderCode=' + application.application_reference
     )
 
+
+def __build_message_body(application, amount):
+    """
+    Helper method to build an SQS request to be picked up by the Integration Adapter component
+    for relay to NOO
+    :param application: the application for which a payment request is to be generated
+    :param amount: the amount that the payment was for
+    :return: an SQS request that can be consumed up by the Integration Adapter component
+    """
+
+    application_reference = application.application_reference
+    applicant_name_obj = ApplicantName.objects.get(application_id=application)
+
+    if len(applicant_name_obj.middle_names):
+        applicant_name = applicant_name_obj.last_name + ',' + applicant_name_obj.first_name + " " + applicant_name_obj.middle_names
+    else:
+        applicant_name = applicant_name_obj.last_name + ',' + applicant_name_obj.first_name
+
+    payment_reference = Payment.objects.get(application_id=application).payment_reference
+
+    return {
+        "payment_action": "SC1",
+        "payment_ref": payment_reference,
+        "payment_amount": amount,
+        "urn": str(settings.PAYMENT_URN_PREFIX) + application_reference,
+        "setting_name": applicant_name
+    }
