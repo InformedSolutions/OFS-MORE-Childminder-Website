@@ -1,6 +1,8 @@
-from datetime import datetime
+from datetime import datetime, date
 from uuid import uuid4
+
 from django.db import models
+
 from .application import Application
 
 
@@ -36,11 +38,19 @@ class AdultInHome(models.Model):
     email_resent_timestamp = models.DateTimeField(null=True, blank=True)
     lived_abroad = models.NullBooleanField(blank=True)
     military_base = models.NullBooleanField(blank=True)
-    capita = models.NullBooleanField(blank=True)                # dbs was found on capita list?
-    enhanced_check = models.NullBooleanField(blank=True)        # stated they have a capita dbs?
-    on_update = models.NullBooleanField(blank=True)             # stated they are signed up to dbs update service?
-    certificate_information = models.TextField(blank=True)      # information from dbs certificate
-    within_three_months = models.NullBooleanField(blank=True)   # dbs was issued within three months of lookup?
+    capita = models.NullBooleanField(blank=True)  # dbs was found on capita list?
+    enhanced_check = models.NullBooleanField(blank=True)  # stated they have a capita dbs?
+    on_update = models.NullBooleanField(blank=True)  # stated they are signed up to dbs update service?
+    certificate_information = models.TextField(blank=True)  # information from dbs certificate
+    within_three_months = models.NullBooleanField(blank=True)  # dbs was issued within three months of lookup?
+
+    # Current name fields
+    start_day = models.IntegerField(blank=True, null=True)
+    start_month = models.IntegerField(blank=True, null=True)
+    start_year = models.IntegerField(blank=True, null=True)
+    end_day = models.IntegerField(blank=True, null=True)
+    end_month = models.IntegerField(blank=True, null=True)
+    end_year = models.IntegerField(blank=True, null=True)
 
     @property
     def timelog_fields(self):
@@ -80,7 +90,26 @@ class AdultInHome(models.Model):
 
     @property
     def get_full_name(self):
-        return '{0}{1} {2}'.format(self.first_name, " "+self.middle_names if self.middle_names else "", self.last_name)
+        return '{0}{1} {2}'.format(self.first_name, " " + self.middle_names if self.middle_names else "",
+                                   self.last_name)
 
     class Meta:
         db_table = 'ADULT_IN_HOME'
+
+    def get_start_date(self):
+        return date(self.start_year, self.start_month, self.start_day)
+
+    def set_start_date(self, start_date):
+        self.start_year = start_date.year
+        self.start_month = start_date.month
+
+    start_date = property(get_start_date, set_start_date)
+
+    def get_end_date(self):
+        return date(self.end_year, self.end_month, self.end_day)
+
+    def set_end_date(self, end_date):
+        self.end_year = end_date.year
+        self.end_month = end_date.month
+
+    end_date = property(get_end_date, set_end_date)

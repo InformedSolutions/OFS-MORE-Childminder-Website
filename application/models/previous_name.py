@@ -1,3 +1,4 @@
+from datetime import date
 from uuid import uuid4
 from django.db import models
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -32,6 +33,14 @@ class PreviousName(models.Model):
     middle_names = models.CharField(max_length=200, blank=True)
     last_name = models.CharField(max_length=200, blank=True)
 
+    # Date fields
+    start_day = models.IntegerField(blank=True, null=True)
+    start_month = models.IntegerField(blank=True, null=True)
+    start_year = models.IntegerField(blank=True, null=True)
+    end_day = models.IntegerField(blank=True, null=True)
+    end_month = models.IntegerField(blank=True, null=True)
+    end_year = models.IntegerField(blank=True, null=True)
+
     @property
     def person(self):
         """
@@ -50,3 +59,20 @@ class PreviousName(models.Model):
     class Meta:
         db_table = 'PREVIOUS_NAME'
 
+    def get_start_date(self):
+        return date(self.start_year, self.start_month, self.start_day)
+
+    def set_start_date(self, start_date):
+        self.start_year = start_date.year
+        self.start_month = start_date.month
+
+    start_date = property(get_start_date, set_start_date)
+
+    def get_end_date(self):
+        return date(self.end_year, self.end_month, self.end_day)
+
+    def set_end_date(self, end_date):
+        self.end_year = end_date.year
+        self.end_month = end_date.month
+
+    end_date = property(get_end_date, set_end_date)
