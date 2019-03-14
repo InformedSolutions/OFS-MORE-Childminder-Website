@@ -57,6 +57,7 @@ class ApplicantName(models.Model):
     def set_start_date(self, start_date):
         self.start_year = start_date.year
         self.start_month = start_date.month
+        self.start_day = start_date.day
         
     start_date = property(get_start_date, set_start_date)
 
@@ -66,6 +67,7 @@ class ApplicantName(models.Model):
     def set_end_date(self, end_date):
         self.end_year = end_date.year
         self.end_month = end_date.month
+        self.end_day = end_date.day
         
     end_date = property(get_end_date, set_end_date)
 

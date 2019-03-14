@@ -45,12 +45,12 @@ class AdultInHome(models.Model):
     within_three_months = models.NullBooleanField(blank=True)  # dbs was issued within three months of lookup?
 
     # Current name fields
-    start_day = models.IntegerField(blank=True, null=True)
-    start_month = models.IntegerField(blank=True, null=True)
-    start_year = models.IntegerField(blank=True, null=True)
-    end_day = models.IntegerField(blank=True, null=True)
-    end_month = models.IntegerField(blank=True, null=True)
-    end_year = models.IntegerField(blank=True, null=True)
+    name_start_day = models.IntegerField(blank=True, null=True)
+    name_start_month = models.IntegerField(blank=True, null=True)
+    name_start_year = models.IntegerField(blank=True, null=True)
+    name_end_day = models.IntegerField(blank=True, null=True)
+    name_end_month = models.IntegerField(blank=True, null=True)
+    name_end_year = models.IntegerField(blank=True, null=True)
 
     @property
     def timelog_fields(self):
@@ -96,20 +96,22 @@ class AdultInHome(models.Model):
     class Meta:
         db_table = 'ADULT_IN_HOME'
 
-    def get_start_date(self):
-        return date(self.start_year, self.start_month, self.start_day)
+    def get_name_start_date(self):
+        return date(self.name_start_year, self.name_start_month, self.name_start_day)
 
-    def set_start_date(self, start_date):
-        self.start_year = start_date.year
-        self.start_month = start_date.month
+    def set_name_start_date(self, start_date):
+        self.name_start_year = start_date.year
+        self.name_start_month = start_date.month
+        self.name_start_day = start_date.day
 
-    start_date = property(get_start_date, set_start_date)
+    start_date = property(get_name_start_date, set_name_start_date)
 
-    def get_end_date(self):
-        return date(self.end_year, self.end_month, self.end_day)
+    def get_name_end_date(self):
+        return date(self.name_end_year, self.name_end_month, self.name_end_day)
 
-    def set_end_date(self, end_date):
-        self.end_year = end_date.year
-        self.end_month = end_date.month
+    def set_name_end_date(self, end_date):
+        self.name_end_year = end_date.year
+        self.name_end_month = end_date.month
+        self.name_end_day = end_date.day
 
-    end_date = property(get_end_date, set_end_date)
+    end_date = property(get_name_end_date, set_name_end_date)
