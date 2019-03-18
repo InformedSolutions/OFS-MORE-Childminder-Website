@@ -1,110 +1,17 @@
 """
 OFS-MORE-CCN3: Apply to be a Childminder Beta
--- customfields.py --
+-- fields.py --
 @author: Informed Solutions
 """
 
 import datetime
+import govuk_forms.widgets
+
 from django import forms
-from django.forms import widgets
 from django.utils.timezone import now
 from django.utils.translation import gettext, gettext_lazy as _
-from govuk_forms.widgets import SplitHiddenDateWidget, SplitDateWidget
 
-
-# Custom creation of an expiry date (month and year) field
-# Creating a widget class
-class Widget(widgets.Widget):
-    """
-    Class to define the base widget from which any custom fields can inherit from, contains links to html and css from
-    which to build thess widgets. This class shouldnt really be edited and has been taken from the govuk-template-forms
-    library
-    """
-    input_classes = 'form-control'
-    input_error_classes = 'form-control-error'
-
-    def build_attrs(self, base_attrs, extra_attrs=None):
-        """
-        A method to define the attributes to build in the widget
-        :param base_attrs: The set of attributes is used to build the attrs object which contains the exact css classes
-        to use
-        :param extra_attrs: Any extra attributes to be used
-        :return: Returns the attributes object to be used in rendering of the form
-        """
-        attrs = super().build_attrs(base_attrs, extra_attrs=extra_attrs)
-        css_classes = self.input_classes() if callable(self.input_classes) else self.input_classes
-        attrs['class'] = ('%s %s' % (attrs.get('class', ''), css_classes)).strip()
-        return attrs
-
-
-# Creating a base multi-widget class
-class MultiWidget(widgets.MultiWidget, Widget):
-    """
-    A class used to define a base widget that has the ability to contain multiple widgets
-    """
-    subwidget_group_classes = ()
-    subwidget_label_classes = ()
-    subwidget_labels = ()
-
-    def get_context(self, name, value, attrs):
-        """
-        :param name: The name of the widget
-        :param value:
-        :param attrs: The attrs object from the base widget
-        :return: Returns the list of classes for each subwidget
-        """
-        context = super().get_context(name, value, attrs)
-        iterator = zip(context['widget']['subwidgets'],
-                       self.subwidget_group_classes,
-                       self.subwidget_label_classes,
-                       self.subwidget_labels)
-        for subwidget, group_classes, label_classes, label in iterator:
-            subwidget.update(
-                group_classes=group_classes,
-                label_classes=label_classes,
-                label=label,
-            )
-        return context
-
-    def decompress(self, value):
-        """
-        This decompress should never get directly called as specifc widgets need to be implemented
-        :param value:Anything that is passed into the Multiwidget class
-        :return: NotImplementError specifies this class has not been implemented/inherited
-        """
-        raise NotImplementedError
-
-
-class ExpirySplitDateWidget(MultiWidget):
-    """
-    This is an implementation of the Multiwidget class used to ask for an expiry date of a credit card, this takes base
-    code from the default SplitDateWidget class in govuk-template-forms
-    """
-    template_name = 'govuk_forms/widgets/split-date.html'
-    subwidget_group_classes = ('form-group form-group-month',
-                               'form-group form-group-year')
-    subwidget_label_classes = ('form-label', 'form-label')  # or form-label-bold
-    subwidget_labels = (_('Month'), _('Year'))
-
-    def __init__(self, attrs=None):
-        """
-        Initialisation of the class which defines the two date widgets (month and year) that will be used in the widget
-        :param attrs: Any attributes to be passed to the individual widget definitions
-        """
-        date_widgets = (widgets.NumberInput(attrs=attrs),
-                        widgets.NumberInput(attrs=attrs),)
-        super().__init__(date_widgets, attrs)
-
-    def decompress(self, value):
-        """
-        Cleaning/Decompressing this class will result in this method being called, this will return the two entry parts
-        should they exist, will returned nothing if called with empty parameters
-        :param value: The object that contains the value of both the expiry month and the expiry year
-        :return:
-        """
-        if value:
-            return [value.month, value.year]
-        return [None, None]
+from application.widgets import ExpirySplitDateWidget, TimeKnownSplitDateWidget
 
 
 class YearField(forms.IntegerField):
@@ -159,7 +66,7 @@ class ExpirySplitDateField(forms.MultiValueField):
     fields
     """
     widget = ExpirySplitDateWidget
-    hidden_widget = SplitHiddenDateWidget
+    hidden_widget = govuk_forms.widgets.SplitHiddenDateWidget
     default_error_messages = {
         'invalid': _('Check the expiry date or use a new card')
     }
@@ -218,42 +125,12 @@ class ExpirySplitDateField(forms.MultiValueField):
         return attrs
 
 
-class TimeKnownSplitDateWidget(MultiWidget):
-    """
-    A class to define the overall split date widget for implementing the time known date type and validation
-    """
-    template_name = 'govuk_forms/widgets/split-date.html'
-    subwidget_group_classes = ('form-group form-group-year',
-                               'form-group form-group-month',)
-    subwidget_label_classes = ('form-hint', 'form-hint')
-    subwidget_labels = (_('Years'), _('Months'))
-
-    def __init__(self, attrs=None):
-        """
-        Constructor defines both the field types to be used in the two dates
-        :param attrs: Any attributes to be passed into the individual widget creation
-        """
-        date_widgets = (widgets.NumberInput(attrs=attrs),
-                        widgets.NumberInput(attrs=attrs),)
-        super().__init__(date_widgets, attrs)
-
-    def decompress(self, value):
-        """
-        Parses out each field from the resultant value object from the form
-        :param value: The object to be parsed
-        :return: Returns a list of the parsed values
-        """
-        if value:
-            return [value[0], value[1]]
-        return [None, None]
-
-
 class TimeKnownField(forms.MultiValueField):
     """
     Class that defines the field type used for both month and years in the TimeKnownWidget
     """
     widget = TimeKnownSplitDateWidget
-    hidden_widget = SplitHiddenDateWidget
+    hidden_widget = govuk_forms.widgets.SplitHiddenDateWidget
     default_error_messages = {
         'invalid': _('Enter a valid date')
     }
@@ -315,60 +192,9 @@ class TimeKnownField(forms.MultiValueField):
         return attrs
 
 
-class SelectDateWidget(MultiWidget):
-    template_name = 'govuk_forms/widgets/split-date.html'
-    select_widget = widgets.Select
-    none_value = (0, _('Not set'))
-    subwidget_group_classes = ('form-group form-group-month-select',
-                               'form-group form-group-year-select')
-    subwidget_label_classes = ('form-label', 'form-label')  # or form-label-bold
-    subwidget_labels = (_('Month'), _('Year'))
-
-    def __init__(self, attrs=None, years=None, months=None, empty_label=None):
-        this_year = datetime.date.today().year
-        self.years = []
-        year_gen = ((i, i) for i in years or range(this_year, this_year + 10))
-        self.years.append((None, 'YYYY'))
-        for year in year_gen:
-            self.years.append(year)
-        self.months = []
-        month_gen = ((i, i) for i in months or range(1, 13))
-        self.months.append((None, 'MM'))
-        for month in month_gen:
-            self.months.append(month)
-
-        if isinstance(empty_label, (list, tuple)):
-            self.year_none_value = (0, empty_label[0])
-            self.month_none_value = (0, empty_label[1])
-        else:
-            none_value = (0, empty_label) if empty_label is not None else self.none_value
-            self.year_none_value = none_value
-            self.month_none_value = none_value
-
-        date_widgets = (self.select_widget(attrs=attrs, choices=self.months),
-                        self.select_widget(attrs=attrs, choices=self.years))
-        super().__init__(date_widgets, attrs=attrs)
-
-    def get_context(self, name, value, attrs):
-        iterators = zip(
-            self.widgets,
-            (self.months, self.years),
-            (self.month_none_value, self.year_none_value)
-        )
-        for widget, choices, none_value in iterators:
-            widget.is_required = self.is_required
-            widget.choices = choices if self.is_required else [none_value] + choices
-        return super().get_context(name, value, attrs)
-
-    def decompress(self, value):
-        if value:
-            return [value.month, value.year]
-        return [None, None]
-
-
 class CustomSplitDateFieldDOB(forms.MultiValueField):
-    widget = SplitDateWidget
-    hidden_widget = SplitHiddenDateWidget
+    widget = govuk_forms.widgets.SplitDateWidget
+    hidden_widget = govuk_forms.widgets.SplitHiddenDateWidget
     default_error_messages = {
         'invalid': _('Please enter a valid date')
     }
@@ -405,7 +231,7 @@ class CustomSplitDateFieldDOB(forms.MultiValueField):
 
     def widget_attrs(self, widget):
         attrs = super().widget_attrs(widget)
-        if not isinstance(widget, SplitDateWidget):
+        if not isinstance(widget, govuk_forms.widgets.SplitDateWidget):
             return attrs
         for subfield, subwidget in zip(self.fields, widget.widgets):
             if subfield.min_value is not None:
@@ -448,8 +274,8 @@ class CustomYearFieldDOB(forms.IntegerField):
 
 
 class CustomSplitDateField(forms.MultiValueField):
-    widget = SplitDateWidget
-    hidden_widget = SplitHiddenDateWidget
+    widget = govuk_forms.widgets.SplitDateWidget
+    hidden_widget = govuk_forms.widgets.SplitHiddenDateWidget
     default_error_messages = {
         'invalid': _('Please check the date of the course')
     }
@@ -490,7 +316,7 @@ class CustomSplitDateField(forms.MultiValueField):
 
     def widget_attrs(self, widget):
         attrs = super().widget_attrs(widget)
-        if not isinstance(widget, SplitDateWidget):
+        if not isinstance(widget, govuk_forms.widgets.SplitDateWidget):
             return attrs
         for subfield, subwidget in zip(self.fields, widget.widgets):
             if subfield.min_value is not None:

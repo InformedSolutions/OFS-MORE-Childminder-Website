@@ -111,13 +111,6 @@
       }
    },
    {
-      "model":"application.applicationreference",
-      "pk":1,
-      "fields":{
-         "reference":1000001
-      }
-   },
-   {
       "model":"application.childinhome",
       "pk":"74f4708e-f29c-4b5c-b1b6-999820797da7",
       "fields":{

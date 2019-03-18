@@ -4,12 +4,21 @@ from .base import *
 
 DEBUG = True
 
-# Override default url for local dev
-PUBLIC_APPLICATION_URL = 'http://localhost:8000/childminder'
+EXECUTING_AS_TEST = 'True'
+
+PUBLIC_APPLICATION_URL = from_env('PUBLIC_APPLICATION_URL', 'http://localhost:8000/childminder')
+
+PAYMENT_URL = from_env('APP_PAYMENT_URL', 'http://localhost:8001/payment-gateway')
+
+ADDRESSING_URL = from_env('APP_ADDRESSING_URL', 'http://localhost:8002/addressing-service')
+
+NOTIFY_URL = from_env('APP_NOTIFY_URL', 'http://localhost:8003/notify-gateway')
+
+# Base URL of integration adapter for interfacing with NOO
+INTEGRATION_ADAPTER_URL = from_env('APP_INTEGRATION_ADAPTER', 'http://localhost:8004/integration-adapter')
 
 INTERNAL_IPS = ["127.0.0.1", "localhost"]
 
-# Workdaround for docker
 INTERNAL_IPS += [socket.gethostbyname(socket.gethostname())[:-1] + '1']
 
 ALLOWED_HOSTS = ['*']
@@ -33,11 +42,11 @@ EMAIL_EXPIRY = 1
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': from_env('POSTGRES_DB', 'postgres'),
-        'USER': from_env('POSTGRES_USER', 'ofsted'),
-        'PASSWORD': from_env('POSTGRES_PASSWORD', 'OfstedB3ta'),
-        'HOST': from_env('POSTGRES_HOST', '130.130.52.132'),
-        'PORT': from_env('POSTGRES_PORT', '5462')
+        'NAME': from_env('POSTGRES_DB', 'ofs'),
+        'USER': from_env('POSTGRES_USER', 'ofs'),
+        'PASSWORD': from_env('POSTGRES_PASSWORD', 'ofs'),
+        'HOST': from_env('POSTGRES_HOST', 'localhost'),
+        'PORT': from_env('POSTGRES_PORT', '5432')
     }
 }
 
@@ -82,3 +91,16 @@ LOGGING = {
         },
     },
 }
+
+# AWS SQS keys
+AWS_SQS_ACCESS_KEY_ID = from_env('AWS_SQS_ACCESS_KEY_ID')
+AWS_SQS_SECRET_ACCESS_KEY = from_env('AWS_SQS_SECRET_ACCESS_KEY')
+
+SQS_QUEUE_PREFIX = from_env('SQS_QUEUE_PREFIX', 'DEV')
+PAYMENT_NOTIFICATIONS_QUEUE_NAME = SQS_QUEUE_PREFIX + '_PAYMENT_NOTIFICATIONS'
+
+# The prefix added before a URN for finance system reconciliation purposes
+PAYMENT_URN_PREFIX = 'EY'
+
+# The prefix used to distinguish Worldpay payment entries for MORE
+PAYMENT_REFERENCE_PREFIX = 'MO'

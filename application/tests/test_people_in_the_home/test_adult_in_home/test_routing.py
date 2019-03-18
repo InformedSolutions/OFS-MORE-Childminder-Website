@@ -1,17 +1,15 @@
 from unittest import mock
 
 from django.core.management import call_command
-from django.test import TestCase
-
-from ...models import AdultInHome, Application
-from .base import ApplicationTestBase
+from django.test import TestCase, tag
 from django.urls import reverse
-from application.views.other_people_health_check import thank_you as thank_you_view
-from ...views.dbs import NO_ADDITIONAL_CERTIFICATE_INFORMATION
-from ...views.other_people_health_check.thank_you import ThankYou
+
+from application.views.dbs import NO_ADDITIONAL_CERTIFICATE_INFORMATION
+from application.views.other_people_health_check.thank_you import ThankYou
 
 
-class AdultInHomeTests(TestCase, ApplicationTestBase):
+@tag('http')
+class AdultInHomeFunctionalTests(TestCase):
     """
     Test class for assuring adults in home functionality.
     """
@@ -19,11 +17,7 @@ class AdultInHomeTests(TestCase, ApplicationTestBase):
         # Load fixtures to populate a test application
         call_command("loaddata", "adult_in_home.json", verbosity=0)
 
-    def authenticate_client(self):
-        return self.client.get(
-            reverse('Health-Check-Authentication', args={'1318336'}),
-            follow=True
-        )
+    # -------------
 
     def test_can_access_healthcheck_pages_as_additional_adult(self):
         # Note login token taken from adult_in_home dump file
@@ -467,7 +461,6 @@ class AdultInHomeTests(TestCase, ApplicationTestBase):
         self.assertEqual(email_template, None)
         self.assertEqual(template, 'other_people_health_check/thank_you_neither.html')
 
-
     def test_confirmation_email_template_capita_lived_abroad(self):
         capita = True
         certificate_information = NO_ADDITIONAL_CERTIFICATE_INFORMATION[0]
@@ -481,4 +474,10 @@ class AdultInHomeTests(TestCase, ApplicationTestBase):
         self.assertEqual(email_template, 'b598fceb-8c3d-46c3-a2fd-7f1568fa7b14')
         self.assertEqual(template, 'other_people_health_check/thank_you_abroad.html')
 
+    # Helper methods ----------------
 
+    def authenticate_client(self):
+        return self.client.get(
+            reverse('Health-Check-Authentication', args={'1318336'}),
+            follow=True
+        )

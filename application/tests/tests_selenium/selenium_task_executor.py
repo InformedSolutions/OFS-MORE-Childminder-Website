@@ -697,7 +697,11 @@ class SeleniumTaskExecutor:
         :param cardholder_name: the cardholders name to be used for payment
         :param cvc: the cvc code to be used for payment
         """
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock:
+        with mock.patch('application.payment_service.make_payment') as post_payment_mock, \
+            mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock:
+
+            application_reference_mock.return_value = 'TESTURN'
+
             test_payment_response = {
                 "customerOrderCode": "TEST",
                 "lastEvent": "AUTHORISED"
