@@ -13,36 +13,6 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.AddField(
-            model_name='adultinhome',
-            name='moved_in_day',
-            field=models.IntegerField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='adultinhome',
-            name='moved_in_month',
-            field=models.IntegerField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='adultinhome',
-            name='moved_in_year',
-            field=models.IntegerField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='adultinhome',
-            name='moved_out_day',
-            field=models.IntegerField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='adultinhome',
-            name='moved_out_month',
-            field=models.IntegerField(blank=True, null=True),
-        ),
-        migrations.AddField(
-            model_name='adultinhome',
-            name='moved_out_year',
-            field=models.IntegerField(blank=True, null=True),
-        ),
-        migrations.AddField(
             model_name='applicantpersonaldetails',
             name='moved_in_day',
             field=models.IntegerField(blank=True, null=True),

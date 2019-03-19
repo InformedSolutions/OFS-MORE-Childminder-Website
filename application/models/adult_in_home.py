@@ -52,14 +52,6 @@ class AdultInHome(models.Model):
     name_end_month = models.IntegerField(blank=True, null=True)
     name_end_year = models.IntegerField(blank=True, null=True)
 
-    # Current moved_in date fields
-    moved_in_day = models.IntegerField(blank=True, null=True)
-    moved_in_month = models.IntegerField(blank=True, null=True)
-    moved_in_year = models.IntegerField(blank=True, null=True)
-    moved_out_day = models.IntegerField(blank=True, null=True)
-    moved_out_month = models.IntegerField(blank=True, null=True)
-    moved_out_year = models.IntegerField(blank=True, null=True)
-
     @property
     def timelog_fields(self):
         """
@@ -123,23 +115,3 @@ class AdultInHome(models.Model):
         self.name_end_day = end_date.day
 
     end_date = property(get_name_end_date, set_name_end_date)
-
-    def get_moved_in_date(self):
-        return date(self.moved_in_year, self.moved_in_month, self.moved_in_day)
-
-    def set_moved_in_date(self, moved_in_date):
-        self.moved_in_year = moved_in_date.year
-        self.moved_in_month = moved_in_date.month
-        self.moved_in_day = moved_in_date.day
-
-    moved_in_date = property(get_moved_in_date, set_moved_in_date)
-
-    def get_moved_out_date(self):
-        return date(self.moved_out_year, self.moved_out_month, self.moved_out_day)
-
-    def set_moved_out_date(self, moved_out_date):
-        self.moved_out_year = moved_out_date.year
-        self.moved_out_month = moved_out_date.month
-        self.moved_out_day = moved_out_date.day
-
-    moved_out_date = property(get_moved_out_date, set_moved_out_date)
