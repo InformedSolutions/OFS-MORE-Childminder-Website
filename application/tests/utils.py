@@ -176,7 +176,6 @@ def make_test_application():
     models.ApplicantHomeAddress.objects.create(
         application_id=application,
         personal_detail_id=applicant_personal_details,
-        move_in_month=1, move_in_year=2001,
         current_address=True,
         childcare_address=True,
     )

@@ -781,7 +781,6 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
         self.home_address = models.ApplicantHomeAddress.objects.create(
             application_id=self.application,
             personal_detail_id=self.personal_details,
-            move_in_month=7, move_in_year=2005,
             current_address=True,
         )
         self.childcare_type = models.ChildcareType.objects.create(

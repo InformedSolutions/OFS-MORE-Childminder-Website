@@ -212,8 +212,6 @@ def personal_home_address_logic(app_id, form):
             postcode=postcode,
             childcare_address=None,
             current_address=True,
-            move_in_month=0,
-            move_in_year=0,
             personal_detail_id=personal_detail_record,
             application_id=app_obj
         )
