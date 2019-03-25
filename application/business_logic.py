@@ -315,8 +315,8 @@ def personal_childcare_address_logic(application_id_local, form):
                                            childcare_address='True').count() == 0:
         childcare_address_record = ApplicantHomeAddress(street_line1=street_line1, street_line2=street_line2, town=town,
                                                         county=county, country='United Kingdom', postcode=postcode,
-                                                        childcare_address=True, current_address=False, move_in_month=0,
-                                                        move_in_year=0, personal_detail_id=personal_detail_record,
+                                                        childcare_address=True, current_address=False,
+                                                        personal_detail_id=personal_detail_record,
                                                         application_id=application_id_local)
         childcare_address_record.save()
     # If the user previously entered information for this task

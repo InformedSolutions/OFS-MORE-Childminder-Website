@@ -256,8 +256,6 @@ def personal_details_home_address(request):
                                                            postcode=postcode,
                                                            current_address=True,
                                                            childcare_address=None,
-                                                           move_in_month=0,
-                                                           move_in_year=0,
                                                            personal_detail_id=applicant,
                                                            application_id=application)
                 home_address_record.save()
@@ -383,8 +381,6 @@ def personal_details_home_address_select(request):
                                                            postcode=postcode,
                                                            childcare_address=None,
                                                            current_address=True,
-                                                           move_in_month=0,
-                                                           move_in_year=0,
                                                            personal_detail_id=personal_detail_record,
                                                            application_id=app_id)
                 home_address_record.save()
@@ -591,8 +587,6 @@ def personal_details_childcare_address(request):
                                                                 postcode=postcode,
                                                                 current_address=False,
                                                                 childcare_address=True,
-                                                                move_in_month=0,
-                                                                move_in_year=0,
                                                                 personal_detail_id=applicant,
                                                                 application_id=application)
                 childcare_address_record.save()
@@ -725,8 +719,6 @@ def personal_details_childcare_address_select(request):
                                                                 postcode=postcode,
                                                                 childcare_address=True,
                                                                 current_address=False,
-                                                                move_in_month=0,
-                                                                move_in_year=0,
                                                                 personal_detail_id=personal_detail_record,
                                                                 application_id=app_id)
                 childcare_address_record.save()
@@ -821,8 +813,6 @@ def personal_details_childcare_address_manual(request):
                                                                 postcode=postcode,
                                                                 current_address=False,
                                                                 childcare_address=True,
-                                                                move_in_month=0,
-                                                                move_in_year=0,
                                                                 personal_detail_id=applicant,
                                                                 application_id=application)
                 childcare_address_record.save()
