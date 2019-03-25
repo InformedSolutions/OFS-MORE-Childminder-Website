@@ -209,9 +209,7 @@
          "country":"United Kingdom",
          "postcode":"TD9 5JS",
          "childcare_address":true,
-         "current_address":true,
-         "move_in_month":0,
-         "move_in_year":0
+         "current_address":true
       }
    },
    {
