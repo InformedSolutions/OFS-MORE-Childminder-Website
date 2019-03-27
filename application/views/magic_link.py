@@ -190,6 +190,8 @@ def validate_magic_link(request, id):
                 CustomAuthenticationHandler.create_session(response, acc.email)
                 # Update date last accessed when successfully logged in
                 application.date_last_accessed = timezone.now()
+                # reset expiry email sent to false if expiry email has been sent
+                application.application_expiry_email_sent = False
                 application.save()
                 return response
             if len(acc.mobile_number) == 0:
@@ -200,6 +202,8 @@ def validate_magic_link(request, id):
                 acc.save()
                 # Update date last accessed when successfully logged in
                 application.date_last_accessed = timezone.now()
+                # reset expiry email sent to false if expiry email has been sent
+                application.application_expiry_email_sent = False
                 application.save()
                 return response
 
