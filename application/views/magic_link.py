@@ -183,17 +183,9 @@ def validate_magic_link(request, id):
         application = Application.objects.get(application_id=app_id)
         if not has_expired(exp) and len(id) > 0:
             acc.email_expiry_date = 0
-            if 'email' in request.GET:
-                acc.email = request.GET['email']
+            if acc.email != acc.change_email:
+                acc.email = acc.change_email
                 acc.save()
-                response = HttpResponseRedirect(reverse('Task-List-View') + '?id=' + str(app_id))
-                CustomAuthenticationHandler.create_session(response, acc.email)
-                # Update date last accessed when successfully logged in
-                application.date_last_accessed = timezone.now()
-                # reset expiry email sent to false if expiry email has been sent
-                application.application_expiry_email_sent = False
-                application.save()
-                return response
             if len(acc.mobile_number) == 0:
                 acc.save()
                 response = HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + str(app_id))
