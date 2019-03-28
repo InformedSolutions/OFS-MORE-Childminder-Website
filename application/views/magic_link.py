@@ -183,16 +183,10 @@ def validate_magic_link(request, id):
         application = Application.objects.get(application_id=app_id)
         if not has_expired(exp) and len(id) > 0:
             acc.email_expiry_date = 0
-            # Changing email
-            if 'email' in request.GET:
-                acc.email = request.GET['email']
+            if acc.email != acc.change_email:
+                acc.email = acc.change_email
                 acc.save()
-                response = HttpResponseRedirect(reverse('Task-List-View') + '?id=' + str(app_id))
-                # user should be already logged in to change email, but update the session with new email
-                CustomAuthenticationHandler.create_session(response, acc.email)
-                return response
-            # First sign-in (no mobile yet, sms check not required)
-            elif len(acc.mobile_number) == 0:
+            if len(acc.mobile_number) == 0:
                 acc.save()
                 response = HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + str(app_id))
                 CustomAuthenticationHandler.create_session(response, acc.email)
