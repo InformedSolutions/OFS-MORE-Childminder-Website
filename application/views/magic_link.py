@@ -212,6 +212,7 @@ def validate_magic_link(request, id):
             expiry = int(time.time())
             acc.magic_link_sms = rand_num
             acc.sms_expiry_date = expiry
+            application.application_expiry_email_sent = False
             acc.save()
             magic_link_text(phone, rand_num)
             return HttpResponseRedirect(settings.URL_PREFIX + '/security-code/?id=' + str(app_id))
