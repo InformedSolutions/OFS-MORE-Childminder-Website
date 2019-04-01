@@ -195,9 +195,9 @@ class ApplicationTestBase(object):
     def TestUpdateEmail(self):
         """Update email address field"""
         r = self.client.post(reverse('Contact-Email-View'), {'id': self.app_id, 'email_address': 'y@y.com'})
-
         self.assertEqual(r.status_code, 302)
         self.assertIsNot('y@y.com', UserDetails.objects.get(application_id=self.app_id).email)
+
 
     def TestUpdateEmailApostrophe(self):
         """Update email address field with apostrophe """
@@ -208,20 +208,26 @@ class ApplicationTestBase(object):
 
     def TestVerifyPhone(self):
         """Test update email address process- update, validate and redirect"""
-        self.TestUpdateEmail()
-        self.TestValidateEmail()
-        r = self.client.post(reverse('Security-Code') + '?id=' + str(self.app_id), {'id': self.app_id,
-                                                                                    'magic_link_sms': UserDetails.objects.get(
-                                                                                        application_id=self.app_id).magic_link_sms})
+        acc = UserDetails.objects.get(email="y@y.com")
+        self.client.get(
+            '/childminder/validate/' + str(acc.magic_link_email), follow=True
+        )
+        sms_code_record = UserDetails.objects.get(application_id=acc.application_id.pk)
+        sms_code = sms_code_record.magic_link_sms
+        r = self.client.post(reverse('Security-Code') + '?id=' + str(acc.application_id.pk), {'id': acc.application_id.pk,
+                                                                                    'magic_link_sms': sms_code})
         self.assertEqual(r.status_code, 302)
 
     def TestVerifyPhoneEmailApostrophe(self):
         """Test update email address process with apostrophe in email- update, validate and redirect"""
         self.TestUpdateEmailApostrophe()
-        self.TestValidateEmail()
-        r = self.client.post(reverse('Security-Code') + '?id=' + str(self.app_id), {'id': self.app_id,
+        acc = UserDetails.objects.get(email="y@y.com")
+        self.client.get(
+            '/childminder/validate/' + str(acc.magic_link_email), follow=True
+        )
+        r = self.client.post(reverse('Security-Code') + '?id=' + str(acc.application_id.pk), {'id': acc.application_id.pk,
                                                                                     'magic_link_sms': UserDetails.objects.get(
-                                                                                        application_id=self.app_id).magic_link_sms})
+                                                                                        application_id=acc.application_id.pk).magic_link_sms})
         self.assertEqual(r.status_code, 302)
 
     def TestSecurityQuestion(self):
