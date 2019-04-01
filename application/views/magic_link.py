@@ -183,7 +183,7 @@ def validate_magic_link(request, id):
         application = Application.objects.get(application_id=app_id)
         if not has_expired(exp) and len(id) > 0:
             acc.email_expiry_date = 0
-            if acc.email != acc.change_email:
+            if acc.email != acc.change_email and acc.change_email is not None:
                 acc.email = acc.change_email
                 acc.save()
             if len(acc.mobile_number) == 0:
