@@ -198,15 +198,16 @@ def validate_magic_link(request, id):
                 application.application_expiry_email_sent = False
                 application.save()
                 return response
-
-            phone = acc.mobile_number
-            rand_num = generate_random(5, 'code')
-            expiry = int(time.time())
-            acc.magic_link_sms = rand_num
-            acc.sms_expiry_date = expiry
-            acc.save()
-            magic_link_text(phone, rand_num)
-            return HttpResponseRedirect(settings.URL_PREFIX + '/security-code/?id=' + str(app_id))
+            # Subsequent sign-in (sms check required)
+            else:
+                phone = acc.mobile_number
+                rand_num = generate_random(5, 'code')
+                expiry = int(time.time())
+                acc.magic_link_sms = rand_num
+                acc.sms_expiry_date = expiry
+                acc.save()
+                magic_link_text(phone, rand_num)
+                return HttpResponseRedirect(settings.URL_PREFIX + '/security-code/?id=' + str(app_id))
         elif has_expired(exp) and acc.email_expiry_date != 0:
             return HttpResponseRedirect(settings.URL_PREFIX + '/link-expired/')
         else:
@@ -269,6 +270,7 @@ class SMSValidationView(View):
 
                     # Update date last accessed when successfully logged in
                     application.date_last_accessed = timezone.now()
+                    application.application_expiry_email_sent = False
                     application.save()
 
                     # Forward back onto application
