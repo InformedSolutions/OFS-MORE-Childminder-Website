@@ -213,27 +213,29 @@ class ApplicationTestBase(object):
         """Test update email address process- update, validate and redirect"""
         self.TestUpdateEmail()
         self.TestValidateEmail()
-        r = self.client.post(reverse('Security-Code') + '?id=' + str(self.app_id), {'id': self.app_id,
-                                                                                    'magic_link_sms': UserDetails.objects.get(
-                                                                                        application_id=self.app_id).magic_link_sms})
+        user_details = UserDetails.objects.get(application_id=self.app_id)
+        r = self.client.post(reverse('Security-Code') + '?validation=' + user_details.magic_link_email,
+                             {'validation': user_details.magic_link_email,
+                              'magic_link_sms': user_details.magic_link_sms})
         self.assertEqual(r.status_code, 302)
 
     def TestVerifyPhoneEmailApostrophe(self):
         """Test update email address process with apostrophe in email- update, validate and redirect"""
         self.TestUpdateEmailApostrophe()
         self.TestValidateEmail()
-        r = self.client.post(reverse('Security-Code') + '?id=' + str(self.app_id), {'id': self.app_id,
-                                                                                    'magic_link_sms': UserDetails.objects.get(
-                                                                                        application_id=self.app_id).magic_link_sms})
+        user_details = UserDetails.objects.get(application_id=self.app_id)
+        r = self.client.post(reverse('Security-Code') + '?validation=' + user_details.magic_link_email,
+                             {'validation': user_details.magic_link_email,
+                              'magic_link_sms': user_details.magic_link_sms})
         self.assertEqual(r.status_code, 302)
 
     def TestSecurityQuestion(self):
         """Test """
         self.test_app_email()
         self.TestValidateEmail()
-        r = self.client.post(reverse('Security-Question'), {'id': self.app_id,
-                                                            'security_answer': UserDetails.objects.get(
-                                                                application_id=self.app_id).mobile_number})
+        user_details = UserDetails.objects.get(application_id=self.app_id)
+        r = self.client.post(reverse('Security-Question'), {'validation': user_details.magic_link_email,
+                                                            'security_answer': user_details.mobile_number})
 
         self.assertEqual(r.status_code, 302)
 

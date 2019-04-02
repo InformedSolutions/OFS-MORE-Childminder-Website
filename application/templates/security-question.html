@@ -30,7 +30,7 @@
         {% csrf_token %}
         {% endfor %}
 
-        <input type="hidden" id="id" value="{{application_id}}" name="id"/>
+        <input type="hidden" name="validation" value="{{ magic_link_email }}" />
         <input type="submit" class="button" value="Save and continue" alt='Continue to declaration'>
     </div>
 </form>
