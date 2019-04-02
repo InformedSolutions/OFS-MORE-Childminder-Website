@@ -112,7 +112,8 @@ class UpdateEmailView(View):
                 application.save()
                 return HttpResponseRedirect(reverse('Contact-Summary-View') + '?id=' + app_id)
 
-            elif UserDetails.objects.filter(email=email).exists() and settings.DEBUG:
+            elif UserDetails.objects.filter(email=email).exists():
+                if settings.DEBUG:
                     print("You will not see an email validation link printed because an account"
                           " already exists with that email.")
                     return login_email_link_sent(request, app_id)
