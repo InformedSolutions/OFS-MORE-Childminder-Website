@@ -6,27 +6,68 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 """
 
 import os
-import random
-import string
-import time
 import logging
-import traceback
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.urls import reverse
-from django.utils import timezone
+from django.urls import reverse, resolve
 from django.views import View
+from django.core.exceptions import PermissionDenied
 
-from application import login_redirect_helper
+from application import login
 from application.middleware import CustomAuthenticationHandler
 from application.forms import VerifyPhoneForm
-from application.models import Application, UserDetails
 from application.notify import send_email, send_text
 
 
 log = logging.getLogger('django.server')
+
+r"""
+2-factor auth: 
+
+User is sent first validation code to entered email address. User can repeat
+this process to generate a new email link.
+
+    _O_  ---- GET sign-in page ---->
+     |   <---------- page ----------
+    / \  ---- POST email addr ----->   
+                                      Expire email code
+                                      Generate new email code 
+                                      Send email          -----> [><]
+         <-------- redirect --------  
+         --- GET email sent page -->
+         <--------- page -----------
+          
+User uses first code, via link, to be sent second code to their mobile. User
+can repeat this process to generate new sms codes too, with the same email 
+link, but are limited to three re-sends.
+
+[><]_O_  ------ GET validate ------>
+     |                                Validate email code
+    / \                               Expire SMS code
+                                      Generate new SMS code      (( * ))
+                                      Send SMS            ----->   /-\
+         <-------- redirect --------
+         ---- GET sms sent page --->
+         <-- page with email code --
+         
+User enters second code into form and submits to log in. The form posts both
+codes which are both validated.
+ 
+( * )       
+  []_O_  ----- POST sms code ------>   
+     |        with email code         Validate email code again
+    / \                               Validate SMS code
+                                      Expire email code
+                                      Expire SMS code
+                                      Create session cookie (log user in)
+         <------- redirect ---------
+         --- GET e.g. task list --->
+                                      Validate session cookie
+         <--------- page -----------
+
+"""
 
 
 def magic_link_confirmation_email(email, link_id):
@@ -135,196 +176,143 @@ def magic_link_text(phone, link_id):
     return send_text(phone, personalisation, template_id)
 
 
-def generate_random(digits, type):
-    """
-    Method to generate a random code or random string of varying size for the SMS code or Magic Link URL
-    :param digits: integer indicating the desired length
-    :param type: flag to indicate the SMS code or Magic Link URL
-    :return:
-    """
-    if type == 'code':
-        r = ''.join([random.choice(string.digits[1:]) for n in range(digits)])
-        if settings.EXECUTING_AS_TEST == 'True':
-            os.environ['SMS_VALIDATION_CODE'] = r
-            print(r)
-    elif type == 'link':
-        r = ''.join([random.choice(string.ascii_letters + string.digits) for n in range(digits)])
-    r = r.upper()
-
-    return r
-
-
-def has_expired(expiry):
-    """
-    Method to check whether a Magic Link URL or SMS code has expired
-    :param expiry:
-    :return:
-    """
-    # Expiry period is set in hours in settings.py
-    exp_period = settings.EMAIL_EXPIRY * 60 * 60
-    diff = int(time.time() - expiry)
-    if diff <= exp_period:
-        return False
-    else:
-        return True
-
-
-def validate_magic_link(request, id):
+def validate_magic_link(request, code):
     """
     Method to verify that the URL matches a magic link
     :param request: request to display a magic link page
-    :param id: magic link ID
+    :param code: magic link code
     :return: HttpResponse, directing to the correct page
     """
+    magic_email_link_code = code
     try:
-        acc = UserDetails.objects.get(magic_link_email=id)
-        app_id = acc.application_id.pk
-        exp = acc.email_expiry_date
-        application = Application.objects.get(application_id=app_id)
-        if not has_expired(exp) and len(id) > 0:
-            acc.email_expiry_date = 0
-            # Changing email
-            if 'email' in request.GET:
-                acc.email = request.GET['email']
-                acc.save()
-                response = HttpResponseRedirect(reverse('Task-List-View') + '?id=' + str(app_id))
-                # user should be already logged in to change email, but update the session with new email
-                CustomAuthenticationHandler.create_session(response, acc.email)
-                return response
-            # First sign-in (no mobile yet, sms check not required)
-            elif len(acc.mobile_number) == 0:
-                acc.save()
-                response = HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + str(app_id))
-                CustomAuthenticationHandler.create_session(response, acc.email)
-                acc.email_expiry_date = 0
-                acc.save()
-                # Update date last accessed when successfully logged in
-                application.date_last_accessed = timezone.now()
-                # reset expiry email sent to false if expiry email has been sent
-                application.application_expiry_email_sent = False
-                application.save()
-                return response
-            # Subsequent sign-in (sms check required)
-            else:
-                phone = acc.mobile_number
-                rand_num = generate_random(5, 'code')
-                expiry = int(time.time())
-                acc.magic_link_sms = rand_num
-                acc.sms_expiry_date = expiry
-                acc.save()
-                magic_link_text(phone, rand_num)
-                return HttpResponseRedirect(settings.URL_PREFIX + '/security-code/?id=' + str(app_id))
-        elif has_expired(exp) and acc.email_expiry_date != 0:
-            return HttpResponseRedirect(settings.URL_PREFIX + '/link-expired/')
-        else:
-            return HttpResponseRedirect(settings.URL_PREFIX + '/link-used/')
-    except Exception as ex:
-        exception_data = traceback.format_exc().splitlines()
-        exception_array = [exception_data[-3:]]
-        log.error(exception_array)
-        return HttpResponseRedirect(settings.URL_PREFIX + '/link-used/')
+        user_details = login.magic_link_validation(magic_email_link_code)
+    except PermissionDenied as e:
+        return login.invalid_email_link_redirect(e)
+
+    # Changing email
+    if 'email' in request.GET:
+        if CustomAuthenticationHandler.get_session_user(request) is None:
+            # not signed in
+            raise PermissionDenied()
+        # expire link
+        user_details.email_expiry_date = 0
+        # update email
+        user_details.email = request.GET['email']
+        user_details.save()
+        response = HttpResponseRedirect(reverse('Task-List-View') + '?id=' + str(user_details.application_id.pk))
+        # user should be already logged in to change email, but update the session with new email
+        CustomAuthenticationHandler.create_session(response, user_details.email)
+        return response
+
+    # First sign-in (no mobile yet, sms check not required)
+    elif len(user_details.mobile_number) == 0:
+        # Successful login.
+        response = HttpResponseRedirect(reverse('Contact-Phone-View') + '?id=' + str(user_details.application_id.pk))
+        login.log_user_in(user_details, response)
+        return response
+
+    # Subsequent sign-in (sms check required)
+    else:
+        # don't expire magic link yet - allow it to be used to re-send sms.
+        # Increment the resend counter each time this link is used
+        if not login.refresh_and_check_sms_resends(user_details):
+            return login.invalid_sms_code_redirect(magic_email_link_code)
+
+        # create and send sms code
+        login.create_and_send_sms_code(user_details)
+
+        # pass email validation code to form page so it can be re-validated as well as sms code.
+        return HttpResponseRedirect(settings.URL_PREFIX + '/security-code/?validation=' + magic_email_link_code)
 
 
 class SMSValidationView(View):
+
     def get(self, request):
-        id = request.GET['id']
-        application = Application.objects.get(pk=id)
-        acc = UserDetails.objects.get(application_id=application)
-        form = VerifyPhoneForm(id=id)
 
-        # Max 3 resend attempts in 24 hours.
-        if has_expired(acc.sms_resend_attempts_expiry_date):
-            acc.sms_resend_attempts_expiry_date = 0
+        magic_link_email = request.GET['validation']
+        try:
+            user_details = login.magic_link_validation(magic_link_email)
+        except PermissionDenied as e:
+            return login.invalid_email_link_redirect(e)
 
-        if request.META.get('HTTP_REFERER') is not None:  # If they have come from email validation link, this is None.
-            code_resent = True
-        else:
-            code_resent = False
+        form = VerifyPhoneForm(correct_sms_code='')
 
-        variables = {
-            'form': form,
-            'id': id,
-            'phone_number': acc.mobile_number[-3:],
-            'url': reverse('Security-Question') + '?id=' + str(application.application_id),
-            'code_resent': code_resent,
-            'sms_resend_attempts': acc.sms_resend_attempts,
-        }
-        return render(request, template_name='verify-phone.html', context=variables)
+        return self._render_page(request, user_details, form)
 
     def post(self, request):
-        id = request.GET['id']
-        application = Application.objects.get(pk=id)
-        acc = UserDetails.objects.get(application_id=application)
-        code = request.POST['magic_link_sms']
-        form = VerifyPhoneForm(request.POST, id=id, correct_sms_code=acc.magic_link_sms)
-        if len(code) > 0:
-            exp = acc.sms_expiry_date
 
-            if form.is_valid():
+        magic_link_email = request.POST['validation']
+        try:
+            user_details = login.magic_link_validation(magic_link_email)
+        except PermissionDenied as e:
+            return login.invalid_email_link_redirect(e)
 
-                if not has_expired(exp):
+        form = VerifyPhoneForm(request.POST, correct_sms_code=user_details.magic_link_sms)
 
-                    response = login_redirect_helper.redirect_by_status(application)
+        if form.is_valid():
 
-                    # Create session issue custom cookie to user
-                    CustomAuthenticationHandler.create_session(response, acc.email)
+            try:
+                login.sms_code_validation(user_details, form.cleaned_data['magic_link_sms'])
+            except PermissionDenied:
+                # Ensure sign out and ask security question if SMS code has expired/already been used once
+                response = login.invalid_sms_code_redirect(magic_link_email)
+                CustomAuthenticationHandler.destroy_session(response)
+                return response
 
-                    acc.sms_resend_attempts = 0
-                    # Set SMS code to expired after a one time successful login
-                    acc.sms_expiry_date = int(time.time()) - ((settings.EMAIL_EXPIRY + 1) * 60 * 60)
-                    acc.save()
+            # Successful login
+            application = user_details.application_id
+            response = login.redirect_by_status(application)
+            login.log_user_in(user_details, response)
+            return response
 
-                    # Update date last accessed when successfully logged in
-                    application.date_last_accessed = timezone.now()
-                    application.application_expiry_email_sent = False
-                    application.save()
+        return self._render_page(request, user_details, form)
 
-                    # Forward back onto application
-                    return response
+    def _render_page(self, request, user_details, form):
 
-                else:
+        # Don't care if user is out of re-sends here - we just display a different message on the page
+        login.refresh_and_check_sms_resends(user_details)
 
-                    # Ensure sign out and ask security question if SMS code has expired/already been used once
-                    response = HttpResponseRedirect(reverse('Security-Question') + '?id=' + id)
-
-                    CustomAuthenticationHandler.destroy_session(response)
-
-                    return response
+        # If they have come from email validation link, this is None.
+        code_resent = request.META.get('HTTP_REFERER') is not None
 
         variables = {
             'form': form,
-            'id': id,
-            'phone_number': acc.mobile_number[-3:],
-            'url': reverse('Security-Question') + '?id=' + str(application.application_id),
-            'sms_resend_atempts': acc.sms_resend_attempts,
+            'magic_link_email': user_details.magic_link_email,
+            'phone_number_end': user_details.mobile_number[-3:],
+            'code_resent': code_resent,
+            'sms_resend_attempts': user_details.sms_resend_attempts,
         }
         return render(request, template_name='verify-phone.html', context=variables)
 
 
 class ResendSMSCodeView(View):
-    def get(self, request):
-        id = request.GET['id']
-        acc = UserDetails.objects.get(application_id=id)
 
-        if acc.sms_resend_attempts >= 3:
-            return HttpResponseRedirect(reverse('Security-Question') + '?id=' + id)
-        else:
-            return render(request, 'resend-security-code.html', context={'id': id})
+    def get(self, request):
+
+        magic_link_email = request.GET['validation']
+        try:
+            user_details = login.magic_link_validation(magic_link_email)
+        except PermissionDenied as e:
+            return login.invalid_email_link_redirect(e)
+
+        if not login.refresh_and_check_sms_resends(user_details):
+            return login.invalid_sms_code_redirect(magic_link_email)
+
+        return render(request, 'resend-security-code.html', context={'magic_link_email': magic_link_email})
 
     def post(self, request):
-        id = request.GET['id']
-        acc = UserDetails.objects.get(application_id=id)
-        mobile_number = acc.mobile_number
-        acc.sms_expiry_date = int(time.time())
-        new_sms_code = generate_random(5, 'code')
-        acc.magic_link_sms = new_sms_code
-        magic_link_text(mobile_number, new_sms_code)
 
-        # Max 3 resend attempts in 24 hours.
-        if acc.sms_resend_attempts == 0:
-            acc.sms_resend_attempts_expiry_date = int(time.time())
+        magic_link_email = request.POST['validation']
+        try:
+            user_details = login.magic_link_validation(magic_link_email)
+        except PermissionDenied as e:
+            return login.invalid_email_link_redirect(e)
 
-        acc.sms_resend_attempts += 1
-        acc.save()
-        return HttpResponseRedirect(reverse('Security-Code') + '?id=' + id)
+        if not login.refresh_and_check_sms_resends(user_details):
+            return login.invalid_sms_code_redirect(magic_link_email)
+
+        login.create_and_send_sms_code(user_details)
+
+        return HttpResponseRedirect(reverse('Security-Code') + '?validation=' + magic_link_email)
+
 

@@ -9,6 +9,7 @@ from django.shortcuts import render
 from django.views import View
 from timeline_logger.models import TimelineLog
 
+import application.login
 from ...views import magic_link
 from ...utils import test_notify, build_url
 from ...forms import ContactEmailForm
@@ -250,7 +251,7 @@ def update_magic_link(email, app_id):
 
 
 def create_account_magic_link(account):
-    link = magic_link.generate_random(12, "link")
+    link = application.login.generate_random(12, "link")
     expiry = int(time.time())
     account.email_expiry_date = expiry
     account.magic_link_email = link

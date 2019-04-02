@@ -5,6 +5,7 @@ from django.test import TestCase
 from uuid import UUID
 from django.urls import reverse
 
+from application import login
 from ...utils import build_url
 from ...views import magic_link
 from ...models import Application, UserDetails
@@ -43,7 +44,7 @@ class TestLoginLogic(TestCase):
         app_id = str(uuid.uuid4())
         self.app_details['application_id'] = app_id
 
-        self.magic_link_str = str(magic_link.generate_random(12, "link"))
+        self.magic_link_str = str(login.generate_random(12, "link"))
         self.user_details['magic_link_email'] = self.magic_link_str
 
     def test_validation_no_details_within_24_hours(self):
@@ -101,7 +102,7 @@ class TestLoginLogic(TestCase):
         self.user_details['email_expiry_date'] = int(time.time())
         UserDetails.objects.create(**self.user_details)
 
-        response = self.client.get('/childminder/validate/' + str(magic_link.generate_random(12, "link")) + "/")
+        response = self.client.get('/childminder/validate/' + str(login.generate_random(12, "link")) + "/")
 
         self.assertEqual(response.status_code, 302)
         self.assertTrue('/link-used/' in response.url)
@@ -113,7 +114,7 @@ class TestLoginLogic(TestCase):
         self.user_details['email_expiry_date'] = int(time.time()) - 90000
         UserDetails.objects.create(**self.user_details)
 
-        response = self.client.get('/childminder/validate/' + str(magic_link.generate_random(12, "link")) + "/")
+        response = self.client.get('/childminder/validate/' + str(login.generate_random(12, "link")) + "/")
 
         self.assertEqual(response.status_code, 302)
         self.assertTrue('/link-used/' in response.url)
