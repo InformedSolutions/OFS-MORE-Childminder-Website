@@ -192,16 +192,7 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
         """
         Test that application throwing expected error message for invalid email format
         """
-        invalid_email = 'test-address@informed'
-
-        r = self.client.post(
-            reverse('New-Email'),
-            {
-                'email_address': invalid_email
-            }
-        )
-        self.assertEqual(r.status_code, 200)
-        self.assertEqual(r.context['error-summary-title'], "There was a problem with your email")
+        self.assertEqual(self.TestAppInvalidEmail(), "There was a problem with your email")
 
     def test_new_application_submit_log(self):
         """
