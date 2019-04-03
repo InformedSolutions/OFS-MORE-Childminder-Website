@@ -82,36 +82,40 @@ STATIC_URL = URL_PREFIX + '/static/'
 
 AUTHENTICATION_URL = URL_PREFIX + '/sign-in/'
 
-AUTHENTICATION_EXEMPT_URLS = (
-    r'^' + URL_PREFIX + '/$',
-    r'^' + URL_PREFIX + '/account/account/$',
-    r'^' + URL_PREFIX + '/account/email/$',
-    r'^' + URL_PREFIX + '/security-question/$',
-    r'^' + URL_PREFIX + '/email-sent/$',
-    r'^' + URL_PREFIX + '/validate/.*$',
-    r'^' + URL_PREFIX + '/code-resent/.*$',
-    r'^' + URL_PREFIX + '/security-code/.*$',
-    r'^' + URL_PREFIX + '/link-used/$',
-    r'^' + URL_PREFIX + '/link-expired/$',
-    r'^' + URL_PREFIX + '/new-code/.*$',
-    r'^' + URL_PREFIX + '/djga/+',
-    r'^' + URL_PREFIX + '/sign-in/',
-    r'^' + URL_PREFIX + '/sign-in/check-email/',
-    r'^' + URL_PREFIX + '/email-resent/',
-    r'^' + URL_PREFIX + '/sign-in/new-application/',
-    r'^' + URL_PREFIX + '/new-application/',
-    r'^' + URL_PREFIX + '/your-location/',
-    r'^' + URL_PREFIX + '/new-application/check-email/',
-    r'^' + URL_PREFIX + '/service-unavailable/',
-    r'^' + URL_PREFIX + '/help-contact/',
-    r'^' + URL_PREFIX + '/application-saved/$',
-    r'^' + URL_PREFIX + '/health-check/(?P<id>[\w-]+)/$',
-    r'^' + URL_PREFIX + '/feedback/',
-    r'^' + URL_PREFIX + '/feedback-submitted/',
-    r'^' + URL_PREFIX + '/documents-needed/',
-    r'^' + URL_PREFIX + '/home-ready/',
-    r'^' + URL_PREFIX + '/prepare-interview/'
-)
+AUTHENTICATION_EXEMPT_URLS = tuple(u.format(prefix=URL_PREFIX) for u in (
+    # omitting the trailing $ will allow *any* url starting with that pattern
+    r'^{prefix}/$',
+    r'^{prefix}/account/account/$',  # unused?
+    r'^{prefix}/account/email/$',  # unused?
+    r'^{prefix}/security-question/$',  # unused?
+    r'^{prefix}/email-sent/$',
+    r'^{prefix}/validate/.*$',
+    r'^{prefix}/code-resent/$',  # unused?
+    r'^{prefix}/security-code/.*$',
+    r'^{prefix}/link-used/$',
+    r'^{prefix}/link-expired/$',
+    r'^{prefix}/new-code/$',
+    r'^{prefix}/djga/+',
+    r'^{prefix}/sign-in/$',
+    r'^{prefix}/sign-in/check-email/$',
+    r'^{prefix}/sign-in/question/$',
+    r'^{prefix}/sign-in/question/[\w-]+/$',
+    r'^{prefix}/sign-in/new-application/$',
+    r'^{prefix}/email-resent/$',
+    r'^{prefix}/new-application/$',
+    r'^{prefix}/new-application/email-sent/$',
+    r'^{prefix}/your-location/$',
+    r'^{prefix}/new-application/check-email/$',  # unused?
+    r'^{prefix}/service-unavailable/$',
+    r'^{prefix}/help-contact/$',
+    r'^{prefix}/application-saved/$',
+    r'^{prefix}/health-check/(?P<id>[\w-]+)/$',
+    r'^{prefix}/feedback/$',
+    r'^{prefix}/feedback-submitted/$',
+    r'^{prefix}/documents-needed/$',
+    r'^{prefix}/home-ready/$',
+    r'^{prefix}/prepare-interview/$'
+))
 
 BUILTIN_APPS = [
     'django.contrib.admin',

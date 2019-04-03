@@ -15,23 +15,26 @@
     </h1>
 
     {% if code_resent %}
-        <p>We have resent a 5 digit security code by text to *********{{ phone_number }}.</p>
+        <p>We have resent a 5 digit security code by text to *********{{ phone_number_end }}.</p>
     {% else %}
-        <p>We have sent a 5 digit security code by text to *********{{ phone_number }}.</p>
+        <p>We have sent a 5 digit security code by text to *********{{ phone_number_end }}.</p>
     {% endif %}
 
     <p>This can take a minute or so to arrive.</p>
     <p>This runs out in 24 hours.</p>
     {{form.as_div}}
     {% csrf_token %}
+    <input type="hidden" name="validation" value="{{ magic_link_email }}" />
 
     <div class="form-group">
 
-        {% if sms_resend_attempts >= 3 %}
-            <a href="{% url 'Resend-Code' %}?id={{id}}&f=1">Still didn't get a code?</a>
+        {# greater than because initial send is counted #}
+        {% if sms_resend_attempts > 3 %}
+            <a href="{% url 'Resend-Code' %}?validation={{ magic_link_email }}&amp;f=1">Still didn't get a code?</a>
         {% else %}
-            <a href="{% url 'Resend-Code' %}?id={{id}}&f=1">Didn't get a code?</a>
-            <a href="{{ url }}"><p>Don't have your phone?</a>
+            <a href="{% url 'Resend-Code' %}?validation={{ magic_link_email }}&amp;f=1">Didn't get a code?</a>
+            <p>
+            <a href="{% url 'Security-Question' %}?validation={{ magic_link_email }}">Don't have your phone?</a>
         {% endif %}
 
         <input type="submit" class="button" value="Continue" alt="Continue">

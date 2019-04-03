@@ -4,11 +4,6 @@ Functional tests for views
 NOTE! If it throws you status 200, that means form submission is failing!
 
 """
-import datetime
-import uuid
-
-from uuid import uuid4
-
 from unittest import mock
 
 from django.core.urlresolvers import reverse
@@ -31,6 +26,7 @@ from ...models import (AdultInHome,
                        UserDetails)
 
 from ...views import magic_link, security_question
+from .. import utils
 
 
 class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
@@ -42,33 +38,39 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
         self.TestNewApplicationSubmit()
         super().setUp()
 
-    def TestEmailValidationDoesNotCountAsResend(self):
+    def TestEmailValidationCountsAsResend(self):
         self.TestUpdateEmail()
         self.TestValidateEmail()
 
-        self.assertEqual(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
-        self.assertEqual(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts_expiry_date)
+        self.assertEqual(1, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
 
     def TestResendCodeIncrementsCount(self):
-        r = self.client.post(reverse('Resend-Code') + '?id=' + str(self.app_id))
+        user_details = UserDetails.objects.get(application_id=self.app_id)
+        incremented = user_details.sms_resend_attempts + 1
+        r = self.client.post(reverse('Resend-Code') + '?validation=' + user_details.magic_link_email,
+                             data={'validation': user_details.magic_link_email})
 
-        self.assertEqual(1, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
+        self.assertEqual(incremented, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
         self.assertNotEqual(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts_expiry_date)
 
     def TestResendCodeRedirectsToSMSPage(self):
-        r = self.client.post(reverse('Resend-Code') + '?id=' + str(self.app_id))
+        user_details = UserDetails.objects.get(application_id=self.app_id)
+        r = self.client.post(reverse('Resend-Code') + '?validation=' + user_details.magic_link_email,
+                             data={'validation': user_details.magic_link_email})
         found = resolve(r.url)
 
         self.assertEqual(r.status_code, 302)
         self.assertEqual(found.func.view_class, magic_link.SMSValidationView.as_view().view_class)
 
     def TestFourthSMSResendRedirectsToSecurityQuestion(self):
-        UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts = 0
+        user_details = UserDetails.objects.get(application_id=self.app_id)
+        user_details.sms_resend_attempts = 0
 
         for n in range(3):
-            r = self.client.post(reverse('Resend-Code') + '?id=' + str(self.app_id))
+            r = self.client.post(reverse('Resend-Code') + '?validation=' + user_details.magic_link_email,
+                                 data={'validation': user_details.magic_link_email})
 
-        r = self.client.get(reverse('Resend-Code') + '?id=' + str(self.app_id))
+        r = self.client.get(reverse('Resend-Code') + '?validation=' + user_details.magic_link_email)
         found = resolve(r.url.split('?')[0])
 
         self.assertEqual(r.status_code, 302)
@@ -80,21 +82,11 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
         correct_sms_code = acc.magic_link_sms
         acc.save()
 
-        r = self.client.post(reverse('Security-Code') + '?id=' + str(self.app_id),
-                             {'id': self.app_id, 'magic_link_sms': correct_sms_code})
-
-        self.assertIs(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
-
-    def TestSecurityQuestionLoginResetsSMSResendNumber(self):
-        acc = UserDetails.objects.get(application_id=self.app_id)
-        acc.sms_resend_attempts = 10  # Some non-zero value.
-        acc.save()
-        # security_answer = CriminalRecordCheck.objects.get(application_id=self.app_id).dbs_certificate_number
-        security_answer = acc.mobile_number
-        r = self.client.post(reverse('Security-Question') + '?id=' + str(self.app_id),
-                             {'id': self.app_id, 'security_answer': security_answer})
-
-        self.assertIs(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
+        r = self.client.post(reverse('Security-Code') + '?validation=' + acc.magic_link_email,
+                             {'validation': acc.magic_link_email, 'magic_link_sms': correct_sms_code})
+        self.assertEqual(302, r.status_code)
+        acc.refresh_from_db()
+        self.assertIs(0, acc.sms_resend_attempts)
 
     def TestSecurityQuestionLoginResetsSMSResendNumber(self):
         acc = UserDetails.objects.get(application_id=self.app_id)
@@ -102,19 +94,11 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
         acc.save()
         # security_answer = CriminalRecordCheck.objects.get(application_id=self.app_id).dbs_certificate_number
         security_answer = acc.mobile_number
-        r = self.client.post(reverse('Security-Question') + '?id=' + str(self.app_id),
-                             {'id': self.app_id, 'security_answer': security_answer})
-
-        self.assertIs(0, UserDetails.objects.get(application_id=self.app_id).sms_resend_attempts)
-
-    def TestAppPaymentConfirmationWithNoHealthBookletNoConviction(self):
-        pass
-
-    def TestAppPaymentConfirmationWithHealthBookletNoConviction(self):
-        pass
-
-    def TestAppPaymentConfirmationWithHealthBookletAndConviction(self):
-        pass
+        r = self.client.post(reverse('Security-Question') + '?validation=' + acc.magic_link_email,
+                             {'validation': acc.magic_link_email, 'security_answer': security_answer})
+        self.assertEqual(302, r.status_code)
+        acc.refresh_from_db()
+        self.assertIs(0, acc.sms_resend_attempts)
 
     def TestNewApplicationSubmit(self):
         """Submit whole application"""
@@ -131,11 +115,12 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
             self.TestAppPhone()
             self.TestReturnToApp()
 
-            self.TestEmailValidationDoesNotCountAsResend()
+            self.TestEmailValidationCountsAsResend()
             self.TestResendCodeIncrementsCount()
             self.TestResendCodeRedirectsToSMSPage()
             self.TestFourthSMSResendRedirectsToSecurityQuestion()
             self.TestSMSLoginResetsSMSResendNumber()
+            self.TestReturnToApp()  # generate a new email code
             self.TestSecurityQuestionLoginResetsSMSResendNumber()
 
             self.TestContactSummaryView()
@@ -177,9 +162,6 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
             self.TestAppArcFlaggedStatuses()
             self.TestAppPaymentCreditDetails()
             self.TestAppPaymentConfirmation()
-            self.TestAppPaymentConfirmationWithHealthBookletNoConviction()
-            self.TestAppPaymentConfirmationWithHealthBookletAndConviction()
-            self.TestAppPaymentConfirmationWithNoHealthBookletNoConviction()
 
     def test_application_submit(self):
         """
