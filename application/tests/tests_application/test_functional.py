@@ -100,15 +100,6 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
         acc.refresh_from_db()
         self.assertIs(0, acc.sms_resend_attempts)
 
-    def TestAppPaymentConfirmationWithNoHealthBookletNoConviction(self):
-        self.skipTest('testNotImplemented')
-
-    def TestAppPaymentConfirmationWithHealthBookletNoConviction(self):
-        self.skipTest('testNotImplemented')
-
-    def TestAppPaymentConfirmationWithHealthBookletAndConviction(self):
-        self.skipTest('testNotImplemented')
-
     def TestNewApplicationSubmit(self):
         """Submit whole application"""
 
@@ -171,9 +162,6 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
             self.TestAppArcFlaggedStatuses()
             self.TestAppPaymentCreditDetails()
             self.TestAppPaymentConfirmation()
-            self.TestAppPaymentConfirmationWithHealthBookletNoConviction()
-            self.TestAppPaymentConfirmationWithHealthBookletAndConviction()
-            self.TestAppPaymentConfirmationWithNoHealthBookletNoConviction()
 
     def test_application_submit(self):
         """

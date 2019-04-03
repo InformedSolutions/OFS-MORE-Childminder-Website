@@ -184,13 +184,14 @@ def validate_magic_link(request, code):
     :return: HttpResponse, directing to the correct page
     """
     magic_email_link_code = code
+
     try:
         user_details = login.magic_link_validation(magic_email_link_code)
     except PermissionDenied as e:
         return login.invalid_email_link_redirect(e)
-    if login.email != login.change_email and login.change_email is not None:
-        login.email = login.change_email
-        login.save()
+    if user_details.email != user_details.change_email and user_details.change_email is not None:
+        user_details.email = user_details.change_email
+        user_details.save()
     # First sign-in (no mobile yet, sms check not required)
     if len(user_details.mobile_number) == 0:
         # Successful login.
