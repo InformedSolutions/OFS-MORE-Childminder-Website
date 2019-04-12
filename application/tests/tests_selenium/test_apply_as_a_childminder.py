@@ -7,8 +7,9 @@ import random
 import time
 from datetime import datetime
 
+from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from django.core.management import call_command
-from django.test import LiveServerTestCase, override_settings, tag
+from django.test import override_settings, tag
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.keys import Keys
@@ -51,7 +52,7 @@ def capture_screenshot(func):
 
 @tag('selenium')
 @override_settings(ALLOWED_HOSTS=['*'])
-class ApplyAsAChildminder(LiveServerTestCase):
+class ApplyAsAChildminder(StaticLiveServerTestCase):
     port = 8000
 
     if os.environ.get('LOCAL_SELENIUM_DRIVER') == 'True':
@@ -101,7 +102,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
             self.selenium_driver = webdriver.Chrome(path_to_chromedriver, chrome_options=chrome_options)
 
         else:
-            self.selenium_driver = webdriver.Firefox()
+            self.selenium_driver = webdriver.Chrome()
         self.selenium_driver.maximize_window()
 
     def launch_remote_browser(self):
@@ -130,8 +131,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
         the ages of children they are minding does not
         """
         self.selenium_task_executor.navigate_to_base_url()
-
-        self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -163,7 +162,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
-        self.selenium_task_executor.select_london_residency()
+        # self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -195,7 +194,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
-        self.selenium_task_executor.select_london_residency()
+        # self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -222,7 +221,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
-        self.selenium_task_executor.select_london_residency()
+        # self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -252,7 +251,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
-        self.selenium_task_executor.select_london_residency()
+        # self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -285,7 +284,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
-        self.selenium_task_executor.select_london_residency()
+        # self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -345,7 +344,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertEqual("Your name",
                          self.selenium_task_executor.get_driver().title)
 
-
     @try_except_method
     def test_complete_personal_details_task_when_location_of_care_is_same_as_home_address(self):
         """
@@ -353,7 +351,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
-        self.selenium_task_executor.select_london_residency()
+        # self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -385,7 +383,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
-        self.selenium_task_executor.select_london_residency()
+        # self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -417,7 +415,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
-        self.selenium_task_executor.select_london_residency()
+        # self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -445,7 +443,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
-        self.selenium_task_executor.select_london_residency()
+        # self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -478,7 +476,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
-        self.selenium_task_executor.select_london_residency()
+        # self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -506,7 +504,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         self.selenium_task_executor.navigate_to_base_url()
 
-        self.selenium_task_executor.select_london_residency()
+        # self.selenium_task_executor.select_london_residency()
 
         test_email = faker.email()
         test_phone_number = self.selenium_task_executor.generate_random_mobile_number()
@@ -567,20 +565,23 @@ class ApplyAsAChildminder(LiveServerTestCase):
         """
         applicant_email = self.create_standard_eyfs_application()
 
-        self.selenium_task_executor.select_london_residency()
-
         self.selenium_task_executor.complete_people_in_your_home_task(
-            False,
-            None, None, None,
-            None, None, None, None, None,
-            faker.email(), True, faker.first_name(), faker.first_name(), faker.last_name_female(),
-            random.randint(1, 28), random.randint(1, 12), random.randint(self.current_year - 14, self.current_year - 1),
-            'Child', applicant_email
-        )
+            other_adults_in_home=False, other_adult_forename=None, other_adult_middle_name=None,
+            other_adult_surname=None,
+            other_adult_dob_day=None, other_adult_dob_month=None, other_adult_dob_year=None,
+            other_adult_relationship=None,
+            other_adult_dbs=None, other_adult_email=faker.email(), children_in_home=True,
+            child_forename=faker.first_name(),
+            child_middle_name=faker.first_name(), child_surname=faker.last_name_female(),
+            child_dob_day=random.randint(1, 28),
+            child_dob_month=random.randint(1, 12),
+            child_dob_year=random.randint(self.current_year - 14, self.current_year - 1),
+            child_relationship='Child', applicant_email=applicant_email)
 
         self.assertEqual("Done", self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='other_people']/td/a/strong").text)
 
+    @tag('fix')
     @try_except_method
     def test_can_complete_people_in_your_home_task_with_other_adults_but_without_other_children(self):
         """
@@ -588,8 +589,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
         'Does anyone aged 16 or over live or work in your home?' but No to the question 'Do you live with any children under 16?'
         """
         applicant_email = self.create_standard_eyfs_application()
-
-        self.selenium_task_executor.select_london_residency()
 
         self.selenium_task_executor.complete_people_in_your_home_task(
             True,
@@ -626,7 +625,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
 
         self.selenium_task_executor.get_driver().find_element_by_id("id_1-first_name").send_keys(faker.first_name())
         self.selenium_task_executor.get_driver().find_element_by_id("id_1-middle_names").send_keys(faker.first_name())
-        self.selenium_task_executor.get_driver().find_element_by_id("id_1-last_name").send_keys(faker.last_name_female())
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-last_name").send_keys(
+            faker.last_name_female())
         self.selenium_task_executor.get_driver().find_element_by_id("id_1-date_of_birth_0").send_keys(20)
         self.selenium_task_executor.get_driver().find_element_by_id("id_1-date_of_birth_1").send_keys(4)
         self.selenium_task_executor.get_driver().find_element_by_id("id_1-date_of_birth_2").send_keys(1995)
@@ -634,48 +634,58 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_id("id_1-email_address").send_keys(faker.email())
 
         # Javascript click execution is used here given element falls out of view location range
-        submit_button = self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']")
+        submit_button = self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//input[@value='Save and continue']")
         self.selenium_task_executor.get_driver().execute_script("arguments[0].click();", submit_button)
 
         WebDriverWait(self.selenium_task_executor.get_driver(), 30).until(
             expected_conditions.title_contains("DBS checks on adults in your home"))
 
-        self.selenium_task_executor.get_driver().find_element_by_id("id_1-dbs_certificate_number").send_keys(123456654321)
+        self.selenium_task_executor.get_driver().find_element_by_id("id_1-dbs_certificate_number").send_keys(
+            123456654321)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
 
-        WebDriverWait(self.selenium_task_executor.get_driver(), 30).until(expected_conditions.title_contains("Children in your home"))
+        WebDriverWait(self.selenium_task_executor.get_driver(), 30).until(
+            expected_conditions.title_contains("Children in your home"))
         self.selenium_task_executor.get_driver().find_element_by_id("id_children_in_home_1").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Save and continue']").click()
 
         # Javascript click execution is used here given element falls out of view location range
-        submit_button = self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']")
+        submit_button = self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//input[@value='Confirm and continue']")
         self.selenium_task_executor.get_driver().execute_script("arguments[0].click();", submit_button)
 
         # Email confirmation page
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").send_keys(Keys.RETURN)
+        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").send_keys(
+            Keys.RETURN)
 
         # Resend health check e-mail 3 times
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
         self.selenium_task_executor.get_driver().find_element_by_link_text("Resend health questions").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend health questions']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//input[@value='Resend health questions']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
         self.selenium_task_executor.get_driver().find_element_by_link_text("Resend health questions").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend health questions']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//input[@value='Resend health questions']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
         self.selenium_task_executor.get_driver().find_element_by_link_text("Resend health questions").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend health questions']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//input[@value='Resend health questions']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='other_people']/td/a/span").click()
         self.selenium_task_executor.get_driver().find_element_by_link_text("Resend health questions").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Resend health questions']").click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath(
+            "//input[@value='Resend health questions']").click()
 
         self.selenium_task_executor.get_driver().find_element_by_class_name("error-summary")
 
+    @tag('fixing')
     @tag('smoke_test')
     @try_except_method
     def test_can_apply_as_a_childminder_full_question_set(self):
@@ -697,6 +707,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
                                                      faker.name(),
                                                      test_cvc)
 
+    @tag('fixing')
     @try_except_method
     def test_sign_out_link_not_shown_when_unauthenticated(self):
         """
@@ -944,11 +955,6 @@ class ApplyAsAChildminder(LiveServerTestCase):
             "//tr[@id='personal_details']/td/a/strong").text)
 
         # When completing first aid training task set expired certification year
-        self.selenium_task_executor.complete_first_aid_training(
-            faker.company(),
-            random.randint(1, 28), random.randint(1, 12), 2012,
-            True
-        )
 
         self.assertEqual("First aid training",
                          self.selenium_task_executor.get_driver().title)
@@ -972,7 +978,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Continue']").click()
 
         self.assertEqual("We've sent a link to {}.".format(first_email),
-                         self.selenium_task_executor.get_driver().find_element_by_xpath("//html/body/main/div[2]/p[1]").text)
+                         self.selenium_task_executor.get_driver().find_element_by_xpath(
+                             "//html/body/main/div[2]/p[1]").text)
 
         # Try to grab email validation URL.
         # Should redirect to bad link; no email validation link sent for preexsiting email.
@@ -998,7 +1005,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.create_standard_eyfs_application()
 
         self.selenium_task_executor.get_driver().find_element_by_link_text("Cancel application").click()
-        self.selenium_task_executor.get_driver().find_element_by_xpath('/html/body/main/div[2]/form/div/input[2]').click()
+        self.selenium_task_executor.get_driver().find_element_by_xpath(
+            '/html/body/main/div[2]/form/div/input[2]').click()
         self.assertEqual("Application Cancelled", self.selenium_task_executor.get_driver().title)
 
     @try_except_method
@@ -1010,6 +1018,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.selenium_task_executor.get_driver().find_element_by_link_text("Save and exit").click()
         self.assertEqual("Application saved", self.selenium_task_executor.get_driver().title)
 
+    @tag('fixing')
     @try_except_method
     def test_task_summaries_display_on_completion(self):
         """
@@ -1018,7 +1027,8 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.complete_full_question_set()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='children']/td/a/span").click()
         self.assertEqual("Check your answers: type of childcare",
-                         self.selenium_task_executor.get_driver().find_element_by_xpath("//html/body/main/div[2]/h1").text)
+                         self.selenium_task_executor.get_driver().find_element_by_xpath(
+                             "//html/body/main/div[2]/h1").text)
         self.selenium_task_executor.get_driver().find_element_by_xpath("//input[@value='Confirm and continue']").click()
         self.selenium_task_executor.get_driver().find_element_by_xpath("//tr[@id='personal_details']/td/a/span").click()
         self.assertEqual("Check your answers: personal details",
@@ -1449,11 +1459,12 @@ class ApplyAsAChildminder(LiveServerTestCase):
         self.assertEqual(new_email, self.selenium_task_executor.get_driver().find_element_by_xpath(
             "//tr[@id='email_address']/td[2]").text)
 
+    @tag('fixing')
     @try_except_method
     def test_user_can_use_resend_link_when_changing_email(self):
         self.create_standard_eyfs_application()
         self.selenium_task_executor.select_london_residency()
-        
+
         new_email = "eva@walle.com"
 
         self.selenium_task_executor.get_driver().find_element_by_xpath(
@@ -1485,6 +1496,7 @@ class ApplyAsAChildminder(LiveServerTestCase):
         # Assert that the validation url changed; that is, that the 'resend email' link did indeed resend the email.
         self.assertNotEqual(first_validation_url, second_validation_url)
 
+    @tag('fixing')
     @try_except_method
     def test_user_cannot_resend_sms_code_more_than_three_times(self):
         """

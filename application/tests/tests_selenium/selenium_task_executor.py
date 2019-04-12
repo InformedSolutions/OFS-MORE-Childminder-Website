@@ -320,6 +320,8 @@ class SeleniumTaskExecutor:
         driver.find_element_by_id("id_course_date_1").send_keys(completion_date_month)
         driver.find_element_by_id("id_course_date_2").send_keys(completion_date_year)
         driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+        driver.find_element_by_xpath("//input[@value='Continue']").click()
+        driver.find_element_by_xpath("//input[@value='Confirm and continue']").click()
 
     def complete_eyfs_details(self, course_name, completion_date_day, completion_date_month, completion_date_year):
         """
@@ -466,18 +468,26 @@ class SeleniumTaskExecutor:
             # Javascript click execution is used here given element falls out of view location range
             submit_button = driver.find_element_by_xpath("//input[@value='Save and continue']")
             driver.execute_script("arguments[0].click();", submit_button)
+            # driver.find_element_by_xpath("//*[contains(@id, '1-label'").click()
+            driver.find_element_by_xpath("//div[contains(@id,'1-group')]").click()
+            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+            driver.find_element_by_xpath("//div[contains(@id,'1-group')]").click()
+            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("DBS checks on adults in the home"))
 
-            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("DBS checks on adults in your home"))
+            # Javascript click execution is used here given element falls out of view location range
+            dbs_number = driver.find_element_by_xpath("//div[contains(@id,'id_dbs_certificate_number')]")
+            driver.execute_script("arguments[0].click();", dbs_number.send_keys("123456789087"))
 
-            driver.find_element_by_id("id_1-dbs_certificate_number").send_keys(other_adult_dbs)
+            # driver.find_element_by_id("id_1-dbs_certificate_number").send_keys(other_adult_dbs)
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
         else:
-            driver.find_element_by_id("id_adults_in_home_1").click()
+            driver.find_element_by_id("id_adults_in_home_1-label").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
         if children_in_home is True:
-            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Children in your home"))
-            driver.find_element_by_id("id_children_in_home_0").click()
+            WebDriverWait(self.get_driver(), 30).until(expected_conditions.title_contains("Children in the home"))
+            driver.find_element_by_id("id_children_in_home_0-label").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
             driver.find_element_by_id("id_1-first_name").send_keys(child_forename)
             driver.find_element_by_id("id_1-middle_names").send_keys(child_middle_name)
@@ -489,9 +499,12 @@ class SeleniumTaskExecutor:
 
             # Javascript click execution is used here given element falls out of view location range
             submit_button = driver.find_element_by_xpath("//input[@value='Save and continue']")
+            # driver.execute_script("arguments[0].click();", submit_button)
             driver.execute_script("arguments[0].click();", submit_button)
+            driver.find_element_by_id("id_known_to_social_services_pith_1-label").click()
+            driver.find_element_by_xpath("//input[@value='Save and continue']").click()
         else:
-            driver.find_element_by_id("id_children_in_home_1").click()
+            driver.find_element_by_id("id_children_in_home_1-label").click()
             driver.find_element_by_xpath("//input[@value='Save and continue']").click()
 
         # Task summary confirmation
