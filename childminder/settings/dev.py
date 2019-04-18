@@ -6,6 +6,8 @@ DEBUG = True
 
 EXECUTING_AS_TEST = 'True'
 
+SESSION_COOKIE_SECURE = False
+
 PUBLIC_APPLICATION_URL = os.environ.get('PUBLIC_APPLICATION_URL', 'http://localhost:8000/childminder')
 
 PAYMENT_URL = os.environ.get('APP_PAYMENT_URL', 'http://localhost:8001/payment-gateway')

@@ -94,7 +94,8 @@ class CustomAuthenticationHandler(object):
         # Set value persisted in cookie with coupled signature to prevent cookie tampering
         signer = Signer()
         signed_email = signer.sign(email)
-        response.set_cookie(COOKIE_IDENTIFIER, signed_email, max_age=1800)
+        response.set_cookie(COOKIE_IDENTIFIER, signed_email,
+                            secure=settings.SESSION_COOKIE_SECURE, httponly=True, max_age=1800)
 
     @staticmethod
     def destroy_session(response):
