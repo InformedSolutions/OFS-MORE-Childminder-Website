@@ -8,7 +8,7 @@ from re import compile
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
-from django.core.signing import Signer, BadSignature
+from django.core.signing import BadSignature, TimestampSigner, SignatureExpired
 
 from .models import Application, UserDetails
 
@@ -82,17 +82,17 @@ class CustomAuthenticationHandler(object):
         if COOKIE_IDENTIFIER not in request.COOKIES:
             return None
         else:
-            signer = Signer()
+            signer = TimestampSigner()
             try:
-                return signer.unsign(request.COOKIES.get(COOKIE_IDENTIFIER))
-            except BadSignature:
+                return signer.unsign(request.COOKIES.get(COOKIE_IDENTIFIER), max_age=1800)
+            except BadSignature or SignatureExpired:
                 # the cookie identifier has not been signed
                 return None
 
     @staticmethod
     def create_session(response, email):
         # Set value persisted in cookie with coupled signature to prevent cookie tampering
-        signer = Signer()
+        signer = TimestampSigner()
         signed_email = signer.sign(email)
         response.set_cookie(COOKIE_IDENTIFIER, signed_email,
                             secure=settings.SESSION_COOKIE_SECURE, httponly=True, max_age=1800)
