@@ -27,6 +27,10 @@ class Arc(models.Model):
     childcare_address_review = models.CharField(choices=TASK_STATUS, max_length=50, default='NOT_STARTED', blank=True, null=True)
     insurance_cover_review = models.CharField(choices=TASK_STATUS, max_length=50, default='NOT_STARTED', blank=True, null=True)
 
+    # Adult update fields
+    adult_update_review = models.CharField(choices=TASK_STATUS, max_length=50, default='NOT_STARTED', blank=True,
+                                           null=True)
+
     @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
