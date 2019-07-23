@@ -273,6 +273,7 @@ class SMSValidationView(View):
 
                     # Update date last accessed when successfully logged in
                     application.date_last_accessed = timezone.now()
+                    application.application_expiry_email_sent = False
                     application.save()
 
                     # Forward back onto application
