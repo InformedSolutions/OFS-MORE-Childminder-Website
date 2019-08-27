@@ -247,6 +247,7 @@ class SMSValidationView(View):
                 CustomAuthenticationHandler.destroy_session(response)
                 return response
 
+
             # Successful login
             application = user_details.application_id
             response = login.redirect_by_status(application)
