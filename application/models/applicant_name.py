@@ -17,6 +17,7 @@ class ApplicantName(models.Model):
     first_name = models.CharField(max_length=100, blank=True)
     middle_names = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
+    title = models.CharField(max_length=100, blank=True)
 
     # Current name fields
     start_day = models.IntegerField(blank=True, null=True)
