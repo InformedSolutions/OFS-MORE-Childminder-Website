@@ -4,6 +4,8 @@ from datetime import date
 from django import forms
 from django.conf import settings
 
+from application.widgets import ConditionalPostInlineRadioSelect
+
 from application.forms.fields import CustomSplitDateFieldDOB
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
@@ -28,7 +30,19 @@ class PersonalDetailsNameForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    reveal_conditionally = {'title': {'Other': 'other_title'}}
 
+    options = (
+        ('Mr', 'Mr'),
+        ('Mrs', 'Mrs'),
+        ('Miss', 'Miss'),
+        ('Other', 'Other')
+    )
+
+    title = forms.ChoiceField(label='Title', choices=options, widget=ConditionalPostInlineRadioSelect, required=True,
+                              error_messages={'required': 'Please select a title'})
+    other_title = forms.CharField(label='Other title',  required=False,
+                                  error_messages={'required': 'Please enter a title'})
     first_name = forms.CharField(label='First name', error_messages={'required': 'Please enter your first name'})
     middle_names = forms.CharField(label='Middle names (if you have any on your DBS check)', required=False)
     last_name = forms.CharField(label='Last name', error_messages={'required': 'Please enter your last name'})
@@ -50,8 +64,26 @@ class PersonalDetailsNameForm(ChildminderForms):
             self.fields['first_name'].initial = applicant_name_record.first_name
             self.fields['middle_names'].initial = applicant_name_record.middle_names
             self.fields['last_name'].initial = applicant_name_record.last_name
+            if applicant_name_record.title in ['Mrs', 'Miss', 'Mr']:
+                self.fields['title'].initial = applicant_name_record.title
+            else:
+                self.fields['title'].initial = 'Other'
+                self.fields['other_title'].initial = applicant_name_record.title
             self.pk = applicant_name_record.name_id
             self.field_list = ['first_name', 'middle_names', 'last_name']
+
+    def clean_other_title(self):
+        """
+        Other title validation
+        :return: string
+        """
+        other_title=self.cleaned_data['other_title']
+        if self.cleaned_data['title'] == 'Other':
+            if len(other_title) == 0:
+                raise forms.ValidationError('Please tell us your title')
+            if len(other_title)>100:
+                raise forms.ValidationError('Titles must be under 100 characters long')
+        return other_title
 
     def clean_first_name(self):
         """
