@@ -4,7 +4,7 @@ from datetime import date
 from django import forms
 from django.conf import settings
 
-from application.widgets import ConditionalPostInlineRadioSelect
+from govuk_forms.widgets import RadioSelect
 
 from application.forms.fields import CustomSplitDateFieldDOB
 from application.forms.childminder import ChildminderForms
@@ -12,7 +12,7 @@ from application.forms_helper import full_stop_stripper
 from application.models import (ApplicantName,
                                 ApplicantPersonalDetails)
 from application.utils import date_formatter
-from ..business_logic import get_title_options
+from ..business_logic import get_title_options, TITLE_OPTIONS
 
 class PersonalDetailsGuidanceForm(ChildminderForms):
     """
@@ -34,9 +34,9 @@ class PersonalDetailsNameForm(ChildminderForms):
 
     options = get_title_options()
 
-    title = forms.ChoiceField(label='Title', choices=options, widget=ConditionalPostInlineRadioSelect, required=True,
+    title = forms.ChoiceField(label='Title', choices=options, required=True, widget=RadioSelect,
                               error_messages={'required': 'Please select a title'})
-    other_title = forms.CharField(label='Other title',  required=False,
+    other_title = forms.CharField(label='Other',  required=False,
                                   error_messages={'required': 'Please enter a title'})
     first_name = forms.CharField(label='First name', error_messages={'required': 'Please enter your first name'})
     middle_names = forms.CharField(label='Middle names (if you have any on your DBS check)', required=False)
@@ -59,7 +59,7 @@ class PersonalDetailsNameForm(ChildminderForms):
             self.fields['first_name'].initial = applicant_name_record.first_name
             self.fields['middle_names'].initial = applicant_name_record.middle_names
             self.fields['last_name'].initial = applicant_name_record.last_name
-            if applicant_name_record.title in ['Mrs', 'Miss', 'Mr']:
+            if applicant_name_record.title in TITLE_OPTIONS:
                 self.fields['title'].initial = applicant_name_record.title
             else:
                 self.fields['title'].initial = 'Other'

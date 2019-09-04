@@ -1391,3 +1391,5 @@ def get_title_options():
         ('Other', 'Other')
     )
     return options
+
+TITLE_OPTIONS = ['Mr', 'Mrs', 'Miss', 'Ms']
