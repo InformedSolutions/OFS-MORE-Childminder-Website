@@ -245,6 +245,7 @@ class ApplicationTestBase(object):
         if not data:
             data = {
                 'id': self.app_id,
+                'title': 'Mr',
                 'first_name': "John-D'Arthur",
                 'middle_names': "Conan-Da'vey",
                 'last_name': "O'Doyle"

@@ -18,14 +18,42 @@ class PersonalDetailsGuidancePageFunctionalTests(utils.NoMiddlewareTestCase):
 @tag('http')
 class NamePageFunctionalTests(utils.NoMiddlewareTestCase):
 
-    def test_can_render_name_page(self):
-        self.skipTest('testNotImplemented')
+    def test_post_name_page(self):
+        # Build env
+        form_data = {
+            'id': str(self.application_id),
+            'title': 'Miss',
+            'first_Name': 'Robin',
+            'last_name': 'Hood',
+        }
+
+        response = self.client.post(reverse('Personal-Details-Name-View')
+                                    + '?id=' + str(self.application_id),
+                                    form_data)
+
+        application = models.Application.objects.get(application_id=self.application_id)
+
+        self.assertEqual(302, response.status_code)
+        self.assertEqual(application.first_name, 'Robin')
+        self.assertEqual('Hood', application.last_name)
+        self.assertEqual('Miss', application.title)
 
     def test_submit_returns_to_page_with_error_if_invalid(self):
-        self.skipTest('testNotImplemented')
+        form_data = {
+            'id': str(self.application_id),
+            'title': '',
+            'first_Name': 'Robin',
+            'last_name': 'Hood',
+        }
 
-    def test_submit_redirects_to_dob_page_if_valid(self):
-        self.skipTest('testNotImplemented')
+        response = self.client.post(reverse('Personal-Details-Name-View')
+                                    + '?id=' + str(self.application_id),
+                                    form_data)
+
+        application = models.Application.objects.get(application_id=self.application_id)
+
+        self.assertEqual(200, response.status_code)
+
 
 
 @tag('http')
