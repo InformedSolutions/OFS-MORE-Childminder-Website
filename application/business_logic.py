@@ -1377,6 +1377,7 @@ class UniqueDbsCheckResult:
     duplicates_household_member_dbs = False
     duplicate_entry_indexes = 0
 
+TITLE_OPTIONS = ['Mr', 'Mrs', 'Miss', 'Ms']
 
 def get_title_options():
     """
@@ -1389,4 +1390,3 @@ def get_title_options():
     options += (('Other', 'Other'),)
     return options
 
-TITLE_OPTIONS = ['Mr', 'Mrs', 'Miss', 'Ms']
