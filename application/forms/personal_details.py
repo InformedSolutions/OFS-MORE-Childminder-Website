@@ -12,7 +12,7 @@ from application.forms_helper import full_stop_stripper
 from application.models import (ApplicantName,
                                 ApplicantPersonalDetails)
 from application.utils import date_formatter
-
+from ..business_logic import get_title_options
 
 class PersonalDetailsGuidanceForm(ChildminderForms):
     """
@@ -32,12 +32,7 @@ class PersonalDetailsNameForm(ChildminderForms):
     auto_replace_widgets = True
     reveal_conditionally = {'title': {'Other': 'other_title'}}
 
-    options = (
-        ('Mr', 'Mr'),
-        ('Mrs', 'Mrs'),
-        ('Miss', 'Miss'),
-        ('Other', 'Other')
-    )
+    options = get_title_options()
 
     title = forms.ChoiceField(label='Title', choices=options, widget=ConditionalPostInlineRadioSelect, required=True,
                               error_messages={'required': 'Please select a title'})

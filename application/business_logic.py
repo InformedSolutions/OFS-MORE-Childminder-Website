@@ -1376,3 +1376,18 @@ class UniqueDbsCheckResult:
     duplicates_childminder_dbs = False
     duplicates_household_member_dbs = False
     duplicate_entry_indexes = 0
+
+
+def get_title_options():
+    """
+    Get the options for the title radio button form
+    :return: tuples of choices
+    """
+    options = (
+        ('Mr', 'Mr'),
+        ('Mrs', 'Mrs'),
+        ('Miss', 'Miss'),
+        ('Ms','Ms'),
+        ('Other', 'Other')
+    )
+    return options

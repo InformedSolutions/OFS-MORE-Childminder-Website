@@ -44,7 +44,8 @@ contact_info_link_dict = collections.OrderedDict([('email_address', 'Contact-Ema
 
 ###
 
-personal_details_name_dict = collections.OrderedDict([('name', 'Your name'),
+personal_details_name_dict = collections.OrderedDict([('title', 'Title'),
+                                                      ('name', 'Your name'),
                                                       ('date_of_birth', 'Date of birth'),
                                                       ('home_address', 'Your home address'),
                                                       ('childcare_address', 'Childcare address'),
@@ -54,7 +55,8 @@ personal_details_name_dict = collections.OrderedDict([('name', 'Your name'),
                                                       ('reasons_known_to_social_services', 'Tell us why')
                                                       ])
 
-personal_details_link_dict_different_childcare_address = collections.OrderedDict([('name', 'Personal-Details-Name-View'),
+personal_details_link_dict_different_childcare_address = collections.OrderedDict([('title', 'Personal-Details-Name-View'),
+                                                                                  ('name', 'Personal-Details-Name-View'),
                                                       ('date_of_birth', 'Personal-Details-DOB-View'),
                                                       ('home_address', 'Personal-Details-Home-Address-Manual-View'),
                                                       ('childcare_address', 'Personal-Details-Childcare-Address-Manual-View'),
@@ -64,7 +66,8 @@ personal_details_link_dict_different_childcare_address = collections.OrderedDict
                                                       ('reasons_known_to_social_services', 'Personal-Details-Your-Own-Children-View')
                                                                                   ])
 
-personal_details_link_dict_same_childcare_address = collections.OrderedDict([('name', 'Personal-Details-Name-View'),
+personal_details_link_dict_same_childcare_address = collections.OrderedDict([('title', 'Personal-Details-Name-View'),
+                                                                             ('name', 'Personal-Details-Name-View'),
                                                       ('date_of_birth', 'Personal-Details-DOB-View'),
                                                       ('home_address', 'Personal-Details-Home-Address-Manual-View'),
                                                       ('childcare_address', 'Personal-Details-Location-Of-Care-View'),
@@ -73,7 +76,8 @@ personal_details_link_dict_same_childcare_address = collections.OrderedDict([('n
                                                       ('own_children', 'Personal-Details-Your-Own-Children-View'),
                                                      ('reasons_known_to_social_services', 'Personal-Details-Your-Own-Children-View')
                                                                              ])
-personal_details_link_dict_known_to_social_services = collections.OrderedDict([('name', 'Personal-Details-Name-View'),
+personal_details_link_dict_known_to_social_services = collections.OrderedDict([('title', 'Personal-Details-Name-View'),
+                                                                               ('name', 'Personal-Details-Name-View'),
                                                       ('date_of_birth', 'Personal-Details-DOB-View'),
                                                       ('home_address', 'Personal-Details-Home-Address-Manual-View'),
                                                       ('childcare_address', 'Personal-Details-Location-Of-Care-View'),
@@ -83,7 +87,8 @@ personal_details_link_dict_known_to_social_services = collections.OrderedDict([(
                                                      ('reasons_known_to_social_services', 'Personal-Details-Your-Own-Children-View')
                                                                              ])
 
-personal_details_change_link_description_dict = collections.OrderedDict([('name', 'your name'),
+personal_details_change_link_description_dict = collections.OrderedDict([('title', 'title'),
+                                                                         ('name', 'your name'),
                                                       ('date_of_birth', 'date of birth'),
                                                       ('home_address', 'your home address'),
                                                       ('childcare_address', 'childcare address'),
