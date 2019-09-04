@@ -350,6 +350,7 @@ def declaration_summary(request, print_mode=False):
             'childcare_type_eight_plus': childcare_record.eight_plus,
             'childcare_overnight': childcare_record.overnight_care,
             'type_of_childcare_change': type_of_childcare_change,
+            'personal_details_title': applicant_name_record.title,
             'personal_details_first_name': applicant_name_record.first_name,
             'personal_details_middle_names': applicant_name_record.middle_names,
             'personal_details_last_name': applicant_name_record.last_name,
