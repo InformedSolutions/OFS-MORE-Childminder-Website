@@ -1383,13 +1383,10 @@ def get_title_options():
     Get the options for the title radio button form
     :return: tuples of choices
     """
-    options = (
-        ('Mr', 'Mr'),
-        ('Mrs', 'Mrs'),
-        ('Miss', 'Miss'),
-        ('Ms','Ms'),
-        ('Other', 'Other')
-    )
+    options = ()
+    for title in TITLE_OPTIONS:
+        options += ((title, title),)
+    options += (('Other', 'Other'),)
     return options
 
 TITLE_OPTIONS = ['Mr', 'Mrs', 'Miss', 'Ms']
