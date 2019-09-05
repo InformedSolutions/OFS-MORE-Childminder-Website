@@ -73,7 +73,7 @@ class PersonalDetailsNameForm(ChildminderForms):
         :return: string
         """
         other_title=self.cleaned_data['other_title']
-        if self.cleaned_data['title'] == 'Other':
+        if self.cleaned_data.get('title') == 'Other':
             if len(other_title) == 0:
                 raise forms.ValidationError('Please tell us your title')
             if len(other_title)>100:

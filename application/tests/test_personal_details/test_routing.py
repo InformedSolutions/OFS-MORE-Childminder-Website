@@ -3,6 +3,7 @@ from django.urls import reverse
 
 from application.tests import utils
 from application import models
+from django.utils import timezone
 
 
 @tag('http')
@@ -17,21 +18,43 @@ class PersonalDetailsGuidancePageFunctionalTests(utils.NoMiddlewareTestCase):
 
 @tag('http')
 class NamePageFunctionalTests(utils.NoMiddlewareTestCase):
+    app_id = '166f77f7-c2ee-4550-9461-45b9d2f28d34'
+
+    def setUp(self):
+        application = models.Application.objects.create(
+            application_id=self.app_id,
+            application_type='CHILDMINDER',
+            application_status='DRAFTING',
+            cygnum_urn='',
+            login_details_status='COMPLETED',
+            personal_details_status='NOT_STARTED',
+            childcare_type_status='COMPLETED',
+            first_aid_training_status='COMPLETED',
+            childcare_training_status='COMPLETED',
+            criminal_record_check_status='COMPLETED',
+            health_status='COMPLETED',
+            references_status='COMPLETED',
+            people_in_home_status='STARTED',
+            declarations_status='NOT_STARTED',
+            date_created=timezone.now(),
+            date_updated=timezone.now(),
+            date_accepted=None,
+        )
 
     def test_post_name_page(self):
         # Build env
         form_data = {
-            'id': str(self.application_id),
+            'id': self.app_id,
             'title': 'Miss',
-            'first_Name': 'Robin',
+            'first_name': 'Robin',
             'last_name': 'Hood',
         }
 
         response = self.client.post(reverse('Personal-Details-Name-View')
-                                    + '?id=' + str(self.application_id),
+                                    + '?id='+self.app_id,
                                     form_data)
 
-        application = models.Application.objects.get(application_id=self.application_id)
+        application = models.ApplicantName.objects.get(application_id=self.app_id)
 
         self.assertEqual(302, response.status_code)
         self.assertEqual(application.first_name, 'Robin')
@@ -40,17 +63,17 @@ class NamePageFunctionalTests(utils.NoMiddlewareTestCase):
 
     def test_submit_returns_to_page_with_error_if_invalid(self):
         form_data = {
-            'id': str(self.application_id),
+            'id': self.app_id,
             'title': '',
             'first_Name': 'Robin',
             'last_name': 'Hood',
         }
 
         response = self.client.post(reverse('Personal-Details-Name-View')
-                                    + '?id=' + str(self.application_id),
+                                    + '?id='+self.app_id,
                                     form_data)
 
-        application = models.Application.objects.get(application_id=self.application_id)
+        application = models.Application.objects.get(application_id=self.app_id)
 
         self.assertEqual(200, response.status_code)
 
