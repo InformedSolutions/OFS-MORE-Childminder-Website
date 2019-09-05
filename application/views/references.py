@@ -11,7 +11,6 @@ from ..summary_page_data import first_reference_name_dict, first_reference_link_
 from ..table_util import Table, create_tables, submit_link_setter
 from .. import address_helper, status
 from ..business_logic import (references_first_reference_logic,
-                              references_second_reference_logic,
                               reset_declaration)
 from ..forms import (FirstReferenceForm,
                      ReferenceFirstReferenceAddressForm,
@@ -102,7 +101,7 @@ def references_first_reference(request):
                               'references_status', 'IN_PROGRESS')
             # Create or update Reference record
             references_record = references_first_reference_logic(
-                application_id_local, form)
+                application_id_local, form, 1)
             references_record.save()
             application.date_updated = current_date
             application.save()
@@ -439,8 +438,8 @@ def references_second_reference(request):
                 status.update(application_id_local,
                               'references_status', 'IN_PROGRESS')
             # Create or update Reference record
-            references_record = references_second_reference_logic(
-                application_id_local, form)
+            references_record = references_first_reference_logic(
+                application_id_local, form, 2)
             references_record.save()
             application.date_updated = current_date
             application.save()

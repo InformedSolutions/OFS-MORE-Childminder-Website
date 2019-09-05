@@ -79,6 +79,11 @@ class FirstReferenceForm(ChildminderForms):
             self.fields['last_name'].initial = reference_record.last_name
             self.fields['relationship'].initial = reference_record.relationship
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
+            if reference_record.title in TITLE_OPTIONS:
+                self.fields['title'].initial = reference_record.title
+            else:
+                self.fields['title'].initial = 'Other'
+                self.fields['other_title'].initial = reference_record.title
             self.pk = reference_record.reference_id
             self.field_list = ['first_name', 'last_name', 'relationship', 'time_known']
         if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
@@ -434,8 +439,13 @@ class SecondReferenceForm(ChildminderForms):
             self.fields['last_name'].initial = reference_record.last_name
             self.fields['relationship'].initial = reference_record.relationship
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
+            if reference_record.title in TITLE_OPTIONS:
+                self.fields['title'].initial = reference_record.title
+            else:
+                self.fields['title'].initial = 'Other'
+                self.fields['other_title'].initial = reference_record.title
             self.pk = reference_record.reference_id
-            self.field_list = ['first_name', 'last_name', 'relationship', 'time_known']
+            self.field_list = ['first_name', 'last_name', 'relationship', 'time_known', 'title']
         if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
             obj = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local)
             self.birth_time = (obj.birth_year, obj.birth_month, obj.birth_day)

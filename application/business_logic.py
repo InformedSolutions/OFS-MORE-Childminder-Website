@@ -462,22 +462,28 @@ def dbs_check_logic(application_id_local, form):
     return dbs_record
 
 
-def references_first_reference_logic(application_id_local, form):
+def references_first_reference_logic(application_id_local, form, number):
     """
     Business logic to create or update a Reference record with first reference details
     :param application_id_local: A string object containing the current application ID
     :param form: A form object containing the data to be stored
+    :param number: define whether it's first or second reference
     :return: an Reference object to be saved
     """
     this_application = Application.objects.get(application_id=application_id_local)
+    if form.cleaned_data.get('title')  != 'Other':
+        title = form.cleaned_data.get('title')
+    else:
+        title=form.cleaned_data.get('other_title')
     first_name = form.cleaned_data.get('first_name')
     last_name = form.cleaned_data.get('last_name')
     relationship = form.cleaned_data.get('relationship')
     years_known = form.cleaned_data.get('time_known')[0]
     months_known = form.cleaned_data.get('time_known')[1]
     # If the user entered information for this task for the first time
-    if Reference.objects.filter(application_id=application_id_local, reference=1).count() == 0:
-        reference_record = Reference(reference=1,
+    if Reference.objects.filter(application_id=application_id_local, reference=number).count() == 0:
+        reference_record = Reference(reference=number,
+                                     title=title,
                                      first_name=first_name,
                                      last_name=last_name,
                                      relationship=relationship,
@@ -493,49 +499,9 @@ def references_first_reference_logic(application_id_local, form):
                                      email='',
                                      application_id=this_application)
     # If the user previously entered information for this task
-    elif Reference.objects.filter(application_id=application_id_local, reference=1).count() > 0:
-        reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
-        reference_record.first_name = first_name
-        reference_record.last_name = last_name
-        reference_record.relationship = relationship
-        reference_record.years_known = years_known
-        reference_record.months_known = months_known
-    return reference_record
-
-
-def references_second_reference_logic(application_id_local, form):
-    """
-    Business logic to create or update a Reference record with first reference details
-    :param application_id_local: A string object containing the current application ID
-    :param form: A form object containing the data to be stored
-    :return: an Reference object to be saved
-    """
-    this_application = Application.objects.get(application_id=application_id_local)
-    first_name = form.cleaned_data.get('first_name')
-    last_name = form.cleaned_data.get('last_name')
-    relationship = form.cleaned_data.get('relationship')
-    years_known = form.cleaned_data.get('time_known')[0]
-    months_known = form.cleaned_data.get('time_known')[1]
-    # If the user entered information for this task for the first time
-    if Reference.objects.filter(application_id=application_id_local, reference=2).count() == 0:
-        reference_record = Reference(reference=2,
-                                     first_name=first_name,
-                                     last_name=last_name,
-                                     relationship=relationship,
-                                     years_known=years_known,
-                                     months_known=months_known,
-                                     street_line1='',
-                                     street_line2='',
-                                     town='',
-                                     county='',
-                                     country='',
-                                     postcode='',
-                                     phone_number='',
-                                     email='',
-                                     application_id=this_application)
-    # If the user previously entered information for this task
-    elif Reference.objects.filter(application_id=application_id_local, reference=2).count() > 0:
-        reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
+    elif Reference.objects.filter(application_id=application_id_local, reference=number).count() > 0:
+        reference_record = Reference.objects.get(application_id=application_id_local, reference=number)
+        reference_record.title = title
         reference_record.first_name = first_name
         reference_record.last_name = last_name
         reference_record.relationship = relationship
