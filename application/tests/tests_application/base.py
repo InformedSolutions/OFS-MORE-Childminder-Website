@@ -588,6 +588,7 @@ class ApplicationTestBase(object):
             reverse('References-First-Reference-View'),
             {
                 'id': self.app_id,
+                'title': 'Mr',
                 'first_name': 'Roman',
                 'last_name': 'Gorodeckij',
                 'relationship': 'My client',
@@ -636,6 +637,7 @@ class ApplicationTestBase(object):
             reverse('References-Second-Reference-View'),
             {
                 'id': self.app_id,
+                'title':'Mr',
                 'first_name': 'Sherlock',
                 'last_name': 'Holmes',
                 'relationship': 'My client',

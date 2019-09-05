@@ -75,7 +75,7 @@ class FirstReferenceForm(ChildminderForms):
         # If information was previously entered, display it on the form
         if Reference.objects.filter(application_id=self.application_id_local, reference=1).count() > 0:
             reference_record = Reference.objects.get(application_id=self.application_id_local, reference=1)
-            self.fields['first_name'].initial = reference_record.first_name
+            self.fields['first_name'].initial = reference_record.first_namem
             self.fields['last_name'].initial = reference_record.last_name
             self.fields['relationship'].initial = reference_record.relationship
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
