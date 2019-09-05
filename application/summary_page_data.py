@@ -226,14 +226,16 @@ pith_own_children_change_link_description_dict = collections.OrderedDict([('know
 
 ###
 
-first_reference_name_dict = collections.OrderedDict([('full_name', 'Full name'),
+first_reference_name_dict = collections.OrderedDict([('title', 'Title'),
+                                                     ('full_name', 'Full name'),
                                                      ('relationship', 'How they know you'),
                                                      ('known_for', 'Known for'),
                                                      ('address', 'Address'),
                                                      ('phone_number', 'Phone number'),
                                                      ('email_address', 'Email address')])
 
-first_reference_link_dict = collections.OrderedDict([('full_name', 'References-First-Reference-View'),
+first_reference_link_dict = collections.OrderedDict([('title', 'References-First-Reference-View'),
+                                                     ('full_name', 'References-First-Reference-View'),
                                                      ('relationship', 'References-First-Reference-View'),
                                                      ('known_for', 'References-First-Reference-View'),
                                                      ('address', 'References-Enter-First-Reference-Address-View'),
@@ -243,13 +245,15 @@ first_reference_link_dict = collections.OrderedDict([('full_name', 'References-F
                                                      ('email_address',
                                                       'References-First-Reference-Contact-Details-View')])
 
-second_reference_name_dict = collections.OrderedDict([('full_name', 'Full name'),
+second_reference_name_dict = collections.OrderedDict([('title', 'Title'),
+                                                      ('full_name', 'Full name'),
                                                       ('relationship', 'How they know you'),
                                                       ('known_for', 'Known for'),
                                                       ('address', 'Address'),
                                                       ('phone_number', 'Phone number'),
                                                       ('email_address', 'Email address')])
-second_reference_link_dict = collections.OrderedDict([('full_name', 'References-Second-Reference-View'),
+second_reference_link_dict = collections.OrderedDict([ ('title', 'References-Second-Reference-View'),
+                                                      ('full_name', 'References-Second-Reference-View'),
                                                       ('relationship', 'References-Second-Reference-View'),
                                                       ('known_for', 'References-Second-Reference-View'),
                                                       ('address', 'References-Enter-Second-Reference-Address-View'),
