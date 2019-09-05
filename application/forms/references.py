@@ -5,13 +5,15 @@ from dateutil.relativedelta import relativedelta
 from django import forms
 from django.conf import settings
 
+from govuk_forms.widgets import RadioSelect
+
 from application.forms.fields import TimeKnownField
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (Reference, ApplicantPersonalDetails)
 
 from ..models import UserDetails
-from ..business_logic import childminder_references_and_user_email_duplication_check
+from ..business_logic import childminder_references_and_user_email_duplication_check, get_title_options, TITLE_OPTIONS
 
 
 class ReferenceIntroForm(ChildminderForms):
@@ -30,6 +32,14 @@ class FirstReferenceForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    reveal_conditionally = {'title': {'Other': 'other_title'}}
+
+    options = get_title_options()
+
+    title = forms.ChoiceField(label='Title', choices=options, required=True, widget=RadioSelect,
+                              error_messages={'required': 'Please select a title'})
+    other_title = forms.CharField(label='Other',  required=False,
+                                  error_messages={'required': 'Please enter a title'})
 
     first_name = forms.CharField(
         label='First name',
@@ -74,6 +84,19 @@ class FirstReferenceForm(ChildminderForms):
         if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
             obj = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local)
             self.birth_time = (obj.birth_year, obj.birth_month, obj.birth_day)
+
+    def clean_other_title(self):
+        """
+        Other title validation
+        :return: string
+        """
+        other_title=self.cleaned_data['other_title']
+        if self.cleaned_data.get('title') == 'Other':
+            if len(other_title) == 0:
+                raise forms.ValidationError('Please tell us your title')
+            if len(other_title)>100:
+                raise forms.ValidationError('Titles must be under 100 characters long')
+        return other_title
 
     def clean_first_name(self):
         """
@@ -375,6 +398,15 @@ class SecondReferenceForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    reveal_conditionally = {'title': {'Other': 'other_title'}}
+
+    options = get_title_options()
+
+    title = forms.ChoiceField(label='Title', choices=options, required=True, widget=RadioSelect,
+                              error_messages={'required': 'Please select a title'})
+    other_title = forms.CharField(label='Other', required=False,
+                                  error_messages={'required': 'Please enter a title'})
+
 
     first_name = forms.CharField(label='First name', required=True,
                                  error_messages={'required': 'Please enter the first name of the referee'})
@@ -407,6 +439,19 @@ class SecondReferenceForm(ChildminderForms):
         if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
             obj = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local)
             self.birth_time = (obj.birth_year, obj.birth_month, obj.birth_day)
+
+    def clean_other_title(self):
+        """
+        Other title validation
+        :return: string
+        """
+        other_title=self.cleaned_data['other_title']
+        if self.cleaned_data.get('title') == 'Other':
+            if len(other_title) == 0:
+                raise forms.ValidationError('Please tell us your title')
+            if len(other_title)>100:
+                raise forms.ValidationError('Titles must be under 100 characters long')
+        return other_title
 
     def clean_first_name(self):
         """
