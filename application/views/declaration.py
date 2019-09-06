@@ -157,6 +157,7 @@ def declaration_summary(request, print_mode=False):
                                                              lives_with_childminder=False).order_by('child')
         # Generate lists of data for adults in your home, to be iteratively displayed on the summary page
         # The HTML will then parse through each list simultaneously, to display the correct data for each adult
+        adult_title_list = []
         adult_name_list = []
         adult_birth_day_list = []
         adult_birth_month_list = []
@@ -190,6 +191,7 @@ def declaration_summary(request, print_mode=False):
             else:
                 adult_birth_month = str(adult.birth_month)
 
+            adult_title_list.append(adult.title)
             adult_name_list.append(name)
             adult_birth_day_list.append(adult_birth_day)
             adult_birth_month_list.append(adult_birth_month)
@@ -204,7 +206,7 @@ def declaration_summary(request, print_mode=False):
             adult_on_update_list.append(adult.on_update)
 
         # Zip the appended lists together for the HTML to simultaneously parse
-        adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
+        adult_lists = zip(adult_title_list, adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
                           adult_relationship_list, adult_dbs_list, adult_health_check_status_list, adult_email_list,
                           adult_lived_abroad_list, adult_enhanced_check_list, adult_on_update_list,
                           adult_military_base_list)
