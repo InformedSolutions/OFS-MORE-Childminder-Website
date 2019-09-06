@@ -14,6 +14,7 @@ class AdultInHome(models.Model):
     application_id = models.ForeignKey(
         Application, on_delete=models.CASCADE, db_column='application_id')
     adult = models.IntegerField(null=True, blank=True)
+    title = models.CharField(max_length=100, blank=True)
     first_name = models.CharField(max_length=100, blank=True)
     middle_names = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
