@@ -118,6 +118,10 @@ def personal_name_logic(app_id, form):
     first_name = form.cleaned_data.get('first_name')
     middle_names = form.cleaned_data.get('middle_names')
     last_name = form.cleaned_data.get('last_name')
+    if form.cleaned_data.get('title') != 'Other':
+        title = form.cleaned_data.get('title')
+    else:
+        title = form.cleaned_data.get('other_title')
 
     # If the user entered information for this task for the first time
     if not ApplicantPersonalDetails.objects.filter(application_id=app_id).exists():
@@ -140,6 +144,7 @@ def personal_name_logic(app_id, form):
             first_name=first_name,
             middle_names=middle_names,
             last_name=last_name,
+            title=title,
             personal_detail_id=p_id
         )
 
@@ -154,6 +159,7 @@ def personal_name_logic(app_id, form):
         applicant_names_record.first_name = first_name
         applicant_names_record.middle_names = middle_names
         applicant_names_record.last_name = last_name
+        applicant_names_record.title = title
 
     return applicant_names_record
 
@@ -1370,3 +1376,17 @@ class UniqueDbsCheckResult:
     duplicates_childminder_dbs = False
     duplicates_household_member_dbs = False
     duplicate_entry_indexes = 0
+
+TITLE_OPTIONS = ['Mr', 'Mrs', 'Miss', 'Ms']
+
+def get_title_options():
+    """
+    Get the options for the title radio button form
+    :return: tuples of choices
+    """
+    options = ()
+    for title in TITLE_OPTIONS:
+        options += ((title, title),)
+    options += (('Other', 'Other'),)
+    return options
+

@@ -208,6 +208,7 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
 
         data = {
             'id': self.app_id,
+            'title': 'Mr',
             'first_name': "Sherlock",
             'middle_names': "Scott",
             'last_name': "Holmes"

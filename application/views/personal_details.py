@@ -8,7 +8,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
 from ..table_util import Table, create_tables, submit_link_setter
-from ..summary_page_data import personal_details_name_dict, personal_details_link_dict_same_childcare_address,\
+from ..summary_page_data import personal_details_name_dict, personal_details_link_dict_same_childcare_address, \
     personal_details_link_dict_different_childcare_address, personal_details_change_link_description_dict
 from .. import address_helper, status
 from ..business_logic import (multiple_childcare_address_logic,
@@ -921,7 +921,6 @@ def personal_details_working_in_other_childminder_home(request):
 
                 # Reset ARC status if there are comments
                 if Arc.objects.filter(application_id=app_id).count() > 0:
-
                     arc = Arc.objects.get(application_id=app_id)
 
                     arc.people_in_home_review = 'COMPLETED'
@@ -1083,6 +1082,7 @@ def personal_details_summary(request):
         birth_month = personal_detail_id.birth_month
         birth_year = personal_detail_id.birth_year
         applicant_name_record = ApplicantName.get_id(app_id=app_id)
+        title = applicant_name_record.title
         first_name = applicant_name_record.first_name
         middle_names = applicant_name_record.middle_names
         last_name = applicant_name_record.last_name
@@ -1115,7 +1115,6 @@ def personal_details_summary(request):
         else:
             working_in_other_childminder_home = 'No'
 
-
         if application.own_children:
             own_children = 'Yes'
             reasons_known_to_social_services = application.reasons_known_to_social_services
@@ -1123,8 +1122,8 @@ def personal_details_summary(request):
             own_children = 'No'
             reasons_known_to_social_services = ' '
 
-
         name_dob_table_dict = collections.OrderedDict([
+            ('title', title),
             ('name', ' '.join([first_name, (middle_names or ''), last_name])),
             ('date_of_birth', ' '.join([str(birth_day), calendar.month_name[birth_month], str(birth_year)]))
         ])
@@ -1177,13 +1176,11 @@ def personal_details_summary(request):
             'error_summary_title': 'There was a problem'
         })
 
-
         tables = [name_dob_dict, address_dict]
 
         own_children_arc_exists = ArcComments.objects.filter(table_pk=app_id, field_name='own_children').exists()
         if not location_of_childcare or application.own_children or own_children_arc_exists:
             tables.append(own_children_dict)
-
 
         # Set change link for childcare address according to whether the childcare address is the same as the home
         # address

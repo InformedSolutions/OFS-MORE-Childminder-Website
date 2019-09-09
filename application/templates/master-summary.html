@@ -252,6 +252,21 @@
     <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
+            Title
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_title}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if personal_details_change %}
+            <a href="{% url 'Personal-Details-Name-View' %}?id={{application_id}}" alt="Change your name">
+                Change <span class="visuallyhidden">your name</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
             Your name
         </td>
         {% if personal_details_middle_names %}
