@@ -1302,6 +1302,21 @@
     <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
+            Title
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_title}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if references_change %}
+            <a href="{% url 'References-First-Reference-View' %}?id={{application_id}}" alt="Change full name for referee 1">
+                Change <span class="visuallyhidden">full name for referee 1</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
             Name
         </td>
         <td style="word-wrap: break-word" class=summary-column>
@@ -1454,6 +1469,21 @@
     </tr>
     </thead>
     <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Title
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_title}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if references_change %}
+            <a href="{% url 'References-First-Reference-View' %}?id={{application_id}}" alt="Change full name for referee 1">
+                Change <span class="visuallyhidden">full name for referee 1</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
             Name

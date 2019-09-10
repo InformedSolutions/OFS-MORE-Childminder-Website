@@ -119,6 +119,7 @@ def declaration_summary(request, print_mode=False):
                 application_id=application_id_local, reference=2)
 
             references_vars = {
+                'first_reference_title': first_reference_record.title,
                 'first_reference_first_name': first_reference_record.first_name,
                 'first_reference_last_name': first_reference_record.last_name,
                 'first_reference_relationship': first_reference_record.relationship,
@@ -132,6 +133,7 @@ def declaration_summary(request, print_mode=False):
                 'first_reference_country': first_reference_record.country,
                 'first_reference_phone_number': first_reference_record.phone_number,
                 'first_reference_email': first_reference_record.email,
+                'second_reference_title': second_reference_record.title,
                 'second_reference_first_name': second_reference_record.first_name,
                 'second_reference_last_name': second_reference_record.last_name,
                 'second_reference_relationship': second_reference_record.relationship,
