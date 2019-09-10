@@ -809,7 +809,7 @@ def references_summary(request):
                                               first_reference_link_dict)
 
         second_reference_fields = collections.OrderedDict([
-            ('title', first_reference_title),
+            ('title', second_reference_title),
             ('full_name', ' '.join([second_reference_first_name, second_reference_last_name])),
             ('relationship', second_reference_relationship),
             ('known_for', ' '.join([str(second_reference_years_known), second_years_known_str,

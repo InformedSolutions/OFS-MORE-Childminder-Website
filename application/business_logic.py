@@ -574,6 +574,10 @@ def other_people_adult_details_logic(application_id_local, form, adult):
     :return: an AdultInHome object to be saved
     """
     this_application = Application.objects.get(application_id=application_id_local)
+    if form.cleaned_data.get('title')  != 'Other':
+        title = form.cleaned_data.get('title')
+    else:
+        title=form.cleaned_data.get('other_title')
     first_name = form.cleaned_data.get('first_name')
     middle_names = form.cleaned_data.get('middle_names')
     last_name = form.cleaned_data.get('last_name')
@@ -588,6 +592,7 @@ def other_people_adult_details_logic(application_id_local, form, adult):
         adult_record = AdultInHome.objects.get(application_id=this_application, adult=adult)
         if adult_record.email != email:
             adult_record.email_resent_timestamp = None
+        adult_record.title = title
         adult_record.first_name = first_name
         adult_record.middle_names = middle_names
         adult_record.last_name = last_name
@@ -601,7 +606,7 @@ def other_people_adult_details_logic(application_id_local, form, adult):
 
     # If the user previously entered information for this task
     else:
-        adult_record = AdultInHome(first_name=first_name, middle_names=middle_names, last_name=last_name,
+        adult_record = AdultInHome(title=title,  first_name=first_name, middle_names=middle_names, last_name=last_name,
                                    birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
                                    relationship=relationship, email=email, application_id=this_application, adult=adult,
                                    email_resent=0)
@@ -1355,4 +1360,3 @@ def get_title_options():
         options += ((title, title),)
     options += (('Other', 'Other'),)
     return options
-

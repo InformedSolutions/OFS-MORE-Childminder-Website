@@ -464,6 +464,7 @@ class ApplicationTestBase(object):
         data = {
             'id': self.app_id,
             'adults': '1',
+            '1-title': 'Mr',
             '1-first_name': 'Joseph-Christ\'Opher',
             '1-middle_names': 'Pet\'r-Ivor',
             '1-last_name': 'Chris-J\'oe',

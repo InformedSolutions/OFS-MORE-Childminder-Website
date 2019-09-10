@@ -150,6 +150,7 @@ health_link_dict = collections.OrderedDict([('health_submission_consent', 'Healt
 ###
 other_adult_name_dict = collections.OrderedDict([
     ('health_check_status', 'Health questions status'),
+    ('title', 'Title'),
     ('full_name', 'Name'),
     ('date_of_birth', 'Date of birth'),
     ('relationship', 'Relationship'),
@@ -164,6 +165,7 @@ other_adult_name_dict = collections.OrderedDict([
 
 other_adult_link_dict = collections.OrderedDict([
     ('health_check_status', 'Other-People-Resend-Email-View'),
+    ('title', 'PITH-Adult-Details-View'),
     ('full_name', 'PITH-Adult-Details-View'),
     ('date_of_birth', 'PITH-Adult-Details-View'),
     ('relationship', 'PITH-Adult-Details-View'),
@@ -178,6 +180,7 @@ other_adult_link_dict = collections.OrderedDict([
 
 other_adult_link_description_dict = collections.OrderedDict([
     ('health_check_status', 'health questions status'),
+    ('title', 'title'),
     ('full_name', 'name'),
     ('date_of_birth', 'date of birth'),
     ('relationship', 'relationship'),

@@ -182,6 +182,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
             birth_date = ' '.join([str(adult.birth_day), calendar.month_name[adult.birth_month], str(adult.birth_year)])
 
             base_adult_fields = [
+                ('title', adult.title),
                 ('full_name', name),
                 ('date_of_birth', birth_date),
                 ('relationship', adult.relationship),
