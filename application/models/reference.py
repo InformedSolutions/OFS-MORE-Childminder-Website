@@ -22,6 +22,7 @@ class Reference(models.Model):
     postcode = models.CharField(max_length=8, blank=True)
     phone_number = models.CharField(max_length=50, blank=True)
     email = models.CharField(max_length=100, blank=True)
+    other_title = models.CharField(max_length=100, blank=True, null=True)
 
     @property
     def timelog_fields(self):
