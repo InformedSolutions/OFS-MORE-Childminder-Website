@@ -226,6 +226,7 @@ REGEX = {
              "\s-]?\d{4}[\s-]?\d{4}))(?:[\s-]?(?:x|ext\.?|\#)\d{3,4})?$",
     "INTERNATIONAL_PHONE": "^(\+|[0-9])[0-9]{5,20}$",
     "POSTCODE_UPPERCASE": "^[A-Z]{1,2}[0-9][A-Z0-9]?[0-9][ABD-HJLNP-UW-Z]{2}$",
+    "TITLE": "^[A-zÀ-ÿ- ']+$",
     "LAST_NAME": "^[A-zÀ-ÿ- ']+$",
     "MIDDLE_NAME": "^[A-zÀ-ÿ- ']+$",
     "FIRST_NAME": "^[A-zÀ-ÿ- ']+$",
