@@ -119,6 +119,7 @@ def declaration_summary(request, print_mode=False):
                 application_id=application_id_local, reference=2)
 
             references_vars = {
+                'first_reference_title': first_reference_record.title,
                 'first_reference_first_name': first_reference_record.first_name,
                 'first_reference_last_name': first_reference_record.last_name,
                 'first_reference_relationship': first_reference_record.relationship,
@@ -132,6 +133,7 @@ def declaration_summary(request, print_mode=False):
                 'first_reference_country': first_reference_record.country,
                 'first_reference_phone_number': first_reference_record.phone_number,
                 'first_reference_email': first_reference_record.email,
+                'second_reference_title': second_reference_record.title,
                 'second_reference_first_name': second_reference_record.first_name,
                 'second_reference_last_name': second_reference_record.last_name,
                 'second_reference_relationship': second_reference_record.relationship,
@@ -157,6 +159,7 @@ def declaration_summary(request, print_mode=False):
                                                              lives_with_childminder=False).order_by('child')
         # Generate lists of data for adults in your home, to be iteratively displayed on the summary page
         # The HTML will then parse through each list simultaneously, to display the correct data for each adult
+        adult_title_list = []
         adult_name_list = []
         adult_birth_day_list = []
         adult_birth_month_list = []
@@ -190,6 +193,7 @@ def declaration_summary(request, print_mode=False):
             else:
                 adult_birth_month = str(adult.birth_month)
 
+            adult_title_list.append(adult.title)
             adult_name_list.append(name)
             adult_birth_day_list.append(adult_birth_day)
             adult_birth_month_list.append(adult_birth_month)
@@ -204,7 +208,7 @@ def declaration_summary(request, print_mode=False):
             adult_on_update_list.append(adult.on_update)
 
         # Zip the appended lists together for the HTML to simultaneously parse
-        adult_lists = zip(adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
+        adult_lists = zip(adult_title_list, adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
                           adult_relationship_list, adult_dbs_list, adult_health_check_status_list, adult_email_list,
                           adult_lived_abroad_list, adult_enhanced_check_list, adult_on_update_list,
                           adult_military_base_list)

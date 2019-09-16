@@ -4,9 +4,9 @@ from datetime import date
 
 from django import forms
 from django.conf import settings
-from govuk_forms.widgets import InlineRadioSelect
+from govuk_forms.widgets import InlineRadioSelect, RadioSelect
 
-from ..business_logic import show_resend_and_change_email
+from ..business_logic import show_resend_and_change_email, TITLE_OPTIONS, get_title_options
 from application.forms.fields import CustomSplitDateFieldDOB
 from ..forms.childminder import ChildminderForms
 from ..forms_helper import full_stop_stripper
@@ -36,6 +36,14 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
     error_summary_title = 'There was a problem with the details'
+    reveal_conditionally = {'title': {'Other': 'other_title'}}
+
+    options = get_title_options()
+
+    title = forms.ChoiceField(label='Title', choices=options, required=True, widget=RadioSelect,
+                              error_messages={'required': 'Please select a title'})
+    other_title = forms.CharField(label='Other', required=False,
+                                  error_messages={'required': 'Please enter a title'})
 
     first_name = forms.CharField(label='First name', required=True,
                                  error_messages={'required': "Please enter their first name"})
@@ -70,7 +78,11 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
             birth_day, birth_month, birth_year = date_formatter(adult_record.birth_day,
                                                                 adult_record.birth_month,
                                                                 adult_record.birth_year)
-
+            if adult_record.title in TITLE_OPTIONS:
+                self.fields['title'].initial = adult_record.title
+            else:
+                self.fields['title'].initial = 'Other'
+                self.fields['other_title'].initial = adult_record.title
             self.fields['first_name'].initial = adult_record.first_name
             self.fields['middle_names'].initial = adult_record.middle_names
             self.fields['last_name'].initial = adult_record.last_name
@@ -78,8 +90,23 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
             self.fields['relationship'].initial = adult_record.relationship
             self.fields['email_address'].initial = adult_record.email
             self.pk = adult_record.adult_id
-            self.field_list = ['first_name', 'middle_names', 'last_name', 'date_of_birth', 'relationship',
+            self.field_list = ['title','first_name', 'middle_names', 'last_name', 'date_of_birth', 'relationship',
                                'email_address']
+
+    def clean_other_title(self):
+        """
+        Other title validation
+        :return: string
+        """
+        other_title=self.cleaned_data['other_title']
+        if self.cleaned_data.get('title') == 'Other':
+            if len(other_title) == 0:
+                raise forms.ValidationError('Please tell us your title')
+            if re.match(settings.REGEX['TITLE'], other_title) is None:
+                raise forms.ValidationError('Title can only have letters')
+            if len(other_title) > 100:
+                raise forms.ValidationError('Titles must be under 100 characters long')
+        return other_title
 
     def clean_first_name(self):
         """

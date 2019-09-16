@@ -76,6 +76,8 @@ class PersonalDetailsNameForm(ChildminderForms):
         if self.cleaned_data.get('title') == 'Other':
             if len(other_title) == 0:
                 raise forms.ValidationError('Please tell us your title')
+            if re.match(settings.REGEX['TITLE'], other_title) is None:
+                raise forms.ValidationError('Title can only have letters')
             if len(other_title)>100:
                 raise forms.ValidationError('Titles must be under 100 characters long')
         return other_title

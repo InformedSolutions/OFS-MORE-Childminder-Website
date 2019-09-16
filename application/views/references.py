@@ -11,7 +11,6 @@ from ..summary_page_data import first_reference_name_dict, first_reference_link_
 from ..table_util import Table, create_tables, submit_link_setter
 from .. import address_helper, status
 from ..business_logic import (references_first_reference_logic,
-                              references_second_reference_logic,
                               reset_declaration)
 from ..forms import (FirstReferenceForm,
                      ReferenceFirstReferenceAddressForm,
@@ -102,7 +101,7 @@ def references_first_reference(request):
                               'references_status', 'IN_PROGRESS')
             # Create or update Reference record
             references_record = references_first_reference_logic(
-                application_id_local, form)
+                application_id_local, form, 1)
             references_record.save()
             application.date_updated = current_date
             application.save()
@@ -439,8 +438,8 @@ def references_second_reference(request):
                 status.update(application_id_local,
                               'references_status', 'IN_PROGRESS')
             # Create or update Reference record
-            references_record = references_second_reference_logic(
-                application_id_local, form)
+            references_record = references_first_reference_logic(
+                application_id_local, form, 2)
             references_record.save()
             application.date_updated = current_date
             application.save()
@@ -754,6 +753,7 @@ def references_summary(request):
             application_id=application_id_local, reference=1)
         second_reference_record = Reference.objects.get(
             application_id=application_id_local, reference=2)
+        first_reference_title = first_reference_record.title
         first_reference_first_name = first_reference_record.first_name
         first_reference_last_name = first_reference_record.last_name
         first_reference_relationship = first_reference_record.relationship
@@ -767,6 +767,7 @@ def references_summary(request):
         first_reference_postcode = first_reference_record.postcode
         first_reference_phone_number = first_reference_record.phone_number
         first_reference_email = first_reference_record.email
+        second_reference_title = second_reference_record.title
         second_reference_first_name = second_reference_record.first_name
         second_reference_last_name = second_reference_record.last_name
         second_reference_relationship = second_reference_record.relationship
@@ -789,6 +790,7 @@ def references_summary(request):
         second_months_known_str = "month" if second_reference_months_known == 1 else "months"
 
         first_reference_fields = collections.OrderedDict([
+            ('title', first_reference_title),
             ('full_name', ' '.join([first_reference_first_name, first_reference_last_name])),
             ('relationship', first_reference_relationship),
             ('known_for', ' '.join([str(first_reference_years_known), first_years_known_str,
@@ -807,6 +809,7 @@ def references_summary(request):
                                               first_reference_link_dict)
 
         second_reference_fields = collections.OrderedDict([
+            ('title', second_reference_title),
             ('full_name', ' '.join([second_reference_first_name, second_reference_last_name])),
             ('relationship', second_reference_relationship),
             ('known_for', ' '.join([str(second_reference_years_known), second_years_known_str,

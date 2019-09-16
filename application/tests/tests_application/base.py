@@ -464,6 +464,7 @@ class ApplicationTestBase(object):
         data = {
             'id': self.app_id,
             'adults': '1',
+            '1-title': 'Mr',
             '1-first_name': 'Joseph-Christ\'Opher',
             '1-middle_names': 'Pet\'r-Ivor',
             '1-last_name': 'Chris-J\'oe',
@@ -588,6 +589,7 @@ class ApplicationTestBase(object):
             reverse('References-First-Reference-View'),
             {
                 'id': self.app_id,
+                'title': 'Mr',
                 'first_name': 'Roman',
                 'last_name': 'Gorodeckij',
                 'relationship': 'My client',
@@ -636,6 +638,7 @@ class ApplicationTestBase(object):
             reverse('References-Second-Reference-View'),
             {
                 'id': self.app_id,
+                'title':'Mr',
                 'first_name': 'Sherlock',
                 'last_name': 'Holmes',
                 'relationship': 'My client',
