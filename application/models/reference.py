@@ -10,6 +10,7 @@ class Reference(models.Model):
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     reference = models.IntegerField(blank=True)
     title = models.CharField(max_length=100, blank=True)
+    other_title = models.CharField(max_length=100, blank=True, null=True)
     first_name = models.CharField(max_length=100, blank=True)
     last_name = models.CharField(max_length=100, blank=True)
     relationship = models.CharField(max_length=100, blank=True)
