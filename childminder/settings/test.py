@@ -10,6 +10,13 @@ PROD_APPS = [
     'whitenoise',
 ]
 
+GOOGLE_ANALYTICS = {
+    'google_analytics_id': [
+        "account-1",
+        "account-2"
+    ]
+}
+
 INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + PROD_APPS + PROJECT_APPS
 
 # Database
