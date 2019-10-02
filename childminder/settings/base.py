@@ -214,7 +214,8 @@ TEST_OUTPUT_DIR = 'xmlrunner'
 
 # Export Settings variables DEBUG to templates context
 SETTINGS_EXPORT = [
-    'DEBUG'
+    'DEBUG',
+    'GOOGLE_ANALYTICS'
 ]
 
 # Regex Validation Strings
