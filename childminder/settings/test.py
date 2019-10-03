@@ -12,8 +12,8 @@ PROD_APPS = [
 
 GOOGLE_ANALYTICS = {
     'google_analytics_id': [
-        "account-1",
-        "account-2"
+        "UA-149348654-1",
+        "UA-149335660-1"
     ]
 }
 
