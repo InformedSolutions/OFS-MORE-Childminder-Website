@@ -12,7 +12,8 @@ PROD_APPS = [
 
 GOOGLE_ANALYTICS = {
     'google_analytics_id': [
-        "UA-114456515-1"
+        "UA-114456515-1",
+        "UA-145652997-1"
     ]
 }
 
