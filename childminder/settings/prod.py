@@ -11,7 +11,10 @@ PROD_APPS = [
 ]
 
 GOOGLE_ANALYTICS = {
-    'google_analytics_id': "UA-114456515-1"
+    'google_analytics_id': [
+        "UA-114456515-1",
+        "UA-145652997-1"
+    ]
 }
 
 INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + PROD_APPS + PROJECT_APPS

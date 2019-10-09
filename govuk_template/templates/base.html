@@ -104,7 +104,9 @@
     {% load google_analytics_tags %}
     {% if not settings.DEBUG %}
     <div style="display:none">
-      <img src="{% google_analytics %}" width="0" height="0" />
+      {% for id in settings.GOOGLE_ANALYTICS.google_analytics_id %}
+        <img src="{% google_analytics tracking_code=id %}" width="0" height="0" />
+      {% endfor %}
     </div>
     {% endif %}
   </body>

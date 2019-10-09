@@ -12,6 +12,13 @@ PROD_APPS = [
 
 INSTALLED_APPS = BUILTIN_APPS + THIRD_PARTY_APPS + PROD_APPS + PROJECT_APPS
 
+GOOGLE_ANALYTICS = {
+    'google_analytics_id': [
+        "UA-149348654-1",
+        "UA-149335660-1"
+    ]
+}
+
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
