@@ -52,8 +52,6 @@ PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS = os.environ.get('PAYMENT_STATUS_QUERY_
 
 PAYMENT_HTTP_REQUEST_TIMEOUT = 60
 
-PAYMENT_NOTIFICATIONS_QUEUE_NAME = SQS_QUEUE_PREFIX + '_PAYMENT_NOTIFICATIONS'
-
 GOOGLE_ANALYTICS = {
 }
 
@@ -236,14 +234,14 @@ LOGGING = {
         'backupCount': 10
     },
     'console': {
-        'level': 'INFO',
+        'level': 'DEBUG',
         'class': 'logging.StreamHandler'
     },
    },
    'loggers': {
      '': {
        'handlers': ['file', 'console'],
-         'level': 'INFO',
+         'level': 'DEBUG',
            'propagate': True,
       },
       'django.server': {
