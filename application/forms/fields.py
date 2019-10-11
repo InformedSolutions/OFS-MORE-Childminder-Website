@@ -280,7 +280,7 @@ class CustomSplitDateField(forms.MultiValueField):
         'invalid': _('Please check the date of the course')
     }
 
-    def __init__(self, bounds_error=None, min_value=2000, *args, **kwargs):
+    def __init__(self, bounds_error=None, min_value=1900, *args, **kwargs):
         day_bounds_error = gettext('Day must be between 1 and 31')
         month_bounds_error = gettext('Month must be between 1 and 12')
 

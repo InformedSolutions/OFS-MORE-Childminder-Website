@@ -94,7 +94,7 @@ class DBSTypeForm(DBSRadioForm):
     )
 
     on_update = forms.ChoiceField(
-        label='Are you on the DBS update service?',
+        label='Are you on the DBS Update Service?',
         choices=choices,
         widget=ConditionalPostInlineRadioSelect,
         required=False,
@@ -132,7 +132,7 @@ class DBSUpdateForm(DBSRadioForm):
 
     def get_choice_field_data(self):
         return forms.ChoiceField(
-            label='Are you on the DBS update service?',
+            label='Are you on the DBS Update Service?',
             choices=self.get_options(),
             widget=InlineRadioSelect,
             required=True,
