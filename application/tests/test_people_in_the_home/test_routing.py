@@ -505,7 +505,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
 
         self.assertEqual(response.status_code, 200)
         utils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
-        utils.assertXPath(response, "(//h2[normalize-space(text())='Sign up to the Update Service']"
+        utils.assertXPath(response, "(//h2[normalize-space(text())='Sign up to the DBS Update Service']"
                                         "/following-sibling::ul)[1]"
                                     "/li[normalize-space(text())='Joe Alan Bloggs']")
 
@@ -521,7 +521,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
 
         self.assertEqual(response.status_code, 200)
         utils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
-        utils.assertXPath(response, "(//h2[normalize-space(text())='DBS Update check']"
+        utils.assertXPath(response, "(//h2[normalize-space(text())='DBS Update Service check']"
                                         "/following-sibling::ul)[1]"
                                         "/li[normalize-space(text())='Joe Alan Bloggs']")
 
@@ -536,7 +536,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
 
         self.assertEqual(response.status_code, 200)
         utils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
-        utils.assertXPath(response, "(//h2[normalize-space(text())='DBS Update check']"
+        utils.assertXPath(response, "(//h2[normalize-space(text())='DBS Update Service check']"
                                         "/following-sibling::ul)[1]"
                                     "/li[normalize-space(text())='Joe Alan Bloggs']")
 
@@ -551,7 +551,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
 
         self.assertEqual(response.status_code, 200)
         utils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
-        utils.assertXPath(response, "(//h2[normalize-space(text())='Sign up to the Update Service']"
+        utils.assertXPath(response, "(//h2[normalize-space(text())='Sign up to the DBS Update Service']"
                                         "/following-sibling::ul)[1]"
                                     "/li[normalize-space(text())='Joe Alan Bloggs']")
 
