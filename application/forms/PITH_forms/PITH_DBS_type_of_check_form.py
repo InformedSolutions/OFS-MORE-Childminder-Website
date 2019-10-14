@@ -86,7 +86,7 @@ class PITHDBSTypeOfCheckForm(PITHChildminderFormAdapter):
 
     def get_on_update_field_data(self):
         return forms.ChoiceField(
-            label='Are they on the DBS update service?',
+            label='Are they on the DBS Update Service?',
             choices=self.get_options(),
             widget=ConditionalPostInlineRadioSelect,
             required=False)
@@ -109,7 +109,7 @@ class PITHDBSTypeOfCheckForm(PITHChildminderFormAdapter):
 
         if (enhanced_yes or not self.ask_if_enhanced_check) and cleaned_on_update_field is None:
             self.add_error(self.on_update_field,
-                           'Please say if they are on the DBS update service')
+                           'Please say if they are on the DBS Update Service')
 
         return self.cleaned_data
 

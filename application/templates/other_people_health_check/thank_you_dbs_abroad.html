@@ -23,13 +23,21 @@
         Manchester <br />
         M1 2WD<br />
     </p>
-    <p><h2 class="form-title heading-small">Email your criminal record certificates from abroad</h2></p>
-    <p>{{ ApplicantName }} told us that you have lived abroad in the last 5 years.</p>
-    <p>We need to see your criminal record certificates from those countries. </p>
-    <p>You can scan the documents or take photos.</p>
-    <p>Make sure everything is clear and you can read everything.</p>
+        <form method="post" novalidate>
+            <div class="form-group">
+                <h2 class="form-title heading-small">
+                    Email your you criminal record certificates from abroad
+                </h2>
+                <p>{{ ApplicantName }} told us that you have lived abroad in the last 5 years.</p>
+                <p>We need to see your criminal record certificates from those countries. </p>
+                <p>You can scan the documents or take photos.</p>
+                <p>Make sure everything is clear and you can read everything.</p>
+                <p>You will need to email a copy of your certificates to Ofsted on <a href="mailto:enquiries@ofsted.gov.uk">enquiries@ofsted.gov.uk</a>  after you submit your application.</p>
+                <p>You must wait to submit your application before sending us these, otherwise we will not be able to check it.</p>
 
-    <p>Email the copies to <a href="mailto:enquiries@ofsted.gov.uk">enquiries@ofsted.gov.uk</a>.</p>
-</div>
+                {% csrf_token %}
+                <input type="submit" class="button" value="Continue">
+            </div>
+        </form>
 
 {% endblock %}
