@@ -33,11 +33,6 @@ class Application(models.Model):
         ('FLAGGED', 'FLAGGED')
     )
 
-    REGISTER_TYPE = (
-        ('EYC', 'EYC'),
-        ('CCR', 'CCR'),
-        ('VCR', 'VCR')
-    )
     application_id = models.UUIDField(primary_key=True, default=uuid4)
     application_type = models.CharField(choices=APP_TYPE, max_length=50, blank=True)
     application_status = models.CharField(choices=APP_STATUS, max_length=50, blank=True)
@@ -83,7 +78,9 @@ class Application(models.Model):
     known_to_social_services_pith = models.NullBooleanField(blank=True, null=True, default=None)
     reasons_known_to_social_services_pith = models.TextField(null=True, default="")  # with_respect_to_your_children
     application_expiry_email_sent = models.NullBooleanField(blank=True, null=True, default=False)
-    register_type = models.CharField(choices=REGISTER_TYPE, max_length=5, null=True, blank=True)
+    EYC = models.NullBooleanField(blank=True, null=True, default=False)
+    VCR = models.NullBooleanField(blank=True, null=True, default=False)
+    CCR = models.NullBooleanField(blank=True, null=True, default=False)
 
     @classmethod
     def get_id(cls, app_id):
