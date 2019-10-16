@@ -781,7 +781,7 @@
     </tr>
     </tbody>
 </table>
-{% for title, name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, lived_abroad, enhanced_check, on_update, military_base in adult_lists %}
+{% for title, name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, PITH_mobile_number, lived_abroad, enhanced_check, on_update, military_base in adult_lists %}
 <table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
@@ -897,6 +897,22 @@
             {% if people_in_your_home_change %}
             <a href="{% url 'PITH-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
                alt="Change the adult's email">
+                Change <span class="visuallyhidden">the adult's email</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Phone number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{PITH_mobile_number}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Change the adult's phone number">
                 Change <span class="visuallyhidden">the adult's email</span>
             </a>
             {% endif %}

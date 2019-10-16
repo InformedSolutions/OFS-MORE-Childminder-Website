@@ -187,6 +187,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
                 ('date_of_birth', birth_date),
                 ('relationship', adult.relationship),
                 ('email', adult.email),
+                ('PITH_mobile_number', adult.PITH_mobile_number),
                 ('lived_abroad', adult.lived_abroad),
             ]
 
