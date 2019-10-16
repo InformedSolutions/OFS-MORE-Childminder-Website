@@ -82,6 +82,7 @@ class Application(models.Model):
     VCR = models.NullBooleanField(blank=True, null=True, default=False)
     CCR = models.NullBooleanField(blank=True, null=True, default=False)
 
+
     @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(pk=app_id)
