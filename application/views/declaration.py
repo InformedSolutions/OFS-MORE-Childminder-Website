@@ -168,6 +168,7 @@ def declaration_summary(request, print_mode=False):
         adult_dbs_list = []
         adult_health_check_status_list = []
         adult_email_list = []
+        adult_mobile_number_list = []
         adult_lived_abroad_list = []
         adult_military_base_list = []
         adult_enhanced_check_list = []
@@ -202,6 +203,7 @@ def declaration_summary(request, print_mode=False):
             adult_dbs_list.append(adult.dbs_certificate_number)
             adult_health_check_status_list.append(adult.health_check_status)
             adult_email_list.append(adult.email)
+            adult_mobile_number_list.append(adult.PITH_mobile_number)
             adult_lived_abroad_list.append(adult.lived_abroad)
             adult_military_base_list.append(adult.military_base)
             adult_enhanced_check_list.append(adult.enhanced_check)
@@ -209,7 +211,7 @@ def declaration_summary(request, print_mode=False):
 
         # Zip the appended lists together for the HTML to simultaneously parse
         adult_lists = zip(adult_title_list, adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
-                          adult_relationship_list, adult_dbs_list, adult_health_check_status_list, adult_email_list,
+                          adult_relationship_list, adult_dbs_list, adult_health_check_status_list, adult_email_list, adult_mobile_number_list,
                           adult_lived_abroad_list, adult_enhanced_check_list, adult_on_update_list,
                           adult_military_base_list)
         # Generate lists of data for children in your home, to be iteratively displayed on the summary page

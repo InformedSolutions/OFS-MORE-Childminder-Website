@@ -32,6 +32,9 @@ class PITHAdultDetailsForm(ChildminderForms):
                                    error_messages={'required': "Please say how the person is related to you"})
     email_address = forms.CharField(label='Email address',
                                     help_text='They need to answer simple questions about their health', required=False)
+    PITH_mobile_number = forms.CharField(label='Phone number',
+                                    help_text='We need their phone number in case we need to get in touch with them', required=True,
+                                    )
 
     def __init__(self, *args, **kwargs):
         """
@@ -58,9 +61,10 @@ class PITHAdultDetailsForm(ChildminderForms):
             self.fields['date_of_birth'].initial = [birth_day, birth_month, birth_year]
             self.fields['relationship'].initial = adult_record.relationship
             self.fields['email_address'].initial = adult_record.email
+            self.fields['PITH_mobile_number'].initial = adult_record.mobile_number
             self.pk = adult_record.adult_id
             self.field_list = ['first_name', 'middle_names', 'last_name', 'date_of_birth', 'relationship',
-                               'email_address']
+                               'email_address', 'PITH_mobile_number']
 
     def clean_first_name(self):
         """
@@ -154,3 +158,14 @@ class PITHAdultDetailsForm(ChildminderForms):
                 raise forms.ValidationError('Please enter an email address')
             else:
                 return self.fields['email_address'].initial
+
+    def clean_mobile_number(self):
+        """
+        Mobile number validation
+        :return: string
+        """
+        mobile_number = self.cleaned_data['PITH_mobile_number']
+        no_space_mobile_number = mobile_number.replace(' ', '')
+        if re.match(settings.REGEX['MOBILE'], no_space_mobile_number) is None:
+            raise forms.ValidationError('Please enter a valid mobile number')
+        return mobile_number

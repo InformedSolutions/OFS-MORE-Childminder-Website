@@ -586,6 +586,7 @@ def other_people_adult_details_logic(application_id_local, form, adult):
     birth_year = form.cleaned_data.get('date_of_birth')[2]
     relationship = form.cleaned_data.get('relationship')
     email = form.cleaned_data.get('email_address')
+    PITH_mobile_number = form.cleaned_data.get('PITH_mobile_number')
     # If the user entered information for this task for the first time
     if AdultInHome.objects.filter(application_id=this_application, adult=adult).exists():
 
@@ -602,13 +603,14 @@ def other_people_adult_details_logic(application_id_local, form, adult):
         adult_record.relationship = relationship
         adult_record.email = email
         adult_record.email_resent = 0
+        adult_record.mobile_number = PITH_mobile_number
 
 
     # If the user previously entered information for this task
     else:
         adult_record = AdultInHome(title=title,  first_name=first_name, middle_names=middle_names, last_name=last_name,
                                    birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
-                                   relationship=relationship, email=email, application_id=this_application, adult=adult,
+                                   relationship=relationship, email=email, PITH_mobile_number=PITH_mobile_number, application_id=this_application, adult=adult,
                                    email_resent=0)
 
     return adult_record
