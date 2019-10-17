@@ -447,10 +447,13 @@ def declaration_intro(request):
         application_id_local = request.GET["id"]
         form = DeclarationIntroForm()
         application = Application.objects.get(pk=application_id_local)
+        childcare_type = ChildcareType.objects.get(application_id=application_id_local)
         variables = {
             'form': form,
             'application_id': application_id_local,
-            'declarations_status': application.declarations_status
+            'declarations_status': application.declarations_status,
+            'five_to_eight': childcare_type.five_to_eight,
+            'eight_plus':  childcare_type.eight_plus
         }
         return render(request, 'declaration-intro.html', variables)
     if request.method == 'POST':
