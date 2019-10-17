@@ -93,7 +93,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
             self.fields['date_of_birth'].initial = [birth_day, birth_month, birth_year]
             self.fields['relationship'].initial = adult_record.relationship
             self.fields['email_address'].initial = adult_record.email
-            self.fields['PITH_mobile_number'].initial = adult_record.mobile_number
+            self.fields['PITH_mobile_number'].initial = adult_record.PITH_mobile_number
             self.pk = adult_record.adult_id
             self.field_list = ['title','first_name', 'middle_names', 'last_name', 'date_of_birth', 'relationship',
                                'email_address', 'PITH_mobile_number']

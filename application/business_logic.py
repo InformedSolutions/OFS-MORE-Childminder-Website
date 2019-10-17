@@ -603,7 +603,7 @@ def other_people_adult_details_logic(application_id_local, form, adult):
         adult_record.relationship = relationship
         adult_record.email = email
         adult_record.email_resent = 0
-        adult_record.mobile_number = PITH_mobile_number
+        adult_record.PITH_mobile_number = PITH_mobile_number
 
 
     # If the user previously entered information for this task
