@@ -1,4 +1,4 @@
-"""
+""")
 OFS-MORE-CCN3: Apply to be a Childminder Beta
 -- test_validation.py --
 @author: Informed Solutions
@@ -33,7 +33,6 @@ def testing_convert_mobile(test_mobile_numbers):
 
 def testing_duplicate_email(test_email_1,test_email_2):
     return childminder_references_and_user_email_duplication_check(test_email_1, test_email_2)
-
 
 class TestUserDetailsValidation(TestCase):
 
