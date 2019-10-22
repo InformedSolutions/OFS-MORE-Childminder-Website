@@ -916,9 +916,9 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
 
-        utils.assertNotSummaryField(response, 'On the update service?', heading='Joe Anthony Bloggs')
-        utils.assertSummaryField(response, 'On the update service?', 'Yes', heading='Joanne Bethanny Smith')
-        utils.assertSummaryField(response, 'On the update service?', 'No', heading='Josef Charlie Thompson')
+        utils.assertNotSummaryField(response, 'On the DBS Update Service?', heading='Joe Anthony Bloggs')
+        utils.assertSummaryField(response, 'On the DBS Update Service?', 'Yes', heading='Joanne Bethanny Smith')
+        utils.assertSummaryField(response, 'On the DBS Update Service?', 'No', heading='Josef Charlie Thompson')
 
     def test_doesnt_display_fields_relating_to_private_information_for_adults_in_home(self):
 

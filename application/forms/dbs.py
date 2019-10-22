@@ -99,7 +99,7 @@ class DBSTypeForm(DBSRadioForm):
         widget=ConditionalPostInlineRadioSelect,
         required=False,
         error_messages={
-            'required': 'Please say if you are on the DBS update service'})
+            'required': 'Please say if you are on the DBS Update Service'})
 
     def clean(self):
         try:
@@ -112,7 +112,7 @@ class DBSTypeForm(DBSRadioForm):
             on_update = None
         if enhanced_check == 'True':
             if on_update == '':
-                self.add_error('on_update', "Please say if you are on the DBS update service")
+                self.add_error('on_update', "Please say if you are on the DBS Update Service")
 
     def get_choice_field_data(self):
         return forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare?',
@@ -137,7 +137,7 @@ class DBSUpdateForm(DBSRadioForm):
             widget=InlineRadioSelect,
             required=True,
             error_messages={
-                'required': 'Please say if you are on the DBS update service'})
+                'required': 'Please say if you are on the DBS Update Service'})
 
 
 class DBSCheckDetailsForm(DBSRadioForm):

@@ -244,7 +244,7 @@ class DBSSummaryView(DBSTemplateView):
             },
             {
                 'field': 'on_update',
-                'title': 'Are you on the DBS update service?',
+                'title': 'Are you on the DBS Update Service?',
                 'url': 'DBS-Update-View',
                 'alt_text': 'answer to DBS being on the Update Service'
             }
