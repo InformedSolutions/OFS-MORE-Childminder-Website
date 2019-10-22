@@ -22,7 +22,7 @@ class EYFSDetailsForm(ChildminderForms):
     eyfs_course_name = forms.CharField(label='Title of training course',
                                        error_messages={'required': 'Please enter the title of the course'})
     eyfs_course_date = CustomSplitDateField(label='Date you completed course', help_text='For example, 31 03 2016',
-                                            error_messages={'required': 'Please enter the full date, including the day, month and year'})
+                                            error_messages={'required': 'Please enter the full date, including the day, month and year'}, min_value=1900)
 
     def __init__(self, *args, **kwargs):
         """

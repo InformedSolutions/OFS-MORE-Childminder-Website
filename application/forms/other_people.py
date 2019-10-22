@@ -62,6 +62,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
     PITH_mobile_number = forms.CharField(label='Phone number',
                                     help_text='We need their phone number in case we need to get in touch with them',
                                     required=True, error_messages={'required': "Please enter their phone number"},
+                                    required=True,
                                     )
 
     def __init__(self, *args, **kwargs):
