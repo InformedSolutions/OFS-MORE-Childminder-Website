@@ -55,6 +55,7 @@
          "birth_year":2000,
          "relationship":"Monster under the bed",
          "email":"test@email.com",
+         "PITH_mobile_number": "12345678900",
          "capita": true,
          "on_update": null,
          "military_base": false,

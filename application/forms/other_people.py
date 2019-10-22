@@ -61,7 +61,7 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
                                     required=False)
     PITH_mobile_number = forms.CharField(label='Phone number',
                                     help_text='We need their phone number in case we need to get in touch with them',
-                                    required=True,
+                                    required=True, error_messages={'required': "Please enter their phone number"},
                                     )
 
     def __init__(self, *args, **kwargs):
@@ -197,16 +197,21 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
 
             raise forms.ValidationError('Please enter an email address')
 
-    def clean_mobile_number(self):
+    def clean_PITH_mobile_number(self):
         """
         Mobile number validation
         :return: string
         """
-        mobile_number = self.cleaned_data['PITH_mobile_number']
-        no_space_mobile_number = mobile_number.replace(' ', '')
-        if re.match(settings.REGEX['MOBILE'], no_space_mobile_number) is None:
-            raise forms.ValidationError('Please enter a valid mobile number')
-        return mobile_number
+        PITH_mobile_number = self.cleaned_data['PITH_mobile_number']
+        applicant_phone_number = UserDetails.objects.get(application_id=self.application_id_local).mobile_number
+        no_space_PITH_mobile_number = PITH_mobile_number.replace(' ', '')
+        if re.match(settings.REGEX['PHONE'], no_space_PITH_mobile_number) is None:
+            raise forms.ValidationError('Please enter a valid phone number')
+        if no_space_PITH_mobile_number == applicant_phone_number:
+            raise forms.ValidationError('Their phone number cannot be the same as your phone number')
+        if len(no_space_PITH_mobile_number) > 20:
+            raise forms.ValidationError('Phone numbers must be less than 20 characters long')
+        return PITH_mobile_number
 
 
 class OtherPeopleChildrenQuestionForm(ChildminderForms):

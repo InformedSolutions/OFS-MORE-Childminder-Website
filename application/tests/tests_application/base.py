@@ -470,7 +470,7 @@ class ApplicationTestBase(object):
             '1-last_name': 'Chris-J\'oe',
             '1-relationship': 'Son',
             '1-email_address': 'test@email.com',
-            '1-PITH_mobile_number': '12345678900',
+            '1-PITH_mobile_number': '07700 900756',
             '1-date_of_birth_0': '16',
             '1-date_of_birth_1': '6',
             '1-date_of_birth_2': '1984',
