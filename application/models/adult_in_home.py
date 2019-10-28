@@ -28,6 +28,12 @@ class AdultInHome(models.Model):
 
     email = models.CharField(max_length=100, blank=True, null=True)
     PITH_mobile_number = models.CharField(max_length=20, blank=True)
+    street_line1 = models.CharField(max_length=100, blank=True)
+    street_line2 = models.CharField(max_length=100, blank=True)
+    town = models.CharField(max_length=100, blank=True)
+    county = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    postcode = models.CharField(max_length=8, blank=True)
     dbs_certificate_number = models.CharField(max_length=50, blank=True)
     token = models.CharField(max_length=100, blank=True, null=True)
     validated = models.BooleanField(default=False)
@@ -78,6 +84,12 @@ class AdultInHome(models.Model):
             'birth_year',
             'relationship',
             'email',
+            'street_line1',
+            'street_line2',
+            'town',
+            'county',
+            'country',
+            'postcode',
             'PITH_mobile_number',
             'dbs_certificate_number',
             'health_check_status',

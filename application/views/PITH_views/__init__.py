@@ -18,3 +18,6 @@ from .PITH_own_children_select import *
 from .PITH_own_children_manual import *
 
 from .PITH_check_your_answers import *
+
+from.PITH_address_details import *
+from .PITH_address_check import *
