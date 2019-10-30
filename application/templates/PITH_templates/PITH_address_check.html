@@ -1,40 +1,42 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Your home address details{% endblock %}
+{% block page_title %}Adults address check{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
 {% include "back-button.html" %}
-
-<!-- Initialise error summary for page -->
 <div class="two-thirds">
-{{form.error_summary}}
-
-<!-- Form -->
-<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    <!-- Content -->
-    <h1 class="form-title heading-large">
-        Your home address details
-    </h1>
-    {% if street_line2 and county %}
-    <p>{{street_line1}}, {{street_line2}}, {{town}}, {{county}} {{postcode}}</p>
-    {% elif street_line2 and not county %}
-    <p>{{street_line1}}, {{street_line2}}, {{town}} {{postcode}}</p>
-    {% elif not street_line2 and county %}
-    <p>{{street_line1}}, {{town}}, {{county}} {{postcode}}</p>
-    {% elif not street_line2 and not county %}
-    <p>{{street_line1}}, {{town}} {{postcode}}</p>
+    {% if error_summary_list %}
+        {% include "PITH_templates/PITH_error_summary.html" %}
     {% endif %}
-    {{form.as_div}}
-    {% csrf_token %}
-    <input type="submit" class="button" value="Save and continue">
-    <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-</form>
-<br>
-{% if personal_details_status == 'COMPLETED' or personal_details_status == 'FLAGGED' %}
-{% include 'return-to-list.html' %}
-{% endif %}
+    <form method="post" novalidate>
+        <div class="form-group">
+
+            <h1 class="form-title heading-large">
+                Your home address details
+            </h1>
+            {% if street_line2 and county %}
+            <p>{{street_line1}}, {{street_line2}}, {{town}}, {{county}} {{postcode}}</p>
+            {% elif street_line2 and not county %}
+            <p>{{street_line1}}, {{street_line2}}, {{town}} {{postcode}}</p>
+            {% elif not street_line2 and county %}
+            <p>{{street_line1}}, {{town}}, {{county}} {{postcode}}</p>
+            {% elif not street_line2 and not county %}
+            <p>{{street_line1}}, {{town}} {{postcode}}</p>
+            {% endif %}
+
+            {% for form in form_list %}
+            {{ form.adult.get_full_name }}
+                {{ form.as_div }}
+            {% endfor %}
+
+            {% csrf_token %}
+            <input type="submit" class="button" value="Save and continue">
+        </div>
+    </form>
 </div>
+
+{% include 'return-to-list.html' %}
 
 {% endblock %}
