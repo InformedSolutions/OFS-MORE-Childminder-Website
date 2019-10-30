@@ -4,11 +4,14 @@ from django.shortcuts import render, reverse
 
 from .. import address_helper, status
 
-from application.business_logic import (PITH_adults_details_logic,
-                              reset_declaration)
+#from application.business_logic import (PITH_adults_details_logic,
+#                              reset_declaration)
 from application.models.application import Application
 from application.models.adult_in_home import AdultInHome
-import application.forms.PITH_forms.PITH_address_details
+from application.forms.PITH_forms.PITH_address_details import (
+                     PITHAddressDetailsForm,
+                     PITHAddressDetailsManualLookupForm,
+                     PITHAddressDetailsManualForm)
 
 def pith_address_details(request):
     """
@@ -36,7 +39,7 @@ def pith_address_details(request):
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         application = Application.objects.get(pk=application_id_local)
-        form = PITH_address_details.PITHAddressDetailsForm(
+        form = PITHAddressDetailsForm(
             request.POST, id=application_id_local)
         if form.is_valid():
             postcode = form.cleaned_data.get('postcode')

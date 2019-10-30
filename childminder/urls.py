@@ -106,7 +106,7 @@ urlpatterns = [
     # Adults
     url(r'^people/adults/$', PITH_views.PITHAdultCheckView.as_view(), name='PITH-Adult-Check-View'),
     url(r'^people/adults-details/$', views.other_people_adult_details, name='PITH-Adult-Details-View'),
-    url(r'^people/adults-address-details/$', PITH_views.PITHAddressDetailsView.as_view(), name='PITH-Address-Details-View'),
+    url(r'^people/adults-address-details/$', PITH_views.PITHAdultAddressCheckView.as_view(), name='PITH-Address-Check-View'),
     url(r'^people/adults-lived-abroad/$', PITH_views.PITHLivedAbroadView.as_view(), name='PITH-Lived-Abroad-View'),
     url(r'^people/adults-checks-abroad/$', PITH_views.PITHAbroadCriminalView.as_view(), name='PITH-Abroad-Criminal-View'),
     url(r'^people/adults-military-bases/$', PITH_views.PITHMilitaryView.as_view(), name='PITH-Military-View'),
