@@ -1,127 +1,135 @@
 import logging
 
 from django.http import HttpResponseRedirect
+from django.shortcuts import render
 
-from application.utils import build_url, get_id
-from application.models import AdultInHome
-from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMultiRadioView
-from application.forms.PITH_forms.PITH_address_details import PITHAddressForm
-from application.business_logic import get_childcare_register_type
+from application import status
+from application.forms.PITH_forms import PITHAddressForm
+from application.models import AdultInHome, Application, AdultInHomeAddress
+from application.utils import get_id, build_url
 
-# Initiate logging
-log = logging.getLogger('')
+logger = logging.getLogger('')
 
 
-class PITHAddressDetailsView(PITHMultiRadioView):
+def PITHAddressDetailsView(request):
 
-    template_name = 'PITH_templates/PITH_address_details.html'
-    form_class = PITHAddressForm
-    success_url = ('PITH-Lived-Abroad-View', 'PITH-Address-Select-View', 'PITH-Address-Manual-View')
-    PITH_field_name = 'PITH_same_address'
+    return __PITH_address_capture(request)
 
-    def get_form_kwargs(self, adult=None):
-        """
-        Returns the keyword arguments for instantiating the form.
-        """
-        application_id = get_id(self.request)
 
-        context = {
-            'id': application_id,
-            'PITH_field_name': self.PITH_field_name,
-            'adult': adult}
+# The following code is a modified version of the your_children views
+def __PITH_address_capture(request):
+    """
+    Method for rendering the page responsible for capturing details of a Child's address
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered children's address capture template
+    """
+    template = 'PITH_templates/PITH_address_details.html'
+    success_url = 'PITH-Adult-Address-Details-View'
 
-        log.debug('Return keyword arguments to instantiate the form')
+    if request.method == 'GET':
 
-        return super().get_form_kwargs(context)
+        logger.debug('Use GET handler')
 
-    def get_success_url(self, get=None):
-        """
-        This view redirects to three potential phases.
-        This method is overridden to return those specific three cases.
-        :param get:
-        :return:
-        """
-        application_id = get_id(self.request)
+        return __PITH_address_capture_get_handler(request,
+                                                  template=template)
+    if request.method == 'POST':
 
-        if not get:
+        logger.debug('Use POST handler')
 
-            return build_url(self.get_choice_url(application_id), get={'id': application_id})
+        return __PITH_address_lookup_post_handler(request,
+                                                  template=template,
+                                                  success_url=success_url)
 
-        else:
 
-            return build_url(self.get_choice_url(application_id), get=get)
+def __PITH_address_capture_get_handler(request, template):
+    """
+    View method for rendering the Your Children's address lookup page
+    :param request: a request object used to generate the HttpResponse
+    :return: an HttpResponse object with the rendered children's address capture template
+    """
 
-    def form_valid(self, form):
-        """
-        If the form is valid, redirect to the supplied URL.
-        """
-        log.debug('Checking if form is valid')
+    application_id = get_id(request)
+    adults = AdultInHome.objects.filter(application_id=application_id)
+    adult_in_home_address = AdultInHomeAddress.objects.filter(application_id=application_id)
+    for adult in adults:
+        logger.debug('Rendering postcode lookup page to capture adult in the address for application with id: '
+                 + str(application_id) + " and adult number: " + str(adult))
 
-        application_id = get_id(self.request)
+    form = PITHAddressForm(id=application_id)
 
-        adults = AdultInHome.objects.filter(application_id=application_id)
+    adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
 
-        for adult in adults:
+    variables = {
+        'form': form,
+        'name': adult_record.get_full_name(),
+        'application_id': application_id,
+        'adult': adult,
+        'adult_in_home_address': adult_in_home_address
+    }
 
-            PITH_same_address_bool = self.request.POST.get(self.PITH_field_name+str(adult.pk))
+    return render(request, template, variables)
 
-            setattr(adult, self.PITH_field_name, PITH_same_address_bool)
-            adult.save()
 
-        return super().form_valid(form)
+def __PITH_address_lookup_post_handler(request, template, success_url):
+    """
+    Method for managing POST requests to lookup addresses from a postcode
+    :param request: a request object used to generate the HttpResponse
+    :return: a redirect to a list of matched addresses or a returned page including any validation errors.
+    """
 
-    def get_form_list(self):
+    application_id = get_id(request)
+    adult = request.GET["adult"]
+    adult_in_home_address = request.GET["adult_in_home_address"]
 
-        application_id = get_id(self.request)
+    logger.debug('Fetching postcode lookup matches for adult address details using application id: '
+                 + str(application_id) + " and adult number: " + str(adult))
 
-        adults = AdultInHome.objects.filter(application_id=application_id, PITH_same_address=False)
-        form_list = [self.form_class(**self.get_form_kwargs(adult=adult)) for adult in adults]
-        sorted_form_list = sorted(form_list, key=lambda form: form.adult.adult)
+    form = AdultInHomeAddress(request.POST, id=application_id, adult_in_home_address=adult_in_home_address)
 
-        log.debug('Retrieving sorted form list')
-        log.debug('Sorted form list is: {}'.format(sorted_form_list))
+    application = Application.objects.get(application_id=application_id)
 
-        return sorted_form_list
+    if 'postcode-search' in request.POST:
 
-    def get_initial(self):
+        if form.is_valid():
+            # If postcode search triggered instantiate address record with postcode saved
+            postcode = form.cleaned_data.get('postcode')
 
-        application_id = get_id(self.request)
-
-        adults = AdultInHome.objects.filter(application_id=application_id)
-
-        initial_context = {self.PITH_field_name+str(adult.pk): adult.lived_abroad
-                           for adult in adults}
-
-        log.debug('Form field data initialised')
-
-        return initial_context
-
-    def get_choice_url(self, app_id):
-
-        adults = AdultInHome.objects.filter(application_id=app_id)
-
-        yes_choice, no_yes_choice, no_no_choice = self.success_url
-
-        childcare_register_status, childcare_register_cost = get_childcare_register_type(app_id)
-
-        if any(adult.lived_abroad for adult in adults):
-
-            log.debug('Adults have lived abroad')
-
-            return yes_choice
-
-        else:
-
-            log.debug('Adults have not lived abroad')
-
-            if not ('CR' in childcare_register_status and 'EYR' not in childcare_register_status):
-
-                log.debug('Only applying to Childcare Register')
-
-                return no_yes_choice
-
+            # Create or update address record based on presence test
+            if AdultInHomeAddress.objects.filter(application_id=application_id, child=child).count() == 0:
+                pith_address_record = AdultInHomeAddress(street_line1='',
+                                                         street_line2='',
+                                                         town='',
+                                                         county='',
+                                                         country='',
+                                                         postcode=postcode,
+                                                         application_id=application,
+                                                         adult_in_home_address=adult)
+                pith_address_record.save()
             else:
+                pith_address_record = AdultInHomeAddress.objects.get(application_id=application_id,
+                                                                     adult_in_home_address=adult)
+                pith_address_record.postcode = postcode
+                pith_address_record.save()
 
-                log.debug('Not applying to Childcare Register')
+            if Application.get_id(app_id=application_id).people_in_home_status not in ['COMPLETED', 'WAITING']:
+                status.update(application_id, 'people_in_home_status', 'IN_PROGRESS')
 
-                return no_no_choice
+            return HttpResponseRedirect(build_url(success_url, get={'id': application_id,
+                                                                    'adult': str(adult)}))
+        else:
+            form.error_summary_title = 'There was a problem with the postcode'
+
+            if application.application_status == 'FURTHER_INFORMATION':
+                form.error_summary_template_name = 'returned-error-summary.html'
+                form.error_summary_title = 'There was a problem'
+
+            adult_record = AdultInHome.objects.get(application_id=application_id, adult_in_home_address=adult)
+
+            variables = {
+                'form': form,
+                'name': adult_record.get_full_name(),
+                'application_id': application_id,
+                'adults': adult,
+            }
+
+            return render(request, template, variables)
