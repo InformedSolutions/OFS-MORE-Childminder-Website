@@ -1,92 +1,69 @@
 import re
-from datetime import datetime
-from dateutil.relativedelta import relativedelta
 
-from django import forms
 from django.conf import settings
 
-from govuk_forms.widgets import RadioSelect
-
-from application.forms.fields import TimeKnownField
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
-from application.models import (AdultInHome, ApplicantPersonalDetails)
+from application.models import ChildAddress, AdultInHomeAddress
 
-class PITHAddressDetailsForm(ChildminderForms):
+
+from django import forms
+from govuk_forms.widgets import InlineRadioSelect
+
+from application.forms.PITH_forms.PITH_base_forms.PITH_multi_radio_form import PITHMultiRadioForm
+
+
+class PITHAddressForm(PITHMultiRadioForm):
+    choice_field_name = 'PITH_same_address'
+
+    def get_choice_field_data(self):
+        return forms.ChoiceField(
+            label='Have they lived outside of the UK in the last 5 years?',
+            choices=self.get_options(),
+            widget=InlineRadioSelect,
+            required=True,
+            error_messages={'required': 'Please say if this person has lived outside of the UK in the last 5 years'})
+
+
+class PITHManualAddressForm(ChildminderForms):
     """
-    GOV.UK form for the 2 references: first reference address page for postcode search
-    """
-    field_label_classes = 'form-label-bold'
-    error_summary_template_name = 'standard-error-summary.html'
-    auto_replace_widgets = True
-
-    postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter the adult's postcode"})
-
-    def __init__(self, *args, **kwargs):
-        """
-        Method to configure the initialisation of the 2 references: first reference address form for postcode search
-        :param args: arguments passed to the form
-        :param kwargs: keyword arguments passed to the form, e.g. application ID
-        """
-        self.application_id_local = kwargs.pop('id')
-        super(PITHAddressDetailsForm, self).__init__(*args, **kwargs)
-        full_stop_stripper(self)
-        # If information was previously entered, display it on the form
-        if AdultInHome.objects.filter(application_id=self.application_id_local, adult=1).count() > 0:
-            self.fields['postcode'].initial = AdultInHome.objects.get(application_id=self.application_id_local,
-                                                                    adult=1).postcode
-
-    def clean_postcode(self):
-        """
-        Postcode validation
-        :return: string
-        """
-        postcode = self.cleaned_data['postcode']
-        postcode_no_space = postcode.replace(" ", "")
-        postcode_uppercase = postcode_no_space.upper()
-        if re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None:
-            raise forms.ValidationError('Enter a valid UK postcode or enter the address manually')
-        return postcode
-
-
-class PITHAddressDetailsManualForm(ChildminderForms):
-    """
-    GOV.UK form for the 2 references: first reference address page for manual entry
+    GOV.UK form for the Your children's address page for manual entry
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    street_line1 = forms.CharField(label='Address line 1', error_messages={
-        'required': "Please enter the first line of the adult's address"})
+    street_line1 = forms.CharField(label='Address line 1', required=True, error_messages={
+        'required': 'Please enter the first line of your address'})
     street_line2 = forms.CharField(label='Address line 2', required=False)
-    town = forms.CharField(label='Town or city',
-                           error_messages={'required': "Please enter the name of the town or city"})
+    town = forms.CharField(label='Town or city', required=True,
+                           error_messages={'required': 'Please enter the name of the town or city'})
     county = forms.CharField(label='County (optional)', required=False)
-    postcode = forms.CharField(label='Postcode', error_messages={'required': "Please enter the adult's postcode"})
-    country = forms.CharField(label='Country', required=True)
+    postcode = forms.CharField(label='Postcode', required=True,
+                               error_messages={'required': 'Please enter your postcode'})
 
     def __init__(self, *args, **kwargs):
         """
-        Method to configure the initialisation of the 2 references: first reference address form for manual entry
+        Method to configure the initialisation of the Your children's address form for manual entry
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
         self.application_id_local = kwargs.pop('id')
-        super(PITHAddressDetailsManualForm, self).__init__(*args, **kwargs)
+        self.adult = kwargs.pop('adult')
+        super(PITHManualAddressForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
-        if Reference.objects.filter(application_id=self.application_id_local, adult=1).count() > 0:
-            reference_record = Reference.objects.get(application_id=self.application_id_local, adult=1)
-            self.fields['street_line1'].initial = reference_record.street_line1
-            self.fields['street_line2'].initial = reference_record.street_line2
-            self.fields['town'].initial = reference_record.town
-            self.fields['county'].initial = reference_record.county
-            self.fields['postcode'].initial = reference_record.postcode
-            self.fields['country'].initial = reference_record.country
-            self.pk = reference_record.reference_id
-            self.field_list = ['street_line1', 'street_line2', 'town', 'county', 'postcode',
-                               'country']
+        if AdultInHomeAddress.objects.filter(application_id=self.application_id_local,
+                                             adult_in_home_address=self.adult).count() > 0:
+            adult_in_home_address = AdultInHomeAddress.objects.get(application_id=self.application_id_local,
+                                                                   adult_in_home_address=self.adult)
+            self.fields['street_line1'].initial = adult_in_home_address.street_line1
+            self.fields['street_line2'].initial = adult_in_home_address.street_line2
+            self.fields['town'].initial = adult_in_home_address.town
+            self.fields['county'].initial = adult_in_home_address.county
+            self.fields['postcode'].initial = adult_in_home_address.postcode
+            self.pk = adult_in_home_address.adult_in_home_address_id
+            self.field_list = ['street_line1', 'street_line2', 'town', 'county', 'postcode']
 
     def clean_street_line1(self):
         """
@@ -95,7 +72,7 @@ class PITHAddressDetailsManualForm(ChildminderForms):
         """
         street_line1 = self.cleaned_data['street_line1']
         if len(street_line1) > 50:
-            raise forms.ValidationError('The first line of the address must be under 50 characters long')
+            raise forms.ValidationError('The first line of your address must be under 50 characters long')
         return street_line1
 
     def clean_street_line2(self):
@@ -105,7 +82,7 @@ class PITHAddressDetailsManualForm(ChildminderForms):
         """
         street_line2 = self.cleaned_data['street_line2']
         if len(street_line2) > 50:
-            raise forms.ValidationError('The second line of the address must be under 50 characters long')
+            raise forms.ValidationError('The second line of your address must be under 50 characters long')
         return street_line2
 
     def clean_town(self):
@@ -145,39 +122,26 @@ class PITHAddressDetailsManualForm(ChildminderForms):
             raise forms.ValidationError('Please enter a valid postcode')
         return postcode
 
-    def clean_country(self):
-        """
-        Country validation
-        :return: string
-        """
-        country = self.cleaned_data['country']
-        if country != '':
-            if re.match(settings.REGEX['COUNTRY'],country) is None:
-                raise forms.ValidationError('Please spell out the name of the country using letters')
-            if len(country) > 50:
-                raise forms.ValidationError('The name of the country must be under 50 characters long')
-        return country
 
-
-class PITHAddressDetailsManualLookupForm(ChildminderForms):
+class PITHAddressLookupForm(ChildminderForms):
     """
-    GOV.UK form for the 2 references: first reference address page for postcode search results
+    GOV.UK form for the Your children's address page for postcode search results
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
     address = forms.ChoiceField(label='Select address', required=True,
-                                error_messages={'required': "Please select the adult's address"})
+                                error_messages={'required': 'Please select your address'})
 
     def __init__(self, *args, **kwargs):
         """
-        Method to configure the initialisation of the 2 references: first reference address form for postcode search
+        Method to configure the initialisation of the Your personal details: home address form for postcode search
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
         self.application_id_local = kwargs.pop('id')
         self.choices = kwargs.pop('choices')
-        super(PITHAddressDetailsManualLookupForm, self).__init__(*args, **kwargs)
+        super(PITHAddressLookupForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         self.fields['address'].choices = self.choices

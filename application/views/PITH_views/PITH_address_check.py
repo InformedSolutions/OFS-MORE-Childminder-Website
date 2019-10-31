@@ -17,7 +17,7 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
     template_name = 'PITH_templates/PITH_address_check.html'
     form_class = PITHAddressDetailsCheckForm
     success_url = ('PITH-Lived-Abroad-View', 'PITH-Address-Details-View')
-    PITH_field_name = 'adult_in_home_address'
+    PITH_field_name = 'PITH_same_address'
 
     def get_form_kwargs(self, adult=None):
         """
@@ -69,10 +69,12 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
         :return:
         """
         application_id = get_id(self.request)
+        if AdultInHome.objects.filter(application_id=application_id, PITH_same_address=False).exists():
+            adults = AdultInHome.objects.filter(application_id=application_id, PITH_same_address=False)
+            first = adults[0].adult
+            if not get:
 
-        if not get:
-
-            return build_url(self.get_choice_url(application_id), get={'id': application_id})
+                return build_url(self.get_choice_url(application_id), get={'id': application_id, 'adult': first})
 
         else:
 
@@ -126,14 +128,14 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
 
         yes_choice, no_choice = self.success_url
 
-        if any(adult.PITH_same_address for adult in adults):
+        if any(not adult.PITH_same_address for adult in adults):
 
             log.debug('Adult lives at applicant\'s address')
 
-            return yes_choice
+            return no_choice
 
         else:
 
             log.debug('Adults live at different address')
 
-            return no_choice
+            return yes_choice
