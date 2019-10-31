@@ -1,66 +1,33 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}First adult address{% endblock %}
+{% block page_title %}Adults who have lived abroad{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
 {% include "back-button.html" %}
-
 <div class="two-thirds">
     {% if error_summary_list %}
         {% include "PITH_templates/PITH_error_summary.html" %}
     {% endif %}
 
-    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
-    <!-- Content -->
-        {% for form in form_list %}
-        <div class="two-thirds">
-            <h1 class="form-title heading-large">
+    <form method="post" novalidate>
+        <div class="form-group">
 
-                {{form.adult.get_full_name}} adult address
+            {% for form in form_list %}
+            <h1 class="form-title heading-large">
+                {{ form.adult.get_full_name }} address
             </h1>
-            <p>Please give the address for {{form.adult.get_full_name}}</p>
+            <p>Please give the address for {{ form.adult.get_full_name }}</p>
+                {{ form.as_div }}
+            {% endfor %}
+
+            {% csrf_token %}
+            <input type="submit" class="button" value="Save and continue">
         </div>
-        {% if not form.errors %}
-        <div id="id_postcode-group" class="form-group-required form-group">
-            <div class="text-before-button">
-                <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
-                    {{form.postcode.label}}
-                </label>
-                {{form.postcode}}
-            </div>
-            <input type="submit" class="button button-submit" value="Find address"
-                   name="postcode-search">
-        </div>
-        {% elif form.errors %}
-        <div id="id_postcode-group" class="form-group-error form-group-required form-group">
-            <label id="id_postcode-label" class="form-label-bold" for="id_postcode">
-                {{form.postcode.label}}
-            </label>
-            <span class="error-message">
-                {% for error in form.postcode.errors %}
-                    {{error}}
-                {% endfor %}
-            </span>
-            <div class="text-before-button">
-            {% if form.postcode.initial is not None %}
-            <input type="text" name="postcode" class="form-control-error form-control"
-                   value="{{form.postcode.initial}}" required="" id="id_postcode">
-            {% elif form.postcode.initial is None %}
-            <input type="text" name="postcode" class="form-control-error form-control"
-                   value="" required="" id="id_postcode">
-            {% endif %}
-            </div>
-            <input type="submit" class="button button-submit" value="Find address"
-                   name="postcode-search">
-        </div>
-        {% endif %}
-        {% csrf_token %}
-        <a href="{% url 'PITH-Address-Details-View' %}?id={{application_id}}"
-           name="manual" id="manual">Enter address manually</a>
-        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        {% endfor %}
     </form>
-    <br>
 </div>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}
