@@ -1,5 +1,6 @@
 import re
 
+from django import forms
 from django.conf import settings
 
 from application.forms.childminder import ChildminderForms
@@ -7,22 +8,43 @@ from application.forms_helper import full_stop_stripper
 from application.models import ChildAddress, AdultInHomeAddress
 
 
-from django import forms
-from govuk_forms.widgets import InlineRadioSelect
+class PITHAddressForm(ChildminderForms):
+    """
+    GOV.UK form for the Your children's address page for postcode search
+    """
+    field_label_classes = 'form-label-bold'
+    error_summary_template_name = 'standard-error-summary.html'
+    auto_replace_widgets = True
 
-from application.forms.PITH_forms.PITH_base_forms.PITH_multi_radio_form import PITHMultiRadioForm
+    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode'})
 
+    def __init__(self, *args, **kwargs):
+        """
+        Method to configure the initialisation of the Your children's address form for postcode search
+        :param args: arguments passed to the form
+        :param kwargs: keyword arguments passed to the form, e.g. application ID
+        """
+        self.application_id_local = kwargs.pop('id')
+        self.adult = kwargs.pop('adult')
+        super(PITHAddressForm, self).__init__(*args, **kwargs)
+        full_stop_stripper(self)
+        if AdultInHomeAddress.objects.filter(application_id=self.application_id_local,
+                                             adult=self.adult).count() > 0:
+            self.fields['postcode'].initial = AdultInHomeAddress.objects.get(application_id=self.application_id_local,
+                                                                             adult_in_home_address=
+                                                                             self.adult_in_home_address).postcode
 
-class PITHAddressForm(PITHMultiRadioForm):
-    choice_field_name = 'PITH_same_address'
-
-    def get_choice_field_data(self):
-        return forms.ChoiceField(
-            label='Have they lived outside of the UK in the last 5 years?',
-            choices=self.get_options(),
-            widget=InlineRadioSelect,
-            required=True,
-            error_messages={'required': 'Please say if this person has lived outside of the UK in the last 5 years'})
+    def clean_postcode(self):
+        """
+        Postcode validation
+        :return: string
+        """
+        postcode = self.cleaned_data['postcode']
+        postcode_no_space = postcode.replace(" ", "")
+        postcode_uppercase = postcode_no_space.upper()
+        if re.match(settings.REGEX['POSTCODE_UPPERCASE'], postcode_uppercase) is None:
+            raise forms.ValidationError('Please enter a valid postcode')
+        return postcode
 
 
 class PITHManualAddressForm(ChildminderForms):
