@@ -24,6 +24,20 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
         Returns the keyword arguments for instantiating the form.
         """
         application_id = get_id(self.request)
+
+        context = {
+            'id': application_id,
+            'PITH_field_name': self.PITH_field_name,
+            'adult': adult}
+
+        log.debug('Return keyword arguments to instantiate the form')
+
+        return super().get_form_kwargs(context)
+
+    def get_context_data(self, **kwargs):
+
+        application_id = get_id(self.request)
+
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=application_id).personal_detail_id
         applicant_home_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
@@ -33,19 +47,19 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
         town = applicant_home_address.town
         county = applicant_home_address.county
         postcode = applicant_home_address.postcode
+        log.debug('Generated address of applicant')
+
         context = {
-            'id': application_id,
+            'application_id': application_id,
             'street_line1': street_line1,
             'street_line2': street_line2,
             'town': town,
             'county': county,
-            'postcode': postcode,
-            'PITH_field_name': self.PITH_field_name,
-            'adult': adult}
+            'postcode': postcode
+        }
 
-        log.debug('Return keyword arguments to instantiate the form')
+        return super().get_context_data(**context, **kwargs)
 
-        return super().get_form_kwargs(context)
 
     def get_success_url(self, get=None):
         """
@@ -91,7 +105,6 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
         sorted_form_list = sorted(form_list, key=lambda form: form.adult.adult)
 
         log.debug('Retrieving sorted form list')
-
         return sorted_form_list
 
     def get_initial(self):
