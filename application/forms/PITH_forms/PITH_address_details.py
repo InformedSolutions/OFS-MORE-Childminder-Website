@@ -29,10 +29,10 @@ class PITHAddressForm(ChildminderForms):
         super(PITHAddressForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         if AdultInHomeAddress.objects.filter(application_id=self.application_id_local,
-                                             adult=self.adult).count() > 0:
+                                             adult_in_home_address=self.adult).count() > 0:
             self.fields['postcode'].initial = AdultInHomeAddress.objects.get(application_id=self.application_id_local,
                                                                              adult_in_home_address=
-                                                                             self.adult_in_home_address).postcode
+                                                                             self.adult).postcode
 
     def clean_postcode(self):
         """

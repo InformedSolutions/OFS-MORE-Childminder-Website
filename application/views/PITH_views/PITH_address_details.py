@@ -24,7 +24,7 @@ def __PITH_address_capture(request):
     :return: an HttpResponse object with the rendered children's address capture template
     """
     template = 'PITH_templates/PITH_address_details.html'
-    success_url = 'PITH-Adult-Address-Details-View'
+    success_url = 'PITH-Address-Select-View'
 
     if request.method == 'GET':
 
@@ -49,23 +49,24 @@ def __PITH_address_capture_get_handler(request, template):
     """
 
     application_id = get_id(request)
-    adults = AdultInHome.objects.filter(application_id=application_id)
-    adult_in_home_address = AdultInHomeAddress.objects.filter(application_id=application_id)
-    for adult in adults:
-        logger.debug('Rendering postcode lookup page to capture adult in the address for application with id: '
+    adult = request.GET["adult"]
+
+    logger.debug('Rendering postcode lookup page to capture an adult address for application with id: '
                  + str(application_id) + " and adult number: " + str(adult))
 
-    form = PITHAddressForm(id=application_id)
+    form = PITHAddressForm(id=application_id, adult=adult)
 
     adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
+    logger.debug('Adult record: {}'.format(adult_record))
 
     variables = {
         'form': form,
-        'name': adult_record.get_full_name(),
         'application_id': application_id,
         'adult': adult,
-        'adult_in_home_address': adult_in_home_address
+        'adult_record': adult_record
     }
+
+    return render(request, template, variables)
 
     return render(request, template, variables)
 
@@ -79,12 +80,11 @@ def __PITH_address_lookup_post_handler(request, template, success_url):
 
     application_id = get_id(request)
     adult = request.GET["adult"]
-    adult_in_home_address = request.GET["adult_in_home_address"]
 
     logger.debug('Fetching postcode lookup matches for adult address details using application id: '
                  + str(application_id) + " and adult number: " + str(adult))
 
-    form = AdultInHomeAddress(request.POST, id=application_id, adult_in_home_address=adult_in_home_address)
+    form = PITHAddressForm(request.POST, id=application_id, adult=adult)
 
     application = Application.objects.get(application_id=application_id)
 
@@ -95,7 +95,7 @@ def __PITH_address_lookup_post_handler(request, template, success_url):
             postcode = form.cleaned_data.get('postcode')
 
             # Create or update address record based on presence test
-            if AdultInHomeAddress.objects.filter(application_id=application_id, child=child).count() == 0:
+            if AdultInHomeAddress.objects.filter(application_id=application_id, adult_in_home_address=adult).count() == 0:
                 pith_address_record = AdultInHomeAddress(street_line1='',
                                                          street_line2='',
                                                          town='',
@@ -127,9 +127,8 @@ def __PITH_address_lookup_post_handler(request, template, success_url):
 
             variables = {
                 'form': form,
-                'name': adult_record.get_full_name(),
                 'application_id': application_id,
-                'adults': adult,
+                'adult': adult,
             }
 
             return render(request, template, variables)

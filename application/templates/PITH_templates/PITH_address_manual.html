@@ -17,17 +17,17 @@
     <!-- Content -->
     <div class="form-group">
         <h1 class="form-title heading-large">
-            Enter {{ name }}’s address
+            Enter {{ adult_record.get_full_name }}’s address
         </h1>
         {{form.as_div}}
         {% csrf_token %}
-        <a href="{% url 'PITH-Address-Details-Postcode-View' %}?id={{application_id}}&children={{children}}" name="manual"
+        <a href="{% url 'PITH-Address-Details-View' %}?id={{application_id}}&adult={{adult}}" name="manual"
            id="manual">Use postcode search</a>
     </div>
     <div class="form-group">
         <input type="submit" class="button" value="Save and continue">
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>
-        <input type="hidden" id="child" name="child" value="{{children}}"/>
+        <input type="hidden" id="adult" name="adult" value="{{adult}}"/>
     </div>
 </form>
 <br>

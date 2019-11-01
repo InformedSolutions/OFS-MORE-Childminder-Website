@@ -1,6 +1,6 @@
 from uuid import uuid4
 from django.db import models
-from .application import Application
+from application.models import Application, AdultInHome
 
 
 class AdultInHomeAddress(models.Model):
@@ -8,6 +8,7 @@ class AdultInHomeAddress(models.Model):
     Model for ADULT_IN_HOME_ADDRESS table
     """
     adult_in_home_address_id = models.UUIDField(primary_key=True, default=uuid4)
+    adult_id = models.ForeignKey(AdultInHome, on_delete=models.CASCADE, db_column='adult_id')
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
     adult_in_home_address = models.IntegerField(blank=True)
     street_line1 = models.CharField(max_length=100, blank=True)
