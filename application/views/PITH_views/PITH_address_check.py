@@ -2,6 +2,7 @@ import logging
 
 from django.http import HttpResponseRedirect
 
+from application.views.PITH_views.your_adults import get_first_adult_number_for_address_entry
 from application.utils import build_url, get_id
 from application.models import AdultInHome, AdultInHomeAddress, ApplicantHomeAddress, ApplicantPersonalDetails, Application
 from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMultiRadioView
@@ -70,11 +71,13 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
         """
         application_id = get_id(self.request)
         if AdultInHome.objects.filter(application_id=application_id, PITH_same_address=False).exists():
-            adults = AdultInHome.objects.filter(application_id=application_id, PITH_same_address=False)
-            first = adults[0].adult
+            # adult = AdultInHome.objects.filter(application_id=application_id, PITH_same_address=False)
+            first_adult = get_first_adult_number_for_address_entry(application_id)
+
             if not get:
 
-                return build_url(self.get_choice_url(application_id), get={'id': application_id, 'adult': first})
+                return build_url(self.get_choice_url(application_id), get={'id': application_id,
+                                                                           'adult': str(first_adult)})
 
         else:
 
@@ -92,8 +95,25 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
 
         for adult in adults:
             PITH_same_address_bool = self.request.POST.get(self.PITH_field_name + str(adult.pk))
-
             setattr(adult, self.PITH_field_name, PITH_same_address_bool)
+            adult.save()
+            # log.debug('BOOL is : {}'.format(PITH_same_address_bool))
+            adult_id = adult.adult_id
+            if PITH_same_address_bool:
+                pith_address_record = AdultInHomeAddress.objects.filter(application_id=application_id,
+                                                                        adult_id=adult_id)
+                log.debug('ADULT ID IS: {}'.format(adult_id))
+                applicant_home_address = ApplicantHomeAddress.objects.filter(application_id=application_id,
+                                                                             personal_detail_id=adult.pk)
+                log.debug('street line 1: {}'.format(applicant_home_address.street_line1))
+                pith_address_record.street_line1 = applicant_home_address.street_line1
+                pith_address_record.street_line2 = applicant_home_address.street_line2
+                pith_address_record.town = applicant_home_address.town
+                pith_address_record.county = applicant_home_address.county
+                pith_address_record.postcode = applicant_home_address.postcode
+                pith_address_record.country = applicant_home_address.country
+                pith_address_record.save()
+            # else:
             adult.save()
 
         return super().form_valid(form)

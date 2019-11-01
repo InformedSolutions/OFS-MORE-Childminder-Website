@@ -103,7 +103,7 @@ def pith_address_details_select(request):
                 'postcode': postcode,
                 'people_in_home_status': application.PITH_status
             }
-            return render(request, 'PITH_address_details_lookup.html', variables)
+            return render(request, 'PITH_address_lookup.html', variables)
         else:
             form = PITHAddressDetailsForm(id=application_id_local)
             form.check_flag()
@@ -162,7 +162,7 @@ def pith_address_details_select(request):
                 'application_id': application_id_local,
                 'people_in_home_status': application.PITH_status
             }
-            return render(request, 'PITH_address_details_lookup.html', variables)
+            return render(request, 'PITH_address_lookup.html', variables)
 
 
 def pith_address_details_manual(request):
@@ -188,7 +188,7 @@ def pith_address_details_manual(request):
             'application_id': application_id_local,
             'people_in_home_status': application.PITH_status
         }
-        return render(request, 'PITH_address_details_manual.html', variables)
+        return render(request, 'PITH_address_manual.html', variables)
     if request.method == 'POST':
         application_id_local = request.POST["id"]
         application = Application.objects.get(pk=application_id_local)
@@ -234,4 +234,4 @@ def pith_address_details_manual(request):
                 'application_id': application_id_local,
                 'people_in_home_status': application.PITH_status
             }
-            return render(request, 'PITH_address_details_manual.html', variables)
+            return render(request, 'PITH_address_manual.html', variables)

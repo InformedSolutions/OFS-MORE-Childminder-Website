@@ -1,29 +1,28 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Adults who have lived abroad{% endblock %}
+{% block page_title %}Adult's address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
 {% block inner_content %}
 
 {% include "back-button.html" %}
+
 <div class="two-thirds">
-    {% if error_summary_list %}
-        {% include "PITH_templates/PITH_error_summary.html" %}
-    {% endif %}
+    {{form.error_summary}}
 
     <form method="post" novalidate>
         <div class="form-group">
-
-            {% for form in form_list %}
             <h1 class="form-title heading-large">
-                {{ form.adult.get_full_name }} address
+                {{ adult_record.get_full_name }}'s address
             </h1>
-            <p>Please give the address for {{ form.adult.get_full_name }}</p>
-                {{ form.as_div }}
-            {% endfor %}
+
+            {{ form.as_div }}
 
             {% csrf_token %}
-            <input type="submit" class="button" value="Save and continue">
+            <input name="postcode-search" type="submit" class="button" value="Find address">
+
+            <br>
+            <a href="{% url 'PITH-Address-Manual-View' %}?id={{application_id}}&adult={{adult}}">Enter address manually</a>
         </div>
     </form>
 </div>

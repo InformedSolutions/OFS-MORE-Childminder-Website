@@ -4,7 +4,10 @@ from .PITH_ministry import *
 from .PITH_adults_details import *
 from .PITH_adult_check import *
 from .PITH_address_details import *
-from.PITH_address_check import *
+from .PITH_address_manual import *
+from .PITH_address_select import *
+from .PITH_address_check import *
+from .your_adults import *
 from .PITH_lived_abroad import *
 from .PITH_military import *
 from .PITH_DBS_check import *

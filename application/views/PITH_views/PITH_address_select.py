@@ -5,22 +5,22 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from application import status, address_helper
-from application.forms import ChildAddressForm, PITHAdultAddressLookupForm, PITHAdultAddressForm
+from application.forms.PITH_forms import PITHAddressLookupForm, PITHAddressForm
 from application.models import Child, Application, ChildAddress, AdultInHome, AdultInHomeAddress
 from application.utils import build_url, get_id
-from application.views.your_children import __remove_arc_address_flag, __get_next_child_number_for_address_entry
+from application.views.PITH_views.your_adults import __get_next_adult_number_for_address_entry
 from application.business_logic import awaiting_pith_dbs_action_from_user, find_dbs_status
 
 logger = logging.getLogger()
 
 
-def PITHAdultAddressSelectView(request):
+def PITHAddressSelectView(request):
 
-    return __PITH_address_details_selection(request)
+    return __PITH_address_selection(request)
 
 
 # The following code is a modified version of the your_children views
-def ___PITH_address_selection(request):
+def __PITH_address_selection(request):
 
     template = 'PITH_templates/PITH_address_select.html'
     address_lookup_template = 'PITH_templates/PITH_address_postcode.html'
@@ -60,7 +60,7 @@ def __PITH_address_selection_get_handler(request, template, address_lookup_templ
 
     if len(addresses) != 0:
 
-        form = PITHAdultAddressLookupForm(id=application_id, choices=addresses)
+        form = PITHAddressLookupForm(id=application_id, choices=addresses)
 
         if application.application_status == 'FURTHER_INFORMATION':
 
@@ -71,7 +71,7 @@ def __PITH_address_selection_get_handler(request, template, address_lookup_templ
             'form': form,
             'application_id': application_id,
             'postcode': postcode,
-            'name': adult_record.get_full_name(),
+            'name': adult_record,
             'adult': adult,
         }
 
@@ -79,7 +79,7 @@ def __PITH_address_selection_get_handler(request, template, address_lookup_templ
 
     else:
 
-        form = PITHAdultAddressForm(id=application_id, adult=adult)
+        form = PITHAddressForm(id=application_id, adult=adult)
 
         if application.application_status == 'FURTHER_INFORMATION':
 
@@ -115,7 +115,7 @@ def __PITH_address_selection_post_handler(request, template, success_url, addres
     adult_address_record = AdultInHomeAddress.objects.get(application_id=application_id, adult_in_home_address=str(adult))
     postcode = adult_address_record.postcode
     addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
-    form = PITHAdultAddressLookupForm(request.POST, id=application_id, choices=addresses)
+    form = PITHAddressLookupForm(request.POST, id=application_id, choices=addresses)
 
     if form.is_valid():
 
@@ -144,22 +144,12 @@ def __PITH_address_selection_post_handler(request, template, success_url, addres
         if next_adult is None:
 
             invalid_adults_url, valid_adults_url = success_url
-
-            # Does user still need to take action wrt PITH DBS checks?
-            if awaiting_pith_dbs_action_from_user(
-                    find_dbs_status(adult, adult)
-                    for adult in AdultInHome.objects.filter(application_id=application_id)):
-
-                redirect_url = invalid_adults_url
-
-            else:
-
-                redirect_url = valid_adults_url
+            redirect_url = valid_adults_url
 
             return HttpResponseRedirect(build_url(redirect_url, get={'id': application_id}))
         # Recurse through use of querystring params
         return HttpResponseRedirect(
-            reverse(address_url) + '?id=' + application_id + '&children=' + str(next_adult))
+            reverse(address_url) + '?id=' + application_id + '&adult=' + str(next_adult))
 
     else:
 
