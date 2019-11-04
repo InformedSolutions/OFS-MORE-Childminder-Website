@@ -781,7 +781,7 @@
     </tr>
     </tbody>
 </table>
-{% for title, name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, PITH_mobile_number, lived_abroad, enhanced_check, on_update, military_base in adult_lists %}
+{% for title, name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, PITH_mobile_number, PITH_same_address, lived_abroad, enhanced_check, on_update, military_base in adult_lists %}
 <table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
@@ -919,7 +919,22 @@
         </td>
     </tr>
     <tr>
-        <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Address
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{PITH_same_address}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Address-Check-View' %}?id={{application_id}}"
+               alt="Change the adult's address">
+                Change <span class="visuallyhidden">the adult's address</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
         <td style="word-wrap: break-word" class=summary-column>
             Have they lived outside of the UK in the last 5 years?
         </td>

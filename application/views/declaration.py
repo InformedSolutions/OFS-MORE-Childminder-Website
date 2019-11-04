@@ -19,6 +19,7 @@ from ..forms import (DeclarationIntroForm,
                      DeclarationSummaryForm,
                      PublishingYourDetailsForm)
 from ..models import (AdultInHome,
+                      AdultInHomeAddress,
                       ApplicantHomeAddress,
                       ApplicantName,
                       ApplicantPersonalDetails,
@@ -169,6 +170,7 @@ def declaration_summary(request, print_mode=False):
         adult_health_check_status_list = []
         adult_email_list = []
         adult_mobile_number_list = []
+        adult_same_address_list = []
         adult_lived_abroad_list = []
         adult_military_base_list = []
         adult_enhanced_check_list = []
@@ -179,6 +181,15 @@ def declaration_summary(request, print_mode=False):
 
             # For each adult, append the correct attribute (e.g. name, relationship) to the relevant list
             # Concatenate the adult's name for display, displaying any middle names if present
+            adult_address_record = AdultInHomeAddress.objects.get(application_id=application, adult_id=adult.pk)
+
+            if not adult.PITH_same_address:
+                adult_address_string = ' '.join([adult_address_record.street_line1, (adult_address_record.street_line2 or ''),
+                                         adult_address_record.town, (adult_address_record.county or ''), adult_address_record.postcode])
+
+            else:
+                adult_address_string = 'Same as home address'
+
             if adult.middle_names != '':
                 name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
             elif adult.middle_names == '':
@@ -204,6 +215,7 @@ def declaration_summary(request, print_mode=False):
             adult_health_check_status_list.append(adult.health_check_status)
             adult_email_list.append(adult.email)
             adult_mobile_number_list.append(adult.PITH_mobile_number)
+            adult_same_address_list.append(adult_address_string)
             adult_lived_abroad_list.append(adult.lived_abroad)
             adult_military_base_list.append(adult.military_base)
             adult_enhanced_check_list.append(adult.enhanced_check)
@@ -212,6 +224,7 @@ def declaration_summary(request, print_mode=False):
         # Zip the appended lists together for the HTML to simultaneously parse
         adult_lists = zip(adult_title_list, adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
                           adult_relationship_list, adult_dbs_list, adult_health_check_status_list, adult_email_list, adult_mobile_number_list,
+                          adult_same_address_list,
                           adult_lived_abroad_list, adult_enhanced_check_list, adult_on_update_list,
                           adult_military_base_list)
         # Generate lists of data for children in your home, to be iteratively displayed on the summary page
