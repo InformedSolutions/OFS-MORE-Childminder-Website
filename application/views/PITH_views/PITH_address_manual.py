@@ -42,7 +42,7 @@ def __PITH_address_manual(request):
 
 def __PITH_address_manual_get_handler(request, template):
     """
-    View logic implementation for managing GET requests to the manual address entry page in the Your Children task
+    View logic implementation for managing GET requests to the manual address entry page in the Your Adult task
     :param request: inbound HTTP request
     :return: Manual address entry page
     """
@@ -76,7 +76,7 @@ def __PITH_address_manual_get_handler(request, template):
 
 def __PITH_address_manual_post_handler(request, template, success_url, address_url):
     """
-    Method for handling POST requests to the page that allows a user to enter their Child's address using a manual form
+    Method for handling POST requests to the page that allows a user to enter their Adult's address using a manual form
     :param request: a request object used to generate the HttpResponse
     :return: Either a redirect to the next section in the task workflow or a rendered template of the requested page
     """
@@ -97,8 +97,6 @@ def __PITH_address_manual_post_handler(request, template, success_url, address_u
 
         logger.debug('Form is valid')
 
-        #pith_address_record = pith_address_logic(application_id, adult, form)
-        #pith_address_record.save()
         application = Application.objects.get(pk=application_id)
         application.date_updated = current_date
         application.save()
@@ -111,10 +109,6 @@ def __PITH_address_manual_post_handler(request, template, success_url, address_u
         reset_declaration(application)
 
         logger.debug('Reset declaration')
-
-        #__remove_arc_address_flag(child_address_record)
-
-        #logger.debug('Removed ARC address flag for child address record')
 
         # Recurse through querystring params
         next_adult = __get_next_adult_number_for_address_entry(application_id, int(adult))
