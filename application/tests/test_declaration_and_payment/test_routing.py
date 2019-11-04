@@ -47,6 +47,7 @@ class DeclarationSummaryPageFunctionalTests(utils.NoMiddlewareTestCase):
         self.adult_in_home.birth_year = 1975
         self.adult_in_home.relationship = 'Uncle'
         self.adult_in_home.email = 'foo@example.com'
+        self.adult_in_home.PITH_same_address=True
         self.adult_in_home.lived_abroad = False
         self.adult_in_home.dbs_certificate_number = '123456789012'
         self.adult_in_home.save()

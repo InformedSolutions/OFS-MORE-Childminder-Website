@@ -43,10 +43,10 @@ def __PITH_address_selection(request):
 
 def __PITH_address_selection_get_handler(request, template, address_lookup_template):
     """
-    Method for handling GET requests to the page that allows a user to select their Child's address from a list of
+    Method for handling GET requests to the page that allows a user to select their Adult's address from a list of
     addresses that match a supplied postcode
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered children's address selection template
+    :return: an HttpResponse object with the rendered adult's address selection template
     """
 
     application_id = get_id(request)
@@ -97,11 +97,11 @@ def __PITH_address_selection_get_handler(request, template, address_lookup_templ
 
 def __PITH_address_selection_post_handler(request, template, success_url, address_url):
     """
-    Method for handling POST requests to the page that allows a user to select their Child's address from a list of
+    Method for handling POST requests to the page that allows a user to select their Adult's address from a list of
     addresses that match a supplied postcode
     :param request: a request object used to generate the HttpResponse
     :return: a redirect to the next portion of the workflow. This could be either another address capture request
-    (for other children), or a redirect to the task summary page.
+    (for other adult), or a redirect to the task summary page.
     """
 
     application_id = get_id(request)
@@ -135,9 +135,6 @@ def __PITH_address_selection_post_handler(request, template, success_url, addres
 
         if Application.get_id(app_id=application_id).people_in_home_status not in ['COMPLETED', 'WAITING']:
             status.update(application_id, 'people_in_home_status', 'IN_PROGRESS')
-
-        # At this point, if an address was previously flagged by ARC, the comment can be safely removed
-        #__remove_arc_address_flag(child_address_record)
 
         next_adult = __get_next_adult_number_for_address_entry(application_id, int(adult))
 

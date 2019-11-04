@@ -19,9 +19,9 @@ def PITHAddressDetailsView(request):
 # The following code is a modified version of the your_children views
 def __PITH_address_capture(request):
     """
-    Method for rendering the page responsible for capturing details of a Child's address
+    Method for rendering the page responsible for capturing details of a Adult's address
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered children's address capture template
+    :return: an HttpResponse object with the rendered adult's address capture template
     """
     template = 'PITH_templates/PITH_address_details.html'
     success_url = 'PITH-Address-Select-View'
@@ -43,9 +43,9 @@ def __PITH_address_capture(request):
 
 def __PITH_address_capture_get_handler(request, template):
     """
-    View method for rendering the Your Children's address lookup page
+    View method for rendering the Your Adult's address lookup page
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered children's address capture template
+    :return: an HttpResponse object with the rendered adult's address capture template
     """
 
     application_id = get_id(request)

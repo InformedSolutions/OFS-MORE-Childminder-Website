@@ -5,12 +5,12 @@ from django.conf import settings
 
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
-from application.models import ChildAddress, AdultInHomeAddress
+from application.models import AdultInHomeAddress
 
 
 class PITHAddressForm(ChildminderForms):
     """
-    GOV.UK form for the Your children's address page for postcode search
+    GOV.UK form for the Your adult's address page for postcode search
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
@@ -20,7 +20,7 @@ class PITHAddressForm(ChildminderForms):
 
     def __init__(self, *args, **kwargs):
         """
-        Method to configure the initialisation of the Your children's address form for postcode search
+        Method to configure the initialisation of the Your adult's address form for postcode search
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
@@ -49,7 +49,7 @@ class PITHAddressForm(ChildminderForms):
 
 class PITHManualAddressForm(ChildminderForms):
     """
-    GOV.UK form for the Your children's address page for manual entry
+    GOV.UK form for the Your adults's address page for manual entry
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
@@ -66,7 +66,7 @@ class PITHManualAddressForm(ChildminderForms):
 
     def __init__(self, *args, **kwargs):
         """
-        Method to configure the initialisation of the Your children's address form for manual entry
+        Method to configure the initialisation of the Your adults's address form for manual entry
         :param args: arguments passed to the form
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
@@ -147,7 +147,7 @@ class PITHManualAddressForm(ChildminderForms):
 
 class PITHAddressLookupForm(ChildminderForms):
     """
-    GOV.UK form for the Your children's address page for postcode search results
+    GOV.UK form for the Your adult's address page for postcode search results
     """
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'

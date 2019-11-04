@@ -811,6 +811,7 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
             relationship='Uncle',
             email='foo@example.com',
             PITH_mobile_number='12345678900',
+            PITH_same_address=True,
             dbs_certificate_number='123456789012',
             lived_abroad=False,
         )
@@ -838,7 +839,7 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
             application_id=self.application,
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
             birth_day=1, birth_month=5, birth_year=1984,
-            military_base=False,
+            military_base=False, PITH_same_address=True,
         )
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
@@ -874,13 +875,13 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
             application_id=self.application,
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
             birth_day=1, birth_month=5, birth_year=1984,
-            dbs_certificate_number='123456789012', capita=True,
+            dbs_certificate_number='123456789012', capita=True, PITH_same_address=True,
         )
         models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Joanne', middle_names='Bethanny', last_name='Smith',
             birth_day=5, birth_month=1, birth_year=1948,
-            dbs_certificate_number='123456789013', capita=False, enhanced_check=True,
+            dbs_certificate_number='123456789013', capita=False, enhanced_check=True, PITH_same_address=True,
         )
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
@@ -899,19 +900,19 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
             application_id=self.application,
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
             birth_day=1, birth_month=5, birth_year=1984,
-            dbs_certificate_number='123456789012', capita=True,
+            dbs_certificate_number='123456789012', capita=True, PITH_same_address=True,
         )
         models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Joanne', middle_names='Bethanny', last_name='Smith',
             birth_day=5, birth_month=1, birth_year=1948,
-            dbs_certificate_number='123456789013', capita=True, within_three_months=False, on_update=True,
+            dbs_certificate_number='123456789013', capita=True, within_three_months=False, on_update=True, PITH_same_address=True,
         )
         models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Josef', middle_names='Charlie', last_name='Thompson',
             birth_day=5, birth_month=5, birth_year=1966,
-            dbs_certificate_number='123456789014', capita=False, on_update=False,
+            dbs_certificate_number='123456789014', capita=False, on_update=False, PITH_same_address=True,
         )
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
@@ -929,7 +930,7 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
             application_id=self.application,
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
             birth_day=1, birth_month=5, birth_year=1984,
-            dbs_certificate_number='123456789012', capita=True,
+            dbs_certificate_number='123456789012', capita=True, PITH_same_address=True,
         )
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
