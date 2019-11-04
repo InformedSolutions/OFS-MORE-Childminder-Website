@@ -7,7 +7,7 @@ from django.shortcuts import reverse
 
 from application.forms.PITH_forms.PITH_check_your_answers_form import PITHCheckYourAnswersForm
 from application.models import AdultInHome, Application, ChildInHome, Child, ChildcareType, ApplicantHomeAddress, \
-    ApplicantPersonalDetails
+    ApplicantPersonalDetails, AdultInHomeAddress
 from application.summary_page_data import (
     other_child_name_dict, other_child_link_dict,
     other_adult_summary_name_dict, other_adult_summary_link_dict,
@@ -37,7 +37,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
         application = get_application_object(application_id)
         personal_detail_id = ApplicantPersonalDetails.get_id(app_id=application_id)
 
-        adults_list, children_list, children_not_in_home_list = self.get_lists(application_id)
+        adults_list, children_list, children_not_in_home_list= self.get_lists(application_id)
 
         # Header tables
         adults_header_table = self.get_adults_header_table(application_id, adults_list)
@@ -177,10 +177,19 @@ class PITHCheckYourAnswersView(PITHTemplateView):
 
         adults_table_list = []
         for index, adult in enumerate(adults_list):
+            adult_address_record = AdultInHomeAddress.objects.get(application_id=app_id, adult_id=adult.pk)
 
             name = ' '.join([adult.first_name, (adult.middle_names or ''), adult.last_name])
             birth_date = ' '.join([str(adult.birth_day), calendar.month_name[adult.birth_month], str(adult.birth_year)])
 
+            if not adult.PITH_same_address:
+                adult_address_string = ' '.join([adult_address_record.street_line1, (adult_address_record.street_line2 or ''),
+                                         adult_address_record.town, (adult_address_record.county or ''), adult_address_record.postcode])
+
+            else:
+                adult_address_string = 'Same as home address'
+
+            logger.debug('Address to be entered is: {}.'.format(adult_address_string))
             base_adult_fields = [
                 ('title', adult.title),
                 ('full_name', name),
@@ -188,6 +197,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
                 ('relationship', adult.relationship),
                 ('email', adult.email),
                 ('PITH_mobile_number', adult.PITH_mobile_number),
+                ('PITH_same_address', adult_address_string),
                 ('lived_abroad', adult.lived_abroad),
             ]
 

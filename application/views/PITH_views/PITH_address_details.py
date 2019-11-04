@@ -88,6 +88,8 @@ def __PITH_address_lookup_post_handler(request, template, success_url):
 
     application = Application.objects.get(application_id=application_id)
 
+    adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
+
     if 'postcode-search' in request.POST:
 
         if form.is_valid():
@@ -103,6 +105,7 @@ def __PITH_address_lookup_post_handler(request, template, success_url):
                                                          country='',
                                                          postcode=postcode,
                                                          application_id=application,
+                                                         adult_id=adult_record,
                                                          adult_in_home_address=adult)
                 pith_address_record.save()
             else:

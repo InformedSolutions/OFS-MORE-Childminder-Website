@@ -91,30 +91,43 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
 
         application_id = get_id(self.request)
 
+        personal_detail_id = ApplicantPersonalDetails.objects.get(
+            application_id=application_id).personal_detail_id
+        applicant_home_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                  current_address=True)
+        street_line1 = applicant_home_address.street_line1
+        street_line2 = applicant_home_address.street_line2
+        town = applicant_home_address.town
+        county = applicant_home_address.county
+        country = applicant_home_address.country
+        postcode = applicant_home_address.postcode
+
         adults = AdultInHome.objects.filter(application_id=application_id)
+        adult_address_record = AdultInHomeAddress.objects.filter(application_id=application_id)
 
         for adult in adults:
             PITH_same_address_bool = self.request.POST.get(self.PITH_field_name + str(adult.pk))
             setattr(adult, self.PITH_field_name, PITH_same_address_bool)
             adult.save()
-            # log.debug('BOOL is : {}'.format(PITH_same_address_bool))
             adult_id = adult.adult_id
-            if PITH_same_address_bool:
-                pith_address_record = AdultInHomeAddress.objects.filter(application_id=application_id,
-                                                                        adult_id=adult_id)
-                log.debug('ADULT ID IS: {}'.format(adult_id))
-                applicant_home_address = ApplicantHomeAddress.objects.filter(application_id=application_id,
-                                                                             personal_detail_id=adult.pk)
-                log.debug('street line 1: {}'.format(applicant_home_address.street_line1))
-                pith_address_record.street_line1 = applicant_home_address.street_line1
-                pith_address_record.street_line2 = applicant_home_address.street_line2
-                pith_address_record.town = applicant_home_address.town
-                pith_address_record.county = applicant_home_address.county
-                pith_address_record.postcode = applicant_home_address.postcode
-                pith_address_record.country = applicant_home_address.country
-                pith_address_record.save()
-            # else:
-            adult.save()
+            if adult.PITH_same_address:
+                if AdultInHomeAddress.objects.filter(adult_id=adult_id).count() == 0:
+                    pith_address_record = AdultInHomeAddress(street_line1='',
+                                                             street_line2='',
+                                                             town='',
+                                                             county='',
+                                                             country='',
+                                                             postcode='')
+                    pith_address_record.street_line1 = street_line1
+                    pith_address_record.street_line2 = street_line2
+                    pith_address_record.town = town
+                    pith_address_record.county = county
+                    pith_address_record.postcode = postcode
+                    pith_address_record.country = country
+                    pith_address_record.adult_in_home_address = None
+                    pith_address_record.adult_id = AdultInHome.objects.get(adult_id=adult_id)
+                    pith_address_record.application_id = Application.objects.get(application_id=application_id)
+                    pith_address_record.save()
 
         return super().form_valid(form)
 

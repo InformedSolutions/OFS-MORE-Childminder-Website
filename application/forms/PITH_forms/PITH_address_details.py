@@ -89,7 +89,7 @@ class PITHManualAddressForm(ChildminderForms):
 
     def clean_street_line1(self):
         """
-        Street name and number validation
+        Street name and number validationDetails
         :return: string
         """
         street_line1 = self.cleaned_data['street_line1']
