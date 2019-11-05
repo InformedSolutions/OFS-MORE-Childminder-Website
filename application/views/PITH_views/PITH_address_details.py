@@ -50,11 +50,11 @@ def __PITH_address_capture_get_handler(request, template):
 
     application_id = get_id(request)
     adult = request.GET["adult"]
+    adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
 
     logger.debug('Rendering postcode lookup page to capture an adult address for application with id: '
                  + str(application_id) + " and adult number: " + str(adult))
-
-    form = PITHAddressForm(id=application_id, adult=adult)
+    form = PITHAddressForm(id=application_id, adult=adult, adult_record=adult_record)
 
     adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
     logger.debug('Adult record: {}'.format(adult_record))
@@ -80,16 +80,18 @@ def __PITH_address_lookup_post_handler(request, template, success_url):
 
     application_id = get_id(request)
     adult = request.GET["adult"]
+    adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
 
     logger.debug('Fetching postcode lookup matches for adult address details using application id: '
                  + str(application_id) + " and adult number: " + str(adult))
 
-    form = PITHAddressForm(request.POST, id=application_id, adult=adult)
+    form = PITHAddressForm(request.POST, id=application_id, adult=adult, adult_record=adult_record)
 
     application = Application.objects.get(application_id=application_id)
 
     adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
 
+    adult_id = adult_record.adult_id
     if 'postcode-search' in request.POST:
 
         if form.is_valid():
@@ -97,7 +99,7 @@ def __PITH_address_lookup_post_handler(request, template, success_url):
             postcode = form.cleaned_data.get('postcode')
 
             # Create or update address record based on presence test
-            if AdultInHomeAddress.objects.filter(application_id=application_id, adult_in_home_address=adult).count() == 0:
+            if AdultInHomeAddress.objects.filter(application_id=application_id, adult_id=adult_id).count() == 0:
                 pith_address_record = AdultInHomeAddress(street_line1='',
                                                          street_line2='',
                                                          town='',
@@ -110,7 +112,7 @@ def __PITH_address_lookup_post_handler(request, template, success_url):
                 pith_address_record.save()
             else:
                 pith_address_record = AdultInHomeAddress.objects.get(application_id=application_id,
-                                                                     adult_in_home_address=adult)
+                                                                     adult_id=adult_id)
                 pith_address_record.postcode = postcode
                 pith_address_record.save()
 
@@ -125,13 +127,12 @@ def __PITH_address_lookup_post_handler(request, template, success_url):
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
-
             adult_record = AdultInHome.objects.get(application_id=application_id, adult_in_home_address=adult)
-
             variables = {
                 'form': form,
                 'application_id': application_id,
                 'adult': adult,
+                'adult_record': adult_record,
             }
 
             return render(request, template, variables)

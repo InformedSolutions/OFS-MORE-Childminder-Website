@@ -183,15 +183,15 @@ def declaration_summary(request, print_mode=False):
             # Concatenate the adult's name for display, displaying any middle names if present
 
             if not adult.PITH_same_address:
-                adult_address_string = ' '.join([AdultInHomeAddress.objects.get(application_id=app_id,
+                adult_address_string = ' '.join([AdultInHomeAddress.objects.get(application_id=application,
                                                                                 adult_id=adult.pk).street_line1,
-                                                 (AdultInHomeAddress.objects.get(application_id=app_id,
+                                                 (AdultInHomeAddress.objects.get(application_id=application,
                                                                                  adult_id=adult.pk).street_line2 or ''),
-                                                 AdultInHomeAddress.objects.get(application_id=app_id,
+                                                 AdultInHomeAddress.objects.get(application_id=application,
                                                                                 adult_id=adult.pk).town,
-                                                 (AdultInHomeAddress.objects.get(application_id=app_id,
+                                                 (AdultInHomeAddress.objects.get(application_id=application,
                                                                                  adult_id=adult.pk).county or ''),
-                                                 AdultInHomeAddress.objects.get(application_id=app_id,
+                                                 AdultInHomeAddress.objects.get(application_id=application,
                                                                                 adult_id=adult.pk).postcode])
 
             else:

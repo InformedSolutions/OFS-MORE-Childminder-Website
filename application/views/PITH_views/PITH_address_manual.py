@@ -54,7 +54,7 @@ def __PITH_address_manual_get_handler(request, template):
 
     adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
     application = Application.objects.get(pk=application_id)
-    form = PITHManualAddressForm(id=application_id, adult=adult)
+    form = PITHManualAddressForm(id=application_id, adult=adult, adult_record=adult_record)
     form.check_flag()
 
     if application.application_status == 'FURTHER_INFORMATION':
@@ -89,8 +89,9 @@ def __PITH_address_manual_post_handler(request, template, success_url, address_u
                  + str(application_id) + " and adult number: " + str(adult))
 
     application = Application.objects.get(pk=application_id)
+    adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
 
-    form = PITHManualAddressForm(request.POST, id=application_id, adult=adult)
+    form = PITHManualAddressForm(request.POST, id=application_id, adult=adult, adult_record=adult_record)
     form.remove_flag()
 
     if form.is_valid():
