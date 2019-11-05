@@ -59,7 +59,6 @@ def __PITH_address_selection_get_handler(request, template, address_lookup_templ
     addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
 
     if len(addresses) != 0:
-
         form = PITHAddressLookupForm(id=application_id, choices=addresses, adult=adult_record)
 
         if application.application_status == 'FURTHER_INFORMATION':

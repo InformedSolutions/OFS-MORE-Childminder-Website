@@ -34,7 +34,7 @@ class PITHAddressForm(ChildminderForms):
             adult_in_home_address = AdultInHomeAddress.objects.get(application_id=self.application_id_local,
                                                                    adult_id=self.adult_record.adult_id)
             self.fields['postcode'].initial = adult_in_home_address.postcode
-
+            
     def clean_postcode(self):
         """
         Postcode validation
@@ -81,6 +81,7 @@ class PITHManualAddressForm(ChildminderForms):
                                              adult_id=self.adult_record.adult_id).count() > 0:
             adult_in_home_address = AdultInHomeAddress.objects.get(application_id=self.application_id_local,
                                                                    adult_id=self.adult_record.adult_id)
+
             self.fields['street_line1'].initial = adult_in_home_address.street_line1
             self.fields['street_line2'].initial = adult_in_home_address.street_line2
             self.fields['town'].initial = adult_in_home_address.town

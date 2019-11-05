@@ -70,7 +70,6 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
         :return:
         """
         application_id = get_id(self.request)
-
         context = {
             'id': get_id(self.request)
         }
@@ -84,7 +83,6 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
                                                                            'adult': str(first_adult)})
 
         else:
-
             return build_url(self.get_choice_url(application_id), get=context)
 
     def form_valid(self, form):
