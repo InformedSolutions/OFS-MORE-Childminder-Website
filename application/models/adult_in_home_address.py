@@ -43,3 +43,8 @@ class AdultInHomeAddress(models.Model):
 
     class Meta:
         db_table = 'ADULT_IN_HOME_ADDRESS'
+
+    @classmethod
+    def get_id(cls, app_id):
+        adult_id = AdultInHome.get_id(app_id)
+        return cls.objects.get(adult_id=adult_id)

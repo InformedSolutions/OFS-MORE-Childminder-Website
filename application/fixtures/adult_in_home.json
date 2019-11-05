@@ -171,6 +171,7 @@
          "relationship":"Father",
          "email":"T.kingsman@hotmail.com",
          "PITH_mobile_number": "12345678900",
+         "PITH_same_address": true,
          "capita": false,
          "on_update": true,
          "enhanced_check": true,

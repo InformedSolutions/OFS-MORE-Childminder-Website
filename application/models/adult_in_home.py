@@ -80,6 +80,7 @@ class AdultInHome(models.Model):
             'relationship',
             'email',
             'PITH_mobile_number',
+            'PITH_same_address',
             'dbs_certificate_number',
             'health_check_status',
         )
