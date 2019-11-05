@@ -181,11 +181,18 @@ def declaration_summary(request, print_mode=False):
 
             # For each adult, append the correct attribute (e.g. name, relationship) to the relevant list
             # Concatenate the adult's name for display, displaying any middle names if present
-            adult_address_record = AdultInHomeAddress.objects.get(application_id=application, adult_id=adult.pk)
 
             if not adult.PITH_same_address:
-                adult_address_string = ' '.join([adult_address_record.street_line1, (adult_address_record.street_line2 or ''),
-                                         adult_address_record.town, (adult_address_record.county or ''), adult_address_record.postcode])
+                adult_address_string = ' '.join([AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                                adult_id=adult.pk).street_line1,
+                                                 (AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                                 adult_id=adult.pk).street_line2 or ''),
+                                                 AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                                adult_id=adult.pk).town,
+                                                 (AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                                 adult_id=adult.pk).county or ''),
+                                                 AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                                adult_id=adult.pk).postcode])
 
             else:
                 adult_address_string = 'Same as home address'
@@ -222,9 +229,9 @@ def declaration_summary(request, print_mode=False):
             adult_on_update_list.append(adult.on_update)
 
         # Zip the appended lists together for the HTML to simultaneously parse
-        adult_lists = zip(adult_title_list, adult_name_list, adult_birth_day_list, adult_birth_month_list, adult_birth_year_list,
-                          adult_relationship_list, adult_dbs_list, adult_health_check_status_list, adult_email_list, adult_mobile_number_list,
-                          adult_same_address_list,
+        adult_lists = zip(adult_title_list, adult_name_list, adult_birth_day_list, adult_birth_month_list,
+                          adult_birth_year_list, adult_relationship_list, adult_dbs_list, adult_health_check_status_list
+                          , adult_email_list, adult_mobile_number_list, adult_same_address_list,
                           adult_lived_abroad_list, adult_enhanced_check_list, adult_on_update_list,
                           adult_military_base_list)
         # Generate lists of data for children in your home, to be iteratively displayed on the summary page

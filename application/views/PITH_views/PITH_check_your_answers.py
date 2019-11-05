@@ -1,6 +1,7 @@
 import calendar
 import collections
 import logging
+import application.models as m
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
@@ -177,14 +178,21 @@ class PITHCheckYourAnswersView(PITHTemplateView):
 
         adults_table_list = []
         for index, adult in enumerate(adults_list):
-            adult_address_record = AdultInHomeAddress.objects.get(application_id=app_id, adult_id=adult.pk)
 
             name = ' '.join([adult.first_name, (adult.middle_names or ''), adult.last_name])
             birth_date = ' '.join([str(adult.birth_day), calendar.month_name[adult.birth_month], str(adult.birth_year)])
 
             if not adult.PITH_same_address:
-                adult_address_string = ' '.join([adult_address_record.street_line1, (adult_address_record.street_line2 or ''),
-                                         adult_address_record.town, (adult_address_record.county or ''), adult_address_record.postcode])
+                adult_address_string = ' '.join([AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                                adult_id=adult.pk).street_line1,
+                                                 (AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                                 adult_id=adult.pk).street_line2 or ''),
+                                                 AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                                adult_id=adult.pk).town,
+                                                 (AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                                 adult_id=adult.pk).county or ''),
+                                                 AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                                adult_id=adult.pk).postcode])
 
             else:
                 adult_address_string = 'Same as home address'
