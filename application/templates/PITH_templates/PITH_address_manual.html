@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Enter your child's address{% endblock %}
+{% block page_title %}Enter adult's address{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -17,7 +17,7 @@
     <!-- Content -->
     <div class="form-group">
         <h1 class="form-title heading-large">
-            Enter {{ adult_record.get_full_name }}’s address
+            Enter {{ form.adult_record.get_full_name }}’s address
         </h1>
         {{form.as_div}}
         {% csrf_token %}

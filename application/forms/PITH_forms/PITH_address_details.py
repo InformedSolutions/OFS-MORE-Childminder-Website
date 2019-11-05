@@ -5,7 +5,7 @@ from django.conf import settings
 
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
-from application.models import AdultInHomeAddress
+from application.models import AdultInHomeAddress, AdultInHome
 
 
 class PITHAddressForm(ChildminderForms):
@@ -26,13 +26,14 @@ class PITHAddressForm(ChildminderForms):
         """
         self.application_id_local = kwargs.pop('id')
         self.adult = kwargs.pop('adult')
+        self.adult_record = kwargs.pop('adult_record')
         super(PITHAddressForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         if AdultInHomeAddress.objects.filter(application_id=self.application_id_local,
-                                             adult_in_home_address=self.adult).count() > 0:
-            self.fields['postcode'].initial = AdultInHomeAddress.objects.get(application_id=self.application_id_local,
-                                                                             adult_in_home_address=
-                                                                             self.adult).postcode
+                                             adult_id=self.adult_record.adult_id).count() > 0:
+            adult_in_home_address = AdultInHomeAddress.objects.get(application_id=self.application_id_local,
+                                                                   adult_id=self.adult_record.adult_id)
+            self.fields['postcode'].initial = adult_in_home_address.postcode
 
     def clean_postcode(self):
         """
@@ -72,13 +73,14 @@ class PITHManualAddressForm(ChildminderForms):
         """
         self.application_id_local = kwargs.pop('id')
         self.adult = kwargs.pop('adult')
+        self.adult_record = kwargs.pop('adult_record')
         super(PITHManualAddressForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if AdultInHomeAddress.objects.filter(application_id=self.application_id_local,
-                                             adult_in_home_address=self.adult).count() > 0:
+                                             adult_id=self.adult_record.adult_id).count() > 0:
             adult_in_home_address = AdultInHomeAddress.objects.get(application_id=self.application_id_local,
-                                                                   adult_in_home_address=self.adult)
+                                                                   adult_id=self.adult_record.adult_id)
             self.fields['street_line1'].initial = adult_in_home_address.street_line1
             self.fields['street_line2'].initial = adult_in_home_address.street_line2
             self.fields['town'].initial = adult_in_home_address.town
@@ -163,6 +165,7 @@ class PITHAddressLookupForm(ChildminderForms):
         :param kwargs: keyword arguments passed to the form, e.g. application ID
         """
         self.application_id_local = kwargs.pop('id')
+        self.adult = kwargs.pop('adult')
         self.choices = kwargs.pop('choices')
         super(PITHAddressLookupForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)

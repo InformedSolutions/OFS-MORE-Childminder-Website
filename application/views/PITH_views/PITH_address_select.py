@@ -54,13 +54,13 @@ def __PITH_address_selection_get_handler(request, template, address_lookup_templ
     application = Application.get_id(app_id=application_id)
 
     adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
-    adult_address_record = AdultInHomeAddress.objects.get(application_id=application_id, adult_in_home_address=adult)
+    adult_address_record = AdultInHomeAddress.objects.get(application_id=application_id, adult_id=adult_record.adult_id)
     postcode = adult_address_record.postcode
     addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
 
     if len(addresses) != 0:
 
-        form = PITHAddressLookupForm(id=application_id, choices=addresses)
+        form = PITHAddressLookupForm(id=application_id, choices=addresses, adult=adult_record)
 
         if application.application_status == 'FURTHER_INFORMATION':
 
@@ -112,10 +112,10 @@ def __PITH_address_selection_post_handler(request, template, success_url, addres
 
     application = Application.get_id(app_id=application_id)
     adult_record = AdultInHome.objects.get(application_id=application_id, adult=str(adult))
-    adult_address_record = AdultInHomeAddress.objects.get(application_id=application_id, adult_in_home_address=str(adult))
+    adult_address_record = AdultInHomeAddress.objects.get(application_id=application_id, adult_id=adult_record.adult_id)
     postcode = adult_address_record.postcode
     addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
-    form = PITHAddressLookupForm(request.POST, id=application_id, choices=addresses)
+    form = PITHAddressLookupForm(request.POST, id=application_id, choices=addresses, adult=adult_record)
 
     if form.is_valid():
 

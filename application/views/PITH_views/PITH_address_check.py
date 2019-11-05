@@ -70,6 +70,10 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
         :return:
         """
         application_id = get_id(self.request)
+
+        context = {
+            'id': get_id(self.request)
+        }
         if AdultInHome.objects.filter(application_id=application_id, PITH_same_address=False).exists():
             # adult = AdultInHome.objects.filter(application_id=application_id, PITH_same_address=False)
             first_adult = get_first_adult_number_for_address_entry(application_id)
@@ -81,7 +85,7 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
 
         else:
 
-            return build_url(self.get_choice_url(application_id), get=get)
+            return build_url(self.get_choice_url(application_id), get=context)
 
     def form_valid(self, form):
         """
