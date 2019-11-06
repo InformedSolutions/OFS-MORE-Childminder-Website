@@ -89,8 +89,6 @@ def __PITH_address_lookup_post_handler(request, template, success_url):
 
     application = Application.objects.get(application_id=application_id)
 
-    adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
-
     adult_id = adult_record.adult_id
     if 'postcode-search' in request.POST:
 
@@ -111,10 +109,8 @@ def __PITH_address_lookup_post_handler(request, template, success_url):
                                                          adult_in_home_address=adult)
                 pith_address_record.save()
             else:
-                pith_address_record = AdultInHomeAddress.objects.get(application_id=application_id,
-                                                                     adult_id=adult_id)
-                pith_address_record.postcode = postcode
-                pith_address_record.save()
+                pith_address_record = AdultInHomeAddress.objects.filter(adult_id=adult_id)
+                pith_address_record.update(postcode=postcode)
 
             if Application.get_id(app_id=application_id).people_in_home_status not in ['COMPLETED', 'WAITING']:
                 status.update(application_id, 'people_in_home_status', 'IN_PROGRESS')
