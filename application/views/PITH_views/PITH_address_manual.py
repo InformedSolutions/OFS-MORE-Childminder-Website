@@ -4,7 +4,7 @@ from django.shortcuts import render
 from django.utils import timezone
 
 from application import status
-from application.business_logic import child_address_logic, reset_declaration
+from application.business_logic import PITH_address_logic, reset_declaration
 from application.forms.PITH_forms import PITHManualAddressForm
 from application.models import Application, AdultInHome, AdultInHomeAddress
 from application.utils import build_url, get_id
@@ -85,7 +85,7 @@ def __PITH_address_manual_post_handler(request, template, success_url, address_u
     application_id = get_id(request)
     adult = request.GET["adult"]
 
-    logger.debug('Saving manual child address details for application with id: '
+    logger.debug('Saving manual adult address details for application with id: '
                  + str(application_id) + " and adult number: " + str(adult))
 
     application = Application.objects.get(pk=application_id)
@@ -99,6 +99,9 @@ def __PITH_address_manual_post_handler(request, template, success_url, address_u
         logger.debug('Form is valid')
 
         application = Application.objects.get(pk=application_id)
+        adult_address_record = PITH_address_logic(application_id, adult_record, form)
+        adult_address_record.save()
+
         application.date_updated = current_date
         application.save()
 
@@ -114,7 +117,7 @@ def __PITH_address_manual_post_handler(request, template, success_url, address_u
         # Recurse through querystring params
         next_adult = __get_next_adult_number_for_address_entry(application_id, int(adult))
 
-        logger.debug('Retrieve number for next child')
+        logger.debug('Retrieve number for next adult')
 
         if next_adult is None:
 
