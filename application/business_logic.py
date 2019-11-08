@@ -265,11 +265,11 @@ def child_address_logic(app_id, child, form):
 
 def PITH_address_logic(app_id, adult, form):
     """
-    Business logic to create or update a child address record with address details
+    Business logic to create or update a adult's address record with address details
     :param app_id: A string object containing the current application ID
-    :param child: A numerical identifier for the child
+    :param child: A numerical identifier for the adult
     :param form: A form object containing the data to be stored
-    :return: an ChildAddress object to be saved
+    :return: an AdultInHomeAddress object to be saved
     """
     application = Application.objects.get(application_id=app_id)
     PITH_address = AdultInHomeAddress(application_id=application)
