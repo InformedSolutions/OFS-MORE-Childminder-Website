@@ -14,6 +14,7 @@ from dateutil.relativedelta import relativedelta
 
 from . import dbs
 from .models import (AdultInHome,
+                     AdultInHomeAddress,
                      ApplicantHomeAddress,
                      ApplicantName,
                      ApplicantPersonalDetails,
@@ -261,6 +262,29 @@ def child_address_logic(app_id, child, form):
     child_address.postcode = form.cleaned_data.get('postcode')
 
     return child_address
+
+def PITH_address_logic(app_id, adult, form):
+    """
+    Business logic to create or update a child address record with address details
+    :param app_id: A string object containing the current application ID
+    :param child: A numerical identifier for the child
+    :param form: A form object containing the data to be stored
+    :return: an ChildAddress object to be saved
+    """
+    application = Application.objects.get(application_id=app_id)
+    PITH_address = AdultInHomeAddress(application_id=application)
+
+    if AdultInHomeAddress.objects.filter(application_id=app_id, adult_id=adult).exists():
+        PITH_address = AdultInHomeAddress.objects.get(application_id=app_id, adult_id=adult)
+
+    PITH_address.adult_id = adult
+    PITH_address.street_line1 = form.cleaned_data.get('street_line1')
+    PITH_address.street_line2 = form.cleaned_data.get('street_line2')
+    PITH_address.town = form.cleaned_data.get('town')
+    PITH_address.county = form.cleaned_data.get('county')
+    PITH_address.postcode = form.cleaned_data.get('postcode')
+
+    return PITH_address
 
 
 def personal_location_of_care_logic(application_id_local, form):
