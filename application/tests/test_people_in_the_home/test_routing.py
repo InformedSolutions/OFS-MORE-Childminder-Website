@@ -858,9 +858,8 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
         adult1 = models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
-            birth_day=1, birth_month=5, birth_year=1984,
+            birth_day=1, birth_month=5, birth_year=1984, PITH_same_address=True
         )
-
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
 
         utils.assertNotSummaryField(response, 'Lived or worked in British military base in the last 5 years?',
