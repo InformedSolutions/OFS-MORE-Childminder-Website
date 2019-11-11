@@ -160,7 +160,7 @@ def make_test_application():
     just that an application exists, or to use as a starting point before tweaking individual fields
     """
 
-    application = models.Application.objects.create(
+    application = models.Application.objects.create(adults_in_home=False
     )
     models.UserDetails.objects.create(
         application_id=application
@@ -183,11 +183,11 @@ def make_test_application():
         application_id=application,
         zero_to_five=True, five_to_eight=True, eight_plus=True,
     )
-    models.AdultInHome.objects.create(
-        application_id=application,
-        birth_day=1, birth_month=2, birth_year=1983,
-        adult=1,
-    )
+    # models.AdultInHome.objects.create(
+    #     application_id=application,
+    #     birth_day=1, birth_month=2, birth_year=1983,
+    #     adult=1,
+    # )
     models.FirstAidTraining.objects.create(
         application_id=application,
         course_day=1, course_month=2, course_year=2015,

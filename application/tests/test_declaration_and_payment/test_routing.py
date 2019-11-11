@@ -1,5 +1,6 @@
 import json
 from unittest import mock
+from uuid import UUID
 
 from django.test import tag
 from django.urls import reverse, resolve
@@ -13,7 +14,6 @@ class DeclarationSummaryPageFunctionalTests(utils.NoMiddlewareTestCase):
 
     def setUp(self):
         self.application = utils.make_test_application()
-        self.adult_in_home = models.AdultInHome.objects.get(application_id=self.application.pk)
 
     # ------------
 
@@ -39,29 +39,30 @@ class DeclarationSummaryPageFunctionalTests(utils.NoMiddlewareTestCase):
         self.application.adults_in_home = True
         self.application.save()
 
-        self.adult_in_home.first_name = 'Joe'
-        self.adult_in_home.middle_names = 'Josef'
-        self.adult_in_home.last_name = 'Johannsen'
-        self.adult_in_home.birth_day = 20
-        self.adult_in_home.birth_month = 12
-        self.adult_in_home.birth_year = 1975
-        self.adult_in_home.relationship = 'Uncle'
-        self.adult_in_home.email = 'foo@example.com'
-        self.adult_in_home.PITH_mobile_number = "07700 900840"
-        self.adult_in_home.PITH_same_address = True
-        self.adult_in_home.lived_abroad = False
-        self.adult_in_home.dbs_certificate_number = '123456789012'
-        self.adult_in_home.save()
+        models.AdultInHome.objects.create(application_id=self.application,
+                                          adult_id=UUID('166f77f7-c2ee-4550-9461-45b9d2f28d34'),
+                                          first_name='Joe',
+                                          last_name='Johannsen',
+                                          birth_day=20,
+                                          birth_month=12,
+                                          birth_year=1975,
+                                          relationship='Uncle',
+                                          email='foo@example.com',
+                                          PITH_mobile_number='07700 900840',
+                                          PITH_same_address=True,
+                                          lived_abroad=False,
+                                          dbs_certificate_number='12345678912',
+                                          )
 
         response = self.client.get(reverse('Declaration-Summary-View'), data={'id': self.application.pk})
 
-        utils.assertSummaryField(response, 'Name', 'Joe Josef Johannsen', heading='Joe Josef Johannsen')
-        utils.assertSummaryField(response, 'Date of birth', '20 Dec 1975', heading='Joe Josef Johannsen')
-        utils.assertSummaryField(response, 'Relationship', 'Uncle', heading='Joe Josef Johannsen')
-        utils.assertSummaryField(response, 'Email', 'foo@example.com', heading='Joe Josef Johannsen')
+        utils.assertSummaryField(response, 'Name', 'Joe Johannsen', heading='Joe Johannsen')
+        utils.assertSummaryField(response, 'Date of birth', '20 Dec 1975', heading='Joe Johannsen')
+        utils.assertSummaryField(response, 'Relationship', 'Uncle', heading='Joe Johannsen')
+        utils.assertSummaryField(response, 'Email', 'foo@example.com', heading='Joe Johannsen')
         utils.assertSummaryField(response, 'Have they lived outside of the UK in the last 5 years?', 'No',
-                                 heading='Joe Josef Johannsen')
-        utils.assertSummaryField(response, 'DBS certificate number', '123456789012', heading='Joe Josef Johannsen')
+                                 heading='Joe Johannsen')
+        utils.assertSummaryField(response, 'DBS certificate number', '12345678912', heading='Joe Johannsen')
 
     def test_doesnt_display_private_information_for_adults_in_the_home(self):
 
@@ -69,15 +70,24 @@ class DeclarationSummaryPageFunctionalTests(utils.NoMiddlewareTestCase):
         self.application.adults_in_home = True
         self.application.save()
 
-        self.adult_in_home.first_name = 'Joe'
-        self.adult_in_home.middle_names = 'Josef'
-        self.adult_in_home.last_name = 'Johannsen'
-        self.adult_in_home.save()
+        models.AdultInHome.objects.create(application_id=self.application,
+                                          first_name='Joe',
+                                          last_name='Johannsen',
+                                          birth_day=20,
+                                          birth_month=12,
+                                          birth_year=1975,
+                                          relationship='Uncle',
+                                          email='foo@example.com',
+                                          PITH_mobile_number='07700 900840',
+                                          PITH_same_address=True,
+                                          lived_abroad=False,
+                                          dbs_certificate_number='12345678912',
+                                          )
 
         response = self.client.get(reverse('Declaration-Summary-View'), data={'id': self.application.pk})
 
         utils.assertNotSummaryField(response, 'Known to council social services in regards to their own children?',
-                                    heading='Joe Josef Johannsen')
+                                    heading='Joe Johannsen')
 
 
 @tag('http')

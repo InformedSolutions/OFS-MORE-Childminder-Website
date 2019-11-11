@@ -15,26 +15,22 @@ logger = logging.getLogger()
 
 
 def PITHAddressSelectView(request):
-
     return __PITH_address_selection(request)
 
 
 # The following code is a modified version of the your_children views
 def __PITH_address_selection(request):
-
     template = 'PITH_templates/PITH_address_select.html'
     address_lookup_template = 'PITH_templates/PITH_address_postcode.html'
     success_url = ('Task-List-View', 'PITH-Lived-Abroad-View')
     address_url = 'PITH-Address-Details-View'
 
     if request.method == 'GET':
-
         return __PITH_address_selection_get_handler(request,
                                                     template=template,
                                                     address_lookup_template=address_lookup_template)
 
     if request.method == 'POST':
-
         return __PITH_address_selection_post_handler(request,
                                                      template=template,
                                                      success_url=success_url,
@@ -62,7 +58,6 @@ def __PITH_address_selection_get_handler(request, template, address_lookup_templ
         form = PITHAddressLookupForm(id=application_id, choices=addresses, adult=adult_record)
 
         if application.application_status == 'FURTHER_INFORMATION':
-
             form.error_summary_template_name = 'returned-error-summary.html'
             form.error_summary_title = 'There was a problem'
 
@@ -81,7 +76,6 @@ def __PITH_address_selection_get_handler(request, template, address_lookup_templ
         form = PITHAddressForm(id=application_id, adult=adult)
 
         if application.application_status == 'FURTHER_INFORMATION':
-
             form.error_summary_template_name = 'returned-error-summary.html'
             form.error_summary_title = 'There was a problem'
 
@@ -110,7 +104,9 @@ def __PITH_address_selection_post_handler(request, template, success_url, addres
                  + str(application_id) + " and adult number: " + str(adult))
 
     application = Application.get_id(app_id=application_id)
-    adult_record = AdultInHome.objects.get(application_id=application_id, adult=str(adult))
+    adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
+    adult_name = '{0}{1} {2}'.format(adult_record.first_name, " " + adult_record.middle_names if
+    adult_record.middle_names else "", adult_record.last_name)
     adult_address_record = AdultInHomeAddress.objects.get(application_id=application_id, adult_id=adult_record.adult_id)
     postcode = adult_address_record.postcode
     addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
@@ -138,7 +134,6 @@ def __PITH_address_selection_post_handler(request, template, success_url, addres
         next_adult = __get_next_adult_number_for_address_entry(application_id, int(adult))
 
         if next_adult is None:
-
             invalid_adults_url, valid_adults_url = success_url
             redirect_url = valid_adults_url
 
@@ -149,10 +144,9 @@ def __PITH_address_selection_post_handler(request, template, success_url, addres
 
     else:
 
-        form.error_summary_title = 'There was a problem finding your address'
+        form.error_summary_title = 'There was a problem finding {}\'s address'.format(adult_name)
 
         if application.application_status == 'FURTHER_INFORMATION':
-
             form.error_summary_template_name = 'returned-error-summary.html'
             form.error_summary_title = 'There was a problem'
 
@@ -161,7 +155,7 @@ def __PITH_address_selection_post_handler(request, template, success_url, addres
             'form': form,
             'application_id': application_id,
             'adult': adult,
-            'name': adult_record.get_full_name(),
+            'name': adult_record,
         }
 
         return render(request, template, variables)

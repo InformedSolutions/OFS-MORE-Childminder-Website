@@ -183,16 +183,11 @@ class PITHCheckYourAnswersView(PITHTemplateView):
             birth_date = ' '.join([str(adult.birth_day), calendar.month_name[adult.birth_month], str(adult.birth_year)])
 
             if not adult.PITH_same_address:
-                adult_address_string = ' '.join([AdultInHomeAddress.objects.get(application_id=app_id,
-                                                                                adult_id=adult.pk).street_line1,
-                                                 (AdultInHomeAddress.objects.get(application_id=app_id,
-                                                                                 adult_id=adult.pk).street_line2 or ''),
-                                                 AdultInHomeAddress.objects.get(application_id=app_id,
-                                                                                adult_id=adult.pk).town,
-                                                 (AdultInHomeAddress.objects.get(application_id=app_id,
-                                                                                 adult_id=adult.pk).county or ''),
-                                                 AdultInHomeAddress.objects.get(application_id=app_id,
-                                                                                adult_id=adult.pk).postcode])
+                adult_in_home_address = AdultInHomeAddress.objects.get(application_id=app_id, adult_id=adult.pk)
+                adult_address_string = ' '.join([adult_in_home_address.street_line1,
+                                                 adult_in_home_address.street_line2 or '',
+                                                 adult_in_home_address.town, adult_in_home_address.county or '',
+                                                 adult_in_home_address.postcode])
 
             else:
                 adult_address_string = 'Same as home address'

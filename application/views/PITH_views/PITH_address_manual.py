@@ -90,6 +90,8 @@ def __PITH_address_manual_post_handler(request, template, success_url, address_u
 
     application = Application.objects.get(pk=application_id)
     adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
+    adult_name = '{0}{1} {2}'.format(adult_record.first_name, " " + adult_record.middle_names if
+    adult_record.middle_names else "", adult_record.last_name)
 
     form = PITHManualAddressForm(request.POST, id=application_id, adult=adult, adult_record=adult_record)
     form.remove_flag()
@@ -136,7 +138,7 @@ def __PITH_address_manual_post_handler(request, template, success_url, address_u
 
         logger.debug('Form is invalid')
 
-        form.error_summary_title = 'There was a problem with your address'
+        form.error_summary_title = 'There was a problem with {}\'s address'.format(adult_name)
         adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
 
         if application.application_status == 'FURTHER_INFORMATION':
@@ -149,7 +151,7 @@ def __PITH_address_manual_post_handler(request, template, success_url, address_u
         variables = {
             'form': form,
             'adult': adult,
-            'name': adult_record.get_full_name(),
+            'name': adult_record,
             'application_id': application_id,
         }
 
