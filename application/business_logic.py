@@ -54,6 +54,7 @@ def childcare_type_logic(application_id_local, form):
     return childcare_type_record
 
 
+
 def childcare_register_type(application_id):
     """
     Function to determine the childcare register to which the applicant is applying.
