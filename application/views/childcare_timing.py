@@ -13,7 +13,7 @@ from django.core.urlresolvers import reverse
 from ..summary_page_data import childcare_type_name_dict, childcare_type_link_dict, childcare_type_change_link_description_dict
 from ..table_util import Table, create_tables, submit_link_setter
 from .. import status
-from ..business_logic import reset_declaration, childcare_type_logic, get_childcare_register_type
+from ..business_logic import reset_declaration, childcare_timing_logic, get_childcare_register_type
 from ..forms import TimingOfChildcareGuidanceForm, TimingOfChildcareGroupsForm, TypeOfChildcareRegisterForm, \
     TypeOfChildcareOvernightCareForm
 from ..models import Application, ChildcareType

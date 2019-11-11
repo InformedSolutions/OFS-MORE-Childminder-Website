@@ -20,6 +20,7 @@ from .models import (AdultInHome,
                      ApplicantPersonalDetails,
                      Application,
                      ChildcareType,
+                     ChildcareTiming,
                      ChildInHome,
                      CriminalRecordCheck,
                      ChildcareTraining,
@@ -53,7 +54,32 @@ def childcare_type_logic(application_id_local, form):
         childcare_type_record.eight_plus = eight_plus_status
     return childcare_type_record
 
+def childcare_timing_logic(application_id_local, form):
+    """
+    Business logic to create or update a Childcare_Type record
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: a ChildcareType object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    for status in form.cleaned_data.get('timing_of_childcare'):
+        if ChildcareTiming.objects.filter(application_id=application_id_local).count() == 0:
+            childcare_timing_record = ChildcareTiming(application_id=this_application, status=status)
 
+    zero_to_five_status = '0-5' in form.cleaned_data.get('type_of_childcare')
+    five_to_eight_status = '5-8' in form.cleaned_data.get('type_of_childcare')
+    eight_plus_status = '8over' in form.cleaned_data.get('type_of_childcare')
+    # If the user entered information for this task for the first time
+    if ChildcareType.objects.filter(application_id=application_id_local).count() == 0:
+        childcare_type_record = ChildcareType(zero_to_five=zero_to_five_status, five_to_eight=five_to_eight_status,
+                                              eight_plus=eight_plus_status, application_id=this_application)
+    # If the user previously entered information for this task
+    elif ChildcareType.objects.filter(application_id=application_id_local).count() > 0:
+        childcare_type_record = ChildcareType.objects.get(application_id=application_id_local)
+        childcare_type_record.zero_to_five = zero_to_five_status
+        childcare_type_record.five_to_eight = five_to_eight_status
+        childcare_type_record.eight_plus = eight_plus_status
+    return childcare_type_record
 
 def childcare_register_type(application_id):
     """
