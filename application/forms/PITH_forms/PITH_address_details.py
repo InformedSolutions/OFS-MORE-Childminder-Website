@@ -16,7 +16,7 @@ class PITHAddressForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode'})
+    postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter their postcode'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -57,13 +57,13 @@ class PITHManualAddressForm(ChildminderForms):
     auto_replace_widgets = True
 
     street_line1 = forms.CharField(label='Address line 1', required=True, error_messages={
-        'required': 'Please enter the first line of your address'})
+        'required': 'Please enter the first line of their address'})
     street_line2 = forms.CharField(label='Address line 2', required=False)
     town = forms.CharField(label='Town or city', required=True,
                            error_messages={'required': 'Please enter the name of the town or city'})
     county = forms.CharField(label='County (optional)', required=False)
     postcode = forms.CharField(label='Postcode', required=True,
-                               error_messages={'required': 'Please enter your postcode'})
+                               error_messages={'required': 'Please enter their postcode'})
 
     def __init__(self, *args, **kwargs):
         """
@@ -157,7 +157,7 @@ class PITHAddressLookupForm(ChildminderForms):
     auto_replace_widgets = True
 
     address = forms.ChoiceField(label='Select address', required=True,
-                                error_messages={'required': 'Please select your address'})
+                                error_messages={'required': 'Please select their address'})
 
     def __init__(self, *args, **kwargs):
         """

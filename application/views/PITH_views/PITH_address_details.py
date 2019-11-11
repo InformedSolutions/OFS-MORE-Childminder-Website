@@ -123,7 +123,7 @@ def __PITH_address_lookup_post_handler(request, template, success_url):
             if application.application_status == 'FURTHER_INFORMATION':
                 form.error_summary_template_name = 'returned-error-summary.html'
                 form.error_summary_title = 'There was a problem'
-            adult_record = AdultInHome.objects.get(application_id=application_id, adult_in_home_address=adult)
+            adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
             variables = {
                 'form': form,
                 'application_id': application_id,
