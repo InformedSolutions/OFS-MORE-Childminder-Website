@@ -154,7 +154,7 @@ def declaration_summary(request, print_mode=False):
             references_vars = {}
 
         # Retrieve lists of adults and children, ordered by adult/child number for iteration by the HTML
-        adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
+        adults_list_exists = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult').exists()
         children_list = ChildInHome.objects.filter(application_id=application_id_local).order_by('child')
         children_not_in_the_home_list = Child.objects.filter(application_id=application_id_local,
                                                              lives_with_childminder=False).order_by('child')
@@ -169,6 +169,7 @@ def declaration_summary(request, print_mode=False):
         adult_dbs_list = []
         adult_health_check_status_list = []
         adult_email_list = []
+        adults_list = []
         adult_mobile_number_list = []
         adult_same_address_list = []
         adult_lived_abroad_list = []
@@ -176,64 +177,60 @@ def declaration_summary(request, print_mode=False):
         adult_enhanced_check_list = []
         adult_on_update_list = []
 
-        application = Application.objects.get(pk=application_id_local)
-        for adult in adults_list:
+        if adults_list_exists:
+            adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
+            for adult in adults_list:
 
-            # For each adult, append the correct attribute (e.g. name, relationship) to the relevant list
-            # Concatenate the adult's name for display, displaying any middle names if present
+                # For each adult, append the correct attribute (e.g. name, relationship) to the relevant list
+                # Concatenate the adult's name for display, displaying any middle names if present
 
-            if not adult.PITH_same_address:
-                adult_address_string = ' '.join([AdultInHomeAddress.objects.get(application_id=application,
-                                                                                adult_id=adult.pk).street_line1,
-                                                 (AdultInHomeAddress.objects.get(application_id=application,
-                                                                                 adult_id=adult.pk).street_line2 or ''),
-                                                 AdultInHomeAddress.objects.get(application_id=application,
-                                                                                adult_id=adult.pk).town,
-                                                 (AdultInHomeAddress.objects.get(application_id=application,
-                                                                                 adult_id=adult.pk).county or ''),
-                                                 AdultInHomeAddress.objects.get(application_id=application,
-                                                                                adult_id=adult.pk).postcode])
+                if not adult.PITH_same_address:
+                    adult_in_home_address = AdultInHomeAddress.objects.get(application_id=application_id_local, adult_id=adult.pk)
+                    adult_address_string = ' '.join([adult_in_home_address.street_line1,
+                                                     adult_in_home_address.street_line2 or '',
+                                                     adult_in_home_address.town, adult_in_home_address.county or '',
+                                                     adult_in_home_address.postcode])
 
-            else:
-                adult_address_string = 'Same as home address'
+                else:
+                    adult_address_string = 'Same as home address'
 
-            if adult.middle_names != '':
-                name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
-            elif adult.middle_names == '':
-                name = adult.first_name + ' ' + adult.last_name
+                if adult.middle_names != '':
+                    name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
+                elif adult.middle_names == '':
+                    name = adult.first_name + ' ' + adult.last_name
 
-            if adult.birth_day < 10:
-                adult_birth_day = '0' + str(adult.birth_day)
-            else:
-                adult_birth_day = str(adult.birth_day)
+                if adult.birth_day < 10:
+                    adult_birth_day = '0' + str(adult.birth_day)
+                else:
+                    adult_birth_day = str(adult.birth_day)
 
-            if adult.birth_month < 10:
-                adult_birth_month = '0' + str(adult.birth_month)
-            else:
-                adult_birth_month = str(adult.birth_month)
+                if adult.birth_month < 10:
+                    adult_birth_month = '0' + str(adult.birth_month)
+                else:
+                    adult_birth_month = str(adult.birth_month)
 
-            adult_title_list.append(adult.title)
-            adult_name_list.append(name)
-            adult_birth_day_list.append(adult_birth_day)
-            adult_birth_month_list.append(adult_birth_month)
-            adult_birth_year_list.append(adult.birth_year)
-            adult_relationship_list.append(adult.relationship)
-            adult_dbs_list.append(adult.dbs_certificate_number)
-            adult_health_check_status_list.append(adult.health_check_status)
-            adult_email_list.append(adult.email)
-            adult_mobile_number_list.append(adult.PITH_mobile_number)
-            adult_same_address_list.append(adult_address_string)
-            adult_lived_abroad_list.append(adult.lived_abroad)
-            adult_military_base_list.append(adult.military_base)
-            adult_enhanced_check_list.append(adult.enhanced_check)
-            adult_on_update_list.append(adult.on_update)
+                adult_title_list.append(adult.title)
+                adult_name_list.append(name)
+                adult_birth_day_list.append(adult_birth_day)
+                adult_birth_month_list.append(adult_birth_month)
+                adult_birth_year_list.append(adult.birth_year)
+                adult_relationship_list.append(adult.relationship)
+                adult_dbs_list.append(adult.dbs_certificate_number)
+                adult_health_check_status_list.append(adult.health_check_status)
+                adult_email_list.append(adult.email)
+                adult_mobile_number_list.append(adult.PITH_mobile_number)
+                adult_same_address_list.append(adult_address_string)
+                adult_lived_abroad_list.append(adult.lived_abroad)
+                adult_military_base_list.append(adult.military_base)
+                adult_enhanced_check_list.append(adult.enhanced_check)
+                adult_on_update_list.append(adult.on_update)
 
-        # Zip the appended lists together for the HTML to simultaneously parse
+            # Zip the appended lists together for the HTML to simultaneously parse
         adult_lists = zip(adult_title_list, adult_name_list, adult_birth_day_list, adult_birth_month_list,
-                          adult_birth_year_list, adult_relationship_list, adult_dbs_list, adult_health_check_status_list
-                          , adult_email_list, adult_mobile_number_list, adult_same_address_list,
-                          adult_lived_abroad_list, adult_enhanced_check_list, adult_on_update_list,
-                          adult_military_base_list)
+                              adult_birth_year_list, adult_relationship_list, adult_dbs_list, adult_health_check_status_list
+                              , adult_email_list, adult_mobile_number_list, adult_same_address_list,
+                              adult_lived_abroad_list, adult_enhanced_check_list, adult_on_update_list,
+                              adult_military_base_list)
         # Generate lists of data for children in your home, to be iteratively displayed on the summary page
         # The HTML will then parse through each list simultaneously, to display the correct data for each child
         child_name_list = []
@@ -414,7 +411,7 @@ def declaration_summary(request, print_mode=False):
             'adults_in_home': application.adults_in_home,
             'children_in_home': application.children_in_home,
             'children_not_in_home': application.known_to_social_services_pith,
-            'number_of_adults': adults_list.count(),
+            'number_of_adults': 0 if len(adults_list) == 0 else adults_list.count(),
             'number_of_children': children_list.count(),
             'adult_lists': adult_lists,
             'child_lists': child_lists,
