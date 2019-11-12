@@ -53,12 +53,12 @@ class TimingOfChildcareGroupsForm(ChildminderForms):
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if ChildcareTiming.objects.filter(application_id=self.application_id_local).count() > 0:
-            childcare_record = ChildcareTiming.objects.get(application_id=self.application_id_local)
+            #childcare_record = ChildcareTiming.objects.get(application_id=self.application_id_local)
             childcare_record_list = ChildcareTiming._meta._get_all_field_names()
-            childcare_record_tuple = ChildcareTiming.timelog_fields()
+            #childcare_record_tuple = ChildcareTiming.timelog_fields()
             bools = []
+            i = 2
             for j in childcare_record_list:
-                i = 2
                 if childcare_record_list[i]:
                     bools.append(j)
                 i += 1

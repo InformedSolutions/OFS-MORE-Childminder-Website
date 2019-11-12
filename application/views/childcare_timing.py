@@ -16,7 +16,7 @@ from .. import status
 from ..business_logic import reset_declaration, childcare_timing_logic, get_childcare_register_type
 from ..forms import TimingOfChildcareGuidanceForm, TimingOfChildcareGroupsForm, TypeOfChildcareRegisterForm, \
     TypeOfChildcareOvernightCareForm
-from ..models import Application, ChildcareType
+from ..models import Application, ChildcareType, ChildcareTiming
 
 
 def timing_of_childcare_guidance(request):
@@ -103,19 +103,23 @@ def timing_of_childcare_groups(request):
             childcare_timing_record = childcare_timing_logic(app_id, form)
 
             # Check to see if the type of childcare training has been changed
-            if ChildcareType.objects.filter(application_id=app_id).count() > 0:
-                existing_record = ChildcareType.objects.get(application_id=app_id)
+            if ChildcareTiming.objects.filter(application_id=app_id).count() > 0:
+                existing_record = ChildcareTiming.objects.get(application_id=app_id)
+                if existing_record.weekday_before_schoweekday_before_schoolol != childcare_timing_record.weekday_before_school or \
+                        existing_record.weekday_after_school != childcare_timing_record.weekday_after_school or \
+                        existing_record.weekday_pm != childcare_timing_record.weekday_pm or \
+                        existing_record.weekday_all_day != childcare_timing_record.weekday_all_day or \
+                        existing_record.weekend_am != childcare_timing_record.weekend_am or \
+                        existing_record.weekend_pm != childcare_timing_record.weekend_pm or \
+                        existing_record.weekend_all_day != childcare_timing_record.weekend_all_day:
+                    application.childcare_timing_status = 'NOT_STARTED'
 
-                if existing_record.zero_to_five != childcare_type_record.zero_to_five or \
-                   existing_record.eight_plus != childcare_type_record.eight_plus:
-                    application.childcare_training_status = 'NOT_STARTED'
-
-            childcare_type_record.save()
+            childcare_timing_record.save()
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
 
-            return HttpResponseRedirect(reverse('Type-Of-Childcare-Register-View') + '?id=' + app_id)
+            return HttpResponseRedirect(reverse('Timing-Of-Childcare-View') + '?id=' + app_id)
         else:
 
             if application.application_status == 'FURTHER_INFORMATION':
@@ -126,7 +130,7 @@ def timing_of_childcare_groups(request):
             variables = {
                 'form': form,
                 'application_id': app_id,
-                'childcare_type_status': application.childcare_type_status
+                'childcare_timing_status': application.childcare_timing_status
             }
             return render(request, 'childcare-age-groups.html', variables)
 
