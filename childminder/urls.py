@@ -25,6 +25,10 @@ urlpatterns = [
     url(r'^childcare/local-authority/', views.local_authority_links, name='Local-Authority-View'),
     url(r'^childcare/overnight-care/', views.overnight_care, name='Type-Of-Childcare-Overnight-Care-View'),
     url(r'^childcare/check-answers/', views.childcare_type_summary, name='Type-Of-Childcare-Summary-View'),
+    url(r'^childcare/timing-groups/', views.timing_of_childcare_groups, name='Timing-Of-Childcare-Groups-View'),
+    url(r'^childcare/timing-summary/', views.ChildcareTimingSummaryView.as_view(),
+        name='Childcare-Timing-Summary-View'),
+
     url(r'^sign-in/change-email/', views.UpdateEmailView.as_view(), name='Contact-Email-View'),
     url(r'^account/phone/', views.contact_phone, name='Contact-Phone-View'),
     url(r'^sign-in/check-answers/', views.contact_summary, name='Contact-Summary-View'),

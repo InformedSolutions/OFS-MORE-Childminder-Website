@@ -165,7 +165,7 @@ class ChildcareTrainingCertificateView(View):
 
 class ChildcareTrainingSummaryView(View):
     template_name = 'generic-summary-template.html'
-    success_url = 'Task-List-View'
+    success_url = 'Timing-Of-Childcare-Groups-View'
 
     def get(self, request):
         context = self.get_context_data(application_id=request.GET['id'])

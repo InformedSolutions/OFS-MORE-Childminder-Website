@@ -8,14 +8,14 @@ class ChildcareTiming(models.Model):
     """
     childcare_timing_id = models.UUIDField(primary_key=True, default=uuid4)
     application_id = models.ForeignKey(Application, on_delete=models.CASCADE, db_column='application_id')
-    weekday_before_school = models.BooleanField()
-    weekday_after_school = models.BooleanField()
-    weekday_am = models.BooleanField()
-    weekday_pm = models.BooleanField()
-    weekday_all_day = models.BooleanField()
-    weekend_am = models.BooleanField()
-    weekend_pm = models.BooleanField()
-    weekend_all_day = models.BooleanField()
+    weekday_before_school = models.NullBooleanField()
+    weekday_after_school = models.NullBooleanField()
+    weekday_am = models.NullBooleanField()
+    weekday_pm = models.NullBooleanField()
+    weekday_all_day = models.NullBooleanField()
+    weekend_am = models.NullBooleanField()
+    weekend_pm = models.NullBooleanField()
+    weekend_all_day = models.NullBooleanField()
 
     @property
     def timelog_fields(self):
@@ -44,6 +44,18 @@ class ChildcareTiming(models.Model):
     @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
+
+    def get_field_names(self):
+        return (
+            'weekday_before_school',
+            'weekday_after_school',
+            'weekday_am',
+            'weekday_pm',
+            'weekday_all_day',
+            'weekend_am',
+            'weekend_pm',
+            'weekend_all_day'
+        )
 
     class Meta:
         db_table = 'CHILDCARE_TIMING'

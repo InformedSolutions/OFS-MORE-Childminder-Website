@@ -12,6 +12,7 @@ from .child_in_home import *
 from .childcare_type import *
 from .criminal_record_check import *
 from .childcare_training import *
+from .childcare_timing import *
 from .firstaid_training import *
 from .health_declaration_booklet import *
 from .payment import *
