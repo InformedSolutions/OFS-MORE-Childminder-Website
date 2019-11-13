@@ -92,8 +92,10 @@ class DBSUpdateCheckView(DBSTemplateView):
         app_id = get_id(self.request)
         capita = get_criminal_record_check(app_id, 'capita')
 
-        # if the dbs is on capita go to summary
-        if capita:
+        info = get_criminal_record_check(app_id, 'certificate_information')
+
+        # if the dbs is on capita with no certificate info go to summary
+        if capita and info in NO_ADDITIONAL_CERTIFICATE_INFORMATION:
             self.success_url = summary_view
         #  else go to the post dbs view
         else:

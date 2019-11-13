@@ -144,35 +144,26 @@ class ThankYou(BaseTemplateView):
         NEITHER_TEMPLATES = None, NEITHER_TEMPLATE_NAME
 
         if capita:
-            if within_three_months:
-                if certificate_information not in NO_ADDITIONAL_CERTIFICATE_INFORMATION:
-                    if lived_abroad:
-                        logger.debug(
-                            'Attempting send of email "Household member completed - Confirmation - DBS & lived abroad"')
-                        return DBS_LIVED_ABROAD_TEMPLATES
-                    else:
-                        logger.debug('Attempting send of email "Household member completed - Confirmation - DBS"')
-                        return DBS_ONLY_TEMPLATES
+            if certificate_information not in NO_ADDITIONAL_CERTIFICATE_INFORMATION:
+                if lived_abroad:
+                    logger.debug(
+                        'Attempting send of email "Household member completed - Confirmation - DBS & lived abroad"')
+                    return DBS_LIVED_ABROAD_TEMPLATES
                 else:
-                    if lived_abroad:
-                        logger.debug(
-                            'Attempting send of email "Household member completed - Confirmation - lived abroad"')
-                        return LIVED_ABROAD_ONLY_TEMPLATES
-                    else:
-                        return NEITHER_TEMPLATES
+                    logger.debug('Attempting send of email "Household member completed - Confirmation - DBS"')
+                    return DBS_ONLY_TEMPLATES
+            elif certificate_information in NO_ADDITIONAL_CERTIFICATE_INFORMATION:
+                if lived_abroad:
+                    logger.debug(
+                        'Attempting send of email "Household member completed - Confirmation - lived abroad"')
+                    return LIVED_ABROAD_ONLY_TEMPLATES
+                else:
+                    return NEITHER_TEMPLATES
+
             else:
-                if on_update:
-                    if lived_abroad:
-                        logger.debug(
-                            'Attempting send of email "Household member completed - Confirmation - DBS & lived abroad"')
-                        return DBS_LIVED_ABROAD_TEMPLATES
-                    else:
-                        logger.debug('Attempting send of email "Household member completed - Confirmation - DBS"')
-                        return DBS_ONLY_TEMPLATES
-                else:
-                    logger.debug("""The following combination is not covered in if block: 
+                logger.debug("""The following combination is not covered in if block: 
                                     on_update {0} """.format(on_update))
-                    raise ValueError("""
+                raise ValueError("""
                                     The following combination is not covered in if block: 
                                     on_update {0} """.format(on_update))
         else:
