@@ -11,6 +11,7 @@ from .personal_details import *
 from .card_payment_details import *
 from .dbs import *
 from .declaration import *
+from .childcare_timing import *
 from .childcare_training import *
 from .first_aid import *
 from .health import *

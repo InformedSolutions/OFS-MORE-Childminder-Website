@@ -23,7 +23,7 @@ class TimingOfChildcareGroupsForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
 
-    CHILDCARE_TYPE_CHOICES = (
+    CHILDCARE_TIMING_CHOICES = (
         ('weekday_before_school', 'Weekday (before school)'),
         ('weekday_after_school', 'Weekday (after school)'),
         ('weekday_am', 'Weekday (morning)'),
@@ -37,7 +37,7 @@ class TimingOfChildcareGroupsForm(ChildminderForms):
     time_of_childcare = forms.MultipleChoiceField(
         required=True,
         widget=CheckboxSelectMultiple,
-        choices=CHILDCARE_TYPE_CHOICES,
+        choices=CHILDCARE_TIMING_CHOICES,
         label='What time will the childcare occur?',
         help_text='Tick all that apply'
     )
@@ -53,36 +53,13 @@ class TimingOfChildcareGroupsForm(ChildminderForms):
         full_stop_stripper(self)
         # If information was previously entered, display it on the form
         if ChildcareTiming.objects.filter(application_id=self.application_id_local).count() > 0:
-            #childcare_record = ChildcareTiming.objects.get(application_id=self.application_id_local)
-            childcare_record_list = ChildcareTiming._meta._get_all_field_names()
-            #childcare_record_tuple = ChildcareTiming.timelog_fields()
+            childcare_record_list = ChildcareTiming.get_field_names(self)
             bools = []
-            i = 2
             for j in childcare_record_list:
-                if childcare_record_list[i]:
+                if j:
                     bools.append(j)
-                i += 1
-            self.fields['type_of_childcare'].initial = bools
-            # zero_to_five_status = childcare_record.zero_to_five
-            # five_to_eight_status = childcare_record.five_to_eight
-            # eight_plus_status = childcare_record.eight_plus
-            # if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
-            #     self.fields['type_of_childcare'].initial = ['0-5', '5-8', '8over']
-            # elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
-            #     self.fields['type_of_childcare'].initial = ['0-5', '5-8']
-            # elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
-            #     self.fields['type_of_childcare'].initial = ['0-5', '8over']
-            # elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
-            #     self.fields['type_of_childcare'].initial = ['5-8', '8over']
-            # elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
-            #     self.fields['type_of_childcare'].initial = ['0-5']
-            # elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is False):
-            #     self.fields['type_of_childcare'].initial = ['5-8']
-            # elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
-            #     self.fields['type_of_childcare'].initial = ['8over']
-            # elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is False):
-            #     self.fields['type_of_childcare'].initial = []
-        self.fields['type_of_childcare'].error_messages = {
-            'required': 'Please select at least one age group'}
+            self.fields['time_of_childcare'].initial = bools
+        self.fields['time_of_childcare'].error_messages = {
+            'required': 'Please select at least one timing group'}
 
 

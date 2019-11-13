@@ -30,7 +30,6 @@ from .models import (AdultInHome,
                      UserDetails, Child, ChildAddress)
 from .utils import unique_values, get_first_duplicate_index, get_duplicate_list_entry_indexes
 
-
 def childcare_type_logic(application_id_local, form):
     """
     Business logic to create or update a Childcare_Type record
@@ -62,7 +61,7 @@ def childcare_timing_logic(application_id_local, form):
     :return: a ChildcareType object to be saved
     """
     this_application = Application.objects.get(application_id=application_id_local)
-    childcare_timing = form.cleaned_data.get['childcare_timing']
+    childcare_timing = form.cleaned_data['time_of_childcare']
 
     options = (
             'weekday_before_school',
@@ -75,11 +74,11 @@ def childcare_timing_logic(application_id_local, form):
             'weekend_all_day'
         )
     if ChildcareTiming.objects.filter(application_id=application_id_local).count() == 0:
-        childcare_timing_recrod = ChildcareTiming.ojects.create(application_id=application_id_local)
+        childcare_timing_record = ChildcareTiming.objects.create(application_id=this_application)
     else:
-        childcare_timing_record = ChildcareTiming.objects.get(application_id=this_application)
+        childcare_timing_record = ChildcareTiming.objects.get(application_id=application_id_local)
     for option in options:
-        if options in childcare_timing:
+        if option in childcare_timing:
             setattr(childcare_timing_record, option, True)
         else:
             setattr(childcare_timing_record, option, False)
