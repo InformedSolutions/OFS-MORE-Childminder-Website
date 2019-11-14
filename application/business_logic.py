@@ -20,7 +20,6 @@ from .models import (AdultInHome,
                      ApplicantPersonalDetails,
                      Application,
                      ChildcareType,
-                     ChildcareTiming,
                      ChildInHome,
                      CriminalRecordCheck,
                      ChildcareTraining,
@@ -73,10 +72,10 @@ def childcare_timing_logic(application_id_local, form):
             'weekend_pm',
             'weekend_all_day'
         )
-    if ChildcareTiming.objects.filter(application_id=application_id_local).count() == 0:
-        childcare_timing_record = ChildcareTiming.objects.create(application_id=this_application)
+    if ChildcareType.objects.filter(application_id=application_id_local).count() == 0:
+        childcare_timing_record = ChildcareType.objects.create(application_id=this_application)
     else:
-        childcare_timing_record = ChildcareTiming.objects.get(application_id=application_id_local)
+        childcare_timing_record = ChildcareType.objects.get(application_id=application_id_local)
     for option in options:
         if option in childcare_timing:
             setattr(childcare_timing_record, option, True)

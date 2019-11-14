@@ -213,6 +213,77 @@
     </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
+            Number of childcare places
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{childcare_places}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if type_of_childcare_change %}
+            <a href="{% url 'Type-Of-Childcare-Number-Of-Places-View' %}?id={{application_id}}#id_childcare_places_1" alt="Change answer to number of childcare places">
+                Change <span class="visuallyhidden">answer to number of childcare places</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            When will the childcare occur?
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            <table>
+                {% if weekday_after_school is True %}
+                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
+                    Weekday (before school) <br>
+                </tr>
+                {% endif %}
+                {% if weekday_before_school is True %}
+                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
+                    Weekday (after school) <br>
+                </tr>
+                {% endif %}
+                {% if weekday_am is True %}
+                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
+                    Weekday (morning) <br>
+                </tr>
+                {% endif %}
+                {% if weekday_pm is True %}
+                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
+                    Weekday (afternoon) <br>
+                </tr>
+                {% endif %}
+                {% if weekday_all_day is True %}
+                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
+                    Weekday (all day) <br>
+                </tr>
+                {% endif %}
+                {% if weekend_am is True %}
+                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
+                    Weekend (morning) <br>
+                </tr>
+                {% endif %}
+                {% if weekend_pm is True %}
+                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
+                    Weekend (afternoon) <br>
+                </tr>
+                {% endif %}
+                {% if weekend_all_day  is True %}
+                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
+                    Weekend (all day) <br>
+                </tr>
+                {% endif %}
+            </table>
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if type_of_childcare_change %}
+            <a href="{% url 'Timing-Of-Childcare-Groups-View' %}?id={{application_id}}#id_time_of_childcare_1" alt="Change answer to time of childcare">
+                Change <span class="visuallyhidden">answer to time of childcare</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
             Looking after children overnight?
         </td>
         {% if childcare_overnight is True %}
