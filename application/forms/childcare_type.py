@@ -90,8 +90,7 @@ class TypeOfChildcareNumberOfPlacesForm(ChildminderForms):
 
     number_of_childcare_places = forms.IntegerField(
         required=True,
-        label='Total number of childcare places you provide or intend to provide for children aged from 1 September '
-              'following the child\'s fifth birthday to under 8',
+        label='How many children will you care for aged between 5 and 8 years old?',
         help_text='Please enter a number'
     )
 
@@ -134,7 +133,7 @@ class TimingOfChildcareGroupsForm(ChildminderForms):
         required=True,
         widget=CheckboxSelectMultiple,
         choices=CHILDCARE_TIMING_CHOICES,
-        label='What time will the childcare occur?',
+        label='When will you be providing childcare?',
         help_text='Tick all that apply'
     )
 
