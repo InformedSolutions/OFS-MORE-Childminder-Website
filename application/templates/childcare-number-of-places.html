@@ -1,0 +1,34 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Number of childcare places{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+<!-- Initialise error summary for page -->
+<div class="two-thirds">
+{{form.error_summary}}
+
+<!-- Form -->
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+    <!-- Content -->
+    <div class="form-group">
+        <h1 class="form-title heading-large">
+            Number of childcare places
+        </h1>
+        {{form.as_div}}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Save and continue" alt='Continue to summary'>
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+    </div>
+</form>
+
+    {% if login_details_status == 'COMPLETED' and childcare_type_status == 'COMPLETED' %}
+        {% include 'return-to-list.html' %}
+    {% elif login_details_status == 'FLAGGED' or childcare_type_status == 'FLAGGED' %}
+        {% include 'return-to-list.html' %}
+    {% endif %}
+</div>
+
+{% endblock %}

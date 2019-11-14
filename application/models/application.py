@@ -44,7 +44,6 @@ class Application(models.Model):
     your_children_arc_flagged = models.BooleanField(default=False)
     childcare_type_status = models.CharField(choices=TASK_STATUS, max_length=50)
     childcare_type_arc_flagged = models.BooleanField(default=False)
-    childcare_timing_status = models.CharField(choices=TASK_STATUS, max_length=50, blank=True)
     first_aid_training_status = models.CharField(choices=TASK_STATUS, max_length=50)
     first_aid_training_arc_flagged = models.BooleanField(default=False)
     childcare_training_status = models.CharField(choices=TASK_STATUS, max_length=50)
