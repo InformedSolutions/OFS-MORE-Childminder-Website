@@ -4,7 +4,8 @@ from django.http import HttpResponseRedirect
 
 from application.views.PITH_views.your_adults import get_first_adult_number_for_address_entry
 from application.utils import build_url, get_id
-from application.models import AdultInHome, AdultInHomeAddress, ApplicantHomeAddress, ApplicantPersonalDetails, Application
+from application.models import AdultInHome, AdultInHomeAddress, ApplicantHomeAddress, ApplicantPersonalDetails, \
+    Application, ChildAddress
 from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMultiRadioView
 from application.forms.PITH_forms.PITH_address_check import PITHAddressDetailsCheckForm
 
@@ -41,13 +42,13 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
 
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=application_id).personal_detail_id
-        applicant_home_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                  current_address=True)
-        street_line1 = applicant_home_address.street_line1
-        street_line2 = applicant_home_address.street_line2
-        town = applicant_home_address.town
-        county = applicant_home_address.county
-        postcode = applicant_home_address.postcode
+        childcare_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                  childcare_address=True)
+        street_line1 = childcare_address.street_line1
+        street_line2 = childcare_address.street_line2
+        town = childcare_address.town
+        county = childcare_address.county
+        postcode = childcare_address.postcode
         log.debug('Generated address of applicant')
 
         context = {

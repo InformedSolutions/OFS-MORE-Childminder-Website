@@ -1,5 +1,5 @@
 {% extends 'govuk_template.html' %}
-{% block page_title %}Adults address check{% endblock %}
+{% block page_title %}Adults at childcare address check{% endblock %}
 {% load static %}
 {% load govuk_template_base %}
 
@@ -14,7 +14,7 @@
         <div class="form-group">
 
             <h1 class="form-title heading-large">
-                Your home address details
+                Childcare address details
             </h1>
             {% if street_line2 and county %}
             <p>{{street_line1}}, {{street_line2}}, {{town}}, {{county}} {{postcode}}</p>
