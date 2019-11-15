@@ -36,6 +36,10 @@ class DBSTemplateViewTestCase(NoMiddlewareTestCase):
     @tag('http')
     def test_redirect_on_post(self):
         if self.view_url_name is not None:
+            criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
+            application = Application.objects.get(application_id=self.application_id)
+            crc_record = CriminalRecordCheck.objects.create(application_id=application,
+                                                            criminal_record_id=criminal_record_check_id)
             response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id)
             print('Returned a {0} response'.format(response.status_code))
             self.assertTrue(response.status_code == 302)
@@ -45,6 +49,10 @@ class DBSTemplateViewTestCase(NoMiddlewareTestCase):
     @tag('http')
     def test_redirect_to_correct_url(self):
         if self.view_url_name is not None and self.correct_url is not None:
+            criminal_record_check_id = '35afa482-c607-4ad9-bf44-a8d69bb8c428'
+            application = Application.objects.get(application_id=self.application_id)
+            crc_record = CriminalRecordCheck.objects.create(application_id=application,
+                                                            criminal_record_id=criminal_record_check_id)
             correct_url = reverse(self.correct_url) + '?id=' + self.application_id
             response = self.client.post(reverse(self.view_url_name) + '?id=' + self.application_id)
             print('Returned url is {0} but should have been {1} response'.format(response.url, correct_url))
@@ -125,7 +133,6 @@ class DBSUpdateCheckView(DBSTemplateViewTestCase):
         super().setUp()
         self.view_url_name = 'DBS-Update-Check-View'
         self.correct_url = 'DBS-Post-View'
-
 
 class DBSRadioViewTests(NoMiddlewareTestCase):
     def setUp(self):
@@ -546,7 +553,7 @@ class DBSUpdateViewTests(DBSRadioViewTests):
         self.view = view
         self.form = form
         self.view_url_name = 'DBS-Update-View'
-        self.correct_url = ('DBS-Post-View', 'DBS-Get-View')
+        self.correct_url = ('DBS-Update-Check-View', 'DBS-Get-View')
 
 
 class DBSCheckNoCapitaView(DBSTemplateViewTestCase):
