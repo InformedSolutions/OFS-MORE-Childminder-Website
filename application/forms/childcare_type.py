@@ -1,5 +1,6 @@
 from django import forms
 from govuk_forms.widgets import CheckboxSelectMultiple, InlineRadioSelect
+from django.core.validators import MaxValueValidator
 
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
@@ -91,7 +92,8 @@ class TypeOfChildcareNumberOfPlacesForm(ChildminderForms):
     number_of_childcare_places = forms.IntegerField(
         required=True,
         label='How many children will you care for aged between 5 and 8 years old?',
-        help_text='Please enter a number'
+        help_text='Please enter a number, enter 0 if not applicable to your application',
+        validators=[MaxValueValidator(9999999999)]
     )
 
     def __init__(self, *args, **kwargs):
