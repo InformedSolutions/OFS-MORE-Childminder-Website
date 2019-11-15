@@ -118,7 +118,7 @@ class ThankYou(BaseTemplateView):
         send_email(email, survey_personalisation, survey_template_id)
 
     @staticmethod
-    def get_templates(capita, certificate_information, lived_abroad, within_three_months, on_update):
+    def get_templates(capita, certificate_information, lived_abroad, on_update):
         """
         method to get the email template id and template name
         :param capita: the adults capita field
@@ -201,11 +201,10 @@ class ThankYou(BaseTemplateView):
          # get adults crc details
          capita = adult_record.capita
          lived_abroad = adult_record.lived_abroad
-         within_three_months = adult_record.within_three_months
          certificate_information = adult_record.certificate_information
          on_update = adult_record.on_update
          # get email template id and template name
-         templates = self.get_templates(capita, certificate_information, lived_abroad, within_three_months, on_update)
+         templates = self.get_templates(capita, certificate_information, lived_abroad, on_update)
          adult_template_id = templates[0]
          if adult_template_id is not None:
              r = send_email(adult_record.email, adult_personalisation, adult_template_id)

@@ -378,9 +378,8 @@ class AdultInHomeFunctionalTests(TestCase):
         capita = True
         certificate_information = 'information'
         lived_abroad = False
-        within_three_months = True
         on_update = None
-        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,on_update)
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, on_update)
         email_template = templates[0]
         template = templates[1]
         self.assertEqual(email_template, '2e9c097c-9e75-4198-9b5d-bab4b710e903')
@@ -390,34 +389,30 @@ class AdultInHomeFunctionalTests(TestCase):
         capita = True
         certificate_information = 'information'
         lived_abroad = True
-        within_three_months = True
         on_update = None
-        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,on_update)
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, on_update)
         email_template = templates[0]
         template = templates[1]
         self.assertEqual(email_template, '0df95124-4b08-4ed7-9881-70c4f0352767')
         self.assertEqual(template, 'other_people_health_check/thank_you_dbs_abroad.html')
 
-    def test_confirmation_email_template_capita_on_update(self):
+    def test_confirmation_email_template_capita_on_update_information(self):
         capita = True
         certificate_information = 'information'
         lived_abroad = False
-        within_three_months = False
         on_update = True
-        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,on_update)
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, on_update)
         email_template = templates[0]
         template = templates[1]
         self.assertEqual(email_template, '2e9c097c-9e75-4198-9b5d-bab4b710e903')
         self.assertEqual(template, 'other_people_health_check/thank_you_dbs.html')
 
-    def test_confirmation_email_template_capita_on_update_lived_abroad(self):
+    def test_confirmation_email_template_capita_on_update_information_lived_abroad(self):
         capita = True
         certificate_information = 'information'
         lived_abroad = True
-        within_three_months = False
         on_update = True
-        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,
-                                           on_update)
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, on_update)
         email_template = templates[0]
         template = templates[1]
         self.assertEqual(email_template, '0df95124-4b08-4ed7-9881-70c4f0352767')
@@ -427,22 +422,19 @@ class AdultInHomeFunctionalTests(TestCase):
         capita = True
         certificate_information = None
         lived_abroad = False
-        within_three_months = None
         on_update = True
-        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,on_update)
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, on_update)
         email_template = templates[0]
         template = templates[1]
         self.assertEqual(email_template, '2e9c097c-9e75-4198-9b5d-bab4b710e903')
         self.assertEqual(template, 'other_people_health_check/thank_you_dbs.html')
 
-    def test_confirmation_email_template_no_capita(self):
+    def test_confirmation_email_template_no_capita_lived_abroad(self):
         capita = False
         certificate_information = None
         lived_abroad = True
-        within_three_months = None
         on_update = True
-        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,
-                                           on_update)
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, on_update)
         email_template = templates[0]
         template = templates[1]
         self.assertEqual(email_template, '0df95124-4b08-4ed7-9881-70c4f0352767')
@@ -452,10 +444,8 @@ class AdultInHomeFunctionalTests(TestCase):
         capita = True
         certificate_information = NO_ADDITIONAL_CERTIFICATE_INFORMATION[0]
         lived_abroad = False
-        within_three_months = True
         on_update = None
-        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,
-                                           on_update)
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, on_update)
         email_template = templates[0]
         template = templates[1]
         self.assertEqual(email_template, None)
@@ -465,15 +455,34 @@ class AdultInHomeFunctionalTests(TestCase):
         capita = True
         certificate_information = NO_ADDITIONAL_CERTIFICATE_INFORMATION[0]
         lived_abroad = True
-        within_three_months = True
         on_update = None
-        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, within_three_months,
-                                           on_update)
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad,on_update)
         email_template = templates[0]
         template = templates[1]
         self.assertEqual(email_template, 'b598fceb-8c3d-46c3-a2fd-7f1568fa7b14')
         self.assertEqual(template, 'other_people_health_check/thank_you_abroad.html')
 
+    def test_confirmation_email_template_capita_on_update_no_email(self):
+        capita = True
+        certificate_information = NO_ADDITIONAL_CERTIFICATE_INFORMATION[0]
+        lived_abroad = False
+        on_update = True
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad, on_update)
+        email_template = templates[0]
+        template = templates[1]
+        self.assertEqual(email_template, None)
+        self.assertEqual(template, 'other_people_health_check/thank_you_neither.html')
+
+    def test_confirmation_email_template_capita_on_update_lived_abroad(self):
+        capita = True
+        certificate_information = NO_ADDITIONAL_CERTIFICATE_INFORMATION[0]
+        lived_abroad = True
+        on_update = True
+        templates = ThankYou.get_templates(capita, certificate_information, lived_abroad,on_update)
+        email_template = templates[0]
+        template = templates[1]
+        self.assertEqual(email_template, 'b598fceb-8c3d-46c3-a2fd-7f1568fa7b14')
+        self.assertEqual(template, 'other_people_health_check/thank_you_abroad.html')
     # Helper methods ----------------
 
     def authenticate_client(self):
