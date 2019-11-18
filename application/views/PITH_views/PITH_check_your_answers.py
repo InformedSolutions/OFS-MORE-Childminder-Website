@@ -131,7 +131,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
         adult_table = {
             'table_object': Table([app_id]),
             'fields': {'adults_in_home': adults_in_home},
-            'title': 'Adults in the home',
+            'title': 'Adults in the home where childcare takes place',
             'error_summary_title': 'There was a problem'
         }
 
@@ -143,7 +143,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
         child_table = {
             'table_object': Table([app_id]),
             'fields': {'children_in_home': children_in_home},
-            'title': 'Children in the home',
+            'title': 'Children in the home where childcare takes places',
             'error_summary_title': 'There was a problem'
         }
         return create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
