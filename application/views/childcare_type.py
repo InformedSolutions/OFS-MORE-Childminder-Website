@@ -414,12 +414,8 @@ def childcare_type_summary(request):
             childcare_time_groups += 'Weekday (afternoon),'
         if childcare_record.weekday_all_day:
             childcare_time_groups += 'Weekday (all day),'
-        if childcare_record.weekend_am:
-            childcare_time_groups += 'Weekend (morning),'
-        if childcare_record.weekend_pm:
-            childcare_time_groups += 'Weekend (afternoon),'
         if childcare_record.weekend_all_day:
-            childcare_time_groups += 'Weekend (all day),'
+            childcare_time_groups += 'Weekend,'
 
         childcare_time_groups = childcare_time_groups.rstrip(',')
         childcare_time_groups = childcare_time_groups.replace(',', ', ')

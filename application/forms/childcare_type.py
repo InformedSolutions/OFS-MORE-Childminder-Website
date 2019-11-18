@@ -126,9 +126,7 @@ class TimingOfChildcareGroupsForm(ChildminderForms):
         ('weekday_am', 'Weekday (morning)'),
         ('weekday_pm', 'Weekday (afternoon)'),
         ('weekday_all_day', 'Weekday (all day)'),
-        ('weekend_am', 'Weekend (morning)'),
-        ('weekend_pm', 'Weekend (afternoon)'),
-        ('weekend_all_day', 'Weekend (all day)')
+        ('weekend_all_day', 'Weekend')
     )
 
     time_of_childcare = forms.MultipleChoiceField(
@@ -156,8 +154,6 @@ class TimingOfChildcareGroupsForm(ChildminderForms):
             weekday_am_status = childcare_record.weekday_am
             weekday_pm_status = childcare_record.weekday_pm
             weekday_all_day_status = childcare_record.weekday_all_day
-            weekend_am_status = childcare_record.weekend_am
-            weekend_pm_status = childcare_record.weekend_pm
             weekend_all_day_status = childcare_record.weekend_all_day
             self.fields['time_of_childcare'].initial = []
             if weekday_before_school_status:
@@ -170,10 +166,6 @@ class TimingOfChildcareGroupsForm(ChildminderForms):
                 self.fields['time_of_childcare'].initial.append('weekday_pm')
             if weekday_all_day_status:
                 self.fields['time_of_childcare'].initial.append('weekday_all_day')
-            if weekend_am_status:
-                self.fields['time_of_childcare'].initial.append('weekend_am')
-            if weekend_pm_status:
-                self.fields['time_of_childcare'].initial.append('weekend_pm')
             if weekend_all_day_status:
                 self.fields['time_of_childcare'].initial.append('weekend_all_day')
 
