@@ -257,19 +257,9 @@
                     Weekday (all day) <br>
                 </tr>
                 {% endif %}
-                {% if weekend_am is True %}
-                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
-                    Weekend (morning) <br>
-                </tr>
-                {% endif %}
-                {% if weekend_pm is True %}
-                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
-                    Weekend (afternoon) <br>
-                </tr>
-                {% endif %}
                 {% if weekend_all_day  is True %}
                 <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
-                    Weekend (all day) <br>
+                    Weekend <br>
                 </tr>
                 {% endif %}
             </table>

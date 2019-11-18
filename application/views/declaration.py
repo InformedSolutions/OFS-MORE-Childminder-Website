@@ -377,8 +377,6 @@ def declaration_summary(request, print_mode=False):
             'weekday_am': childcare_record.weekday_am,
             'weekday_pm': childcare_record.weekday_pm,
             'weekday_all_day': childcare_record.weekday_all_day,
-            'weekend_am': childcare_record.weekend_am,
-            'weekend_pm': childcare_record.weekend_pm,
             'weekend_all_day': childcare_record.weekend_all_day,
             'childcare_overnight': childcare_record.overnight_care,
             'type_of_childcare_change': type_of_childcare_change,

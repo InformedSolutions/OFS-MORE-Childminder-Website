@@ -18,8 +18,6 @@ class ChildcareType(models.Model):
     weekday_am = models.NullBooleanField(blank=True, null=True)
     weekday_pm = models.NullBooleanField(blank=True, null=True)
     weekday_all_day = models.NullBooleanField(blank=True, null=True)
-    weekend_am = models.NullBooleanField(blank=True, null=True)
-    weekend_pm = models.NullBooleanField(blank=True, null=True)
     weekend_all_day = models.NullBooleanField(blank=True, null=True)
     overnight_care = models.NullBooleanField()
 
@@ -46,8 +44,6 @@ class ChildcareType(models.Model):
             'weekday_am',
             'weekday_pm',
             'weekday_all_day',
-            'weekend_am',
-            'weekend_pm',
             'weekend_all_day',
             'overnight_care'
         )
@@ -62,8 +58,6 @@ class ChildcareType(models.Model):
                 'weekday_am',
                 'weekday_pm',
                 'weekday_all_day',
-                'weekend_am',
-                'weekend_pm',
                 'weekend_all_day')
 
     class Meta:
