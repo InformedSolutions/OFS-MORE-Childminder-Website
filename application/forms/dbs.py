@@ -1,4 +1,5 @@
 from django import forms
+from django.utils.safestring import mark_safe
 from govuk_forms.widgets import InlineRadioSelect, NumberInput
 
 from application.widgets import ConditionalPostInlineRadioSelect
@@ -115,7 +116,10 @@ class DBSTypeForm(DBSRadioForm):
                 self.add_error('on_update', "Please say if you are on the DBS Update Service")
 
     def get_choice_field_data(self):
-        return forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare?',
+        return forms.ChoiceField(label=mark_safe('Is it an enhanced check with barred lists as well as being for a <a '
+                                                 'href="https://www.gov.uk/government/publications/dbs-home-based'
+                                                 '-positions-guide/home-based-position-definition-and-guidance" '
+                                                 'target="_blank">home-based childcare role</a>?'),
                                  choices=self.choices,
                                  widget=ConditionalPostInlineRadioSelect,
                                  required=True,
