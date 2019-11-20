@@ -139,6 +139,8 @@ def type_of_childcare_register(request):
     :return: an HttpResponse object with the correct rendered Type of childcare: register template
     """
 
+    current_date = timezone.now()
+
     if request.method == 'GET':
 
         app_id = request.GET["id"]
@@ -171,7 +173,21 @@ def type_of_childcare_register(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
-        return HttpResponseRedirect(reverse('Type-Of-Childcare-Number-Of-Places-View') + '?id=' + app_id)
+        childcare_register_type, childcare_register_cost = get_childcare_register_type(app_id)
+        if childcare_register_type == 'EYR-CR-voluntary' or childcare_register_type == 'EYR' or childcare_register_type \
+                == 'CR-voluntary':
+            application = Application.get_id(app_id=app_id)
+            childcare_record = ChildcareType.objects.get(application_id=app_id)
+            childcare_record.childcare_places = None
+            childcare_record.save()
+
+            application.date_updated = current_date
+            application.save()
+
+            reset_declaration(application)
+            return HttpResponseRedirect(reverse('Timing-Of-Childcare-Groups-View') + '?id=' + app_id)
+        else:
+            return HttpResponseRedirect(reverse('Type-Of-Childcare-Number-Of-Places-View') + '?id=' + app_id)
 
 
 def number_of_childcare_places(request):
@@ -284,8 +300,6 @@ def timing_of_childcare_groups(request):
                         existing_record.weekday_after_school != childcare_timing_record.weekday_after_school or \
                         existing_record.weekday_pm != childcare_timing_record.weekday_pm or \
                         existing_record.weekday_all_day != childcare_timing_record.weekday_all_day or \
-                        existing_record.weekend_am != childcare_timing_record.weekend_am or \
-                        existing_record.weekend_pm != childcare_timing_record.weekend_pm or \
                         existing_record.weekend_all_day != childcare_timing_record.weekend_all_day:
                     application.childcare_type_status = 'NOT_STARTED'
 
@@ -420,13 +434,19 @@ def childcare_type_summary(request):
         childcare_time_groups = childcare_time_groups.rstrip(',')
         childcare_time_groups = childcare_time_groups.replace(',', ', ')
 
-
-        childcare_type_fields = collections.OrderedDict([
-            ('childcare_age_groups', childcare_age_groups),
-            ('number_of_places', str(childcare_record.childcare_places)),
-            ('childcare_time_groups', childcare_time_groups),
-            ('overnight_care', childcare_record.overnight_care),
-        ])
+        if childcare_record.childcare_places != None:
+            childcare_type_fields = collections.OrderedDict([
+                ('childcare_age_groups', childcare_age_groups),
+                ('number_of_places', str(childcare_record.childcare_places)),
+                ('childcare_time_groups', childcare_time_groups),
+                ('overnight_care', childcare_record.overnight_care),
+            ])
+        else:
+            childcare_type_fields = collections.OrderedDict([
+                ('childcare_age_groups', childcare_age_groups),
+                ('childcare_time_groups', childcare_time_groups),
+                ('overnight_care', childcare_record.overnight_care),
+            ])
 
         childcare_type_table = collections.OrderedDict({
             'table_object': Table([childcare_record.pk]),
