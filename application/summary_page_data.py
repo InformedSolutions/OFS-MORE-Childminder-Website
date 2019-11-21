@@ -5,13 +5,21 @@ import collections
 
 childcare_type_name_dict = collections.OrderedDict(
     [('childcare_age_groups', 'What age groups will you be able to care for?'),
+    ('number_of_places', 'How many children will you care for aged between 6 and 8 years old?'),
+    ('childcare_time_groups', 'When will you be providing childcare?'),
      ('overnight_care', 'Will you be looking after children overnight?')])
 
 childcare_type_link_dict = collections.OrderedDict([('childcare_age_groups', 'Type-Of-Childcare-Age-Groups-View'),
+                                                    ('number_of_places', 'Type-Of-Childcare-Number-Of-Places-View'),
+                                                    ('childcare_time_groups', 'Timing-Of-Childcare-Groups-View'),
                                                     ('overnight_care', 'Type-Of-Childcare-Overnight-Care-View')])
 
 childcare_type_change_link_description_dict = collections.OrderedDict([('childcare_age_groups',
                                                                         'the age groups you could be caring for'),
+                                                                       ('number_of_places',
+                                                                        'the number of places you provide childcare for children 5-8.'),
+                                                                       ('childcare_time_groups',
+                                                                        'when childcare will occur'),
                                                                        ('overnight_care',
                                                                         "if you'll be looking after children overnight")])
 

@@ -29,7 +29,6 @@ from .models import (AdultInHome,
                      UserDetails, Child, ChildAddress)
 from .utils import unique_values, get_first_duplicate_index, get_duplicate_list_entry_indexes
 
-
 def childcare_type_logic(application_id_local, form):
     """
     Business logic to create or update a Childcare_Type record
@@ -53,6 +52,37 @@ def childcare_type_logic(application_id_local, form):
         childcare_type_record.eight_plus = eight_plus_status
     return childcare_type_record
 
+def childcare_timing_logic(application_id_local, form):
+    """
+    Business logic to create or update a Childcare_Type record
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: a ChildcareType object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    childcare_timing = form.cleaned_data['time_of_childcare']
+
+    options = (
+            'weekday_before_school',
+            'weekday_after_school',
+            'weekday_am',
+            'weekday_pm',
+            'weekday_all_day',
+            'weekend_am',
+            'weekend_pm',
+            'weekend_all_day'
+        )
+    if ChildcareType.objects.filter(application_id=application_id_local).count() == 0:
+        childcare_timing_record = ChildcareType.objects.create(application_id=this_application)
+    else:
+        childcare_timing_record = ChildcareType.objects.get(application_id=application_id_local)
+    for option in options:
+        if option in childcare_timing:
+            setattr(childcare_timing_record, option, True)
+        else:
+            setattr(childcare_timing_record, option, False)
+
+    return childcare_timing_record
 
 def childcare_register_type(application_id):
     """
