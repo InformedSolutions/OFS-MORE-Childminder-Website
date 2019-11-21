@@ -182,7 +182,7 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
         """
 
         self.TestAppInit()
-        self.assertEqual(
+        self.assertTrue(
             TimelineLog.objects.filter(object_id=self.app_id, extra_data__contains={"action": "created by"})
         )
 
