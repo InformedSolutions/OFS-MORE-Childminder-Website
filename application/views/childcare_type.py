@@ -173,11 +173,12 @@ def type_of_childcare_register(request):
     if request.method == 'POST':
 
         app_id = request.POST["id"]
+
+        # do not display number of childcare places if only applying to early years register
         childcare_register_type, childcare_register_cost = get_childcare_register_type(app_id)
-        if childcare_register_type == 'EYR-CR-voluntary' or childcare_register_type == 'EYR' or childcare_register_type \
-                == 'CR-voluntary':
-            application = Application.get_id(app_id=app_id)
-            childcare_record = ChildcareType.objects.get(application_id=app_id)
+        application = Application.get_id(app_id=app_id)
+        childcare_record = ChildcareType.objects.get(application_id=app_id)
+        if childcare_register_type == 'EYR':
             childcare_record.childcare_places = None
             childcare_record.save()
 
@@ -255,11 +256,11 @@ def number_of_childcare_places(request):
 
 def timing_of_childcare_groups(request):
     """
-    Method returning the template for the Type of childcare: age groups page (for a given application) and navigating
+    Method returning the template for the Type of childcare: timing of childcare page (for a given application) and navigating
     to the task list when successfully completed; business logic is applied to either create or update the
     associated Childcare_Type record
     :param request: a request object used to generate the HttpResponse
-    :return: an HttpResponse object with the rendered Type of childcare: age groups template
+    :return: an HttpResponse object with the rendered Type of childcare: timing of childcare template
     """
 
     current_date = timezone.now()
@@ -293,7 +294,7 @@ def timing_of_childcare_groups(request):
             # Create or update Childcare_Type record
             childcare_timing_record = childcare_timing_logic(app_id, form)
 
-            # Check to see if the type of childcare training has been changed
+            # Check to see if the timing of childcare has been changed
             if ChildcareType.objects.filter(application_id=app_id).count() > 0:
                 existing_record = ChildcareType.objects.get(application_id=app_id)
                 if existing_record.weekday_before_school != childcare_timing_record.weekday_before_school or \
@@ -431,16 +432,19 @@ def childcare_type_summary(request):
         if childcare_record.weekend_all_day:
             childcare_time_groups += 'Weekend,'
 
+        # Format response by comma delimiting
         childcare_time_groups = childcare_time_groups.rstrip(',')
         childcare_time_groups = childcare_time_groups.replace(',', ', ')
 
-        if childcare_record.childcare_places != None:
+        # if applicant is not exclusively applying ot the early years register
+        if childcare_record.childcare_places is not None:
             childcare_type_fields = collections.OrderedDict([
                 ('childcare_age_groups', childcare_age_groups),
                 ('number_of_places', str(childcare_record.childcare_places)),
                 ('childcare_time_groups', childcare_time_groups),
                 ('overnight_care', childcare_record.overnight_care),
             ])
+        # the applicant is exclusively applying to the early years register
         else:
             childcare_type_fields = collections.OrderedDict([
                 ('childcare_age_groups', childcare_age_groups),
