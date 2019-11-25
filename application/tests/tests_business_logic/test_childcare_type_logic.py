@@ -50,7 +50,15 @@ class TestChildcareTypeLogic(TestCase):
             application_id=Application.objects.get(application_id=self.test_application_id),
             zero_to_five='False',
             five_to_eight='False',
-            eight_plus='False'
+            eight_plus='False',
+            childcare_places='3',
+            weekday_before_school='False',
+            weekday_after_school='False',
+            weekday_am='False',
+            weekday_pm='False',
+            weekday_all_day='False',
+            weekend_all_day='False',
+            overnight_care='False'
         )
 
     def retrieve_test_chilcare_record(self):
@@ -195,6 +203,55 @@ class TestChildcareTypeLogic(TestCase):
             'application.middleware.CustomAuthenticationHandler',
         ]
     })
+    def test_http_number_of_places_if_childcare_for_ages_over_five(self):
+        """Test to assert childcare type number of places page only displays for childminders applying to care for
+        children aged over 5years old"""
+
+        data = {
+            'id': self.test_application_id,
+            'type_of_childcare': ['5-8', '8over']
+        }
+
+        self.test_childcare_record.zero_to_five = False
+        self.test_childcare_record.five_to_eight = True
+        self.test_childcare_record.eight_plus = True
+        self.test_childcare_record.save()
+
+        response = self.client.post(
+            reverse('Type-Of-Childcare-Register-View'),
+            data, follow=True
+        )
+
+        expected_redirect_url = reverse('Type-Of-Childcare-Number-Of-Places-View') + '?id=' + self.test_application_id
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, expected_redirect_url)
+        self.assertContains(response, 'Number of childcare places')
+
+    def test_http_childcare_timing_if_childcare_for_ages_under_five(self):
+        """Test to assert childcare type number of places page only displays for childminders applying to care for
+        children aged over 5years old"""
+
+        data = {
+            'id': self.test_application_id,
+            'type_of_childcare': ['0-5']
+        }
+
+        self.test_childcare_record.zero_to_five = True
+        self.test_childcare_record.five_to_eight = False
+        self.test_childcare_record.eight_plus = False
+        self.test_childcare_record.save()
+
+        response = self.client.post(
+            reverse('Type-Of-Childcare-Register-View'),
+            data,
+            follow=True
+        )
+
+        expected_redirect_url = reverse('Timing-Of-Childcare-Groups-View') + '?id=' + self.test_application_id
+        self.assertEqual(response.status_code, 200)
+        self.assertRedirects(response, expected_redirect_url)
+        self.assertContains(response, 'Timing of the childcare')
+
     def test_http_can_access_personal_details_task_if_personal_details_not_started(self):
         """
         Test to assert a user is progressed to the personal details task on the premise they are

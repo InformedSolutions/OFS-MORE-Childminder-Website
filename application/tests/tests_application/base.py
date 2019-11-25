@@ -164,6 +164,34 @@ class ApplicationTestBase(object):
         self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).five_to_eight, True)
         self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).eight_plus, True)
 
+    def TestTypeOfChildcareNumberOfPlaces(self):
+        """Type of childcare number of places"""
+
+        data = {
+            'id': self.app_id,
+            'number_of_childcare_places': 3
+        }
+
+        r = self.client.post(reverse('Type-Of-Childcare-Number-Of-Places-View'), data)
+        self.assertEqual(r.status_code, 302)
+
+        self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).childcare_places, 3)
+
+    def TestTypeofChildcareTiming(self):
+        """Type of childcare time of childcare"""
+
+        data = {
+            'id': self.app_id,
+            'time_of_childcare': ['weekday_before_school', 'weekday_after_school', 'weekend_all_day']
+        }
+
+        r = self.client.post(reverse('Timing-Of-Childcare-Groups-View'), data)
+        self.assertEqual(r.status_code, 302)
+
+        self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).weekday_before_school, True)
+        self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).weekday_after_school, True)
+        self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).weekend_all_day, True)
+
     def TestTypeOfChildcareOvernightCare(self):
         """Type of childcare overnight care"""
 
@@ -188,11 +216,29 @@ class ApplicationTestBase(object):
         r = self.client.post(reverse('Type-Of-Childcare-Register-View'), {'id': self.app_id})
         self.assertEqual(r.status_code, 302)
 
+    def AppTestNumberOfPlaces(self):
+        """Number of places provision"""
+        r = self.client.post(reverse('Type-Of-Childcare-Number-Of-Places-View'), {'id': self.app_id,
+                                                                                  'number_of_childcare_places': 3})
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(Application.objects.get(pk=self.app_id).childcare_type_status, "IN_PROGRESS")
+
+    def AppTestChildcareTiming(self):
+        """Childcare timing provision"""
+        r = self.client.post(reverse('Timing-Of-Childcare-Groups-View'), {'id': self.app_id,
+                                                                                  'time_of_childcare':
+                                                                                      ['weekday_before_school',
+                                                                                       'weekday_after_school',
+                                                                                       'weekend_all_day']})
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(Application.objects.get(pk=self.app_id).childcare_type_status, "IN_PROGRESS")
+
     def AppTestOvernightCare(self):
         """Overnight care provision"""
-        r = self.client.post(reverse('Type-Of-Childcare-Overnight-Care-View'), {'id': self.app_id})
+        r = self.client.post(reverse('Type-Of-Childcare-Overnight-Care-View'), {'id': self.app_id,
+                                                                                'overnight_care': ['True']})
         self.assertEqual(r.status_code, 302)
-        self.assertEqual(Application.objects.get(pk=self.app_id).childcare_type_status, "COMPLETED")
+        self.assertEqual(Application.objects.get(pk=self.app_id).childcare_type_status, "IN_PROGRESS")
 
     def TestUpdateEmail(self):
         """Update email address field"""

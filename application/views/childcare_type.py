@@ -227,10 +227,16 @@ def number_of_childcare_places(request):
         if form.is_valid():
 
             childcare_record = ChildcareType.objects.get(application_id=app_id)
-            childcare_record.childcare_places = form.cleaned_data['number_of_childcare_places']
+            if ChildcareType.objects.filter(application_id=app_id).count() == 0:
+                childcare_record = ChildcareType.objects.create(application_id=app_id)
+                childcare_record.childcare_places = form.cleaned_data['number_of_childcare_places']
+            else:
+                childcare_record.childcare_places = form.cleaned_data['number_of_childcare_places']
+
             childcare_record.save()
 
             application.date_updated = current_date
+            application.childcare_type_status = 'IN_PROGRESS'
             application.save()
 
             reset_declaration(application)
@@ -305,6 +311,7 @@ def timing_of_childcare_groups(request):
                     application.childcare_type_status = 'NOT_STARTED'
 
             childcare_timing_record.save()
+            application.childcare_type_status = 'IN_PROGRESS'
             application.date_updated = current_date
             application.save()
             reset_declaration(application)
@@ -363,7 +370,7 @@ def overnight_care(request):
             childcare_record = ChildcareType.objects.get(application_id=app_id)
             childcare_record.overnight_care = form.cleaned_data['overnight_care']
             childcare_record.save()
-
+            application.childcare_type_status = 'IN_PROGRESS'
             application.date_updated = current_date
             application.save()
 

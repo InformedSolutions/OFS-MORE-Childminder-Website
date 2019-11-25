@@ -125,9 +125,14 @@ class CreateTestNewApplicationSubmit(TestCase, ApplicationTestBase):
 
             self.TestContactSummaryView()
             self.TestTypeOfChildcareAgeGroups()
+            self.TestTypeofChildcareTiming()
+            self.TestTypeOfChildcareNumberOfPlaces()
             self.TestTypeOfChildcareOvernightCare()
             self.TestSecurityQuestion()
             self.AppTestTypeOfChildcareRegister()
+            self.AppTestNumberOfPlaces()
+            self.AppTestChildcareTiming()
+            self.AppTestOvernightCare()
 
             self.TestAppPersonalDetailsNames()
             self.TestAppPersonalDetailsDOB()

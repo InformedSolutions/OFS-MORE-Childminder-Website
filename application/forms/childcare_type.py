@@ -93,7 +93,7 @@ class TypeOfChildcareNumberOfPlacesForm(ChildminderForms):
         required=True,
         label='How many children will you care for aged between 5 and 8 years old?',
         help_text='Please enter a number, enter 0 if not applicable to your application',
-        validators=[MaxValueValidator(9999999999)]
+        validators=[MaxValueValidator(9999)]
     )
 
     def __init__(self, *args, **kwargs):

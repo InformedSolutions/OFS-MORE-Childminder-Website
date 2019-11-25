@@ -68,19 +68,17 @@ def childcare_timing_logic(application_id_local, form):
             'weekday_am',
             'weekday_pm',
             'weekday_all_day',
-            'weekend_am',
-            'weekend_pm',
             'weekend_all_day'
         )
     if ChildcareType.objects.filter(application_id=application_id_local).count() == 0:
         childcare_timing_record = ChildcareType.objects.create(application_id=this_application)
     else:
         childcare_timing_record = ChildcareType.objects.get(application_id=application_id_local)
-    for option in options:
-        if option in childcare_timing:
-            setattr(childcare_timing_record, option, True)
-        else:
-            setattr(childcare_timing_record, option, False)
+        for option in options:
+            if option in childcare_timing:
+                setattr(childcare_timing_record, option, True)
+            else:
+                setattr(childcare_timing_record, option, False)
 
     return childcare_timing_record
 

@@ -788,7 +788,13 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
             zero_to_five=False,
             five_to_eight=True,
             eight_plus=True,
+            childcare_places=3,
+            weekday_before_school=True,
+            weekday_after_school=True,
+            weekend_all_day=True,
+            overnight_care=False
         )
+
 
     # ----------
 
@@ -824,6 +830,7 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
         utils.assertSummaryField(response, 'Relationship', 'Uncle', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'Email', 'foo@example.com', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'Phone number', '07700 900840', heading='Joe Anthony Bloggs')
+        utils.assertSummaryField(response, 'Address', 'Same as home address', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'DBS certificate number', '123456789012', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'Lived abroad in the last 5 years?', 'No', heading='Joe Anthony Bloggs')
 
