@@ -115,8 +115,8 @@ class TypeOfChildcareNumberOfPlacesForm(ChildminderForms):
 
     def clean_number_of_childcare_places(self):
         """
-        Date of birth validation (calculate if age is less than 18)
-        :return: birth day, birth month, birth year
+        Number of places validation
+        :return: Number of childcare places
         """
         childcare_places = self.cleaned_data['number_of_childcare_places']
         if childcare_places > 9999:
