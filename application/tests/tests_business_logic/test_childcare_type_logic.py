@@ -227,6 +227,12 @@ class TestChildcareTypeLogic(TestCase):
         self.assertRedirects(response, expected_redirect_url)
         self.assertContains(response, 'Number of childcare places')
 
+    @modify_settings(MIDDLEWARE={
+        'remove': [
+            'application.middleware.CustomAuthenticationHandler',
+        ]
+    })
+
     def test_http_childcare_timing_if_childcare_for_ages_under_five(self):
         """Test to assert childcare type number of places page only displays for childminders applying to care for
         children aged over 5years old"""
@@ -251,6 +257,13 @@ class TestChildcareTypeLogic(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertRedirects(response, expected_redirect_url)
         self.assertContains(response, 'Timing of the childcare')
+
+
+    @modify_settings(MIDDLEWARE={
+        'remove': [
+            'application.middleware.CustomAuthenticationHandler',
+        ]
+    })
 
     def test_http_can_access_personal_details_task_if_personal_details_not_started(self):
         """
