@@ -225,7 +225,6 @@ def number_of_childcare_places(request):
         application = Application.get_id(app_id=app_id)
 
         if form.is_valid():
-
             childcare_record = ChildcareType.objects.get(application_id=app_id)
             if ChildcareType.objects.filter(application_id=app_id).count() == 0:
                 childcare_record = ChildcareType.objects.create(application_id=app_id)
@@ -242,7 +241,7 @@ def number_of_childcare_places(request):
             reset_declaration(application)
 
         else:
-
+            form.error_summary_title = 'There was a problem with the number of childcare places'
             if application.application_status == 'FURTHER_INFORMATION':
 
                 form.error_summary_template_name = 'returned-error-summary.html'
@@ -329,7 +328,7 @@ def timing_of_childcare_groups(request):
                 'application_id': app_id,
                 'childcare_type_status': application.childcare_type_status
             }
-            return render(request, 'childcare-age-groups.html', variables)
+            return render(request, 'childcare-timing-groups.html', variables)
 
 
 def overnight_care(request):
