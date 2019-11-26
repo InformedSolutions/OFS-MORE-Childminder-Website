@@ -88,12 +88,13 @@ class TypeOfChildcareNumberOfPlacesForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    error_summary_title = 'There was a problem with the details'
 
     number_of_childcare_places = forms.IntegerField(
         required=True,
         label='How many children will you care for aged between 5 and 8 years old?',
         help_text='Please enter a number, enter 0 if not applicable to your application',
-        validators=[MaxValueValidator(9999999999)]
+        error_messages={'required': "Please enter the number of childcare places"},
     )
 
     def __init__(self, *args, **kwargs):
@@ -111,6 +112,17 @@ class TypeOfChildcareNumberOfPlacesForm(ChildminderForms):
             childcare_record = ChildcareType.objects.get(application_id=self.application_id_local)
             self.fields['number_of_childcare_places'].initial = childcare_record.childcare_places
             self.field_list = ['number_of_childcare_places']
+
+    def clean_number_of_childcare_places(self):
+        """
+        Number of places validation
+        :return: Number of childcare places
+        """
+        childcare_places = self.cleaned_data['number_of_childcare_places']
+        if childcare_places > 9999:
+            raise forms.ValidationError('Please enter the number of children you will care for (4 digits or less)')
+
+        return childcare_places
 
 class TimingOfChildcareGroupsForm(ChildminderForms):
     """

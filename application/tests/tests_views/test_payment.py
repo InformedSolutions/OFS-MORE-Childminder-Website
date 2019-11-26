@@ -116,7 +116,15 @@ class PaymentTest(ViewsTest):
             zero_to_five=False,
             five_to_eight=True,
             eight_plus=True,
+            childcare_places=3,
+            weekday_before_school=True,
+            weekday_after_school=True,
+            weekday_am=False,
+            weekday_pm=False,
+            weekday_all_day=False,
+            weekend_all_day=False,
             overnight_care=True
+
         )
         UserDetails.objects.create(
             application_id=application,

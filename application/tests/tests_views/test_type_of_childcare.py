@@ -27,6 +27,18 @@ class TypeOfChildcareTest(ViewsTest):
         c = self.client
         c.get(settings.URL_PREFIX + '/childcare/register?id=')
 
+    def test_NumberOfPlaces_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/childcare/number-of-places/')
+        self.assertEqual(found.func, number_of_childcare_places)
+
+    def test_NumberOfPlaces_page_not_displayed_without_id(self):
+        c = self.client
+        c.get(settings.URL_PREFIX + '/childcare/number-of-places/')
+
+    def test_ChildcareTiming_url_resolves_to_page(self):
+        found = resolve(settings.URL_PREFIX + '/childcare/timing-groups/')
+        self.assertEqual(found.func, timing_of_childcare_groups)
+
     def test_status_does_not_change_to_in_progress_when_returning_to_task_list(self):
         test_application_id = 'f8c42666-1367-4878-92e2-1cee6ebcb48c'
         test_login_id = '004551ca-21fa-4dbe-9095-0384e73b3cbe'

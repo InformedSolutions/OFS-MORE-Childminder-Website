@@ -68,8 +68,6 @@ def childcare_timing_logic(application_id_local, form):
             'weekday_am',
             'weekday_pm',
             'weekday_all_day',
-            'weekend_am',
-            'weekend_pm',
             'weekend_all_day'
         )
     if ChildcareType.objects.filter(application_id=application_id_local).count() == 0:
