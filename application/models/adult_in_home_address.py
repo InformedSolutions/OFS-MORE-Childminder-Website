@@ -18,6 +18,10 @@ class AdultInHomeAddress(models.Model):
     country = models.CharField(max_length=100, blank=True)
     postcode = models.CharField(max_length=8, blank=True)
 
+    moved_in_day = models.IntegerField(blank=True, null=True)
+    moved_in_month = models.IntegerField(blank=True, null=True)
+    moved_in_year = models.IntegerField(blank=True, null=True)
+
     @property
     def timelog_fields(self):
         """
@@ -43,6 +47,17 @@ class AdultInHomeAddress(models.Model):
 
     class Meta:
         db_table = 'ADULT_IN_HOME_ADDRESS'
+
+
+    def get_moved_in_date(self):
+        if not all((self.moved_in_year, self.moved_in_month, self.moved_in_day)):
+            return None
+        return date(self.moved_in_year, self.moved_in_month, self.moved_in_day)
+
+    def set_moved_in_date(self, moved_in_date):
+        self.moved_in_year = moved_in_date.year
+        self.moved_in_month = moved_in_date.month
+        self.moved_in_day = moved_in_date.day
 
     @classmethod
     def get_id(cls, app_id):

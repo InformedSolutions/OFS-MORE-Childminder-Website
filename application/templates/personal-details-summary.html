@@ -172,6 +172,20 @@
     </tr>
     <tr>
         <td style="word-wrap: break-word">
+            Moved in Date
+        </td>
+        <td style="word-wrap: break-word">
+            {{moved_in_date}}
+        </td>
+        <td class="change-answer">
+            <a href="{% url 'Personal-Details-Location-Of-Care-View' %}?id={{application_id}}"
+               alt='Change childcare address'>
+                Change <span class="visuallyhidden">childcare address</span>
+            </a>
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word">
             Childcare location
         </td>
         {% if location_of_childcare == True %}

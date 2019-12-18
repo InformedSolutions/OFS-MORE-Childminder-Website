@@ -1,13 +1,16 @@
 import re
+from datetime import date
 
 from django import forms
 from django.conf import settings
 from govuk_forms.widgets import InlineRadioSelect
 
+from application.forms.fields import CustomSplitDateFieldDOB
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (ApplicantHomeAddress,
                                 ApplicantPersonalDetails)
+from application.utils import date_formatter
 
 
 class PersonalDetailsHomeAddressForm(ChildminderForms):
@@ -35,7 +38,6 @@ class PersonalDetailsHomeAddressForm(ChildminderForms):
         if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, current_address=True).count() > 0:
             self.fields['postcode'].initial = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                                current_address=True).postcode
-
     def clean_postcode(self):
         """
         Postcode validation
@@ -65,6 +67,12 @@ class PersonalDetailsHomeAddressManualForm(ChildminderForms):
     county = forms.CharField(label='County (optional)', required=False)
     postcode = forms.CharField(label='Postcode', error_messages={'required': 'Please enter your postcode'})
 
+    moved_in_date = CustomSplitDateFieldDOB(
+        label='Date you moved in',
+        help_text='For example, 31 03 2016',
+        error_messages={'required': 'Please enter the full date, including the day, month and year'}
+    )
+
     def __init__(self, *args, **kwargs):
         """
         Method to configure the initialisation of the Your personal details: home address form for manual entry
@@ -88,6 +96,15 @@ class PersonalDetailsHomeAddressManualForm(ChildminderForms):
             self.fields['postcode'].initial = applicant_home_address.postcode
             self.pk = applicant_home_address.home_address_id
             self.field_list = ['street_line1', 'street_line2', 'town', 'county', 'postcode']
+        if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
+            personal_details_record = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local)
+
+            moved_in_day, moved_in_month, moved_in_year = date_formatter(personal_details_record.moved_in_day,
+                                                                   personal_details_record.moved_in_month,
+                                                                   personal_details_record.moved_in_year)
+            self.fields['moved_in_date'].initial = [moved_in_day, moved_in_month, moved_in_year]
+            self.pk = personal_details_record.personal_detail_id
+            self.field_list = ['course_date']
 
     def clean_street_line1(self):
         """
@@ -146,6 +163,24 @@ class PersonalDetailsHomeAddressManualForm(ChildminderForms):
             raise forms.ValidationError('Please enter a valid postcode')
         return postcode
 
+    def clean_moved_in_date(self):
+        """
+        Course date validation (calculate date is in the future)
+        :return: course day, course month, course year
+        """
+        moved_in_day = self.cleaned_data['moved_in_date'].day
+        moved_in_month = self.cleaned_data['moved_in_date'].month
+        moved_in_year = self.cleaned_data['moved_in_date'].year
+        moved_in_date = date(moved_in_year, moved_in_month, moved_in_day)
+        today = date.today()
+        date_today_diff = today.year - moved_in_date.year - (
+                (today.month, today.day) < (moved_in_date.month, moved_in_date.day))
+        if date_today_diff < 0:
+            raise forms.ValidationError('Please enter a past date')
+        if len(str(moved_in_year)) < 4:
+            raise forms.ValidationError('Please enter the whole year (4 digits)')
+        return moved_in_day, moved_in_month, moved_in_year
+
 
 class PersonalDetailsHomeAddressLookupForm(ChildminderForms):
     """
@@ -158,6 +193,12 @@ class PersonalDetailsHomeAddressLookupForm(ChildminderForms):
     address = forms.ChoiceField(label='Select address', required=True,
                                 error_messages={'required': 'Please select your address'})
 
+    moved_in_date = CustomSplitDateFieldDOB(
+        label='Date you moved in',
+        help_text='For example, 31 03 2016',
+        error_messages={'required': 'Please enter the full date, including the day, month and year'}
+    )
+
     def __init__(self, *args, **kwargs):
         """
         Method to configure the initialisation of the Your personal details: home address form for postcode search
@@ -168,8 +209,34 @@ class PersonalDetailsHomeAddressLookupForm(ChildminderForms):
         self.choices = kwargs.pop('choices')
         super(PersonalDetailsHomeAddressLookupForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
+        if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
+            personal_details_record = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local)
+
+            moved_in_day, moved_in_month, moved_in_year = date_formatter(personal_details_record.moved_in_day,
+                                                                   personal_details_record.moved_in_month,
+                                                                   personal_details_record.moved_in_year)
+            self.fields['moved_in_date'].initial = [moved_in_day, moved_in_month, moved_in_year]
+            self.pk = personal_details_record.personal_detail_id
+            self.field_list = ['course_date']
         self.fields['address'].choices = self.choices
 
+    def clean_moved_in_date(self):
+        """
+        Course date validation (calculate date is in the future)
+        :return: course day, course month, course year
+        """
+        moved_in_day = self.cleaned_data['moved_in_date'].day
+        moved_in_month = self.cleaned_data['moved_in_date'].month
+        moved_in_year = self.cleaned_data['moved_in_date'].year
+        moved_in_date = date(moved_in_year, moved_in_month, moved_in_day)
+        today = date.today()
+        date_today_diff = today.year - moved_in_date.year - (
+                (today.month, today.day) < (moved_in_date.month, moved_in_date.day))
+        if date_today_diff < 0:
+            raise forms.ValidationError('Please enter a past date')
+        if len(str(moved_in_year)) < 4:
+            raise forms.ValidationError('Please enter the whole year (4 digits)')
+        return moved_in_day, moved_in_month, moved_in_year
 
 class PersonalDetailsLocationOfCareForm(ChildminderForms):
     """
