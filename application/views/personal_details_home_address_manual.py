@@ -12,7 +12,7 @@ from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 
 from .. import status
-from ..models import Application
+from ..models import Application, ApplicantPersonalDetails
 from ..forms import PersonalDetailsHomeAddressManualForm
 from ..business_logic import reset_declaration, personal_home_address_logic
 
@@ -51,9 +51,16 @@ def personal_details_home_address_manual(request):
 
             home_address_record = personal_home_address_logic(application_id_local, form)
             home_address_record.save()
+            moved_in_day, moved_in_month, moved_in_year = form.cleaned_data.get('moved_in_date')
             application = Application.objects.get(pk=application_id_local)
             application.date_updated = current_date
             application.save()
+            personal_detail_record = ApplicantPersonalDetails.get_id(app_id=application_id_local)
+
+            personal_detail_record.moved_in_day = moved_in_day
+            personal_detail_record.moved_in_month = moved_in_month
+            personal_detail_record.moved_in_year = moved_in_year
+            personal_detail_record.save()
 
             if Application.objects \
                     .get(pk=application_id_local) \
