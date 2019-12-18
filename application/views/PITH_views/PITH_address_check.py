@@ -19,7 +19,11 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
     template_name = 'PITH_templates/PITH_address_check.html'
     form_class = PITHAddressDetailsCheckForm
     success_url = ('PITH-Lived-Abroad-View', 'PITH-Address-Details-View')
-    PITH_field_name = 'PITH_same_address'
+    PITH_same_address_field = 'PITH_same_address'
+    PITH_same_time_field = 'PITH_same_time'
+    PITH_move_in_time_field = 'PITH_move_in_time_field'
+
+
 
     def get_form_kwargs(self, adult=None):
         """
@@ -29,7 +33,8 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
 
         context = {
             'id': application_id,
-            'PITH_field_name': self.PITH_field_name,
+            'PITH_same_address_field': self.PITH_same_address_field,
+            'PITH_same_time_field': self.PITH_same_time_field,
             'adult': adult}
 
         log.debug('Return keyword arguments to instantiate the form')
@@ -107,8 +112,8 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
 
         adults = AdultInHome.objects.filter(application_id=application_id)
         for adult in adults:
-            PITH_same_address_bool = self.request.POST.get(self.PITH_field_name + str(adult.pk))
-            setattr(adult, self.PITH_field_name, PITH_same_address_bool)
+            PITH_same_address_bool = self.request.POST.get(self.PITH_same_address_field + str(adult.pk))
+            setattr(adult, self.PITH_same_address_field, PITH_same_address_bool)
             adult.save()
             adult_id = adult.adult_id
             if adult.PITH_same_address:
@@ -149,8 +154,16 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
 
         adults = AdultInHome.objects.filter(application_id=application_id)
 
-        initial_context = {self.PITH_field_name + str(adult.pk): adult.PITH_same_address
-                           for adult in adults}
+        initial_context = {}
+
+        for adult in adults:
+            initial_context.update({
+                self.PITH_same_address_field + str(adult.pk): adult.enhanced_check,
+                self.PITH_same_time_field + str(adult.pk): adult.PITH_same_time,
+            })
+
+        # initial_context = {self.PITH_same_address_field + str(adult.pk): adult.PITH_same_address
+        #                    for adult in adults}
 
         log.debug('Form field data initialised')
 
