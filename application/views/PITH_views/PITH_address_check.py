@@ -21,7 +21,7 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
     success_url = ('PITH-Lived-Abroad-View', 'PITH-Address-Details-View')
     PITH_same_address_field = 'PITH_same_address'
     PITH_same_time_field = 'PITH_same_time'
-    PITH_move_in_time_field = 'PITH_move_in_time_field'
+    PITH_moved_in_date_field = 'PITH_moved_in_date_field'
 
 
 
@@ -35,6 +35,7 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
             'id': application_id,
             'PITH_same_address_field': self.PITH_same_address_field,
             'PITH_same_time_field': self.PITH_same_time_field,
+            'PITH_moved_in_date_field': self.PITH_moved_in_date_field,
             'adult': adult}
 
         log.debug('Return keyword arguments to instantiate the form')
@@ -114,6 +115,8 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
         for adult in adults:
             PITH_same_address_bool = self.request.POST.get(self.PITH_same_address_field + str(adult.pk))
             setattr(adult, self.PITH_same_address_field, PITH_same_address_bool)
+            PITH_same_time_bool = self.request.POST.get(self.PITH_same_time_field + str(adult.pk))
+            setattr(adult, self.PITH_same_time_field, PITH_same_time_bool)
             adult.save()
             adult_id = adult.adult_id
             if adult.PITH_same_address:
@@ -135,6 +138,21 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
                     PITH_same_address.update(street_line1=street_line1, street_line2=street_line2, town=town,
                                              county=county, country=country, postcode=postcode,
                                              )
+            if adult.PITH_same_time:
+                if AdultInHomeAddress.objects.filter(adult_id=adult_id).count() == 0:
+                    pith_address_record = AdultInHomeAddress(moved_in_day=adult.moved_in_day,
+                                                             moved_in_month=adult.moved_in_month,
+                                                             moved_in_year=adult.moved_in_year,
+                                                             adult_id=AdultInHome.objects.get(adult_id=adult_id),
+                                                             application_id=Application.objects.get(application_id=
+                                                                                                    application_id)
+                                                             )
+                    pith_address_record.save()
+                else:
+                    PITH_same_address = AdultInHomeAddress.objects.filter(adult_id=adult_id)
+                    PITH_same_address.update(moved_in_day=adult.moved_in_day,moved_in_month=adult.moved_in_month,
+                                             moved_in_year=adult.moved_in_year
+                                             )
         return super().form_valid(form)
 
     def get_form_list(self):
@@ -153,17 +171,19 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
         application_id = get_id(self.request)
 
         adults = AdultInHome.objects.filter(application_id=application_id)
-
+        log.debug('Initialising form field data')
         initial_context = {}
-
         for adult in adults:
             initial_context.update({
-                self.PITH_same_address_field + str(adult.pk): adult.enhanced_check,
+                self.PITH_same_address_field + str(adult.pk): adult.PITH_same_address,
                 self.PITH_same_time_field + str(adult.pk): adult.PITH_same_time,
+                self.PITH_moved_in_date_field + str(adult.pk): None
             })
-
-        # initial_context = {self.PITH_same_address_field + str(adult.pk): adult.PITH_same_address
-        #                    for adult in adults}
+            if len(AdultInHomeAddress.objects.filter(adult_id=adult.pk)) > 0:
+                initial_context.update({
+                    self.PITH_moved_in_date_field + str(adult.pk):
+                        AdultInHomeAddress.objects.get(adult_id=adult.pk).get_moved_in_date()
+                })
 
         log.debug('Form field data initialised')
 
