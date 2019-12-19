@@ -1,4 +1,5 @@
 import collections
+from datetime import date
 
 from django import forms
 from govuk_forms.widgets import InlineRadioSelect
@@ -32,12 +33,10 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
 
         self.PITH_moved_in_date_field_name = self.PITH_moved_in_date_field + str(self.adult.pk)
         self.PITH_same_address_field_name = self.PITH_same_address_field + str(self.adult.pk)
-        self.base_fields=collections.OrderedDict([
+        self.base_fields = collections.OrderedDict([
             (self.PITH_same_address_field_name, self.get_choice_field_data())
         ])
         self.base_fields[self.PITH_moved_in_date_field_name] = self.get_moved_in_data()
-
-        # if not self.PITH_same_time_field:
 
         self.reveal_conditionally = self.get_reveal_conditionally()
 
@@ -124,4 +123,22 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
         return collections.OrderedDict([
             (self.PITH_same_address_field_name, {True: self.PITH_moved_in_date_field_name}),
             ])
+
+    def clean_moved_in_date(self):
+        """
+        Course date validation (calculate date is in the future)
+        :return: course day, course month, course year
+        """
+        moved_in_day = self.cleaned_data['moved_in_date'].day
+        moved_in_month = self.cleaned_data['moved_in_date'].month
+        moved_in_year = self.cleaned_data['moved_in_date'].year
+        moved_in_date = date(moved_in_year, moved_in_month, moved_in_day)
+        today = date.today()
+        date_today_diff = today.year - moved_in_date.year - (
+                (today.month, today.day) < (moved_in_date.month, moved_in_date.day))
+        if date_today_diff < 0:
+            raise forms.ValidationError('Please enter a past date')
+        if len(str(moved_in_year)) < 4:
+            raise forms.ValidationError('Please enter the whole year (4 digits)')
+        return moved_in_day, moved_in_month, moved_in_year
 

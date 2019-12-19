@@ -108,15 +108,17 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
         county = applicant_home_address.county
         country = applicant_home_address.country
         postcode = applicant_home_address.postcode
+        # moved_in_day, moved_in_month, moved_in_year = form.cleaned_data.get('moved_in_date')
 
         adults = AdultInHome.objects.filter(application_id=application_id)
         for adult in adults:
             PITH_same_address_bool = self.request.POST.get(self.PITH_same_address_field + str(adult.pk))
             setattr(adult, self.PITH_same_address_field, PITH_same_address_bool)
+            moved_in_day, moved_in_month, moved_in_year = self.request.POST.get(self.PITH_moved_in_date_field + str(adult.pk))
             adult.save()
             adult_id = adult.adult_id
             if adult.PITH_same_address:
-                applicant_record = ApplicantPersonalDetails.objects.get(personal_details_id=personal_detail_id)
+                applicant_record = ApplicantPersonalDetails.objects.get(application_id=application_id)
                 if AdultInHomeAddress.objects.filter(adult_id=adult_id).count() == 0:
                     pith_address_record = AdultInHomeAddress(street_line1=street_line1,
                                                              street_line2=street_line2,
@@ -124,9 +126,9 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
                                                              county=county,
                                                              country=country,
                                                              postcode=postcode,
-                                                             moved_in_day=adult.moved_in_day,
-                                                             moved_in_month=adult.moved_in_month,
-                                                             moved_in_year=adult.moved_in_year,
+                                                             moved_in_day=moved_in_day,
+                                                             moved_in_month=moved_in_month,
+                                                             moved_in_year=moved_in_year,
                                                              adult_in_home_address=None,
                                                              adult_id=AdultInHome.objects.get(adult_id=adult_id),
                                                              application_id=Application.objects.get(application_id=
