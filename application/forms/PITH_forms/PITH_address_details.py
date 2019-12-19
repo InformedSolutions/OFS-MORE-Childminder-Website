@@ -1,4 +1,5 @@
 import re
+from datetime import date
 
 from django import forms
 from django.conf import settings
@@ -6,6 +7,8 @@ from django.conf import settings
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import AdultInHomeAddress, AdultInHome
+from application.utils import date_formatter
+from application.forms.fields import CustomSplitDateFieldDOB
 
 
 class PITHAddressForm(ChildminderForms):
@@ -65,6 +68,12 @@ class PITHManualAddressForm(ChildminderForms):
     postcode = forms.CharField(label='Postcode', required=True,
                                error_messages={'required': 'Please enter their postcode'})
 
+    moved_in_date = CustomSplitDateFieldDOB(
+        label='Date you moved in',
+        help_text='For example, 31 03 2016',
+        error_messages={'required': 'Please enter the full date, including the day, month and year'}
+    )
+
     def __init__(self, *args, **kwargs):
         """
         Method to configure the initialisation of the Your adults's address form for manual entry
@@ -87,8 +96,12 @@ class PITHManualAddressForm(ChildminderForms):
             self.fields['town'].initial = adult_in_home_address.town
             self.fields['county'].initial = adult_in_home_address.county
             self.fields['postcode'].initial = adult_in_home_address.postcode
+            moved_in_day, moved_in_month, moved_in_year = date_formatter(adult_in_home_address.moved_in_day,
+                                                                         adult_in_home_address.moved_in_month,
+                                                                         adult_in_home_address.moved_in_year)
+            self.fields['moved_in_date'].initial = [moved_in_day, moved_in_month, moved_in_year]
             self.pk = adult_in_home_address.adult_in_home_address_id
-            self.field_list = ['street_line1', 'street_line2', 'town', 'county', 'postcode']
+            self.field_list = ['street_line1', 'street_line2', 'town', 'county', 'postcode', 'moved_in_date']
 
     def clean_street_line1(self):
         """
@@ -147,6 +160,24 @@ class PITHManualAddressForm(ChildminderForms):
             raise forms.ValidationError('Please enter a valid postcode')
         return postcode
 
+    def clean_moved_in_date(self):
+        """
+        Course date validation (calculate date is in the future)
+        :return: course day, course month, course year
+        """
+        moved_in_day = self.cleaned_data['moved_in_date'].day
+        moved_in_month = self.cleaned_data['moved_in_date'].month
+        moved_in_year = self.cleaned_data['moved_in_date'].year
+        moved_in_date = date(moved_in_year, moved_in_month, moved_in_day)
+        today = date.today()
+        date_today_diff = today.year - moved_in_date.year - (
+                (today.month, today.day) < (moved_in_date.month, moved_in_date.day))
+        if date_today_diff < 0:
+            raise forms.ValidationError('Please enter a past date')
+        if len(str(moved_in_year)) < 4:
+            raise forms.ValidationError('Please enter the whole year (4 digits)')
+        return moved_in_day, moved_in_month, moved_in_year
+
 
 class PITHAddressLookupForm(ChildminderForms):
     """
@@ -159,6 +190,12 @@ class PITHAddressLookupForm(ChildminderForms):
     address = forms.ChoiceField(label='Select address', required=True,
                                 error_messages={'required': 'Please select their address'})
 
+    moved_in_date = CustomSplitDateFieldDOB(
+        label='Date you moved in',
+        help_text='For example, 31 03 2016',
+        error_messages={'required': 'Please enter the full date, including the day, month and year'}
+    )
+
     def __init__(self, *args, **kwargs):
         """
         Method to configure the initialisation of the Your personal details: home address form for postcode search
@@ -167,7 +204,34 @@ class PITHAddressLookupForm(ChildminderForms):
         """
         self.application_id_local = kwargs.pop('id')
         self.adult = kwargs.pop('adult')
+        self.adult_record = kwargs.pop('adult_record')
         self.choices = kwargs.pop('choices')
         super(PITHAddressLookupForm, self).__init__(*args, **kwargs)
         full_stop_stripper(self)
+        if AdultInHomeAddress.objects.filter(application_id=self.application_id_local).count() > 0:
+            adult_in_home_address = AdultInHomeAddress.objects.get(application_id=self.application_id_local,
+                                                                   adult_id=self.adult_record.adult_id)
+            moved_in_day, moved_in_month, moved_in_year = date_formatter(adult_in_home_address.moved_in_day,
+                                                                   adult_in_home_address.moved_in_month,
+                                                                   adult_in_home_address.moved_in_year)
+            self.fields['moved_in_date'].initial = [moved_in_day, moved_in_month, moved_in_year]
+            self.field_list = ['moved_in_date']
         self.fields['address'].choices = self.choices
+
+    def clean_moved_in_date(self):
+        """
+        Course date validation (calculate date is in the future)
+        :return: course day, course month, course year
+        """
+        moved_in_day = self.cleaned_data['moved_in_date'].day
+        moved_in_month = self.cleaned_data['moved_in_date'].month
+        moved_in_year = self.cleaned_data['moved_in_date'].year
+        moved_in_date = date(moved_in_year, moved_in_month, moved_in_day)
+        today = date.today()
+        date_today_diff = today.year - moved_in_date.year - (
+                (today.month, today.day) < (moved_in_date.month, moved_in_date.day))
+        if date_today_diff < 0:
+            raise forms.ValidationError('Please enter a past date')
+        if len(str(moved_in_year)) < 4:
+            raise forms.ValidationError('Please enter the whole year (4 digits)')
+        return moved_in_day, moved_in_month, moved_in_year

@@ -172,6 +172,7 @@ def declaration_summary(request, print_mode=False):
         adults_list = []
         adult_mobile_number_list = []
         adult_same_address_list = []
+        adult_PITH_moved_in_list= []
         adult_lived_abroad_list = []
         adult_military_base_list = []
         adult_enhanced_check_list = []
@@ -180,12 +181,12 @@ def declaration_summary(request, print_mode=False):
         if adults_list_exists:
             adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
             for adult in adults_list:
-
+                adult_in_home_address = AdultInHomeAddress.objects.get(application_id=application_id_local,
+                                                                       adult_id=adult.pk)
                 # For each adult, append the correct attribute (e.g. name, relationship) to the relevant list
                 # Concatenate the adult's name for display, displaying any middle names if present
 
                 if not adult.PITH_same_address:
-                    adult_in_home_address = AdultInHomeAddress.objects.get(application_id=application_id_local, adult_id=adult.pk)
                     adult_address_string = ' '.join([adult_in_home_address.street_line1,
                                                      adult_in_home_address.street_line2 or '',
                                                      adult_in_home_address.town, adult_in_home_address.county or '',
@@ -220,6 +221,7 @@ def declaration_summary(request, print_mode=False):
                 adult_email_list.append(adult.email)
                 adult_mobile_number_list.append(adult.PITH_mobile_number)
                 adult_same_address_list.append(adult_address_string)
+                adult_PITH_moved_in_list.append(adult_in_home_address.get_moved_in_date())
                 adult_lived_abroad_list.append(adult.lived_abroad)
                 adult_military_base_list.append(adult.military_base)
                 adult_enhanced_check_list.append(adult.enhanced_check)
@@ -228,7 +230,7 @@ def declaration_summary(request, print_mode=False):
             # Zip the appended lists together for the HTML to simultaneously parse
         adult_lists = zip(adult_title_list, adult_name_list, adult_birth_day_list, adult_birth_month_list,
                               adult_birth_year_list, adult_relationship_list, adult_dbs_list, adult_health_check_status_list
-                              , adult_email_list, adult_mobile_number_list, adult_same_address_list,
+                              , adult_email_list, adult_mobile_number_list, adult_same_address_list, adult_PITH_moved_in_list,
                               adult_lived_abroad_list, adult_enhanced_check_list, adult_on_update_list,
                               adult_military_base_list)
         # Generate lists of data for children in your home, to be iteratively displayed on the summary page
@@ -392,6 +394,7 @@ def declaration_summary(request, print_mode=False):
             'home_address_town': applicant_home_address_record.town,
             'home_address_county': applicant_home_address_record.county,
             'home_address_postcode': applicant_home_address_record.postcode,
+            'moved_in_date': applicant_record.get_moved_in_date,
             'childcare_street_line1': childcare_street_line1,
             'childcare_street_line2': childcare_street_line2,
             'childcare_town': childcare_town,

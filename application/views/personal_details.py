@@ -389,6 +389,7 @@ def personal_details_home_address_select(request):
                 personal_detail_record.moved_in_day = moved_in_day
                 personal_detail_record.moved_in_month = moved_in_month
                 personal_detail_record.moved_in_year = moved_in_year
+                personal_detail_record.save()
 
             # If the user previously entered information for this task
             elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,

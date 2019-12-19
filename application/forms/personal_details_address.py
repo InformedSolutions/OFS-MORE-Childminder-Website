@@ -104,7 +104,7 @@ class PersonalDetailsHomeAddressManualForm(ChildminderForms):
                                                                    personal_details_record.moved_in_year)
             self.fields['moved_in_date'].initial = [moved_in_day, moved_in_month, moved_in_year]
             self.pk = personal_details_record.personal_detail_id
-            self.field_list = ['course_date']
+            self.field_list = ['moved_in_date']
 
     def clean_street_line1(self):
         """

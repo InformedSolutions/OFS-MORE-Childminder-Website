@@ -484,6 +484,21 @@
     </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
+            Moved in
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{moved_in_date}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if personal_details_change %}
+            <a href="{% url 'Personal-Details-Home-Address-Select-View' %}?id={{application_id}}" alt="Change when you moved in">
+                Change <span class="visuallyhidden">your name</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
             Childcare address
         </td>
         {% if location_of_childcare == True %}
@@ -844,7 +859,7 @@
     </tr>
     </tbody>
 </table>
-{% for title, name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, PITH_mobile_number, PITH_same_address, lived_abroad, enhanced_check, on_update, military_base in adult_lists %}
+{% for title, name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, PITH_mobile_number, PITH_same_address, PITH_moved_in_date, lived_abroad, enhanced_check, on_update, military_base in adult_lists %}
 <table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
@@ -993,6 +1008,22 @@
             <a href="{% url 'PITH-Address-Check-View' %}?id={{application_id}}"
                alt="Change the adult's address">
                 Change <span class="visuallyhidden">the adult's address</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Moved in
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{PITH_moved_in_date}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Address-Check-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Change the adult's move in date">
+                Change <span class="visuallyhidden">the adult's name</span>
             </a>
             {% endif %}
         </td>

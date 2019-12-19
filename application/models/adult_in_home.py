@@ -41,7 +41,6 @@ class AdultInHome(models.Model):
     email_resent_timestamp = models.DateTimeField(null=True, blank=True)
     lived_abroad = models.NullBooleanField(blank=True)
     PITH_same_address = models.NullBooleanField(blank=True)
-    PITH_same_time = models.NullBooleanField(blank=True)
 
     military_base = models.NullBooleanField(blank=True)
     capita = models.NullBooleanField(blank=True)  # dbs was found on capita list?
