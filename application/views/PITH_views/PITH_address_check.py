@@ -118,7 +118,7 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
             adult.save()
             adult_id = adult.adult_id
             if adult.PITH_same_address:
-                applicant_record = ApplicantPersonalDetails.objects.get(application_id=application_id)
+                applicant_record = ApplicantPersonalDetails.objects.get(personal_details_id=personal_detail_id)
                 if AdultInHomeAddress.objects.filter(adult_id=adult_id).count() == 0:
                     pith_address_record = AdultInHomeAddress(street_line1=street_line1,
                                                              street_line2=street_line2,
