@@ -119,7 +119,7 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
             if self.cleaned_data[self.PITH_same_time_field_name] != "" \
             else None
 
-        cleaned_PITH_moved_in_date = self.cleaned_data[self.PITH_moved_in_date_field_name] == 'True' \
+        cleaned_PITH_moved_in_date = self.cleaned_data[self.PITH_moved_in_date_field_name] == 'False' \
             if self.cleaned_data[self.PITH_moved_in_date_field_name] != "" \
             else None
 
@@ -133,7 +133,7 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
             self.add_error(self.PITH_same_time_field,
                            'Please say if they moved in at the same time as you')
 
-        additional_enhanced_yes = cleaned_PITH_same_time is not None and cleaned_PITH_same_time
+        additional_enhanced_yes = cleaned_PITH_same_time is not None and not cleaned_PITH_same_time
 
         if additional_enhanced_yes and cleaned_PITH_moved_in_date is None:
             self.add_error(self.PITH_moved_in_date_field,
@@ -143,7 +143,9 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
 
     def get_reveal_conditionally(self):
         return collections.OrderedDict([
-            (self.PITH_same_address_field_name, {True: self.PITH_same_time_field_name})])
+            (self.PITH_same_address_field_name, {True: self.PITH_same_time_field_name}),
+                # (self.PITH_same_time_field_name, {False: self.PITH_moved_in_date_field_name})
+        ])
         # if self.PITH_same_time_field == "False":
         #     return collections.OrderedDict([
         #         (self.PITH_same_address_field_name, {True: self.PITH_same_time_field_name})

@@ -150,8 +150,9 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
                     pith_address_record.save()
                 else:
                     PITH_same_address = AdultInHomeAddress.objects.filter(adult_id=adult_id)
-                    PITH_same_address.update(moved_in_day=adult.moved_in_day,moved_in_month=adult.moved_in_month,
-                                             moved_in_year=adult.moved_in_year
+                    applicant_record = ApplicantPersonalDetails.objects.get(application_id=application_id)
+                    PITH_same_address.update(moved_in_day=applicant_record.moved_in_day,moved_in_month=applicant_record.moved_in_month,
+                                             moved_in_year=applicant_record.moved_in_year
                                              )
         return super().form_valid(form)
 
