@@ -311,6 +311,7 @@ def PITH_address_logic(app_id, adult, form):
     PITH_address.town = form.cleaned_data.get('town')
     PITH_address.county = form.cleaned_data.get('county')
     PITH_address.postcode = form.cleaned_data.get('postcode')
+    PITH_address.moved_in_day, PITH_address.moved_in_month, PITH_address.moved_in_year = form.cleaned_data.get('moved_in_date')
 
     return PITH_address
 

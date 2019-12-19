@@ -27,18 +27,14 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
         self.application_id = kwargs.pop('id')
         self.adult = kwargs.pop('adult')
         self.PITH_same_address_field = kwargs.pop('PITH_same_address_field')
-        self.PITH_same_time_field = kwargs.pop('PITH_same_time_field')
         self.PITH_moved_in_date_field = kwargs.pop('PITH_moved_in_date_field')
         self.pk = self.adult.pk
 
         self.PITH_moved_in_date_field_name = self.PITH_moved_in_date_field + str(self.adult.pk)
         self.PITH_same_address_field_name = self.PITH_same_address_field + str(self.adult.pk)
-        self.PITH_same_time_field_name = self.PITH_same_time_field + str(self.adult.pk)
-        log.debug('key for address field is: {}'.format(self.PITH_same_time_field_name))
-        self.base_fields = collections.OrderedDict([
-            (self.PITH_same_time_field_name, self.get_same_time_data()),
+        self.base_fields=collections.OrderedDict([
+            (self.PITH_same_address_field_name, self.get_choice_field_data())
         ])
-        self.base_fields[self.PITH_same_address_field_name] = self.get_choice_field_data()
         self.base_fields[self.PITH_moved_in_date_field_name] = self.get_moved_in_data()
 
         # if not self.PITH_same_time_field:
@@ -94,16 +90,9 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
             widget=ConditionalPostInlineRadioSelect,
             required=False)
 
-    def get_same_time_data(self):
-        return forms.ChoiceField(
-            label='Did they move in at the same time as you?',
-            choices=self.get_options(),
-            widget=ConditionalPostInlineRadioSelect,
-            required=False)
-
     def get_moved_in_data(self):
         return CustomSplitDateFieldDOB(
-            label='Date you moved in',
+            label='Date they moved in',
             help_text='For example, 31 03 2016',
             error_messages={'required': 'Please enter the full date, including the day, month and year'},
             required=False
@@ -115,10 +104,6 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
         cleaned_PITH_same_address_field = self.cleaned_data[self.PITH_same_address_field_name] == 'True' \
             if self.cleaned_data.get(self.PITH_same_address_field_name) \
             else None
-        cleaned_PITH_same_time = self.cleaned_data[self.PITH_same_time_field_name] == 'True' \
-            if self.cleaned_data[self.PITH_same_time_field_name] != "" \
-            else None
-
         cleaned_PITH_moved_in_date = self.cleaned_data[self.PITH_moved_in_date_field_name] == 'False' \
             if self.cleaned_data[self.PITH_moved_in_date_field_name] != "" \
             else None
@@ -129,25 +114,14 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
 
         enhanced_yes = cleaned_PITH_same_address_field is not None and cleaned_PITH_same_address_field
 
-        if enhanced_yes and cleaned_PITH_same_time is None:
+        if enhanced_yes and cleaned_PITH_moved_in_date is None:
             self.add_error(self.PITH_same_time_field,
-                           'Please say if they moved in at the same time as you')
-
-        additional_enhanced_yes = cleaned_PITH_same_time is not None and not cleaned_PITH_same_time
-
-        if additional_enhanced_yes and cleaned_PITH_moved_in_date is None:
-            self.add_error(self.PITH_moved_in_date_field,
                            'Please enter the date when they moved in')
 
         return self.cleaned_data
 
     def get_reveal_conditionally(self):
         return collections.OrderedDict([
-            (self.PITH_same_address_field_name, {True: self.PITH_same_time_field_name}),
-                # (self.PITH_same_time_field_name, {False: self.PITH_moved_in_date_field_name})
-        ])
-        # if self.PITH_same_time_field == "False":
-        #     return collections.OrderedDict([
-        #         (self.PITH_same_address_field_name, {True: self.PITH_same_time_field_name})
-        #         (self.PITH_same_time_field_name, {False: self.PITH_moved_in_date_field_name})
-        #     ])
+            (self.PITH_same_address_field_name, {True: self.PITH_moved_in_date_field_name}),
+            ])
+

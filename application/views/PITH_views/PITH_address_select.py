@@ -55,7 +55,7 @@ def __PITH_address_selection_get_handler(request, template, address_lookup_templ
     addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
 
     if len(addresses) != 0:
-        form = PITHAddressLookupForm(id=application_id, choices=addresses, adult=adult_record)
+        form = PITHAddressLookupForm(id=application_id, choices=addresses, adult=adult, adult_record=adult_record)
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
@@ -110,7 +110,7 @@ def __PITH_address_selection_post_handler(request, template, success_url, addres
     adult_address_record = AdultInHomeAddress.objects.get(application_id=application_id, adult_id=adult_record.adult_id)
     postcode = adult_address_record.postcode
     addresses = address_helper.AddressHelper.create_address_lookup_list(postcode)
-    form = PITHAddressLookupForm(request.POST, id=application_id, choices=addresses, adult=adult_record)
+    form = PITHAddressLookupForm(request.POST, id=application_id, choices=addresses, adult_record=adult_record, adult=adult)
 
     if form.is_valid():
 
@@ -120,12 +120,16 @@ def __PITH_address_selection_post_handler(request, template, success_url, addres
         line2 = selected_address['line2']
         town = selected_address['townOrCity']
         postcode = selected_address['postcode']
+        moved_in_day, moved_in_month, moved_in_year = form.cleaned_data.get('moved_in_date')
 
         adult_address_record.street_line1 = line1
         adult_address_record.street_line2 = line2
         adult_address_record.town = town
         adult_address_record.postcode = postcode
         adult_address_record.country = 'United Kingdom'
+        adult_address_record.moved_in_day = moved_in_day
+        adult_address_record.moved_in_month = moved_in_month
+        adult_address_record.moved_in_year = moved_in_year
         adult_address_record.save()
 
         if Application.get_id(app_id=application_id).people_in_home_status not in ['COMPLETED', 'WAITING']:
@@ -145,6 +149,7 @@ def __PITH_address_selection_post_handler(request, template, success_url, addres
     else:
 
         form.error_summary_title = 'There was a problem finding {}\'s address'.format(adult_name)
+        adult_record = AdultInHome.objects.get(application_id=application_id, adult=adult)
 
         if application.application_status == 'FURTHER_INFORMATION':
             form.error_summary_template_name = 'returned-error-summary.html'
