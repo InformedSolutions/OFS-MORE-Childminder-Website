@@ -5,7 +5,7 @@ import collections
 
 childcare_type_name_dict = collections.OrderedDict(
     [('childcare_age_groups', 'What age groups will you be able to care for?'),
-    ('number_of_places', 'How many children will you care for aged between 6 and 8 years old?'),
+    ('number_of_places', 'How many children will you care for aged between 5 and 7 years old?'),
     ('childcare_time_groups', 'When will you be providing childcare?'),
      ('overnight_care', 'Will you be looking after children overnight?')])
 

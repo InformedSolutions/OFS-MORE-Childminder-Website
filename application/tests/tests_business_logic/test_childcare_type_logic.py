@@ -203,18 +203,18 @@ class TestChildcareTypeLogic(TestCase):
             'application.middleware.CustomAuthenticationHandler',
         ]
     })
-    def test_http_number_of_places_if_childcare_for_ages_over_five(self):
+    def test_http_number_of_places_if_childcare_for_ages_over_five_and_less_than_eight(self):
         """Test to assert childcare type number of places page only displays for childminders applying to care for
         children aged over 5years old"""
 
         data = {
             'id': self.test_application_id,
-            'type_of_childcare': ['5-8', '8over']
+            'type_of_childcare': ['5-8']
         }
 
         self.test_childcare_record.zero_to_five = False
         self.test_childcare_record.five_to_eight = True
-        self.test_childcare_record.eight_plus = True
+        self.test_childcare_record.eight_plus = False
         self.test_childcare_record.save()
 
         response = self.client.post(
@@ -233,13 +233,13 @@ class TestChildcareTypeLogic(TestCase):
         ]
     })
 
-    def test_http_childcare_timing_if_childcare_for_ages_under_five(self):
+    def test_http_childcare_timing_if_childcare_for_ages_under_five_and_over_eight(self):
         """Test to assert childcare type number of places page only displays for childminders applying to care for
         children aged over 5years old"""
 
         data = {
             'id': self.test_application_id,
-            'type_of_childcare': ['0-5']
+            'type_of_childcare': ['0-5', '8over']
         }
 
         self.test_childcare_record.zero_to_five = True

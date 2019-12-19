@@ -18,6 +18,15 @@
             Number of childcare places
         </h1>
         {{form.as_div}}
+        <p>
+            Do not include children aged:
+            <ul class="list-bullet">
+                <li>0-5 years old</li>
+                <li>8+ years old</li>
+            </ul><br>
+            We will ask you separately about the number of places for these children at registration or inspection visit
+        </p>
+
         {% csrf_token %}
         <input type="submit" class="button" value="Save and continue" alt='Continue to summary'>
         <input type="hidden" id="id" name="id" value="{{application_id}}"/>

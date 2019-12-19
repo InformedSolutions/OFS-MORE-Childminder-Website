@@ -92,8 +92,7 @@ class TypeOfChildcareNumberOfPlacesForm(ChildminderForms):
 
     number_of_childcare_places = forms.IntegerField(
         required=True,
-        label='How many children will you care for aged between 5 and 8 years old?',
-        help_text='Please enter a number, enter 0 if not applicable to your application',
+        label='How many children will you care for aged 5 to 7 years old?',
         error_messages={'required': "Please enter the number of childcare places"},
     )
 

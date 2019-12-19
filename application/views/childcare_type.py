@@ -178,7 +178,8 @@ def type_of_childcare_register(request):
         childcare_register_type, childcare_register_cost = get_childcare_register_type(app_id)
         application = Application.get_id(app_id=app_id)
         childcare_record = ChildcareType.objects.get(application_id=app_id)
-        if childcare_register_type == 'EYR':
+        if childcare_register_type == 'EYR' or childcare_register_type =='EYR-CR-voluntary' or \
+                childcare_register_type =='CR-voluntary':
             childcare_record.childcare_places = None
             childcare_record.save()
 
