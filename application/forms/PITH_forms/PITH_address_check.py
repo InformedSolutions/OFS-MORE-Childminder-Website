@@ -13,6 +13,7 @@ import logging
 
 log = logging.getLogger('')
 
+
 class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
     """
         GOV.UK form for the People in the Home: Non generic form for the PITHDBSTypeOfCheckView
@@ -27,7 +28,7 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
         self.adult = kwargs.pop('adult')
         self.PITH_same_address_field = kwargs.pop('PITH_same_address_field')
         self.PITH_same_time_field = kwargs.pop('PITH_same_time_field')
-        self.PITH_moved_in_date_field = 'moved_in_date'
+        self.PITH_moved_in_date_field = kwargs.pop('PITH_moved_in_date_field')
         self.pk = self.adult.pk
 
         self.PITH_moved_in_date_field_name = self.PITH_moved_in_date_field + str(self.adult.pk)
@@ -38,10 +39,9 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
             (self.PITH_same_time_field_name, self.get_same_time_data()),
         ])
         self.base_fields[self.PITH_same_address_field_name] = self.get_choice_field_data()
+        self.base_fields[self.PITH_moved_in_date_field_name] = self.get_moved_in_data()
 
-        if not self.PITH_same_time_field:
-            self.base_fields[self.PITH_moved_in_date_field_name] = self.get_moved_in_data()
-
+        # if not self.PITH_same_time_field:
 
         self.reveal_conditionally = self.get_reveal_conditionally()
 
@@ -103,25 +103,25 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
 
     def get_moved_in_data(self):
         return CustomSplitDateFieldDOB(
-        label='Date you moved in',
-        help_text='For example, 31 03 2016',
-        error_messages={'required': 'Please enter the full date, including the day, month and year'}
-    )
+            label='Date you moved in',
+            help_text='For example, 31 03 2016',
+            error_messages={'required': 'Please enter the full date, including the day, month and year'},
+            required=False
+        )
 
     def clean(self):
         super().clean()
 
-        cleaned_PITH_same_address_field = self.cleaned_data[self.PITH_same_address_field_name] == 'True'\
-            if self.cleaned_data.get(self.PITH_same_address_field_name)\
+        cleaned_PITH_same_address_field = self.cleaned_data[self.PITH_same_address_field_name] == 'True' \
+            if self.cleaned_data.get(self.PITH_same_address_field_name) \
             else None
-        cleaned_PITH_same_time = self.cleaned_data[self.PITH_same_time_field_name] == 'True'\
-            if self.cleaned_data[self.PITH_same_time_field_name] != ""\
-            else None
-
-        cleaned_PITH_moved_in_date = self.cleaned_data[self.PITH_moved_in_date_field_name] == 'True'\
-            if self.cleaned_data[self.PITH_moved_in_date_field_name] != ""\
+        cleaned_PITH_same_time = self.cleaned_data[self.PITH_same_time_field_name] == 'True' \
+            if self.cleaned_data[self.PITH_same_time_field_name] != "" \
             else None
 
+        cleaned_PITH_moved_in_date = self.cleaned_data[self.PITH_moved_in_date_field_name] == 'True' \
+            if self.cleaned_data[self.PITH_moved_in_date_field_name] != "" \
+            else None
 
         if cleaned_PITH_same_address_field is None:
             self.add_error(self.enhanced_check_field,
@@ -143,7 +143,9 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
 
     def get_reveal_conditionally(self):
         return collections.OrderedDict([
-            (self.PITH_same_address_field_name, {True: self.PITH_same_time_field_name}),
-            (self.PITH_same_time_field_name, {False: self.PITH_moved_in_date_field_name})
-        ])
-
+            (self.PITH_same_address_field_name, {True: self.PITH_same_time_field_name})])
+        # if self.PITH_same_time_field == "False":
+        #     return collections.OrderedDict([
+        #         (self.PITH_same_address_field_name, {True: self.PITH_same_time_field_name})
+        #         (self.PITH_same_time_field_name, {False: self.PITH_moved_in_date_field_name})
+        #     ])
