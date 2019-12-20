@@ -110,13 +110,14 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
         if cleaned_PITH_same_address_field is None:
             self.add_error(self.PITH_same_address_field,
                            'Please say if they live at the same address as you')
-        if cleaned_PITH_moved_in_date_field is None:
-            self.add_error(self.PITH_moved_in_date_field,
-                           'Please enter the full date, including the day, month and year')
-        else:
-            if self.cleaned_data.get(self.PITH_moved_in_date_field_name) < AdultInHome.objects.get(adult_id=self.adult.adult_id).date_of_birth.date():
+        if cleaned_PITH_same_address_field:
+            if cleaned_PITH_moved_in_date_field is None:
                 self.add_error(self.PITH_moved_in_date_field,
-                            'Please enter a move in date which is after their date of birth')
+                               'Please enter the full date, including the day, month and year')
+            else:
+                if self.cleaned_data.get(self.PITH_moved_in_date_field_name) < AdultInHome.objects.get(adult_id=self.adult.adult_id).date_of_birth.date():
+                    self.add_error(self.PITH_moved_in_date_field,
+                                'Please enter a move in date which is after their date of birth')
         return self.cleaned_data
 
     def get_reveal_conditionally(self):

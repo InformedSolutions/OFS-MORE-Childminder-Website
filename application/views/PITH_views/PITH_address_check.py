@@ -114,7 +114,6 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
             moved_in_day = self.request.POST.get(self.PITH_moved_in_date_field + str(adult.pk) + '_0')
             moved_in_month = self.request.POST.get(self.PITH_moved_in_date_field + str(adult.pk) + '_1')
             moved_in_year = self.request.POST.get(self.PITH_moved_in_date_field + str(adult.pk) + '_2')
-            log.debug(self.request.POST.get(self.PITH_moved_in_date_field + str(adult.pk) + '_0'))
             adult.save()
             adult_id = adult.adult_id
             if adult.PITH_same_address:

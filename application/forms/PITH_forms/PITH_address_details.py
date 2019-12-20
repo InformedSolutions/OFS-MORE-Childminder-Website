@@ -9,6 +9,7 @@ from application.forms_helper import full_stop_stripper
 from application.models import AdultInHomeAddress, AdultInHome
 from application.utils import date_formatter
 from application.forms.fields import CustomSplitDateFieldDOB
+from application.forms.personal_details_address import validate_moved_in_date
 
 
 class PITHAddressForm(ChildminderForms):
@@ -168,16 +169,10 @@ class PITHManualAddressForm(ChildminderForms):
         moved_in_day = self.cleaned_data['moved_in_date'].day
         moved_in_month = self.cleaned_data['moved_in_date'].month
         moved_in_year = self.cleaned_data['moved_in_date'].year
-        moved_in_date = date(moved_in_year, moved_in_month, moved_in_day)
-        today = date.today()
-        date_today_diff = today.year - moved_in_date.year - (
-                (today.month, today.day) < (moved_in_date.month, moved_in_date.day))
-        if date_today_diff < 0:
-            raise forms.ValidationError('Please enter a past date')
-        if len(str(moved_in_year)) < 4:
-            raise forms.ValidationError('Please enter the whole year (4 digits)')
+        moved_in_day, moved_in_month, moved_in_year = validate_moved_in_date(moved_in_year, moved_in_month,
+                                                                             moved_in_day, self.application_id_local,
+                                                                             self.adult_record.adult_id)
         return moved_in_day, moved_in_month, moved_in_year
-
 
 class PITHAddressLookupForm(ChildminderForms):
     """
@@ -226,12 +221,26 @@ class PITHAddressLookupForm(ChildminderForms):
         moved_in_day = self.cleaned_data['moved_in_date'].day
         moved_in_month = self.cleaned_data['moved_in_date'].month
         moved_in_year = self.cleaned_data['moved_in_date'].year
-        moved_in_date = date(moved_in_year, moved_in_month, moved_in_day)
-        today = date.today()
-        date_today_diff = today.year - moved_in_date.year - (
-                (today.month, today.day) < (moved_in_date.month, moved_in_date.day))
-        if date_today_diff < 0:
-            raise forms.ValidationError('Please enter a past date')
-        if len(str(moved_in_year)) < 4:
-            raise forms.ValidationError('Please enter the whole year (4 digits)')
+        moved_in_day, moved_in_month, moved_in_year = validate_moved_in_date(moved_in_year, moved_in_month,
+                                                                             moved_in_day, self.application_id_local,
+                                                                             self.adult_record.adult_id)
         return moved_in_day, moved_in_month, moved_in_year
+
+def validate_moved_in_date(moved_in_year, moved_in_month, moved_in_day, application_id, adult_id):
+    """
+    Course date validation (calculate date is in the future)
+    :return: course day, course month, course year
+    """
+    moved_in_date = date(moved_in_year, moved_in_month, moved_in_day)
+    today = date.today()
+    date_today_diff = today.year - moved_in_date.year - (
+            (today.month, today.day) < (moved_in_date.month, moved_in_date.day))
+    adult_record = AdultInHome.objects.get(application_id=application_id, adult_id=adult_id)
+    if moved_in_date < date(year=adult_record.birth_year, month=adult_record.birth_month,
+                            day=adult_record.birth_day):
+        raise forms.ValidationError('Please enter a move in date which is after your date of birth')
+    if date_today_diff < 0:
+        raise forms.ValidationError('Please enter a past date')
+    if len(str(moved_in_year)) < 4:
+        raise forms.ValidationError('Please enter the whole year (4 digits)')
+    return moved_in_day, moved_in_month, moved_in_year
