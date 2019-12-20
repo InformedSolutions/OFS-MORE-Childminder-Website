@@ -45,6 +45,9 @@ class AdultInHomeAddress(models.Model):
             'county',
             'country',
             'postcode',
+            'moved_in_day',
+            'moved_in_month',
+            'moved_in_year',
         )
 
     class Meta:

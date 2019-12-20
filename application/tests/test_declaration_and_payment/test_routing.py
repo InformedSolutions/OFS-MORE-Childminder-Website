@@ -39,7 +39,7 @@ class DeclarationSummaryPageFunctionalTests(utils.NoMiddlewareTestCase):
         self.application.adults_in_home = True
         self.application.save()
 
-        models.AdultInHome.objects.create(application_id=self.application,
+        adult1 = models.AdultInHome.objects.create(application_id=self.application,
                                           adult_id=UUID('166f77f7-c2ee-4550-9461-45b9d2f28d34'),
                                           first_name='Joe',
                                           last_name='Johannsen',
@@ -54,6 +54,13 @@ class DeclarationSummaryPageFunctionalTests(utils.NoMiddlewareTestCase):
                                           dbs_certificate_number='12345678912',
                                           )
 
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult1,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
+        )
+
         response = self.client.get(reverse('Declaration-Summary-View'), data={'id': self.application.pk})
 
         utils.assertSummaryField(response, 'Name', 'Joe Johannsen', heading='Joe Johannsen')
@@ -62,6 +69,7 @@ class DeclarationSummaryPageFunctionalTests(utils.NoMiddlewareTestCase):
         utils.assertSummaryField(response, 'Email', 'foo@example.com', heading='Joe Johannsen')
         utils.assertSummaryField(response, 'Have they lived outside of the UK in the last 5 years?', 'No',
                                  heading='Joe Johannsen')
+        utils.assertSummaryField(response, 'Moved in', '2 Feb 1980', heading='Joe Johannsen')
         utils.assertSummaryField(response, 'DBS certificate number', '12345678912', heading='Joe Johannsen')
 
     def test_doesnt_display_private_information_for_adults_in_the_home(self):
@@ -70,7 +78,7 @@ class DeclarationSummaryPageFunctionalTests(utils.NoMiddlewareTestCase):
         self.application.adults_in_home = True
         self.application.save()
 
-        models.AdultInHome.objects.create(application_id=self.application,
+        adult1 = models.AdultInHome.objects.create(application_id=self.application,
                                           first_name='Joe',
                                           last_name='Johannsen',
                                           birth_day=20,
@@ -83,6 +91,12 @@ class DeclarationSummaryPageFunctionalTests(utils.NoMiddlewareTestCase):
                                           lived_abroad=False,
                                           dbs_certificate_number='12345678912',
                                           )
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult1,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
+        )
 
         response = self.client.get(reverse('Declaration-Summary-View'), data={'id': self.application.pk})
 
