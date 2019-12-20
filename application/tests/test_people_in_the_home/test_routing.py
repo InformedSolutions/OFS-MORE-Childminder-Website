@@ -818,6 +818,9 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
             email='foo@example.com',
             PITH_mobile_number='07700 900840',
             PITH_same_address=True,
+            moved_in_day = 2,
+            moved_in_month=2,
+            moved_in_year=1980,
             dbs_certificate_number='123456789012',
             lived_abroad=False,
         )
@@ -831,6 +834,7 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
         utils.assertSummaryField(response, 'Email', 'foo@example.com', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'Phone number', '07700 900840', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'Address', 'Same as home address', heading='Joe Anthony Bloggs')
+        utils.assertSummaryField(response, 'Moved in', '2 Feb 1980', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'DBS certificate number', '123456789012', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'Lived abroad in the last 5 years?', 'No', heading='Joe Anthony Bloggs')
 
