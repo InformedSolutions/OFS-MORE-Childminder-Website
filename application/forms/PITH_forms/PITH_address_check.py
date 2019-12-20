@@ -9,6 +9,7 @@ from govuk_forms import widgets as govuk_widgets
 from application.forms.PITH_forms.PITH_base_forms.PITH_multi_radio_form import PITHMultiRadioForm
 from application.widgets import ConditionalPostInlineRadioSelect
 from application.forms.fields import CustomSplitDateFieldDOB
+from application.models import AdultInHome
 
 import logging
 
@@ -37,7 +38,6 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
             (self.PITH_same_address_field_name, self.get_choice_field_data())
         ])
         self.base_fields[self.PITH_moved_in_date_field_name] = self.get_moved_in_data()
-
         self.reveal_conditionally = self.get_reveal_conditionally()
 
         # ============================================================================================================ #
@@ -103,20 +103,20 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
         cleaned_PITH_same_address_field = self.cleaned_data[self.PITH_same_address_field_name] == 'True' \
             if self.cleaned_data.get(self.PITH_same_address_field_name) \
             else None
-        cleaned_PITH_moved_in_date = self.cleaned_data[self.PITH_moved_in_date_field_name] == 'False' \
-            if self.cleaned_data[self.PITH_moved_in_date_field_name] != "" \
+        cleaned_PITH_moved_in_date_field = self.cleaned_data[self.PITH_moved_in_date_field_name] == 'True' \
+            if self.cleaned_data.get(self.PITH_moved_in_date_field_name) \
             else None
 
         if cleaned_PITH_same_address_field is None:
-            self.add_error(self.enhanced_check_field,
+            self.add_error(self.PITH_same_address_field,
                            'Please say if they live at the same address as you')
-
-        enhanced_yes = cleaned_PITH_same_address_field is not None and cleaned_PITH_same_address_field
-
-        if enhanced_yes and cleaned_PITH_moved_in_date is None:
-            self.add_error(self.PITH_same_time_field,
-                           'Please enter the date when they moved in')
-
+        if cleaned_PITH_moved_in_date_field is None:
+            self.add_error(self.PITH_moved_in_date_field,
+                           'Please enter the full date, including the day, month and year')
+        else:
+            if self.cleaned_data.get(self.PITH_moved_in_date_field_name) < AdultInHome.objects.get(adult_id=self.adult.adult_id).date_of_birth.date():
+                self.add_error(self.PITH_moved_in_date_field,
+                            'Please enter a move in date which is after their date of birth')
         return self.cleaned_data
 
     def get_reveal_conditionally(self):
@@ -124,21 +124,4 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
             (self.PITH_same_address_field_name, {True: self.PITH_moved_in_date_field_name}),
             ])
 
-    def clean_moved_in_date(self):
-        """
-        Course date validation (calculate date is in the future)
-        :return: course day, course month, course year
-        """
-        moved_in_day = self.cleaned_data['moved_in_date'].day
-        moved_in_month = self.cleaned_data['moved_in_date'].month
-        moved_in_year = self.cleaned_data['moved_in_date'].year
-        moved_in_date = date(moved_in_year, moved_in_month, moved_in_day)
-        today = date.today()
-        date_today_diff = today.year - moved_in_date.year - (
-                (today.month, today.day) < (moved_in_date.month, moved_in_date.day))
-        if date_today_diff < 0:
-            raise forms.ValidationError('Please enter a past date')
-        if len(str(moved_in_year)) < 4:
-            raise forms.ValidationError('Please enter the whole year (4 digits)')
-        return moved_in_day, moved_in_month, moved_in_year
 

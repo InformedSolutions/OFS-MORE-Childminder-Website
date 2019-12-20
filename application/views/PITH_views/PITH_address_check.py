@@ -10,19 +10,17 @@ from application.views.PITH_views.base_views.PITH_multi_radio_view import PITHMu
 from application.forms.PITH_forms.PITH_address_check import PITHAddressDetailsCheckForm
 
 from .. import address_helper, status
+
 # Initiate logging
 log = logging.getLogger('')
 
 
 class PITHAdultAddressCheckView(PITHMultiRadioView):
-
     template_name = 'PITH_templates/PITH_address_check.html'
     form_class = PITHAddressDetailsCheckForm
     success_url = ('PITH-Lived-Abroad-View', 'PITH-Address-Details-View')
     PITH_same_address_field = 'PITH_same_address'
     PITH_moved_in_date_field = 'PITH_moved_in_date_field'
-
-
 
     def get_form_kwargs(self, adult=None):
         """
@@ -47,7 +45,7 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
         personal_detail_id = ApplicantPersonalDetails.objects.get(
             application_id=application_id).personal_detail_id
         childcare_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                  childcare_address=True)
+                                                             childcare_address=True)
         street_line1 = childcare_address.street_line1
         street_line2 = childcare_address.street_line2
         town = childcare_address.town
@@ -66,7 +64,6 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
 
         return super().get_context_data(**context, **kwargs)
 
-
     def get_success_url(self, get=None):
         """
         This view redirects to three potential phases.
@@ -83,7 +80,6 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
             first_adult = get_first_adult_number_for_address_entry(application_id)
 
             if not get:
-
                 return build_url(self.get_choice_url(application_id), get={'id': application_id,
                                                                            'adult': str(first_adult)})
 
@@ -111,14 +107,17 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
         # moved_in_day, moved_in_month, moved_in_year = form.cleaned_data.get('moved_in_date')
 
         adults = AdultInHome.objects.filter(application_id=application_id)
+
         for adult in adults:
             PITH_same_address_bool = self.request.POST.get(self.PITH_same_address_field + str(adult.pk))
             setattr(adult, self.PITH_same_address_field, PITH_same_address_bool)
-            moved_in_day, moved_in_month, moved_in_year = self.request.POST.get(self.PITH_moved_in_date_field + str(adult.pk))
+            moved_in_day = self.request.POST.get(self.PITH_moved_in_date_field + str(adult.pk) + '_0')
+            moved_in_month = self.request.POST.get(self.PITH_moved_in_date_field + str(adult.pk) + '_1')
+            moved_in_year = self.request.POST.get(self.PITH_moved_in_date_field + str(adult.pk) + '_2')
+            log.debug(self.request.POST.get(self.PITH_moved_in_date_field + str(adult.pk) + '_0'))
             adult.save()
             adult_id = adult.adult_id
             if adult.PITH_same_address:
-                applicant_record = ApplicantPersonalDetails.objects.get(personal_details_id=personal_detail_id)
                 if AdultInHomeAddress.objects.filter(adult_id=adult_id).count() == 0:
                     pith_address_record = AdultInHomeAddress(street_line1=street_line1,
                                                              street_line2=street_line2,
@@ -138,8 +137,16 @@ class PITHAdultAddressCheckView(PITHMultiRadioView):
                 else:
                     PITH_same_address = AdultInHomeAddress.objects.filter(adult_id=adult_id)
                     PITH_same_address.update(street_line1=street_line1, street_line2=street_line2, town=town,
-                                             county=county, country=country, postcode=postcode,moved_in_day=applicant_record.moved_in_day,moved_in_month=applicant_record.moved_in_month,
-                                             moved_in_year=applicant_record.moved_in_year
+                                             county=county, country=country, postcode=postcode,
+                                             moved_in_day=moved_in_day,
+                                             moved_in_month=moved_in_month,
+                                             moved_in_year=moved_in_year,
+                                             )
+            else:
+                PITH_not_same_address = AdultInHomeAddress.objects.filter(adult_id=adult_id)
+                PITH_not_same_address.update(moved_in_day=None,
+                                             moved_in_month=None,
+                                             moved_in_year=None
                                              )
         return super().form_valid(form)
 
