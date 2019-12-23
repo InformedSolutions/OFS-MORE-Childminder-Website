@@ -18,14 +18,12 @@ class DeclarationSummaryPageFunctionalTests(utils.NoMiddlewareTestCase):
     # ------------
 
     def test_can_render_page(self):
-
         response = self.client.get(reverse('Declaration-Summary-View'), data={'id': self.application.pk})
 
         self.assertEqual(200, response.status_code)
         utils.assertView(response, views.declaration_summary)
 
     def test_doesnt_display_adults_in_home_if_not_working_in_their_own_home(self):
-
         self.application.working_in_other_childminder_home = True
         self.application.save()
 
@@ -34,25 +32,24 @@ class DeclarationSummaryPageFunctionalTests(utils.NoMiddlewareTestCase):
         utils.assertNotXPath(response, '//*[normalize-space(text())="Adults in the home"]')
 
     def test_displays_adults_in_home_info_that_is_always_shown(self):
-
         self.application.working_in_other_childminder_home = False
         self.application.adults_in_home = True
         self.application.save()
 
         adult1 = models.AdultInHome.objects.create(application_id=self.application,
-                                          adult_id=UUID('166f77f7-c2ee-4550-9461-45b9d2f28d34'),
-                                          first_name='Joe',
-                                          last_name='Johannsen',
-                                          birth_day=20,
-                                          birth_month=12,
-                                          birth_year=1975,
-                                          relationship='Uncle',
-                                          email='foo@example.com',
-                                          PITH_mobile_number='07700 900840',
-                                          PITH_same_address=True,
-                                          lived_abroad=False,
-                                          dbs_certificate_number='12345678912',
-                                          )
+                                                   adult_id=UUID('166f77f7-c2ee-4550-9461-45b9d2f28d34'),
+                                                   first_name='Joe',
+                                                   last_name='Johannsen',
+                                                   birth_day=20,
+                                                   birth_month=12,
+                                                   birth_year=1975,
+                                                   relationship='Uncle',
+                                                   email='foo@example.com',
+                                                   PITH_mobile_number='07700 900840',
+                                                   PITH_same_address=True,
+                                                   lived_abroad=False,
+                                                   dbs_certificate_number='12345678912',
+                                                   )
 
         models.AdultInHomeAddress.objects.create(
             application_id=self.application, adult_id=adult1,
@@ -73,30 +70,33 @@ class DeclarationSummaryPageFunctionalTests(utils.NoMiddlewareTestCase):
         utils.assertSummaryField(response, 'DBS certificate number', '12345678912', heading='Joe Johannsen')
 
     def test_doesnt_display_private_information_for_adults_in_the_home(self):
-
         self.application.working_in_other_childminder_home = False
         self.application.adults_in_home = True
         self.application.save()
 
         adult1 = models.AdultInHome.objects.create(application_id=self.application,
-                                          first_name='Joe',
-                                          last_name='Johannsen',
-                                          birth_day=20,
-                                          birth_month=12,
-                                          birth_year=1975,
-                                          relationship='Uncle',
-                                          email='foo@example.com',
-                                          PITH_mobile_number='07700 900840',
-                                          PITH_same_address=True,
-                                          lived_abroad=False,
-                                          dbs_certificate_number='12345678912',
-                                          )
+                                                   first_name='Joe',
+                                                   last_name='Johannsen',
+                                                   birth_day=20,
+                                                   birth_month=12,
+                                                   birth_year=1975,
+                                                   relationship='Uncle',
+                                                   email='foo@example.com',
+                                                   PITH_mobile_number='07700 900840',
+                                                   PITH_same_address=True,
+                                                   lived_abroad=False,
+                                                   dbs_certificate_number='12345678912',
+                                                   )
         models.AdultInHomeAddress.objects.create(
             application_id=self.application, adult_id=adult1,
             moved_in_day=2,
             moved_in_month=2,
-            moved_in_year=1980,
-        )
+            moved_in_year=1980)
+
+        # applicant = models.ApplicantPersonalDetails.objects.get(application_id=self.application)
+        # applicant.update(moved_in_day=2,
+        #                  moved_in_month=2,
+        #                  moved_in_year=2011)
 
         response = self.client.get(reverse('Declaration-Summary-View'), data={'id': self.application.pk})
 
@@ -123,8 +123,8 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
         application_reference_mock.return_value = 'TESTURN'
 
         test_payment_response = {
-          'message': 'Internal Server error',
-          'error': 'Test error',
+            'message': 'Internal Server error',
+            'error': 'Test error',
         }
 
         post_payment_mock.return_value.status_code = 500
@@ -372,4 +372,3 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
         self.assertIsNotNone(payment_record.payment_reference)
         self.assertTrue(payment_record.payment_submitted)
         self.assertTrue(payment_record.payment_authorised)
-

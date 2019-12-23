@@ -166,7 +166,10 @@ def make_test_application():
         application_id=application
     )
     applicant_personal_details = models.ApplicantPersonalDetails.objects.create(
-        application_id=application
+        application_id=application,
+        moved_in_day=2,
+        moved_in_month=2,
+        moved_in_year=2011
     )
     models.ApplicantName.objects.create(
         application_id=application,
