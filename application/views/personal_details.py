@@ -2,6 +2,7 @@ import collections
 
 from django.utils import timezone
 import calendar
+from datetime import date
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -369,6 +370,7 @@ def personal_details_home_address_select(request):
             postcode = selected_address['postcode']
             personal_detail_record = ApplicantPersonalDetails.get_id(app_id=app_id)
             personal_detail_id = personal_detail_record.personal_detail_id
+            moved_in_day, moved_in_month, moved_in_year = form.cleaned_data.get('moved_in_date')
 
             # If the user entered information for this task for the first time
             if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).count() == 0:
@@ -384,6 +386,10 @@ def personal_details_home_address_select(request):
                                                            personal_detail_id=personal_detail_record,
                                                            application_id=app_id)
                 home_address_record.save()
+                personal_detail_record.moved_in_day = moved_in_day
+                personal_detail_record.moved_in_month = moved_in_month
+                personal_detail_record.moved_in_year = moved_in_year
+                personal_detail_record.save()
 
             # If the user previously entered information for this task
             elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
@@ -392,11 +398,16 @@ def personal_details_home_address_select(request):
                 home_address_record = ApplicantHomeAddress.objects.get(
                     personal_detail_id=personal_detail_id,
                     current_address=True)
+                personal_details_record = ApplicantPersonalDetails.objects.get(personal_detail_id=personal_detail_id)
                 home_address_record.street_line1 = line1
                 home_address_record.street_line2 = line2
                 home_address_record.town = town
                 home_address_record.postcode = postcode
+                personal_details_record.moved_in_day = moved_in_day
+                personal_details_record.moved_in_month = moved_in_month
+                personal_details_record.moved_in_year = moved_in_year
                 home_address_record.save()
+                personal_details_record.save()
             application = Application.get_id(app_id=app_id)
             application.date_updated = current_date
             application.save()
@@ -1088,6 +1099,7 @@ def personal_details_summary(request):
         last_name = applicant_name_record.last_name
         applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                          current_address=True)
+        personal_details_record = ApplicantPersonalDetails.objects.get(application_id=app_id)
         applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                               childcare_address=True)
         street_line1 = applicant_home_address_record.street_line1
@@ -1095,6 +1107,7 @@ def personal_details_summary(request):
         town = applicant_home_address_record.town
         county = applicant_home_address_record.county
         postcode = applicant_home_address_record.postcode
+        moved_in_date = personal_details_record.get_moved_in_date()
         location_of_childcare = applicant_home_address_record.childcare_address
 
         childcare_street_line1 = applicant_childcare_address_record.street_line1
@@ -1133,11 +1146,13 @@ def personal_details_summary(request):
         if location_of_childcare:
             address_table_dict = collections.OrderedDict([
                 ('home_address', home_address),
+                ('moved_in_date', moved_in_date),
                 ('childcare_address', childcare_address)
             ])
         else:
             address_table_dict = collections.OrderedDict([
                 ('home_address', home_address),
+                ('moved_in_date', moved_in_date),
                 ('childcare_address', childcare_address),
                 ('working_in_other_childminder_home', working_in_other_childminder_home)
             ])

@@ -335,7 +335,10 @@ class ApplicationTestBase(object):
             'street_line2': '',
             'town': 'London',
             'county': 'Essex',
-            'postcode': 'IG39LY'
+            'postcode': 'IG39LY',
+            'moved_in_date_0': 12,
+            'moved_in_date_1': 3,
+            'moved_in_date_2': 2000
         }
 
         r = self.client.post(reverse('Personal-Details-Home-Address-Manual-View'), data)
@@ -350,6 +353,9 @@ class ApplicationTestBase(object):
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).town, data['town'])
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).county, data['county'])
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).postcode, data['postcode'])
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).moved_in_day, data['moved_in_date_0'])
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).moved_in_month, data['moved_in_date_1'])
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).moved_in_year, data['moved_in_date_2'])
 
     def TestAppPersonalDetailsHomeAddressDetails(self):
         """Submit Personal Home address"""

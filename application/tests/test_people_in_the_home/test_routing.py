@@ -821,6 +821,12 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
             dbs_certificate_number='123456789012',
             lived_abroad=False,
         )
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult1,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
+        )
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
 
@@ -831,6 +837,7 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
         utils.assertSummaryField(response, 'Email', 'foo@example.com', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'Phone number', '07700 900840', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'Address', 'Same as home address', heading='Joe Anthony Bloggs')
+        utils.assertSummaryField(response, 'Moved in', '2 Feb 1980', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'DBS certificate number', '123456789012', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'Lived abroad in the last 5 years?', 'No', heading='Joe Anthony Bloggs')
 
@@ -847,6 +854,13 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
             birth_day=1, birth_month=5, birth_year=1984,
             military_base=False, PITH_same_address=True,
+        )
+
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult1,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
         )
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
@@ -867,6 +881,13 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
             birth_day=1, birth_month=5, birth_year=1984, PITH_same_address=True
         )
+
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult1,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
+        )
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
 
         utils.assertNotSummaryField(response, 'Lived or worked in British military base in the last 5 years?',
@@ -877,17 +898,31 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
         self.application.adults_in_home = True
         self.application.save()
 
-        models.AdultInHome.objects.create(
+        adult1 = models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
             birth_day=1, birth_month=5, birth_year=1984,
             dbs_certificate_number='123456789012', capita=True, PITH_same_address=True,
         )
-        models.AdultInHome.objects.create(
+        adult2 = models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Joanne', middle_names='Bethanny', last_name='Smith',
             birth_day=5, birth_month=1, birth_year=1948,
             dbs_certificate_number='123456789013', capita=False, enhanced_check=True, PITH_same_address=True,
+        )
+
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult1,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
+        )
+
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult2,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
         )
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
@@ -902,23 +937,42 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
         self.application.adults_in_home = True
         self.application.save()
 
-        models.AdultInHome.objects.create(
+        adult1 = models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
             birth_day=1, birth_month=5, birth_year=1984,
             dbs_certificate_number='123456789012', capita=True, PITH_same_address=True,
         )
-        models.AdultInHome.objects.create(
+        adult2 = models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Joanne', middle_names='Bethanny', last_name='Smith',
             birth_day=5, birth_month=1, birth_year=1948,
             dbs_certificate_number='123456789013', capita=True, within_three_months=False, on_update=True, PITH_same_address=True,
         )
-        models.AdultInHome.objects.create(
+        adult3 = models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Josef', middle_names='Charlie', last_name='Thompson',
             birth_day=5, birth_month=5, birth_year=1966,
             dbs_certificate_number='123456789014', capita=False, on_update=False, PITH_same_address=True,
+        )
+
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult1,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
+        )
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult2,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
+        )
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult3,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
         )
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
@@ -932,11 +986,17 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
         self.application.adults_in_home = True
         self.application.save()
 
-        models.AdultInHome.objects.create(
+        adult1 = models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
             birth_day=1, birth_month=5, birth_year=1984,
             dbs_certificate_number='123456789012', capita=True, PITH_same_address=True,
+        )
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult1,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
         )
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
