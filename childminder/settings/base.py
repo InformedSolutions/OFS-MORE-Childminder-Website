@@ -54,6 +54,9 @@ FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'tester@informed.com')
 AWS_SQS_ACCESS_KEY_ID = os.environ.get('AWS_SQS_ACCESS_KEY_ID')
 AWS_SQS_SECRET_ACCESS_KEY = os.environ.get('AWS_SQS_SECRET_ACCESS_KEY')
 
+# Fees
+CR_FEE = os.environ.get('CR_FEE')
+EY_FEE = os.environ.get('EY_FEE')
 
 TEST_NOTIFY_CONNECTION = True
 
