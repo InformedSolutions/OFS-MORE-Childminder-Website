@@ -146,14 +146,16 @@ def type_of_childcare_register(request):
         app_id = request.GET["id"]
         form = TypeOfChildcareRegisterForm()
         application = Application.get_id(app_id=app_id)
+
+        childcare_register_type, childcare_register_cost = get_childcare_register_type(app_id)
+
         variables = {
             'form': form,
             'application_id': app_id,
             'childcare_type_status': application.childcare_type_status,
             'login_details_status': application.login_details_status,
+            'fee': str(childcare_register_cost)
         }
-
-        childcare_register_type, childcare_register_cost = get_childcare_register_type(app_id)
 
         if childcare_register_type == 'EYR-CR-both':
             return render(request, 'childcare-register-EYR-CR-both.html', variables)
@@ -178,8 +180,8 @@ def type_of_childcare_register(request):
         childcare_register_type, childcare_register_cost = get_childcare_register_type(app_id)
         application = Application.get_id(app_id=app_id)
         childcare_record = ChildcareType.objects.get(application_id=app_id)
-        if childcare_register_type == 'EYR' or childcare_register_type =='EYR-CR-voluntary' or \
-                childcare_register_type =='CR-voluntary':
+        if childcare_register_type == 'EYR' or childcare_register_type == 'EYR-CR-voluntary' or \
+                childcare_register_type == 'CR-voluntary':
             childcare_record.childcare_places = None
             childcare_record.save()
 

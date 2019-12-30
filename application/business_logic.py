@@ -8,6 +8,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 import enum
 import re
 from datetime import datetime, timedelta
+from django.conf import settings
 
 import pytz
 from dateutil.relativedelta import relativedelta
@@ -658,7 +659,6 @@ def other_people_adult_details_logic(application_id_local, form, adult):
         adult_record.email_resent = 0
         adult_record.PITH_mobile_number = PITH_mobile_number
 
-
     # If the user previously entered information for this task
     else:
         adult_record = AdultInHome(title=title,  first_name=first_name, middle_names=middle_names, last_name=last_name,
@@ -1259,43 +1259,43 @@ def get_childcare_register_type(app_id):
     if (childcare_record.zero_to_five is True) \
             & (childcare_record.five_to_eight is True) \
             & (childcare_record.eight_plus is True):
-        cost = 35
+        cost = int(settings.EY_FEE)
         return 'EYR-CR-both', cost
 
     elif (childcare_record.zero_to_five is True) \
             & (childcare_record.five_to_eight is True) \
             & (childcare_record.eight_plus is False):
-        cost = 35
+        cost = int(settings.EY_FEE)
         return 'EYR-CR-compulsory', cost
 
     elif (childcare_record.zero_to_five is True) \
             & (childcare_record.five_to_eight is False) \
             & (childcare_record.eight_plus is True):
-        cost = 35
+        cost = int(settings.EY_FEE)
         return 'EYR-CR-voluntary', cost
 
     elif (childcare_record.zero_to_five is True) \
             & (childcare_record.five_to_eight is False) \
             & (childcare_record.eight_plus is False):
-        cost = 35
+        cost = int(settings.EY_FEE)
         return 'EYR', cost
 
     elif (childcare_record.zero_to_five is False) \
             & (childcare_record.five_to_eight is True) \
             & (childcare_record.eight_plus is False):
-        cost = 103
+        cost = int(settings.CR_FEE)
         return 'CR-compulsory', cost
 
     elif (childcare_record.zero_to_five is False) \
             & (childcare_record.five_to_eight is True) \
             & (childcare_record.eight_plus is True):
-        cost = 103
+        cost = int(settings.CR_FEE)
         return 'CR-both', cost
 
     elif (childcare_record.zero_to_five is False) \
             & (childcare_record.five_to_eight is False) \
             & (childcare_record.eight_plus is True):
-        cost = 103
+        cost = int(settings.CR_FEE)
         return 'CR-voluntary', cost
 
 
@@ -1403,7 +1403,9 @@ class UniqueDbsCheckResult:
     duplicates_household_member_dbs = False
     duplicate_entry_indexes = 0
 
+
 TITLE_OPTIONS = ['Mr', 'Mrs', 'Miss', 'Ms']
+
 
 def get_title_options():
     """
