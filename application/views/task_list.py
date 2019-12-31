@@ -103,7 +103,7 @@ def task_list(request):
         'id': application_id,
         'all_complete': False,
         'registers': registers,
-        'fee': fee,
+        'fee': '£' + fee,
         'can_cancel': can_cancel(application),
         'application_status': application.application_status,
         'tasks': [
