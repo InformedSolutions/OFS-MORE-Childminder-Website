@@ -107,7 +107,7 @@ def card_payment_post_handler(request):
 
     application = Application.objects.get(pk=app_id)
     childcare_type = ChildcareType.objects.get(application_id=app_id)
-    amount = 3500 if childcare_type.zero_to_five else 10300
+    amount = int(childcare_register_cost) * 100  # Payment amount needs to be in pence
 
     try:
         __assign_application_reference(application)

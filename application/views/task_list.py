@@ -14,6 +14,7 @@ from django.urls import reverse
 from django.views.decorators.cache import never_cache
 
 from ..models import (ApplicantPersonalDetails, Application, ChildcareType, ApplicantHomeAddress)
+from ..business_logic import get_childcare_register_type
 # noinspection PyTypeChecker
 from ..utils import can_cancel
 
@@ -75,32 +76,24 @@ def task_list(request):
         return HttpResponseRedirect(reverse("Personal-Details-Name-View") + '?id=' + application_id)
 
     zero_to_five_status = childcare_record.zero_to_five
-    five_to_eight_status = childcare_record.five_to_eight
-    eight_plus_status = childcare_record.eight_plus
 
-    # See childcare_type move to separate method/file
+    # Get the fee and the type for display on the page
+    childcare_register_type, fee = get_childcare_register_type(application.application_id)
 
-    if (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is True):
+    if childcare_register_type == 'EYR-CR-both':
         registers = 'Early Years and Childcare Register (both parts)'
-        fee = '£35'
-    elif (zero_to_five_status is True) & (five_to_eight_status is True) & (eight_plus_status is False):
+    elif childcare_register_type == 'EYR-CR-compulsory':
         registers = 'Early Years and Childcare Register (compulsory part)'
-        fee = '£35'
-    elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is True):
+    elif childcare_register_type == 'EYR-CR-voluntary':
         registers = 'Early Years and Childcare Register (voluntary part)'
-        fee = '£35'
-    elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is True):
-        registers = 'Childcare Register (both parts)'
-        fee = '£103'
-    elif (zero_to_five_status is True) & (five_to_eight_status is False) & (eight_plus_status is False):
+    elif childcare_register_type == 'EYR':
         registers = 'Early Years Register'
-        fee = '£35'
-    elif (zero_to_five_status is False) & (five_to_eight_status is True) & (eight_plus_status is False):
+    elif childcare_register_type == 'CR-compulsory':
         registers = 'Childcare Register (compulsory part)'
-        fee = '£103'
-    elif (zero_to_five_status is False) & (five_to_eight_status is False) & (eight_plus_status is True):
+    elif childcare_register_type == 'CR-both':
+        registers = 'Childcare Register (both parts)'
+    elif childcare_register_type == 'CR-voluntary':
         registers = 'Childcare Register (voluntary part)'
-        fee = '£103'
 
     """
     Variables which are passed to the template
