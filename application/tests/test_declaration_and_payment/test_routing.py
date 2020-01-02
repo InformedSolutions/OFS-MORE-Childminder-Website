@@ -93,11 +93,6 @@ class DeclarationSummaryPageFunctionalTests(utils.NoMiddlewareTestCase):
             moved_in_month=2,
             moved_in_year=1980)
 
-        # applicant = models.ApplicantPersonalDetails.objects.get(application_id=self.application)
-        # applicant.update(moved_in_day=2,
-        #                  moved_in_month=2,
-        #                  moved_in_year=2011)
-
         response = self.client.get(reverse('Declaration-Summary-View'), data={'id': self.application.pk})
 
         utils.assertNotSummaryField(response, 'Known to council social services in regards to their own children?',

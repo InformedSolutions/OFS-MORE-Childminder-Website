@@ -210,6 +210,9 @@ def declaration_summary(request, print_mode=False):
                 else:
                     adult_birth_month = str(adult.birth_month)
 
+                if adult_in_home_address.get_moved_in_date() is not None:
+                    adult_PITH_moved_in_list.append(adult_in_home_address.get_moved_in_date())
+
                 adult_title_list.append(adult.title)
                 adult_name_list.append(name)
                 adult_birth_day_list.append(adult_birth_day)
@@ -221,7 +224,6 @@ def declaration_summary(request, print_mode=False):
                 adult_email_list.append(adult.email)
                 adult_mobile_number_list.append(adult.PITH_mobile_number)
                 adult_same_address_list.append(adult_address_string)
-                adult_PITH_moved_in_list.append(adult_in_home_address.get_moved_in_date())
                 adult_lived_abroad_list.append(adult.lived_abroad)
                 adult_military_base_list.append(adult.military_base)
                 adult_enhanced_check_list.append(adult.enhanced_check)
