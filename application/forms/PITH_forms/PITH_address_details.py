@@ -72,7 +72,6 @@ class PITHManualAddressForm(ChildminderForms):
     moved_in_date = CustomSplitDateFieldDOB(
         label='Date they moved in',
         help_text='For example, 31 03 2016',
-        error_messages={'required': 'Please enter the full date, including the day, month and year'}
     )
 
     def __init__(self, *args, **kwargs):
@@ -188,7 +187,6 @@ class PITHAddressLookupForm(ChildminderForms):
     moved_in_date = CustomSplitDateFieldDOB(
         label='Date they moved in',
         help_text='For example, 31 03 2016',
-        error_messages={'required': 'Please enter the full date, including the day, month and year'}
     )
 
     def __init__(self, *args, **kwargs):

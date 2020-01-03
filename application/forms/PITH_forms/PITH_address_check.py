@@ -93,7 +93,6 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
         return CustomSplitDateFieldDOB(
             label='Date they moved in',
             help_text='For example, 31 03 2016',
-            error_messages={'required': 'Please enter the full date, including the day, month and year'},
             required=False
         )
 
