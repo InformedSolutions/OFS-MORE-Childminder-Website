@@ -102,21 +102,21 @@ class PITHAddressDetailsCheckForm(PITHMultiRadioForm):
         cleaned_PITH_same_address_field = self.cleaned_data[self.PITH_same_address_field_name] == 'True' \
             if self.cleaned_data.get(self.PITH_same_address_field_name) \
             else None
-        cleaned_PITH_moved_in_date_field = self.cleaned_data[self.PITH_moved_in_date_field_name] == 'True' \
+        cleaned_PITH_moved_in_date_field = self.cleaned_data[self.PITH_moved_in_date_field_name] \
             if self.cleaned_data.get(self.PITH_moved_in_date_field_name) \
             else None
 
+        if cleaned_PITH_same_address_field == True:
+            if cleaned_PITH_moved_in_date_field is None:
+                if len(self.errors) == 0:
+                    self.add_error(self.PITH_moved_in_date_field,
+                           'Please enter the full date, including the day, month and year')
         if cleaned_PITH_same_address_field is None:
             self.add_error(self.PITH_same_address_field,
                            'Please say if they live at the same address as you')
-        if cleaned_PITH_same_address_field:
-            if cleaned_PITH_moved_in_date_field is None:
-                self.add_error(self.PITH_moved_in_date_field,
-                               'Please enter the full date, including the day, month and year')
-            else:
-                if self.cleaned_data.get(self.PITH_moved_in_date_field_name) < AdultInHome.objects.get(adult_id=self.adult.adult_id).date_of_birth.date():
-                    self.add_error(self.PITH_moved_in_date_field,
-                                'Please enter a move in date which is after their date of birth')
+        if cleaned_PITH_moved_in_date_field is not None and cleaned_PITH_moved_in_date_field < AdultInHome.objects.get(adult_id=self.adult.adult_id).date_of_birth.date():
+            self.add_error(self.PITH_moved_in_date_field,
+                        'Please enter a move in date which is after their date of birth')
         return self.cleaned_data
 
     def get_reveal_conditionally(self):
