@@ -210,7 +210,7 @@ def declaration_summary(request, print_mode=False):
                 else:
                     adult_birth_month = str(adult.birth_month)
 
-                if adult_in_home_address.get_moved_in_date() is not None:
+                if adult_in_home_address.moved_in_year is not None:
                     adult_PITH_moved_in_list.append(adult_in_home_address.get_moved_in_date())
 
                 adult_title_list.append(adult.title)
@@ -396,7 +396,7 @@ def declaration_summary(request, print_mode=False):
             'home_address_town': applicant_home_address_record.town,
             'home_address_county': applicant_home_address_record.county,
             'home_address_postcode': applicant_home_address_record.postcode,
-            'moved_in_date': applicant_record.get_moved_in_date,
+            'moved_in_date': applicant_record.get_moved_in_date if applicant_record.moved_in_year is not None else None,
             'childcare_street_line1': childcare_street_line1,
             'childcare_street_line2': childcare_street_line2,
             'childcare_town': childcare_town,
