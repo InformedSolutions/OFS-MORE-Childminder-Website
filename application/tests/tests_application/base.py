@@ -790,7 +790,7 @@ class ApplicationTestBase(object):
                     'card_type': 'visa',
                     'card_number': '5454545454545454',
                     'expiry_date_0': 1,
-                    'expiry_date_1': 19,
+                    'expiry_date_1': 21,
                     'cardholders_name': 'Mr Example Cardholder',
                     'card_security_code': 123,
                 }

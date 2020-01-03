@@ -70,7 +70,7 @@ class PITHManualAddressForm(ChildminderForms):
                                error_messages={'required': 'Please enter their postcode'})
 
     moved_in_date = CustomSplitDateFieldDOB(
-        label='Date you moved in',
+        label='Date they moved in',
         help_text='For example, 31 03 2016',
         error_messages={'required': 'Please enter the full date, including the day, month and year'}
     )
@@ -186,7 +186,7 @@ class PITHAddressLookupForm(ChildminderForms):
                                 error_messages={'required': 'Please select their address'})
 
     moved_in_date = CustomSplitDateFieldDOB(
-        label='Date you moved in',
+        label='Date they moved in',
         help_text='For example, 31 03 2016',
         error_messages={'required': 'Please enter the full date, including the day, month and year'}
     )

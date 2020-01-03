@@ -10,7 +10,9 @@ from django.shortcuts import render, reverse
 
 from ..table_util import Table, create_tables, submit_link_setter
 from ..summary_page_data import personal_details_name_dict, personal_details_link_dict_same_childcare_address, \
-    personal_details_link_dict_different_childcare_address, personal_details_change_link_description_dict
+    personal_details_link_dict_different_childcare_address, personal_details_change_link_description_dict, \
+    personal_details_name_dict_with_moved_in, personal_details_link_dict_same_childcare_address_with_moved_in, \
+    personal_details_link_dict_different_childcare_address_with_moved_in, personal_details_change_link_description_dict_with_moved_in
 from .. import address_helper, status
 from ..business_logic import (multiple_childcare_address_logic,
                               personal_dob_logic,
@@ -1085,6 +1087,7 @@ def personal_details_summary(request):
     :return: an HttpResponse object with the rendered Your personal details: summary template
     """
 
+    global moved_in_date
     if request.method == 'GET':
         app_id = request.GET["id"]
         application = Application.objects.get(application_id=app_id)
@@ -1107,7 +1110,8 @@ def personal_details_summary(request):
         town = applicant_home_address_record.town
         county = applicant_home_address_record.county
         postcode = applicant_home_address_record.postcode
-        moved_in_date = personal_details_record.get_moved_in_date()
+        if personal_details_record.moved_in_year is not None:
+            moved_in_date = personal_details_record.get_moved_in_date()
         location_of_childcare = applicant_home_address_record.childcare_address
 
         childcare_street_line1 = applicant_childcare_address_record.street_line1
@@ -1146,16 +1150,27 @@ def personal_details_summary(request):
         if location_of_childcare:
             address_table_dict = collections.OrderedDict([
                 ('home_address', home_address),
-                ('moved_in_date', moved_in_date),
                 ('childcare_address', childcare_address)
             ])
+            if personal_details_record.moved_in_year is not None:
+                address_table_dict = collections.OrderedDict([
+                    ('home_address', home_address),
+                    ('moved_in_date', moved_in_date),
+                    ('childcare_address', childcare_address)
+                ])
         else:
             address_table_dict = collections.OrderedDict([
+                ('home_address', home_address),
+                ('childcare_address', childcare_address),
+                ('working_in_other_childminder_home', working_in_other_childminder_home)
+            ])
+            if personal_details_record.moved_in_year is not None:
+                address_table_dict = collections.OrderedDict([
                 ('home_address', home_address),
                 ('moved_in_date', moved_in_date),
                 ('childcare_address', childcare_address),
                 ('working_in_other_childminder_home', working_in_other_childminder_home)
-            ])
+                    ])
 
         if own_children is 'Yes':
             own_children_table_dict = collections.OrderedDict([
@@ -1200,13 +1215,23 @@ def personal_details_summary(request):
         # Set change link for childcare address according to whether the childcare address is the same as the home
         # address
         if location_of_childcare:
-            table_list = create_tables(tables, personal_details_name_dict,
+            if personal_details_record.moved_in_year is not None:
+                table_list = create_tables(tables, personal_details_name_dict_with_moved_in,
+                                           personal_details_link_dict_same_childcare_address_with_moved_in,
+                                           personal_details_change_link_description_dict_with_moved_in)
+            else:
+                table_list = create_tables(tables, personal_details_name_dict,
                                        personal_details_link_dict_same_childcare_address,
                                        personal_details_change_link_description_dict)
         else:
-            table_list = create_tables(tables, personal_details_name_dict,
-                                       personal_details_link_dict_different_childcare_address,
-                                       personal_details_change_link_description_dict)
+            if personal_details_record.moved_in_year is not None:
+                table_list = create_tables(tables, personal_details_name_dict_with_moved_in,
+                                           personal_details_link_dict_different_childcare_address_with_moved_in,
+                                           personal_details_change_link_description_dict_with_moved_in)
+            else:
+                table_list = create_tables(tables, personal_details_name_dict,
+                                           personal_details_link_dict_different_childcare_address,
+                                           personal_details_change_link_description_dict)
 
         form = PersonalDetailsSummaryForm()
         application = Application.get_id(app_id=app_id)

@@ -93,11 +93,6 @@ class DeclarationSummaryPageFunctionalTests(utils.NoMiddlewareTestCase):
             moved_in_month=2,
             moved_in_year=1980)
 
-        # applicant = models.ApplicantPersonalDetails.objects.get(application_id=self.application)
-        # applicant.update(moved_in_day=2,
-        #                  moved_in_month=2,
-        #                  moved_in_year=2011)
-
         response = self.client.get(reverse('Declaration-Summary-View'), data={'id': self.application.pk})
 
         utils.assertNotSummaryField(response, 'Known to council social services in regards to their own children?',
@@ -137,7 +132,7 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
                 'card_type': 'visa',
                 'card_number': '5454545454545454',
                 'expiry_date_0': 1,
-                'expiry_date_1': 19,
+                'expiry_date_1': 21,
                 'cardholders_name': 'Mr Example Cardholder',
                 'card_security_code': 123,
             }
@@ -189,7 +184,7 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
                 'card_type': 'visa',
                 'card_number': '5454545454545454',
                 'expiry_date_0': 1,
-                'expiry_date_1': 19,
+                'expiry_date_1': 21,
                 'cardholders_name': 'Mr Example Cardholder',
                 'card_security_code': 123,
             }
@@ -231,7 +226,7 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
                 'card_type': 'visa',
                 'card_number': '5454545454545454',
                 'expiry_date_0': 1,
-                'expiry_date_1': 19,
+                'expiry_date_1': 21,
                 'cardholders_name': 'Mr Example Cardholder',
                 'card_security_code': 123,
             }
@@ -279,7 +274,7 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
                 'card_type': 'visa',
                 'card_number': '5454545454545454',
                 'expiry_date_0': 1,
-                'expiry_date_1': 19,
+                'expiry_date_1': 21,
                 'cardholders_name': 'Mr Example Cardholder',
                 'card_security_code': 123,
             }
@@ -299,7 +294,7 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
                 'card_type': 'visa',
                 'card_number': '5454545454545454',
                 'expiry_date_0': 1,
-                'expiry_date_1': 19,
+                'expiry_date_1': 21,
                 'cardholders_name': 'Mr Example Cardholder',
                 'card_security_code': 123,
             }
@@ -351,7 +346,7 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
                 'card_type': 'visa',
                 'card_number': '5454545454545454',
                 'expiry_date_0': 1,
-                'expiry_date_1': 19,
+                'expiry_date_1': 21,
                 'cardholders_name': 'Mr Example Cardholder',
                 'card_security_code': 123,
             }
