@@ -1152,7 +1152,7 @@ def personal_details_summary(request):
                 ('home_address', home_address),
                 ('childcare_address', childcare_address)
             ])
-            if moved_in_date is not None:
+            if personal_details_record.moved_in_year is not None:
                 address_table_dict = collections.OrderedDict([
                     ('home_address', home_address),
                     ('moved_in_date', moved_in_date),
@@ -1164,7 +1164,7 @@ def personal_details_summary(request):
                 ('childcare_address', childcare_address),
                 ('working_in_other_childminder_home', working_in_other_childminder_home)
             ])
-            if moved_in_date is not None:
+            if personal_details_record.moved_in_year is not None:
                 address_table_dict = collections.OrderedDict([
                 ('home_address', home_address),
                 ('moved_in_date', moved_in_date),
@@ -1215,7 +1215,7 @@ def personal_details_summary(request):
         # Set change link for childcare address according to whether the childcare address is the same as the home
         # address
         if location_of_childcare:
-            if moved_in_date is not None:
+            if personal_details_record.moved_in_year is not None:
                 table_list = create_tables(tables, personal_details_name_dict_with_moved_in,
                                            personal_details_link_dict_same_childcare_address_with_moved_in,
                                            personal_details_change_link_description_dict_with_moved_in)
@@ -1224,7 +1224,7 @@ def personal_details_summary(request):
                                        personal_details_link_dict_same_childcare_address,
                                        personal_details_change_link_description_dict)
         else:
-            if moved_in_date is not None:
+            if personal_details_record.moved_in_year is not None:
                 table_list = create_tables(tables, personal_details_name_dict_with_moved_in,
                                            personal_details_link_dict_different_childcare_address_with_moved_in,
                                            personal_details_change_link_description_dict_with_moved_in)
