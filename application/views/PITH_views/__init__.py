@@ -1,7 +1,6 @@
 from .PITH_abroad_criminal import *
 from .PITH_guidance import *
 from .PITH_ministry import *
-from .PITH_adults_details import *
 from .PITH_adult_check import *
 from .PITH_address_details import *
 from .PITH_address_manual import *

@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 from unittest.mock import patch, Mock
 
 from django.urls import reverse
-from django.test import tag
+from django.test import tag, Client
+
 
 from application import dbs
 from application import models
@@ -43,10 +44,29 @@ class PITHGuidancePageFunctionalTests(PITHFunctionalTestCase):
 class PITHAdultDetailsFunctionalTests(PITHFunctionalTestCase):
 
     def test_yes_to_adults_in_home_redirects_to_details_page(self):
-        self.skipTest('testNotImplemented')
+
+        form_data = {
+            'id': str(self.app_id),
+            'adults_in_home': 'True'
+        }
+
+        response = self.client.post(reverse('PITH-Adult-Check-View')
+                                    + '?id=' + str(self.app_id),
+                                    form_data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('PITH-Adult-Details-View') + '?id=' + self.app_id +'&adults=0&remove=0')
 
     def test_no_to_adults_in_home_redirects_to_children_in_home_page(self):
-        self.skipTest('testNotImplemented')
+
+        form_data = {
+            'id': str(self.app_id),
+            'adults_in_home': 'False'
+        }
+        response = self.client.post(reverse('PITH-Adult-Check-View') + '?id=' + str(self.app_id), form_data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('PITH-Children-Check-View') + '?id=' + self.app_id)
 
     def test_can_render_adult_details_page(self):
         response = self.client.get(reverse('PITH-Adult-Details-View'),

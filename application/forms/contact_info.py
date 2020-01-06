@@ -9,6 +9,9 @@ from application.models import (Application,
                                 UserDetails,
                                 Reference)
 from ..business_logic import childminder_references_and_user_email_duplication_check
+import logging
+
+log = logging.getLogger('')
 
 class ContactEmailForm(ChildminderForms):
     """
@@ -102,7 +105,7 @@ class ContactMobilePhoneForm(ChildminderForms):
         no_space_mobile_number = mobile_number.replace(' ', '')
         if re.match(settings.REGEX['MOBILE'], no_space_mobile_number) is None:
             raise forms.ValidationError('Please enter a valid mobile number')
-        return mobile_number
+        return no_space_mobile_number
 
 
 class ContactAddPhoneForm(ChildminderForms):
