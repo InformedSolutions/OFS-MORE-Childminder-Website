@@ -9,9 +9,6 @@ from application.models import (Application,
                                 UserDetails,
                                 Reference)
 from ..business_logic import childminder_references_and_user_email_duplication_check
-import logging
-
-log = logging.getLogger('')
 
 class ContactEmailForm(ChildminderForms):
     """
