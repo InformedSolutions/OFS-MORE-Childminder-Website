@@ -117,7 +117,8 @@ def card_payment_post_handler(request):
 
         # In the event a URN could not be fetched yield error page to user as the payment reference
         # cannot be generated without said URN
-        return __yield_general_processing_error_to_user(request, form, application.application_id)
+        return __yield_general_processing_error_to_user(request, form, application.application_id,
+                                                        childcare_register_cost)
 
     # Boolean flag for managing logic gates
     prior_payment_record_exists = Payment.objects.filter(application_id=application).exists()
@@ -161,27 +162,31 @@ def card_payment_post_handler(request):
                 # If payment has been marked as a REFUSED by Worldpay then payment has
                 # been attempted but was not successful in which case a new order should be attempted.
                 __rollback_payment_submission_status(application)
-                return __yield_general_processing_error_to_user(request, form, application.application_id)
+                return __yield_general_processing_error_to_user(request, form, application.application_id,
+                                                                childcare_register_cost)
 
             if parsed_payment_response.get('lastEvent') == "ERROR":
-                return __yield_general_processing_error_to_user(request, form, application.application_id)
+                return __yield_general_processing_error_to_user(request, form, application.application_id,
+                                                                childcare_register_cost)
 
         else:
             # If non-201 return status, this indicates a Payment gateway or Worldpay failure
-            return __yield_general_processing_error_to_user(request, form, app_id)
+            return __yield_general_processing_error_to_user(request, form, app_id, childcare_register_cost)
 
     # If above logic gates have not been triggered, this indicates a form re-submission whilst processing
     # was taking place
-    return resubmission_handler(request, payment_reference, form, application, amount)
+    return resubmission_handler(request, payment_reference, form, application, amount, childcare_register_cost)
 
 
-def resubmission_handler(request, payment_reference, form, application, amount):
+def resubmission_handler(request, payment_reference, form, application, amount, childcare_register_cost):
     """
     Handling logic for managing page re-submissions to avoid duplicate payments being created
     :param request: Inbound HTTP post request
     :param payment_reference: the payment reference number allocated to an application payment attempt
     :param form: the Django form for the card details page
     :param application: the user's childminder application
+    :param amount: the payment amount in pence
+    :param childcare_register_cost: the payment amount in GBP
     :return: HTTP response redirect based on payment status check outcome
     """
 
@@ -193,7 +198,8 @@ def resubmission_handler(request, payment_reference, form, application, amount):
 
     # If no record of the payment could be found, yield error
     if payment_status_response_raw.status_code == 404:
-        return __yield_general_processing_error_to_user(request, form, application.application_id)
+        return __yield_general_processing_error_to_user(request, form, application.application_id,
+                                                        childcare_register_cost)
 
     # Deserialize Payment Gateway API response
     parsed_payment_response = json.loads(payment_status_response_raw.text)
@@ -206,9 +212,11 @@ def resubmission_handler(request, payment_reference, form, application, amount):
         # If payment has been marked as a REFUSED by Worldpay then payment has
         # been attempted but was not successful in which case a new order should be attempted.
         __rollback_payment_submission_status(application)
-        return __yield_general_processing_error_to_user(request, form, application.application_id)
+        return __yield_general_processing_error_to_user(request, form, application.application_id,
+                                                        childcare_register_cost)
     if parsed_payment_response.get('lastEvent') == "ERROR":
-        return __yield_general_processing_error_to_user(request, form, application.application_id)
+        return __yield_general_processing_error_to_user(request, form, application.application_id,
+                                                        childcare_register_cost)
     else:
         if 'processing_attempts' in request.META:
             processing_attempts = int(request.META.get('processing_attempts'))
@@ -223,6 +231,7 @@ def resubmission_handler(request, payment_reference, form, application, amount):
                 variables = {
                     'form': form,
                     'application_id': application.application_id,
+                    'cost': childcare_register_cost
                 }
 
                 return HttpResponseRedirect(
@@ -234,7 +243,7 @@ def resubmission_handler(request, payment_reference, form, application, amount):
             request.META['processing_attempts'] = 1
 
         # Retry processing of payment
-        return resubmission_handler(request, payment_reference, form, application, amount)
+        return resubmission_handler(request, payment_reference, form, application, amount, childcare_register_cost)
 
 
 def __assign_application_reference(application):
@@ -329,12 +338,13 @@ def __mark_payment_record_as_authorised(application):
     payment_record.save()
 
 
-def __yield_general_processing_error_to_user(request, form, app_id):
+def __yield_general_processing_error_to_user(request, form, app_id, childcare_register_cost):
     """
     Private helper function to show a non-field relevant error on the payment details page
     :param request: inbound HTTP request
     :param form: the Django/GOV.UK form to which the error will be appended
     :param app_id: the user's application id
+    :param childcare_register_cost: the payment amount in GBP
     :return: HTML template inclusive of a processing error
     """
 
@@ -347,6 +357,7 @@ def __yield_general_processing_error_to_user(request, form, app_id):
     variables = {
         'form': form,
         'application_id': app_id,
+        'cost': childcare_register_cost
     }
 
     return render(request, 'payment-details.html', variables)
