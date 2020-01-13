@@ -192,6 +192,12 @@ class PITHCheckYourAnswersView(PITHTemplateView):
             else:
                 adult_address_string = 'Same as home address'
 
+            if adult.PITH_same_address is not None:
+                moved_in_date = AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                 adult_id=adult.pk).get_moved_in_date()
+            else:
+                moved_in_date = ''
+
             logger.debug('Address to be entered is: {}.'.format(adult_address_string))
             base_adult_fields = [
                 ('title', adult.title),
@@ -201,8 +207,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
                 ('email', adult.email),
                 ('PITH_mobile_number', adult.PITH_mobile_number),
                 ('PITH_same_address', adult_address_string),
-                ('PITH_moved_in', AdultInHomeAddress.objects.get(application_id=app_id,
-                                                                 adult_id=adult.pk).get_moved_in_date()),
+                ('PITH_moved_in', moved_in_date),
                 ('lived_abroad', adult.lived_abroad),
             ]
 
@@ -220,11 +225,11 @@ class PITHCheckYourAnswersView(PITHTemplateView):
             if adult.on_update is not None:
                 base_adult_fields.append(('on_update', adult.on_update))
 
-            if AdultInHomeAddress.objects.get(application_id=app_id,
+            if adult.PITH_same_address is not None and AdultInHomeAddress.objects.get(application_id=app_id,
                                               adult_id=adult.pk).get_moved_in_date() is not None:
                 base_adult_fields.append(('PITH_moved_in', AdultInHomeAddress.objects.get(application_id=app_id,
                                                                                           adult_id=adult.pk).get_moved_in_date()))
-                
+
             if application.people_in_home_status == 'IN_PROGRESS' and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):
                 adult_fields = collections.OrderedDict(base_adult_fields)
