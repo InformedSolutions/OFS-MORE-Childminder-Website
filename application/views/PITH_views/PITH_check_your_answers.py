@@ -192,7 +192,8 @@ class PITHCheckYourAnswersView(PITHTemplateView):
             else:
                 adult_address_string = 'Same as home address'
 
-            if adult.PITH_same_address is not None:
+            if AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                 adult_id=adult.pk).exists():
                 moved_in_date = AdultInHomeAddress.objects.get(application_id=app_id,
                                                                  adult_id=adult.pk).get_moved_in_date()
             else:
