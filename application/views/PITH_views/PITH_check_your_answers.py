@@ -220,11 +220,11 @@ class PITHCheckYourAnswersView(PITHTemplateView):
             if adult.on_update is not None:
                 base_adult_fields.append(('on_update', adult.on_update))
 
-            if AdultInHomeAddress.objects.get(application_id=app_id,
+            if adult.PITH_same_addres is not None and AdultInHomeAddress.objects.get(application_id=app_id,
                                               adult_id=adult.pk).get_moved_in_date() is not None:
                 base_adult_fields.append(('PITH_moved_in', AdultInHomeAddress.objects.get(application_id=app_id,
                                                                                           adult_id=adult.pk).get_moved_in_date()))
-                
+
             if application.people_in_home_status == 'IN_PROGRESS' and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):
                 adult_fields = collections.OrderedDict(base_adult_fields)
