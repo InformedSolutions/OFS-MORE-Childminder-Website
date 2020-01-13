@@ -192,7 +192,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
             else:
                 adult_address_string = 'Same as home address'
 
-            if AdultInHomeAddress.objects.get(application_id=app_id,
+            if AdultInHomeAddress.objects.filter(application_id=app_id,
                                                                  adult_id=adult.pk).exists():
                 moved_in_date = AdultInHomeAddress.objects.get(application_id=app_id,
                                                                  adult_id=adult.pk).get_moved_in_date()
