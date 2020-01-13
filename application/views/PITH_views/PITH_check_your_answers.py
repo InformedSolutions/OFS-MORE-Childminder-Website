@@ -182,7 +182,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
             name = ' '.join([adult.first_name, (adult.middle_names or ''), adult.last_name])
             birth_date = ' '.join([str(adult.birth_day), calendar.month_name[adult.birth_month], str(adult.birth_year)])
 
-            if not adult.PITH_same_address:
+            if adult.PITH_same_address is not None and not adult.PITH_same_address:
                 adult_in_home_address = AdultInHomeAddress.objects.get(application_id=app_id, adult_id=adult.pk)
                 adult_address_string = ' '.join([adult_in_home_address.street_line1,
                                                  adult_in_home_address.street_line2 or '',
@@ -221,10 +221,10 @@ class PITHCheckYourAnswersView(PITHTemplateView):
                 base_adult_fields.append(('on_update', adult.on_update))
 
             if AdultInHomeAddress.objects.get(application_id=app_id,
-                                           adult_id=adult.pk).get_moved_in_date() is not None:
+                                              adult_id=adult.pk).get_moved_in_date() is not None:
                 base_adult_fields.append(('PITH_moved_in', AdultInHomeAddress.objects.get(application_id=app_id,
-                                                                 adult_id=adult.pk).get_moved_in_date()))
-
+                                                                                          adult_id=adult.pk).get_moved_in_date()))
+                
             if application.people_in_home_status == 'IN_PROGRESS' and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):
                 adult_fields = collections.OrderedDict(base_adult_fields)
