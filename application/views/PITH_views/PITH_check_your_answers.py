@@ -206,7 +206,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
                 ('email', adult.email),
                 ('PITH_mobile_number', adult.PITH_mobile_number),
                 ('PITH_same_address', adult_address_string),
-                ('PITH_moved_in', moved_in_date,
+                ('PITH_moved_in', moved_in_date),
                 ('lived_abroad', adult.lived_abroad),
             ]
 
