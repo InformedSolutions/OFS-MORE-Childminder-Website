@@ -192,6 +192,11 @@ class PITHCheckYourAnswersView(PITHTemplateView):
             else:
                 adult_address_string = 'Same as home address'
 
+            if adult.PITH_same_address is not None:
+                moved_in_date = AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                 adult_id=adult.pk).get_moved_in_date()),
+            else:
+                moved_in_date = ''
             logger.debug('Address to be entered is: {}.'.format(adult_address_string))
             base_adult_fields = [
                 ('title', adult.title),
@@ -201,8 +206,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
                 ('email', adult.email),
                 ('PITH_mobile_number', adult.PITH_mobile_number),
                 ('PITH_same_address', adult_address_string),
-                ('PITH_moved_in', AdultInHomeAddress.objects.get(application_id=app_id,
-                                                                 adult_id=adult.pk).get_moved_in_date()),
+                ('PITH_moved_in', moved_in_date,
                 ('lived_abroad', adult.lived_abroad),
             ]
 
