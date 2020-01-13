@@ -181,19 +181,26 @@ def declaration_summary(request, print_mode=False):
         if adults_list_exists:
             adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
             for adult in adults_list:
-                adult_in_home_address = AdultInHomeAddress.objects.get(application_id=application_id_local,
+                if adult.PITH_same_address is not None:
+                    adult_in_home_address = AdultInHomeAddress.objects.get(application_id=application_id_local,
                                                                        adult_id=adult.pk)
-                # For each adult, append the correct attribute (e.g. name, relationship) to the relevant list
-                # Concatenate the adult's name for display, displaying any middle names if present
+                    # For each adult, append the correct attribute (e.g. name, relationship) to the relevant list
+                    # Concatenate the adult's name for display, displaying any middle names if present
 
-                if not adult.PITH_same_address:
-                    adult_address_string = ' '.join([adult_in_home_address.street_line1,
+                    if not adult.PITH_same_address:
+                        adult_address_string = ' '.join([adult_in_home_address.street_line1,
                                                      adult_in_home_address.street_line2 or '',
                                                      adult_in_home_address.town, adult_in_home_address.county or '',
                                                      adult_in_home_address.postcode])
 
+                    else:
+                        adult_address_string = 'Same as home address'
+
+                    if adult_in_home_address.moved_in_year is not None:
+                        adult_PITH_moved_in_list.append(adult_in_home_address.get_moved_in_date())
+                        
                 else:
-                    adult_address_string = 'Same as home address'
+                    adult_address_string = ''
 
                 if adult.middle_names != '':
                     name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
@@ -209,9 +216,6 @@ def declaration_summary(request, print_mode=False):
                     adult_birth_month = '0' + str(adult.birth_month)
                 else:
                     adult_birth_month = str(adult.birth_month)
-
-                if adult_in_home_address.moved_in_year is not None:
-                    adult_PITH_moved_in_list.append(adult_in_home_address.get_moved_in_date())
 
                 adult_title_list.append(adult.title)
                 adult_name_list.append(name)
