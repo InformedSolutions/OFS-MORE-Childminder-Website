@@ -181,7 +181,8 @@ def declaration_summary(request, print_mode=False):
         if adults_list_exists:
             adults_list = AdultInHome.objects.filter(application_id=application_id_local).order_by('adult')
             for adult in adults_list:
-                if adult.PITH_same_address is not None:
+                if AdultInHomeAddress.objects.filter(application_id=application_id_local,
+                                                                       adult_id=adult.pk).exists():
                     adult_in_home_address = AdultInHomeAddress.objects.get(application_id=application_id_local,
                                                                        adult_id=adult.pk)
                     # For each adult, append the correct attribute (e.g. name, relationship) to the relevant list
@@ -201,6 +202,7 @@ def declaration_summary(request, print_mode=False):
                         
                 else:
                     adult_address_string = ''
+                    adult_PITH_moved_in_list.append('')
 
                 if adult.middle_names != '':
                     name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
