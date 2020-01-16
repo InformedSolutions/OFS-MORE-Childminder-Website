@@ -202,6 +202,7 @@ def declaration_summary(request, print_mode=False):
                         
                 else:
                     adult_address_string = ''
+                    adult_PITH_moved_in_list.append('')
 
                 if adult.middle_names != '':
                     name = adult.first_name + ' ' + adult.middle_names + ' ' + adult.last_name
