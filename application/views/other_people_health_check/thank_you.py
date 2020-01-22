@@ -11,6 +11,7 @@ from ..dbs import NO_ADDITIONAL_CERTIFICATE_INFORMATION
 
 logger = logging.getLogger()
 
+
 def get_name_formatted_string(adult_list):
     if len(adult_list) == 1:
         name_string = adult_list[0].get_full_name
@@ -26,7 +27,6 @@ def get_name_formatted_string(adult_list):
 class ThankYou(BaseTemplateView):
 
     success_url_name = 'Health-Check-Thank-You'
-
 
     def get(self, request, *args, **kwargs):
         adult_id = self.request.GET.get('person_id')
@@ -118,7 +118,7 @@ class ThankYou(BaseTemplateView):
         send_email(email, survey_personalisation, survey_template_id)
 
     @staticmethod
-    def get_templates(capita, certificate_information, lived_abroad, within_three_months, on_update):
+    def get_templates(capita, certificate_information, lived_abroad, on_update):
         """
         method to get the email template id and template name
         :param capita: the adults capita field
@@ -144,35 +144,26 @@ class ThankYou(BaseTemplateView):
         NEITHER_TEMPLATES = None, NEITHER_TEMPLATE_NAME
 
         if capita:
-            if within_three_months:
-                if certificate_information not in NO_ADDITIONAL_CERTIFICATE_INFORMATION:
-                    if lived_abroad:
-                        logger.debug(
-                            'Attempting send of email "Household member completed - Confirmation - DBS & lived abroad"')
-                        return DBS_LIVED_ABROAD_TEMPLATES
-                    else:
-                        logger.debug('Attempting send of email "Household member completed - Confirmation - DBS"')
-                        return DBS_ONLY_TEMPLATES
+            if certificate_information not in NO_ADDITIONAL_CERTIFICATE_INFORMATION:
+                if lived_abroad:
+                    logger.debug(
+                        'Attempting send of email "Household member completed - Confirmation - DBS & lived abroad"')
+                    return DBS_LIVED_ABROAD_TEMPLATES
                 else:
-                    if lived_abroad:
-                        logger.debug(
-                            'Attempting send of email "Household member completed - Confirmation - lived abroad"')
-                        return LIVED_ABROAD_ONLY_TEMPLATES
-                    else:
-                        return NEITHER_TEMPLATES
+                    logger.debug('Attempting send of email "Household member completed - Confirmation - DBS"')
+                    return DBS_ONLY_TEMPLATES
+            elif certificate_information in NO_ADDITIONAL_CERTIFICATE_INFORMATION:
+                if lived_abroad:
+                    logger.debug(
+                        'Attempting send of email "Household member completed - Confirmation - lived abroad"')
+                    return LIVED_ABROAD_ONLY_TEMPLATES
+                else:
+                    return NEITHER_TEMPLATES
+
             else:
-                if on_update:
-                    if lived_abroad:
-                        logger.debug(
-                            'Attempting send of email "Household member completed - Confirmation - DBS & lived abroad"')
-                        return DBS_LIVED_ABROAD_TEMPLATES
-                    else:
-                        logger.debug('Attempting send of email "Household member completed - Confirmation - DBS"')
-                        return DBS_ONLY_TEMPLATES
-                else:
-                    logger.debug("""The following combination is not covered in if block: 
+                logger.debug("""The following combination is not covered in if block: 
                                     on_update {0} """.format(on_update))
-                    raise ValueError("""
+                raise ValueError("""
                                     The following combination is not covered in if block: 
                                     on_update {0} """.format(on_update))
         else:
@@ -210,11 +201,10 @@ class ThankYou(BaseTemplateView):
          # get adults crc details
          capita = adult_record.capita
          lived_abroad = adult_record.lived_abroad
-         within_three_months = adult_record.within_three_months
          certificate_information = adult_record.certificate_information
          on_update = adult_record.on_update
          # get email template id and template name
-         templates = self.get_templates(capita, certificate_information, lived_abroad, within_three_months, on_update)
+         templates = self.get_templates(capita, certificate_information, lived_abroad, on_update)
          adult_template_id = templates[0]
          if adult_template_id is not None:
              r = send_email(adult_record.email, adult_personalisation, adult_template_id)

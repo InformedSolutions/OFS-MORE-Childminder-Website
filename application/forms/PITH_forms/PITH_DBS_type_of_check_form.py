@@ -6,7 +6,7 @@ from govuk_forms.forms import GOVUKForm
 from govuk_forms import widgets as govuk_widgets
 
 from application.forms.PITH_forms.PITH_base_forms.PITH_childminder_form_retrofit import PITHChildminderFormAdapter
-from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
+from application.widgets import ConditionalPostInlineRadioSelect
 
 
 class PITHDBSTypeOfCheckForm(PITHChildminderFormAdapter):
@@ -43,7 +43,8 @@ class PITHDBSTypeOfCheckForm(PITHChildminderFormAdapter):
         # This is to prevent Python3.5 errors when not preserving order in which items are added to a dictionary.
         #
         # Thus we use the code in that __init__() and super back to the __init__() of forms.Form, using
-        # super(GOVUKForm, self).__init__(*args, **kwargs), not super(PITHDBSTypeOfCheckForm, self).__init__(*args, **kwargs)
+        # super(GOVUKForm, self).__init__(*args, **kwargs),
+        # not super(PITHDBSTypeOfCheckForm, self).__init__(*args, **kwargs)
 
         kwargs.setdefault('label_suffix', '')
         super(GOVUKForm, self).__init__(*args, **kwargs)
@@ -85,7 +86,7 @@ class PITHDBSTypeOfCheckForm(PITHChildminderFormAdapter):
 
     def get_on_update_field_data(self):
         return forms.ChoiceField(
-            label='Are they on the DBS update service?',
+            label='Are they on the DBS Update Service?',
             choices=self.get_options(),
             widget=ConditionalPostInlineRadioSelect,
             required=False)
@@ -108,7 +109,7 @@ class PITHDBSTypeOfCheckForm(PITHChildminderFormAdapter):
 
         if (enhanced_yes or not self.ask_if_enhanced_check) and cleaned_on_update_field is None:
             self.add_error(self.on_update_field,
-                           'Please say if they are on the DBS update service')
+                           'Please say if they are on the DBS Update Service')
 
         return self.cleaned_data
 

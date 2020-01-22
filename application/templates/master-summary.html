@@ -211,6 +211,69 @@
             {% endif %}
         </td>
     </tr>
+    {% if childcare_places != None %}
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            How many children will you care for aged between 5 and 7 years old?
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{childcare_places}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if type_of_childcare_change %}
+            <a href="{% url 'Type-Of-Childcare-Number-Of-Places-View' %}?id={{application_id}}#id_childcare_places_1" alt="Change answer to number of childcare places">
+                Change <span class="visuallyhidden">answer to number of childcare places</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            When will you be providing childcare?
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            <table>
+                {% if weekday_after_school is True %}
+                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
+                    Weekday (before school) <br>
+                </tr>
+                {% endif %}
+                {% if weekday_before_school is True %}
+                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
+                    Weekday (after school) <br>
+                </tr>
+                {% endif %}
+                {% if weekday_am is True %}
+                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
+                    Weekday (morning) <br>
+                </tr>
+                {% endif %}
+                {% if weekday_pm is True %}
+                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
+                    Weekday (afternoon) <br>
+                </tr>
+                {% endif %}
+                {% if weekday_all_day is True %}
+                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
+                    Weekday (all day) <br>
+                </tr>
+                {% endif %}
+                {% if weekend_all_day  is True %}
+                <tr style="white-space:pre-wrap; word-wrap: break-word" class=summary-column>
+                    Weekend <br>
+                </tr>
+                {% endif %}
+            </table>
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if type_of_childcare_change %}
+            <a href="{% url 'Timing-Of-Childcare-Groups-View' %}?id={{application_id}}#id_time_of_childcare_1" alt="Change answer to time of childcare">
+                Change <span class="visuallyhidden">answer to time of childcare</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
             Looking after children overnight?
@@ -250,6 +313,21 @@
     </tr>
     </thead>
     <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Title
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{personal_details_title}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if personal_details_change %}
+            <a href="{% url 'Personal-Details-Name-View' %}?id={{application_id}}" alt="Change your name">
+                Change <span class="visuallyhidden">your name</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
             Your name
@@ -404,6 +482,23 @@
             {% endif %}
         </td>
     </tr>
+    {% if moved_in_date %}
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Moved in
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{moved_in_date}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if personal_details_change %}
+            <a href="{% url 'Personal-Details-Home-Address-Select-View' %}?id={{application_id}}" alt="Change when you moved in">
+                Change <span class="visuallyhidden">your name</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endif %}
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
             Childcare address
@@ -736,7 +831,7 @@
     <tr>
         <th colspan="{% if print_class %}2{% else %}3{% endif %}">
             <div class="heading-medium">
-                Adults in the home
+                Adults in the home where childcare takes places
             </div>
         </th>
     </tr>
@@ -766,7 +861,7 @@
     </tr>
     </tbody>
 </table>
-{% for name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, lived_abroad, enhanced_check, on_update, military_base in adult_lists %}
+{% for title, name, day, month, year, relationship, dbs_certificate_number, health_check_status, email, PITH_mobile_number, PITH_same_address, PITH_moved_in_date, lived_abroad, enhanced_check, on_update, military_base in adult_lists %}
 <table class="check-your-answers">
     <colgroup>
         <col class="summary-column">
@@ -791,6 +886,22 @@
             {{health_check_status}}
         </td>
         <td class="change-answer {{ print_class }}">
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Title
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{title}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Change the adult's name">
+                Change <span class="visuallyhidden">the adult's name</span>
+            </a>
+            {% endif %}
         </td>
     </tr>
     <tr>
@@ -872,7 +983,54 @@
         </td>
     </tr>
     <tr>
-        <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Phone number
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{PITH_mobile_number}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Adult-Details-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Change the adult's phone number">
+                Change <span class="visuallyhidden">the adult's email</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Address
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{PITH_same_address}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Address-Check-View' %}?id={{application_id}}"
+               alt="Change the adult's address">
+                Change <span class="visuallyhidden">the adult's address</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Moved in
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{PITH_moved_in_date}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if people_in_your_home_change %}
+            <a href="{% url 'PITH-Address-Check-View' %}?id={{application_id}}&adults={{number_of_adults}}&remove=0"
+               alt="Change the adult's move in date">
+                Change <span class="visuallyhidden">the adult's name</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
         <td style="word-wrap: break-word" class=summary-column>
             Have they lived outside of the UK in the last 5 years?
         </td>
@@ -956,7 +1114,7 @@
     {% if on_update is not None %}
     <tr>
         <td style="word-wrap: break-word" class="summary-column">
-            Are they on the update service?
+            Are they on the DBS Update Service?
         </td>
 
         <td style="word-wrap: break-word" class="summary-column">
@@ -985,7 +1143,7 @@
     <tr>
         <th colspan="{% if print_class %}2{% else %}3{% endif %}">
             <div class="heading-medium">
-                Children in the home
+                Children in the home where childcare takes place
             </div>
         </th>
     </tr>
@@ -1271,6 +1429,21 @@
     <tbody>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
+            Title
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{first_reference_title}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if references_change %}
+            <a href="{% url 'References-First-Reference-View' %}?id={{application_id}}" alt="Change full name for referee 1">
+                Change <span class="visuallyhidden">full name for referee 1</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
             Name
         </td>
         <td style="word-wrap: break-word" class=summary-column>
@@ -1423,6 +1596,21 @@
     </tr>
     </thead>
     <tbody>
+    <tr>
+        <td style="word-wrap: break-word" class=summary-column>
+            Title
+        </td>
+        <td style="word-wrap: break-word" class=summary-column>
+            {{second_reference_title}}
+        </td>
+        <td class="change-answer {{ print_class }}">
+            {% if references_change %}
+            <a href="{% url 'References-Second-Reference-View' %}?id={{application_id}}" alt="Change full name for referee 2">
+                Change <span class="visuallyhidden">full name for referee 1</span>
+            </a>
+            {% endif %}
+        </td>
+    </tr>
     <tr>
         <td style="word-wrap: break-word" class=summary-column>
             Name

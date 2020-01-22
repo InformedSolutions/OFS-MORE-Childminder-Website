@@ -1,8 +1,7 @@
 from django import forms
-from govuk_forms.widgets import InlineRadioSelect, RadioSelect, SeparatedRadioSelect
 
 from application.forms import ChildminderForms
-from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
+from application.widgets import ConditionalPostInlineRadioSelect
 
 
 class LocalAuthorities(ChildminderForms):
@@ -15,19 +14,26 @@ class LocalAuthorities(ChildminderForms):
     auto_replace_widgets = True
     reveal_conditionally = {'known_to_council': {True: 'reasons_known_to_council_health_check'}}
 
-
     choices = (
         (True, 'Yes'),
         (False, 'No'),
     )
 
-    known_to_council = forms.ChoiceField(choices=choices, widget=ConditionalPostInlineRadioSelect, required=True,
-                                      label='Are you known to council social services in regards to your own children?',
-                                      error_messages={'required': 'Please say if you are known to council social services in regards to your own children'})
+    known_to_council = forms.ChoiceField(
+        choices=choices,
+        widget=ConditionalPostInlineRadioSelect,
+        required=True,
+        label='Are you known to council social services in regards to your own children?',
+        error_messages={'required': 'Please say if you are known to council social services '
+                                    'in regards to your own children'}
+    )
 
-    reasons_known_to_council_health_check = forms.CharField(label='Tell us why',
-                                      widget=forms.Textarea(), required=True,
-                                      error_messages={'required': 'You must tell us why'})
+    reasons_known_to_council_health_check = forms.CharField(
+        label='Tell us why',
+        widget=forms.Textarea(),
+        required=True,
+        error_messages={'required': 'You must tell us why'}
+    )
 
     def clean(self):
         cleaned_data = super().clean()
@@ -36,6 +42,7 @@ class LocalAuthorities(ChildminderForms):
 
         if known_to_council == 'True':
             if reasons_known_to_council_health_check is '':
-                self.add_error('reasons_known_to_council_health_check', 'Are you known to council social services in regards to your own children?')
+                self.add_error('reasons_known_to_council_health_check',
+                               'Are you known to council social services in regards to your own children?')
 
         return cleaned_data

@@ -2,14 +2,17 @@ import collections
 
 from django.utils import timezone
 import calendar
+from datetime import date
 
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, reverse
 
 from ..table_util import Table, create_tables, submit_link_setter
-from ..summary_page_data import personal_details_name_dict, personal_details_link_dict_same_childcare_address,\
-    personal_details_link_dict_different_childcare_address, personal_details_change_link_description_dict
+from ..summary_page_data import personal_details_name_dict, personal_details_link_dict_same_childcare_address, \
+    personal_details_link_dict_different_childcare_address, personal_details_change_link_description_dict, \
+    personal_details_name_dict_with_moved_in, personal_details_link_dict_same_childcare_address_with_moved_in, \
+    personal_details_link_dict_different_childcare_address_with_moved_in, personal_details_change_link_description_dict_with_moved_in
 from .. import address_helper, status
 from ..business_logic import (multiple_childcare_address_logic,
                               personal_dob_logic,
@@ -256,8 +259,6 @@ def personal_details_home_address(request):
                                                            postcode=postcode,
                                                            current_address=True,
                                                            childcare_address=None,
-                                                           move_in_month=0,
-                                                           move_in_year=0,
                                                            personal_detail_id=applicant,
                                                            application_id=application)
                 home_address_record.save()
@@ -371,6 +372,7 @@ def personal_details_home_address_select(request):
             postcode = selected_address['postcode']
             personal_detail_record = ApplicantPersonalDetails.get_id(app_id=app_id)
             personal_detail_id = personal_detail_record.personal_detail_id
+            moved_in_day, moved_in_month, moved_in_year = form.cleaned_data.get('moved_in_date')
 
             # If the user entered information for this task for the first time
             if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).count() == 0:
@@ -383,11 +385,13 @@ def personal_details_home_address_select(request):
                                                            postcode=postcode,
                                                            childcare_address=None,
                                                            current_address=True,
-                                                           move_in_month=0,
-                                                           move_in_year=0,
                                                            personal_detail_id=personal_detail_record,
                                                            application_id=app_id)
                 home_address_record.save()
+                personal_detail_record.moved_in_day = moved_in_day
+                personal_detail_record.moved_in_month = moved_in_month
+                personal_detail_record.moved_in_year = moved_in_year
+                personal_detail_record.save()
 
             # If the user previously entered information for this task
             elif ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
@@ -396,11 +400,16 @@ def personal_details_home_address_select(request):
                 home_address_record = ApplicantHomeAddress.objects.get(
                     personal_detail_id=personal_detail_id,
                     current_address=True)
+                personal_details_record = ApplicantPersonalDetails.objects.get(personal_detail_id=personal_detail_id)
                 home_address_record.street_line1 = line1
                 home_address_record.street_line2 = line2
                 home_address_record.town = town
                 home_address_record.postcode = postcode
+                personal_details_record.moved_in_day = moved_in_day
+                personal_details_record.moved_in_month = moved_in_month
+                personal_details_record.moved_in_year = moved_in_year
                 home_address_record.save()
+                personal_details_record.save()
             application = Application.get_id(app_id=app_id)
             application.date_updated = current_date
             application.save()
@@ -591,8 +600,6 @@ def personal_details_childcare_address(request):
                                                                 postcode=postcode,
                                                                 current_address=False,
                                                                 childcare_address=True,
-                                                                move_in_month=0,
-                                                                move_in_year=0,
                                                                 personal_detail_id=applicant,
                                                                 application_id=application)
                 childcare_address_record.save()
@@ -725,8 +732,6 @@ def personal_details_childcare_address_select(request):
                                                                 postcode=postcode,
                                                                 childcare_address=True,
                                                                 current_address=False,
-                                                                move_in_month=0,
-                                                                move_in_year=0,
                                                                 personal_detail_id=personal_detail_record,
                                                                 application_id=app_id)
                 childcare_address_record.save()
@@ -821,8 +826,6 @@ def personal_details_childcare_address_manual(request):
                                                                 postcode=postcode,
                                                                 current_address=False,
                                                                 childcare_address=True,
-                                                                move_in_month=0,
-                                                                move_in_year=0,
                                                                 personal_detail_id=applicant,
                                                                 application_id=application)
                 childcare_address_record.save()
@@ -931,7 +934,6 @@ def personal_details_working_in_other_childminder_home(request):
 
                 # Reset ARC status if there are comments
                 if Arc.objects.filter(application_id=app_id).count() > 0:
-
                     arc = Arc.objects.get(application_id=app_id)
 
                     arc.people_in_home_review = 'COMPLETED'
@@ -1085,6 +1087,7 @@ def personal_details_summary(request):
     :return: an HttpResponse object with the rendered Your personal details: summary template
     """
 
+    global moved_in_date
     if request.method == 'GET':
         app_id = request.GET["id"]
         application = Application.objects.get(application_id=app_id)
@@ -1093,11 +1096,13 @@ def personal_details_summary(request):
         birth_month = personal_detail_id.birth_month
         birth_year = personal_detail_id.birth_year
         applicant_name_record = ApplicantName.get_id(app_id=app_id)
+        title = applicant_name_record.title
         first_name = applicant_name_record.first_name
         middle_names = applicant_name_record.middle_names
         last_name = applicant_name_record.last_name
         applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                          current_address=True)
+        personal_details_record = ApplicantPersonalDetails.objects.get(application_id=app_id)
         applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                               childcare_address=True)
         street_line1 = applicant_home_address_record.street_line1
@@ -1105,6 +1110,8 @@ def personal_details_summary(request):
         town = applicant_home_address_record.town
         county = applicant_home_address_record.county
         postcode = applicant_home_address_record.postcode
+        if personal_details_record.moved_in_year is not None:
+            moved_in_date = personal_details_record.get_moved_in_date()
         location_of_childcare = applicant_home_address_record.childcare_address
 
         childcare_street_line1 = applicant_childcare_address_record.street_line1
@@ -1125,7 +1132,6 @@ def personal_details_summary(request):
         else:
             working_in_other_childminder_home = 'No'
 
-
         if application.own_children:
             own_children = 'Yes'
             reasons_known_to_social_services = application.reasons_known_to_social_services
@@ -1133,8 +1139,8 @@ def personal_details_summary(request):
             own_children = 'No'
             reasons_known_to_social_services = ' '
 
-
         name_dob_table_dict = collections.OrderedDict([
+            ('title', title),
             ('name', ' '.join([first_name, (middle_names or ''), last_name])),
             ('date_of_birth', ' '.join([str(birth_day), calendar.month_name[birth_month], str(birth_year)]))
         ])
@@ -1146,12 +1152,25 @@ def personal_details_summary(request):
                 ('home_address', home_address),
                 ('childcare_address', childcare_address)
             ])
+            if personal_details_record.moved_in_year is not None:
+                address_table_dict = collections.OrderedDict([
+                    ('home_address', home_address),
+                    ('moved_in_date', moved_in_date),
+                    ('childcare_address', childcare_address)
+                ])
         else:
             address_table_dict = collections.OrderedDict([
                 ('home_address', home_address),
                 ('childcare_address', childcare_address),
                 ('working_in_other_childminder_home', working_in_other_childminder_home)
             ])
+            if personal_details_record.moved_in_year is not None:
+                address_table_dict = collections.OrderedDict([
+                ('home_address', home_address),
+                ('moved_in_date', moved_in_date),
+                ('childcare_address', childcare_address),
+                ('working_in_other_childminder_home', working_in_other_childminder_home)
+                    ])
 
         if own_children is 'Yes':
             own_children_table_dict = collections.OrderedDict([
@@ -1187,24 +1206,32 @@ def personal_details_summary(request):
             'error_summary_title': 'There was a problem'
         })
 
-
         tables = [name_dob_dict, address_dict]
 
         own_children_arc_exists = ArcComments.objects.filter(table_pk=app_id, field_name='own_children').exists()
         if not location_of_childcare or application.own_children or own_children_arc_exists:
             tables.append(own_children_dict)
 
-
         # Set change link for childcare address according to whether the childcare address is the same as the home
         # address
         if location_of_childcare:
-            table_list = create_tables(tables, personal_details_name_dict,
+            if personal_details_record.moved_in_year is not None:
+                table_list = create_tables(tables, personal_details_name_dict_with_moved_in,
+                                           personal_details_link_dict_same_childcare_address_with_moved_in,
+                                           personal_details_change_link_description_dict_with_moved_in)
+            else:
+                table_list = create_tables(tables, personal_details_name_dict,
                                        personal_details_link_dict_same_childcare_address,
                                        personal_details_change_link_description_dict)
         else:
-            table_list = create_tables(tables, personal_details_name_dict,
-                                       personal_details_link_dict_different_childcare_address,
-                                       personal_details_change_link_description_dict)
+            if personal_details_record.moved_in_year is not None:
+                table_list = create_tables(tables, personal_details_name_dict_with_moved_in,
+                                           personal_details_link_dict_different_childcare_address_with_moved_in,
+                                           personal_details_change_link_description_dict_with_moved_in)
+            else:
+                table_list = create_tables(tables, personal_details_name_dict,
+                                           personal_details_link_dict_different_childcare_address,
+                                           personal_details_change_link_description_dict)
 
         form = PersonalDetailsSummaryForm()
         application = Application.get_id(app_id=app_id)

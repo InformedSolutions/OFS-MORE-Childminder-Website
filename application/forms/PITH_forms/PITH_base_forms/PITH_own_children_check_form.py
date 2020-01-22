@@ -1,6 +1,6 @@
 from django import forms
 from application.forms import ChildminderForms
-from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
+from application.widgets import ConditionalPostInlineRadioSelect
 
 
 class PITHOwnChildrenCheckForm(ChildminderForms):

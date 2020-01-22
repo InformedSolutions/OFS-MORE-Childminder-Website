@@ -1,17 +1,19 @@
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 from django import forms
 from django.conf import settings
 
-from application.customfields import TimeKnownField
+from govuk_forms.widgets import RadioSelect
+
+from application.forms.fields import TimeKnownField
 from application.forms.childminder import ChildminderForms
 from application.forms_helper import full_stop_stripper
 from application.models import (Reference, ApplicantPersonalDetails)
 
 from ..models import UserDetails
-from ..business_logic import childminder_references_and_user_email_duplication_check
+from ..business_logic import childminder_references_and_user_email_duplication_check, get_title_options, TITLE_OPTIONS
 
 
 class ReferenceIntroForm(ChildminderForms):
@@ -30,16 +32,36 @@ class FirstReferenceForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    reveal_conditionally = {'title': {'Other': 'other_title'}}
 
-    first_name = forms.CharField(label='First name', required=True,
-                                 error_messages={'required': 'Please enter the first name of the referee'})
-    last_name = forms.CharField(label='Last name', required=True,
-                                error_messages={'required': 'Please enter the last name of the referee'})
-    relationship = forms.CharField(label='How do they know you?', help_text='For instance, friend or neighbour',
-                                   required=True,
-                                   error_messages={'required': 'Please tell us how the referee knows you'})
-    time_known = TimeKnownField(label='How long have they known you?', required=True,
-                                error_messages={'required': 'Please tell us how long you have known the referee'})
+    options = get_title_options()
+
+    title = forms.ChoiceField(label='Title', choices=options, required=True, widget=RadioSelect,
+                              error_messages={'required': 'Please select a title'})
+    other_title = forms.CharField(label='Other',  required=False,
+                                  error_messages={'required': 'Please enter a title'})
+
+    first_name = forms.CharField(
+        label='First name',
+        required=True,
+        error_messages={'required': 'Please enter the first name of the referee'}
+    )
+    last_name = forms.CharField(
+        label='Last name',
+        required=True,
+        error_messages={'required': 'Please enter the last name of the referee'}
+    )
+    relationship = forms.CharField(
+        label='How do they know you?',
+        help_text='For instance, friend or neighbour',
+        required=True,
+        error_messages={'required': 'Please tell us how the referee knows you'}
+    )
+    time_known = TimeKnownField(
+        label='How long have they known you?',
+        required=True,
+        error_messages={'required': 'Please tell us how long you have known the referee'}
+    )
 
     def __init__(self, *args, **kwargs):
         """
@@ -57,11 +79,31 @@ class FirstReferenceForm(ChildminderForms):
             self.fields['last_name'].initial = reference_record.last_name
             self.fields['relationship'].initial = reference_record.relationship
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
+            if reference_record.title in TITLE_OPTIONS:
+                self.fields['title'].initial = reference_record.title
+            else:
+                self.fields['title'].initial = 'Other'
+                self.fields['other_title'].initial = reference_record.title
             self.pk = reference_record.reference_id
             self.field_list = ['first_name', 'last_name', 'relationship', 'time_known']
         if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
             obj = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local)
             self.birth_time = (obj.birth_year, obj.birth_month, obj.birth_day)
+
+    def clean_other_title(self):
+        """
+        Other title validation
+        :return: string
+        """
+        other_title=self.cleaned_data['other_title']
+        if self.cleaned_data.get('title') == 'Other':
+            if len(other_title) == 0:
+                raise forms.ValidationError('Please tell us your title')
+            if re.match(settings.REGEX['TITLE'], other_title) is None:
+                raise forms.ValidationError('Title can only have letters')
+            if len(other_title) > 100:
+                raise forms.ValidationError('Titles must be under 100 characters long')
+        return other_title
 
     def clean_first_name(self):
         """
@@ -363,6 +405,15 @@ class SecondReferenceForm(ChildminderForms):
     field_label_classes = 'form-label-bold'
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
+    reveal_conditionally = {'title': {'Other': 'other_title'}}
+
+    options = get_title_options()
+
+    title = forms.ChoiceField(label='Title', choices=options, required=True, widget=RadioSelect,
+                              error_messages={'required': 'Please select a title'})
+    other_title = forms.CharField(label='Other', required=False,
+                                  error_messages={'required': 'Please enter a title'})
+
 
     first_name = forms.CharField(label='First name', required=True,
                                  error_messages={'required': 'Please enter the first name of the referee'})
@@ -390,11 +441,31 @@ class SecondReferenceForm(ChildminderForms):
             self.fields['last_name'].initial = reference_record.last_name
             self.fields['relationship'].initial = reference_record.relationship
             self.fields['time_known'].initial = [reference_record.years_known, reference_record.months_known]
+            if reference_record.title in TITLE_OPTIONS:
+                self.fields['title'].initial = reference_record.title
+            else:
+                self.fields['title'].initial = 'Other'
+                self.fields['other_title'].initial = reference_record.title
             self.pk = reference_record.reference_id
-            self.field_list = ['first_name', 'last_name', 'relationship', 'time_known']
+            self.field_list = ['first_name', 'last_name', 'relationship', 'time_known', 'title']
         if ApplicantPersonalDetails.objects.filter(application_id=self.application_id_local).count() > 0:
             obj = ApplicantPersonalDetails.objects.get(application_id=self.application_id_local)
             self.birth_time = (obj.birth_year, obj.birth_month, obj.birth_day)
+
+    def clean_other_title(self):
+        """
+        Other title validation
+        :return: string
+        """
+        other_title=self.cleaned_data['other_title']
+        if self.cleaned_data.get('title') == 'Other':
+            if len(other_title) == 0:
+                raise forms.ValidationError('Please tell us your title')
+            if re.match(settings.REGEX['TITLE'], other_title) is None:
+                raise forms.ValidationError('Title can only have letters')
+            if len(other_title) > 100:
+                raise forms.ValidationError('Titles must be under 100 characters long')
+        return other_title
 
     def clean_first_name(self):
         """

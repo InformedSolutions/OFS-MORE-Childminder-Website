@@ -2,7 +2,7 @@ import collections
 
 from django import forms
 
-from application.customfields import CustomSplitDateFieldDOB
+from application.forms.fields import CustomSplitDateFieldDOB
 from application.forms import ChildminderForms, re, settings, date, date_formatter, Child
 
 

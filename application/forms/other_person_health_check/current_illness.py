@@ -1,8 +1,7 @@
 from django import forms
-from govuk_forms.widgets import InlineRadioSelect, RadioSelect, SeparatedRadioSelect
 
 from application.forms import ChildminderForms
-from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
+from application.widgets import ConditionalPostInlineRadioSelect
 
 
 class CurrentIllness(ChildminderForms):
@@ -15,19 +14,25 @@ class CurrentIllness(ChildminderForms):
     auto_replace_widgets = True
     reveal_conditionally = {'currently_ill': {True: 'illness_details'}}
 
-
     choices = (
         (True, 'Yes'),
         (False, 'No'),
     )
 
-    currently_ill = forms.ChoiceField(choices=choices, widget=ConditionalPostInlineRadioSelect, required=True,
-                                      label='Are you currently being treated by your GP, another doctor or a hospital?',
-                                      error_messages={'required': 'Please answer yes or no'})
+    currently_ill = forms.ChoiceField(
+        choices=choices,
+        widget=ConditionalPostInlineRadioSelect,
+        required=True,
+        label='Are you currently being treated by your GP, another doctor or a hospital?',
+        error_messages={'required': 'Please answer yes or no'}
+    )
 
-    illness_details = forms.CharField(label='Give details of your condition or illness',
-                                      widget=forms.Textarea(), required=True,
-                                      error_messages={'required': 'Please give details of your condition or illness'})
+    illness_details = forms.CharField(
+        label='Give details of your condition or illness',
+        widget=forms.Textarea(),
+        required=True,
+        error_messages={'required': 'Please give details of your condition or illness'}
+    )
 
     def clean(self):
         cleaned_data = super().clean()

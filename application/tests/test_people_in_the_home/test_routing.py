@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 from unittest.mock import patch, Mock
 
 from django.urls import reverse
-from django.test import tag
+from django.test import tag, Client
+
 
 from application import dbs
 from application import models
@@ -43,10 +44,29 @@ class PITHGuidancePageFunctionalTests(PITHFunctionalTestCase):
 class PITHAdultDetailsFunctionalTests(PITHFunctionalTestCase):
 
     def test_yes_to_adults_in_home_redirects_to_details_page(self):
-        self.skipTest('testNotImplemented')
+
+        form_data = {
+            'id': str(self.app_id),
+            'adults_in_home': 'True'
+        }
+
+        response = self.client.post(reverse('PITH-Adult-Check-View')
+                                    + '?id=' + str(self.app_id),
+                                    form_data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('PITH-Adult-Details-View') + '?id=' + self.app_id +'&adults=0&remove=0')
 
     def test_no_to_adults_in_home_redirects_to_children_in_home_page(self):
-        self.skipTest('testNotImplemented')
+
+        form_data = {
+            'id': str(self.app_id),
+            'adults_in_home': 'False'
+        }
+        response = self.client.post(reverse('PITH-Adult-Check-View') + '?id=' + str(self.app_id), form_data)
+
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, reverse('PITH-Children-Check-View') + '?id=' + self.app_id)
 
     def test_can_render_adult_details_page(self):
         response = self.client.get(reverse('PITH-Adult-Details-View'),
@@ -505,7 +525,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
 
         self.assertEqual(response.status_code, 200)
         utils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
-        utils.assertXPath(response, "(//h2[normalize-space(text())='Sign up to the Update Service']"
+        utils.assertXPath(response, "(//h2[normalize-space(text())='Sign up to the DBS Update Service']"
                                         "/following-sibling::ul)[1]"
                                     "/li[normalize-space(text())='Joe Alan Bloggs']")
 
@@ -521,7 +541,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
 
         self.assertEqual(response.status_code, 200)
         utils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
-        utils.assertXPath(response, "(//h2[normalize-space(text())='DBS Update check']"
+        utils.assertXPath(response, "(//h2[normalize-space(text())='DBS Update Service check']"
                                         "/following-sibling::ul)[1]"
                                         "/li[normalize-space(text())='Joe Alan Bloggs']")
 
@@ -536,7 +556,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
 
         self.assertEqual(response.status_code, 200)
         utils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
-        utils.assertXPath(response, "(//h2[normalize-space(text())='DBS Update check']"
+        utils.assertXPath(response, "(//h2[normalize-space(text())='DBS Update Service check']"
                                         "/following-sibling::ul)[1]"
                                     "/li[normalize-space(text())='Joe Alan Bloggs']")
 
@@ -551,7 +571,7 @@ class PITHAdultDBSFunctionalTests(PITHFunctionalTestCase):
 
         self.assertEqual(response.status_code, 200)
         utils.assertView(response, PITH_views.PITHDBSPostOrApplyView)
-        utils.assertXPath(response, "(//h2[normalize-space(text())='Sign up to the Update Service']"
+        utils.assertXPath(response, "(//h2[normalize-space(text())='Sign up to the DBS Update Service']"
                                         "/following-sibling::ul)[1]"
                                     "/li[normalize-space(text())='Joe Alan Bloggs']")
 
@@ -781,7 +801,6 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
         self.home_address = models.ApplicantHomeAddress.objects.create(
             application_id=self.application,
             personal_detail_id=self.personal_details,
-            move_in_month=7, move_in_year=2005,
             current_address=True,
         )
         self.childcare_type = models.ChildcareType.objects.create(
@@ -789,7 +808,13 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
             zero_to_five=False,
             five_to_eight=True,
             eight_plus=True,
+            childcare_places=3,
+            weekday_before_school=True,
+            weekday_after_school=True,
+            weekend_all_day=True,
+            overnight_care=False
         )
+
 
     # ----------
 
@@ -811,8 +836,16 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
             birth_day=1, birth_month=5, birth_year=1984,
             relationship='Uncle',
             email='foo@example.com',
+            PITH_mobile_number='07700 900840',
+            PITH_same_address=True,
             dbs_certificate_number='123456789012',
             lived_abroad=False,
+        )
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult1,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
         )
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
@@ -822,6 +855,9 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
         utils.assertSummaryField(response, 'Date of birth', '1 May 1984', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'Relationship', 'Uncle', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'Email', 'foo@example.com', heading='Joe Anthony Bloggs')
+        utils.assertSummaryField(response, 'Phone number', '07700 900840', heading='Joe Anthony Bloggs')
+        utils.assertSummaryField(response, 'Address', 'Same as home address', heading='Joe Anthony Bloggs')
+        utils.assertSummaryField(response, 'Moved in', '2 Feb 1980', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'DBS certificate number', '123456789012', heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'Lived abroad in the last 5 years?', 'No', heading='Joe Anthony Bloggs')
 
@@ -837,7 +873,14 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
             application_id=self.application,
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
             birth_day=1, birth_month=5, birth_year=1984,
-            military_base=False,
+            military_base=False, PITH_same_address=True,
+        )
+
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult1,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
         )
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
@@ -856,9 +899,15 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
         adult1 = models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
-            birth_day=1, birth_month=5, birth_year=1984,
+            birth_day=1, birth_month=5, birth_year=1984, PITH_same_address=True
         )
 
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult1,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
+        )
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
 
         utils.assertNotSummaryField(response, 'Lived or worked in British military base in the last 5 years?',
@@ -869,17 +918,31 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
         self.application.adults_in_home = True
         self.application.save()
 
-        models.AdultInHome.objects.create(
+        adult1 = models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
             birth_day=1, birth_month=5, birth_year=1984,
-            dbs_certificate_number='123456789012', capita=True,
+            dbs_certificate_number='123456789012', capita=True, PITH_same_address=True,
         )
-        models.AdultInHome.objects.create(
+        adult2 = models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Joanne', middle_names='Bethanny', last_name='Smith',
             birth_day=5, birth_month=1, birth_year=1948,
-            dbs_certificate_number='123456789013', capita=False, enhanced_check=True,
+            dbs_certificate_number='123456789013', capita=False, enhanced_check=True, PITH_same_address=True,
+        )
+
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult1,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
+        )
+
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult2,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
         )
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
@@ -894,41 +957,66 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
         self.application.adults_in_home = True
         self.application.save()
 
-        models.AdultInHome.objects.create(
+        adult1 = models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
             birth_day=1, birth_month=5, birth_year=1984,
-            dbs_certificate_number='123456789012', capita=True,
+            dbs_certificate_number='123456789012', capita=True, PITH_same_address=True,
         )
-        models.AdultInHome.objects.create(
+        adult2 = models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Joanne', middle_names='Bethanny', last_name='Smith',
             birth_day=5, birth_month=1, birth_year=1948,
-            dbs_certificate_number='123456789013', capita=True, within_three_months=False, on_update=True,
+            dbs_certificate_number='123456789013', capita=True, within_three_months=False, on_update=True, PITH_same_address=True,
         )
-        models.AdultInHome.objects.create(
+        adult3 = models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Josef', middle_names='Charlie', last_name='Thompson',
             birth_day=5, birth_month=5, birth_year=1966,
-            dbs_certificate_number='123456789014', capita=False, on_update=False,
+            dbs_certificate_number='123456789014', capita=False, on_update=False, PITH_same_address=True,
+        )
+
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult1,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
+        )
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult2,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
+        )
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult3,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
         )
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
 
-        utils.assertNotSummaryField(response, 'On the update service?', heading='Joe Anthony Bloggs')
-        utils.assertSummaryField(response, 'On the update service?', 'Yes', heading='Joanne Bethanny Smith')
-        utils.assertSummaryField(response, 'On the update service?', 'No', heading='Josef Charlie Thompson')
+        utils.assertNotSummaryField(response, 'On the DBS Update Service?', heading='Joe Anthony Bloggs')
+        utils.assertSummaryField(response, 'On the DBS Update Service?', 'Yes', heading='Joanne Bethanny Smith')
+        utils.assertSummaryField(response, 'On the DBS Update Service?', 'No', heading='Josef Charlie Thompson')
 
     def test_doesnt_display_fields_relating_to_private_information_for_adults_in_home(self):
 
         self.application.adults_in_home = True
         self.application.save()
 
-        models.AdultInHome.objects.create(
+        adult1 = models.AdultInHome.objects.create(
             application_id=self.application,
             first_name='Joe', middle_names='Anthony', last_name='Bloggs',
             birth_day=1, birth_month=5, birth_year=1984,
-            dbs_certificate_number='123456789012', capita=True,
+            dbs_certificate_number='123456789012', capita=True, PITH_same_address=True,
+        )
+        models.AdultInHomeAddress.objects.create(
+            application_id=self.application, adult_id=adult1,
+            moved_in_day=2,
+            moved_in_month=2,
+            moved_in_year=1980,
         )
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})

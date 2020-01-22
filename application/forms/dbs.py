@@ -1,7 +1,8 @@
 from django import forms
+from django.utils.safestring import mark_safe
 from govuk_forms.widgets import InlineRadioSelect, NumberInput
 
-from application.widgets.ConditionalPostChoiceWidget import ConditionalPostInlineRadioSelect
+from application.widgets import ConditionalPostInlineRadioSelect
 from ..business_logic import childminder_dbs_duplicates_household_member_check, dbs_date_of_birth_no_match
 from ..dbs import read
 from ..forms.childminder import ChildminderForms
@@ -76,8 +77,8 @@ class DBSMilitaryForm(DBSRadioForm):
             choices=self.get_options(),
             widget=InlineRadioSelect,
             required=True,
-            error_messages={
-                'required': 'Please say if you have lived in a British military base outside of the UK in the last 5 years'})
+            error_messages={'required': 'Please say if you have lived in a British military base '
+                                        'outside of the UK in the last 5 years'})
 
 
 class DBSTypeForm(DBSRadioForm):
@@ -94,12 +95,12 @@ class DBSTypeForm(DBSRadioForm):
     )
 
     on_update = forms.ChoiceField(
-        label='Are you on the DBS update service?',
+        label='Are you on the DBS Update Service?',
         choices=choices,
         widget=ConditionalPostInlineRadioSelect,
         required=False,
         error_messages={
-            'required': 'Please say if you are on the DBS update service'})
+            'required': 'Please say if you are on the DBS Update Service'})
 
     def clean(self):
         try:
@@ -112,10 +113,13 @@ class DBSTypeForm(DBSRadioForm):
             on_update = None
         if enhanced_check == 'True':
             if on_update == '':
-                self.add_error('on_update', "Please say if you are on the DBS update service")
+                self.add_error('on_update', "Please say if you are on the DBS Update Service")
 
     def get_choice_field_data(self):
-        return forms.ChoiceField(label='Is it an enhanced DBS check for home-based childcare?',
+        return forms.ChoiceField(label=mark_safe('Is it an enhanced check with barred lists as well as being for a <a '
+                                                 'href="https://www.gov.uk/government/publications/dbs-home-based'
+                                                 '-positions-guide/home-based-position-definition-and-guidance" '
+                                                 'target="_blank">home-based childcare role</a>?'),
                                  choices=self.choices,
                                  widget=ConditionalPostInlineRadioSelect,
                                  required=True,
@@ -132,12 +136,12 @@ class DBSUpdateForm(DBSRadioForm):
 
     def get_choice_field_data(self):
         return forms.ChoiceField(
-            label='Are you on the DBS update service?',
+            label='Are you on the DBS Update Service?',
             choices=self.get_options(),
             widget=InlineRadioSelect,
             required=True,
             error_messages={
-                'required': 'Please say if you are on the DBS update service'})
+                'required': 'Please say if you are on the DBS Update Service'})
 
 
 class DBSCheckDetailsForm(DBSRadioForm):
@@ -183,7 +187,8 @@ class DBSCheckDetailsForm(DBSRadioForm):
         DBS certificate number validation
         :return: integer
         """
-        # is_valid() call strips leading 0(s) required by DBS number. Use raw str input from user instead of cleaned_data.
+        # is_valid() call strips leading 0(s) required by DBS number.
+        # Use raw str input from user instead of cleaned_data.
         dbs_certificate_number = self.data['dbs_certificate_number']
         if len(str(dbs_certificate_number)) > 12:
             raise forms.ValidationError('The certificate number should be 12 digits long')

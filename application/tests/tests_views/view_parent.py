@@ -65,7 +65,9 @@ from ...views import (application_saved,
                       task_list,
                       type_of_childcare_age_groups,
                       type_of_childcare_guidance,
-                      type_of_childcare_register)
+                      type_of_childcare_register,
+                      number_of_childcare_places,
+                      timing_of_childcare_groups)
 from ...views.login import account_selection, NewUserSignInView, ExistingUserSignInView
 from ...models import Application, UserDetails
 

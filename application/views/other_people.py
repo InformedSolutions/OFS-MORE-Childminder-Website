@@ -1,5 +1,4 @@
 import logging
-import logging
 import os
 import random
 import string
@@ -149,7 +148,7 @@ def other_people_adult_details(request):
                     'application_id': application_id_local,
                     'people_in_home_status': application.people_in_home_status
                 }
-                return HttpResponseRedirect(reverse('PITH-Lived-Abroad-View') + '?id=' + application_id_local +
+                return HttpResponseRedirect(reverse('PITH-Address-Check-View') + '?id=' + application_id_local +
                                             '&adults=' + number_of_adults, variables)
             # If there is an invalid form
             elif False in valid_list:

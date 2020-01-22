@@ -7,6 +7,7 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 
 import logging
 
+from django.conf import settings
 from django.shortcuts import render
 
 from .. import status
@@ -42,7 +43,8 @@ def start_page(request):
     :param request: a request object used to generate the HttpResponse
     :return: an HttpResponse object with the rendered start page template
     """
-    return render(request, 'start-page.html') #'Start-Page-View')
+    context = {'fee': settings.EY_FEE}
+    return render(request, 'start-page.html', context)  # 'Start-Page-View'
 
 
 def awaiting_review(request):

@@ -3,7 +3,7 @@ from datetime import date
 from django import forms
 from govuk_forms.widgets import InlineRadioSelect
 
-from application.customfields import CustomSplitDateField
+from application.forms.fields import CustomSplitDateField
 from application.forms import ChildminderForms
 
 
@@ -39,17 +39,28 @@ class HospitalAdmission(ChildminderForms):
         (False, 'No'),
     )
 
-    description = forms.CharField(label='Tell us why you were admitted to hospital',
-                                  widget=forms.Textarea(), required=True,
-                                  error_messages={'required': 'Tell us why you were admitted'})
+    description = forms.CharField(
+        label='Tell us why you were admitted to hospital',
+        widget=forms.Textarea(),
+        required=True,
+        error_messages={'required': 'Tell us why you were admitted'}
+    )
 
-    start_date = CustomSplitDateField(label='Date you were admitted', help_text='For example, 31 03 2016', error_messages={
-        'required': 'Please enter the full date, including the day, month and year'}, bounds_error='Please check the date of your illness',
-                                      min_value=0)
+    start_date = CustomSplitDateField(
+        label='Date you were admitted',
+        help_text='For example, 31 03 2016',
+        error_messages={'required': 'Please enter the full date, including the day, month and year'},
+        bounds_error='Please check the date of your illness',
+        min_value=0
+    )
 
-    end_date = CustomSplitDateField(label='Date you were discharged', help_text='For example, 31 03 2016', error_messages={
-        'required': 'Please enter the full date, including the day, month and year'}, bounds_error='Please check the date of your illness',
-                                    min_value=0)
+    end_date = CustomSplitDateField(
+        label='Date you were discharged',
+        help_text='For example, 31 03 2016',
+        error_messages={'required': 'Please enter the full date, including the day, month and year'},
+        bounds_error='Please check the date of your illness',
+        min_value=0
+    )
 
     def __init__(self, *args, **kwargs):
         self.person = kwargs.pop('adult')
@@ -64,7 +75,7 @@ class HospitalAdmission(ChildminderForms):
         if date_diff.days < 0:
             raise forms.ValidationError('Please enter a date after your date of birth')
         if len(str(start_date.year)) < 4:
-           raise forms.ValidationError('Please enter the whole year (4 digits)')
+            raise forms.ValidationError('Please enter the whole year (4 digits)')
 
         return start_date
 

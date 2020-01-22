@@ -1,0 +1,42 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Lookup adult's address{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<!-- Initialise error summary for page -->
+<div class="two-thirds">
+    {% if error_summary_list %}
+        {% include "PITH_templates/PITH_error_summary.html" %}
+    {% endif %}
+<!-- Form -->
+    <form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+        <!-- Content -->
+        {% for form in form_list %}
+        <div class="two-thirds">
+            <h1 class="form-title heading-large">
+                Select {{form.adult.get_full_name}}'s address
+            </h1>
+            <p>Please give the address for {{form.adult.get_full_name}}.</p>
+            <h2 class="form-title heading-small">Postcode</h2>
+        </div>
+        <p>{{postcode}} <a
+                href="{% url 'PITH-Address-Details-View' %}?id={{application_id}}">Change</a></p>
+        <legend id='{{form.postcode.id_for_label}}-label' class="form-label-bold">{{form.postcode.label}}</legend>
+        {{form.as_div}}
+        {% csrf_token %}
+        <a href="{% url 'PITH-Address-Details-View' %}?id={{application_id}}" name="manual"
+           id="manual">I can't find {{form.adult.get_full_name}} address in the list</a>
+        <input type="submit" class="button button-submit" value="Save and continue">
+        <input type="hidden" id="id" name="id" value="{{application_id}}"/>
+        {% endfor}
+    </form>
+    <br>
+</div>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}

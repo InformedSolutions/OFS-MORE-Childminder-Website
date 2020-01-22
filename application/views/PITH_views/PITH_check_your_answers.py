@@ -1,13 +1,14 @@
 import calendar
 import collections
 import logging
+import application.models as m
 
 from django.http import HttpResponseRedirect
 from django.shortcuts import reverse
 
 from application.forms.PITH_forms.PITH_check_your_answers_form import PITHCheckYourAnswersForm
 from application.models import AdultInHome, Application, ChildInHome, Child, ChildcareType, ApplicantHomeAddress, \
-    ApplicantPersonalDetails
+    ApplicantPersonalDetails, AdultInHomeAddress
 from application.summary_page_data import (
     other_child_name_dict, other_child_link_dict,
     other_adult_summary_name_dict, other_adult_summary_link_dict,
@@ -37,7 +38,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
         application = get_application_object(application_id)
         personal_detail_id = ApplicantPersonalDetails.get_id(app_id=application_id)
 
-        adults_list, children_list, children_not_in_home_list = self.get_lists(application_id)
+        adults_list, children_list, children_not_in_home_list= self.get_lists(application_id)
 
         # Header tables
         adults_header_table = self.get_adults_header_table(application_id, adults_list)
@@ -130,7 +131,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
         adult_table = {
             'table_object': Table([app_id]),
             'fields': {'adults_in_home': adults_in_home},
-            'title': 'Adults in the home',
+            'title': 'Adults in the home where childcare takes place',
             'error_summary_title': 'There was a problem'
         }
 
@@ -142,7 +143,7 @@ class PITHCheckYourAnswersView(PITHTemplateView):
         child_table = {
             'table_object': Table([app_id]),
             'fields': {'children_in_home': children_in_home},
-            'title': 'Children in the home',
+            'title': 'Children in the home where childcare takes places',
             'error_summary_title': 'There was a problem'
         }
         return create_tables([child_table], other_child_summary_name_dict, other_child_summary_link_dict)
@@ -181,11 +182,33 @@ class PITHCheckYourAnswersView(PITHTemplateView):
             name = ' '.join([adult.first_name, (adult.middle_names or ''), adult.last_name])
             birth_date = ' '.join([str(adult.birth_day), calendar.month_name[adult.birth_month], str(adult.birth_year)])
 
+            if adult.PITH_same_address is not None and not adult.PITH_same_address:
+                adult_in_home_address = AdultInHomeAddress.objects.get(application_id=app_id, adult_id=adult.pk)
+                adult_address_string = ' '.join([adult_in_home_address.street_line1,
+                                                 adult_in_home_address.street_line2 or '',
+                                                 adult_in_home_address.town, adult_in_home_address.county or '',
+                                                 adult_in_home_address.postcode])
+
+            else:
+                adult_address_string = 'Same as home address'
+
+            if AdultInHomeAddress.objects.filter(application_id=app_id,
+                                                                 adult_id=adult.pk).exists():
+                moved_in_date = AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                 adult_id=adult.pk).get_moved_in_date()
+            else:
+                moved_in_date = ''
+
+            logger.debug('Address to be entered is: {}.'.format(adult_address_string))
             base_adult_fields = [
+                ('title', adult.title),
                 ('full_name', name),
                 ('date_of_birth', birth_date),
                 ('relationship', adult.relationship),
                 ('email', adult.email),
+                ('PITH_mobile_number', adult.PITH_mobile_number),
+                ('PITH_same_address', adult_address_string),
+                ('PITH_moved_in', moved_in_date),
                 ('lived_abroad', adult.lived_abroad),
             ]
 
@@ -202,6 +225,10 @@ class PITHCheckYourAnswersView(PITHTemplateView):
 
             if adult.on_update is not None:
                 base_adult_fields.append(('on_update', adult.on_update))
+
+            if moved_in_date != '':
+                base_adult_fields.append(('PITH_moved_in', AdultInHomeAddress.objects.get(application_id=app_id,
+                                                                                          adult_id=adult.pk).get_moved_in_date()))
 
             if application.people_in_home_status == 'IN_PROGRESS' and any(
                     [adult.email_resent_timestamp is None for adult in adults_list]):

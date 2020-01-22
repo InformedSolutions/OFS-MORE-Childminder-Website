@@ -4,26 +4,21 @@ A base class for reusable test steps across application unit tests
 import json
 from datetime import datetime
 from unittest import mock
-from unittest.mock import patch
 
 from django.core.urlresolvers import reverse
-from django.http import HttpResponse
 from django.test import Client
-
-from application.views import DBSCheckNoCapitaView
 from ...models import (ApplicantHomeAddress,
                        ApplicantName,
                        ApplicantPersonalDetails,
                        Application,
                        ChildcareType,
-                       UserDetails, CriminalRecordCheck)
-from application.views import dbs as view_dbs
-from application.forms import dbs as form_dbs
+                       UserDetails)
 
 
 class ApplicationTestBase(object):
     client = Client()
     app_id = None
+    email = None
 
     def TestAppInit(self):
         """Start application"""
@@ -39,7 +34,8 @@ class ApplicationTestBase(object):
             magic_link_email_mock.return_value.status_code = 201
             magic_link_text_mock.return_value.status_code = 201
 
-            self.email = 'test-address@informed.com'
+            if self.email is None:
+                self.email = 'test-address@informed.com'
 
             r = self.client.post(
                 reverse('New-Email'),
@@ -75,7 +71,6 @@ class ApplicationTestBase(object):
             magic_link_email_mock.return_value.status_code = 201
             magic_link_text_mock.return_value.status_code = 201
 
-            self.email = 'test-address@informed.com'
             new_email = 'cheese.omelette@gmail.com'
 
             r = self.client.post(
@@ -117,6 +112,7 @@ class ApplicationTestBase(object):
             r = self.client.get(
                 '/childminder/validate/' + str(acc.magic_link_email), follow=True
             )
+            self.email = UserDetails.objects.get(application_id=self.app_id).email
 
             self.assertEqual(r.status_code, 200)
             self.assertTrue(
@@ -168,6 +164,34 @@ class ApplicationTestBase(object):
         self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).five_to_eight, True)
         self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).eight_plus, True)
 
+    def TestTypeOfChildcareNumberOfPlaces(self):
+        """Type of childcare number of places"""
+
+        data = {
+            'id': self.app_id,
+            'number_of_childcare_places': 3
+        }
+
+        r = self.client.post(reverse('Type-Of-Childcare-Number-Of-Places-View'), data)
+        self.assertEqual(r.status_code, 302)
+
+        self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).childcare_places, 3)
+
+    def TestTypeofChildcareTiming(self):
+        """Type of childcare time of childcare"""
+
+        data = {
+            'id': self.app_id,
+            'time_of_childcare': ['weekday_before_school', 'weekday_after_school', 'weekend_all_day']
+        }
+
+        r = self.client.post(reverse('Timing-Of-Childcare-Groups-View'), data)
+        self.assertEqual(r.status_code, 302)
+
+        self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).weekday_before_school, True)
+        self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).weekday_after_school, True)
+        self.assertEqual(ChildcareType.objects.get(application_id=self.app_id).weekend_all_day, True)
+
     def TestTypeOfChildcareOvernightCare(self):
         """Type of childcare overnight care"""
 
@@ -192,11 +216,29 @@ class ApplicationTestBase(object):
         r = self.client.post(reverse('Type-Of-Childcare-Register-View'), {'id': self.app_id})
         self.assertEqual(r.status_code, 302)
 
+    def AppTestNumberOfPlaces(self):
+        """Number of places provision"""
+        r = self.client.post(reverse('Type-Of-Childcare-Number-Of-Places-View'), {'id': self.app_id,
+                                                                                  'number_of_childcare_places': 3})
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(Application.objects.get(pk=self.app_id).childcare_type_status, "IN_PROGRESS")
+
+    def AppTestChildcareTiming(self):
+        """Childcare timing provision"""
+        r = self.client.post(reverse('Timing-Of-Childcare-Groups-View'), {'id': self.app_id,
+                                                                                  'time_of_childcare':
+                                                                                      ['weekday_before_school',
+                                                                                       'weekday_after_school',
+                                                                                       'weekend_all_day']})
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(Application.objects.get(pk=self.app_id).childcare_type_status, "IN_PROGRESS")
+
     def AppTestOvernightCare(self):
         """Overnight care provision"""
-        r = self.client.post(reverse('Type-Of-Childcare-Overnight-Care-View'), {'id': self.app_id})
+        r = self.client.post(reverse('Type-Of-Childcare-Overnight-Care-View'), {'id': self.app_id,
+                                                                                'overnight_care': ['True']})
         self.assertEqual(r.status_code, 302)
-        self.assertEqual(Application.objects.get(pk=self.app_id).childcare_type_status, "COMPLETED")
+        self.assertEqual(Application.objects.get(pk=self.app_id).childcare_type_status, "IN_PROGRESS")
 
     def TestUpdateEmail(self):
         """Update email address field"""
@@ -204,6 +246,7 @@ class ApplicationTestBase(object):
 
         self.assertEqual(r.status_code, 302)
         self.assertIsNot('y@y.com', UserDetails.objects.get(application_id=self.app_id).email)
+
 
     def TestUpdateEmailApostrophe(self):
         """Update email address field with apostrophe """
@@ -216,27 +259,29 @@ class ApplicationTestBase(object):
         """Test update email address process- update, validate and redirect"""
         self.TestUpdateEmail()
         self.TestValidateEmail()
-        r = self.client.post(reverse('Security-Code') + '?id=' + str(self.app_id), {'id': self.app_id,
-                                                                                    'magic_link_sms': UserDetails.objects.get(
-                                                                                        application_id=self.app_id).magic_link_sms})
+        user_details = UserDetails.objects.get(application_id=self.app_id)
+        r = self.client.post(reverse('Security-Code') + '?validation=' + user_details.magic_link_email,
+                             {'validation': user_details.magic_link_email,
+                              'magic_link_sms': user_details.magic_link_sms})
         self.assertEqual(r.status_code, 302)
 
     def TestVerifyPhoneEmailApostrophe(self):
         """Test update email address process with apostrophe in email- update, validate and redirect"""
         self.TestUpdateEmailApostrophe()
         self.TestValidateEmail()
-        r = self.client.post(reverse('Security-Code') + '?id=' + str(self.app_id), {'id': self.app_id,
-                                                                                    'magic_link_sms': UserDetails.objects.get(
-                                                                                        application_id=self.app_id).magic_link_sms})
+        user_details = UserDetails.objects.get(application_id=self.app_id)
+        r = self.client.post(reverse('Security-Code') + '?validation=' + user_details.magic_link_email,
+                             {'validation': user_details.magic_link_email,
+                              'magic_link_sms': user_details.magic_link_sms})
         self.assertEqual(r.status_code, 302)
 
     def TestSecurityQuestion(self):
         """Test """
         self.test_app_email()
         self.TestValidateEmail()
-        r = self.client.post(reverse('Security-Question'), {'id': self.app_id,
-                                                            'security_answer': UserDetails.objects.get(
-                                                                application_id=self.app_id).mobile_number})
+        user_details = UserDetails.objects.get(application_id=self.app_id)
+        r = self.client.post(reverse('Security-Question'), {'validation': user_details.magic_link_email,
+                                                            'security_answer': user_details.mobile_number})
 
         self.assertEqual(r.status_code, 302)
 
@@ -246,6 +291,7 @@ class ApplicationTestBase(object):
         if not data:
             data = {
                 'id': self.app_id,
+                'title': 'Mr',
                 'first_name': "John-D'Arthur",
                 'middle_names': "Conan-Da'vey",
                 'last_name': "O'Doyle"
@@ -289,7 +335,10 @@ class ApplicationTestBase(object):
             'street_line2': '',
             'town': 'London',
             'county': 'Essex',
-            'postcode': 'IG39LY'
+            'postcode': 'IG39LY',
+            'moved_in_date_0': 12,
+            'moved_in_date_1': 3,
+            'moved_in_date_2': 2000
         }
 
         r = self.client.post(reverse('Personal-Details-Home-Address-Manual-View'), data)
@@ -304,6 +353,9 @@ class ApplicationTestBase(object):
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).town, data['town'])
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).county, data['county'])
         self.assertEqual(ApplicantHomeAddress.objects.get(personal_detail_id=p_id).postcode, data['postcode'])
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).moved_in_day, data['moved_in_date_0'])
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).moved_in_month, data['moved_in_date_1'])
+        self.assertEqual(ApplicantPersonalDetails.objects.get(personal_detail_id=p_id).moved_in_year, data['moved_in_date_2'])
 
     def TestAppPersonalDetailsHomeAddressDetails(self):
         """Submit Personal Home address"""
@@ -464,11 +516,13 @@ class ApplicationTestBase(object):
         data = {
             'id': self.app_id,
             'adults': '1',
+            '1-title': 'Mr',
             '1-first_name': 'Joseph-Christ\'Opher',
             '1-middle_names': 'Pet\'r-Ivor',
             '1-last_name': 'Chris-J\'oe',
             '1-relationship': 'Son',
             '1-email_address': 'test@email.com',
+            '1-PITH_mobile_number': '07700 900756',
             '1-date_of_birth_0': '16',
             '1-date_of_birth_1': '6',
             '1-date_of_birth_2': '1984',
@@ -588,6 +642,7 @@ class ApplicationTestBase(object):
             reverse('References-First-Reference-View'),
             {
                 'id': self.app_id,
+                'title': 'Mr',
                 'first_name': 'Roman',
                 'last_name': 'Gorodeckij',
                 'relationship': 'My client',
@@ -636,6 +691,7 @@ class ApplicationTestBase(object):
             reverse('References-Second-Reference-View'),
             {
                 'id': self.app_id,
+                'title':'Mr',
                 'first_name': 'Sherlock',
                 'last_name': 'Holmes',
                 'relationship': 'My client',
@@ -713,7 +769,10 @@ class ApplicationTestBase(object):
         #                              eight_plus=True,
         #                              overnight_care=True)
 
-        with mock.patch('application.payment_service.make_payment') as post_payment_mock:
+        with mock.patch('application.services.payment_service.make_payment') as post_payment_mock, \
+                mock.patch('application.services.noo_integration_service.create_application_reference') as application_reference_mock, \
+                mock.patch('application.messaging.SQSHandler.send_message'):
+
             test_payment_response = {
                 "customerOrderCode": "TEST",
                 "lastEvent": "AUTHORISED"
@@ -722,6 +781,8 @@ class ApplicationTestBase(object):
             post_payment_mock.return_value.status_code = 201
             post_payment_mock.return_value.text = json.dumps(test_payment_response)
 
+            application_reference_mock.return_value = 'TESTURN'
+
             r = self.client.post(
                 reverse('Payment-Details-View'),
                 {
@@ -729,7 +790,7 @@ class ApplicationTestBase(object):
                     'card_type': 'visa',
                     'card_number': '5454545454545454',
                     'expiry_date_0': 1,
-                    'expiry_date_1': 19,
+                    'expiry_date_1': 21,
                     'cardholders_name': 'Mr Example Cardholder',
                     'card_security_code': 123,
                 }

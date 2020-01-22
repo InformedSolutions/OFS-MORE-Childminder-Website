@@ -5,6 +5,7 @@ the Create an account button, which triggers the creation
 of a new application
 """
 
+from django.conf import settings
 from django.utils import timezone
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -57,7 +58,9 @@ def account_selection(request):
 
     form = AccountForm()
     variables = {
-        'form': form
+        'form': form,
+        'ey_fee': settings.EY_FEE,
+        'cr_fee': settings.CR_FEE
     }
 
     return render(request, 'account-account.html', variables)

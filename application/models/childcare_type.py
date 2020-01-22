@@ -2,6 +2,7 @@ from uuid import uuid4
 from django.db import models
 from .application import Application
 
+
 class ChildcareType(models.Model):
     """
     Model for CHILDCARE_TYPE table
@@ -11,6 +12,13 @@ class ChildcareType(models.Model):
     zero_to_five = models.BooleanField()
     five_to_eight = models.BooleanField()
     eight_plus = models.BooleanField()
+    childcare_places = models.IntegerField(blank=True, null=True)
+    weekday_before_school = models.NullBooleanField(blank=True, null=True)
+    weekday_after_school = models.NullBooleanField(blank=True, null=True)
+    weekday_am = models.NullBooleanField(blank=True, null=True)
+    weekday_pm = models.NullBooleanField(blank=True, null=True)
+    weekday_all_day = models.NullBooleanField(blank=True, null=True)
+    weekend_all_day = models.NullBooleanField(blank=True, null=True)
     overnight_care = models.NullBooleanField()
 
     @property
@@ -30,12 +38,27 @@ class ChildcareType(models.Model):
             'zero_to_five',
             'five_to_eight',
             'eight_plus',
+            'childcare_places',
+            'weekday_before_school',
+            'weekday_after_school',
+            'weekday_am',
+            'weekday_pm',
+            'weekday_all_day',
+            'weekend_all_day',
             'overnight_care'
         )
 
     @classmethod
     def get_id(cls, app_id):
         return cls.objects.get(application_id=app_id)
+
+    def get_childcare_timings(self):
+        return ('weekday_before_school',
+                'weekday_after_school',
+                'weekday_am',
+                'weekday_pm',
+                'weekday_all_day',
+                'weekend_all_day')
 
     class Meta:
         db_table = 'CHILDCARE_TYPE'

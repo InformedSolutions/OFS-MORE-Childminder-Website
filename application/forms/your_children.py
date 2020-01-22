@@ -7,7 +7,7 @@ from govuk_forms.widgets import CheckboxSelectMultiple
 from ..forms import ChildminderForms
 from django.conf import settings
 
-from ..customfields import CustomSplitDateFieldDOB
+from application.forms.fields import CustomSplitDateFieldDOB
 from ..forms_helper import full_stop_stripper
 from ..models import Child, ChildAddress
 from ..utils import date_formatter

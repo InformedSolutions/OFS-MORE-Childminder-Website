@@ -22,6 +22,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 SMS_EXPIRY = 24
 EMAIL_EXPIRY = 24
 
+# Cost of making application
+APP_COST = 3500
+
 # Visa Validation
 VISA_VALIDATION = os.environ.get('VISA_VALIDATION') == 'True'
 
@@ -34,6 +37,9 @@ PAYMENT_URL = os.environ.get('APP_PAYMENT_URL')
 # Base URL of addressing-service gateway
 ADDRESSING_URL = os.environ.get('APP_ADDRESSING_URL')
 
+# Base URL of integration adapter for interfacing with NOO
+INTEGRATION_ADAPTER_URL = os.environ.get('APP_INTEGRATION_ADAPTER')
+
 # Base URL of the DBS check API
 DBS_URL = os.environ.get('APP_DBS_URL')
 
@@ -43,14 +49,31 @@ EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
 
 FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'tester@informed.com')
 
+
+# AWS SQS keys
+AWS_SQS_ACCESS_KEY_ID = os.environ.get('AWS_SQS_ACCESS_KEY_ID')
+AWS_SQS_SECRET_ACCESS_KEY = os.environ.get('AWS_SQS_SECRET_ACCESS_KEY')
+
+# Fees
+CR_FEE = os.environ.get('CR_FEE')
+EY_FEE = os.environ.get('EY_FEE')
+
 TEST_NOTIFY_CONNECTION = True
 
-APPLICATION_PREFIX = 'CM'
+# The prefix added before a URN for finance system reconciliation purposes
+PAYMENT_URN_PREFIX = 'EY'
+
+# The prefix used to distinguish Worldpay payment entries for MORE
+PAYMENT_REFERENCE_PREFIX = 'MO'
 
 PAYMENT_PROCESSING_ATTEMPTS = os.environ.get('PAYMENT_PROCESSING_ATTEMPTS', 10)
 PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS = os.environ.get('PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS', 10)
 
 PAYMENT_HTTP_REQUEST_TIMEOUT = 60
+
+SQS_QUEUE_PREFIX = os.environ.get('SQS_QUEUE_PREFIX', 'DEV')
+
+PAYMENT_NOTIFICATIONS_QUEUE_NAME = SQS_QUEUE_PREFIX + '_PAYMENT_NOTIFICATIONS'
 
 GOOGLE_ANALYTICS = {
 }
@@ -62,36 +85,40 @@ STATIC_URL = URL_PREFIX + '/static/'
 
 AUTHENTICATION_URL = URL_PREFIX + '/sign-in/'
 
-AUTHENTICATION_EXEMPT_URLS = (
-    r'^' + URL_PREFIX + '/$',
-    r'^' + URL_PREFIX + '/account/account/$',
-    r'^' + URL_PREFIX + '/account/email/$',
-    r'^' + URL_PREFIX + '/security-question/$',
-    r'^' + URL_PREFIX + '/email-sent/$',
-    r'^' + URL_PREFIX + '/validate/.*$',
-    r'^' + URL_PREFIX + '/code-resent/.*$',
-    r'^' + URL_PREFIX + '/security-code/.*$',
-    r'^' + URL_PREFIX + '/link-used/$',
-    r'^' + URL_PREFIX + '/link-expired/$',
-    r'^' + URL_PREFIX + '/new-code/.*$',
-    r'^' + URL_PREFIX + '/djga/+',
-    r'^' + URL_PREFIX + '/sign-in/',
-    r'^' + URL_PREFIX + '/sign-in/check-email/',
-    r'^' + URL_PREFIX + '/email-resent/',
-    r'^' + URL_PREFIX + '/sign-in/new-application/',
-    r'^' + URL_PREFIX + '/new-application/',
-    r'^' + URL_PREFIX + '/your-location/',
-    r'^' + URL_PREFIX + '/new-application/check-email/',
-    r'^' + URL_PREFIX + '/service-unavailable/',
-    r'^' + URL_PREFIX + '/help-contact/',
-    r'^' + URL_PREFIX + '/application-saved/$',
-    r'^' + URL_PREFIX + '/health-check/(?P<id>[\w-]+)/$',
-    r'^' + URL_PREFIX + '/feedback/',
-    r'^' + URL_PREFIX + '/feedback-submitted/',
-    r'^' + URL_PREFIX + '/documents-needed/',
-    r'^' + URL_PREFIX + '/home-ready/',
-    r'^' + URL_PREFIX + '/prepare-interview/'
-)
+AUTHENTICATION_EXEMPT_URLS = tuple(u.format(prefix=URL_PREFIX) for u in (
+    # omitting the trailing $ will allow *any* url starting with that pattern
+    r'^{prefix}/$',
+    r'^{prefix}/account/account/$',  # unused?
+    r'^{prefix}/account/email/$',  # unused?
+    r'^{prefix}/security-question/$',  # unused?
+    r'^{prefix}/email-sent/$',
+    r'^{prefix}/validate/.*$',
+    r'^{prefix}/code-resent/$',  # unused?
+    r'^{prefix}/security-code/.*$',
+    r'^{prefix}/link-used/$',
+    r'^{prefix}/link-expired/$',
+    r'^{prefix}/new-code/$',
+    r'^{prefix}/djga/+',
+    r'^{prefix}/sign-in/$',
+    r'^{prefix}/sign-in/check-email/$',
+    r'^{prefix}/sign-in/question/$',
+    r'^{prefix}/sign-in/question/[\w-]+/$',
+    r'^{prefix}/sign-in/new-application/$',
+    r'^{prefix}/email-resent/$',
+    r'^{prefix}/new-application/$',
+    r'^{prefix}/new-application/email-sent/$',
+    r'^{prefix}/your-location/$',
+    r'^{prefix}/new-application/check-email/$',  # unused?
+    r'^{prefix}/service-unavailable/$',
+    r'^{prefix}/help-contact/$',
+    r'^{prefix}/application-saved/$',
+    r'^{prefix}/health-check/(?P<id>[\w-]+)/$',
+    r'^{prefix}/feedback/$',
+    r'^{prefix}/feedback-submitted/$',
+    r'^{prefix}/documents-needed/$',
+    r'^{prefix}/home-ready/$',
+    r'^{prefix}/prepare-interview/$'
+))
 
 BUILTIN_APPS = [
     'django.contrib.admin',
@@ -202,7 +229,8 @@ REGEX = {
              "5})|(?:\d{4}\)?[\s-]?(?:\d{5}|\d{3}[\s-]?\d{3}))|(?:\d{3}\)?[\s-]?\d{3}[\s-]?\d{3,4})|(?:\d{2}\)?["
              "\s-]?\d{4}[\s-]?\d{4}))(?:[\s-]?(?:x|ext\.?|\#)\d{3,4})?$",
     "INTERNATIONAL_PHONE": "^(\+|[0-9])[0-9]{5,20}$",
-    "POSTCODE_UPPERCASE": "^[A-Z]{1,2}[0-9]{1,2}[A-Z]?[0-9][A-Z][A-Z]$",
+    "POSTCODE_UPPERCASE": "^[A-Z]{1,2}[0-9][A-Z0-9]?[0-9][ABD-HJLNP-UW-Z]{2}$",
+    "TITLE": "^[A-zÀ-ÿ- ']+$",
     "LAST_NAME": "^[A-zÀ-ÿ- ']+$",
     "MIDDLE_NAME": "^[A-zÀ-ÿ- ']+$",
     "FIRST_NAME": "^[A-zÀ-ÿ- ']+$",
@@ -234,14 +262,14 @@ LOGGING = {
         'backupCount': 10
     },
     'console': {
-        'level': 'DEBUG',
+        'level': 'INFO',
         'class': 'logging.StreamHandler'
     },
    },
    'loggers': {
      '': {
        'handlers': ['file', 'console'],
-         'level': 'DEBUG',
+         'level': 'INFO',
            'propagate': True,
       },
       'django.server': {

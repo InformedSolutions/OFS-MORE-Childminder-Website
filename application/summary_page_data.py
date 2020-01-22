@@ -5,13 +5,21 @@ import collections
 
 childcare_type_name_dict = collections.OrderedDict(
     [('childcare_age_groups', 'What age groups will you be able to care for?'),
+    ('number_of_places', 'How many children will you care for aged between 5 and 7 years old?'),
+    ('childcare_time_groups', 'When will you be providing childcare?'),
      ('overnight_care', 'Will you be looking after children overnight?')])
 
 childcare_type_link_dict = collections.OrderedDict([('childcare_age_groups', 'Type-Of-Childcare-Age-Groups-View'),
+                                                    ('number_of_places', 'Type-Of-Childcare-Number-Of-Places-View'),
+                                                    ('childcare_time_groups', 'Timing-Of-Childcare-Groups-View'),
                                                     ('overnight_care', 'Type-Of-Childcare-Overnight-Care-View')])
 
 childcare_type_change_link_description_dict = collections.OrderedDict([('childcare_age_groups',
                                                                         'the age groups you could be caring for'),
+                                                                       ('number_of_places',
+                                                                        'the number of places you provide childcare for children 5-8.'),
+                                                                       ('childcare_time_groups',
+                                                                        'when childcare will occur'),
                                                                        ('overnight_care',
                                                                         "if you'll be looking after children overnight")])
 
@@ -44,7 +52,20 @@ contact_info_link_dict = collections.OrderedDict([('email_address', 'Contact-Ema
 
 ###
 
-personal_details_name_dict = collections.OrderedDict([('name', 'Your name'),
+personal_details_name_dict_with_moved_in = collections.OrderedDict([('title', 'Title'),
+                                                      ('name', 'Your name'),
+                                                      ('date_of_birth', 'Date of birth'),
+                                                      ('home_address', 'Your home address'),
+                                                      ('moved_in_date', 'Moved in'),
+                                                      ('childcare_address', 'Childcare address'),
+                                                      ('working_in_other_childminder_home',
+                                                       "Is this another childminder's home?"),
+                                                      ('own_children', 'Known to council social services?'),
+                                                      ('reasons_known_to_social_services', 'Tell us why')
+                                                      ])
+
+personal_details_name_dict = collections.OrderedDict([('title', 'Title'),
+                                                      ('name', 'Your name'),
                                                       ('date_of_birth', 'Date of birth'),
                                                       ('home_address', 'Your home address'),
                                                       ('childcare_address', 'Childcare address'),
@@ -54,7 +75,20 @@ personal_details_name_dict = collections.OrderedDict([('name', 'Your name'),
                                                       ('reasons_known_to_social_services', 'Tell us why')
                                                       ])
 
-personal_details_link_dict_different_childcare_address = collections.OrderedDict([('name', 'Personal-Details-Name-View'),
+personal_details_link_dict_different_childcare_address_with_moved_in = collections.OrderedDict([('title', 'Personal-Details-Name-View'),
+                                                                                  ('name', 'Personal-Details-Name-View'),
+                                                      ('date_of_birth', 'Personal-Details-DOB-View'),
+                                                      ('home_address', 'Personal-Details-Home-Address-Manual-View'),
+                                                      ('moved_in_date', 'Personal-Details-Home-Address-Manual-View'),
+                                                      ('childcare_address', 'Personal-Details-Childcare-Address-Manual-View'),
+                                                      ('working_in_other_childminder_home',
+                                                       'Personal-Details-Childcare-Address-Details-View'),
+                                                      ('own_children', 'Personal-Details-Your-Own-Children-View'),
+                                                      ('reasons_known_to_social_services', 'Personal-Details-Your-Own-Children-View')
+                                                                                  ])
+
+personal_details_link_dict_different_childcare_address = collections.OrderedDict([('title', 'Personal-Details-Name-View'),
+                                                                                  ('name', 'Personal-Details-Name-View'),
                                                       ('date_of_birth', 'Personal-Details-DOB-View'),
                                                       ('home_address', 'Personal-Details-Home-Address-Manual-View'),
                                                       ('childcare_address', 'Personal-Details-Childcare-Address-Manual-View'),
@@ -64,7 +98,19 @@ personal_details_link_dict_different_childcare_address = collections.OrderedDict
                                                       ('reasons_known_to_social_services', 'Personal-Details-Your-Own-Children-View')
                                                                                   ])
 
-personal_details_link_dict_same_childcare_address = collections.OrderedDict([('name', 'Personal-Details-Name-View'),
+personal_details_link_dict_same_childcare_address_with_moved_in = collections.OrderedDict([('title', 'Personal-Details-Name-View'),
+                                                                             ('name', 'Personal-Details-Name-View'),
+                                                      ('date_of_birth', 'Personal-Details-DOB-View'),
+                                                      ('home_address', 'Personal-Details-Home-Address-Manual-View'),
+                                                      ('moved_in_date', 'Personal-Details-Home-Address-Manual-View'),
+                                                      ('childcare_address', 'Personal-Details-Location-Of-Care-View'),
+                                                      ('working_in_other_childminder_home',
+                                                       'Personal-Details-Childcare-Address-Details-View'),
+                                                      ('own_children', 'Personal-Details-Your-Own-Children-View'),
+                                                     ('reasons_known_to_social_services', 'Personal-Details-Your-Own-Children-View')])
+
+personal_details_link_dict_same_childcare_address = collections.OrderedDict([('title', 'Personal-Details-Name-View'),
+                                                                             ('name', 'Personal-Details-Name-View'),
                                                       ('date_of_birth', 'Personal-Details-DOB-View'),
                                                       ('home_address', 'Personal-Details-Home-Address-Manual-View'),
                                                       ('childcare_address', 'Personal-Details-Location-Of-Care-View'),
@@ -73,9 +119,11 @@ personal_details_link_dict_same_childcare_address = collections.OrderedDict([('n
                                                       ('own_children', 'Personal-Details-Your-Own-Children-View'),
                                                      ('reasons_known_to_social_services', 'Personal-Details-Your-Own-Children-View')
                                                                              ])
-personal_details_link_dict_known_to_social_services = collections.OrderedDict([('name', 'Personal-Details-Name-View'),
+personal_details_link_dict_known_to_social_services = collections.OrderedDict([('title', 'Personal-Details-Name-View'),
+                                                                               ('name', 'Personal-Details-Name-View'),
                                                       ('date_of_birth', 'Personal-Details-DOB-View'),
                                                       ('home_address', 'Personal-Details-Home-Address-Manual-View'),
+                                                      ('moved_in_date', 'Personal-Details-Home-Address-Manual-View'),
                                                       ('childcare_address', 'Personal-Details-Location-Of-Care-View'),
                                                       ('working_in_other_childminder_home',
                                                        'Personal-Details-Childcare-Address-Details-View'),
@@ -83,7 +131,20 @@ personal_details_link_dict_known_to_social_services = collections.OrderedDict([(
                                                      ('reasons_known_to_social_services', 'Personal-Details-Your-Own-Children-View')
                                                                              ])
 
-personal_details_change_link_description_dict = collections.OrderedDict([('name', 'your name'),
+personal_details_change_link_description_dict_with_moved_in = collections.OrderedDict([('title', 'title'),
+                                                                         ('name', 'your name'),
+                                                      ('date_of_birth', 'date of birth'),
+                                                      ('home_address', 'your home address'),
+                                                                         ('moved_in_date', 'moved in'),
+                                                      ('childcare_address', 'childcare address'),
+                                                      ('working_in_other_childminder_home',
+                                                       "childcare address as another childminder's home"),
+                                                      ('own_children', 'answer to known to council social services in regards to your own children'),
+                                                      ('reasons_known_to_social_services', 'why you are known to council social services in regards to your own children')
+                                                                         ])
+
+personal_details_change_link_description_dict = collections.OrderedDict([('title', 'title'),
+                                                                         ('name', 'your name'),
                                                       ('date_of_birth', 'date of birth'),
                                                       ('home_address', 'your home address'),
                                                       ('childcare_address', 'childcare address'),
@@ -145,24 +206,32 @@ health_link_dict = collections.OrderedDict([('health_submission_consent', 'Healt
 ###
 other_adult_name_dict = collections.OrderedDict([
     ('health_check_status', 'Health questions status'),
+    ('title', 'Title'),
     ('full_name', 'Name'),
     ('date_of_birth', 'Date of birth'),
     ('relationship', 'Relationship'),
     ('email', 'Email'),
+    ('PITH_mobile_number', 'Phone number'),
+    ('PITH_same_address', 'Address'),
+    ('PITH_moved_in', 'Moved in'),
     ('lived_abroad', 'Lived abroad in the last 5 years?'),
     ('military_base', 'Lived or worked in British military base in the last 5 years?'),
     ('dbs_certificate_number', 'DBS certificate number'),
     ('enhanced_check', 'Enhanced DBS check for home-based childcare?'),
-    ('on_update', 'On the update service?'),
+    ('on_update', 'On the DBS Update Service?'),
     ('permission', 'Permission for checks')
 ])
 
 other_adult_link_dict = collections.OrderedDict([
     ('health_check_status', 'Other-People-Resend-Email-View'),
+    ('title', 'PITH-Adult-Details-View'),
     ('full_name', 'PITH-Adult-Details-View'),
     ('date_of_birth', 'PITH-Adult-Details-View'),
     ('relationship', 'PITH-Adult-Details-View'),
     ('email', 'PITH-Adult-Details-View'),
+    ('PITH_mobile_number', 'PITH-Adult-Details-View'),
+    ('PITH_same_address', 'PITH-Address-Check-View'),
+    ('PITH_moved_in', 'PITH-Address-Check-View'),
     ('lived_abroad', 'PITH-Lived-Abroad-View'),
     ('military_base', 'PITH-Military-View'),
     ('dbs_certificate_number', 'PITH-DBS-Check-View'),
@@ -173,10 +242,13 @@ other_adult_link_dict = collections.OrderedDict([
 
 other_adult_link_description_dict = collections.OrderedDict([
     ('health_check_status', 'health questions status'),
+    ('title', 'title'),
     ('full_name', 'name'),
     ('date_of_birth', 'date of birth'),
     ('relationship', 'relationship'),
     ('email', 'email'),
+    ('PITH_mobile_number', 'PITH_mobile_number'),
+    ('PITH_same_address', 'PITH same address?'),
     ('lived_abroad', 'lived abroad in the last 5 years?'),
     ('military_base', 'lived or worked in British military base in the last 5 years?'),
     ('dbs_certificate_number', 'DBS certificate number'),
@@ -221,14 +293,16 @@ pith_own_children_change_link_description_dict = collections.OrderedDict([('know
 
 ###
 
-first_reference_name_dict = collections.OrderedDict([('full_name', 'Full name'),
+first_reference_name_dict = collections.OrderedDict([('title', 'Title'),
+                                                     ('full_name', 'Full name'),
                                                      ('relationship', 'How they know you'),
                                                      ('known_for', 'Known for'),
                                                      ('address', 'Address'),
                                                      ('phone_number', 'Phone number'),
                                                      ('email_address', 'Email address')])
 
-first_reference_link_dict = collections.OrderedDict([('full_name', 'References-First-Reference-View'),
+first_reference_link_dict = collections.OrderedDict([('title', 'References-First-Reference-View'),
+                                                     ('full_name', 'References-First-Reference-View'),
                                                      ('relationship', 'References-First-Reference-View'),
                                                      ('known_for', 'References-First-Reference-View'),
                                                      ('address', 'References-Enter-First-Reference-Address-View'),
@@ -238,13 +312,15 @@ first_reference_link_dict = collections.OrderedDict([('full_name', 'References-F
                                                      ('email_address',
                                                       'References-First-Reference-Contact-Details-View')])
 
-second_reference_name_dict = collections.OrderedDict([('full_name', 'Full name'),
+second_reference_name_dict = collections.OrderedDict([('title', 'Title'),
+                                                      ('full_name', 'Full name'),
                                                       ('relationship', 'How they know you'),
                                                       ('known_for', 'Known for'),
                                                       ('address', 'Address'),
                                                       ('phone_number', 'Phone number'),
                                                       ('email_address', 'Email address')])
-second_reference_link_dict = collections.OrderedDict([('full_name', 'References-Second-Reference-View'),
+second_reference_link_dict = collections.OrderedDict([ ('title', 'References-Second-Reference-View'),
+                                                      ('full_name', 'References-Second-Reference-View'),
                                                       ('relationship', 'References-Second-Reference-View'),
                                                       ('known_for', 'References-Second-Reference-View'),
                                                       ('address', 'References-Enter-Second-Reference-Address-View'),

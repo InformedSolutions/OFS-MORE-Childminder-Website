@@ -85,7 +85,24 @@ class DBSPostView(DBSTemplateView):
 
 class DBSUpdateCheckView(DBSTemplateView):
     template_name = 'dbs-update-check.html'
-    success_url = 'DBS-Post-View'
+    success_urls = ('DBS-Post-View', 'DBS-Summary-View')
+
+    def post(self, request, *args, **kwargs):
+        post_view, summary_view = self.success_urls
+        app_id = get_id(self.request)
+        capita = get_criminal_record_check(app_id, 'capita')
+
+        info = get_criminal_record_check(app_id, 'certificate_information')
+
+        # if the dbs is on capita with no certificate info go to summary
+        if capita and info in NO_ADDITIONAL_CERTIFICATE_INFORMATION:
+            self.success_url = summary_view
+        #  else go to the post dbs view
+        else:
+            self.success_url = post_view
+
+        return super().post(request, *args, **kwargs)
+
 
 
 class DBSApplyNewView(DBSTemplateView):
@@ -244,7 +261,7 @@ class DBSSummaryView(DBSTemplateView):
             },
             {
                 'field': 'on_update',
-                'title': 'Are you on the DBS update service?',
+                'title': 'Are you on the DBS Update Service?',
                 'url': 'DBS-Update-View',
                 'alt_text': 'answer to DBS being on the Update Service'
             }
@@ -318,9 +335,9 @@ class DBSSummaryView(DBSTemplateView):
 class DBSUpdateView(DBSRadioView):
     template_name = 'dbs-update.html'
     form_class = DBSUpdateForm
-    success_url = ('DBS-Post-View', 'DBS-Get-View')
+    success_url = ('DBS-Update-Check-View', 'DBS-Get-View')
     dbs_field_name = 'on_update'
-    nullify_field_list = ['cautions_convictions']
+
 
 
 class DBSTypeView(DBSRadioView):

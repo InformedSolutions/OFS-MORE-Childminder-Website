@@ -5,3 +5,5 @@ from .PITH_lived_abroad_form import *
 from .PITH_military_form import *
 from .PITH_DBS_check_form import *
 from .PITH_DBS_type_of_check_form import *
+from .PITH_address_check import *
+from .PITH_address_details import *

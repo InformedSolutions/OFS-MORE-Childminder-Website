@@ -8,12 +8,14 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 import enum
 import re
 from datetime import datetime, timedelta
+from django.conf import settings
 
 import pytz
 from dateutil.relativedelta import relativedelta
 
 from . import dbs
 from .models import (AdultInHome,
+                     AdultInHomeAddress,
                      ApplicantHomeAddress,
                      ApplicantName,
                      ApplicantPersonalDetails,
@@ -27,7 +29,6 @@ from .models import (AdultInHome,
                      Reference,
                      UserDetails, Child, ChildAddress)
 from .utils import unique_values, get_first_duplicate_index, get_duplicate_list_entry_indexes
-
 
 def childcare_type_logic(application_id_local, form):
     """
@@ -52,6 +53,35 @@ def childcare_type_logic(application_id_local, form):
         childcare_type_record.eight_plus = eight_plus_status
     return childcare_type_record
 
+def childcare_timing_logic(application_id_local, form):
+    """
+    Business logic to create or update a Childcare_Type record
+    :param application_id_local: A string object containing the current application ID
+    :param form: A form object containing the data to be stored
+    :return: a ChildcareType object to be saved
+    """
+    this_application = Application.objects.get(application_id=application_id_local)
+    childcare_timing = form.cleaned_data['time_of_childcare']
+
+    options = (
+            'weekday_before_school',
+            'weekday_after_school',
+            'weekday_am',
+            'weekday_pm',
+            'weekday_all_day',
+            'weekend_all_day'
+        )
+    if ChildcareType.objects.filter(application_id=application_id_local).count() == 0:
+        childcare_timing_record = ChildcareType.objects.create(application_id=this_application)
+    else:
+        childcare_timing_record = ChildcareType.objects.get(application_id=application_id_local)
+    for option in options:
+        if option in childcare_timing:
+            setattr(childcare_timing_record, option, True)
+        else:
+            setattr(childcare_timing_record, option, False)
+
+    return childcare_timing_record
 
 def childcare_register_type(application_id):
     """
@@ -118,6 +148,10 @@ def personal_name_logic(app_id, form):
     first_name = form.cleaned_data.get('first_name')
     middle_names = form.cleaned_data.get('middle_names')
     last_name = form.cleaned_data.get('last_name')
+    if form.cleaned_data.get('title') != 'Other':
+        title = form.cleaned_data.get('title')
+    else:
+        title = form.cleaned_data.get('other_title')
 
     # If the user entered information for this task for the first time
     if not ApplicantPersonalDetails.objects.filter(application_id=app_id).exists():
@@ -140,6 +174,7 @@ def personal_name_logic(app_id, form):
             first_name=first_name,
             middle_names=middle_names,
             last_name=last_name,
+            title=title,
             personal_detail_id=p_id
         )
 
@@ -154,6 +189,7 @@ def personal_name_logic(app_id, form):
         applicant_names_record.first_name = first_name
         applicant_names_record.middle_names = middle_names
         applicant_names_record.last_name = last_name
+        applicant_names_record.title = title
 
     return applicant_names_record
 
@@ -212,8 +248,6 @@ def personal_home_address_logic(app_id, form):
             postcode=postcode,
             childcare_address=None,
             current_address=True,
-            move_in_month=0,
-            move_in_year=0,
             personal_detail_id=personal_detail_record,
             application_id=app_obj
         )
@@ -257,6 +291,30 @@ def child_address_logic(app_id, child, form):
     child_address.postcode = form.cleaned_data.get('postcode')
 
     return child_address
+
+def PITH_address_logic(app_id, adult, form):
+    """
+    Business logic to create or update a adult's address record with address details
+    :param app_id: A string object containing the current application ID
+    :param child: A numerical identifier for the adult
+    :param form: A form object containing the data to be stored
+    :return: an AdultInHomeAddress object to be saved
+    """
+    application = Application.objects.get(application_id=app_id)
+    PITH_address = AdultInHomeAddress(application_id=application)
+
+    if AdultInHomeAddress.objects.filter(application_id=app_id, adult_id=adult).exists():
+        PITH_address = AdultInHomeAddress.objects.get(application_id=app_id, adult_id=adult)
+
+    PITH_address.adult_id = adult
+    PITH_address.street_line1 = form.cleaned_data.get('street_line1')
+    PITH_address.street_line2 = form.cleaned_data.get('street_line2')
+    PITH_address.town = form.cleaned_data.get('town')
+    PITH_address.county = form.cleaned_data.get('county')
+    PITH_address.postcode = form.cleaned_data.get('postcode')
+    PITH_address.moved_in_day, PITH_address.moved_in_month, PITH_address.moved_in_year = form.cleaned_data.get('moved_in_date')
+
+    return PITH_address
 
 
 def personal_location_of_care_logic(application_id_local, form):
@@ -317,8 +375,8 @@ def personal_childcare_address_logic(application_id_local, form):
                                            childcare_address='True').count() == 0:
         childcare_address_record = ApplicantHomeAddress(street_line1=street_line1, street_line2=street_line2, town=town,
                                                         county=county, country='United Kingdom', postcode=postcode,
-                                                        childcare_address=True, current_address=False, move_in_month=0,
-                                                        move_in_year=0, personal_detail_id=personal_detail_record,
+                                                        childcare_address=True, current_address=False,
+                                                        personal_detail_id=personal_detail_record,
                                                         application_id=application_id_local)
         childcare_address_record.save()
     # If the user previously entered information for this task
@@ -458,22 +516,28 @@ def dbs_check_logic(application_id_local, form):
     return dbs_record
 
 
-def references_first_reference_logic(application_id_local, form):
+def references_first_reference_logic(application_id_local, form, number):
     """
     Business logic to create or update a Reference record with first reference details
     :param application_id_local: A string object containing the current application ID
     :param form: A form object containing the data to be stored
+    :param number: define whether it's first or second reference
     :return: an Reference object to be saved
     """
     this_application = Application.objects.get(application_id=application_id_local)
+    if form.cleaned_data.get('title')  != 'Other':
+        title = form.cleaned_data.get('title')
+    else:
+        title=form.cleaned_data.get('other_title')
     first_name = form.cleaned_data.get('first_name')
     last_name = form.cleaned_data.get('last_name')
     relationship = form.cleaned_data.get('relationship')
     years_known = form.cleaned_data.get('time_known')[0]
     months_known = form.cleaned_data.get('time_known')[1]
     # If the user entered information for this task for the first time
-    if Reference.objects.filter(application_id=application_id_local, reference=1).count() == 0:
-        reference_record = Reference(reference=1,
+    if Reference.objects.filter(application_id=application_id_local, reference=number).count() == 0:
+        reference_record = Reference(reference=number,
+                                     title=title,
                                      first_name=first_name,
                                      last_name=last_name,
                                      relationship=relationship,
@@ -489,49 +553,9 @@ def references_first_reference_logic(application_id_local, form):
                                      email='',
                                      application_id=this_application)
     # If the user previously entered information for this task
-    elif Reference.objects.filter(application_id=application_id_local, reference=1).count() > 0:
-        reference_record = Reference.objects.get(application_id=application_id_local, reference=1)
-        reference_record.first_name = first_name
-        reference_record.last_name = last_name
-        reference_record.relationship = relationship
-        reference_record.years_known = years_known
-        reference_record.months_known = months_known
-    return reference_record
-
-
-def references_second_reference_logic(application_id_local, form):
-    """
-    Business logic to create or update a Reference record with first reference details
-    :param application_id_local: A string object containing the current application ID
-    :param form: A form object containing the data to be stored
-    :return: an Reference object to be saved
-    """
-    this_application = Application.objects.get(application_id=application_id_local)
-    first_name = form.cleaned_data.get('first_name')
-    last_name = form.cleaned_data.get('last_name')
-    relationship = form.cleaned_data.get('relationship')
-    years_known = form.cleaned_data.get('time_known')[0]
-    months_known = form.cleaned_data.get('time_known')[1]
-    # If the user entered information for this task for the first time
-    if Reference.objects.filter(application_id=application_id_local, reference=2).count() == 0:
-        reference_record = Reference(reference=2,
-                                     first_name=first_name,
-                                     last_name=last_name,
-                                     relationship=relationship,
-                                     years_known=years_known,
-                                     months_known=months_known,
-                                     street_line1='',
-                                     street_line2='',
-                                     town='',
-                                     county='',
-                                     country='',
-                                     postcode='',
-                                     phone_number='',
-                                     email='',
-                                     application_id=this_application)
-    # If the user previously entered information for this task
-    elif Reference.objects.filter(application_id=application_id_local, reference=2).count() > 0:
-        reference_record = Reference.objects.get(application_id=application_id_local, reference=2)
+    elif Reference.objects.filter(application_id=application_id_local, reference=number).count() > 0:
+        reference_record = Reference.objects.get(application_id=application_id_local, reference=number)
+        reference_record.title = title
         reference_record.first_name = first_name
         reference_record.last_name = last_name
         reference_record.relationship = relationship
@@ -604,6 +628,10 @@ def other_people_adult_details_logic(application_id_local, form, adult):
     :return: an AdultInHome object to be saved
     """
     this_application = Application.objects.get(application_id=application_id_local)
+    if form.cleaned_data.get('title')  != 'Other':
+        title = form.cleaned_data.get('title')
+    else:
+        title=form.cleaned_data.get('other_title')
     first_name = form.cleaned_data.get('first_name')
     middle_names = form.cleaned_data.get('middle_names')
     last_name = form.cleaned_data.get('last_name')
@@ -612,12 +640,14 @@ def other_people_adult_details_logic(application_id_local, form, adult):
     birth_year = form.cleaned_data.get('date_of_birth')[2]
     relationship = form.cleaned_data.get('relationship')
     email = form.cleaned_data.get('email_address')
+    PITH_mobile_number = form.cleaned_data.get('PITH_mobile_number')
     # If the user entered information for this task for the first time
     if AdultInHome.objects.filter(application_id=this_application, adult=adult).exists():
 
         adult_record = AdultInHome.objects.get(application_id=this_application, adult=adult)
         if adult_record.email != email:
             adult_record.email_resent_timestamp = None
+        adult_record.title = title
         adult_record.first_name = first_name
         adult_record.middle_names = middle_names
         adult_record.last_name = last_name
@@ -627,13 +657,13 @@ def other_people_adult_details_logic(application_id_local, form, adult):
         adult_record.relationship = relationship
         adult_record.email = email
         adult_record.email_resent = 0
-
+        adult_record.PITH_mobile_number = PITH_mobile_number
 
     # If the user previously entered information for this task
     else:
-        adult_record = AdultInHome(first_name=first_name, middle_names=middle_names, last_name=last_name,
+        adult_record = AdultInHome(title=title,  first_name=first_name, middle_names=middle_names, last_name=last_name,
                                    birth_day=birth_day, birth_month=birth_month, birth_year=birth_year,
-                                   relationship=relationship, email=email, application_id=this_application, adult=adult,
+                                   relationship=relationship, email=email, PITH_mobile_number=PITH_mobile_number, application_id=this_application, adult=adult,
                                    email_resent=0)
 
     return adult_record
@@ -1229,43 +1259,43 @@ def get_childcare_register_type(app_id):
     if (childcare_record.zero_to_five is True) \
             & (childcare_record.five_to_eight is True) \
             & (childcare_record.eight_plus is True):
-        cost = 35
+        cost = int(settings.EY_FEE)
         return 'EYR-CR-both', cost
 
     elif (childcare_record.zero_to_five is True) \
             & (childcare_record.five_to_eight is True) \
             & (childcare_record.eight_plus is False):
-        cost = 35
+        cost = int(settings.EY_FEE)
         return 'EYR-CR-compulsory', cost
 
     elif (childcare_record.zero_to_five is True) \
             & (childcare_record.five_to_eight is False) \
             & (childcare_record.eight_plus is True):
-        cost = 35
+        cost = int(settings.EY_FEE)
         return 'EYR-CR-voluntary', cost
 
     elif (childcare_record.zero_to_five is True) \
             & (childcare_record.five_to_eight is False) \
             & (childcare_record.eight_plus is False):
-        cost = 35
+        cost = int(settings.EY_FEE)
         return 'EYR', cost
 
     elif (childcare_record.zero_to_five is False) \
             & (childcare_record.five_to_eight is True) \
             & (childcare_record.eight_plus is False):
-        cost = 103
+        cost = int(settings.CR_FEE)
         return 'CR-compulsory', cost
 
     elif (childcare_record.zero_to_five is False) \
             & (childcare_record.five_to_eight is True) \
             & (childcare_record.eight_plus is True):
-        cost = 103
+        cost = int(settings.CR_FEE)
         return 'CR-both', cost
 
     elif (childcare_record.zero_to_five is False) \
             & (childcare_record.five_to_eight is False) \
             & (childcare_record.eight_plus is True):
-        cost = 103
+        cost = int(settings.CR_FEE)
         return 'CR-voluntary', cost
 
 
@@ -1372,3 +1402,18 @@ class UniqueDbsCheckResult:
     duplicates_childminder_dbs = False
     duplicates_household_member_dbs = False
     duplicate_entry_indexes = 0
+
+
+TITLE_OPTIONS = ['Mr', 'Mrs', 'Miss', 'Ms']
+
+
+def get_title_options():
+    """
+    Get the options for the title radio button form
+    :return: tuples of choices
+    """
+    options = ()
+    for title in TITLE_OPTIONS:
+        options += ((title, title),)
+    options += (('Other', 'Other'),)
+    return options

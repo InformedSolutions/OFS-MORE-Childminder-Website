@@ -1,0 +1,32 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Adult's address{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+    {{form.error_summary}}
+
+    <form method="post" novalidate>
+        <div class="form-group">
+            <h1 class="form-title heading-large">
+                {{ adult_record.get_full_name }}'s address
+            </h1>
+
+            {{ form.as_div }}
+
+            {% csrf_token %}
+            <input name="postcode-search" type="submit" class="button" value="Find address">
+
+            <br>
+            <a href="{% url 'PITH-Address-Manual-View' %}?id={{application_id}}&adult={{adult}}">Enter address manually</a>
+        </div>
+    </form>
+</div>
+
+{% include 'return-to-list.html' %}
+
+{% endblock %}

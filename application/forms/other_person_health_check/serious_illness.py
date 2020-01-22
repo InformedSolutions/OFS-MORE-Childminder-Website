@@ -1,12 +1,10 @@
 from datetime import date
 
 from django import forms
-from govuk_forms.fields import SplitDateField
 from govuk_forms.widgets import InlineRadioSelect
 
-from application.customfields import CustomSplitDateFieldDOB, CustomSplitDateField
+from application.forms.fields import CustomSplitDateField
 from application.forms import ChildminderForms
-from application.models import AdultInHome
 
 
 class SeriousIllness(ChildminderForms):
@@ -23,17 +21,28 @@ class SeriousIllness(ChildminderForms):
         (True, 'Yes')
     )
 
-    description = forms.CharField(label='Illness',
-                                  widget=forms.Textarea(), required=True,
-                                  error_messages={'required': 'Please enter the name of the illness'})
+    description = forms.CharField(
+        label='Illness',
+        widget=forms.Textarea(),
+        required=True,
+        error_messages={'required': 'Please enter the name of the illness'}
+    )
 
-    start_date = CustomSplitDateField(label='Start date', help_text='For example, 31 03 2016', error_messages={
-        'required': 'Please enter the full date, including the day, month and year'}, bounds_error='Please check the date of your illness',
-                                      min_value=0)
+    start_date = CustomSplitDateField(
+        label='Start date',
+        help_text='For example, 31 03 2016',
+        error_messages={'required': 'Please enter the full date, including the day, month and year'},
+        bounds_error='Please check the date of your illness',
+        min_value=0
+    )
 
-    end_date = CustomSplitDateField(label='End date', help_text='For example, 31 03 2016', error_messages={
-        'required': 'Please enter the full date, including the day, month and year'}, bounds_error='Please check the date of your illness',
-                                    min_value=0)
+    end_date = CustomSplitDateField(
+        label='End date',
+        help_text='For example, 31 03 2016',
+        error_messages={'required': 'Please enter the full date, including the day, month and year'},
+        bounds_error='Please check the date of your illness',
+        min_value=0
+    )
 
     def __init__(self, *args, **kwargs):
         self.person = kwargs.pop('adult')
@@ -91,9 +100,13 @@ class SeriousIllnessStart(ChildminderForms):
 
     )
 
-    has_illnesses = forms.ChoiceField(choices=choices, widget=InlineRadioSelect, required=True,
-                                      label='Have you had any serious illnesses in the past 5 years?',
-                                      error_messages={'required': 'Please answer yes or no'})
+    has_illnesses = forms.ChoiceField(
+        choices=choices,
+        widget=InlineRadioSelect,
+        required=True,
+        label='Have you had any serious illnesses in the past 5 years?',
+        error_messages={'required': 'Please answer yes or no'}
+    )
 
 
 class MoreSeriousIllnesses(ChildminderForms):
@@ -109,6 +122,10 @@ class MoreSeriousIllnesses(ChildminderForms):
         (False, 'No')
     )
 
-    more_illnesses = forms.ChoiceField(choices=choices, widget=InlineRadioSelect, required=True,
-                                      label='Have you had any other serious illnesses in the past 5 years?',
-                                      error_messages={'required': 'Please answer yes or no'})
+    more_illnesses = forms.ChoiceField(
+        choices=choices,
+        widget=InlineRadioSelect,
+        required=True,
+        label='Have you had any other serious illnesses in the past 5 years?',
+        error_messages={'required': 'Please answer yes or no'}
+    )

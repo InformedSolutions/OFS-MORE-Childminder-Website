@@ -1,10 +1,10 @@
-django==1.11.16
-psycopg2-binary
+django==1.11.20
+psycopg2-binary==2.7.7
 django-govuk-template==0.4
 django-govuk-forms==0.4
-unittest-xml-reporting
-requests
-whitenoise
+unittest-xml-reporting==2.2.1
+requests==2.21.0
+whitenoise==4.1.2
 django-timeline-logger==1.0
 django-google-analytics-app==4.2.0
 django-settings-export==1.2.1
@@ -13,4 +13,10 @@ selenium==3.11.0
 faker==0.8.13
 inflect==0.2.5
 python-dateutil==2.7.3
+django_extensions==2.1.4
+pydotplus==2.0.2
+pylint==2.2.2
+pylint-django==2.0.5
+coverage==4.5.2
+boto3==1.7.66
 lxml==4.3.0

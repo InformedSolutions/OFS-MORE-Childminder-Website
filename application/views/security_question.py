@@ -6,10 +6,10 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 """
 
 from django.shortcuts import render
+from django.core.exceptions import PermissionDenied
 
+from application import login
 from application.forms import SecurityQuestionForm, SecurityDateForm
-from application import login_redirect_helper
-from application.middleware import CustomAuthenticationHandler
 from application.models import Application, UserDetails, ApplicantHomeAddress, ApplicantPersonalDetails, AdultInHome, \
     CriminalRecordCheck
 
@@ -22,42 +22,48 @@ def question(request):
     :return: an HttpResponse object with the rendered security question verification template
     """
     if request.method == 'GET':
-        app_id = request.GET['id']
+        magic_link_email = request.GET['validation']
+        try:
+            user_details = login.magic_link_validation(magic_link_email)
+        except PermissionDenied as e:
+            return login.invalid_email_link_redirect(e)
+
+        app_id = user_details.application_id.pk
         question = get_security_question(app_id)
         forms = get_forms(app_id, question)
 
         variables = {
             'forms': forms,
             'question': question,
-            'application_id': app_id,
+            'magic_link_email': magic_link_email,
             'label': get_label(question)
         }
 
         return render(request, 'security-question.html', variables)
 
     if request.method == 'POST':
-        app_id = request.POST['id']
+        magic_link_email = request.POST['validation']
+        try:
+            user_details = login.magic_link_validation(magic_link_email)
+        except PermissionDenied as e:
+            return login.invalid_email_link_redirect(e)
+        app_id = user_details.application_id.pk
         question = get_security_question(app_id)
         forms = post_forms(question, request.POST, app_id)
         application = Application.objects.get(pk=app_id)
-        acc = UserDetails.objects.get(application_id=application)
         valid_forms = [form.is_valid() for form in forms]
 
         if all(valid_forms):
-            response = login_redirect_helper.redirect_by_status(application)
-            # Create session issue custom cookie to user
-            CustomAuthenticationHandler.create_session(response, acc.email)
-
-            acc.sms_resend_attempts = 0
-            acc.save()
-
+            # Successful login
+            response = login.redirect_by_status(application)
+            login.log_user_in(user_details, response)
             # Forward back onto application
             return response
 
         variables = {
             'forms': forms,
             'question': question,
-            'application_id': app_id,
+            'magic_link_email': magic_link_email,
             'label': get_label(question)
         }
         return render(request, 'security-question.html', variables)

@@ -4,10 +4,10 @@ from datetime import date
 
 from django import forms
 from django.conf import settings
-from govuk_forms.widgets import InlineRadioSelect
+from govuk_forms.widgets import InlineRadioSelect, RadioSelect
 
-from ..business_logic import show_resend_and_change_email
-from ..customfields import CustomSplitDateFieldDOB
+from ..business_logic import show_resend_and_change_email, TITLE_OPTIONS, get_title_options
+from application.forms.fields import CustomSplitDateFieldDOB
 from ..forms.childminder import ChildminderForms
 from ..forms_helper import full_stop_stripper
 from ..models import (AdultInHome,
@@ -36,6 +36,14 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
     error_summary_template_name = 'standard-error-summary.html'
     auto_replace_widgets = True
     error_summary_title = 'There was a problem with the details'
+    reveal_conditionally = {'title': {'Other': 'other_title'}}
+
+    options = get_title_options()
+
+    title = forms.ChoiceField(label='Title', choices=options, required=True, widget=RadioSelect,
+                              error_messages={'required': 'Please select a title'})
+    other_title = forms.CharField(label='Other', required=False,
+                                  error_messages={'required': 'Please enter a title'})
 
     first_name = forms.CharField(label='First name', required=True,
                                  error_messages={'required': "Please enter their first name"})
@@ -51,6 +59,10 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
     email_address = forms.CharField(label='Email address',
                                     help_text='We need to email them simple questions about their health',
                                     required=False)
+    PITH_mobile_number = forms.CharField(label='Phone number',
+                                    help_text='We need their phone number in case we need to get in touch with them',
+                                    required=True, error_messages={'required': "Please enter their phone number"},
+                                    )
 
     def __init__(self, *args, **kwargs):
         """
@@ -70,16 +82,36 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
             birth_day, birth_month, birth_year = date_formatter(adult_record.birth_day,
                                                                 adult_record.birth_month,
                                                                 adult_record.birth_year)
-
+            if adult_record.title in TITLE_OPTIONS:
+                self.fields['title'].initial = adult_record.title
+            else:
+                self.fields['title'].initial = 'Other'
+                self.fields['other_title'].initial = adult_record.title
             self.fields['first_name'].initial = adult_record.first_name
             self.fields['middle_names'].initial = adult_record.middle_names
             self.fields['last_name'].initial = adult_record.last_name
             self.fields['date_of_birth'].initial = [birth_day, birth_month, birth_year]
             self.fields['relationship'].initial = adult_record.relationship
             self.fields['email_address'].initial = adult_record.email
+            self.fields['PITH_mobile_number'].initial = adult_record.PITH_mobile_number
             self.pk = adult_record.adult_id
-            self.field_list = ['first_name', 'middle_names', 'last_name', 'date_of_birth', 'relationship',
-                               'email_address']
+            self.field_list = ['title','first_name', 'middle_names', 'last_name', 'date_of_birth', 'relationship',
+                               'email_address', 'PITH_mobile_number']
+
+    def clean_other_title(self):
+        """
+        Other title validation
+        :return: string
+        """
+        other_title=self.cleaned_data['other_title']
+        if self.cleaned_data.get('title') == 'Other':
+            if len(other_title) == 0:
+                raise forms.ValidationError('Please tell us your title')
+            if re.match(settings.REGEX['TITLE'], other_title) is None:
+                raise forms.ValidationError('Title can only have letters')
+            if len(other_title) > 100:
+                raise forms.ValidationError('Titles must be under 100 characters long')
+        return other_title
 
     def clean_first_name(self):
         """
@@ -164,6 +196,22 @@ class OtherPeopleAdultDetailsForm(ChildminderForms):
                     return self.fields['email_address'].initial
 
             raise forms.ValidationError('Please enter an email address')
+
+    def clean_PITH_mobile_number(self):
+        """
+        Mobile number validation
+        :return: string
+        """
+        PITH_mobile_number = self.cleaned_data['PITH_mobile_number']
+        applicant_phone_number = UserDetails.objects.get(application_id=self.application_id_local).mobile_number
+        no_space_PITH_mobile_number = PITH_mobile_number.replace(' ', '')
+        if re.match(settings.REGEX['PHONE'], no_space_PITH_mobile_number) is None:
+            raise forms.ValidationError('Please enter a valid phone number')
+        if no_space_PITH_mobile_number == applicant_phone_number:
+            raise forms.ValidationError('Their phone number cannot be the same as your phone number')
+        if len(no_space_PITH_mobile_number) > 20:
+            raise forms.ValidationError('Phone numbers must be less than 20 characters long')
+        return PITH_mobile_number
 
 
 class OtherPeopleChildrenQuestionForm(ChildminderForms):

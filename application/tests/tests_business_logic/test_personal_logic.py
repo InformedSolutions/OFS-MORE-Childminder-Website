@@ -183,8 +183,6 @@ class TestPersonalLogic(TestCase):
             postcode='',
             childcare_address=None,
             current_address=True,
-            move_in_month=0,
-            move_in_year=0
         )
         assert (ApplicantPersonalDetails.objects.filter(application_id=test_application_id).count() > 0)
         assert (ApplicantHomeAddress.objects.filter(personal_detail_id=test_personal_detail_id,
@@ -248,8 +246,6 @@ class TestPersonalLogic(TestCase):
             postcode='',
             childcare_address=False,
             current_address=True,
-            move_in_month=0,
-            move_in_year=0
         )
         ApplicantPersonalDetails.objects.filter(application_id=test_application_id).delete()
         ApplicantHomeAddress.objects.filter(home_address_id=test_home_address_id, childcare_address=True).delete()
@@ -314,8 +310,6 @@ class TestPersonalLogic(TestCase):
             postcode='',
             childcare_address=True,
             current_address=False,
-            move_in_month=0,
-            move_in_year=0
         )
         assert (ApplicantPersonalDetails.objects.filter(application_id=test_application_id).count() > 0)
         assert (ApplicantHomeAddress.objects.filter(personal_detail_id=test_personal_detail_id,
@@ -378,8 +372,6 @@ class TestPersonalLogic(TestCase):
             postcode='',
             childcare_address=True,
             current_address=False,
-            move_in_month=0,
-            move_in_year=0
         )
         test_home_address_id2 = 'd51b854d-30b0-4889-88d4-804b2c6215e4'
         ApplicantHomeAddress.objects.create(
@@ -394,8 +386,6 @@ class TestPersonalLogic(TestCase):
             postcode='',
             childcare_address=True,
             current_address=True,
-            move_in_month=0,
-            move_in_year=0
         )
         assert (ApplicantHomeAddress.objects.filter(personal_detail_id=test_personal_detail_id,
                                                     childcare_address=True).count() > 1)
