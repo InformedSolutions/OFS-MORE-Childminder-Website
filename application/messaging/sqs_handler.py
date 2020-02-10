@@ -47,5 +47,5 @@ class SQSHandler:
             response = self.queue.send_message(MessageBody=json.dumps(body))
             return response
         except Exception as e:
-            self.logger.debug(e)
+            self.logger.error(e)
             raise e

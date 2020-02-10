@@ -123,12 +123,10 @@ def card_payment_post_handler(request):
     # Boolean flag for managing logic gates
     prior_payment_record_exists = Payment.objects.filter(application_id=application).exists()
 
-    payment_reference = __create_payment_record(application)
-
     # If no prior payment record exists, request to capture the payment
-    if not prior_payment_record_exists \
-            or (prior_payment_record_exists
-                and not Payment.objects.get(application_id=application).payment_submitted):
+    if not prior_payment_record_exists:
+
+        payment_reference = __create_payment_record(application)
 
         # Attempt to lodge payment by pulling form POST details
         card_number = re.sub('[ -]+', '', request.POST["card_number"])
@@ -171,6 +169,9 @@ def card_payment_post_handler(request):
 
         else:
             # If non-201 return status, this indicates a Payment gateway or Worldpay failure
+            logger.info('Payment failed - rolling back payment status for application ' +
+                        str(application.application_id))
+            __rollback_payment_submission_status(application)
             return __yield_general_processing_error_to_user(request, form, app_id, childcare_register_cost)
 
     # If above logic gates have not been triggered, this indicates a form re-submission whilst processing
@@ -198,6 +199,9 @@ def resubmission_handler(request, payment_reference, form, application, amount, 
 
     # If no record of the payment could be found, yield error
     if payment_status_response_raw.status_code == 404:
+        logger.info('Payment record does not exist for application ' + str(application.application_id) + '. Rolling '
+                    'back payment record.')
+        __rollback_payment_submission_status(application)
         return __yield_general_processing_error_to_user(request, form, application.application_id,
                                                         childcare_register_cost)
 
@@ -290,6 +294,7 @@ def __create_payment_record(application):
 
         return payment_reference
     else:
+        logger.info('Returning existing payment reference for application with id: ' + str(application.application_id))
         return Payment.objects.get(application_id=application).payment_reference
 
 
@@ -304,7 +309,7 @@ def __handle_authorised_payment(application, amount):
     __mark_payment_record_as_authorised(application)
 
     # Transition application to submitted
-    logger.info('Assigning SUBMITTED state for application with id: ' + str(application.application_id))
+    logger.info('Assigning submitted date for application with id: ' + str(application.application_id))
     application.date_submitted = datetime.datetime.today()
     application.save()
 
@@ -370,8 +375,10 @@ def __rollback_payment_submission_status(application):
     """
     logger.info('Rolling payment back in response to REFUSED status for application with id: '
                 + str(application.application_id))
-    payment_record = Payment.objects.get(application_id=application.application_id)
-    payment_record.delete()
+
+    if Payment.objects.filter(application_id=application).exists():
+        payment_record = Payment.objects.get(application_id=application.application_id)
+        payment_record.delete()
 
 
 def __redirect_to_payment_confirmation(application):
