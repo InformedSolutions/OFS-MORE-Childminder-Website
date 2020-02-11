@@ -92,6 +92,8 @@ def card_payment_post_handler(request):
     :param request: inbound HTTP POST request
     :return: confirmation of payment or error page based on payment processing outcome
     """
+    logger.info('Received request to process card payment')
+
     app_id = request.POST["id"]
     form = PaymentDetailsForm(request.POST)
     childcare_register_type, childcare_register_cost = get_childcare_register_type(app_id)
@@ -109,24 +111,29 @@ def card_payment_post_handler(request):
     childcare_type = ChildcareType.objects.get(application_id=app_id)
     amount = int(childcare_register_cost) * 100  # Payment amount needs to be in pence
 
-    try:
-        __assign_application_reference(application)
-    except Exception as e:
-        logger.error('An error was incurred whilst attempting to fetch a new URN')
-        logger.error(str(e))
-
-        # In the event a URN could not be fetched yield error page to user as the payment reference
-        # cannot be generated without said URN
-        return __yield_general_processing_error_to_user(request, form, application.application_id,
-                                                        childcare_register_cost)
-
     # Boolean flag for managing logic gates
     prior_payment_record_exists = Payment.objects.filter(application_id=application).exists()
+
+    # Ensure payment record exists so any following requests do not enter logic gate
+    __create_payment_record(application)
 
     # If no prior payment record exists, request to capture the payment
     if not prior_payment_record_exists:
 
-        payment_reference = __create_payment_record(application)
+        # Assign the application reference - request goes to NOO to reserve this
+        try:
+            __assign_application_reference(application)
+        except Exception as e:
+            logger.error('An error was incurred whilst attempting to fetch a new URN')
+            logger.error(str(e))
+
+            # In the event a URN could not be fetched yield error page to user as the payment reference
+            # cannot be generated without said URN
+            return __yield_general_processing_error_to_user(request, form, application.application_id,
+                                                            childcare_register_cost)
+
+        # Set the official payment reference (uses the application reference)
+        payment_reference = __assign_payment_reference(application)
 
         # Attempt to lodge payment by pulling form POST details
         card_number = re.sub('[ -]+', '', request.POST["card_number"])
@@ -176,79 +183,101 @@ def card_payment_post_handler(request):
 
     # If above logic gates have not been triggered, this indicates a form re-submission whilst processing
     # was taking place
-    return resubmission_handler(request, payment_reference, form, application, amount, childcare_register_cost)
+    return resubmission_handler(request, form, application, amount, childcare_register_cost)
 
 
-def resubmission_handler(request, payment_reference, form, application, amount, childcare_register_cost):
+def resubmission_handler(request, form, application, amount, childcare_register_cost):
     """
     Handling logic for managing page re-submissions to avoid duplicate payments being created
     :param request: Inbound HTTP post request
-    :param payment_reference: the payment reference number allocated to an application payment attempt
     :param form: the Django form for the card details page
     :param application: the user's childminder application
     :param amount: the payment amount in pence
     :param childcare_register_cost: the payment amount in GBP
     :return: HTTP response redirect based on payment status check outcome
     """
+    logger.info('Resubmission handler triggered due to multiple payment requests')
 
     # All logic below acts as a handler for page re-submissions
     time.sleep(int(settings.PAYMENT_STATUS_QUERY_INTERVAL_IN_SECONDS))
 
-    # Check at this point whether Worldpay has marked the payment as authorised
-    payment_status_response_raw = payment_service.check_payment(payment_reference)
+    prior_payment_record_exists = Payment.objects.filter(application_id=application).exists()
+    if prior_payment_record_exists:
+        payment = Payment.objects.get(application_id=application)
+        if payment.payment_reference is not None and payment.payment_reference != "PENDING":
+            # Check at this point whether Worldpay has marked the payment as authorised
+            payment_status_response_raw = payment_service.check_payment(payment.payment_reference)
 
-    # If no record of the payment could be found, yield error
-    if payment_status_response_raw.status_code == 404:
-        logger.info('Payment record does not exist for application ' + str(application.application_id) + '. Rolling '
-                    'back payment record.')
-        __rollback_payment_submission_status(application)
-        return __yield_general_processing_error_to_user(request, form, application.application_id,
-                                                        childcare_register_cost)
+            # If no record of the payment could be found, yield error
+            if payment_status_response_raw.status_code == 404:
+                logger.info('Worldpay payment record does not exist for application ' + str(application.application_id) +
+                            '. Rolling back payment record.')
+                __rollback_payment_submission_status(application)
 
-    # Deserialize Payment Gateway API response
-    parsed_payment_response = json.loads(payment_status_response_raw.text)
+                # There is a possibility that the payment became submitted whilst this method was running
+                # Check whether payment record exists - the above rollback will not have rolled back if it was authorised
+                if Payment.objects.filter(application_id=application).exists():
+                    logger.info('Rollback cancelled due to successful payment, redirecting to confirmation')
+                    return __redirect_to_payment_confirmation(application.application_id)
+                else:
+                    # If payment record was rolled back then payment has not successfully been taken
+                    return __yield_general_processing_error_to_user(request, form, application.application_id,
+                                                                    childcare_register_cost)
 
-    if parsed_payment_response.get('lastEvent') == "AUTHORISED":
-        # If payment has been marked as a AUTHORISED by Worldpay then payment has been captured
-        # meaning user can be safely progressed to confirmation page
-        return __handle_authorised_payment(application, amount)
-    if parsed_payment_response.get('lastEvent') == "REFUSED":
-        # If payment has been marked as a REFUSED by Worldpay then payment has
-        # been attempted but was not successful in which case a new order should be attempted.
-        __rollback_payment_submission_status(application)
-        return __yield_general_processing_error_to_user(request, form, application.application_id,
-                                                        childcare_register_cost)
-    if parsed_payment_response.get('lastEvent') == "ERROR":
-        return __yield_general_processing_error_to_user(request, form, application.application_id,
-                                                        childcare_register_cost)
-    else:
-        if 'processing_attempts' in request.META:
-            processing_attempts = int(request.META.get('processing_attempts'))
+            # Deserialize Payment Gateway API response
+            parsed_payment_response = json.loads(payment_status_response_raw.text)
 
-            # If 3 attempts to process the payment have already been made without success
-            # yield error to user
-            if processing_attempts >= settings.PAYMENT_PROCESSING_ATTEMPTS:
-                form.add_error(None, 'There has been a problem when trying to process your payment. '
-                                     'Please contact Ofsted for assistance.',)
-                form.error_summary_template_name = 'error-summary.html'
+            if parsed_payment_response.get('lastEvent') == "AUTHORISED":
+                # If payment has been marked as a AUTHORISED by Worldpay then payment has been captured
+                # meaning user can be safely progressed to confirmation page
+                return __handle_authorised_payment(application, amount)
+            if parsed_payment_response.get('lastEvent') == "REFUSED":
+                # If payment has been marked as a REFUSED by Worldpay then payment has
+                # been attempted but was not successful in which case a new order should be attempted.
+                __rollback_payment_submission_status(application)
+                return __yield_general_processing_error_to_user(request, form, application.application_id,
+                                                                childcare_register_cost)
+            if parsed_payment_response.get('lastEvent') == "ERROR":
+                return __yield_general_processing_error_to_user(request, form, application.application_id,
+                                                                childcare_register_cost)
+            else:
+                if 'processing_attempts' in request.META:
+                    processing_attempts = int(request.META.get('processing_attempts'))
 
-                variables = {
-                    'form': form,
-                    'application_id': application.application_id,
-                    'cost': childcare_register_cost
-                }
+                    # If 3 attempts to process the payment have already been made without success
+                    # yield error to user
+                    if processing_attempts >= settings.PAYMENT_PROCESSING_ATTEMPTS:
+                        form.add_error(None, 'There has been a problem when trying to process your payment. '
+                                             'Please contact Ofsted for assistance.',)
+                        form.error_summary_template_name = 'error-summary.html'
 
-                return HttpResponseRedirect(
-                    reverse('Payment-Details-View') + '?id=' + application.application_id, variables)
+                        variables = {
+                            'form': form,
+                            'application_id': application.application_id,
+                            'cost': childcare_register_cost
+                        }
 
-            # Otherwise increment processing attempt count
-            request.META['processing_attempts'] = processing_attempts + 1
+                        return HttpResponseRedirect(
+                            reverse('Payment-Details-View') + '?id=' + application.application_id, variables)
+
+                    # Otherwise increment processing attempt count
+                    request.META['processing_attempts'] = processing_attempts + 1
+                else:
+                    request.META['processing_attempts'] = 1
+
+                # Retry processing of payment
+                return resubmission_handler(request, form, application, amount, childcare_register_cost)
+
         else:
-            request.META['processing_attempts'] = 1
+            # No payment reference exists - clear the payment record so that applicant can try again
+            __rollback_payment_submission_status(application)
+            __yield_general_processing_error_to_user(request, form, application.application_id,
+                                                     childcare_register_cost)
 
-        # Retry processing of payment
-        return resubmission_handler(request, payment_reference, form, application, amount, childcare_register_cost)
-
+    else:
+        # No payment record exists
+        __yield_general_processing_error_to_user(request, form, application.application_id,
+                                                 childcare_register_cost)
 
 def __assign_application_reference(application):
     """
@@ -269,12 +298,28 @@ def __assign_application_reference(application):
         return application.application_reference
 
 
+def __assign_payment_reference(application):
+    """
+    Private helper method to create formatted payment reference for finance reconciliation purposes
+    :param application: the application for which a new payment reference is to be assigned
+    :return: a payment reference number for an application (either new or existing)
+    """
+    payment_record = Payment.objects.get(application_id=application.application_id)
+    if payment_record.payment_reference == "PENDING":
+        logger.info('Assigning new payment reference for application with id ' + str(application.application_id))
+        payment_reference = payment_service.created_formatted_payment_reference(application.application_reference)
+        payment_record.payment_reference = payment_reference
+        payment_record.save()
+        return payment_reference
+    else:
+        logger.info('Returning existing payment reference for application with id: ' + str(application.application_id))
+        return payment_record.payment_reference
+
+
 def __create_payment_record(application):
     """
     Private helper function for creating a payment record in the event one does not previously exist.
-    If a previous record is already present, a payment reference is returned
     :param application: the application for which a new payment record is to be created
-    :return: a payment reference number for an application (either new or)
     """
 
     prior_payment_record_exists = Payment.objects.filter(application_id=application).exists()
@@ -284,18 +329,10 @@ def __create_payment_record(application):
         logger.info('Creating new payment record '
                     'for application with id: ' + str(application.application_id))
 
-        # Create formatted payment reference for finance reconciliation purposes
-        payment_reference = payment_service.created_formatted_payment_reference(application.application_reference)
-
         Payment.objects.create(
             application_id=application,
-            payment_reference=payment_reference,
+            payment_reference="PENDING"
         )
-
-        return payment_reference
-    else:
-        logger.info('Returning existing payment reference for application with id: ' + str(application.application_id))
-        return Payment.objects.get(application_id=application).payment_reference
 
 
 def __handle_authorised_payment(application, amount):
@@ -318,7 +355,7 @@ def __handle_authorised_payment(application, amount):
     msg_body = __build_message_body(application, format(app_cost_float, '.4f'))
     sqs_handler.send_message(msg_body)
 
-    return __redirect_to_payment_confirmation(application)
+    return __redirect_to_payment_confirmation(application.application_id)
 
 
 def __mark_payment_record_as_submitted(application):
@@ -373,22 +410,27 @@ def __rollback_payment_submission_status(application):
     Method for rolling back a payment submission if card details have been declined
     :param application: the application for which a payment is to be rolled back
     """
-    logger.info('Rolling payment back in response to REFUSED status for application with id: '
+    logger.info('Rolling payment back for application with id: '
                 + str(application.application_id))
 
     if Payment.objects.filter(application_id=application).exists():
         payment_record = Payment.objects.get(application_id=application.application_id)
-        payment_record.delete()
+        if not payment_record.payment_authorised:
+            # Only delete the record if the payment is not authorised
+            payment_record.delete()
+        else:
+            logger.info('Rollback cancelled - payment has already been authorised')
 
 
-def __redirect_to_payment_confirmation(application):
+def __redirect_to_payment_confirmation(app_id):
     """
     Private helper function for redirecting to the payment confirmation page
     :return: payment confirmation page redirect
     """
+    application = Application.objects.get(pk=app_id)
     return HttpResponseRedirect(
         reverse('Payment-Confirmation')
-        + '?id=' + str(application.application_id)
+        + '?id=' + str(app_id)
         + '&orderCode=' + application.application_reference
     )
 

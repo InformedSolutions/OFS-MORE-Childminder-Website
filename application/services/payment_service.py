@@ -49,12 +49,13 @@ def make_payment(amount, name, number, cvc, expiry_m, expiry_y, currency, custom
         "orderDescription": desc
     }
 
-    logger.info('Submitting payment request to payment gateway for order: ' + customer_order_code)
+    logger.info('Submitting payment request to payment gateway for order: ' + str(customer_order_code))
 
     response = requests.post(base_url + "/api/v1/payments/card/", json.dumps(payload),
                              headers=header, timeout=int(settings.PAYMENT_HTTP_REQUEST_TIMEOUT))
 
-    logger.info('Received response from payment gateway for order ' + customer_order_code + ': ' + response.status_code)
+    logger.info('Received response from payment gateway for order ' + str(customer_order_code) + ': ' +
+                str(response.status_code))
     return response
 
 

@@ -307,16 +307,10 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
         payment_record.refresh_from_db()
         self.assertEqual(payment_record.payment_reference, initial_payment_reference)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
         # Assert taken back to the payment page
         self.assertEqual(response.resolver_match.view_name, 'Payment-Details-View')
-
-        # Assert error message returned to user
-        self.assertEqual(response.context['non_field_errors'].data[0].message,
-                         'There has been a problem when trying to process your payment. '
-                         'Your card has not been charged. '
-                         'Please check your card details and try again.')
 
     @mock.patch('application.messaging.SQSHandler.send_message')
     @mock.patch('application.services.noo_integration_service.create_application_reference')
