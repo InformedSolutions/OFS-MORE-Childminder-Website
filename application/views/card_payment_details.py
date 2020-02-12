@@ -126,7 +126,7 @@ def card_payment_post_handler(request):
         except Exception as e:
             logger.error('An error was incurred whilst attempting to fetch a new URN')
             logger.error(str(e))
-
+            __rollback_payment_submission_status(application)
             # In the event a URN could not be fetched yield error page to user as the payment reference
             # cannot be generated without said URN
             return __yield_general_processing_error_to_user(request, form, application.application_id,
@@ -136,7 +136,7 @@ def card_payment_post_handler(request):
         payment_reference = __assign_payment_reference(application)
 
         # Attempt to lodge payment by pulling form POST details
-        card_number = re.sub('[ -]+', '', request.POST["card_number"])
+        card_number = re.sub('[ -]+', '', request.POST["card_number"])  
         cardholders_name = request.POST["cardholders_name"]
         card_security_code = str(request.POST["card_security_code"])
         expiry_month = request.POST["expiry_date_0"]
