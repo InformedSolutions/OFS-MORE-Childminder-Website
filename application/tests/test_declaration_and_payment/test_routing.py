@@ -249,8 +249,9 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
     @mock.patch('application.messaging.SQSHandler.send_message')
     @mock.patch('application.services.noo_integration_service.create_application_reference')
     @mock.patch('application.services.payment_service.make_payment')
+    @mock.patch('application.services.payment_service.check_payment')
     def test_resubmit_doesnt_place_second_worldpay_order_and_original_payment_ref_is_retained(
-            self, post_payment_mock, application_reference_mock, send_message_mock):
+            self, check_payment_mock, post_payment_mock, application_reference_mock, send_message_mock):
         """
         Test to assert that if a payment is submitted for a second time
         it is not placed as a second Worldpay order and the original payment reference
@@ -265,6 +266,8 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
 
         post_payment_mock.return_value.status_code = 201
         post_payment_mock.return_value.text = json.dumps(test_payment_response)
+        check_payment_mock.return_value.status_code = 200
+        check_payment_mock.return_value.text = json.dumps(test_payment_response)
 
         # POST to submission page twice
         self.client.post(
