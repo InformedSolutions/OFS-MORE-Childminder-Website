@@ -249,8 +249,9 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
     @mock.patch('application.messaging.SQSHandler.send_message')
     @mock.patch('application.services.noo_integration_service.create_application_reference')
     @mock.patch('application.services.payment_service.make_payment')
+    @mock.patch('application.services.payment_service.check_payment')
     def test_resubmit_doesnt_place_second_worldpay_order_and_original_payment_ref_is_retained(
-            self, post_payment_mock, application_reference_mock, send_message_mock):
+            self, check_payment_mock, post_payment_mock, application_reference_mock, send_message_mock):
         """
         Test to assert that if a payment is submitted for a second time
         it is not placed as a second Worldpay order and the original payment reference
@@ -265,6 +266,8 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
 
         post_payment_mock.return_value.status_code = 201
         post_payment_mock.return_value.text = json.dumps(test_payment_response)
+        check_payment_mock.return_value.status_code = 200
+        check_payment_mock.return_value.text = json.dumps(test_payment_response)
 
         # POST to submission page twice
         self.client.post(
@@ -307,16 +310,11 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
         payment_record.refresh_from_db()
         self.assertEqual(payment_record.payment_reference, initial_payment_reference)
 
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 302)
 
-        # Assert taken back to the payment page
-        self.assertEqual(response.resolver_match.view_name, 'Payment-Details-View')
-
-        # Assert error message returned to user
-        self.assertEqual(response.context['non_field_errors'].data[0].message,
-                         'There has been a problem when trying to process your payment. '
-                         'Your card has not been charged. '
-                         'Please check your card details and try again.')
+        # Assert taken to payment confirmation
+        redirect_target = resolve(response.url)
+        self.assertEqual(redirect_target.view_name, 'Payment-Confirmation')
 
     @mock.patch('application.messaging.SQSHandler.send_message')
     @mock.patch('application.services.noo_integration_service.create_application_reference')
