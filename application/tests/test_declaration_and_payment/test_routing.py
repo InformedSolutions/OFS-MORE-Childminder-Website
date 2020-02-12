@@ -309,8 +309,9 @@ class PaymentPageFunctionalTests(utils.NoMiddlewareTestCase):
 
         self.assertEqual(response.status_code, 302)
 
-        # Assert taken back to the payment page
-        self.assertEqual(response.resolver_match.view_name, 'Payment-Details-View')
+        # Assert taken to payment confirmation
+        redirect_target = resolve(response.url)
+        self.assertEqual(redirect_target.view_name, 'Payment-Confirmation')
 
     @mock.patch('application.messaging.SQSHandler.send_message')
     @mock.patch('application.services.noo_integration_service.create_application_reference')
