@@ -171,6 +171,7 @@ def card_payment_post_handler(request):
                                                                 childcare_register_cost)
 
             if parsed_payment_response.get('lastEvent') == "ERROR":
+                __rollback_payment_submission_status(application)
                 return __yield_general_processing_error_to_user(request, form, application.application_id,
                                                                 childcare_register_cost)
 
