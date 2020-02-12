@@ -48,4 +48,3 @@ class SQSHandler:
             return response
         except Exception as e:
             self.logger.error(e)
-            raise e
