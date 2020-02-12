@@ -213,16 +213,8 @@ def resubmission_handler(request, form, application, amount, childcare_register_
             if payment_status_response_raw.status_code == 404:
                 logger.info('Worldpay payment record does not exist for application ' + str(application.application_id) +
                             '. Rolling back payment record.')
-                __rollback_payment_submission_status(application)
-
-                # There is a possibility that the payment became submitted whilst this method was running
-                # Check whether payment record exists - the above rollback will not have rolled back if it was authorised
-                if Payment.objects.filter(application_id=application).exists():
-                    logger.info('Rollback cancelled due to successful payment, redirecting to confirmation')
-                    return __redirect_to_payment_confirmation(application.application_id)
-                else:
-                    # If payment record was rolled back then payment has not successfully been taken
-                    return __yield_general_processing_error_to_user(request, form, application.application_id,
+                # If payment record was rolled back then payment has not successfully been taken
+                return __yield_general_processing_error_to_user(request, form, application.application_id,
                                                                     childcare_register_cost)
 
             # Deserialize Payment Gateway API response
