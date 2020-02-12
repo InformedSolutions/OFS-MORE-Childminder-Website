@@ -211,8 +211,7 @@ def resubmission_handler(request, form, application, amount, childcare_register_
 
             # If no record of the payment could be found, yield error
             if payment_status_response_raw.status_code == 404:
-                logger.info('Worldpay payment record does not exist for application ' + str(application.application_id) +
-                            '. Rolling back payment record.')
+                logger.info('Worldpay payment record does not exist for application ' + str(application.application_id))
                 # If payment record was rolled back then payment has not successfully been taken
                 return __yield_general_processing_error_to_user(request, form, application.application_id,
                                                                     childcare_register_cost)
