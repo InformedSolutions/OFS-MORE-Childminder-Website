@@ -28,13 +28,13 @@
     <p>This fee is not refundable.</p>
 
 </div>
-<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+<form class="form" method="post" novalidate onsubmit="submit.disabled=true; return true;" {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     {{form.as_div}}
     <div class="two-thirds">
         <p>Ofsted does not keep a record of your card details.</p>
         {% csrf_token %}
         <input type="hidden" value="{{application_id}}" name="id"/>
-        <input type="submit" class="button" value="Pay and apply">
+        <input type="submit" name="submit" class="button" value="Pay and apply">
         <a href="{% url 'Task-List-View' %}?id={{ id }}" class="button-secondary button-save-and-exit">Save and
             return</a>
     </div>
