@@ -26,4 +26,5 @@ def create_application_reference():
         return str(urn)
     except Exception as e:
         logger.error('Failed to allocate application reference number: ' + str(e))
+        raise e
 

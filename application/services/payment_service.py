@@ -6,14 +6,15 @@ OFS-MORE-CCN3: Apply to be a Childminder Beta
 """
 
 import json
+import logging
 import time
 from urllib.parse import quote
-from ..models import CriminalRecordCheck
-from ..notify import send_email
 
 import requests
 
 from django.conf import settings
+
+logger = logging.getLogger(__name__)
 
 
 def make_payment(amount, name, number, cvc, expiry_m, expiry_y, currency, customer_order_code, desc):
@@ -47,8 +48,14 @@ def make_payment(amount, name, number, cvc, expiry_m, expiry_y, currency, custom
         "customerOrderCode": customer_order_code,
         "orderDescription": desc
     }
+
+    logger.info('Submitting payment request to payment gateway for order: ' + str(customer_order_code))
+
     response = requests.post(base_url + "/api/v1/payments/card/", json.dumps(payload),
                              headers=header, timeout=int(settings.PAYMENT_HTTP_REQUEST_TIMEOUT))
+
+    logger.info('Received response from payment gateway for order ' + str(customer_order_code) + ': ' +
+                str(response.status_code))
     return response
 
 

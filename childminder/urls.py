@@ -224,7 +224,6 @@ urlpatterns = [
     url(r'^sign-in/check-email/$', views.login.login_email_link_sent, name='Existing-Email-Sent'),
     url(r'^sign-in/check-email-change/$', views.login.update_email_link_sent, name='Update-Email-Sent'),
     url(r'^sign-in/change-email-resent/$', views.login.update_email_link_resent, name='Update-Email-Resent'),
-    url(r'^your-location/$', views.login.your_location, name='Your-Location'),
     url(r'^sign-in/new-application/$', views.login.account_selection, name='Account-Selection'),
     url(r'^service-unavailable/$', utils.service_down, name='Service-Down'),
     url(r'^email-resent/$', views.login.login_email_link_resent, name='Email-Resent'),
