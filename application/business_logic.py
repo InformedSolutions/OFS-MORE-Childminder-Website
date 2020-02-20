@@ -680,10 +680,6 @@ def remove_adult(application_id_local, remove_person):
 
     if AdultInHome.objects.filter(application_id=application_id_local, adult=remove_person).exists() is True:
         AdultInHome.objects.get(application_id=application_id_local, adult=remove_person).delete()
-        # Reset task status to WAITING if adults are updated
-        if application.people_in_home_status == 'WAITING':
-            application.people_in_home_status == 'IN_PROGRESS'
-            application.save()
 
 
 def rearrange_adults(number_of_adults, application_id_local):

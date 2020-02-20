@@ -271,6 +271,7 @@ def resubmission_handler(request, form, application, amount, childcare_register_
         __yield_general_processing_error_to_user(request, form, application.application_id,
                                                  childcare_register_cost)
 
+
 def __assign_application_reference(application):
     """
     Private helper function for assigning an application reference number if one has not already allocated
