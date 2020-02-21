@@ -679,11 +679,11 @@ def remove_adult(application_id_local, remove_person):
     application = Application.objects.get(pk=application_id_local)
 
     if AdultInHome.objects.filter(application_id=application_id_local, adult=remove_person).exists() is True:
+        remove_adult_id = AdultInHome.objects.get(application_id=application_id_local, adult=remove_person).adult_id
         AdultInHome.objects.get(application_id=application_id_local, adult=remove_person).delete()
-        # Reset task status to WAITING if adults are updated
-        if application.people_in_home_status == 'WAITING':
-            application.people_in_home_status == 'IN_PROGRESS'
-            application.save()
+
+        if AdultInHomeAddress.objects.get(application_id=application_id_local, adult_id=remove_adult_id).exists():
+            AdultInHomeAddress.objects.get(application_id=application_id_local, adult_id=remove_adult_id).delete()
 
 
 def rearrange_adults(number_of_adults, application_id_local):
