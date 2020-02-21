@@ -682,9 +682,6 @@ def remove_adult(application_id_local, remove_person):
         remove_adult_id = AdultInHome.objects.get(application_id=application_id_local, adult=remove_person).adult_id
         AdultInHome.objects.get(application_id=application_id_local, adult=remove_person).delete()
 
-        if AdultInHomeAddress.objects.get(application_id=application_id_local, adult_id=remove_adult_id).exists():
-            AdultInHomeAddress.objects.get(application_id=application_id_local, adult_id=remove_adult_id).delete()
-
 
 def rearrange_adults(number_of_adults, application_id_local):
     """
