@@ -18,7 +18,9 @@ from ..business_logic import (multiple_childcare_address_logic,
                               personal_dob_logic,
                               personal_location_of_care_logic,
                               personal_name_logic,
-                              reset_declaration)
+                              reset_declaration,
+                              remove_adult,
+                              remove_child_in_home)
 from ..forms import (PersonalDetailsChildcareAddressForm,
                      PersonalDetailsChildcareAddressLookupForm,
                      PersonalDetailsChildcareAddressManualForm,
@@ -36,7 +38,9 @@ from ..models import (ApplicantHomeAddress,
                       ArcComments,
                       ApplicantPersonalDetails,
                       Application,
-                      Arc)
+                      Arc,
+                      AdultInHome,
+                      ChildInHome)
 
 
 def personal_details_guidance(request):
@@ -938,6 +942,17 @@ def personal_details_working_in_other_childminder_home(request):
 
                     arc.people_in_home_review = 'COMPLETED'
                     arc.save()
+
+                #Clear any already-saved people in the home
+                adults = AdultInHome.objects.filter(application_id=app_id)
+                children = ChildInHome.objects.filter(application_id=app_id)
+
+                for adult in adults:
+                    remove_adult(app_id, adult.adult)
+                for child in children:
+                    remove_child_in_home(app_id, child.child)
+
+
             else:
                 application.people_in_home_status = 'NOT_STARTED'
 
