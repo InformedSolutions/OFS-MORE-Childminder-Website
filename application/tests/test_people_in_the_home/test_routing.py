@@ -949,7 +949,7 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
 
         utils.assertNotSummaryField(response, 'Do they have the correct DBS check?',
                                     heading='Joe Anthony Bloggs')
-        utils.assertSummaryField(response, 'Enhanced DBS check for home-based childcare?', 'Yes',
+        utils.assertSummaryField(response, 'Do they have the correct DBS check?', 'Yes',
                                  heading='Joanne Bethanny Smith')
 
     def test_displays_adult_dbs_on_update_field_only_for_adults_without_recent_dbs_on_capita_list(self):
