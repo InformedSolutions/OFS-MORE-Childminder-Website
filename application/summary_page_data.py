@@ -217,7 +217,7 @@ other_adult_name_dict = collections.OrderedDict([
     ('lived_abroad', 'Lived abroad in the last 5 years?'),
     ('military_base', 'Lived or worked in British military base in the last 5 years?'),
     ('dbs_certificate_number', 'DBS certificate number'),
-    ('enhanced_check', 'Enhanced DBS check for home-based childcare?'),
+    ('enhanced_check', 'Do they have the correct DBS check?'),
     ('on_update', 'On the DBS Update Service?'),
     ('permission', 'Permission for checks')
 ])
