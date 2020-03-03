@@ -947,7 +947,7 @@ class PITHSummaryPageFunctionalTests(PITHFunctionalTestCase):
 
         response = self.client.get(reverse('PITH-Summary-View'), data={'id': self.app_id})
 
-        utils.assertNotSummaryField(response, 'Enhanced DBS check for home-based childcare?',
+        utils.assertNotSummaryField(response, 'Do they have the correct DBS check?',
                                     heading='Joe Anthony Bloggs')
         utils.assertSummaryField(response, 'Enhanced DBS check for home-based childcare?', 'Yes',
                                  heading='Joanne Bethanny Smith')
