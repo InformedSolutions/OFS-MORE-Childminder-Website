@@ -319,10 +319,10 @@ class AdultInHomeFunctionalTests(TestCase):
                 'description': 'Test serious illness',
                 'start_date_0': '26',
                 'start_date_1': '1',
-                'start_date_2': '2017',
+                'start_date_2': '2020',
                 'end_date_0': '26',
                 'end_date_1': '2',
-                'end_date_2': '2018',
+                'end_date_2': '2020',
             },
             follow=True
         )
