@@ -119,7 +119,7 @@ class DBSTypeForm(DBSRadioForm):
         return forms.ChoiceField(label=mark_safe('Is it an enhanced check with barred lists as well as being for a <a '
                                                  'href="https://www.gov.uk/government/publications/dbs-home-based'
                                                  '-positions-guide/home-based-position-definition-and-guidance" '
-                                                 'target="_blank">home-based childcare role</a>?'),
+                                                 'target="_blank">home-based role</a>?'),
                                  choices=self.choices,
                                  widget=ConditionalPostInlineRadioSelect,
                                  required=True,
