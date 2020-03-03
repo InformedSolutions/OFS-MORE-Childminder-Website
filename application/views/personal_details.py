@@ -1118,8 +1118,21 @@ def personal_details_summary(request):
         applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                          current_address=True)
         personal_details_record = ApplicantPersonalDetails.objects.get(application_id=app_id)
-        applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                              childcare_address=True)
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).count() == 1:
+            applicant_childcare_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id)
+            if applicant_childcare_address.childcare_address == False:
+                if Arc.objects.filter(application_id=app_id).count() > 0:
+                    arc = Arc.objects.get(application_id=app_id)
+                    arc.personal_details_review = 'FLAGGED'
+                    arc.save()
+            else:
+                applicant_childcare_address_record = applicant_childcare_address
+                childcare_street_line1 = applicant_childcare_address_record.street_line1
+                childcare_street_line2 = applicant_childcare_address_record.street_line2
+                childcare_town = applicant_childcare_address_record.town
+                childcare_county = applicant_childcare_address_record.county
+                childcare_postcode = applicant_childcare_address_record.postcode
+
         street_line1 = applicant_home_address_record.street_line1
         street_line2 = applicant_home_address_record.street_line2
         town = applicant_home_address_record.town
@@ -1128,12 +1141,6 @@ def personal_details_summary(request):
         if personal_details_record.moved_in_year is not None:
             moved_in_date = personal_details_record.get_moved_in_date()
         location_of_childcare = applicant_home_address_record.childcare_address
-
-        childcare_street_line1 = applicant_childcare_address_record.street_line1
-        childcare_street_line2 = applicant_childcare_address_record.street_line2
-        childcare_town = applicant_childcare_address_record.town
-        childcare_county = applicant_childcare_address_record.county
-        childcare_postcode = applicant_childcare_address_record.postcode
 
         if location_of_childcare:
             childcare_address = 'Same as home address'
