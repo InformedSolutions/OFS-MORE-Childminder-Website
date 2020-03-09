@@ -524,6 +524,8 @@ def personal_details_location_of_care(request):
                 return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
 
             else:
+                if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
+                    status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
                 return HttpResponseRedirect(reverse('Personal-Details-Childcare-Address-View') + '?id=' + app_id)
         else:
@@ -1121,7 +1123,7 @@ def personal_details_summary(request):
         if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).count() == 1:
             applicant_childcare_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id)
             if applicant_childcare_address.childcare_address == False:
-                return HttpResponseRedirect(reverse('Personal-Details-Location-Of-Care-View') + '?id=' + app_id)
+                return HttpResponseRedirect(reverse('Personal-Details-Childcare-Address-View') + '?id=' + app_id)
             else:
                 applicant_childcare_address_record = applicant_childcare_address
         else:
