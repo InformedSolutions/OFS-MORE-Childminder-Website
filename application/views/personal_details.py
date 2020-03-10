@@ -524,8 +524,6 @@ def personal_details_location_of_care(request):
                 return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
 
             else:
-                if Application.get_id(app_id=app_id).personal_details_status != 'COMPLETED':
-                    status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
 
                 return HttpResponseRedirect(reverse('Personal-Details-Childcare-Address-View') + '?id=' + app_id)
         else:
