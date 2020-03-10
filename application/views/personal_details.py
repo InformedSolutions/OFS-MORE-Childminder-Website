@@ -1118,15 +1118,11 @@ def personal_details_summary(request):
         applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                          current_address=True)
         personal_details_record = ApplicantPersonalDetails.objects.get(application_id=app_id)
-        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id).count() == 1:
-            applicant_childcare_address = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id)
-            if applicant_childcare_address.childcare_address == False:
-                return HttpResponseRedirect(reverse('Personal-Details-Childcare-Address-View') + '?id=' + app_id)
-            else:
-                applicant_childcare_address_record = applicant_childcare_address
-        else:
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True).exists():
             applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                                   childcare_address=True)
+        else:
+            return HttpResponseRedirect(reverse('Personal-Details-Childcare-Address-View') + '?id=' + app_id)
 
 
         street_line1 = applicant_home_address_record.street_line1
