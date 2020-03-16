@@ -7,6 +7,7 @@ from govuk_forms import widgets as govuk_widgets
 
 from application.forms.PITH_forms.PITH_base_forms.PITH_childminder_form_retrofit import PITHChildminderFormAdapter
 from application.widgets import ConditionalPostInlineRadioSelect
+from django.utils.safestring import mark_safe
 
 
 class PITHDBSTypeOfCheckForm(PITHChildminderFormAdapter):
@@ -79,7 +80,11 @@ class PITHDBSTypeOfCheckForm(PITHChildminderFormAdapter):
 
     def get_enhanced_check_field_data(self):
         return forms.ChoiceField(
-            label='Do they have an enhanced DBS check for home-based childcare?',
+            label=mark_safe('Is their DBS check:<ul style="list-style-type: disc; padding-left: 50px;"><li>an '
+                        'enhanced check with barred lists?</li><li>if they live in the home childcare is taking place '
+                        'in, is the check also for a <a '
+                        'href="https://www.gov.uk/government/publications/dbs-home-based-positions-guide/home-based'
+                        '-position-definition-and-guidance">home-based role</a>?</li></ul>'),
             choices=self.get_options(),
             widget=ConditionalPostInlineRadioSelect,
             required=False)
