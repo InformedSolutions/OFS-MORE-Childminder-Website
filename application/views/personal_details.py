@@ -524,7 +524,9 @@ def personal_details_location_of_care(request):
                 return HttpResponseRedirect(reverse('Personal-Details-Summary-View') + '?id=' + app_id)
 
             else:
-
+                if not ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id,
+                                                       childcare_address=True).exists():
+                    status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
                 return HttpResponseRedirect(reverse('Personal-Details-Childcare-Address-View') + '?id=' + app_id)
         else:
 
@@ -1118,8 +1120,14 @@ def personal_details_summary(request):
         applicant_home_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
                                                                          current_address=True)
         personal_details_record = ApplicantPersonalDetails.objects.get(application_id=app_id)
-        applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
-                                                                              childcare_address=True)
+        if ApplicantHomeAddress.objects.filter(personal_detail_id=personal_detail_id, childcare_address=True).exists():
+            applicant_childcare_address_record = ApplicantHomeAddress.objects.get(personal_detail_id=personal_detail_id,
+                                                                                  childcare_address=True)
+        else:
+            status.update(app_id, 'personal_details_status', 'IN_PROGRESS')
+            return HttpResponseRedirect(reverse('Personal-Details-Childcare-Address-View') + '?id=' + app_id)
+
+
         street_line1 = applicant_home_address_record.street_line1
         street_line2 = applicant_home_address_record.street_line2
         town = applicant_home_address_record.town
