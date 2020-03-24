@@ -33,19 +33,19 @@ def payment_confirmation(request):
 
     template, is_early_years_register = get_template(criminal_record_check, application_id_local, local_app,
                                                      childcare_register_cost, childcare_register_type)
-    if local_app.application_status != 'SUBMITTED':
-        log.info('Updating application status to SUBMITTED for application with id: ' + application_id_local)
-        local_app.application_status = 'SUBMITTED'
-        local_app.save()
-        status.update(application_id_local, 'declarations_status', 'COMPLETED')
 
-        # Payment presents the first true trigger for submission so is logged as submitted at this point
-        TimelineLog.objects.create(
-            content_object=local_app,
-            user=None,
-            template='timeline_logger/application_action.txt',
-            extra_data={'user_type': 'applicant', 'action': 'submitted by', 'entity': 'application'}
-        )
+    log.info('Updating application status to SUBMITTED for application with id: ' + application_id_local)
+    local_app.application_status = 'SUBMITTED'
+    local_app.save()
+    status.update(application_id_local, 'declarations_status', 'COMPLETED')
+
+    # Payment presents the first true trigger for submission so is logged as submitted at this point
+    TimelineLog.objects.create(
+        content_object=local_app,
+        user=None,
+        template='timeline_logger/application_action.txt',
+        extra_data={'user_type': 'applicant', 'action': 'submitted by', 'entity': 'application'}
+    )
 
     variables = {
         'id': application_id_local,
