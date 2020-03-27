@@ -3,8 +3,7 @@
 <!--[if lt IE 9]><html class="lte-ie8" lang="{{ html_lang|default:'en' }}"><![endif]-->
 <!--[if gt IE 8]><!--><html lang="{{ html_lang|default:'en' }}"><!--<![endif]-->
   <head>
-    <!-- Change this if to if not for production -->
-    {% if settings.DEBUG %}
+    {% if not settings.GOOGLE_TAG_MANAGER_ID == "" %}
       <!-- Google Tag Manager -->
       <script>
       var gtm_id = "{{settings.GOOGLE_TAG_MANAGER_ID}}";
@@ -47,8 +46,7 @@
   </head>
 
   <body class="{% block body_classes %}{% endblock %}">
-<!-- Change this if to if not for production -->
-    {% if settings.DEBUG %}
+    {% if not settings.GOOGLE_TAG_MANAGER_ID == "" %}
       <!-- Google Tag Manager (noscript) -->
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ settings.GOOGLE_TAG_MANAGER_ID }}"
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
