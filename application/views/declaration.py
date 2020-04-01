@@ -440,7 +440,8 @@ def declaration_summary(request, print_mode=False):
             'children': children_table,
             'children_living_with_childminder': ", ".join(children_living_with_childminder),
             'known_to_social_services_pith': application.known_to_social_services_pith,
-            'reasons_known_to_social_services_pith': application.reasons_known_to_social_services_pith
+            'reasons_known_to_social_services_pith': application.reasons_known_to_social_services_pith,
+            'application_status':  application.application_status
         }
 
         variables = {**variables, **references_vars}
