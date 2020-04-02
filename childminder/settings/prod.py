@@ -10,13 +10,6 @@ PROD_APPS = [
     'whitenoise',
 ]
 
-GOOGLE_ANALYTICS = {
-    'google_analytics_id': [
-        "UA-114456515-1",
-        "UA-145652997-1"
-    ]
-}
-
 # GTM Container ID
 GOOGLE_TAG_MANAGER_ID = "GTM-59J29MZ"
 
