@@ -1782,7 +1782,13 @@
 
 {% if print %}
     <div class="form-group">
-        <a href="{% url 'Payment-Confirmation' %}?id={{application_id}}&orderCode={{order_code}}">Return to confirmation</a>
+        {% if application_status == 'SUBMITTED' %}
+            <a href="{% url 'Awaiting-Review-View' %}?id={{application_id}}">Return to confirmation</a>
+        {% elif application_status == 'ARC_REVIEW' %}
+            <a href="{% url 'Awaiting-Review-View' %}?id={{application_id}}">Return to confirmation</a>
+        {% elif application_status == 'ACCEPTED' %}
+            <a href="{% url 'Accepted-View' %}?id={{application_id}}">Return to confirmation</a>
+        {% endif %}
     </div>
 {% endif %}
 <input type="hidden" value="{{application_id}}" name="id"/>

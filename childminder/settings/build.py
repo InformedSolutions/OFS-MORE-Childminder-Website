@@ -10,6 +10,9 @@ DEV_APPS = [
     'debug_toolbar'
 ]
 
+# GTM Container ID
+GOOGLE_TAG_MANAGER_ID = "GTM-TMKB37K"
+
 MIDDLEWARE_DEV = [
     'debug_toolbar.middleware.DebugToolbarMiddleware'
 ]
