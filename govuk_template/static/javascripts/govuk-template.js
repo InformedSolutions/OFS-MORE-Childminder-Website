@@ -107,6 +107,17 @@
     }
   }
 }).call(this);
+function globalCookieMessageOptIn() {
+    var cookieSelection = document.getElementById("global-cookie-message-selection");
+    var cookieAcceptConfirmation = document.getElementById("global-cookie-message-accepted-confirmation");
 
+    document.cookie = "cookie_preferences=opted_in; path=/";
+    cookieSelection.style.display = "none";
+    cookieAcceptConfirmation.style.display = "block";
+};
+function globalCookieMessageOptOut() {
+    var cookieBanner = document.getElementById("global-cookie-message");
 
-
+    document.cookie = "cookie_preferences=opted_out; path=/";
+    cookieBanner.style.display = "none";
+};

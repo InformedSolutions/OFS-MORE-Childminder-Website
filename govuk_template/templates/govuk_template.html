@@ -24,8 +24,12 @@
             <a href="/childminder/cookies">read more about our cookies</a> before you choose.
         </p>
         <div>
-            <button type="button" class="button">I’m ok with analytics cookies</button>
-            <button type="button" class="button">Do not use analytics cookies</button>
+            <button type="button" class="button" onclick="globalCookieMessageOptIn()">
+                I’m ok with analytics cookies
+            </button>
+            <button type="button" class="button" onclick="globalCookieMessageOptOut()">
+                Do not use analytics cookies
+            </button>
         </div>
     </div>
     <div id="global-cookie-message-accepted-confirmation" style="display: none">
