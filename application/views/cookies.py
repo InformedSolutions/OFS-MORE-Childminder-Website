@@ -19,22 +19,23 @@ def cookie_policy(request):
     :return: an HttpResponse object with the rendered cookies template
     """
     if request.method == 'GET':
-        form = AnalyticsCookieSelection()
-        context = {
-            'form': form
-        }
+        # Set default form value if preferences are already set
+        initial_form_state = None
+        if 'cookie_preferences' in request.COOKIES:
+            preference = request.COOKIES['cookie_preferences']
+            initial_form_state = {'cookie_selection': preference}
 
+        form = AnalyticsCookieSelection(initial=initial_form_state)
+        context = {'form': form}
         return render(request, 'cookies.html', context)
 
     elif request.method == 'POST':
         form = AnalyticsCookieSelection(request.POST)
-        if form.is_valid():
-            cookie_selection = form.cleaned_data['cookie_selection']
-            if 'opt in' in cookie_selection:
-                cookie_value = 'opted_in'
-            if 'opt out' in cookie_selection:
-                cookie_value = 'opted_out'
-
         response = render(request, 'cookies.html', {'form': form})
-        response.set_cookie('cookie_preferences', cookie_value)
+
+        # Set cookie based on what the user put in the form
+        if form.is_valid():
+            cookie_value = form.cleaned_data['cookie_selection']
+            response.set_cookie('cookie_preferences', cookie_value)
+
         return response

@@ -15,8 +15,8 @@ class AnalyticsCookieSelection(ChildminderForms):
     auto_replace_widgets = True
 
     options = (
-        ('opt in', 'On'),
-        ('opt out', 'Off')
+        ('opted_in', 'On'),
+        ('opted_out', 'Off')
     )
 
     # ToDo - Confirm wording of below
