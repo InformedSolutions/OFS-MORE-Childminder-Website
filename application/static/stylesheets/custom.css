@@ -510,6 +510,5 @@ div.error-summary ul.error-summary-list {
 }
 
 .global-cookie-message-heading {
-  margin-top: 0px;
-  margin-bottom: 15px;
+  margin-top: 0;
 }
