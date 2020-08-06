@@ -10,6 +10,7 @@ from urllib.parse import quote
 
 from ..forms import AnalyticsCookieSelection
 
+
 # ToDo - Allow the cookie policy page to be viewed when not logged in.
 def cookie_policy(request):
     """
@@ -30,11 +31,10 @@ def cookie_policy(request):
         if form.is_valid():
             cookie_selection = form.cleaned_data['cookie_selection']
             if 'opt in' in cookie_selection:
-                # Set cookie selection to flag opt in
-                #Todo - Set cookie selection to flag opt in
-                pass
+                cookie_value = 'opted_in'
             if 'opt out' in cookie_selection:
-                # Set cookie selection to flag opt out
-                # Todo - Set cookie selection to flag opt out
-                pass
-        return render(request, 'cookies.html', {'form': form})
+                cookie_value = 'opted_out'
+
+        response = render(request, 'cookies.html', {'form': form})
+        response.set_cookie('cookie_preferences', cookie_value)
+        return response
