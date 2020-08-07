@@ -55,6 +55,14 @@
         <input type="submit" class="button" value="Save changes" alt='Save changes'>
     </form>
 
+    {% if show_preference_set_confirmation %}
+    </br>
+    <p>
+        Your cookie settings were saved
+        </br><a href="javascript:history.go(-2);">Go back to the page you were looking at</a>
+    </p>
+    {% endif %}
+
     <h2 class="heading-medium"> Technical details </h2>
     <table>
         <thead>

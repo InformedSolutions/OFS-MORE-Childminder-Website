@@ -39,9 +39,16 @@ def cookie_policy(request):
         form = AnalyticsCookieSelection(request.POST)
         if form.is_valid():
             cookie_value = form.cleaned_data['cookie_selection']
-            response = render(request, 'cookies.html', {'form': form, 'cookie_preference_set': True})
+            response = render(request, 'cookies.html', {
+                'form': form,
+                'cookie_preference_set': True,
+                'show_preference_set_confirmation': True
+            })
             response.set_cookie('cookie_preferences', cookie_value)
         else:
-            response = render(request, 'cookies.html', {'form': form, 'cookie_preference_set': False})
+            response = render(request, 'cookies.html', {
+                'form': form,
+                'cookie_preference_set': False
+            })
 
         return response
