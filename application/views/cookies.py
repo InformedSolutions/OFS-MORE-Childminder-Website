@@ -11,7 +11,7 @@ from urllib.parse import quote
 from ..forms import AnalyticsCookieSelection
 
 
-# ToDo - Allow the cookie policy page to be viewed when not logged in.
+# ToDo 14625 - Allow the cookie policy page to be viewed when not logged in.
 def cookie_policy(request):
     """
     Method returning the template for the cookies page
