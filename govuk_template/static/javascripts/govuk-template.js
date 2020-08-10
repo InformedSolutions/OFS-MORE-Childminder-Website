@@ -116,12 +116,19 @@ function globalCookieMessageOptIn() {
     cookieAcceptConfirmation.style.display = "block";
 };
 function globalCookieMessageOptOut() {
-    var cookieBanner = document.getElementById("global-cookie-message");
+    var cookieSelection = document.getElementById("global-cookie-message-selection");
+    var cookieRejectConfirmation = document.getElementById("global-cookie-message-rejected-confirmation");
 
     document.cookie = "cookie_preferences=opted_out; path=/";
-    cookieBanner.style.display = "none";
+    cookieSelection.style.display = "none";
+    cookieRejectConfirmation.style.display = "block";
 };
 function globalCookieMessageOptInHideBanner() {
+    var cookieBanner = document.getElementById("global-cookie-message");
+
+    cookieBanner.style.display = "none";
+};
+function globalCookieMessageOptOutHideBanner() {
     var cookieBanner = document.getElementById("global-cookie-message");
 
     cookieBanner.style.display = "none";
