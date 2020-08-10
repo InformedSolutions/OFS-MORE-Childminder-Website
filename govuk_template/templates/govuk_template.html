@@ -34,13 +34,12 @@
     </div>
     <div id="global-cookie-message-accepted-confirmation" style="display: none">
         <h2 class="heading-medium global-cookie-message-heading">Cookies on the Register as a childminder
-            website</h2>
-        <p>
-            You’ve accepted analytics cookies. You can <a href="{% url 'Cookie-Policy' %}?url={{ request.get_full_path|urlencode }}" id="cookies-accepted">change your cookie settings</a>
-            at any time.
-
-            </br></br>ToDo 14625: Do we want a hide button on this? (see gov.uk cookie banner)
-        </p>
+        website</h2>
+        You’ve accepted analytics cookies. You can <a href="{% url 'Cookie-Policy' %}?url={{ request.get_full_path|urlencode }}" id="cookies-accepted">change your cookie settings</a>
+        at any time
+        <div>
+            <button type="button" class="button" onclick="globalCookieMessageOptInHideBanner()">Hide</button>
+        </div>
     </div>
 </div>
 {% endblock %}

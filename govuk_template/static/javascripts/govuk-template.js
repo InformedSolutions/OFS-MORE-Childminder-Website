@@ -121,3 +121,8 @@ function globalCookieMessageOptOut() {
     document.cookie = "cookie_preferences=opted_out; path=/";
     cookieBanner.style.display = "none";
 };
+function globalCookieMessageOptInHideBanner() {
+    var cookieBanner = document.getElementById("global-cookie-message");
+
+    cookieBanner.style.display = "none";
+};
