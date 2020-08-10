@@ -21,7 +21,7 @@
             </br></br>We’d also like to use analytics cookies. These send information about how our site is used to a
             service called Google Analytics. We use this information to improve our site.
             </br></br>Let us know if this is OK. We’ll use a cookie to save your choice. You can
-            <a href="/childminder/cookies">read more about our cookies</a> before you choose.
+            <a href="{% url 'Cookie-Policy' %}?url={{ request.get_full_path|urlencode }}" id="cookies">read more about our cookies</a> before you choose.
         </p>
         <div>
             <button type="button" class="button" onclick="globalCookieMessageOptIn()">
@@ -36,7 +36,7 @@
         <h2 class="heading-medium global-cookie-message-heading">Cookies on the Register as a childminder
             website</h2>
         <p>
-            You’ve accepted analytics cookies. You can <a href="/childminder/cookies">change your cookie settings</a>
+            You’ve accepted analytics cookies. You can <a href="{% url 'Cookie-Policy' %}?url={{ request.get_full_path|urlencode }}" id="cookies-accepted">change your cookie settings</a>
             at any time.
 
             </br></br>ToDo 14625: Do we want a hide button on this? (see gov.uk cookie banner)
