@@ -63,7 +63,6 @@
   "use strict"
   var root = this;
   if(typeof root.GOVUK === 'undefined') { root.GOVUK = {}; }
-  GOVUK.cookie('cookie_preferences', 'opted_out', {days: 28})
   GOVUK.addCookieMessage = function () {
     var message = document.getElementById('global-cookie-message'),
         hasCookieMessage = (message && GOVUK.cookie('seen_cookie_message') === null);

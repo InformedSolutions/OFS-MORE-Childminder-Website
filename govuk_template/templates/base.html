@@ -3,7 +3,7 @@
 <!--[if lt IE 9]><html class="lte-ie8" lang="{{ html_lang|default:'en' }}"><![endif]-->
 <!--[if gt IE 8]><!--><html lang="{{ html_lang|default:'en' }}"><!--<![endif]-->
   <head>
-    {% if not settings.GOOGLE_TAG_MANAGER_ID == "" %}
+    {% if settings.GOOGLE_TAG_MANAGER_ID != "" and request.COOKIES.cookie_preferences == 'opted_in' %}
       <!-- Google Tag Manager -->
       <script>
       var gtm_id = "{{settings.GOOGLE_TAG_MANAGER_ID}}";
@@ -46,7 +46,7 @@
   </head>
 
   <body class="{% block body_classes %}{% endblock %}">
-    {% if not settings.GOOGLE_TAG_MANAGER_ID == "" %}
+    {% if settings.GOOGLE_TAG_MANAGER_ID != "" and request.COOKIES.cookie_preferences == 'opted_in' %}
       <!-- Google Tag Manager (noscript) -->
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ settings.GOOGLE_TAG_MANAGER_ID }}"
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -119,6 +119,8 @@
     <script src="{% static 'javascripts/govuk-template.js' %}"></script>
     {% block body_end %}{% endblock %}
     <script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script>
-
+    {% if not request.COOKIES.cookie_preferences %}
+        <script>GOVUK.cookie('cookie_preferences', 'opted_out', { days: 28 });</script>
+    {% endif %}
   </body>
 </html>
