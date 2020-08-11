@@ -78,7 +78,9 @@
 
   // add cookie message
   if (window.GOVUK && GOVUK.addCookieMessage) {
-    GOVUK.addCookieMessage();
+    if (!window.location.href.includes('cookies')) {
+        GOVUK.addCookieMessage();
+    }
   }
 
   // header navigation toggle
