@@ -44,6 +44,7 @@ def cookie_policy(request):
                 'previous_url': previous_url
             })
             response.set_cookie('cookie_preferences', cookie_value)
+            response.set_cookie('seen_cookie_message', 'yes')
         else:
             response = render(request, 'cookies.html', {
                 'form': form,

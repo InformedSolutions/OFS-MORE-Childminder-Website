@@ -69,7 +69,6 @@
 
     if (hasCookieMessage) {
       message.style.display = 'block';
-      GOVUK.cookie('seen_cookie_message', 'yes', { days: 28 });
     }
   };
 }).call(this);
@@ -113,6 +112,7 @@ function globalCookieMessageOptIn() {
     var cookieAcceptConfirmation = document.getElementById("global-cookie-message-accepted-confirmation");
 
     document.cookie = "cookie_preferences=opted_in; path=/";
+    document.cookie = "seen_cookie_message=yes; path=/";
     cookieSelection.style.display = "none";
     cookieAcceptConfirmation.style.display = "block";
 };
@@ -121,6 +121,7 @@ function globalCookieMessageOptOut() {
     var cookieRejectConfirmation = document.getElementById("global-cookie-message-rejected-confirmation");
 
     document.cookie = "cookie_preferences=opted_out; path=/";
+    document.cookie = "seen_cookie_message=yes; path=/";
     cookieSelection.style.display = "none";
     cookieRejectConfirmation.style.display = "block";
 };
