@@ -14,7 +14,7 @@ def cookie_policy(request):
     :return: an HttpResponse object with the rendered cookies template
     """
     if request.method == 'GET':
-        previous_url = request.GET["url"]
+        previous_url = request.GET["url"] if "url" in request.GET else ''
         # Set default form value if preferences are already set
         initial_form_state = None
         if 'cookie_preferences' in request.COOKIES:
@@ -32,7 +32,7 @@ def cookie_policy(request):
         return render(request, 'cookies.html', context)
 
     elif request.method == 'POST':
-        previous_url = request.POST["url"]
+        previous_url = request.POST["url"] if "url" in request.POST else ''
         # Set cookie based on what the user put in the form
         form = AnalyticsCookieSelection(request.POST)
         if form.is_valid():
@@ -43,8 +43,8 @@ def cookie_policy(request):
                 'show_preference_set_confirmation': True,
                 'previous_url': previous_url
             })
-            response.set_cookie('cookie_preferences', cookie_value)
-            response.set_cookie('seen_cookie_message', 'yes')
+            response.set_cookie('cookie_preferences', cookie_value, max_age=2419200)
+            response.set_cookie('seen_cookie_message', 'yes', max_age=2419200)
         else:
             response = render(request, 'cookies.html', {
                 'form': form,
