@@ -1,0 +1,116 @@
+{% extends 'govuk_template.html' %}
+{% block page_title %}Cookie Policy{% endblock %}
+{% load static %}
+{% load govuk_template_base %}
+
+{% block inner_content %}
+
+{% include "back-button.html" %}
+
+<div class="two-thirds">
+    <h1 class="form-title heading-large">
+        Cookies on our service
+    </h1>
+    <p>
+        Cookies are files saved on your phone, tablet or computer when you visit a website.
+        <br><br>
+        We use cookies to store information about how you use the Ofsted forms service hosted at
+        register-childminder.service.gov.uk
+    </p>
+    <h2 class="heading-medium"> Cookie settings </h2>
+    <p>We use 2 types of cookie.</p>
+
+    <h2 class="heading-medium"> Strictly necessary cookies </h2>
+    <p> These essential cookies do things like:</p>
+    <ul class="list list-bullet">
+        <li>remember the notifications you've seen so we do not show them to you again</li>
+        <li>remember your progress through a form</li>
+    </ul>
+    <p>They always need to be on.</p>
+
+    <h2 class="heading-medium"> Cookies that measure website use </h2>
+    <p>
+        We use Google Analytics to measure how you use the website so we can improve it based on user needs.
+        Google Analytics sets cookies that store anonymised information about:
+    </p>
+    <ul class="list list-bullet">
+        <li>how you got to the site</li>
+        <li>the pages you visit on GOV.UK and government digital services, and how long you spend on each page</li>
+        <li>what you click on while you're visiting the site</li>
+    </ul>
+    <p>We do not allow Google to use or share the data about how you use this site.</p>
+
+    <form method="post" novalidate>
+        {{ form.as_div }}
+        {% csrf_token %}
+        <input type="submit" class="button" value="Save changes" alt='Save changes'>
+        <input type="hidden" value="{{ previous_url }}" id="url" name="url">
+    </form>
+
+    {% if show_preference_set_confirmation %}
+    </br>
+    <p>
+        Your cookie settings were saved
+        </br><a href="{{ previous_url }}">Go back to the page you were looking at</a>
+    </p>
+    {% endif %}
+
+    <h2 class="heading-medium"> Technical details </h2>
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Purpose</th>
+            <th>Expires</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>_gat</td>
+            <td>Tracks your current session activity</td>
+            <td>When you close your browser</td>
+        </tr>
+        <tr>
+            <td>_gid</td>
+            <td>Identifies you to register-childminder.service.gov.uk</td>
+            <td>24 hours</td>
+        </tr>
+        <tr>
+            <td>_ga</td>
+            <td>These help us count how many people visit register-childminder.service.gov.uk by tracking if you’ve visited before</td>
+            <td>Two years</td>
+        </tr>
+        </tbody>
+    </table>
+
+    </br>
+    <h3 class="heading-small"> Sessions </h3>
+    <table>
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Purpose</th>
+            <th>Expires</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td>cookie_preferences</td>
+            <td>Remembers your cookie preferences (defaults to opted out)</td>
+            <td>28 days</td>
+        </tr>
+        <tr>
+            <td>seen_cookie_message</td>
+            <td>Remembers if you have seen the cookie message</td>
+            <td>28 days</td>
+        </tr>
+        <tr>
+            <td>_ofs</td>
+            <td>Used to validate your application</td>
+            <td>When you close your browser</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}
