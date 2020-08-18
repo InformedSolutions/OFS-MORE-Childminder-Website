@@ -3,20 +3,15 @@
 <!--[if lt IE 9]><html class="lte-ie8" lang="{{ html_lang|default:'en' }}"><![endif]-->
 <!--[if gt IE 8]><!--><html lang="{{ html_lang|default:'en' }}"><!--<![endif]-->
   <head>
-    {% if settings.GOOGLE_TAG_MANAGER_ID != "" %}
+    {% if not settings.GOOGLE_TAG_MANAGER_ID == "" %}
       <!-- Google Tag Manager -->
-    <script src="{% static 'javascripts/govuk-template.js' %}"></script>
-    <script>
-    if (GOVUK.cookie('cookie_preferences') == 'opted_in') {
-    console.log(GOVUK.getCookie('cookie_preferences'));
+      <script>
       var gtm_id = "{{settings.GOOGLE_TAG_MANAGER_ID}}";
       (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
       new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
       j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-      })(window,document,'script','dataLayer', gtm_id);
-  }
-  </script>
+      })(window,document,'script','dataLayer', gtm_id);</script>
       <!-- End Google Tag Manager -->
     {% endif %}
 
@@ -51,7 +46,7 @@
   </head>
 
   <body class="{% block body_classes %}{% endblock %}">
-    {% if settings.GOOGLE_TAG_MANAGER_ID != "" and request.COOKIES.cookie_preferences == 'opted_in' %}
+    {% if not settings.GOOGLE_TAG_MANAGER_ID == "" %}
       <!-- Google Tag Manager (noscript) -->
       <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{ settings.GOOGLE_TAG_MANAGER_ID }}"
       height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
@@ -124,8 +119,6 @@
     <script src="{% static 'javascripts/govuk-template.js' %}"></script>
     {% block body_end %}{% endblock %}
     <script>if (typeof window.GOVUK === 'undefined') document.body.className = document.body.className.replace('js-enabled', '');</script>
-    {% if not request.COOKIES.cookie_preferences %}
-        <script>GOVUK.cookie('cookie_preferences', 'opted_out', { days: 28 });</script>
-    {% endif %}
+
   </body>
 </html>

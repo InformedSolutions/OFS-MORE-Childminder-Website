@@ -63,12 +63,14 @@
   "use strict"
   var root = this;
   if(typeof root.GOVUK === 'undefined') { root.GOVUK = {}; }
+
   GOVUK.addCookieMessage = function () {
     var message = document.getElementById('global-cookie-message'),
         hasCookieMessage = (message && GOVUK.cookie('seen_cookie_message') === null);
 
     if (hasCookieMessage) {
       message.style.display = 'block';
+      GOVUK.cookie('seen_cookie_message', 'yes', { days: 28 });
     }
   };
 }).call(this);
@@ -77,9 +79,7 @@
 
   // add cookie message
   if (window.GOVUK && GOVUK.addCookieMessage) {
-    if (!window.location.href.includes('cookies')) {
-        GOVUK.addCookieMessage();
-    }
+    GOVUK.addCookieMessage();
   }
 
   // header navigation toggle
@@ -107,31 +107,3 @@
     }
   }
 }).call(this);
-function globalCookieMessageOptIn() {
-    var cookieSelection = document.getElementById("global-cookie-message-selection");
-    var cookieAcceptConfirmation = document.getElementById("global-cookie-message-accepted-confirmation");
-
-    document.cookie = "cookie_preferences=opted_in; path=/";
-    document.cookie = "seen_cookie_message=yes; path=/";
-    cookieSelection.style.display = "none";
-    cookieAcceptConfirmation.style.display = "block";
-};
-function globalCookieMessageOptOut() {
-    var cookieSelection = document.getElementById("global-cookie-message-selection");
-    var cookieRejectConfirmation = document.getElementById("global-cookie-message-rejected-confirmation");
-
-    document.cookie = "cookie_preferences=opted_out; path=/";
-    document.cookie = "seen_cookie_message=yes; path=/";
-    cookieSelection.style.display = "none";
-    cookieRejectConfirmation.style.display = "block";
-};
-function globalCookieMessageOptInHideBanner() {
-    var cookieBanner = document.getElementById("global-cookie-message");
-
-    cookieBanner.style.display = "none";
-};
-function globalCookieMessageOptOutHideBanner() {
-    var cookieBanner = document.getElementById("global-cookie-message");
-
-    cookieBanner.style.display = "none";
-};
