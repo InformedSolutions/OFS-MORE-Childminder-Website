@@ -10,7 +10,7 @@
 <div class="two-thirds">
 {{form.error_summary}}
 </div>
-<form class="form" method="post" novalidate onsubmit="submit.disabled=true; return true;" {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
+<form method="post" novalidate {% if form.is_multipart %}enctype="multipart/form-data" {% endif %}>
     <div class="two-thirds">
         <h1 class="form-title heading-large">
             Your email address
@@ -20,7 +20,7 @@
     </div>
     {{form.as_div}}
     {% csrf_token %}
-    <input type="submit" name="submit" class="button" value="Continue" alt='Continue'>
+    <input type="submit" class="button" value="Continue" alt='Continue'>
 </form>
 
 {% endblock %}
