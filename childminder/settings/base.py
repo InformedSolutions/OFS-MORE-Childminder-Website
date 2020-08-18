@@ -114,6 +114,7 @@ AUTHENTICATION_EXEMPT_URLS = tuple(u.format(prefix=URL_PREFIX) for u in (
     r'^{prefix}/application-saved/$',
     r'^{prefix}/health-check/(?P<id>[\w-]+)/$',
     r'^{prefix}/feedback/$',
+    r'^{prefix}/cookies/$',
     r'^{prefix}/feedback-submitted/$',
     r'^{prefix}/documents-needed/$',
     r'^{prefix}/home-ready/$',
