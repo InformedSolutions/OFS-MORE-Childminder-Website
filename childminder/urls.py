@@ -11,7 +11,7 @@ from django.conf.urls import url, include
 from django.views.generic import TemplateView
 
 from application import views, utils
-from application.views import security_question, magic_link, feedback, your_children, cookies
+from application.views import security_question, magic_link, feedback, your_children
 from application.views.other_people_health_check import health_check_login, dob_auth, current_treatment, local_authorities, guidance, \
     declaration, serious_illness, hospital_admission, summary, thank_you
 from application.views import PITH_views
@@ -232,7 +232,6 @@ urlpatterns = [
     url(r'^childcare-location/cancel-application', views.cancel_application.cl_cancel_app, name='Service-Unavailable'),
     url(r'^feedback/', feedback.feedback, name='Feedback'),
     url(r'^feedback-submitted/', feedback.feedback_confirmation, name='Feedback-Confirmation'),
-    url(r'^cookies/', cookies.cookie_policy, name='Cookie-Policy'),
 ]
 
 if settings.DEBUG:
