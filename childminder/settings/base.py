@@ -49,6 +49,8 @@ EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
 
 FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'tester@informed.com')
 
+DOMAIN_URL = os.environ.get('APP_DOMAIN')
+
 
 # AWS SQS keys
 AWS_SQS_ACCESS_KEY_ID = os.environ.get('AWS_SQS_ACCESS_KEY_ID')
