@@ -110,18 +110,16 @@
 function globalCookieMessageOptIn() {
     var cookieSelection = document.getElementById("global-cookie-message-selection");
     var cookieAcceptConfirmation = document.getElementById("global-cookie-message-accepted-confirmation");
-
-    document.cookie = "cookie_preferences=opted_in; max_age=2419200; path=/";
-    document.cookie = "seen_cookie_message=yes; max_age=2419200; path=/";
+    GOVUK.cookie('cookie_preferences', 'opted_in', { days: 28 });
+    GOVUK.cookie('seen_cookie_message', 'yes', { days: 28 });
     cookieSelection.style.display = "none";
     cookieAcceptConfirmation.style.display = "block";
 };
 function globalCookieMessageOptOut() {
     var cookieSelection = document.getElementById("global-cookie-message-selection");
     var cookieRejectConfirmation = document.getElementById("global-cookie-message-rejected-confirmation");
-
-    document.cookie = "cookie_preferences=opted_out; max_age=2419200; path=/";
-    document.cookie = "seen_cookie_message=yes; max_age=2419200; path=/";
+    GOVUK.cookie('cookie_preferences', 'opted_out', { days: 28 });
+    GOVUK.cookie('seen_cookie_message', 'yes', { days: 28 });
     cookieSelection.style.display = "none";
     cookieRejectConfirmation.style.display = "block";
 };
