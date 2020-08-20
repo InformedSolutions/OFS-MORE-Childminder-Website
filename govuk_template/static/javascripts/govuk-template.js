@@ -111,8 +111,8 @@ function globalCookieMessageOptIn() {
     var cookieSelection = document.getElementById("global-cookie-message-selection");
     var cookieAcceptConfirmation = document.getElementById("global-cookie-message-accepted-confirmation");
 
-    document.cookie = "cookie_preferences=opted_in; path=/";
-    document.cookie = "seen_cookie_message=yes; path=/";
+    document.cookie = "cookie_preferences=opted_in; max_age=2419200; path=/";
+    document.cookie = "seen_cookie_message=yes; max_age=2419200; path=/";
     cookieSelection.style.display = "none";
     cookieAcceptConfirmation.style.display = "block";
 };
@@ -120,8 +120,8 @@ function globalCookieMessageOptOut() {
     var cookieSelection = document.getElementById("global-cookie-message-selection");
     var cookieRejectConfirmation = document.getElementById("global-cookie-message-rejected-confirmation");
 
-    document.cookie = "cookie_preferences=opted_out; path=/";
-    document.cookie = "seen_cookie_message=yes; path=/";
+    document.cookie = "cookie_preferences=opted_out; max_age=2419200; path=/";
+    document.cookie = "seen_cookie_message=yes; max_age=2419200; path=/";
     cookieSelection.style.display = "none";
     cookieRejectConfirmation.style.display = "block";
 };
