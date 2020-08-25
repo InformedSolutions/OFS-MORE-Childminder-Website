@@ -29,7 +29,7 @@
     </ul>
     <p>They always need to be on.</p>
 
-    <h2 class="heading-medium"> Cookies that measure website use </h2>
+    <h2 class="heading-medium" id="form"> Cookies that measure website use </h2>
     <p>
         We use Google Analytics to measure how you use the website so we can improve it based on user needs.
         Google Analytics sets cookies that store anonymised information about:
@@ -41,7 +41,7 @@
     </ul>
     <p>We do not allow Google to use or share the data about how you use this site.</p>
 
-    <form method="post" novalidate>
+    <form method="post" novalidate action="{% url 'Cookie-Policy' %}?url={{ previous_url }}#form">
         {{ form.as_div }}
         {% csrf_token %}
         <input type="submit" class="button" value="Save changes" alt='Save changes'>
