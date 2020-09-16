@@ -49,6 +49,8 @@ EXECUTING_AS_TEST = os.environ.get('EXECUTING_AS_TEST')
 
 FEEDBACK_EMAIL = os.environ.get('FEEDBACK_EMAIL', 'tester@informed.com')
 
+DOMAIN_URL = os.environ.get('APP_DOMAIN')
+
 
 # AWS SQS keys
 AWS_SQS_ACCESS_KEY_ID = os.environ.get('AWS_SQS_ACCESS_KEY_ID')
@@ -114,6 +116,7 @@ AUTHENTICATION_EXEMPT_URLS = tuple(u.format(prefix=URL_PREFIX) for u in (
     r'^{prefix}/application-saved/$',
     r'^{prefix}/health-check/(?P<id>[\w-]+)/$',
     r'^{prefix}/feedback/$',
+    r'^{prefix}/cookies/$',
     r'^{prefix}/feedback-submitted/$',
     r'^{prefix}/documents-needed/$',
     r'^{prefix}/home-ready/$',
