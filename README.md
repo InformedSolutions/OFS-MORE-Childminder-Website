@@ -2,6 +2,8 @@
 
 A Django-based prototype for users to apply to be a childminder.
 
+This branch can be used to cherry-pick the maintenance message commit onto the latest release.
+
 ## Pre-setup
 
 These environment variables have to be defined before running Childminder:
