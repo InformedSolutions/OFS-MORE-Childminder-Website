@@ -19,4 +19,4 @@ pylint==2.2.2
 pylint-django==2.0.5
 coverage==4.5.2
 boto3==1.7.66
-lxml==4.3.0
+lxml==4.6.2
